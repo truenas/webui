@@ -12,7 +12,7 @@ export const cronCardElements = {
       synonyms: [
         T('Create Cron Job'),
         T('New Cron Job'),
-        T('Setup Cron Job'),
+        T('Set Up Cron Job'),
         T('Cron Job'),
         T('Cronjob'),
       ],

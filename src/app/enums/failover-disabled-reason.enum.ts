@@ -44,7 +44,7 @@ export const failoverDisabledReasonLabels = new Map<FailoverDisabledReason, stri
   [FailoverDisabledReason.NoPong, T('Other TrueNAS controller cannot be reached.')],
   [FailoverDisabledReason.NoFailover, T('Failover is administratively disabled.')],
   [FailoverDisabledReason.NoLicense, T('Other TrueNAS controller has no license.')],
-  [FailoverDisabledReason.DisagreeVip, T('Nodes Virtual IP states do not agree.')],
+  [FailoverDisabledReason.DisagreeVip, T('Nodes\' Virtual IP states do not agree.')],
   [FailoverDisabledReason.MismatchDisks, T('The TrueNAS controllers do not have the same quantity of disks.')],
   [FailoverDisabledReason.MismatchVersions, T('TrueNAS software versions do not match between storage controllers.')],
   [FailoverDisabledReason.MismatchNics, T('Network interfaces do not match between storage controllers.')],

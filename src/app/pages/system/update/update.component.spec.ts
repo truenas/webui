@@ -834,7 +834,7 @@ describe('UpdateComponent', () => {
       spectator.detectChanges();
 
       // The custom error message should be displayed
-      const errorElement = spectator.query(byText('Network resource is not reachable, verify your network settings and health.'));
+      const errorElement = spectator.query(byText('Network resource is not reachable. Verify your network settings and health.'));
       expect(errorElement).toBeTruthy();
     });
   });

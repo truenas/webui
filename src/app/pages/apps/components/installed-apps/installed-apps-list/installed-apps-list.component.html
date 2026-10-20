@@ -126,7 +126,7 @@
           [tnTestId]="[('Block I/O' | translate), uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, ioStats)
           ? (ioStats.blkio.read | ixFileSize) + ' - ' + (ioStats.blkio.write | ixFileSize)
-          : ('Block I/O read and writes' | translate)"
+          : ('Block I/O reads and writes' | translate)"
         >
           @if (hasStats(row, ioStats)) {
             <span class="stat-pair">

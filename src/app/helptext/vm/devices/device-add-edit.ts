@@ -53,7 +53,7 @@ export const helptextDevice = {
   enable_display_tooltip: T('Enable a SPICE display for web-based and client remote\
  connections. Requires <i>UEFI</i> booting.'),
   enable_vnc_tooltip: T('Enable a VNC display for client-only remote connections.\
- Requires VNC client software. Cannot be accessed through web browser.'),
+ Requires VNC client software. Cannot be accessed through a web browser.'),
   vnc_password_tooltip: T('VNC password (maximum 8 characters). Required for VNC connections.'),
   vnc_bind_tooltip: T('Select an IP address for VNC connections. Leave as 0.0.0.0 to bind to all interfaces.'),
   vnc_port_tooltip: T('Port for VNC connections. Leave empty to auto-assign an available port.'),

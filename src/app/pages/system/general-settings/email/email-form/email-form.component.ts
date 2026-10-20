@@ -223,7 +223,7 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
         if (!email) {
           this.dialogService.info(
             this.translate.instant('Email'),
-            this.translate.instant('No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.'),
+            this.translate.instant('No email address is set for root user or any other local administrator. Please configure such an email address first.'),
           );
           // TODO: Consider taking user to the user edit page
           return;

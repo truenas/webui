@@ -83,7 +83,7 @@ export class GlobalTwoFactorAuthCardComponent {
           twoFactorAuthConfig,
         ),
         {
-          title: this.translate.instant('Global Two Factor Authentication'),
+          title: this.translate.instant('Global Two-Factor Authentication'),
           editData: {
             enabled: twoFactorAuthConfig.enabled,
             window: twoFactorAuthConfig.window,

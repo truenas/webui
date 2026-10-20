@@ -31,7 +31,7 @@ Note: If the administrative account Shell is not set to TrueNAS Console, you ent
 
   motdTooltip: T('The message to show when a user logs in with SSH.'),
 
-  fqdnTooltip: T('Set to include the Fully-Qualified Domain Name (FQDN)\
+  fqdnTooltip: T('Set to include the Fully Qualified Domain Name (FQDN)\
  in logs to precisely identify systems with similar\
  hostnames.'),
 
@@ -110,6 +110,6 @@ Note: If the administrative account Shell is not set to TrueNAS Console, you ent
  — lower than regular ZFS I/O operations.\
  You can specify a time window during which resilvering is given higher priority\
  — useful for scheduling it during non-business hours.'),
-    smbRebootWarning: T('Changing System Dataset Pool requires SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.'),
+    smbRebootWarning: T('Changing System Dataset Pool requires the SMB service to be restarted. This will cause a temporary disruption of any active SMB connections.'),
   },
 };

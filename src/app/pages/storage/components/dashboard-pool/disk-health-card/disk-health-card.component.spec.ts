@@ -77,7 +77,7 @@ describe('DiskHealthCardComponent', () => {
 
   describe('Temperatures', () => {
     it('shows disks temperature related alerts', () => {
-      const detailsItem = spectator.query(byText('Disks temperature related alerts:'))!.parentElement!;
+      const detailsItem = spectator.query(byText('Disk temperature-related alerts:'))!.parentElement!;
       expect(detailsItem.querySelector('.value')).toHaveText('0');
     });
 

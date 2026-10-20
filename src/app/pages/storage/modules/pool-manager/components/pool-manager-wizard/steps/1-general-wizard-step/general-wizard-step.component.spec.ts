@@ -280,7 +280,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
-    const sedRadio = await loader.getHarnessOrNull(TnRadioHarness.with({ label: 'Self Encrypting Drives (SED)' }));
+    const sedRadio = await loader.getHarnessOrNull(TnRadioHarness.with({ label: 'Self-Encrypting Drives (SED)' }));
     expect(sedRadio).toBeNull();
 
     // Software encryption is ungated and sits beside it — proves the radio group rendered.
@@ -288,7 +288,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
   });
 
   it('shows info message when no global SED password is set', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ label: 'Self Encrypting Drives (SED)' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Self-Encrypting Drives (SED)' }))).check();
     spectator.detectChanges();
 
     const infoMessage = spectator.query('ix-warning');
@@ -368,7 +368,7 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
   });
 
   it('shows warning message when global SED password is already set', async () => {
-    await (await loader.getHarness(TnRadioHarness.with({ label: 'Self Encrypting Drives (SED)' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Self-Encrypting Drives (SED)' }))).check();
     spectator.detectChanges();
 
     const warningMessage = spectator.query('ix-warning');

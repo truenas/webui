@@ -38,9 +38,9 @@ export const helptextUsers = {
  account can use the saved <b>Password</b> to authenticate with\
  password-based services.'),
   oneTimePasswordWarning: T('Once generated, one-time password is only valid for one login within 24 hours and does not persist across reboots.\
- User will be required to set new password after they log in.<br><br>\
+ User will be required to set a new password after they log in.<br><br>\
  Do you want to continue?'),
-  oneTimePasswordTooltip: T('Temporary password will be generated and shown to you once form is saved.\
+  oneTimePasswordTooltip: T('A temporary password will be generated and shown to you once the form is saved.\
  <br><br>This password is only valid for one login within 24 hours and does not persist across reboots.\
  <br><br>User will be encouraged to choose their own password after they log in for the first time.'),
   shellTooltip: T('Select the shell to use for local and SSH logins.'),
@@ -48,7 +48,7 @@ export const helptextUsers = {
  using password-based services until this option is unset. Locking an\
  account is only possible when <b>Disable Password</b> is <i>No</i> and\
  a <b>Password</b> has been created for the account.'),
-  smbTooltip: T('Set to allow user to authenticate to Samba shares.'),
+  smbTooltip: T('Set to allow the user to authenticate to Samba shares.'),
   smbBuiltin: T('Cannot be enabled for built-in users.'),
   smbStig: T('Local user accounts using NTLM authentication are not permitted when TrueNAS is running in an enhanced security mode.'),
 };

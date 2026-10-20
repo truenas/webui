@@ -228,7 +228,7 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
       this.form.controls.gpus,
       this.destroyRef,
       this.translate.instant('Cannot Select GPU'),
-      this.translate.instant('System critical GPUs cannot be used for VMs'),
+      this.translate.instant('System-critical GPUs cannot be used for VMs'),
       this.cachedGpuPciChoices$,
     );
   }

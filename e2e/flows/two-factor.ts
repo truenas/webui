@@ -19,7 +19,7 @@ import { totpCode } from '../support/totp';
 const saveTimeoutMs = 60_000;
 
 /**
- * Opens the Global Two Factor Authentication form from its card on System >
+ * Opens the Global Two-Factor Authentication form from its card on System >
  * Advanced Settings, once the card reads `expectedState`.
  *
  * Waits for the card first because the form is filled from what the card last

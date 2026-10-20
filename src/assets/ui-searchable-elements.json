@@ -2054,7 +2054,7 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Global Two Factor Authentication"
+      "Global Two-Factor Authentication"
     ],
     "synonyms": [],
     "requiredRoles": [],
@@ -2072,12 +2072,12 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Global Two Factor Authentication",
+      "Global Two-Factor Authentication",
       "Global 2FA Enable"
     ],
     "synonyms": [
-      "Enable Two Factor Authentication Globally",
-      "Two Factor Auth",
+      "Enable Two-Factor Authentication Globally",
+      "Two-Factor Auth",
       "2FA"
     ],
     "requiredRoles": [],
@@ -2095,7 +2095,7 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Global Two Factor Authentication",
+      "Global Two-Factor Authentication",
       "Window"
     ],
     "synonyms": [
@@ -2116,11 +2116,11 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Global Two Factor Authentication",
+      "Global Two-Factor Authentication",
       "SSH"
     ],
     "synonyms": [
-      "Enable Two Factor Authentication for SSH"
+      "Enable Two-Factor Authentication for SSH"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -2137,11 +2137,11 @@
     "hierarchy": [
       "System",
       "Advanced Settings",
-      "Global Two Factor Authentication",
-      "Configure Global Two Factor Authentication"
+      "Global Two-Factor Authentication",
+      "Configure Global Two-Factor Authentication"
     ],
     "synonyms": [
-      "Global Two Factor Authentication Settings",
+      "Global Two-Factor Authentication Settings",
       "2FA Settings"
     ],
     "requiredRoles": [
@@ -2252,7 +2252,7 @@
     "synonyms": [
       "Create Cron Job",
       "New Cron Job",
-      "Setup Cron Job",
+      "Set Up Cron Job",
       "Cron Job",
       "Cronjob"
     ],
@@ -4817,7 +4817,7 @@
   {
     "hierarchy": [
       "Datasets",
-      "Manage Snapshots Tasks"
+      "Manage Snapshot Tasks"
     ],
     "synonyms": [
       "View Datasets",
@@ -4833,7 +4833,7 @@
       "/data-protection/snapshot",
       "dataset().id"
     ],
-    "anchor": "manage-snapshots-tasks",
+    "anchor": "manage-snapshot-tasks",
     "triggerAnchor": null,
     "section": "ui"
   },
@@ -5176,7 +5176,7 @@
       "Add API Key"
     ],
     "synonyms": [
-      "Add user linked API Key"
+      "Add user-linked API Key"
     ],
     "requiredRoles": [
       "API_KEY_WRITE",

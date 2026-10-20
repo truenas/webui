@@ -303,7 +303,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   openAdvanced(): void {
     this.dialog.confirm({
       title: this.translate.instant('Switch to Advanced Options'),
-      message: this.translate.instant('Switching to Advanced Options will lose data entered on second step. Do you want to continue?'),
+      message: this.translate.instant('Switching to Advanced Options will lose data entered on the second step. Do you want to continue?'),
       buttonText: this.translate.instant('Continue'),
       cancelText: this.translate.instant('Cancel'),
       hideCheckbox: true,
@@ -651,7 +651,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       formControl.setErrors({
         ...prevErrors,
         misMatchDirectories: {
-          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+          message: this.translate.instant('All selected directories must be at the same level, i.e., must have the same parent directory.'),
         },
       });
     } else {

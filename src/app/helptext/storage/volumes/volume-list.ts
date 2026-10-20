@@ -13,7 +13,7 @@ export const helptextVolumes = {
 
   exportDialog: {
     warningSysDataset: T('This pool contains the system dataset that stores critical data like debugging\
- core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share level\
+ core files, encryption keys for pools, and Samba 4 metadata such as the user/group cache and share-level\
  permissions. Exporting this pool will transfer the system dataset to another available pool. If the only\
  available pool is encrypted, that pool will no longer be able to be locked. When no other pools exist,\
  the system dataset transfers back to the TrueNAS operating system device.'),

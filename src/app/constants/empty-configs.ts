@@ -30,7 +30,7 @@ export const sharesEmptyConfig = {
 export const cloudSyncTaskEmptyConfig = {
   type: EmptyType.NoPageData,
   icon: tnIconMarker('cloud-outline', 'mdi'),
-  message: T('Sync data to a popular cloud storage provider, such as: Google Drive and Photos, Dropbox, Amazon S3 and many others.'),
+  message: T('Sync data to a popular cloud storage provider, such as Google Drive and Photos, Dropbox, Amazon S3 and many others.'),
   large: true,
 } as EmptyConfig;
 

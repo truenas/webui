@@ -93,7 +93,7 @@ export const helptextCloudSync = {
  <b>Encryption Password</b> and <b>Encryption Salt</b> values.<br><br>\
  <i>PULL:</i> Decrypt files that are being stored on the remote system\
  before the transfer. Transferring the encrypted files requires entering\
- the same <b>Encryption Password</b> and <b>Encryption Salt</b> that was\
+ the same <b>Encryption Password</b> and <b>Encryption Salt</b> that were\
  used to encrypt the files.<br><br>\
  Additional details about the encryption algorithm and key derivation\
  are available in the\

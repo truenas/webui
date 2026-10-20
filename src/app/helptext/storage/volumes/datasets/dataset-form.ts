@@ -4,15 +4,15 @@ export const helptextDatasetForm = {
   addTitle: T('Add Dataset'),
   editTitle: T('Edit Dataset'),
   capacitySettingsTitle: T('Capacity Settings'),
-  nameTooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this, length validation on this field accounts for the parent path as well. Furthermore, the maximum nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
+  nameTooltip: T('Enter a unique name for the dataset. The dataset name length is calculated by adding the length of this field\'s value and the length of the parent path field value. The length of \'Parent Path\' and \'Name\' added together cannot exceed 200 characters. Because of this, length validation on this field accounts for the parent path as well. Furthermore, the maximum number of nested directory levels allowed is 50. You can\'t create a dataset that\'s at the 51st level in the directory hierarchy after you account for the nested levels in the parent path.'),
   syncTooltip: T('<i>Standard</i> uses the sync settings that have been\
  requested by the client software, <i>Always</i> waits for\
  data writes to complete, and <i>Disabled</i> never waits for\
  writes to complete.'),
   disabledSyncWarning: T('TrueNAS recommends that the sync setting always\
  be left to the default of "Standard" or increased to "Always". The "Disabled" setting should\
- not be used in production and only where data roll back by few seconds\
- in case of crash or power loss is not a concern.'),
+ not be used in production, and only where rolling data back by a few seconds\
+ in case of a crash or power loss is not a concern.'),
   compressionTooltip: T('Encode information in less space than the\
  original data occupies. It is recommended to choose a compression algorithm\
  that balances disk performance with the amount of saved space.<br> <i>LZ4</i> is\
@@ -53,7 +53,7 @@ export const helptextDatasetForm = {
   deduplicationTooltip: T('Transparently reuse a single copy of duplicated\
  data to save space. Deduplication can improve storage capacity, but is RAM intensive.\
  Compressing data is generally recommended before using deduplication. Deduplicating data is\
- a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>.'),
+ a one-way process. <b>Deduplicated data cannot be undeduplicated!</b>'),
 
   deduplicationWarning: T('Once enabled, deduplication settings cannot be reverted. Use caution and be certain that you have adequate data backups before activating this feature.'),
   deduplicationChecksumWarning: T('The default "Checksum" value for datasets with deduplication used to be SHA256.\nOur testing has shown that SHA512 performs better for such datasets.\nWe\'ve changed the checksum value from SHA256 to SHA512. You can change it back in "Advanced Options".'),
@@ -91,7 +91,7 @@ export const helptextDatasetForm = {
  SMB sharing, but can require further optimizations. For example, configuring an rsync task with this\
  dataset could require adding <i>--no-perms</i> in the task <i>Auxiliary Parameters</i> field.'),
 
-  quotaTooSmall: T('Quota size is too small, enter a value of 1 GiB or larger.'),
+  quotaTooSmall: T('Quota size is too small. Enter a value of 1 GiB or larger.'),
 
   specialSmallBlocksTooltip: T('This value represents the threshold block size\
  for including small file blocks into the special allocation class. Blocks smaller than or\
@@ -122,7 +122,7 @@ export const helptextDatasetForm = {
   encryption: {
     inheritTooltip: T('Use the encryption properties of the parent dataset.'),
     encryptionTooltip: T('Secure data within this dataset. Data is unusable until\
- unlocked with an encryption key or passphrase. If parent dataset has encryption enabled, it is\
+ unlocked with an encryption key or passphrase. If the parent dataset has encryption enabled, it is\
  not possible to disable this option.'),
     typeTooltip: T('How the dataset is secured. Choose between securing with\
  an encryption <i>Key</i> or a user-defined <i>Passphrase</i>. Creating a new key file\

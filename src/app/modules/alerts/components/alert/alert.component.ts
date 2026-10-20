@@ -202,7 +202,7 @@ export class AlertComponent implements OnChanges {
       case this.alert().one_shot:
         this.icon = alertIcons.notificationsActive;
         this.iconTooltip = this.translate.instant(
-          "This is a ONE-SHOT {alertLevel} alert, it won't be dismissed automatically",
+          "This is a ONE-SHOT {alertLevel} alert; it won't be dismissed automatically",
           { alertLevel: this.levelLabel() },
         );
         this.alertLevelColor = AlertLevelColor.Primary;

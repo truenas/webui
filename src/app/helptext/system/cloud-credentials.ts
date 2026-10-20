@@ -28,7 +28,7 @@ export const helptextSystemCloudcredentials = {
     },
     maxUploadParts: {
       tooltip: T('Define the maximum number of chunks for a multipart upload. This can\
- be useful if a service does not support the 10,000 chunk AWS S3 specification.'),
+ be useful if a service does not support the 10,000-chunk AWS S3 specification.'),
     },
     endpoint: {
       tooltip: T('<a href="https://docs.aws.amazon.com/AmazonS3/latest/dev/WebsiteEndpoints.html"\
@@ -254,11 +254,11 @@ export const helptextSystemCloudcredentials = {
  target="_blank">OpenStack credentials file</a>.'),
     },
     userId: {
-      tooltip: T('User ID to log in - optional - most swift systems use user and leave this blank\
+      tooltip: T('User ID to log in (optional); most swift systems use user and leave this blank\
  <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
     },
     domain: {
-      tooltip: T('User domain - optional\
+      tooltip: T('User domain (optional)\
  <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
     },
     tenant: {
@@ -275,7 +275,7 @@ export const helptextSystemCloudcredentials = {
  <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
     },
     region: {
-      tooltip: T('Region name - optional\
+      tooltip: T('Region name (optional)\
  <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
     },
     storageUrl: {
@@ -291,7 +291,7 @@ export const helptextSystemCloudcredentials = {
  <a href="https://rclone.org/swift/#swift-region" target="_blank">(rclone documentation)</a>.'),
     },
     endpointType: {
-      tooltip: T('Endpoint type to choose from the service catalogue. <i>Public</i> is recommended, see the\
+      tooltip: T('Endpoint type to choose from the service catalogue. <i>Public</i> is recommended; see the\
  <a href="https://rclone.org/swift/#swift-region" target="_blank">rclone documentation</a>.'),
     },
   },

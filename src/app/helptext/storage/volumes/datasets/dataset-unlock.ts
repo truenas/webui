@@ -13,9 +13,9 @@ export const helptextUnlock = {
   datasetPassphraseLabel: T('Dataset Passphrase'),
   datasetPassphraseTooltip: T('The user-defined string that can unlock this dataset.'),
   datasetForceTooltip: T('In some cases it\'s possible that the provided key/passphrase is valid but the path\
- where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, unlock\
+ where the dataset is supposed to be mounted after being unlocked already exists and is not empty. In this case, the unlock\
  operation would fail. This can be overridden by Force flag.\
- When it is set, system will rename the existing\
+ When it is set, the system will rename the existing\
  directory/file path where the dataset should be mounted resulting in successful unlock of the dataset.'),
   fetchingEncryptionSummaryTitle: T('Fetching Encryption Summary'),
   fetchingEncryptionSummaryMessage: T('Fetching Encryption Summary for {dataset}'),

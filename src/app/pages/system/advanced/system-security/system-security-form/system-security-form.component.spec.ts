@@ -1239,7 +1239,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(formPanel.openForm).toHaveBeenCalledWith(
         expect.anything(),
         {
-          title: 'Global Two Factor Authentication',
+          title: 'Global Two-Factor Authentication',
           editData: { enabled: false, window: undefined, ssh: false },
         },
       );
@@ -1269,7 +1269,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(formPanel.openForm).toHaveBeenCalledWith(
         expect.anything(),
         {
-          title: 'Global Two Factor Authentication',
+          title: 'Global Two-Factor Authentication',
           editData: { enabled: false, window: undefined, ssh: false },
         },
       );

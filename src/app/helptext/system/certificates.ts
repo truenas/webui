@@ -91,7 +91,7 @@ export const helptextSystemCertificates = {
     common: {
       tooltip: T(
         'Enter the <a href="https://kb.iu.edu/d/aiuv"\
- target="_blank">fully-qualified hostname (FQDN)</a> of\
+ target="_blank">fully qualified hostname (FQDN)</a> of\
  the system. This name must be unique within a\
  certificate chain.',
       ),
@@ -143,7 +143,7 @@ export const helptextSystemCertificates = {
  certification paths that include this certificate.'),
       },
       pathLength: {
-        tooltip: T('How many non-self-issued intermediate certificates that can follow\
+        tooltip: T('How many non-self-issued intermediate certificates can follow\
  this certificate in a valid certification path. Entering <i>0</i> allows a single\
  additional certificate to follow in the certificate path. Cannot be less than <i>0</i>.'),
       },
@@ -264,7 +264,7 @@ export const helptextSystemCertificates = {
     },
     renewDays: {
       tooltip: T(
-        'For example if you set this value to 5, system will renew certificates that expire in 5 days or less.',
+        'For example, if you set this value to 5, the system will renew certificates that expire in 5 days or less.',
       ),
     },
   },

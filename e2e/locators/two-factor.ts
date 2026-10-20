@@ -14,7 +14,7 @@ export const twoFactorLocators = {
     state: '[data-test="text-global-2fa"]',
     /** Tolerance Window: the number of 30-second steps, as a bare number. */
     window: '[data-test="text-global-2fa-tolerance-window"]',
-    /** Two Factor Authentication for SSH: `Enabled` or `Disabled`. */
+    /** Two-Factor Authentication for SSH: `Enabled` or `Disabled`. */
     ssh: '[data-test="text-global-2fa-ssh"]',
     /** `<tn-button [testId]="['two-factor-auth', 'configure']">` in the card footer. */
     configure: '[data-test="button-two-factor-auth-configure"]',

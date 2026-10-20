@@ -22,7 +22,7 @@ export const helptextIscsi = {
 
     portalGroupIdLabel: T('Portal Group ID'),
     portalGroupIdTooltip: T(
-      'Leave empty or select number of existing portal to use.',
+      'Leave empty or select the number of an existing portal to use.',
     ),
 
     initiatorGroupIdLabel: T('Initiator Group ID'),
@@ -101,7 +101,7 @@ export const helptextIscsi = {
     alertThreshold: T('Generate an alert when the\
  pool has this percent space remaining. This is typically\
  configured at the pool level when using zvols or at the extent level\
- for both file and device based extents.'),
+ for both file- and device-based extents.'),
 
     aluaTooltip: T('Do not enable ALUA on TrueNAS unless it is also supported\
  by and enabled on the client computers. ALUA only works when enabled\

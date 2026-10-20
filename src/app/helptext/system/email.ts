@@ -8,7 +8,7 @@ export const helptextSystemEmail = {
   },
   fromname: {
     tooltip: T('The friendly name to show in front of the sending email\
- address. Example: <i>Storage System 01</i>&ltit@example.com&gt'),
+ address. Example: <i>Storage System 01</i>&lt;it@example.com&gt;'),
   },
   outgoingserver: {
     tooltip: T(
@@ -18,7 +18,7 @@ export const helptextSystemEmail = {
   },
   port: {
     tooltip: T(
-      'SMTP port number. Typically <i>25,465</i>\
+      'SMTP port number. Typically <i>25</i>, <i>465</i>\
  (secure SMTP), or <i>587</i> (submission).',
     ),
   },

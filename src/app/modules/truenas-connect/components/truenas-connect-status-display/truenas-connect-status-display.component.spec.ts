@@ -68,7 +68,7 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     expect(spectator.query('.connecting-state-content')).toBeTruthy();
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
     expect(spectator.query('.connecting-header')).toHaveText('Setting up TrueNAS Connect');
-    expect(spectator.query('.connecting-description')).toHaveText('Your system is setting up with TrueNAS Connect, this may take a few moments.');
+    expect(spectator.query('.connecting-description')).toHaveText('Your system is setting up with TrueNAS Connect; this may take a few moments.');
   });
 
   it('should display disabled state correctly', () => {

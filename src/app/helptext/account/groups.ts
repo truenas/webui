@@ -10,7 +10,7 @@ export const helptextGroups = {
   nameTooltip: T('Group name cannot begin with a hyphen\
  (<i>-</i>) or contain a space, tab, or these characters:\
  <i>, : + & # % ^ ( ) ! @ ~ * ? < > =</i>. <i>$</i> can only be used\
- as the last character of the username.'),
+ as the last character of the group name.'),
 
   privilegesTooltip: T('Attaches privileges to the group. Only needed if users in this group need access\
  to the TrueNAS API or WebUI.'),

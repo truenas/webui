@@ -56,8 +56,8 @@ export const helptextRsyncForm = {
  options to include. Separate entries by pressing <code>Enter</code>.<br>\
  Note: The "*" character must be escaped with a backslash (\\*.txt) or used\
  inside single quotes (\'*.txt\').'),
-  rsyncSshConnectModeTooltip: T('Choose to connect using either SSH private key stored\
- in user\'s home directory or SSH connection from the keychain'),
+  rsyncSshConnectModeTooltip: T('Choose to connect using either an SSH private key stored\
+ in the user\'s home directory or SSH connection from the keychain'),
   rsyncSshCredentialsTooltip: T('Select an existing SSH connection to a remote system or\
  choose Create New to create a new SSH connection.'),
 };

@@ -46,9 +46,9 @@ export const helptextReplicationWizard = {
  <code>/zvol1</code> after <i>dataset1</i> will create <i>zvol1</i> for\
  snapshot storage.'),
 
-  sudoWarning: T('Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.\nIf not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
+  sudoWarning: T('Selected SSH connection uses non-root user. Would you like to use sudo with <i>/usr/sbin/zfs</i> commands? Passwordless sudo must be enabled on the remote system.\nIf not checked, <i>zfs allow</i> must be used to grant non-root user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
   sudoTooltip: T('Controls whether the user used for SSH/SSH+NETCAT replication will have passwordless sudo enabled to execute zfs commands on the remote host.\
- If not checked, <i>zfs allow</i> must be used to grant non-user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
+ If not checked, <i>zfs allow</i> must be used to grant non-root user permissions to perform ZFS tasks. Mounting ZFS filesystems by non-root still would not be possible due to Linux restrictions.'),
 
   recursiveLabel: T('Recursive'),
   recursiveTooltip: T('Set to also replicate all snapshots contained\
@@ -97,8 +97,8 @@ export const helptextReplicationWizard = {
  patterns is shown.'),
   nameRegexTooltip: T('Using this option will replicate all snapshots\
  whose names match the specified regular expression. The\
- performance on the systems with large number of snapshots\
- will be lower, as snapshots metadata needs to be read in order\
+ performance on systems with a large number of snapshots\
+ will be lower, as snapshot metadata needs to be read in order\
  to determine snapshots creation order.'),
   transportLabel: T('SSH Transfer Security'),
   transportTooltip: T('Data transfer security. The connection is\

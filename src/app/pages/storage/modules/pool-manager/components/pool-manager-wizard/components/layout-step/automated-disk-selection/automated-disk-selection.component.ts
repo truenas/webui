@@ -58,7 +58,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
 
   protected dataLayoutTooltip = computed(() => {
     if (this.isDataVdev()) {
-      return this.translate.instant('Read only field: this Data VDEV\'s layout is locked to match the existing Data devices in the pool.');
+      return this.translate.instant('Read-only field: this Data VDEV\'s layout is locked to match the existing Data devices in the pool.');
     }
 
     return '';

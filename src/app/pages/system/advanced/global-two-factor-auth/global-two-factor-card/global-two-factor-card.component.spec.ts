@@ -54,7 +54,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     expect(itemTexts).toEqual([
       'Global 2FA: Disabled',
       'Tolerance Window: 3',
-      'Two Factor Authentication for SSH: Disabled',
+      'Two-Factor Authentication for SSH: Disabled',
     ]);
   });
 
@@ -66,7 +66,7 @@ describe('GlobalTwoFactorAuthCardComponent', () => {
     expect(spectator.inject(FormSidePanelService).openForm).toHaveBeenCalledWith(
       expect.anything(),
       {
-        title: 'Global Two Factor Authentication',
+        title: 'Global Two-Factor Authentication',
         editData: {
           enabled: false,
           window: 3,

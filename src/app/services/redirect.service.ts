@@ -31,7 +31,7 @@ export class RedirectService {
       }
       this.dialogService.redirect({
         title: this.translate.instant('Enabled HTTPS Redirect'),
-        message: this.translate.instant('You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if app does not support secure connections.<br>\n<br>\nYou can try opening app url in an incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.', { url }),
+        message: this.translate.instant('You are trying to open:<br>\n{url}<br><br>\nBecause HTTP to HTTPS redirect is enabled in settings your browser will force HTTPS connection for this URL.<br>\nThis may create issues if the app does not support secure connections.<br>\n<br>\nYou can try opening app url in an incognito mode.<br>\nAlternatively you can disable redirect in Settings, clear browser cache and try again.', { url }),
         url,
       }).pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
         this.window.open(url, target);

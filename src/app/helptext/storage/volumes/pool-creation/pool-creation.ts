@@ -23,11 +23,11 @@ export const helptextPoolCreation = {
   spareVdevDescription: T('Drive reserved for inserting into DATA pool VDEVs when an active drive has failed.'),
   specialVdevDescription: T('Special Allocation class, used to create Fusion pools. Optional VDEV type\
  which is used to speed up metadata and blocks below configured size.'),
-  dedupVdevDescription: T('De-duplication tables are stored on this special VDEV type. These VDEVs must\
+  dedupVdevDescription: T('Deduplication tables are stored on this special VDEV type. These VDEVs must\
  be sized to X GiB for each X TiB of general storage.'),
   exportedPoolWarning: T('This disk is part of the exported pool {pool}. Adding this disk to a new or other existing pools will make {pool} unable to import. You will lose any and all data in {pool}. Please make sure you have backed up any sensitive data in {pool} before reusing/repurposing this disk.'),
 
-  dRaidTooltip: T('dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.'),
+  dRaidTooltip: T('dRAID is a ZFS feature that boosts resilver speed and load distribution. Due to fixed stripe width, disk space efficiency may be substantially worse with small files. \nOpt for dRAID over RAID-Z when handling large-capacity drives and extensive disk environments for enhanced performance.'),
   stripeTooltip: T('Each disk stores data. A stripe requires at least one disk and has no data redundancy.'),
   mirrorTooltip: T('Data is identical in each disk. A mirror requires at least two disks, provides the most redundancy, and has the least capacity.'),
   raidz1Tooltip: T('Uses one disk for parity while all other disks store data. RAIDZ1 requires at least three disks. RAIDZ is a traditional ZFS data protection scheme. \nChoose RAIDZ over dRAID when managing a smaller set of drives, where simplicity of setup and predictable disk usage are primary considerations.'),
@@ -54,6 +54,6 @@ export const helptextPoolCreation = {
   sedPasswordsMustMatch: T('SED passwords must match.'),
   encryptionTypeNone: T('None'),
   encryptionTypeSoftware: T('Software Encryption (ZFS)'),
-  encryptionTypeSed: T('Self Encrypting Drives (SED)'),
+  encryptionTypeSed: T('Self-Encrypting Drives (SED)'),
   sedPoolVdevMessage: T('This pool uses SED encryption. Only SED-capable disks will be available for selection.'),
 };

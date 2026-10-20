@@ -24,7 +24,7 @@ export const helptextSharingSmb = {
     'List of groups for which to generate audit messages. At least one group must be specified in either Watch List or Ignore List when audit logging is enabled.',
   ),
   ignoreListTooltip: T(
-    'List of groups to ignore when auditing. At least one group must be specified in either Watch List or Ignore List when audit logging is enabled. If conflict arises between Watch List and Ignore List\
+    'List of groups to ignore when auditing. At least one group must be specified in either Watch List or Ignore List when audit logging is enabled. If a conflict arises between Watch List and Ignore List\
  (based on user group membership), then Watch List will take precedence and ops will be audited.',
   ),
 
@@ -65,7 +65,7 @@ export const helptextSharingSmb = {
   ),
   afpWarningTitle: T('Warning'),
   afpWarningMessage: T(
-    'This option controls how metadata and alternate data streams read write to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.',
+    'This option controls how metadata and alternate data streams are read from and written to disks. Only enable this when the share configuration was migrated from the deprecated Apple Filing Protocol (AFP). Do not attempt to force a previous AFP share to behave like a pure SMB share or file corruption can occur.',
   ),
   afpDialogButton: T('I understand'),
 
@@ -247,7 +247,7 @@ export const helptextSharingSmb = {
     'SMB clients maintain persistent connections to the server. When share settings change, connected clients may continue using cached configurations until they reconnect. Restarting the SMB service forces all clients to disconnect and reconnect, ensuring they receive the updated share configuration immediately.',
   ),
   restartLearnMoreExamples: T('Examples of changes that benefit from a restart include:'),
-  restartExampleTimeMachine: T('Time Machine settings - changes how the SMB server advertises itself to clients.'),
+  restartExampleTimeMachine: T('Time Machine settings: changes how the SMB server advertises itself to clients.'),
   restartExampleHostsAllowDeny: T('Hosts Allow/Deny: more restrictive settings may not deny access to currently connected clients until they reconnect.'),
   restartExamplePath: T('Path changes: clients will not see this change until they negotiate a new session.'),
   restartLearnMoreOtherCases: T('Other configuration changes may also benefit from a restart.'),

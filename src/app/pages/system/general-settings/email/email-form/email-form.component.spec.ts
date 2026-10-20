@@ -139,7 +139,7 @@ describe('EmailFormComponent', () => {
       expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('mail.local_administrator_email');
       expect(spectator.inject(DialogService).info).toHaveBeenCalledWith(
         'Email',
-        'No e-mail address is set for root user or any other local administrator. Please, configure such an email address first.',
+        'No email address is set for root user or any other local administrator. Please configure such an email address first.',
       );
     });
 

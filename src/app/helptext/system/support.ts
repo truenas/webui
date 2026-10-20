@@ -74,7 +74,7 @@ export const helptextSystemSupport = {
 
   body: {
     tooltip: T(
-      'Enter a one to three paragraph summary of the issue.\
+      'Enter a one- to three-paragraph summary of the issue.\
  Describe the problem and provide any steps to\
  replicate the issue.',
     ),

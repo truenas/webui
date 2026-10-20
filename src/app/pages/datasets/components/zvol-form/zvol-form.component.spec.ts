@@ -705,7 +705,7 @@ describe('ZvolFormComponent', () => {
       expect(spectator.component.form.controls.volsize.disabled).toBe(true);
       const warning = spectator.query('.volsize-warning');
       expect(warning).toBeTruthy();
-      expect(warning.textContent).toContain('Size cannot be changed when readonly is toggled.');
+      expect(warning.textContent).toContain('Size cannot be changed when read-only is toggled.');
     });
 
     it('re-enables volsize and hides warning when readonly is toggled back to original value', () => {

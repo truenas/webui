@@ -365,7 +365,7 @@ describe('PoolManagerValidationService', () => {
     it('adds a warning when dRAID data disk is not a power of two', async () => {
       const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
       expect(errors).toContainEqual({
-        text: 'Recommended number of data disks for optimal space allocation should be power of 2 (2, 4, 8, 16...).',
+        text: 'Recommended number of data disks for optimal space allocation should be a power of 2 (2, 4, 8, 16...).',
         severity: PoolCreationSeverity.Warning,
         step: PoolCreationWizardStep.Data,
       });

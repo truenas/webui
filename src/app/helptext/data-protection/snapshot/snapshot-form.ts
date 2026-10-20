@@ -51,7 +51,7 @@ export const helptextSnapshotForm = {
 
   allowEmptyLabel: T('Allow Taking Empty Snapshots'),
   allowEmptyTooltip: T('Creates dataset snapshots even when there\
- have been no changes to the dataset from the last snapshot. Recommended\
+ have been no changes to the dataset since the last snapshot. Recommended\
  for creating long-term restore points, multiple snapshot tasks pointed\
  at the same datasets, or to be compatible with snapshot schedules or\
  replications created in TrueNAS 11.2 and earlier.<br><br> For example,\

@@ -5,7 +5,7 @@ export const helptextServiceFtp = {
   clientsTooltip: T('The maximum number of simultaneous clients.'),
   ipconnectionsTooltip: T('Set the maximum number of connections per IP address.\
  <i>0</i> means unlimited.'),
-  loginattemptTooltip: T('Enter the maximum number of attempts before client is\
+  loginattemptTooltip: T('Enter the maximum number of attempts before the client is\
  disconnected. Increase this if users are prone to typos.'),
   timeoutNotransferTooltip: T('Maximum number of seconds a client is allowed to spend connected, after\n'
     + 'authentication, without issuing a command which results in creating an active or passive data connection\n'

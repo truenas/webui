@@ -352,7 +352,7 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
 
     it('shows SED encryption as default when SED disks available and Enterprise', async () => {
       const stepValues = await wizard.getStepValues();
-      expect(stepValues['Encryption']).toBe('Self Encrypting Drives (SED)');
+      expect(stepValues['Encryption']).toBe('Self-Encrypting Drives (SED)');
     });
 
     it('requires SED password when no global password exists', async () => {

@@ -15,7 +15,7 @@ export const dataProtectionCardElements = {
       synonyms: [T('Snapshot Manager')],
     },
     manageSnapshotTasks: {
-      hierarchy: [T('Manage Snapshots Tasks')],
+      hierarchy: [T('Manage Snapshot Tasks')],
       synonyms: [T('Snapshot Task Manager')],
     },
     manageReplicationTasks: {

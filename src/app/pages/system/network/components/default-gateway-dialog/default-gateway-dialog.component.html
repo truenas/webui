@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="default-gateway" [title]="'Set Gateway and DNS' | translate">
 <div>
-  <p class="message">{{ 'Editing interface will result in default gateway being removed, which may result in TrueNAS being inaccessible. You can provide new default gateway and DNS information now:' | translate }}</p>
+  <p class="message">{{ 'Editing the interface will result in the default gateway being removed, which may result in TrueNAS being inaccessible. You can provide a new default gateway and DNS information now:' | translate }}</p>
   <p class="message">{{ 'Current values are pre-filled in the form below.' | translate }}</p>
 </div>
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">

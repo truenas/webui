@@ -925,7 +925,7 @@ export class CloudSyncFormComponent implements OnInit {
       formControl.setErrors({
         ...prevErrors,
         misMatchDirectories: {
-          message: this.translate.instant('All selected directories must be at the same level i.e., must have the same parent directory.'),
+          message: this.translate.instant('All selected directories must be at the same level, i.e., must have the same parent directory.'),
         },
       });
     } else {
