@@ -17,12 +17,15 @@
  * same cache for the same reason (`test/integration/utils/client.py`).
  *
  * `rate.limit.cache_clear` is a private method, so it is not in the client's
- * typed directory. The connection opts in to private methods first with
+ * typed directory. The connection opts in to private methods with
  * `core.set_options`, the documented way to call them; without it middleware
- * still answers but logs a warning per call. The option is per connection and a
- * reconnect drops it, so it is set again before every clear.
+ * still answers but logs a warning per call. The option belongs to the
+ * connection, and a reconnect is a new connection, so `enablePrivateMethods`
+ * sets it again each time the socket opens.
  */
-import { firstValueFrom, type Observable, timeout } from 'rxjs';
+import {
+  filter, firstValueFrom, type Observable, timeout,
+} from 'rxjs';
 import type { E2eApiClient } from './client';
 
 const callTimeoutMs = 15_000;
@@ -34,15 +37,31 @@ type UntypedCall = (method: string, params?: unknown[]) => Observable<unknown>;
 const reportedClients = new WeakSet<E2eApiClient>();
 
 /**
+ * Opts `client`'s connection in to private methods now and after every
+ * reconnect, for as long as the client lives.
+ *
+ * `connection.opened` holds the current state and emits `true` each time a
+ * socket opens, which is how the client's own authenticator signs in again
+ * after a reconnect. `close()` ends the reconnects, so the subscription needs no
+ * teardown of its own. A clear that lands between a reconnect and this call
+ * still works; middleware logs one warning for it.
+ */
+export function enablePrivateMethods(client: E2eApiClient): void {
+  client.connection.opened.pipe(filter(Boolean)).subscribe(() => {
+    client.api.call('core.set_options', [{ private_methods: true }]).subscribe({
+      // Not fatal: without the option the clear still goes through, with a warning in middleware's log.
+      error: () => undefined,
+    });
+  });
+}
+
+/**
  * Empties middleware's rate-limit cache. Never throws: a test that cannot clear
  * it may still stay under the limit, so a failure is reported and the test runs
  * on — a run whose clears fail meets `EBUSY` the way it did before this existed.
  */
 export async function clearRateLimit(client: E2eApiClient): Promise<void> {
   try {
-    await firstValueFrom(
-      client.api.call('core.set_options', [{ private_methods: true }]).pipe(timeout(callTimeoutMs)),
-    );
     const call = client.api.call.bind(client.api) as unknown as UntypedCall;
     await firstValueFrom(call('rate.limit.cache_clear').pipe(timeout(callTimeoutMs)));
   } catch (error) {
