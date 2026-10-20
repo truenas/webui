@@ -121,9 +121,11 @@ test('View Snapshot Tasks on a dataset opens the task list searched down to that
   await page.locator(snapshotLocators.card.viewSnapshotTasks).click();
   await expect(page.locator(list.add)).toBeVisible();
 
-  // The dataset is one route segment, so its slash is encoded.
+  // The dataset is one route segment, so its slash is encoded. Decoded rather
+  // than re-encoded here: the router leaves some characters (`:`, `@`) bare.
   await expect(page).toHaveURL(/\/data-protection\/snapshot\/[^/]+$/);
-  expect(new URL(page.url()).pathname).toBe(`/data-protection/snapshot/${encodeURIComponent(target)}`);
+  const segment = new URL(page.url()).pathname.split('/').pop() ?? '';
+  expect(decodeURIComponent(segment)).toBe(target);
 
   await expect(page.locator(taskListLocators.search)).toHaveValue(target);
   await expect(page.locator(list.dataset(target, targetNamingSchema))).toHaveText(target);
