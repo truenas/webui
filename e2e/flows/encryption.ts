@@ -1,13 +1,13 @@
 /**
- * Dataset encryption, driven through the UI: the form's Encryption Options, and editing, locking and
- * unlocking from the Encryption card.
+ * Dataset encryption, driven through the UI: the form's Encryption Options, and editing, locking,
+ * unlocking and exporting the key from the Encryption card.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Download, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
-import { selectOption } from './storage';
+import { keyDownloadTimeoutMs, selectOption } from './storage';
 import {
-  encryptionCardLocators, encryptionFormLocators, encryptionOptionsLocators, jobDialogLocators, lockDialogLocators,
-  unlockLocators, unlockSummaryLocators,
+  encryptionCardLocators, encryptionFormLocators, encryptionOptionsLocators, exportKeyDialogLocators,
+  jobDialogLocators, lockDialogLocators, unlockLocators, unlockSummaryLocators,
 } from '../locators/encryption';
 import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 
@@ -67,6 +67,38 @@ export async function saveEncryptionOptions(page: Page): Promise<void> {
   await expect(save).toBeEnabled();
   await save.click();
   await expect(page.locator(encryptionOptionsLocators.title)).toBeHidden({ timeout: jobTimeoutMs });
+}
+
+/**
+ * Opens Export Key from the selected dataset's Encryption card, and returns the key the dialog shows.
+ *
+ * The dialog opens on a `pool.dataset.export_key` job and fills the key in only once that has
+ * finished, so the paragraph is waited on until it holds something. The key is returned rather than
+ * asserted, so that a failure never prints it into the report.
+ */
+export async function openExportKeyDialog(page: Page): Promise<string> {
+  await page.locator(encryptionCardLocators.exportKey).click();
+  await expect(page.locator(exportKeyDialogLocators.title)).toBeVisible();
+
+  const key = page.locator(exportKeyDialogLocators.key);
+  await expect(key).not.toBeEmpty({ timeout: jobTimeoutMs });
+  return (await key.textContent())?.trim() ?? '';
+}
+
+/**
+ * Presses Download Key on the open Export Key dialog, and returns the download once it has started.
+ *
+ * The file comes from a `core.download` job, the same as the pool wizard's key in `downloadPoolKey`,
+ * so it gets the same ceiling. A sibling of that flow rather than a call to it, because that one
+ * presses the wizard dialog's button.
+ */
+export async function downloadDatasetKey(page: Page): Promise<Download> {
+  const [download] = await Promise.all([
+    page.waitForEvent('download', { timeout: keyDownloadTimeoutMs }),
+    page.locator(exportKeyDialogLocators.download).click(),
+  ]);
+
+  return download;
 }
 
 /**
