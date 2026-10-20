@@ -145,6 +145,57 @@ export const installedAppLocators = (name: string): {
   };
 };
 
+/**
+ * One service's container on the selected app's Workloads card, `app-workloads-card.component.html`.
+ * Every id is `[container.service_name, …]` through the library's normalizer. The three actions
+ * render only while the app is Running, Deploying or Crashed.
+ */
+export const workloadsCardLocators = (service: string): {
+  serviceName: string;
+  state: string;
+  shell: string;
+  viewLogs: string;
+} => {
+  const container = kebabTestSegment(service);
+
+  return {
+    serviceName: `[data-test="text-${container}-service-name"]`,
+    /** The container's state label: "Running", "Exited", and so on. */
+    state: `[data-test="text-${container}-container-state"]`,
+    /** Disabled, with a lock icon, unless the user holds both `APPS_WRITE` and `web_shell`. */
+    shell: `[data-test="button-${container}-shell"]`,
+    viewLogs: `[data-test="button-${container}-view-logs"]`,
+  };
+};
+
+/**
+ * `LogsDetailsDialog`, `<tn-dialog-shell testId="logs-details">`, which the logs page raises on open
+ * and on every Reconnect. Cancel leaves the page for the app's details.
+ */
+export const logsDetailsDialogLocators = {
+  title: '[data-test="dialog-title-logs-details"]',
+  /** Required, `500` by default. */
+  tailLines: '[data-test="input-tail-lines"]',
+  cancel: '[data-test="button-cancel"]',
+  /** "Connect". Disabled while Tail Lines is empty. */
+  connect: '[data-test="button-choose"]',
+} as const;
+
+/**
+ * A container's logs page (`/apps/installed/<train>/<app>/logs/<containerId>`),
+ * `container-logs.component.html`. Rows are numbered from 0 in the order they arrived, and Reconnect
+ * clears them before the new subscription fills them again.
+ */
+export const containerLogsLocators = {
+  reconnect: '[data-test="button-reconnect"]',
+  applicationName: '[data-test="text-application-name"]',
+  containerId: '[data-test="text-container-id"]',
+  /** Every row's line, for counting them. */
+  anyLine: '[data-test^="text-log-data-"]',
+  line: (index: number): string => `[data-test="text-log-data-${index}"]`,
+  timestamp: (index: number): string => `[data-test="text-log-timestamp-${index}"]`,
+} as const;
+
 /** The Application Info card's own controls, the same whichever app is selected. */
 export const appInfoCardLocators = {
   /** `<tn-icon-button testId="app-info-menu">`, "More Options", which opens Update and Convert. */

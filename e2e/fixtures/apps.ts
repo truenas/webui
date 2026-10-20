@@ -326,6 +326,21 @@ export async function seedCatalogApp(
 /** One row of `app.query`, typed from the client's own directory. */
 type AppEntry = QueryEntity<E2eApiDirectory['call'], 'app.query'>;
 
+/**
+ * The id of the container running `service` in the app, from `active_workloads.container_details`,
+ * or undefined while the app or that container is absent. The Workloads card's links carry it.
+ */
+export async function findContainerId(
+  client: E2eApiClient,
+  name: string,
+  service: string,
+): Promise<string | undefined> {
+  const [app] = await firstValueFrom(
+    client.api.query('app.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+  return app?.active_workloads.container_details.find((container) => container.service_name === service)?.id;
+}
+
 /** Which catalog revision an app runs, and what the catalog offers it. */
 export interface AppVersions {
   /** The installed catalog revision, e.g. `1.0.5`. The Application Info card shows it as Revision. */
