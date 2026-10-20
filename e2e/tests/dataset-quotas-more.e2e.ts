@@ -254,7 +254,7 @@ for (const kind of ['user', 'group'] as const) {
       await fillQuotas(page, { dataQuota: '1 GiB', objectQuota: 1000 });
 
       // Save stays enabled while the existence check is pending, so the error is waited on first.
-      await expect(page.locator(form.principalsField(kind))).toContainText(`${label} "${nobody}" does not exist`);
+      await expect(page.locator(form.principalsField(kind))).toContainText(`The following ${kind}s do not exist: ${nobody}`);
       await expect(page.locator(form.save)).toBeDisabled();
 
       // Enter in a field submits the form even with Save disabled, and `<ix-form>` has to refuse it.
