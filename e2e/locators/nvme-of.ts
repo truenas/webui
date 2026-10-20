@@ -1,7 +1,7 @@
 /**
  * NVMe-oF — the NVMe-oF Subsystems card on the Shares dashboard, the Add Subsystem
  * form it opens, the subsystem details page and its three association cards, the
- * host form, and the global configuration.
+ * host and port forms, and the global configuration.
  *
  * Derived from the templates rather than read off a running appliance; see
  * `signin.ts` for the type-prefixing that produces these values.
@@ -116,6 +116,12 @@ export const nvmeOfLocators = {
   /** "Create New" in that menu. Opens the host form, and adds the host it saves. */
   createNewHost: '[data-test="button-create-new-host"]',
 
+  /**
+   * "Create New" in the Ports card's Add menu, which is a menu only while some port
+   * exists. Opens the port form, and links the port it saves to this subsystem.
+   */
+  createNewPort: '[data-test="button-create-new-port"]',
+
   /** "Manage Ports" in the Ports card's Add menu. Opens the Manage Ports dialog. */
   managePorts: '[data-test="button-manage-ports"]',
   /** "Manage Hosts" in the Associated Hosts card's Add menu. Opens the Manage Hosts dialog. */
@@ -177,10 +183,16 @@ export const nvmeOfLocators = {
     cancel: '[data-test="button-cancel"]',
   },
 
-  /** The port form, as Edit in Manage Ports opens it. */
+  /** The port form, as Edit in Manage Ports or Create New in the Add menu opens it. */
   portForm: {
+    /** Transport Type. Opens on TCP, which shows as `TCP`. */
+    transportType: '[data-test="select-addr-trtype"]',
     /** The service id. A number input, though the control holds what middleware stored. */
     serviceId: '[data-test="input-addr-trsvcid"]',
+    /** Address. Required, and offers only what `nvmet.port.transport_address_choices` returns. */
+    address: '[data-test="select-addr-traddr"]',
+    /** One address among those options. Keyed by the label, which for TCP without ANA is the address. */
+    addressOption: (address: string): string => `[data-test="option-addr-traddr-${kebabTestSegment(address)}"]`,
     save: '[data-test="button-save"]',
   },
 

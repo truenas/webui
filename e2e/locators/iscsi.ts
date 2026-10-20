@@ -102,6 +102,8 @@ export const iscsiLocators = {
      * target's extents and found at least one, so its appearing is also that wait.
      */
     deleteExtents: '[data-test="checkbox-delete-extents"]',
+    /** "Force Delete". Always rendered, and opens unticked. */
+    force: '[data-test="checkbox-force"]',
     delete: '[data-test="button-delete"]',
   },
 

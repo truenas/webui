@@ -9,6 +9,7 @@
 import { expect, type Page } from '@playwright/test';
 import { goToShares } from './navigation';
 import { formSettleTimeoutMs } from './smb';
+import { selectOption } from './storage';
 import type { TcpPort } from '../fixtures/nvme-of';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { nvmeOfLocators } from '../locators/nvme-of';
@@ -195,6 +196,35 @@ export async function createAuthenticatedHostOnDetails(page: Page, hostnqn: stri
   await page.locator(hostForm.save).click();
   await expect(page.locator(hostForm.save)).toBeHidden({ timeout: saveTimeoutMs });
   await expect(page.locator(nvmeOfLocators.details.host(hostnqn))).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * On the details page: opens the port form through Create New in the Ports card's
+ * Add menu, and waits for it.
+ *
+ * The Add button is a menu only while some port exists; a test opening this has
+ * always provisioned one.
+ */
+export async function openNewPortFormOnDetails(page: Page): Promise<void> {
+  await pickFromAddMenu(page, nvmeOfLocators.addPort, nvmeOfLocators.createNewPort);
+
+  await expect(page.locator(nvmeOfLocators.portForm.serviceId)).toBeVisible({ timeout: formSettleTimeoutMs });
+}
+
+/**
+ * In the port form Create New opened: sets the service id and picks the address,
+ * keeping the transport it opened on, then saves. Waits for the panel to close and
+ * for the Ports card to list the new port, which the card links after the create.
+ */
+export async function saveNewTcpPortOnDetails(page: Page, port: TcpPort): Promise<void> {
+  const { portForm } = nvmeOfLocators;
+  await page.locator(portForm.serviceId).fill(String(port.port));
+  await selectOption(page, portForm.address, portForm.addressOption(port.address));
+
+  await expect(page.locator(portForm.save)).toBeEnabled();
+  await page.locator(portForm.save).click();
+  await expect(page.locator(portForm.save)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(nvmeOfLocators.details.removePort(port))).toBeVisible({ timeout: saveTimeoutMs });
 }
 
 /**

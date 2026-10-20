@@ -75,13 +75,19 @@ export async function createIscsiShareWithWizard(page: Page, share: IscsiWizardS
 }
 
 /**
- * Deletes a target from its row menu on the dashboard card, ticking "Delete
- * associated extents", and waits for its row to go.
+ * Deletes a target that has extents from its row menu on the dashboard card, and
+ * waits for its row to go. "Delete associated extents" is ticked only when asked;
+ * Force is left off.
  *
  * The tick box appears only once the dialog has found the target's extents, so
- * waiting for it is also waiting for that load. Force is left off.
+ * waiting for it is also waiting for that load. Both boxes must open unticked: a
+ * dialog that ticked one for the user would delete more than they chose.
  */
-export async function deleteIscsiTargetWithExtents(page: Page, name: string): Promise<void> {
+export async function deleteIscsiTarget(
+  page: Page,
+  name: string,
+  { deleteExtents }: { deleteExtents: boolean },
+): Promise<void> {
   const { card, deleteDialog } = iscsiLocators;
   await goToShares(page);
 
@@ -90,8 +96,13 @@ export async function deleteIscsiTargetWithExtents(page: Page, name: string): Pr
   await trigger.click();
   await page.locator(card.rowMenuDelete(name)).click();
 
-  await expect(page.locator(deleteDialog.deleteExtents)).toBeVisible({ timeout: formSettleTimeoutMs });
-  await page.locator(deleteDialog.deleteExtents).click();
+  const deleteExtentsBox = page.locator(deleteDialog.deleteExtents);
+  await expect(deleteExtentsBox).toBeVisible({ timeout: formSettleTimeoutMs });
+  await expect(deleteExtentsBox).not.toBeChecked();
+  await expect(page.locator(deleteDialog.force)).not.toBeChecked();
+  if (deleteExtents) {
+    await deleteExtentsBox.click();
+  }
   await page.locator(deleteDialog.delete).click();
 
   await expect(page.locator(card.row(name))).toBeHidden({ timeout: saveTimeoutMs });

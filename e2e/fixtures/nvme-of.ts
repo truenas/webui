@@ -243,6 +243,22 @@ export async function ensureNvmeOfPortPresent(client: E2eApiClient, port: TcpPor
   return created;
 }
 
+/**
+ * The addresses the port form's Address select offers for TCP, as `{ address: label }`.
+ *
+ * Middleware lists only configured aliases (`interface.query`'s `aliases`, not the
+ * leased `state.aliases`), and without ANA each label is the address itself. So an
+ * appliance whose NIC is on DHCP is offered nothing.
+ */
+export async function readNvmeOfTcpAddressChoices(client: E2eApiClient): Promise<Record<string, string>> {
+  const params = ['TCP'] as CallParams<E2eApiDirectory, 'nvmet.port.transport_address_choices'>;
+  const choices = await firstValueFrom(
+    client.api.call('nvmet.port.transport_address_choices', params).pipe(timeout(readTimeoutMs)),
+  );
+
+  return choices as Record<string, string>;
+}
+
 /** Removes a port, if present. `force` unlinks it from any subsystem first. */
 export async function ensureNvmeOfPortAbsent(client: E2eApiClient, port: TcpPort): Promise<void> {
   const existing = await findNvmeOfPort(client, port);
