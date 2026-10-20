@@ -52,23 +52,32 @@ function isLiteralUnionNode(type: ts.TypeNode): boolean {
 }
 
 /**
- * Whether the source spells the name out at the call site or one hop from it: a literal, a
- * conditional of them, a `const` inferred from its initializer, or a parameter whose annotation is
- * itself a literal union. Without this the checker also resolves the API layer's own plumbing —
+ * Whether the source spells the name out: a literal, a conditional whose branches all are, a
+ * `const` with no annotation whose initializer is, or a parameter whose annotation is itself a
+ * literal union. Without this the checker also resolves the API layer's own plumbing —
  * `ApiService.subscribe(method)`, `TypedApiService.query(...args)` and the table data providers'
  * `this.method` are typed with method-union aliases, and would bring in 80-odd names that no
- * feature calls.
+ * feature calls. It is checked all the way down, so `const method = this.method` does not let
+ * them back in.
  */
 function namedAtCallSite(node: ts.Expression, checker: ts.TypeChecker): boolean {
-  if (ts.isStringLiteralLike(node) || ts.isConditionalExpression(node) || ts.isParenthesizedExpression(node)) {
+  if (ts.isStringLiteralLike(node)) {
     return true;
+  }
+  if (ts.isParenthesizedExpression(node)) {
+    return namedAtCallSite(node.expression, checker);
+  }
+  if (ts.isConditionalExpression(node)) {
+    return namedAtCallSite(node.whenTrue, checker) && namedAtCallSite(node.whenFalse, checker);
   }
   if (!ts.isIdentifier(node)) {
     return false;
   }
   const declaration = checker.getSymbolAtLocation(node)?.valueDeclaration;
   if (declaration && ts.isVariableDeclaration(declaration)) {
-    return !declaration.type && (ts.getCombinedNodeFlags(declaration) & ts.NodeFlags.Const) !== 0;
+    return !declaration.type && declaration.initializer !== undefined
+      && (ts.getCombinedNodeFlags(declaration) & ts.NodeFlags.Const) !== 0
+      && namedAtCallSite(declaration.initializer, checker);
   }
   if (declaration && ts.isParameter(declaration)) {
     return declaration.type !== undefined && isLiteralUnionNode(declaration.type);

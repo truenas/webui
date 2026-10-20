@@ -47,6 +47,10 @@ const fixtures: Record<string, string> = {
     export function forward(method: QueryMethod): void {
       api.query(method);
     }
+    declare const configured: QueryMethod;
+    const copied = configured;
+    api.call(copied);
+    api.call(flag ? configured : 'y.z');
   `,
   'method-property.ts': `${api}
     export const download = { method: 'k.l', args: [] };
