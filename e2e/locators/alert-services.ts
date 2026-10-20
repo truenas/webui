@@ -55,6 +55,7 @@ export const alertServiceLocators = {
      */
     type: '[data-test="select-type"]',
     typeSlack: '[data-test="option-type-slack"]',
+    typeSnmpTrap: '[data-test="option-type-snmp-trap"]',
 
     /** Options are keyed by the level's label, so Critical is `option-level-critical`. Opens on Warning. */
     level: '[data-test="select-level"]',
@@ -66,11 +67,25 @@ export const alertServiceLocators = {
      */
     slackUrl: '[data-test="input-url"]',
 
+    /** SNMP Trap's child form. Hostname is required; Port opens on `162` and Community on `public`. */
+    snmpHost: '[data-test="input-host"]',
+    snmpPort: '[data-test="input-port"]',
+    snmpCommunity: '[data-test="input-community"]',
+
     /**
      * `<tn-button [testId]="'save'">` on the side panel container. Unique on this
      * page only because the Category card beside the table, which also had a
      * `button-save`, now emits `button-save-alert-config`.
      */
     save: '[data-test="button-save"]',
+
+    /**
+     * The form's own footer action beside Save, `testId: 'send-test-alert'` in its
+     * `footerActions`. Disabled while either form is invalid or a call is in flight.
+     */
+    sendTestAlert: '[data-test="button-send-test-alert"]',
+
+    /** The side panel's dismiss control. It asks first only when the form has unsaved edits. */
+    closePanel: '[data-test="button-close-side-panel"]',
   },
 } as const;
