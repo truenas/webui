@@ -25,8 +25,11 @@ import { datasetCapacityLocators } from '../locators/dataset-capacity';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { quotaLocators } from '../locators/quotas';
 import type { E2eApiClient } from '../support/api/client';
+import { apiCallsTo } from '../support/api-calls';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
+
+test.use({ recordApiCalls: true });
 
 const mib = 1024 * 1024;
 
@@ -254,10 +257,13 @@ for (const kind of ['user', 'group'] as const) {
       await expect(page.locator(form.principalsField(kind))).toContainText(`${label} "${nobody}" does not exist`);
       await expect(page.locator(form.save)).toBeDisabled();
 
-      // Enter in a field submits the form, which an invalid form must refuse.
+      // Enter in a field submits the form even with Save disabled, and `<ix-form>` has to refuse it.
+      // A form that sent it anyway would be refused by middleware too, so the request is the claim.
       await page.locator(form.objectQuota).press('Enter');
+      expect(apiCallsTo(page, 'pool.dataset.set_quota')).toEqual([]);
       await expect(page.locator(form.save)).toBeVisible();
 
+      // A backstop the ticket asks for: nothing above could have set a quota.
       const set = (await listQuotas(api, dataset, kind)).filter((quota) => quota.quota || quota.obj_quota);
       expect(set).toEqual([]);
     });
