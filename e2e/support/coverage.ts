@@ -11,6 +11,10 @@
  *   same-document (`pushState`) navigations here too, which is every one an
  *   Angular router link makes.
  *
+ * Both are counted from the test's first navigation or first user input after
+ * the sign-in, so the dashboard every test lands on is not credited to all of
+ * them — see {@link CoverageRecorder.start}.
+ *
  * One JSON file per test attempt lands in `test-results/e2e-coverage/`.
  * Playwright clears `test-results` at the start of a run, so the directory only
  * ever holds the run that just finished. The directory is fixed rather than the
@@ -36,7 +40,42 @@ export interface TestCoverage {
 }
 
 /** Plumbing every page issues; counting it says nothing about a feature. */
-const ignoredMethods = new Set(['core.ping', 'core.subscribe', 'core.unsubscribe']);
+const ignoredMethods = new Set(['core.ping', 'core.subscribe', 'core.unsubscribe', 'core.set_options']);
+
+/** What the page calls on its first trusted input; see {@link CoverageRecorder.attach}. */
+const inputBinding = '__e2eCoverageInput';
+
+/**
+ * Runs in the page, in every document. Reports the first trusted pointer, key or
+ * input event — what Playwright's `click`, `press`, `type` and `fill` produce,
+ * and what neither `dispatchEvent` nor the app on its own ever does — with the
+ * page's clock at that moment. `input` is there because `fill` sends no key or
+ * pointer events. It keeps reporting until the recorder accepts one, so an
+ * input before {@link CoverageRecorder.start} is not the last chance.
+ */
+function reportFirstInput(binding: string): void {
+  const types = ['pointerdown', 'keydown', 'input'];
+  const onInput = (event: Event): void => {
+    const report = (globalThis as unknown as Record<string, ((at: number) => Promise<boolean>) | undefined>)[binding];
+    if (!event.isTrusted || !report) {
+      return;
+    }
+    const stopIfAccepted = (accepted: boolean): void => {
+      if (accepted) {
+        types.forEach((type) => globalThis.removeEventListener(type, onInput, { capture: true }));
+      }
+    };
+    // A navigation can drop the call in flight; the next input reports again.
+    report(Date.now()).then(stopIfAccepted, () => undefined);
+  };
+  types.forEach((type) => globalThis.addEventListener(type, onInput, { capture: true }));
+}
+
+interface SentFrame {
+  payload: string;
+  /** When it reached this process, on the same clock as the page's `Date.now()`. */
+  at: number;
+}
 
 /**
  * Wrappers whose first parameter names the method that actually runs:
@@ -60,31 +99,55 @@ export class CoverageRecorder {
   private readonly routes = new Set<string>();
   private armed = false;
   private recording = false;
+  /** Frames sent after {@link start} and before counting began, held until an input says which count. */
+  private pending: SentFrame[] = [];
 
   /**
    * Listens from the moment the page exists, but records nothing until the
-   * test's first navigation after {@link start}. The app's socket is opened
-   * during sign-in and `websocket` only fires for new sockets, so listening has
-   * to begin before sign-in even though counting must not.
+   * test's first navigation or input after {@link start}. The app's socket is
+   * opened during sign-in and `websocket` only fires for new sockets, so
+   * listening has to begin before sign-in even though counting must not.
+   * Call {@link attach} before the sign-in too.
    */
-  constructor(page: Page, private readonly uiBaseUrl: string) {
+  constructor(private readonly page: Page, private readonly uiBaseUrl: string) {
     page.on('websocket', (socket) => {
       socket.on('framesent', ({ payload }) => {
+        const text = typeof payload === 'string' ? payload : payload.toString('utf8');
         if (this.recording) {
-          this.recordFrame(typeof payload === 'string' ? payload : payload.toString('utf8'));
+          this.recordFrame(text);
+        } else if (this.armed) {
+          this.pending.push({ payload: text, at: Date.now() });
         }
       });
     });
     page.on('framenavigated', (frame) => {
       if (this.armed && frame === page.mainFrame()) {
+        // What the dashboard sent before the navigation is not the test's.
         this.recording = true;
+        this.pending = [];
         this.recordRoute(frame.url());
       }
     });
   }
 
   /**
-   * Counts from the test's first navigation, not from here.
+   * Watches the page for the first trusted user input. Before the sign-in, so
+   * the script is in place in every document the test loads.
+   *
+   * The input reaches this process separately from the socket's frames, so a
+   * frame its click handler sent at once can arrive first. Frames are therefore
+   * held from {@link start}, stamped on arrival, and the input carries the
+   * page's clock: those that arrived at or after it are counted. The browser
+   * runs on this host, so the two clocks are the same one.
+   */
+  async attach(): Promise<void> {
+    await this.page.exposeBinding(inputBinding, (_source, at: number) => this.onInput(at));
+    await this.page.addInitScript(reportFirstInput, inputBinding);
+  }
+
+  /**
+   * Counts from the test's first navigation or first user input, whichever
+   * comes first — not from here.
    *
    * Every authenticated test signs in onto the dashboard, and the dashboard is
    * still talking to middleware when the shell appears: its widgets mount only
@@ -95,12 +158,33 @@ export class CoverageRecorder {
    * URL only once the new page has replaced the dashboard, whose calls are gone
    * with it.
    *
-   * The cost is a test that never navigates — one that works in the topbar on
-   * the dashboard, like the preferences panel — records nothing. For the
-   * unauthenticated project the test's own `goto` is the first navigation.
+   * A navigation alone missed every test that never makes one — those working
+   * in the topbar on the dashboard, like the jobs, alerts and preferences
+   * panels — so the first trusted input counts too. That is a point in the test
+   * as well, but the dashboard has not gone anywhere: a test that clicks the
+   * topbar while widgets are still loading is credited with their late calls.
+   * For the unauthenticated project the test's own `goto` is the first
+   * navigation.
    */
   start(): void {
     this.armed = true;
+  }
+
+  /** Whether counting has begun, which tells the page to stop reporting. */
+  private onInput(at: number): boolean {
+    if (!this.armed) {
+      return false;
+    }
+    if (!this.recording) {
+      this.recording = true;
+      for (const frame of this.pending) {
+        if (frame.at >= at) {
+          this.recordFrame(frame.payload);
+        }
+      }
+      this.pending = [];
+    }
+    return true;
   }
 
   async save(testInfo: TestInfo): Promise<void> {

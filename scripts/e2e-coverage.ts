@@ -13,24 +13,31 @@
  *   features does a test drive": a feature is, roughly, the methods behind it.
  * - **Routes.** Every routed page in the router config, against the URLs the app reached.
  *
- * The recording side is `e2e/support/coverage.ts`. It counts from each test's first navigation, so
- * the dashboard every test signs in onto is not credited to all of them.
+ * The recording side is `e2e/support/coverage.ts`. It counts from each test's first navigation or
+ * first user input, whichever comes first, so the dashboard every test signs in onto is not
+ * credited to all of them.
  *
- * The inventory is read statically and is approximate in a known direction. A method name built at
- * runtime, or passed through a helper (`getAppsFetchCall('app.latest')`), is not found. When a test
- * sends one anyway, it shows up under "called but not in the inventory" and joins the denominator,
- * so a gap in the scan can lower the total but never inflate the share covered. Uploads go over
- * HTTP rather than the socket, so their methods (`filesystem.put`, `config.upload`) never count.
+ * Methods come from the TypeScript AST, in `scripts/e2e-coverage/api-inventory.ts`: call sites and
+ * `method:` properties, with literal unions resolved and comments ignored. It is approximate in a
+ * known direction. A name built at runtime, or held in anything typed more loosely than a literal
+ * union, is not found. When a test sends one anyway, it shows up under "seen in the run but not in
+ * the inventory" and joins the denominator, so a gap in the scan can lower the total but never
+ * inflate the share covered. Names `@truenas/api-client` sends itself (`auth.login_ex`) land there
+ * too, correctly. Uploads go over HTTP rather than the socket, so their methods (`filesystem.put`,
+ * `config.upload`) never count.
+ *
+ * Routes nothing links to are listed in {@link unlinkedRoutes} and reported outside the total.
  *
  * Usage: `yarn e2e:coverage [results-dir] [--out <file>]`. Markdown goes to stdout, and to `--out`
  * when given; a JSON summary is written next to the results as `summary.json`.
  */
 
 import {
-  existsSync, readdirSync, readFileSync, statSync, writeFileSync,
+  existsSync, readdirSync, readFileSync, writeFileSync,
 } from 'fs';
 import { dirname, join, relative, resolve } from 'path';
 import * as ts from 'typescript';
+import { compilerOptionsFrom, scanApiUsage } from './e2e-coverage/api-inventory';
 
 // `yarn` runs scripts from the repository root.
 const repoRoot = process.cwd();
@@ -45,60 +52,24 @@ interface TestCoverage {
 }
 
 // ---------------------------------------------------------------------------------------------
-// Inventory: middleware methods and events
-// ---------------------------------------------------------------------------------------------
-
-const methodName = String.raw`([a-z][a-z0-9_]*(?:\.[a-z0-9_]+)+)`;
-
-/**
- * Where a method name appears in source. `ApiService` and `TypedApiService` share these names;
- * `method: '…'` is the download and upload helpers; `core.bulk`'s first parameter is the method it
- * fans out.
- */
-const methodPatterns = [
-  new RegExp(String.raw`\.(?:call|callUnauthenticated|job|startJob|callAndSubscribe|queryAndSubscribe|query)\(\s*'${methodName}'`, 'g'),
-  new RegExp(String.raw`\bmethod:\s*'${methodName}'`, 'g'),
-  new RegExp(String.raw`'core\.bulk',\s*\[\s*'${methodName}'`, 'g'),
-];
-
-/** RxJS's `subscribe` never takes a string, so a string literal here is always an event. */
-const eventPattern = new RegExp(String.raw`\.subscribe(?:<[^(]*>)?\(\s*'${methodName}`, 'g');
-
-/** Not features: the plumbing `support/coverage.ts` also ignores. */
-const ignoredMethods = new Set(['core.ping', 'core.subscribe', 'core.unsubscribe']);
-
-function sourceFiles(dir: string): string[] {
-  return readdirSync(dir).flatMap((name) => {
-    const path = join(dir, name);
-    if (statSync(path).isDirectory()) {
-      return path === join(appRoot, 'core/testing') ? [] : sourceFiles(path);
-    }
-    return name.endsWith('.ts') && !name.endsWith('.spec.ts') ? [path] : [];
-  });
-}
-
-function scanApiUsage(): { methods: Set<string>; events: Set<string> } {
-  const methods = new Set<string>();
-  const events = new Set<string>();
-  for (const file of sourceFiles(appRoot)) {
-    const source = readFileSync(file, 'utf8');
-    for (const pattern of methodPatterns) {
-      for (const [, method = ''] of source.matchAll(pattern)) {
-        if (!ignoredMethods.has(method)) {
-          methods.add(method);
-        }
-      }
-    }
-    for (const [, event = ''] of source.matchAll(eventPattern)) {
-      events.add(event);
-    }
-  }
-  return { methods, events };
-}
-
-// ---------------------------------------------------------------------------------------------
 // Inventory: routes
 // ---------------------------------------------------------------------------------------------
+
+/**
+ * Routes in the router config that no user can reach, so no test could cover them. They are left
+ * out of the route total and listed on their own. Removing them is a product change; the report
+ * only stops counting them. An entry that matches no route fails the script, so a deleted or
+ * renamed route takes its entry with it.
+ */
+const unlinkedRoutes = new Map<string, string>([
+  ['/datasets/user-quotas/:pk', 'Nothing links to it, and its component reads a `datasetId` param this route lacks; the reachable page is `/datasets/:datasetId/user-quotas`.'],
+  ['/datasets/group-quotas/:pk', 'Nothing links to it, and its component reads a `datasetId` param this route lacks; the reachable page is `/datasets/:datasetId/group-quotas`.'],
+  ['/data-protection/cloudsync/:dataset', 'No template links to it; only the snapshot task list is linked per dataset.'],
+  ['/data-protection/replication/:dataset', 'No template links to it; only the snapshot task list is linked per dataset.'],
+  ['/data-protection/rsync/:dataset', 'No template links to it; only the snapshot task list is linked per dataset.'],
+  ['/data-protection/replication/wizard', 'Declared after `replication/:dataset`, which matches the URL first; the wizard opens as a side panel anyway.'],
+  ['/shell', 'The sidebar links to `/system/shell`, which loads the same component.'],
+]);
 
 /**
  * Walks the router config from `rootRoutes`, following `children`, spreads and lazy
@@ -351,9 +322,15 @@ function main(): void {
     .map((name) => JSON.parse(readFileSync(join(resultsDir, name), 'utf8')) as TestCoverage);
 
   // Inventory.
-  const { methods: sourceMethods, events: sourceEvents } = scanApiUsage();
-  const routes = [...new RouteCollector().collect(join(appRoot, 'app.routes.ts'), 'rootRoutes')]
+  const { methods: sourceMethods, events: sourceEvents } = scanApiUsage(
+    appRoot,
+    compilerOptionsFrom(join(repoRoot, 'tsconfig.json')),
+  );
+  // Every route, so a visit to an unlinked one is matched to it rather than to a lookalike.
+  const allRoutes = [...new RouteCollector().collect(join(appRoot, 'app.routes.ts'), 'rootRoutes')]
     .filter((route) => !segments(route).includes('**'));
+  const routes = allRoutes.filter((route) => !unlinkedRoutes.has(route));
+  const staleExclusions = [...unlinkedRoutes.keys()].filter((route) => !allRoutes.includes(route));
 
   // What the run exercised.
   const calledMethods = new Set(results.flatMap((result) => result.methods));
@@ -363,9 +340,11 @@ function main(): void {
   const visitedRoutes = new Set<string>();
   const unmatchedUrls: string[] = [];
   for (const url of visitedUrls) {
-    const route = routeFor(url, routes);
+    const route = routeFor(url, allRoutes);
     if (route) {
-      visitedRoutes.add(route);
+      if (!unlinkedRoutes.has(route)) {
+        visitedRoutes.add(route);
+      }
     } else {
       unmatchedUrls.push(url);
     }
@@ -390,7 +369,7 @@ function main(): void {
     '# E2E coverage',
     '',
     `From ${results.length} test attempts${failedNote}.`,
-    'Counted from each test\'s first navigation; the inventory is read statically from `src/app`. See `scripts/e2e-coverage.ts`.',
+    'Counted from each test\'s first navigation or user input; the inventory is read statically from `src/app`. See `scripts/e2e-coverage.ts`.',
     '',
     '| | Covered | Total | % |',
     '|---|---:|---:|---:|',
@@ -407,6 +386,12 @@ function main(): void {
     '<details><summary>Middleware methods by namespace</summary>',
     '',
     ...groupTable(methodGroups, 'Namespace'),
+    '',
+    '</details>',
+    '',
+    '<details><summary>Routes no link reaches (not counted)</summary>',
+    '',
+    ...[...unlinkedRoutes].map(([route, reason]) => `- ${code(route)}: ${reason}`),
     '',
     '</details>',
   ];
@@ -447,11 +432,18 @@ function main(): void {
       covered: visitedRoutes.size,
       total: routes.length,
       all: [...routes].sort(byName),
-      coveredBy: coveredBy((result) => result.routes.map((url) => routeFor(url, routes) ?? url)),
+      coveredBy: coveredBy((result) => result.routes.map((url) => routeFor(url, allRoutes) ?? url)),
+      unlinked: [...unlinkedRoutes.keys()],
     },
     events: { covered: coveredEvents, total: allEvents.length },
     notInInventory: { methods: methodsNotInSource, urls: unmatchedUrls },
   }, null, 2));
+
+  // After the report, so a stale entry does not also cost the run its coverage numbers.
+  if (staleExclusions.length) {
+    console.error(`unlinkedRoutes in scripts/e2e-coverage.ts names routes that do not exist: ${staleExclusions.join(', ')}`);
+    process.exitCode = 1;
+  }
 }
 
 main();
