@@ -16,7 +16,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('NQN' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['NQN', uniqueRowTag(row), 'row-text']"
         >{{ row.hostnqn }}</span>
       </ng-template>
     </ng-container>
@@ -26,7 +26,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
         >{{ row.description }}</span>
       </ng-template>
     </ng-container>
@@ -36,7 +36,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Has Host Authentication' | translate), uniqueRowTag(row), 'row-yesno']"
+          [tnTestId]="['Has Host Authentication', uniqueRowTag(row), 'row-yesno']"
         >{{ row.dhchap_key ? ('Yes' | translate) : ('No' | translate) }}</span>
       </ng-template>
     </ng-container>
@@ -46,7 +46,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Used In Subsystems' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Used In Subsystems', uniqueRowTag(row), 'row-text']"
         >{{ row.usedInSubsystems }}</span>
       </ng-template>
     </ng-container>

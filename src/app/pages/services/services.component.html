@@ -23,7 +23,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="row.name ? (row.name | translate) : ''"
         >{{ row.name }}</span>
       </ng-template>
@@ -34,7 +34,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Status' | translate), uniqueRowTag(row), 'row-state']"
+          [tnTestId]="['Status', uniqueRowTag(row), 'row-state']"
         ><ix-service-status-cell [service]="row"></ix-service-status-cell></span>
       </ng-template>
     </ng-container>
@@ -45,7 +45,7 @@
         <tn-slide-toggle
           *ixRequiresRoles="rolesToManage(row)"
           color="primary"
-          [testId]="[('Start Automatically' | translate), uniqueRowTag(row), 'row-toggle']"
+          [testId]="['Start Automatically', uniqueRowTag(row), 'row-toggle']"
           [checked]="row.enable"
           [ariaLabel]="(row.enable ? ('Disable' | translate) : ('Enable' | translate)) + ' ' + row.name"
           (change)="enableToggle(row)"

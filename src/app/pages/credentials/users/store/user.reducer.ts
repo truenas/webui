@@ -32,7 +32,8 @@ export const userReducer = createReducer(
   on(usersLoaded, (state, { users }) => adapter.setAll(users, { ...state, isLoading: false })),
   on(usersNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
 
-  on(userAdded, (state, { user }) => adapter.addOne(user, state)),
+  // Upserted: a user made while the list loads can be in the query's answer and its `added` event both.
+  on(userAdded, (state, { user }) => adapter.upsertOne(user, state)),
   on(userChanged, (state, { user }) => adapter.updateOne({
     id: user.id,
     changes: user,

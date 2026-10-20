@@ -1,13 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { TranslateService } from '@ngx-translate/core';
+import { omit } from 'lodash-es';
 import { of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap,
+  catchError, map, switchMap,
 } from 'rxjs/operators';
 import { toUser } from 'app/interfaces/user.interface';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
+  userAdded,
+  userChanged,
   userPageEntered,
   userRemoved,
   usersLoaded,
@@ -39,14 +43,22 @@ export class UserEffects {
     }),
   ));
 
-  // userAdded() and userChanged() are dispatched from the User Form
-
-  subscribeToRemoval$ = createEffect(() => this.actions$.pipe(
+  // Follows changes made anywhere — this tab, another admin, the CLI — so the list the form validates
+  // new names against does not miss a user made since the page loaded it. Middleware sends `added`
+  // and `changed` with what `user.create` and `user.update` returned, the entry plus the `password`
+  // given in the call, which is left out of the store.
+  subscribeToChanges$ = createEffect(() => this.actions$.pipe(
     ofType(usersLoaded),
     switchMap(() => {
       return this.api.subscribe('user.query').pipe(
-        filter((event) => event.msg === 'removed'),
-        map((event) => userRemoved({ id: event.id as number })),
+        map((event) => {
+          if (event.msg === 'removed') {
+            return userRemoved({ id: event.id as number });
+          }
+          const fields = omit(event.fields, 'password');
+          const user = toUser({ ...fields, id: event.id } as WebUiQueryEntity<'user.query'>);
+          return event.msg === 'added' ? userAdded({ user }) : userChanged({ user });
+        }),
       );
     }),
   ));

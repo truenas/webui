@@ -228,6 +228,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     this.setupTree();
     this.listenForRouteChanges();
     this.listenForLoading();
+    // Fetched again on each visit: tiering can be changed outside this tab.
+    this.sharingTierService.refresh();
     this.sharingTierService.getTierConfig()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.cdr.markForCheck());

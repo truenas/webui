@@ -39,7 +39,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
         >{{ row.name }}</span>
       </ng-template>
     </ng-container>
@@ -49,7 +49,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Alias' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Alias', uniqueRowTag(row), 'row-text']"
         >{{ row.alias }}</span>
       </ng-template>
     </ng-container>
@@ -59,7 +59,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Mode' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Mode', uniqueRowTag(row), 'row-text']"
         >{{ modeLabel(row) }}</span>
       </ng-template>
     </ng-container>

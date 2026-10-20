@@ -99,7 +99,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Used' | translate), uniqueRowTag(row), 'row-size']"
+          [tnTestId]="['Used', uniqueRowTag(row), 'row-size']"
         >{{ getUsed(row) | ixFileSize }}</span>
       </ng-template>
     </ng-container>
@@ -111,7 +111,7 @@
           <ix-date
             tnTestIdType="date"
             [date]="created"
-            [tnTestId]="[('Date created' | translate), uniqueRowTag(row), 'row-date']"
+            [tnTestId]="['Date created', uniqueRowTag(row), 'row-date']"
           ></ix-date>
         }
       </ng-template>
@@ -122,7 +122,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Referenced' | translate), uniqueRowTag(row), 'row-size']"
+          [tnTestId]="['Referenced', uniqueRowTag(row), 'row-size']"
         >{{ getReferenced(row) | ixFileSize }}</span>
       </ng-template>
     </ng-container>

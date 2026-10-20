@@ -106,7 +106,7 @@
             <span
               role="text"
               tnTestIdType="text"
-              [tnTestId]="[('Name' | translate), cellRowTag(row), 'row-text']"
+              [tnTestId]="['Name', cellRowTag(row), 'row-text']"
               [attr.aria-label]="'WebShare name: ' + row.name"
             >{{ row.name }}</span>
             @if (row.isHomeBase) {
@@ -126,7 +126,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Path' | translate), cellRowTag(row), 'row-text']"
+            [tnTestId]="['Path', cellRowTag(row), 'row-text']"
             [tnTooltip]="row.path ? (row.path | translate) : ''"
           >{{ row.path }}</span>
         </ng-template>

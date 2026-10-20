@@ -58,7 +58,7 @@
         <span
           class="name"
           tnTestIdType="text"
-          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
         >{{ row.name }}</span>
       </ng-template>
     </ng-container>
@@ -69,7 +69,7 @@
         <ix-container-status-cell
           tnTestIdType="text"
           [container]="row"
-          [tnTestId]="[('Status' | translate), uniqueRowTag(row), 'row-state']"
+          [tnTestId]="['Status', uniqueRowTag(row), 'row-state']"
         ></ix-container-status-cell>
       </ng-template>
     </ng-container>
@@ -89,7 +89,7 @@
       <ng-template tnHeaderCellDef>{{ 'CPU' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span tnTestIdType="text"
-          [tnTestId]="[('CPU' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['CPU', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="'Percentage of total core utilization' | translate">
           @if (hasMetrics(row)) {
             {{ getMetrics(row)?.cpu.cpu_user_percentage.toFixed(0) }}%
@@ -104,7 +104,7 @@
       <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span tnTestIdType="text"
-          [tnTestId]="[('RAM' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['RAM', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="'Memory Usage' | translate">
           @if (hasMetrics(row)) {
             {{ getMetrics(row)?.mem_usage.mem_usage_ram_mib.toFixed(0) }} MiB
@@ -119,7 +119,7 @@
       <ng-template tnHeaderCellDef>{{ 'Disk I/O' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <span tnTestIdType="text"
-          [tnTestId]="[('Disk I/O' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Disk I/O', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="'Disk I/O Full Pressure' | translate">
           @if (hasMetrics(row)) {
             {{ getMetrics(row)?.io_full_pressure.io_full_pressure_full_60_percentage.toFixed(0) }}%

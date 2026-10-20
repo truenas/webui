@@ -60,7 +60,7 @@
             class="app-name"
             tnTestIdType="text"
             [tnTooltip]="row.name"
-            [tnTestId]="[('Application' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Application', uniqueRowTag(row), 'row-text']"
           >{{ row.name }}</div>
           <ix-app-action-required-badge
             [app]="row"
@@ -77,7 +77,7 @@
           tnTestIdType="text"
           [app]="row"
           [job]="appJobs.get(row.name)"
-          [tnTestId]="[('Status' | translate), uniqueRowTag(row), 'row-state']"
+          [tnTestId]="['Status', uniqueRowTag(row), 'row-state']"
           (click)="openStatusDialog(row.name); $event.stopPropagation()"
         ></ix-app-state-cell>
       </ng-template>
@@ -88,7 +88,7 @@
       <ng-template let-row tnCellDef>
         @let cpuStats = getAppStats(row.name) | async;
         <span tnTestIdType="text"
-          [tnTestId]="[('CPU' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['CPU', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="'Percentage of total core utilization' | translate">
           @if (hasStats(row, cpuStats)) {
             {{ cpuStats.cpu_usage.toFixed(0) }}%
@@ -104,7 +104,7 @@
       <ng-template let-row tnCellDef>
         @let ramStats = getAppStats(row.name) | async;
         <span tnTestIdType="text"
-          [tnTestId]="[('RAM' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['RAM', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, ramStats)
           ? (ramStats.memory | ixFileSize)
           : ('Memory usage of app' | translate)"
@@ -123,7 +123,7 @@
       <ng-template let-row tnCellDef>
         @let ioStats = getAppStats(row.name) | async;
         <span tnTestIdType="text"
-          [tnTestId]="[('Block I/O' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Block I/O', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, ioStats)
           ? (ioStats.blkio.read | ixFileSize) + ' - ' + (ioStats.blkio.write | ixFileSize)
           : ('Block I/O reads and writes' | translate)"
@@ -145,7 +145,7 @@
       <ng-template let-row tnCellDef>
         @let networkStats = getAppStats(row.name) | async;
         <span tnTestIdType="text"
-          [tnTestId]="[('Network' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Network', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, networkStats) && networkStats.networks?.length
           ? (incomingTrafficBits(networkStats) | ixNetworkSpeed) + ' - ' + (outgoingTrafficBits(networkStats) | ixNetworkSpeed)
           : ('Incoming / Outgoing network traffic' | translate)"
@@ -182,7 +182,7 @@
           tnTestIdType="text"
           [app]="row"
           [showIcon]="true"
-          [tnTestId]="[('Updates' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Updates', uniqueRowTag(row), 'row-text']"
         ></ix-app-update-cell>
       </ng-template>
     </ng-container>

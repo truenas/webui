@@ -90,6 +90,8 @@ export class PoolsDashboardComponent implements OnInit {
 
     // Prime the shared tier config so child cards (pool-usage-card, vdevs-card)
     // can read tierService.tierEnabled directly without each subscribing.
+    // Fetched again on each visit: tiering can be changed outside this tab.
+    this.tierService.refresh();
     this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.store.loadDashboard();

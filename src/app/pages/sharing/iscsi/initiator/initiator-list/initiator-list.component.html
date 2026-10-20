@@ -41,7 +41,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Group ID' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Group ID', uniqueRowTag(row), 'row-text']"
         >{{ row.id }}</span>
       </ng-template>
     </ng-container>
@@ -51,7 +51,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Initiators' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Initiators', uniqueRowTag(row), 'row-text']"
         >{{ formatInitiators(row) }}</span>
       </ng-template>
     </ng-container>
@@ -61,7 +61,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="row.comment || ''"
         >{{ row.comment }}</span>
       </ng-template>

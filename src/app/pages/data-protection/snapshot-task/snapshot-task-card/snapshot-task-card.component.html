@@ -44,7 +44,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Pool/Dataset' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Pool/Dataset', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.dataset || ''"
           >{{ row.dataset }}</span>
         </ng-template>
@@ -55,7 +55,7 @@
         <ng-template let-row tnCellDef>
           <ix-task-state-cell
             [state]="row.state.state"
-            [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+            [testId]="['State', uniqueRowTag(row), 'row-state']"
             [ariaLabel]="ariaLabel(row)"
           ></ix-task-state-cell>
         </ng-template>

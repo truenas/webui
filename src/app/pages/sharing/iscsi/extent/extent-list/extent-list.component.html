@@ -44,7 +44,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Extent Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Extent Name', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="row.name || ''"
         >{{ row.name }}</span>
       </ng-template>
@@ -55,7 +55,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Device/File' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Device/File', uniqueRowTag(row), 'row-text']"
         >{{ devicePath(row) }}</span>
       </ng-template>
     </ng-container>
@@ -65,7 +65,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="row.comment || ''"
         >{{ row.comment }}</span>
       </ng-template>
@@ -76,7 +76,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Serial' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Serial', uniqueRowTag(row), 'row-text']"
         >{{ row.serial }}</span>
       </ng-template>
     </ng-container>
@@ -86,7 +86,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Product ID' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Product ID', uniqueRowTag(row), 'row-text']"
         >{{ row.product_id }}</span>
       </ng-template>
     </ng-container>
@@ -96,7 +96,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('NAA' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['NAA', uniqueRowTag(row), 'row-text']"
         >{{ row.naa }}</span>
       </ng-template>
     </ng-container>
@@ -106,7 +106,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Enabled' | translate), uniqueRowTag(row), 'row-yesno']"
+          [tnTestId]="['Enabled', uniqueRowTag(row), 'row-yesno']"
         >{{ !!row.enabled | yesNo | translate }}</span>
       </ng-template>
     </ng-container>

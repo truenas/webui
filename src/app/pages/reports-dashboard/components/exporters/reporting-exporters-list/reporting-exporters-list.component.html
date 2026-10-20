@@ -36,7 +36,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
         >{{ row.name }}</span>
       </ng-template>
     </ng-container>
@@ -46,7 +46,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Type' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Type', uniqueRowTag(row), 'row-text']"
         >{{ row.attributes['exporter_type'] }}</span>
       </ng-template>
     </ng-container>
@@ -56,7 +56,7 @@
       <ng-template let-row tnCellDef>
         <tn-slide-toggle
           *ixRequiresRoles="requiredRoles"
-          [testId]="[('Enabled' | translate), uniqueRowTag(row), 'row-toggle']"
+          [testId]="['Enabled', uniqueRowTag(row), 'row-toggle']"
           [checked]="row.enabled"
           [ariaLabel]="'Toggle enabled for {name}' | translate: { name: row.name }"
           (change)="onToggle(row, $event)"

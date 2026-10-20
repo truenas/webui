@@ -35,7 +35,7 @@
     <ng-template let-device tnCellDef>
       <span
         tnTestIdType="text"
-        [tnTestId]="[('Device ID' | translate), uniqueRowTag(device), 'row-text']"
+        [tnTestId]="['Device ID', uniqueRowTag(device), 'row-text']"
       >{{ device.id }}</span>
     </ng-template>
   </ng-container>
@@ -47,7 +47,7 @@
       <span
         tnTestIdType="text"
         [tnTooltip]="getDeviceTypeLabel(device)"
-        [tnTestId]="[('Device' | translate), uniqueRowTag(device), 'row-text']"
+        [tnTestId]="['Device', uniqueRowTag(device), 'row-text']"
       >{{ getDeviceTypeLabel(device) }}</span>
     </ng-template>
   </ng-container>
@@ -57,7 +57,7 @@
     <ng-template let-device tnCellDef>
       <span
         tnTestIdType="text"
-        [tnTestId]="[('Order' | translate), uniqueRowTag(device), 'row-text']"
+        [tnTestId]="['Order', uniqueRowTag(device), 'row-text']"
       >{{ device.order }}</span>
     </ng-template>
   </ng-container>

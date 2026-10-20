@@ -70,8 +70,8 @@ export class SharingTierService {
       // Auto-retry transient failures (websocket reconnect at boot, slow
       // middleware) with backoff before caching the "tiering off" fallback.
       // After retries are exhausted the fallback is cached and replayed to
-      // future subscribers — `invalidate()` (called after the tiering config
-      // form saves) is the only way to force another live fetch.
+      // future subscribers until `invalidate()` (after the tiering config form
+      // saves) or `refresh()` (as a page that shows it opens).
       this.tierConfig$ = this.api.call('zfs.tier.config').pipe(
         // 1s, 2s, 4s exponential backoff before giving up.
         retry({ count: 3, delay: (_err, attempt) => timer(2 ** (attempt - 1) * 1000) }),
@@ -84,6 +84,15 @@ export class SharingTierService {
       );
     }
     return this.tierConfig$;
+  }
+
+  /**
+   * Makes the next `getTierConfig()` fetch again, keeping the current values until the answer
+   * arrives so a column does not blink out and back. For a page to call as it opens, since tiering
+   * can be changed outside this tab.
+   */
+  refresh(): void {
+    this.tierConfig$ = null;
   }
 
   invalidate(): void {

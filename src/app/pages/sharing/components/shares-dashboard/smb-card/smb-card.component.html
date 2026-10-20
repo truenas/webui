@@ -72,7 +72,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Name' | translate), cellRowTag(row), 'row-text']"
+            [tnTestId]="['Name', cellRowTag(row), 'row-text']"
             [tnTooltip]="row.name ? (row.name | translate) : ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -84,7 +84,7 @@
           @let path = getPathValue(row);
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Path' | translate), cellRowTag(row), 'row-text']"
+            [tnTestId]="['Path', cellRowTag(row), 'row-text']"
             [tnTooltip]="path ? (path | translate) : ''"
           >{{ path }}</span>
         </ng-template>
@@ -96,7 +96,7 @@
           <span
             tnTestIdType="text"
             [class.empty-value]="!row.comment"
-            [tnTestId]="[('Description' | translate), cellRowTag(row), 'row-text']"
+            [tnTestId]="['Description', cellRowTag(row), 'row-text']"
             [tnTooltip]="row.comment ? (row.comment | translate) : ''"
             [attr.aria-label]="row.comment ? null : ('No description' | translate)"
           >{{ row.comment || '—' }}</span>
@@ -125,7 +125,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Audit Logging' | translate), cellRowTag(row), 'row-yesno']"
+            [tnTestId]="['Audit Logging', cellRowTag(row), 'row-yesno']"
           >{{ !!row.audit?.enable | yesNo | translate }}</span>
         </ng-template>
       </ng-container>
