@@ -63,4 +63,10 @@ export const entitlementFeature = {
    * denied, so ask with `isNotDenied`.
    */
   nvmeOfSpdk: 'NVMEOF_SPDK',
+  /**
+   * Not a lock either: the Self-Encrypting Drive card hides only when the key is explicitly
+   * denied, and `system.advanced.update` refuses a SED password on the same terms. Ask with
+   * `isNotDenied`.
+   */
+  sed: 'SED',
 } as const;
