@@ -240,6 +240,35 @@ export async function syncCatalog(client: E2eApiClient): Promise<void> {
   );
 }
 
+/** Every category the catalog knows, as `app.categories` returns them to Discover. */
+export async function readAppCategories(client: E2eApiClient): Promise<string[]> {
+  return firstValueFrom(client.api.call('app.categories').pipe(timeout(readTimeoutMs)));
+}
+
+/** One catalog app as a card names it: its train and its name, and what it is filed under. */
+export interface CatalogAppEntry {
+  train: string;
+  name: string;
+  categories: string[];
+}
+
+/**
+ * The catalog's apps in `category`, as Discover's category page fetches them: `app.available` with
+ * the same filter, without the `ix-app` placeholder the UI leaves out.
+ */
+export async function readAvailableAppsInCategory(
+  client: E2eApiClient,
+  category: string,
+): Promise<CatalogAppEntry[]> {
+  const apps = await firstValueFrom(
+    client.api.query('app.available', [['categories', 'rin', category]]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return apps
+    .filter((app) => app.name !== 'ix-app')
+    .map(({ train, name, categories }) => ({ train, name, categories }));
+}
+
 /**
  * The per-user attribute the UI sets once its third-party apps warning has been agreed to. While it
  * is unset, the first Install raises that warning in front of the install wizard.
