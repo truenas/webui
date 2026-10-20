@@ -65,8 +65,7 @@ let image: { name: string; version: string } | undefined;
 let containerId: number;
 /** The bridge the container is always on, which the card lists as `<bridge> (Default)`. */
 let defaultNetwork: string | null;
-/** Every interface the Add menu offers, in its order; the tests attach the first. */
-let addableNics: string[];
+/** The first interface the Add menu offers, which every test attaches. */
 let nic: string;
 
 test.beforeAll(async ({ api }) => {
@@ -90,8 +89,7 @@ test.beforeEach(async ({ api, pool }) => {
   containerId = container.id;
   defaultNetwork = container.default_network ?? null;
 
-  addableNics = await findAddableNics(api, defaultNetwork);
-  const [first] = addableNics;
+  const [first] = await findAddableNics(api, defaultNetwork);
   if (!first) {
     throw new Error(
       `container.device.nic_attach_choices offers nothing beside the default network ${defaultNetwork}, `
@@ -147,21 +145,22 @@ test('an admin adds a NIC with the default MAC, and the menu stops offering it',
   expect(device).toMatchObject({ nic_attach: nic, type: 'VIRTIO' });
   await expect(page.locator(card.device(device.id))).toContainText(`${nic} (`);
 
-  // Proven on an interface the menu still offers where there is one, so the
-  // absence below is the filter's and not a menu that never opened.
-  const other = addableNics.find((name) => name !== nic);
-  if (other) {
-    await page.locator(card.add).click();
-    await expect(page.locator(card.addNic(other))).toBeVisible();
-    await expect(page.locator(card.addNic(nic))).toBeHidden();
-    await page.keyboard.press('Escape');
-  } else {
-    await expect(page.locator(card.add)).toBeHidden();
+  // A NIC device replaces the default network: middleware reports
+  // `default_network: null` once the container has one (`extend` in
+  // `plugins/container/crud.py`), so the card drops the "(Default)" row and the
+  // menu offers that bridge, which `nic_attach_choices` always lists.
+  await expect(page.locator(card.defaultDevice)).toBeHidden();
+  expect((await findContainer(api, containerName))?.default_network ?? null).toBeNull();
+  if (!defaultNetwork) {
+    throw new Error('the container was seeded with no default network, so there is no bridge to offer');
   }
-  test.info().annotations.push({
-    type: 'add menu after the add',
-    description: other ? `still offers ${other}, not ${nic}` : `offered only ${nic}, so Add is gone`,
-  });
+
+  // Proven on the bridge the menu now offers, so the absence below is the
+  // filter's and not a menu that never opened.
+  await page.locator(card.add).click();
+  await expect(page.locator(card.addNic(defaultNetwork))).toBeVisible();
+  await expect(page.locator(card.addNic(nic))).toBeHidden();
+  await page.keyboard.press('Escape');
 });
 
 test('an admin changes the type and MAC address of a NIC', async ({ page, api }) => {

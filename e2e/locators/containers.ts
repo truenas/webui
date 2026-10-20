@@ -269,7 +269,7 @@ export const containersLocators = {
    * dialog below; its Delete raises webui's shared confirm (see `locators/dialogs.ts`).
    */
   nicDevices: {
-    /** `<default_network> (Default)`, hidden once a NIC device is attached to that bridge. */
+    /** `<default_network> (Default)`, hidden once any NIC device is attached, since `default_network` is then null. */
     defaultDevice: '[data-test="text-default-nic-device"]',
     /** A device's description line, `['nic-device', id]`. */
     device: (id: number): string => `[data-test="text-nic-device-${id}"]`,
