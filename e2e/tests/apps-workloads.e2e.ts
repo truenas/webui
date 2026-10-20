@@ -193,8 +193,9 @@ test('Tail Lines limits the lines fetched, and the dialog refuses an empty value
     await page.locator(logsDetailsDialogLocators.connect).click();
 
     // On row 0's text rather than a count: the rows are cleared and filled again.
+    // A row ends in the line's own newline, and a RegExp is not whitespace-normalized.
     await expect(page.locator(containerLogsLocators.line(0)))
-      .toHaveText(/^e2e-log-(3|tick)$/, { timeout: followTimeoutMs });
+      .toHaveText(/^e2e-log-(3|tick)\n?$/, { timeout: followTimeoutMs });
   });
 
   await test.step('Connect is disabled while Tail Lines is empty', async () => {
