@@ -1,10 +1,11 @@
 /**
  * Alert service preconditions, cleanup and readback, over the API.
  *
- * Every service the suite makes is a Slack one: its only setting is a webhook
- * URL, and saving one sends nothing — only the form's Send Test Alert does, and
- * the suite never presses it. Every URL is under `example.com`, which RFC 2606
- * reserves, so even a service that did fire could reach nothing.
+ * Saving a service sends nothing — only the form's Send Test Alert does, which
+ * `alert-service-test.e2e.ts` presses, only ever at `127.0.0.1` (see that spec's
+ * header). Every saved Slack URL is under `example.com`, which RFC 2606 reserves,
+ * and the one SNMP Trap service points at `127.0.0.1`, so even a service that
+ * fired a real alert could reach nothing outside the appliance.
  *
  * Middleware does not hold names unique, and a form saved twice by a retried
  * test leaves two services with one name. So these helpers key on the name, and
@@ -21,7 +22,7 @@ type AlertServiceEntry = Extract<CallResponse<E2eApiDirectory, 'alertservice.que
 export type AlertServiceRecord = AlertServiceEntry & { id: number };
 
 /** Every alert service middleware holds under a name. */
-async function findAlertServices(client: E2eApiClient, name: string): Promise<AlertServiceRecord[]> {
+export async function findAlertServices(client: E2eApiClient, name: string): Promise<AlertServiceRecord[]> {
   const services = await firstValueFrom(
     client.api.query('alertservice.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
   );
@@ -75,6 +76,34 @@ export async function ensureSlackAlertServicePresent(
       enabled: true,
       level: 'WARNING',
       attributes: { type: 'Slack', url },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Creates an enabled SNMP v2c Trap service at Warning, to port 162 with community
+ * `public`, if none has this name already — the attributes the form sends for one.
+ */
+export async function ensureSnmpTrapAlertServicePresent(
+  client: E2eApiClient,
+  { name, host }: { name: string; host: string },
+): Promise<void> {
+  if (await findAlertService(client, name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('alertservice.create', [{
+      name,
+      enabled: true,
+      level: 'WARNING',
+      attributes: {
+        type: 'SNMPTrap',
+        host,
+        port: 162,
+        v3: false,
+        community: 'public',
+      },
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
