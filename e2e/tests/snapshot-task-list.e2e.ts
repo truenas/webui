@@ -128,6 +128,7 @@ test('editing a periodic snapshot task from the full list changes the task that 
   const before = await findSnapshotTask(api, target);
 
   const { form, list } = snapshotTaskLocators;
+  await openSnapshotTaskList(page);
   await openEditSnapshotTaskFormFromList(page, target, targetNamingSchema);
   await page.locator(form.lifetimeValue).fill('5');
   await chooseSnapshotTaskLifetimeUnit(page, 'MONTH');
@@ -171,6 +172,7 @@ test('deleting a periodic snapshot task from the full list removes the task that
 }) => {
   const { target, bystander } = await seedTargetAndBystander(api, pool);
 
+  await openSnapshotTaskList(page);
   await deleteSnapshotTaskFromList(page, target, targetNamingSchema);
 
   // Polled rather than read once: the list reloads after the call, but a row can
