@@ -48,9 +48,10 @@ export interface ReportRange {
 /**
  * Reads one `ix-date` beside the chart as milliseconds.
  *
- * The text is `yyyy-MM-dd HH:mm:ss`, webui's default date and time format, in the appliance's
- * timezone. It is read as though it were UTC, which shifts every reading by the same offset, so the
- * differences these specs compare are unaffected.
+ * The text is `yyyy-MM-dd HH:mm:ss`, webui's default date and time format, as wall-clock time in the
+ * appliance's timezone. It is read as though it were UTC. That keeps the order of two readings and
+ * whether they are equal, but a difference between them is off by an hour when a daylight-saving
+ * change falls between them, so compare lengths only where an hour cannot decide the result.
  */
 async function readReportDate(locator: Locator): Promise<number> {
   const text = (await locator.textContent())?.trim() ?? '';
@@ -59,6 +60,11 @@ async function readReportDate(locator: Locator): Promise<number> {
   }
 
   return Date.parse(`${text.replace(' ', 'T')}Z`);
+}
+
+/** How long a shown period is, in milliseconds. See {@link readReportDate} for its limit. */
+export function spanOf(range: ReportRange): number {
+  return range.end - range.start;
 }
 
 /** The start and end the report shows beside its chart. */

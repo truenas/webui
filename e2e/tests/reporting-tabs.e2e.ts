@@ -12,8 +12,8 @@
  * in a virtual scroll that renders only the first few, so those take the first identifier.
  *
  * "Charts a report" means a Mean in its legend holds a number, as in `reporting.e2e.ts`. Any series
- * rather than the first: the template writes `null` for a Mean of zero, and an interface's or a
- * disk's first series can be idle for the whole hour.
+ * rather than the first: the template writes `null` for a series with no value, and an interface's
+ * or a disk's first series can have collected nothing in the hour.
  *
  * The step and zoom buttons carry the same ids on every report, so they are selected inside the
  * report's card, which is keyed by its title. They are checked on the CPU tab's `cpu` report, which
@@ -33,7 +33,7 @@ import {
 } from '../fixtures/reporting';
 import { goToReporting } from '../flows/navigation';
 import {
-  chooseReportingCategory, readReportRange, reportControl, toggleOptions,
+  chooseReportingCategory, readReportRange, reportControl, spanOf, toggleOptions,
 } from '../flows/reporting';
 import { reportingLocators } from '../locators/reporting';
 import type { E2eApiClient } from '../support/api/client';
@@ -42,8 +42,7 @@ import { expect, test } from '../support/fixtures';
 /** A report waits a second before it fetches, then fetches its hour of samples. */
 const reportLoadTimeoutMs = 30_000;
 
-/** The period a report opens on, and the one Reset Zoom returns to. */
-const oneHourMs = 60 * 60_000;
+const oneDayMs = 24 * 60 * 60_000;
 
 /** The Disk tab's Devices and Metrics pickers apply a change after a 300 ms debounce. */
 const diskPickerTimeoutMs = 10_000;
@@ -189,31 +188,25 @@ test('zooming a report in narrows its period, and Reset Zoom restores the last h
   await expectChartedData(page, title);
 
   const opened = await readReportRange(page, title);
-  expect(opened.end - opened.start).toBe(oneHourMs);
+  // Reset Zoom is disabled exactly while the report shows its default period, so this is the state
+  // it should return to.
+  await expect(reportControl(page, title, reportingLocators.zoomReset)).toBeDisabled();
 
   // Out twice, to a week, so that In has somewhere to go and still leaves the period wider than the
   // hour Reset returns to.
   await reportControl(page, title, reportingLocators.zoomOut).click();
   await reportControl(page, title, reportingLocators.zoomOut).click();
-  await expect.poll(async () => {
-    const range = await readReportRange(page, title);
-    return range.end - range.start;
-  }).toBeGreaterThan(24 * oneHourMs);
+  await expect.poll(async () => spanOf(await readReportRange(page, title))).toBeGreaterThan(2 * oneDayMs);
   const zoomedOut = await readReportRange(page, title);
 
   await reportControl(page, title, reportingLocators.zoomIn).click();
-  await expect.poll(async () => {
-    const range = await readReportRange(page, title);
-    return range.end - range.start;
-  }).toBeLessThan(zoomedOut.end - zoomedOut.start);
+  await expect.poll(async () => spanOf(await readReportRange(page, title))).toBeLessThan(spanOf(zoomedOut));
   const zoomedIn = await readReportRange(page, title);
-  expect(zoomedIn.end - zoomedIn.start).toBeGreaterThan(oneHourMs);
 
   await reportControl(page, title, reportingLocators.zoomReset).click();
-  await expect.poll(async () => {
-    const range = await readReportRange(page, title);
-    return range.end - range.start;
-  }).toBe(oneHourMs);
+  await expect.poll(async () => spanOf(await readReportRange(page, title))).toBeLessThan(spanOf(zoomedIn));
+  await expect(reportControl(page, title, reportingLocators.zoomReset)).toBeDisabled();
+  // Back on the present, not on an hour inside the day zoom In showed.
   expect((await readReportRange(page, title)).end).toBeGreaterThanOrEqual(opened.end);
 });
 
@@ -227,11 +220,11 @@ test('Step Back moves a report one period earlier, and Step Forward brings it ba
   // A report opens on the present, which there is nothing after.
   await expect(reportControl(page, title, reportingLocators.stepForward)).toBeDisabled();
 
+  // The period now ends where it used to start. Compared as shown rather than by length, because a
+  // length read off wall-clock times is off by an hour across a daylight-saving change.
   await reportControl(page, title, reportingLocators.stepBack).click();
-  await expect.poll(() => readReportRange(page, title)).toEqual({
-    start: opened.start - oneHourMs,
-    end: opened.start,
-  });
+  await expect.poll(async () => (await readReportRange(page, title)).end).toBe(opened.start);
+  await expect(reportControl(page, title, reportingLocators.stepForward)).toBeEnabled();
 
   await reportControl(page, title, reportingLocators.stepForward).click();
   await expect.poll(() => readReportRange(page, title)).toEqual(opened);
