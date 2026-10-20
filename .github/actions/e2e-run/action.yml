@@ -1,5 +1,5 @@
 name: 'E2E: run the suite'
-description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results and failure traces."
+description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results, coverage and failure traces."
 
 # Only the test run is containerised; the appliance stays on the runner,
 # under qemu.
@@ -120,6 +120,45 @@ runs:
         if-no-files-found: error
         retention-days: 14
 
+    # What the run exercised — middleware methods and routes against the UI's
+    # inventory of both (scripts/e2e-coverage.ts). Informational: never fails
+    # the job. With more than one shard each report covers its own shard only;
+    # the per-test results are uploaded so they can be merged by hand
+    # (`yarn e2e:coverage <dir>`).
+    #
+    # Written three ways, because the job summary is only on the run's Summary
+    # page and is easy to miss from a job's log: the full report into the step
+    # log and the summary, and the headline as a notice, which shows on both.
+    - if: always() && steps.suite.outcome != 'skipped'
+      continue-on-error: true
+      shell: bash
+      env:
+        TN_SHARD: ${{ inputs.shard }}
+      run: |
+        set -euo pipefail
+        report="$RUNNER_TEMP/e2e-coverage.md"
+        yarn e2e:coverage --out "$report"
+        {
+          if [ "$TN_SHARD" != 1/1 ]; then
+            echo "> Shard $TN_SHARD only."
+            echo
+          fi
+          cat "$report"
+        } >> "$GITHUB_STEP_SUMMARY"
+        node -e '
+          const { methods, routes } = require("./test-results/e2e-coverage/summary.json");
+          const part = (name, { covered, total }) => `${name} ${covered}/${total} (${Math.round(covered / total * 100)}%)`;
+          console.log(`::notice title=E2E coverage (shard ${process.argv[1]})::${part("methods", methods)}, ${part("routes", routes)}`);
+        ' "$TN_SHARD"
+
+    - if: always() && steps.suite.outcome != 'skipped'
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-coverage${{ inputs.artifact-suffix }}
+        path: test-results/e2e-coverage/
+        if-no-files-found: ignore
+        retention-days: 14
+
     # Traces, screenshots and video for the tests that failed (R7.1): what
     # makes a failure triageable without a local reproduction (R6.2).
     #
@@ -145,6 +184,7 @@ runs:
           echo 'paths<<EOF'
           echo 'test-results/**'
           echo '!test-results/junit.xml'
+          echo '!test-results/e2e-coverage/**'
           echo 'EOF'
         } >> "$GITHUB_OUTPUT"
 
