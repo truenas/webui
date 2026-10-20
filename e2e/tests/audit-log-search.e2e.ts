@@ -201,24 +201,28 @@ test('a malformed advanced query shows the query error', async ({ page }) => {
 });
 
 test('clicking a record opens its details', async ({ page, api, config }) => {
-  // The page opens Log Details on its first row by itself, so the record clicked must not be the
-  // newest. The throwaway account's sign-in is newer than the suite admin's own `user.create` for
-  // it, so the admin's newest record sits below a row the page selects instead.
-  await recordThrowawaySignIn(api, config);
-  const record = await findNewestUserAuditRecord(api, config.username);
-  if (!record) {
+  // The page opens Log Details on its first row by itself, so clicking that row would prove nothing.
+  // Two records are known: the throwaway account's sign-in and the suite admin's `user.create` for
+  // it just before. Timestamps are whole seconds, so the two can tie and either can be first; the
+  // test reads which one the page chose and clicks the other.
+  const signIn = await recordThrowawaySignIn(api, config);
+  const creation = await findNewestUserAuditRecord(api, config.username);
+  if (!creation) {
     throw new Error(`audit.query has no record made by "${config.username}", who created "${auditUser.username}".`);
   }
 
   await goToAudit(page);
-  await expect(page.locator(auditLocators.list.row(record))).toBeVisible({ timeout: listLoadTimeoutMs });
-  await expect(page.locator(auditLocators.details.auditId)).toBeVisible();
-  await expect(page.locator(auditLocators.details.auditId)).not.toHaveText(record.audit_id);
+  await expect(page.locator(auditLocators.list.row(signIn))).toBeVisible({ timeout: listLoadTimeoutMs });
+  await expect(page.locator(auditLocators.list.row(creation))).toBeVisible();
+  const auditId = page.locator(auditLocators.details.auditId);
+  await expect(auditId).toBeVisible();
+  const record = (await auditId.textContent())?.trim() === signIn.audit_id ? creation : signIn;
+  await expect(auditId).not.toHaveText(record.audit_id);
 
   await page.locator(auditLocators.list.user(record)).click();
 
-  await expect(page.locator(auditLocators.details.auditId)).toHaveText(record.audit_id);
-  await expect(page.locator(auditLocators.details.user)).toHaveText(config.username);
+  await expect(auditId).toHaveText(record.audit_id);
+  await expect(page.locator(auditLocators.details.user)).toHaveText(record.username);
   await expect(page.locator(auditLocators.details.event)).toHaveText(record.event);
   await expect(page.locator(auditLocators.details.service)).toHaveText(serviceLabels.MIDDLEWARE);
 });
