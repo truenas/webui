@@ -127,6 +127,12 @@ describe('CronCardComponent', () => {
     ]);
   });
 
+  it('links its title to the full Cron Jobs list', () => {
+    const link = spectator.query<HTMLAnchorElement>('h3 a');
+    expect(link).toHaveText('Cron Jobs');
+    expect(link).toHaveAttribute('href', '/system/cron');
+  });
+
   it('opens the Add Cron Job form in a side panel when Add is pressed', async () => {
     const addButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add' }));
     await addButton.click();

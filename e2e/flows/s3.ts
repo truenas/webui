@@ -450,6 +450,17 @@ export async function toggleBucketEnabled(page: Page, bucket: string): Promise<v
 }
 
 /**
+ * Follows the dashboard card's title to the full bucket list, starting from the
+ * sidebar, and waits for the list's own Add.
+ */
+export async function openS3BucketList(page: Page): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3BucketLocators.cardTitle).click();
+  await expect(page).toHaveURL(/\/sharing\/s3\/?$/);
+  await expect(page.locator(s3BucketLocators.list.add)).toBeVisible();
+}
+
+/**
  * Deletes a bucket from the dashboard card's row menu.
  *
  * `confirmDelete` raises the standard confirm dialog with its tick box, so the

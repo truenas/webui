@@ -3,18 +3,22 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
   TnCellDefDirective,
   TnDialog,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
+  TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { isValid } from 'date-fns';
 import {
@@ -50,11 +54,16 @@ import { TaskService } from 'app/services/task.service';
 @Component({
   selector: 'ix-cron-card',
   templateUrl: './cron-card.component.html',
+  styleUrls: ['./cron-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
+    TnTestIdDirective,
+    RouterLink,
+    TnIconComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     UiSearchDirective,

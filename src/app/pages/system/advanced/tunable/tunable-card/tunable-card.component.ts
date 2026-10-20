@@ -3,17 +3,21 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
   TnButtonComponent,
   TnCardComponent,
   TnCardFooterActionsDirective,
+  TnCardHeaderDirective,
   TnCellDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
+  TnIconComponent,
   TnTableColumnDirective,
   TnTableComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { from, map, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -38,11 +42,16 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 @Component({
   selector: 'ix-tunable-card',
   templateUrl: './tunable-card.component.html',
+  styleUrls: ['./tunable-card.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TableTextCellComponent,
     TnCardComponent,
     TnCardFooterActionsDirective,
+    TnCardHeaderDirective,
+    TnTestIdDirective,
+    RouterLink,
+    TnIconComponent,
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,

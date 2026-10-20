@@ -34,6 +34,11 @@
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
+/** The full bucket list's row tag. See {@link s3BucketLocators.list}. */
+function bucketListRowTag(bucket: string): string {
+  return legacyKebabTestSegment('s3-bucket-' + bucket);
+}
+
 export const s3BucketLocators = {
   /**
    * "Add" in the Object Storage (S3) Buckets card on the Shares dashboard —
@@ -42,6 +47,27 @@ export const s3BucketLocators = {
    * dashboard, so the card's button is the one a user clicks.
    */
   addFromDashboard: '[data-test="button-s3-bucket-add"]',
+
+  /** The dashboard card's title, `['s3-bucket', 'open-in-new']`: a link to the full list at `/sharing/s3`. */
+  cardTitle: '[data-test="link-s3-bucket-open-in-new"]',
+
+  /**
+   * The full list at `/sharing/s3` (`s3-bucket-list.component.html`). Its row tag
+   * is `toUniqueRowTag('s3-bucket-' + name)`, which goes through lodash, so `s3`
+   * is `s-3` and `e2e` is `e-2-e` here — unlike the card's. Its search covers name,
+   * dataset and owner, but filters nothing until the list has loaded.
+   */
+  list: {
+    /** The page's own Add, `[testId]="'add-s3-bucket'"`. Not the card's `s3-bucket-add`. */
+    add: '[data-test="button-add-s3-bucket"]',
+    row: (bucket: string) => `[data-test="row-${bucketListRowTag(bucket)}"]`,
+    /** The Dataset cell, which the card does not have: `<pool>/<parent>/<bucket>`. */
+    dataset: (bucket: string) => `[data-test="text-dataset-${bucketListRowTag(bucket)}-row-text"]`,
+    menu: (bucket: string) => `[data-test="button-${bucketListRowTag(bucket)}-more-action"]`,
+    delete: (bucket: string) => (
+      `[data-test="button-${bucketListRowTag(bucket)}-more-action-mdi-delete-row-action"]`
+    ),
+  },
 
   form: {
     name: '[data-test="input-name"]',

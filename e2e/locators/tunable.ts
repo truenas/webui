@@ -23,7 +23,18 @@ function rowTag(variable: string): string {
 }
 
 export const tunableLocators = {
+  /**
+   * Also the full list's rows, cells and menus: the list's tag is
+   * `convertStringToId('tunable-' + var)`, which the library's normalizer turns
+   * into the same `tunable-<var>` the card's plain tag becomes.
+   */
   card: {
+    /**
+     * The card's title, a link to the full list: an anchor projected into the card
+     * header with `tnTestIdType="link"` and `['tunable', 'open-in-new']`.
+     */
+    title: '[data-test="link-tunable-open-in-new"]',
+
     /** `<tn-button [testId]="['tunable', 'add']">` in the card footer. */
     add: '[data-test="button-tunable-add"]',
 
@@ -54,6 +65,17 @@ export const tunableLocators = {
     rowMenuDelete: (variable: string): string => (
       `[data-test="button-${rowTag(variable)}-more-action-mdi-delete-row-action"]`
     ),
+  },
+
+  /**
+   * The full list at `/system/tunable` (`tunable-list.component.html`). Its rows
+   * are addressed through {@link tunableLocators.card} — see the note there. Its
+   * search turns the `_` in a variable into a space before matching, so a query
+   * with an underscore never matches a variable name.
+   */
+  list: {
+    /** The page header's own Add, `[testId]="'add-tunable'"`. Not the card's `tunable-add`. */
+    add: '[data-test="button-add-tunable"]',
   },
 
   form: {

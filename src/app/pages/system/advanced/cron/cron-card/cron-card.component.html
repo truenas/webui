@@ -1,8 +1,21 @@
-<tn-card
-  padding="small"
-  [title]="title | translate"
-  [titleRouterLink]="['/system', 'cron']"
->
+<tn-card padding="small">
+  <h3 tnCardHeader class="card-title">
+    <a
+      class="card-title-link"
+      tnTestIdType="link"
+      [tnTestId]="['cron', 'open-in-new']"
+      [routerLink]="['/system', 'cron']"
+    >
+      {{ title | translate }}
+      <tn-icon
+        class="title-icon"
+        name="open-in-new"
+        library="mdi"
+        size="sm"
+        [attr.aria-hidden]="true"
+      ></tn-icon>
+    </a>
+  </h3>
   @if (!(dataProvider.currentPageCount$ | async) && !(dataProvider.isLoading$ | async)) {
     <tn-empty
       [title]="emptyService.titleForType(dataProvider.emptyType$ | async)"

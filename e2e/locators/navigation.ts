@@ -9,6 +9,26 @@
  * Submenu entries use the raw item name instead (`[tnTestId]="subItem.name"`),
  * so they are `link-users` rather than `link-users-menu`.
  */
+import { kebabTestSegment } from './test-id';
+
+/**
+ * Global search, the "Search UI" box in the topbar.
+ *
+ * The topbar's box is only a trigger: clicking it opens an overlay holding a
+ * second box with the same `input-global-search` id, and hides the first. So
+ * while search is open the id matches twice, and the visible one is the box a
+ * user types into.
+ *
+ * A result is `[tnTestId]="['search-result', hierarchy.join('-')]"` with
+ * `tnTestIdType="text"`, where the hierarchy is the breadcrumb it shows.
+ */
+export const globalSearchLocators = {
+  input: '[data-test="input-global-search"]',
+  result: (hierarchy: readonly string[]): string => (
+    `[data-test="text-search-result-${kebabTestSegment(hierarchy.join('-'))}"]`
+  ),
+} as const;
+
 export const navLocators = {
   dashboard: '[data-test="link-dashboard-menu"]',
   storage: '[data-test="link-storage-menu"]',

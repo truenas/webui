@@ -152,6 +152,18 @@ export async function openKerberosSettings(page: Page): Promise<void> {
 }
 
 /**
+ * Follows a Kerberos card's title to its full page, starting from the sidebar and
+ * going past the Advanced Settings warning. `title` is `realms.title` or
+ * `keytabs.title`. The page's rows load after the route changes, so the caller
+ * waits on a row it expects.
+ */
+export async function openKerberosPage(page: Page, title: string, route: RegExp): Promise<void> {
+  await openKerberosSettings(page);
+  await page.locator(title).click();
+  await expect(page).toHaveURL(route);
+}
+
+/**
  * Saves whichever Kerberos form is open and waits for the panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded — a refusal
