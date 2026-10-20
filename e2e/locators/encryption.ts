@@ -1,7 +1,7 @@
 /**
  * Dataset encryption: the Encryption Options of the dataset form, the Encryption card on the
- * details panel, the Edit Encryption Options and Lock dialogs it opens, and the Unlock page with the
- * summary dialogs after it.
+ * details panel, the Edit Encryption Options, Lock and Export Key dialogs it opens, and the Unlock
+ * page with the summary dialogs after it.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -27,6 +27,7 @@ export const encryptionFormLocators = {
  * only for an encrypted dataset.
  */
 export const encryptionCardLocators = {
+  card: '[data-test="card-encryption"]',
   /** `Unencrypted`, `Locked`, `Locked by parent` or `Unlocked`. */
   state: '[data-test="text-encryption-current-state"]',
   /** `Passphrase` or `Key`. */
@@ -45,6 +46,24 @@ export const encryptionCardLocators = {
    * encrypted dataset. Its id is a generic `button-edit`, so it is reached through the card.
    */
   edit: '[data-test="card-encryption"] [data-test="button-edit"]',
+  /**
+   * `<tn-button [testId]="'export-key'">`, which opens the Export Key dialog. Offered on an unlocked
+   * encryption root whose key is stored, so never on a passphrase root.
+   */
+  exportKey: '[data-test="button-export-key"]',
+} as const;
+
+/** The Export Key dialog, `<tn-dialog-shell testId="export-dataset-key">`, titled `Key for '<dataset>'`. */
+export const exportKeyDialogLocators = {
+  title: '[data-test="dialog-title-export-dataset-key"]',
+  /** The key itself. Empty until the `pool.dataset.export_key` job the dialog starts has finished. */
+  key: '[data-test="text-dataset-key"]',
+  /**
+   * Saves the key as a file, and closes the dialog once the download is done. The pool wizard's
+   * Download Encryption Key dialog emits the same id, and the two are never open together.
+   */
+  download: '[data-test="button-download-key"]',
+  close: '[data-test="button-close"]',
 } as const;
 
 /**

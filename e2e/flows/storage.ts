@@ -22,7 +22,7 @@ const poolCreateTimeoutMs = 5 * 60_000;
 const saveTimeoutMs = 90_000;
 
 /** A `core.download` job, then the fetch of the file it wrote. */
-const keyDownloadTimeoutMs = 60_000;
+export const keyDownloadTimeoutMs = 60_000;
 
 /**
  * `pool.import_find` scans every disk before the Import Pool form renders, and

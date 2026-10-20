@@ -1,5 +1,5 @@
 <tn-dialog-shell testId="export-dataset-key" [title]="'Key for {id}' | translate: { id: '\''+dataset.id+'\'' }">
-<p class="key">{{ key }}</p>
+<p class="key" tnTestIdType="text" [tnTestId]="'dataset-key'">{{ key }}</p>
   <p>
     {{ 'WARNING: Only the key for the dataset in question will be downloaded.' | translate }}
   </p>
