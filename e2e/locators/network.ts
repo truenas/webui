@@ -11,7 +11,14 @@
  *
  * The card's readouts are scoped inside the card, because the top bar renders its
  * own `text-hostname` and an unscoped locator matches both.
+ *
+ * Outbound Network is stored the other way round from how it reads: "Allow All"
+ * saves `{ type: 'DENY', activities: [] }`, an empty deny list, and "Deny All"
+ * saves an empty allow list. The component's own comment explains why.
  */
+import { kebabTestSegment } from './test-id';
+
+export type OutboundActivityLabel = 'Allow All' | 'Deny All' | 'Allow Specific' | 'Allow All Except';
 
 const card = '[data-test="card-network-configuration"]';
 
@@ -29,6 +36,11 @@ export const networkConfigLocators = {
     hostnameDatabase: `${card} [data-test="text-hostname-database"]`,
     /** The announcements switched on, of "NETBIOS-NS", "mDNS" and "WS-DISCOVERY", joined with ", ". */
     serviceAnnouncement: `${card} [data-test="text-service-announcement"]`,
+    /**
+     * Read from the stored `activity`, not from the radio labels: "Allow All",
+     * "Deny All", or "Only allow: " or "Allow all except: " and the activity values joined with ", ".
+     */
+    outboundNetwork: `${card} [data-test="text-outbound-network"]`,
   },
 
   form: {
@@ -56,6 +68,20 @@ export const networkConfigLocators = {
     ipv4gatewayField: '[data-test="form-field-ipv4gateway"]',
     /** "Host Name Database", one `<address> <name>` entry per chip. */
     hosts: '[data-test="chip-input-hosts"]',
+    /**
+     * An Outbound Network radio, by its label: "Allow All", "Deny All", "Allow
+     * Specific" or "Allow All Except". The ids keep the legacy
+     * `radio-button-<group>-<label>` shape — the template says why.
+     */
+    outboundActivity: (label: OutboundActivityLabel): string => (
+      `[data-test="radio-button-outbound-network-activity-${kebabTestSegment(label)}"]`
+    ),
+    /** "Services", a multiple select shown only for the two Specific radios. */
+    outboundServices: '[data-test="select-outbound-network-value"]',
+    /** By the label `network.configuration.activity_choices` gives the activity. */
+    outboundServicesOption: (label: string): string => (
+      `[data-test="option-outbound-network-value-${kebabTestSegment(label)}"]`
+    ),
   },
 
   /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */

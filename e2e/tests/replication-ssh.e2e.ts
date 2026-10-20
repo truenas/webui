@@ -18,6 +18,10 @@
  * saves the task and starts it. The source is made fresh for each test and no
  * target is: replication creates its own, so a target that exists afterwards is
  * evidence of a run. Local replication is `replication-tasks.e2e.ts`.
+ *
+ * A second test pulls over the same connection, picking its source by browsing
+ * the remote system's datasets in the wizard's picker. It is saved on a schedule
+ * and never run, so only the stored task is checked.
  */
 import {
   countReplicationTasks,
@@ -35,12 +39,17 @@ import {
   ensureSshConnectionAbsent,
 } from '../fixtures/ssh-connections';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
+import { openExplorer, openExplorerDirectory, pickExplorerEntry } from '../flows/explorer';
 import {
+  chooseRemoteReplicationSource,
   fillRemoteReplication,
+  finishReplicationWhatAndWhere,
   openReplicationWizard,
   replicationTaskCardPageSize,
+  saveReplicationOnSchedule,
   saveReplicationToRunOnce,
 } from '../flows/replication-tasks';
+import { explorerLocators } from '../locators/explorer';
 import { replicationTaskLocators } from '../locators/replication-tasks';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -53,6 +62,8 @@ const connectionName = 'e2e-replication-loopback';
 
 /** Made through the wizard, never over the API — that is the thing under test. */
 const createdName = 'e2e-replication-ssh';
+const pulledName = 'e2e-replication-ssh-pulled';
+const allNames = [createdName, pulledName];
 const sourceLeaf = 'e2e_repl_ssh_src';
 const targetLeaf = 'e2e_repl_ssh_dst';
 
@@ -60,22 +71,26 @@ let connectionId: number;
 
 /**
  * The connection, root's key and SSH are set up once for the file: none of them
- * is under test. The task goes first because middleware will not delete a
+ * is under test. The tasks go first because middleware will not delete a
  * connection a task uses, so a run interrupted mid-file leaves the next one able
  * to start.
  */
 test.beforeAll(async ({ api }) => {
-  await ensureReplicationTaskAbsent(api, createdName);
+  for (const name of allNames) {
+    await ensureReplicationTaskAbsent(api, name);
+  }
   connectionId = await ensureLoopbackSshConnectionPresent(api, connectionName);
 });
 
 /**
- * Task first, then target, then source, so nothing is left pointing at a dataset
+ * Tasks first, then target, then source, so nothing is left pointing at a dataset
  * that is gone. Run before each test as well as after, so no target exists until
  * a run makes it.
  */
 test.beforeEach(async ({ api, pool }) => {
-  await ensureReplicationTaskAbsent(api, createdName);
+  for (const name of allNames) {
+    await ensureReplicationTaskAbsent(api, name);
+  }
   await ensureDatasetAbsent(api, `${pool}/${targetLeaf}`);
   await ensureDatasetAbsent(api, `${pool}/${sourceLeaf}`);
   await ensureDatasetPresent(api, `${pool}/${sourceLeaf}`);
@@ -83,12 +98,14 @@ test.beforeEach(async ({ api, pool }) => {
 
 test.afterEach(async ({ api, pool }) => {
   const datasets = [`${pool}/${targetLeaf}`, `${pool}/${sourceLeaf}`];
-  if (leavingTestData(`the replication task ${createdName} and the datasets ${datasets.join(', ')}`)) {
+  if (leavingTestData(`the replication tasks ${allNames.join(', ')} and the datasets ${datasets.join(', ')}`)) {
     return;
   }
 
   await runCleanupSteps([
-    [`remove the replication task "${createdName}"`, () => ensureReplicationTaskAbsent(api, createdName)],
+    ...allNames.map((name): [string, () => Promise<void>] => [
+      `remove the replication task "${name}"`, () => ensureReplicationTaskAbsent(api, name),
+    ]),
     ...datasets.map((dataset): [string, () => Promise<void>] => [
       `remove the dataset "${dataset}"`, () => ensureDatasetAbsent(api, dataset),
     ]),
@@ -102,7 +119,9 @@ test.afterAll(async ({ api }) => {
   }
 
   await runCleanupSteps([
-    [`remove the replication task "${createdName}"`, () => ensureReplicationTaskAbsent(api, createdName)],
+    ...allNames.map((name): [string, () => Promise<void>] => [
+      `remove the replication task "${name}"`, () => ensureReplicationTaskAbsent(api, name),
+    ]),
     [`remove the SSH connection "${connectionName}"`, () => ensureSshConnectionAbsent(api, connectionName)],
     ['remove root\'s loopback key, its keypair, and SSH if it was started', () => (
       ensureLoopbackSshAccessAbsent(api, connectionName)
@@ -156,4 +175,37 @@ test('creating a replication task over an SSH connection with Run Once replicate
     { timeout: runTimeoutMs },
   ).toEqual(['SUCCESS']);
   expect(await findSnapshotNames(api, target)).toEqual(sourceSnapshots);
+});
+
+test('an admin picks a pull task\'s source by browsing the remote system\'s datasets', async ({ page, api, pool }) => {
+  const source = `${pool}/${sourceLeaf}`;
+  const target = `${pool}/${targetLeaf}`;
+  const { wizard } = replicationTaskLocators;
+  const base = wizard.sourceDatasetsExplorer;
+
+  await openReplicationWizard(page);
+  await chooseRemoteReplicationSource(page, connectionName);
+
+  // Listed by `replication.list_datasets` over the connection, a level at a time.
+  await openExplorer(page, base, pool);
+  await openExplorerDirectory(page, base, pool);
+  await expect(page.locator(explorerLocators.entry(base, sourceLeaf))).toBeVisible();
+  await pickExplorerEntry(page, base, sourceLeaf, { multiple: true });
+  // A dataset name, not a mount path: that is what a pull's source is stored as.
+  await expect(page.locator(wizard.sourceDatasets)).toHaveValue(source);
+
+  await finishReplicationWhatAndWhere(page, { target, name: pulledName });
+  await saveReplicationOnSchedule(page);
+
+  // Only the task is checked. A scheduled pull is not run here, so no target is made.
+  expect(await findReplicationTasks(api, pulledName)).toHaveLength(1);
+  expect(await findReplicationTask(api, pulledName)).toMatchObject({
+    direction: 'PULL',
+    transport: 'SSH',
+    ssh_credentials: { id: connectionId },
+    source_datasets: [source],
+    target_dataset: target,
+    naming_schema: [replicationNamingSchema],
+    auto: true,
+  });
 });

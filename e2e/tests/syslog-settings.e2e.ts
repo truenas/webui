@@ -8,18 +8,50 @@
  *
  * One test sets every field, starting from the defaults. The other starts with
  * everything set and undoes all of it, removing the server. Between them, every
- * control in the form is changed in both directions.
+ * control in the form is changed in both directions. A third adds a server over
+ * TLS, which is the one transport that needs a certificate.
  *
  * The settings are one config record, so there is nothing to delete afterwards.
- * Teardown writes middleware's defaults back. See `fixtures/syslog.ts`.
+ * Teardown writes middleware's defaults back. See `fixtures/syslog.ts`. The TLS
+ * test may import a certificate, which teardown removes after the settings, so
+ * that no server still uses it.
  */
+import { ensureCertificateAbsent, ensureImportedCertificatePresent, findCertificate } from '../fixtures/certificates';
 import { readSyslogSettings, setSyslogSettings, syslogBaseline } from '../fixtures/syslog';
 import {
-  addSyslogServer, chooseSyslogLevel, openSyslogForm, saveSyslogForm,
+  addSyslogServer, chooseSyslogCertificate, chooseSyslogLevel, openSyslogForm, saveSyslogForm,
 } from '../flows/syslog';
 import { syslogLocators, type SyslogLevel } from '../locators/syslog';
-import { leavingTestData } from '../support/cleanup';
+import type { E2eApiClient } from '../support/api/client';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
+
+/** The appliance's own certificate. Every install has one, and the TLS Certificate select offers it. */
+const builtInCertificateName = 'truenas_default';
+
+/** The checked-in test certificate, imported only on an appliance with no `truenas_default`. */
+const importedCertificateName = 'e2e-syslog-tls';
+
+/**
+ * The certificate the TLS test forwards with: `truenas_default` where the
+ * appliance has it, or else the test certificate imported under its own name.
+ *
+ * `system.advanced.syslog_certificate_choices` offers every certificate that is
+ * neither a CSR nor a CA, labelled by its name. Either of these qualifies.
+ */
+async function tlsCertificate(api: E2eApiClient): Promise<{ id: number; name: string }> {
+  const builtIn = await findCertificate(api, builtInCertificateName);
+  if (builtIn) {
+    return { id: builtIn.id, name: builtInCertificateName };
+  }
+
+  await ensureImportedCertificatePresent(api, importedCertificateName);
+  const imported = await findCertificate(api, importedCertificateName);
+  if (!imported) {
+    throw new Error(`the certificate ${importedCertificateName} was imported and then not found`);
+  }
+  return { id: imported.id, name: importedCertificateName };
+}
 
 /** Written before each test as well as after, so an interrupted run leaves the next one able to start. */
 test.beforeEach(async ({ api }) => {
@@ -27,11 +59,17 @@ test.beforeEach(async ({ api }) => {
 });
 
 test.afterEach(async ({ api }) => {
-  if (leavingTestData('the syslog settings as the test left them')) {
+  if (leavingTestData(`the syslog settings as the test left them, and the certificate ${importedCertificateName}`)) {
     return;
   }
 
-  await setSyslogSettings(api, syslogBaseline);
+  // The settings first: middleware may refuse to delete a certificate a syslog server uses.
+  await runCleanupSteps([
+    ['write the syslog defaults back', () => setSyslogSettings(api, syslogBaseline)],
+    [`remove the certificate "${importedCertificateName}"`, () => (
+      ensureCertificateAbsent(api, importedCertificateName)
+    )],
+  ]);
 });
 
 test('an admin sets up syslog forwarding, and the appliance keeps every setting', async ({ page, api }) => {
@@ -60,6 +98,29 @@ test('an admin sets up syslog forwarding, and the appliance keeps every setting'
   // with, or sent the entry twice, fails here.
   expect(saved.syslogservers).toHaveLength(1);
   expect(saved.syslogservers?.[0]).toMatchObject({ host, transport: 'TCP' });
+});
+
+test('an admin forwards syslog over TLS with a certificate', async ({ page, api }) => {
+  const host = '192.0.2.23';
+  const certificate = await tlsCertificate(api);
+  const { form, card } = syslogLocators;
+
+  await openSyslogForm(page, 'F_INFO');
+  await addSyslogServer(page, host, 'TLS');
+  // TLS makes the certificate required, and nothing is picked yet.
+  await expect(page.locator(form.tlsCertificate)).toBeVisible();
+  await expect(page.locator(form.save)).toBeDisabled();
+
+  await chooseSyslogCertificate(page, certificate.name);
+  await expect(page.locator(form.save)).toBeEnabled();
+  await saveSyslogForm(page);
+
+  await expect(page.locator(card.servers)).toHaveText(`${host} (TLS)`);
+
+  // The select offers names and sends ids, so the id stored is what says the pick reached the form.
+  const { syslogservers } = await readSyslogSettings(api);
+  expect(syslogservers).toHaveLength(1);
+  expect(syslogservers?.[0]).toMatchObject({ host, transport: 'TLS', tls_certificate: certificate.id });
 });
 
 /**

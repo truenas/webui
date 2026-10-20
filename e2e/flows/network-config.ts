@@ -45,6 +45,25 @@ export async function addChips(page: Page, field: string, values: string[]): Pro
 }
 
 /**
+ * Picks options in the Services select, then closes it.
+ *
+ * A click toggles an option, and the select stays open between clicks, so
+ * Escape is what closes it. The panel stays open behind it.
+ */
+export async function chooseOutboundServices(page: Page, labels: [string, ...string[]]): Promise<void> {
+  const { form } = networkConfigLocators;
+  await page.locator(form.outboundServices).click();
+
+  for (const label of labels) {
+    await page.locator(form.outboundServicesOption(label)).click();
+  }
+
+  await page.keyboard.press('Escape');
+  await expect(page.locator(form.outboundServicesOption(labels[0]))).toBeHidden();
+  await expect(page.locator(networkConfigLocators.save)).toBeVisible();
+}
+
+/**
  * Closes the edited form without saving. The form is dirty, so the
  * unsaved-changes question is asserted rather than looked for.
  */

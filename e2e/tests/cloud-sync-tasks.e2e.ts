@@ -17,6 +17,10 @@
  * action belongs to whichever row's menu was opened, and a row-targeting bug
  * would act on the wrong task without failing anything else.
  *
+ * Every other test types its folders. One edit picks the remote folder in the
+ * Folder picker instead, which is the only thing here that has the remote list
+ * its directories (`cloudsync.list_directory`).
+ *
  * Stopping needs a run that lasts: the task is given a bandwidth limit and a
  * file large enough that the run would take minutes, and is stopped long
  * before then.
@@ -60,8 +64,10 @@ import {
   saveCloudSyncWizard,
   stopCloudSyncTaskFromCard,
 } from '../flows/cloud-sync';
+import { openExplorer, openExplorerDirectory, pickExplorerEntry } from '../flows/explorer';
 import { cloudSyncLocators } from '../locators/cloud-sync';
 import { hourlyScheduleLabel } from '../locators/cron';
+import { explorerLocators } from '../locators/explorer';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -94,8 +100,10 @@ const restoreLeaf = 'e2e_cloudsync_restore';
 const remoteLeaf = 'e2e_cloudsync_remote';
 const bystanderSourceLeaf = 'e2e_cloudsync_bystander_src';
 const bystanderRemoteLeaf = 'e2e_cloudsync_bystander_remote';
+/** A second folder on the remote, beside `remoteLeaf`, for the edit form's Folder picker to move a task to. */
+const browsedLeaf = 'e2e_cloudsync_browsed';
 
-const allLeaves = [sourceLeaf, restoreLeaf, remoteLeaf, bystanderSourceLeaf, bystanderRemoteLeaf];
+const allLeaves = [sourceLeaf, restoreLeaf, remoteLeaf, bystanderSourceLeaf, bystanderRemoteLeaf, browsedLeaf];
 
 /** What a run copies. Written fresh for each test that needs one. */
 const seededFile = 'e2e-cloudsync.txt';
@@ -313,6 +321,37 @@ test('editing a cloud sync task from the card changes the task that was picked',
     transfer_mode: 'COPY',
     schedule: monthly,
     enabled: true,
+  });
+});
+
+test('an admin picks a task\'s remote folder by browsing the SFTP host', async ({ page, api, pool }) => {
+  const browsedFolder = datasetMountPath(`${pool}/${browsedLeaf}`);
+  const base = cloudSyncLocators.form.folderDestinationExplorer;
+  await requireRoomOnCard(api, 2);
+  await seedTargetAndBystander(api, pool);
+  const before = await findCloudSyncTask(api, targetDescription);
+
+  await openEditCloudSyncForm(page, targetDescription);
+  // The root of the remote is the SFTP host's `/`, which is this appliance's,
+  // so `mnt` here is the remote's listing rather than anything local.
+  await openExplorer(page, base, 'mnt');
+  await openExplorerDirectory(page, base, 'mnt');
+  await openExplorerDirectory(page, base, pool);
+  await expect(page.locator(explorerLocators.entry(base, remoteLeaf))).toBeVisible();
+  await expect(page.locator(explorerLocators.entry(base, browsedLeaf))).toBeVisible();
+
+  await pickExplorerEntry(page, base, browsedLeaf, { multiple: false });
+  await expect(page.locator(cloudSyncLocators.form.folderDestination)).toHaveValue(browsedFolder);
+  await saveCloudSyncForm(page);
+
+  // The same task, moved to the picked folder, with its local side as it was.
+  expect(await findCloudSyncTask(api, targetDescription)).toMatchObject({
+    id: before?.id,
+    path: datasetMountPath(`${pool}/${sourceLeaf}`),
+    attributes: { folder: browsedFolder },
+  });
+  expect(await findCloudSyncTask(api, bystanderDescription)).toMatchObject({
+    attributes: { folder: datasetMountPath(`${pool}/${bystanderRemoteLeaf}`) },
   });
 });
 

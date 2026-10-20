@@ -63,6 +63,15 @@ export const syslogLocators = {
     transportOption: (transport: SyslogTransport): string => (
       `[data-test="option-transport-${kebabTestSegment(transport)}"]`
     ),
+    /**
+     * The first server's TLS Certificate, shown only while its transport is TLS.
+     * Required then, so Save stays disabled until one is picked.
+     */
+    tlsCertificate: '[data-test="select-tls-certificate"]',
+    /** By the certificate's name, which is how `system.advanced.syslog_certificate_choices` labels it. */
+    tlsCertificateOption: (name: string): string => (
+      `[data-test="option-tls-certificate-${kebabTestSegment(name)}"]`
+    ),
     /** Remove on the first server. This one is indexed, from 1. */
     removeFirstServer: '[data-test="button-remove-server-1"]',
     includeAuditLogs: '[data-test="checkbox-syslog-audit"]',
