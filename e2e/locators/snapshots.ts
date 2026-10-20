@@ -24,6 +24,13 @@ export const snapshotLocators = {
     takeSnapshot: '[data-test="button-create-snapshot"]',
     /** "View Snapshots" — the list, filtered to this dataset. */
     viewSnapshots: '[data-test="link-manage-snapshots"]',
+    /** The Snapshot Tasks count, `snapshot_tasks_count` from `pool.dataset.details`. */
+    snapshotTasks: '[data-test="text-data-protection-snapshot-tasks"]',
+    /**
+     * "View Snapshot Tasks" — the full Periodic Snapshot Tasks list, with this
+     * dataset in its search box. See `snapshotTaskLocators.list`.
+     */
+    viewSnapshotTasks: '[data-test="link-manage-snapshot-tasks"]',
   },
 
   form: {
