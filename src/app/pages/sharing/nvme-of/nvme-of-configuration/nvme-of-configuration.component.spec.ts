@@ -129,6 +129,27 @@ describe('NvmeOfConfigurationComponent', () => {
     });
   });
 
+  it('explains on hover that a disabled RDMA control needs an Enterprise license and RDMA hardware', async () => {
+    spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    form = await loader.getHarness(IxFormHarness);
+    expect(await form.getDisabledState()).toMatchObject({
+      'Enable Remote Direct Memory Access (RDMA)': true,
+    });
+
+    // The `?` is swapped for a key icon carrying the same requirement text, which also shows on hover.
+    const gate = spectator.query('[formControlName="rdma"]')!.closest('ix-licensed-feature')!;
+    expect(gate.querySelector('tn-icon[name="key-variant"]')).toExist();
+    spectator.dispatchMouseEvent(gate.querySelector('.control')!, 'mouseenter');
+    await new Promise((resolve) => {
+      setTimeout(resolve);
+    });
+    spectator.detectChanges();
+
+    expect(document.querySelector('.tn-tooltip')).toHaveText('Enabling is limited to TrueNAS Enterprise-licensed systems');
+  });
+
   it('disables ANA for systems without HA license', async () => {
     spectator.inject(MockStore).overrideSelector(selectIsHaLicensed, false);
     spectator = createComponent();

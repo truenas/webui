@@ -1,0 +1,29 @@
+:host {
+  align-items: center;
+  display: flex;
+  gap: 0.375rem;
+}
+
+// Mirrors tn-form-field's own `?` button so a gated field sits flush with its neighbours.
+.icon-button {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--tn-fg2, var(--fg2));
+  cursor: help;
+  display: inline-flex;
+  justify-content: center;
+  line-height: 0;
+  padding: 0;
+
+  &:hover,
+  &:focus-visible {
+    color: var(--tn-primary, var(--primary));
+  }
+
+  &:focus-visible {
+    border-radius: 50%;
+    outline: 2px solid var(--tn-primary, var(--primary));
+    outline-offset: 2px;
+  }
+}

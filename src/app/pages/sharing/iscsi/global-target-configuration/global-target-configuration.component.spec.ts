@@ -183,7 +183,7 @@ describe('TargetGlobalConfigurationComponent', () => {
       if (method === 'rdma.capable_protocols') {
         return of([]);
       }
-      return of(undefined);
+      return of({ basename: 'iqn.2005-10.org.freenas.ctl' });
     });
     spectator.component.ngOnInit();
 
@@ -191,6 +191,33 @@ describe('TargetGlobalConfigurationComponent', () => {
     expect(await form.getDisabledState()).toMatchObject({
       'Enable iSCSI Extensions for RDMA (iSER)': true,
     });
+  });
+
+  it('explains on hover that a disabled iSER field needs an Enterprise license and RDMA hardware', async () => {
+    jest.spyOn(api, 'call').mockImplementation((method: string) => {
+      if (method === 'rdma.capable_protocols') {
+        return of([]);
+      }
+      return of({ basename: 'iqn.2005-10.org.freenas.ctl' });
+    });
+    spectator.component.ngOnInit();
+    spectator.detectChanges();
+
+    const form = await loader.getHarness(IxFormHarness);
+    expect(await form.getDisabledState()).toMatchObject({
+      'Enable iSCSI Extensions for RDMA (iSER)': true,
+    });
+
+    // The `?` is swapped for a key icon carrying the same requirement text, which also shows on hover.
+    const gate = spectator.query('[formControlName="iser"]')!.closest('ix-licensed-feature')!;
+    expect(gate.querySelector('tn-icon[name="key-variant"]')).toExist();
+    spectator.dispatchMouseEvent(gate.querySelector('.control')!, 'mouseenter');
+    await new Promise((resolve) => {
+      setTimeout(resolve);
+    });
+    spectator.detectChanges();
+
+    expect(document.querySelector('.tn-tooltip')).toHaveText('Enabling is limited to TrueNAS Enterprise-licensed systems');
   });
 
   it('validates Base Name field only when it is being modified', async () => {
