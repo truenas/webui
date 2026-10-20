@@ -25,7 +25,7 @@
       <span
         class="cell-clamp"
         tnTestIdType="text"
-        [tnTestId]="[('Service' | translate), uniqueRowTag(row), 'row-text']"
+        [tnTestId]="['Service', uniqueRowTag(row), 'row-text']"
       >{{ row.service | auditServiceLabel | translate }}</span>
     </ng-template>
   </ng-container>
@@ -39,7 +39,7 @@
         <span
           class="cell-clamp"
           tnTestIdType="text"
-          [tnTestId]="[('User' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['User', uniqueRowTag(row), 'row-text']"
         >{{ row.username || '-' }}</span>
       </div>
     </ng-template>
@@ -52,7 +52,7 @@
         <ix-date
           tnTestIdType="date"
           [date]="row.message_timestamp * 1000"
-          [tnTestId]="[('Timestamp' | translate), uniqueRowTag(row), 'row-date']"
+          [tnTestId]="['Timestamp', uniqueRowTag(row), 'row-date']"
         ></ix-date>
       </span>
     </ng-template>
@@ -69,7 +69,7 @@
       <span
         class="cell-clamp"
         tnTestIdType="text"
-        [tnTestId]="[('Event' | translate), uniqueRowTag(row), 'row-text']"
+        [tnTestId]="['Event', uniqueRowTag(row), 'row-text']"
       >{{ row.event || '-' }}</span>
     </ng-template>
   </ng-container>
@@ -87,7 +87,7 @@
         <span
           class="cell-clamp"
           tnTestIdType="text"
-          [tnTestId]="[('Event Data' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Event Data', uniqueRowTag(row), 'row-text']"
         >{{ importantData }}</span>
       </div>
     </ng-template>

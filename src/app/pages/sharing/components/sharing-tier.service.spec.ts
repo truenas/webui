@@ -183,6 +183,23 @@ describe('SharingTierService', () => {
     });
   });
 
+  describe('refresh', () => {
+    it('fetches the tier config again, keeping the old value until the new one arrives', async () => {
+      const api = spectator.inject(MockTypedApiService);
+      api.mockCall('zfs.tier.config', { enabled: true } as ZfsTierConfig);
+      await firstValueFrom(spectator.service.getTierConfig());
+
+      // Turned off elsewhere: the cached config would keep saying it is on.
+      api.mockCall('zfs.tier.config', { enabled: false } as ZfsTierConfig);
+      expect(await firstValueFrom(spectator.service.getTierConfig())).toEqual({ enabled: true });
+
+      spectator.service.refresh();
+      expect(spectator.service.tierEnabled()).toBe(true);
+      expect(await firstValueFrom(spectator.service.getTierConfig())).toEqual({ enabled: false });
+      expect(spectator.service.tierEnabled()).toBe(false);
+    });
+  });
+
   describe('job wiring', () => {
     const destroyRef = { onDestroy: jest.fn() } as unknown as DestroyRef;
     let jobUpdates$: Subject<{ fields: unknown }>;

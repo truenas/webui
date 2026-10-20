@@ -16,21 +16,21 @@
     <ng-container [tnColumnDef]="'server_id'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Server' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span tnTestIdType="text" [tnTestId]="[('Server' | translate), uniqueRowTag(row), 'row-text']">{{ formatServer(row) }}</span>
+        <span tnTestIdType="text" [tnTestId]="['Server', uniqueRowTag(row), 'row-text']">{{ formatServer(row) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'uid'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Username' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span tnTestIdType="text" [tnTestId]="[('Username' | translate), uniqueRowTag(row), 'row-text']">{{ formatUsername(row) }}</span>
+        <span tnTestIdType="text" [tnTestId]="['Username', uniqueRowTag(row), 'row-text']">{{ formatUsername(row) }}</span>
       </ng-template>
     </ng-container>
 
     <ng-container [tnColumnDef]="'opened_at'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Opened at' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <span tnTestIdType="text" [tnTestId]="[('Opened at' | translate), uniqueRowTag(row), 'row-text']">{{ row.opened_at }}</span>
+        <span tnTestIdType="text" [tnTestId]="['Opened at', uniqueRowTag(row), 'row-text']">{{ row.opened_at }}</span>
       </ng-template>
     </ng-container>
   </tn-table>

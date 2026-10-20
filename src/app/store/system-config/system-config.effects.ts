@@ -10,6 +10,7 @@ import {
   advancedConfigUpdated,
   generalConfigUpdated,
   systemConfigLoaded,
+  systemConfigRefreshRequested,
 } from 'app/store/system-config/system-config.actions';
 
 @Injectable()
@@ -19,7 +20,7 @@ export class SystemConfigEffects {
   private window = inject<Window>(WINDOW);
 
   loadConfig$ = createEffect(() => this.actions$.pipe(
-    ofType(adminUiInitialized, generalConfigUpdated, advancedConfigUpdated),
+    ofType(adminUiInitialized, generalConfigUpdated, advancedConfigUpdated, systemConfigRefreshRequested),
     mergeMap(() => {
       return forkJoin([
         this.api.call('system.general.config'),

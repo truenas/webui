@@ -63,7 +63,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Path' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Path', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.path || ''"
           >{{ row.path }}</span>
         </ng-template>
@@ -74,7 +74,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.comment || ''"
           >{{ row.comment }}</span>
         </ng-template>
@@ -85,7 +85,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Networks' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Networks', uniqueRowTag(row), 'row-text']"
           >{{ formatList(row.networks) }}</span>
         </ng-template>
       </ng-container>
@@ -95,7 +95,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Hosts' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Hosts', uniqueRowTag(row), 'row-text']"
           >{{ formatList(row.hosts) }}</span>
         </ng-template>
       </ng-container>
@@ -121,7 +121,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Expose Snapshots' | translate), uniqueRowTag(row), 'row-yesno']"
+            [tnTestId]="['Expose Snapshots', uniqueRowTag(row), 'row-yesno']"
           >{{ !!row.expose_snapshots | yesNo | translate }}</span>
         </ng-template>
       </ng-container>

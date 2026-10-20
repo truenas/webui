@@ -42,7 +42,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.description || ''"
           >{{ row.description }}</span>
         </ng-template>
@@ -54,7 +54,7 @@
           <ix-task-state-cell
             [state]="row.job?.state"
             [job]="row.job"
-            [testId]="[('State' | translate), uniqueRowTag(row), 'row-state']"
+            [testId]="['State', uniqueRowTag(row), 'row-state']"
             [ariaLabel]="ariaLabel(row)"
           ></ix-task-state-cell>
         </ng-template>

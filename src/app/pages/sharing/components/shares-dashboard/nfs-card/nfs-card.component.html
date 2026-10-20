@@ -71,7 +71,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Path' | translate), cellRowTag(row), 'row-text']"
+            [tnTestId]="['Path', cellRowTag(row), 'row-text']"
             [tnTooltip]="row.path ? (row.path | translate) : ''"
           >{{ row.path }}</span>
         </ng-template>
@@ -82,7 +82,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Description' | translate), cellRowTag(row), 'row-text']"
+            [tnTestId]="['Description', cellRowTag(row), 'row-text']"
             [tnTooltip]="row.comment ? (row.comment | translate) : ''"
           >{{ row.comment }}</span>
         </ng-template>

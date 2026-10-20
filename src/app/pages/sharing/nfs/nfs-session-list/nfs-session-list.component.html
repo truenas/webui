@@ -69,7 +69,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('IP' | translate), uniqueRowTag3(row), 'row-text']"
+            [tnTestId]="['IP', uniqueRowTag3(row), 'row-text']"
           >{{ row.ip }}</span>
         </ng-template>
       </ng-container>
@@ -79,7 +79,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Export' | translate), uniqueRowTag3(row), 'row-text']"
+            [tnTestId]="['Export', uniqueRowTag3(row), 'row-text']"
           >{{ row.export }}</span>
         </ng-template>
       </ng-container>
@@ -116,7 +116,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Name' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Name', uniqueRowTag4(row), 'row-text']"
           >{{ row.name }}</span>
         </ng-template>
       </ng-container>
@@ -126,7 +126,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Client ID' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Client ID', uniqueRowTag4(row), 'row-text']"
           >{{ row.clientid }}</span>
         </ng-template>
       </ng-container>
@@ -136,7 +136,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Address' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Address', uniqueRowTag4(row), 'row-text']"
           >{{ row.address }}</span>
         </ng-template>
       </ng-container>
@@ -146,7 +146,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Status' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Status', uniqueRowTag4(row), 'row-text']"
           >{{ formatStatus(row.status) }}</span>
         </ng-template>
       </ng-container>
@@ -156,7 +156,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Seconds From Last Renew' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Seconds From Last Renew', uniqueRowTag4(row), 'row-text']"
           >
             {{ row['seconds from last renew'] }}
           </span>
@@ -168,7 +168,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Minor Version' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Minor Version', uniqueRowTag4(row), 'row-text']"
           >{{ row['minor version'] }}</span>
         </ng-template>
       </ng-container>
@@ -178,7 +178,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Implementation Domain' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Implementation Domain', uniqueRowTag4(row), 'row-text']"
           >
             {{ row['Implementation domain'] }}
           </span>
@@ -190,7 +190,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Implementation Name' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Implementation Name', uniqueRowTag4(row), 'row-text']"
           >
             {{ row['Implementation name'] }}
           </span>
@@ -202,7 +202,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Callback State' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Callback State', uniqueRowTag4(row), 'row-text']"
           >{{ row['callback state'] }}</span>
         </ng-template>
       </ng-container>
@@ -212,7 +212,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Callback Address' | translate), uniqueRowTag4(row), 'row-text']"
+            [tnTestId]="['Callback Address', uniqueRowTag4(row), 'row-text']"
           >
             {{ row['callback address'] }}
           </span>

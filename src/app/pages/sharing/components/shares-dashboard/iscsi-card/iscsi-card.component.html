@@ -76,7 +76,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Target Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Target Name', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.name ? (row.name | translate) : ''"
           >{{ row.name }}</span>
         </ng-template>
@@ -87,7 +87,7 @@
         <ng-template let-row tnCellDef>
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Target Alias' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Target Alias', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="row.alias ? (row.alias | translate) : ''"
           >{{ row.alias }}</span>
         </ng-template>
@@ -99,7 +99,7 @@
           @let mode = getModeValue(row);
           <span
             tnTestIdType="text"
-            [tnTestId]="[('Mode' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Mode', uniqueRowTag(row), 'row-text']"
             [tnTooltip]="mode"
           >{{ mode }}</span>
         </ng-template>

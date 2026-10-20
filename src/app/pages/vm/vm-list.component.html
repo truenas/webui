@@ -70,7 +70,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="row.name"
-          [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
         >{{ row.name }}</span>
       </ng-template>
     </ng-container>
@@ -110,7 +110,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Virtual CPUs' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Virtual CPUs', uniqueRowTag(row), 'row-text']"
         >{{ row.vcpus }}</span>
       </ng-template>
     </ng-container>
@@ -120,7 +120,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Cores' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Cores', uniqueRowTag(row), 'row-text']"
         >{{ row.cores }}</span>
       </ng-template>
     </ng-container>
@@ -130,7 +130,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Threads' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Threads', uniqueRowTag(row), 'row-text']"
         >{{ row.threads }}</span>
       </ng-template>
     </ng-container>
@@ -142,7 +142,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="memory"
-          [tnTestId]="[('Memory Size' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Memory Size', uniqueRowTag(row), 'row-text']"
         >{{ memory }}</span>
       </ng-template>
     </ng-container>
@@ -153,7 +153,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="row.bootloader"
-          [tnTestId]="[('Boot Loader Type' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Boot Loader Type', uniqueRowTag(row), 'row-text']"
         >{{ row.bootloader }}</span>
       </ng-template>
     </ng-container>
@@ -165,7 +165,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="systemClock"
-          [tnTestId]="[('System Clock' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['System Clock', uniqueRowTag(row), 'row-text']"
         >{{ systemClock }}</span>
       </ng-template>
     </ng-container>
@@ -177,7 +177,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="displayPort"
-          [tnTestId]="[('Display Port' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Display Port', uniqueRowTag(row), 'row-text']"
         >{{ displayPort }}</span>
       </ng-template>
     </ng-container>
@@ -188,7 +188,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="row.description"
-          [tnTestId]="[('Description' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Description', uniqueRowTag(row), 'row-text']"
         >{{ row.description }}</span>
       </ng-template>
     </ng-container>
@@ -200,7 +200,7 @@
         <span
           tnTestIdType="text"
           [tnTooltip]="shutdownTimeout"
-          [tnTestId]="[('Shutdown Timeout' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Shutdown Timeout', uniqueRowTag(row), 'row-text']"
         >{{ shutdownTimeout }}</span>
       </ng-template>
     </ng-container>
