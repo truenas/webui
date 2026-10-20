@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnInputHarness, TnRadioHarness,
+  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnTooltipHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -139,6 +139,25 @@ describe('NvmeOfConfigurationComponent', () => {
       TnCheckboxHarness.with({ label: 'Enable Remote Direct Memory Access (RDMA)' }),
     );
     expect(await rdma.isDisabled()).toBe(true);
+  });
+
+  it('explains on hover that a disabled RDMA control needs an Enterprise license and RDMA hardware', async () => {
+    spectator.inject(NvmeOfService).isRdmaCapable.mockReturnValue(of(false));
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const rdma = await loader.getHarness(
+      TnCheckboxHarness.with({ label: 'Enable Remote Direct Memory Access (RDMA)' }),
+    );
+    expect(await rdma.isDisabled()).toBe(true);
+
+    // The `?` is swapped for a key icon carrying the same requirement text, which also shows on hover.
+    const gate = spectator.query('[formControlName="rdma"]')!.closest('ix-licensed-feature')!;
+    expect(gate.querySelector('tn-icon[name="key-variant"]')).toExist();
+    spectator.dispatchMouseEvent(gate.querySelector('.control')!, 'mouseenter');
+
+    const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
+      .getHarness(TnTooltipHarness);
+    expect(await tooltip.getText()).toContain('Enabling is limited to TrueNAS Enterprise-licensed systems');
   });
 
   it('disables ANA for systems without HA license', async () => {

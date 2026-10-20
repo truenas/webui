@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnDialog, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+  TnDialog, TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness, TnTooltipHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
@@ -203,6 +203,21 @@ describe('TargetGlobalConfigurationComponent', () => {
     recreateComponent();
 
     expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
+  });
+
+  it('explains on hover that a disabled iSER field needs an Enterprise license and RDMA hardware', async () => {
+    spectator.inject(MockTypedApiService).mockCall('rdma.capable_protocols', []);
+    recreateComponent();
+    expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
+
+    // The `?` is swapped for a key icon carrying the same requirement text, which also shows on hover.
+    const gate = spectator.query('[formControlName="iser"]')!.closest('ix-licensed-feature')!;
+    expect(gate.querySelector('tn-icon[name="key-variant"]')).toExist();
+    spectator.dispatchMouseEvent(gate.querySelector('.control')!, 'mouseenter');
+
+    const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
+      .getHarness(TnTooltipHarness);
+    expect(await tooltip.getText()).toContain('Enabling is limited to TrueNAS Enterprise-licensed systems');
   });
 
   it('keeps the loaded ALUA value across a change in HA license status', async () => {

@@ -34,23 +34,27 @@
       </tn-form-field>
     }
 
-    <tn-form-field
-      [tnTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
-    >
-      <tn-checkbox
-        formControlName="ana"
-        [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
-      ></tn-checkbox>
+    <tn-form-field>
+      <ix-licensed-feature
+        [locked]="form.controls.ana.disabled"
+        [lockedTooltip]="helptext.anaDisabledTooltip | translate"
+      >
+        <tn-checkbox
+          formControlName="ana"
+          [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
+        ></tn-checkbox>
+      </ix-licensed-feature>
     </tn-form-field>
 
-    <tn-form-field
-      [tooltip]="helptext.rdmaTooltip | translate"
-      [tnTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
-    >
-      <tn-checkbox
-        formControlName="rdma"
-        [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
-      ></tn-checkbox>
+    <!-- `rdma.capable_protocols` folds the Enterprise license into its answer, so the UI can't tell a
+         missing license from missing hardware: the locked state shows the full requirement text. -->
+    <tn-form-field>
+      <ix-licensed-feature [locked]="form.controls.rdma.disabled" [tooltip]="helptext.rdmaTooltip | translate">
+        <tn-checkbox
+          formControlName="rdma"
+          [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
+        ></tn-checkbox>
+      </ix-licensed-feature>
     </tn-form-field>
   </tn-form-section>
 </ix-form>
