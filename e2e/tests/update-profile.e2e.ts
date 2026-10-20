@@ -6,10 +6,13 @@
  * middleware (`plugins/update_/profile_.py`), an appliance without the Mission Critical entitlement
  * lists Developer, Early Adopter and General, and one with it lists General and Mission Critical. A
  * profile is available when it is the configured one, or when it is no more conservative than the
- * profile of the installed version. The CI appliance has no Mission Critical entitlement, and
- * `dashboard-update-state.e2e.ts` switches it to Developer and back on every run, so at least those
- * two are on offer there. Nothing here could read the appliance directly, so which of Early Adopter
- * and General are also available is left to the API on the day.
+ * profile of the installed version.
+ *
+ * On the CI appliance fewer than two are available: E2E run 39359788981 (2026-10-20) skipped both
+ * switching tests for that reason, and `dashboard-update-state.e2e.ts` skipped in the same run
+ * because Developer is not available. With one profile on offer the card disables the select and
+ * Apply, so nothing can be switched or cancelled there. The readouts test does not need the select
+ * open, so it runs whatever is on offer and checks the options only when there is a choice.
  *
  * Switching only rewrites the configuration: `update.update` sends an `update.status` CHANGED event
  * and clears the HasUpdate alert, and starts no download (`plugins/update_/config.py`). So the
@@ -134,20 +137,10 @@ test('the select offers exactly the available profiles', async ({ page, api }) =
   const available = profiles.filter((profile) => profile.available);
   const notAvailable = profiles.filter((profile) => !profile.available);
 
-  // With one profile on offer the card disables the select, so it cannot be opened.
-  test.skip(available.length < 2, 'fewer than two update profiles are available on this appliance');
-
   await openUpdateProfileCard(page, nameOf(choices, current));
-  await page.locator(updateLocators.profile.select).click();
-
-  for (const profile of available) {
-    await expect(page.locator(updateLocators.profile.option(profile.name))).toBeVisible();
-  }
-  await expect(page.locator(updateLocators.profile.options)).toHaveCount(available.length);
 
   // Empty when the appliance offers every profile it lists. The loop stays, so it checks when it does not.
   for (const profile of notAvailable) {
-    await expect(page.locator(updateLocators.profile.option(profile.name))).toHaveCount(0);
     await expect(page.locator(updateLocators.profile.name(profile.name))).toBeVisible();
   }
 
@@ -155,6 +148,23 @@ test('the select offers exactly the available profiles', async ({ page, api }) =
     await expect(page.locator(updateLocators.profile.current)).toHaveCount(0);
   } else {
     await expect(page.locator(updateLocators.profile.current)).toHaveText(nameOf(choices, current));
+  }
+
+  // With one profile on offer, the configured one, the card disables Apply and the select, so the
+  // options cannot be listed. That is the CI appliance (see the header).
+  if (available.length < 2) {
+    await expect(page.locator(updateLocators.profile.apply)).toBeDisabled();
+    return;
+  }
+
+  await page.locator(updateLocators.profile.select).click();
+
+  for (const profile of available) {
+    await expect(page.locator(updateLocators.profile.option(profile.name))).toBeVisible();
+  }
+  await expect(page.locator(updateLocators.profile.options)).toHaveCount(available.length);
+  for (const profile of notAvailable) {
+    await expect(page.locator(updateLocators.profile.option(profile.name))).toHaveCount(0);
   }
 
   await page.keyboard.press('Escape');
