@@ -80,14 +80,15 @@ function domainPattern(ad: ActiveDirectoryTarget): RegExp {
  * `hostname`, with Kerberos User credentials.
  *
  * Enable Service is ticked by the type selection after a debounce, so it is
- * waited on. Enable DNS Updates is asserted off: on, a join would register the
- * appliance's NAT address in the shared domain's DNS.
+ * waited on. Enable DNS Updates is unticked: on, a join would register the
+ * appliance's NAT address in the shared domain's DNS. The form starts from the
+ * stored configuration, and a cleared one still has it on.
  */
 async function fillActiveDirectoryJoin(page: Page, ad: ActiveDirectoryTarget, hostname: string): Promise<void> {
   const form = directoryServicesLocators.configForm;
   await selectServiceType(page, directoryServiceTypeLabels.activeDirectory);
   await expect(page.locator(form.enable)).toBeChecked();
-  await expect(page.locator(form.enableDnsUpdates)).not.toBeChecked();
+  await page.locator(form.enableDnsUpdates).setChecked(false);
 
   await selectCredentialType(page, credentialTypeLabels.kerberosUser);
   await page.locator(form.username).fill(ad.username);
