@@ -9,12 +9,13 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToUsers } from './navigation';
+import { fillDateInput } from './s3';
 import { confirmDestructiveAction } from './storage';
 import { apiKeyLocators } from '../locators/api-keys';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { usersLocators } from '../locators/users';
 
-/** Creating and deleting a key are middleware calls, not instant. */
+/** Creating, editing and deleting a key are middleware calls, not instant. */
 const saveTimeoutMs = 60_000;
 
 /**
@@ -44,7 +45,7 @@ export async function openUserApiKeys(page: Page, username: string): Promise<voi
  * nobody chose.
  */
 export async function createApiKey(page: Page, key: { name: string; username: string }): Promise<string> {
-  const { form, keyCreatedDialog } = apiKeyLocators;
+  const { form } = apiKeyLocators;
 
   await page.locator(apiKeyLocators.add).click();
   await expect(page.locator(form.name)).toBeVisible();
@@ -60,7 +61,16 @@ export async function createApiKey(page: Page, key: { name: string; username: st
 
   await page.locator(form.save).click();
 
-  // The key is shown here once and never again, so it is read before closing.
+  return readKeyCreatedDialog(page);
+}
+
+/**
+ * Reads the key off the one-time dialog a create or a reset raises, and closes
+ * it. The key is shown there once and never again, so it is read first.
+ */
+async function readKeyCreatedDialog(page: Page): Promise<string> {
+  const { keyCreatedDialog } = apiKeyLocators;
+
   await expect(page.locator(keyCreatedDialog.title)).toBeVisible({ timeout: saveTimeoutMs });
   const shown = await page.locator(keyCreatedDialog.key).inputValue();
 
@@ -68,6 +78,94 @@ export async function createApiKey(page: Page, key: { name: string; username: st
   await expect(page.locator(keyCreatedDialog.title)).toBeHidden();
 
   return shown;
+}
+
+/** What an edit changes. A field left out is left as the form opened it. */
+export interface ApiKeyChanges {
+  name?: string;
+  reset?: boolean;
+  /** A date to expire on, or null to make the key non-expiring again. */
+  expiresOn?: Date | null;
+}
+
+/**
+ * Opens a key's Edit form from its row, makes the changes and presses Save.
+ * Returns once Save is pressed; what follows depends on the change.
+ *
+ * Name holding the key's name is the signal the form has been filled from the
+ * row, so a change typed before that cannot be overwritten by it.
+ *
+ * Each expiry change is confirmed by the date input appearing or going, so a
+ * Non-expiring box that started the other way fails here rather than
+ * toggling the wrong way.
+ */
+export async function submitApiKeyEdit(page: Page, name: string, changes: ApiKeyChanges): Promise<void> {
+  const { form } = apiKeyLocators;
+
+  await page.locator(apiKeyLocators.edit(name)).click();
+  await expect(page.locator(form.name)).toHaveValue(name);
+
+  if (changes.name !== undefined) {
+    await page.locator(form.name).fill(changes.name);
+  }
+
+  if (changes.expiresOn === null) {
+    await expect(page.locator(form.expiresAt)).toBeVisible();
+    await page.locator(form.nonExpiring).click();
+    await expect(page.locator(form.expiresAt)).toBeHidden();
+  } else if (changes.expiresOn) {
+    await expect(page.locator(form.expiresAt)).toBeHidden();
+    await page.locator(form.nonExpiring).click();
+    await expect(page.locator(form.expiresAt)).toBeVisible();
+    await fillDateInput(
+      page,
+      { month: form.expiresAtMonth, day: form.expiresAtDay, year: form.expiresAtYear },
+      changes.expiresOn,
+    );
+  }
+
+  if (changes.reset) {
+    await page.locator(form.reset).click();
+    await expect(page.locator(form.reset)).toBeChecked();
+  }
+
+  await page.locator(form.save).click();
+}
+
+/**
+ * Edits a key without resetting it, and returns once the panel has closed on
+ * a successful save.
+ *
+ * The one-time key dialog must not open: a save that returns no key shows a
+ * snackbar instead. Checked once the panel has gone, when a dialog raised by
+ * the same save would already be on screen.
+ */
+export async function editApiKey(page: Page, name: string, changes: Omit<ApiKeyChanges, 'reset'>): Promise<void> {
+  await submitApiKeyEdit(page, name, changes);
+
+  await expect(page.locator(apiKeyLocators.form.name)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(apiKeyLocators.keyCreatedDialog.title)).toHaveCount(0);
+}
+
+/** Resets a key from its Edit form and returns the new key the dialog showed. */
+export async function resetApiKey(page: Page, name: string): Promise<string> {
+  await submitApiKeyEdit(page, name, { reset: true });
+
+  return readKeyCreatedDialog(page);
+}
+
+/**
+ * Closes the Edit panel without saving. The form is dirty by then, so the
+ * unsaved-changes question is asserted rather than looked for.
+ */
+export async function discardApiKeyEdit(page: Page): Promise<void> {
+  const { form } = apiKeyLocators;
+
+  await page.locator(form.closePanel).click();
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible();
+  await discard.click();
+  await expect(page.locator(form.name)).toBeHidden();
 }
 
 /**
