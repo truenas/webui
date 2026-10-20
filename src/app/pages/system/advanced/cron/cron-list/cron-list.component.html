@@ -25,6 +25,8 @@
     [trackBy]="trackBy"
     [loading]="!!(dataProvider.isLoading$ | async)"
     [expandable]="true"
+    [clickable]="true"
+    [expandOnRowClick]="true"
     (sortChange)="onSortChange($event)"
   >
     <ng-container [tnColumnDef]="'user'" [sortable]="true">

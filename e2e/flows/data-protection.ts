@@ -75,7 +75,8 @@ export async function searchTaskList(page: Page, query: string): Promise<void> {
  * of its actions.
  *
  * Replication, cloud sync and periodic snapshot lists keep a row's actions in
- * that panel rather than on the row. Clicking anywhere on the row opens it. The
+ * that panel rather than on the row, and so does the cron jobs list. Clicking
+ * anywhere on the row opens it, on a table that sets `expandOnRowClick`. The
  * caller passes a text cell to click, because a replication row also holds its
  * Enabled switch, and a click on the switch writes to the task.
  */
