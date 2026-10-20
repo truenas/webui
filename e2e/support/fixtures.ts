@@ -20,6 +20,7 @@
 import { expect, type Page, test as base } from '@playwright/test';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
+import { clearRateLimit, enablePrivateMethods } from './api/rate-limit';
 import { recordApiCalls } from './api-calls';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
@@ -242,6 +243,8 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   api: [
     async ({ config }, use) => {
       const client = await connectAndLogin(config);
+      // For `clearRateLimit`, which the `page` override calls before every test.
+      enablePrivateMethods(client);
       try {
         await use(client);
       } finally {
@@ -300,6 +303,12 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   page: async ({
     page, authenticate, recordApiCalls: recording, api, config,
   }, use, testInfo) => {
+    // First, so this test's sign-in and any reloads it makes start from an empty
+    // rate-limit budget, whatever the tests before it spent. For the
+    // unauthenticated project too: its sign-ins go through the same sign-in page,
+    // and its password logins through `auth.login_ex`. See `support/api/rate-limit.ts`.
+    await clearRateLimit(api);
+
     const coverage = new CoverageRecorder(page, config.uiBaseUrl);
     await coverage.attach();
 
