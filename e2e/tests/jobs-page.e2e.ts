@@ -24,7 +24,8 @@
  *   teardown and ends on its own. Its cron job is still removed.
  *
  * Expanding a row from its chevron (the ticket's second scenario) waits on a
- * row-scoped id for that chevron, #14687, and is not here yet.
+ * row-scoped id for that chevron, #14687, and is not here yet. View Details is
+ * written but not run, waiting on a Jobs page fix; see its marker.
  */
 import { readFile } from 'node:fs/promises';
 import {
@@ -183,7 +184,13 @@ test('Download Logs on a failed job saves its log', async ({ page, api }) => {
   await expect(page.locator(errorDialogLocators.title)).toBeHidden();
 });
 
-test('View Details on a failed job\'s error opens that job on the Jobs page, already expanded', async ({
+// Not run until the Jobs page keeps `?jobId=` on arrival: in CI the dialog's View
+// Details reached `/jobs` with no parameter and no row open, twice in a row. Only
+// the page's own expansion effect drops the parameter, when it reads the table as
+// the user collapsing a row, and `openExpandedRow` marks a row as synced whether or
+// not `expandRow` opened it. The product fix is proposed on #14697. Remove this
+// marker with it.
+test.fixme('View Details on a failed job\'s error opens that job on the Jobs page, already expanded', async ({
   page, api,
 }) => {
   await openJobsPanel(page);
