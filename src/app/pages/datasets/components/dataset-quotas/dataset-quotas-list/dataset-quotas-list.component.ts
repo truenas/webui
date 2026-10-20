@@ -239,9 +239,9 @@ export class DatasetQuotasListComponent implements OnInit {
       [this.datasetId, this.quotaType, toDatasetQuotaFilters(this.invalidFilter)],
     ).pipe(map(toDatasetQuotas), takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (quotas: DatasetQuota[]) => {
-        if (quotas?.length) {
-          this.invalidQuotas = quotas;
-        }
+        // Assigned whatever its length, so a removal that leaves none takes the button away.
+        this.invalidQuotas = quotas ?? [];
+        this.cdr.markForCheck();
       },
       error: this.handleError,
     });

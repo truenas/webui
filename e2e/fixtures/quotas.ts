@@ -28,12 +28,22 @@ const quotaTypes = {
 export interface QuotaEntry {
   /** The uid or gid. */
   id: number;
-  /** The user or group name. Empty when the id no longer maps to one. */
-  name: string;
+  /** The user or group name. `null` when the id no longer maps to one, as for a deleted user. */
+  name: string | null;
   /** Bytes. `0` when unset. */
   quota: number;
   /** `0` when unset. */
   obj_quota: number;
+}
+
+/**
+ * Every entry middleware lists for `kind` on `dataset`: each principal with a quota, and each one
+ * that owns something there with none.
+ */
+export async function listQuotas(client: E2eApiClient, dataset: string, kind: QuotaKind): Promise<QuotaEntry[]> {
+  return await firstValueFrom(
+    client.api.call('pool.dataset.get_quota', [dataset, quotaTypes[kind].data, []]).pipe(timeout(readTimeoutMs)),
+  ) as unknown as QuotaEntry[];
 }
 
 /**
@@ -48,11 +58,19 @@ export async function findQuota(
   kind: QuotaKind,
   name: string,
 ): Promise<QuotaEntry | undefined> {
-  const quotas = await firstValueFrom(
-    client.api.call('pool.dataset.get_quota', [dataset, quotaTypes[kind].data, []]).pipe(timeout(readTimeoutMs)),
-  ) as unknown as QuotaEntry[];
-
+  const quotas = await listQuotas(client, dataset, kind);
   return quotas.find((quota) => quota.name === name);
+}
+
+/** The quota set for the uid or gid `id` on `dataset`, for an id that may no longer map to a name. */
+export async function findQuotaById(
+  client: E2eApiClient,
+  dataset: string,
+  kind: QuotaKind,
+  id: number,
+): Promise<QuotaEntry | undefined> {
+  const quotas = await listQuotas(client, dataset, kind);
+  return quotas.find((quota) => quota.id === id);
 }
 
 /** Sets both quotas for `name` on `dataset`, as a precondition. `name` may be a name or an id. */

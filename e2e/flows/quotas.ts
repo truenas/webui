@@ -2,10 +2,9 @@
  * User and group quotas on a dataset, driven through the UI.
  */
 import { expect, type Page } from '@playwright/test';
-import { goToDatasets } from './navigation';
+import { selectDataset } from './encryption';
 import type { QuotaKind } from '../fixtures/quotas';
 import { quotaLocators } from '../locators/quotas';
-import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 
 const saveTimeoutMs = 90_000;
 
@@ -20,13 +19,15 @@ const saveTimeoutMs = 90_000;
  * Waits for Add, which the page header renders once the page is up.
  */
 export async function openQuotasPage(page: Page, dataset: string, kind: QuotaKind): Promise<void> {
-  await goToDatasets(page);
+  await selectDataset(page, dataset);
+  await openQuotasFromCard(page, dataset, kind);
+}
 
-  const node = page.locator(datasetLocators.treeNode(dataset));
-  await expect(node).toBeVisible();
-  await node.click();
-  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(dataset);
-
+/**
+ * Opens the quotas page from the Space Management card of `dataset`, which the tree already has
+ * selected. For a test that reads the card first; {@link openQuotasPage} does both.
+ */
+export async function openQuotasFromCard(page: Page, dataset: string, kind: QuotaKind): Promise<void> {
   await page.locator(quotaLocators.manage(dataset, kind)).click();
   await expect(page.locator(quotaLocators.list.add)).toBeVisible();
 }
