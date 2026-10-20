@@ -260,6 +260,7 @@ test.describe('preferred trains', () => {
   });
 
   test('an Enterprise-entitled appliance refuses a list without enterprise', async ({ page, api }) => {
+    // `catalog.update` refuses only where CATALOG_ENTERPRISE_TRAIN is granted, so elsewhere there is nothing to see.
     test.skip(!enterpriseTrainRequired, 'Only an appliance entitled to the Enterprise train must keep it.');
     expect(startingTrains, 'An entitled appliance already prefers the enterprise train.').toContain(enterpriseTrain);
 
