@@ -75,13 +75,19 @@ export async function createIscsiShareWithWizard(page: Page, share: IscsiWizardS
 }
 
 /**
- * Deletes a target from its row menu on the dashboard card, ticking "Delete
- * associated extents", and waits for its row to go.
+ * Deletes a target that has extents from its row menu on the dashboard card, and
+ * waits for its row to go. "Delete associated extents" is ticked only when asked;
+ * Force is left off.
  *
  * The tick box appears only once the dialog has found the target's extents, so
- * waiting for it is also waiting for that load. Force is left off.
+ * waiting for it is also waiting for that load. Both boxes must open unticked: a
+ * dialog that ticked one for the user would delete more than they chose.
  */
-export async function deleteIscsiTargetWithExtents(page: Page, name: string): Promise<void> {
+export async function deleteIscsiTarget(
+  page: Page,
+  name: string,
+  { deleteExtents }: { deleteExtents: boolean },
+): Promise<void> {
   const { card, deleteDialog } = iscsiLocators;
   await goToShares(page);
 
@@ -90,8 +96,13 @@ export async function deleteIscsiTargetWithExtents(page: Page, name: string): Pr
   await trigger.click();
   await page.locator(card.rowMenuDelete(name)).click();
 
-  await expect(page.locator(deleteDialog.deleteExtents)).toBeVisible({ timeout: formSettleTimeoutMs });
-  await page.locator(deleteDialog.deleteExtents).click();
+  const deleteExtentsBox = page.locator(deleteDialog.deleteExtents);
+  await expect(deleteExtentsBox).toBeVisible({ timeout: formSettleTimeoutMs });
+  await expect(deleteExtentsBox).not.toBeChecked();
+  await expect(page.locator(deleteDialog.force)).not.toBeChecked();
+  if (deleteExtents) {
+    await deleteExtentsBox.click();
+  }
   await page.locator(deleteDialog.delete).click();
 
   await expect(page.locator(card.row(name))).toBeHidden({ timeout: saveTimeoutMs });
@@ -186,6 +197,48 @@ export async function addIscsiTarget(page: Page, target: IscsiTargetEntry): Prom
   await expect(page.locator(targets.detailsFor)).toHaveText(`Details for ${target.name}`, {
     timeout: formSettleTimeoutMs,
   });
+}
+
+/**
+ * Opens the target form for a target from Edit in the Targets tab's detail
+ * header, and waits for it to load the target.
+ */
+export async function openIscsiTargetForEdit(page: Page, name: string): Promise<void> {
+  const { targets, targetForm } = iscsiLocators;
+  await goToIscsiTargets(page);
+  await selectIscsiTarget(page, name);
+
+  await page.locator(targets.edit).click();
+  // The form patches the target in once it has opened; typing before that is overwritten.
+  await expect(page.locator(targetForm.name)).toHaveValue(name, { timeout: formSettleTimeoutMs });
+}
+
+/** What an edit to a target with one authorized network and one group changes. */
+export interface IscsiTargetEdit {
+  name: string;
+  alias: string;
+  /** The network's new address. Its prefix length is left as it is. */
+  networkAddress: string;
+  /** The tag the group's CHAP authentication uses. */
+  chapAuthTag: number;
+}
+
+/**
+ * Edits a target from the Targets tab: a new alias, a new address on its one
+ * authorized network, and CHAP on its one group. Waits for the panel to close.
+ */
+export async function editIscsiTarget(page: Page, edit: IscsiTargetEdit): Promise<void> {
+  const { targetForm } = iscsiLocators;
+  await openIscsiTargetForEdit(page, edit.name);
+
+  await page.locator(targetForm.alias).fill(edit.alias);
+  await page.locator(targetForm.networkAddress(0)).fill(edit.networkAddress);
+  await selectOption(page, targetForm.authmethod, targetForm.authmethodChapOption);
+  await selectOption(page, targetForm.auth, targetForm.authOption(edit.chapAuthTag));
+
+  await expect(page.locator(targetForm.save)).toBeEnabled({ timeout: formSettleTimeoutMs });
+  await page.locator(targetForm.save).click();
+  await expect(page.locator(targetForm.save)).toBeHidden({ timeout: panelSaveTimeoutMs });
 }
 
 /**

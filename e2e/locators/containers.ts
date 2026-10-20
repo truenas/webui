@@ -1,6 +1,6 @@
 /**
- * The Containers page: its header, the Global Configuration form its
- * Configuration menu opens, the Create New Container form and its image
+ * The Containers page: its header, the Global Configuration form and the Map
+ * User/Group IDs dialog its Configuration menu opens, the Create New Container form and its image
  * browser, the list, the Stop Options dialog, the details panel and the delete
  * dialog.
  *
@@ -21,12 +21,17 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
  */
 const rowTag = (name: string): string => legacyKebabTestSegment(`container-${name}`);
 
+/** A row of the Map User/Group IDs dialog: `mapping-<name>`, through lodash as {@link rowTag} is. */
+const idMappingRowTag = (name: string): string => legacyKebabTestSegment(`mapping-${name}`);
+
 export const containersLocators = {
   header: {
     /** "Configuration", a `tn-button` that opens a menu rather than a page. */
     configurationMenu: '[data-test="button-configuration-menu"]',
     /** "Settings" in that menu. A `tn-menu-item`, so its id is `button-<testId>`. */
     settings: '[data-test="button-global-configuration"]',
+    /** "Map User/Group IDs" in that menu, `testId="map-user-group-ids"`. Opens the dialog below. */
+    mapUserGroupIds: '[data-test="button-map-user-group-ids"]',
     /** "Create New Container". Rendered once the page has read `lxc.config`. */
     createContainer: '[data-test="button-create-new-container"]',
   },
@@ -54,6 +59,55 @@ export const containersLocators = {
 
     /** "IPv6 Network", the same control with `[testId]="'v6-network'"`. */
     v6Address: '[data-test="input-v6-network"]',
+  },
+
+  /**
+   * The Map User/Group IDs dialog, `map-user-group-ids-dialog.component.html`, and
+   * its Add New Mapping form, `new-mapping-form.component.html`.
+   *
+   * `<tn-dialog-shell testId="dialog">`, so its title and ✕ carry the shell's
+   * generic ids. The table and the form below it are rendered only once the
+   * mappings have loaded, and both are rendered again on every reload: switching
+   * Users/Groups, a Set, a Clear.
+   */
+  idMapping: {
+    title: '[data-test="dialog-title-dialog"]',
+    close: '[data-test="button-close-dialog"]',
+    /** The Users / Groups switch, `<tn-button-toggle [testId]="option.value">`. */
+    users: '[data-test="button-toggle-users"]',
+    groups: '[data-test="button-toggle-groups"]',
+
+    /**
+     * A mapping's row and cells. The tag is `toUniqueRowTag('mapping-' + name)`, so
+     * the whole of it goes through lodash and `e2e_idmap_user` is `e-2-e-idmap-user`.
+     * The Host column is titled Host UID in the Users view and Host GID in the
+     * Groups view, and its id follows the title.
+     */
+    row: (name: string): string => `[data-test="row-${idMappingRowTag(name)}"]`,
+    hostUid: (name: string): string => `[data-test="text-host-uid-${idMappingRowTag(name)}-row-text"]`,
+    hostGid: (name: string): string => `[data-test="text-host-gid-${idMappingRowTag(name)}-row-text"]`,
+    /** The container's UID or GID: `Same` for a `DIRECT` mapping, the number otherwise. */
+    containerId: (name: string): string => (
+      `[data-test="text-instance-uid-or-gid-${idMappingRowTag(name)}-row-text"]`
+    ),
+    /**
+     * "Clear mapping", `['clear-mapping', name]`. Unlike the row tag this goes
+     * through the library's normalizer alone, so `e2e_idmap_user` is `e2e-idmap-user`.
+     */
+    clear: (name: string): string => `[data-test="button-clear-mapping-${kebabTestSegment(name)}"]`,
+
+    /**
+     * The User or Group picker, an `ix-user-combobox` / `ix-group-combobox` bound to
+     * `hostUidOrGid` with no `testId`, so both fall back to the control name. Its
+     * rows are keyed by the name they show.
+     */
+    account: '[data-test="autocomplete-host-uid-or-gid"]',
+    accountOption: (name: string): string => `[data-test="option-host-uid-or-gid-${kebabTestSegment(name)}"]`,
+    /** "Map to the same UID (or GID) in the container", ticked whenever the form resets. */
+    mapDirectly: '[data-test="checkbox-map-directly"]',
+    /** "Container UID" or "Container GID", rendered only while Map Directly is unticked. */
+    containerIdInput: '[data-test="input-instance-uid-or-gid"]',
+    set: '[data-test="button-set-mapping"]',
   },
 
   /**
@@ -205,6 +259,56 @@ export const containersLocators = {
     sourceErrors: '[data-test="text-source-errors"]',
     /** "Container Mount Path". */
     target: '[data-test="input-target"]',
+  },
+
+  /**
+   * The details panel's NIC Devices card, `container-nic-devices.component.html`.
+   * A device's menu ids are keyed by its description, `<nic_attach> (<mac>)` as
+   * `getDeviceDescription` words it, or `<nic_attach> (Default Mac Address)` with
+   * no MAC, so they change when an edit changes the MAC. Its Edit opens the NIC
+   * dialog below; its Delete raises webui's shared confirm (see `locators/dialogs.ts`).
+   */
+  nicDevices: {
+    /** `<default_network> (Default)`, hidden once any NIC device is attached, since `default_network` is then null. */
+    defaultDevice: '[data-test="text-default-nic-device"]',
+    /** A device's description line, `['nic-device', id]`. */
+    device: (id: number): string => `[data-test="text-nic-device-${id}"]`,
+    /**
+     * "Add" in the card footer, `add-nic-menu.component.html`. Opens a menu of the
+     * interfaces left to attach; replaced by plain text when none are.
+     */
+    add: '[data-test="button-add-nic"]',
+    /** An interface in that menu, a `tn-menu-item` with `testId: ['add-nic', nic]`. */
+    addNic: (nic: string): string => `[data-test="button-add-nic-${kebabTestSegment(nic)}"]`,
+    /** The `ix-device-actions-menu` trigger, `['actions-for', description]`. */
+    actionsFor: (description: string): string => (
+      `[data-test="button-actions-for-${kebabTestSegment(description)}"]`
+    ),
+    edit: (description: string): string => `[data-test="button-edit-${kebabTestSegment(description)}"]`,
+    delete: (description: string): string => `[data-test="button-delete-${kebabTestSegment(description)}"]`,
+  },
+
+  /**
+   * The NIC dialog, `container-nic-form-dialog.component.html`,
+   * `<tn-dialog-shell testId="container-nic-form">`. Add and Edit open the same
+   * dialog, titled "Add NIC Device: <nic>" or "Edit NIC Device: <nic>".
+   */
+  nicForm: {
+    title: '[data-test="dialog-title-container-nic-form"]',
+    /** "NIC Type", `testId="type"`. Options are labelled `VirtIO` and `Intel e82585 (e1000)`. */
+    type: '[data-test="select-type"]',
+    typeOption: (label: string): string => `[data-test="option-type-${kebabTestSegment(label)}"]`,
+    /** "Use Default Mac Address", ticked as Add opens and absent in Edit. */
+    useDefault: '[data-test="checkbox-use-default"]',
+    /** "Mac Address", shown once Use Default is unticked and always in Edit. */
+    mac: '[data-test="input-mac"]',
+    /** The field around {@link mac}, `testId="mac"`, which holds its error text. */
+    macField: '[data-test="form-field-mac"]',
+    /** "Trust Guest RX Filters", shown for VirtIO only. */
+    trustGuestRxFilters: '[data-test="checkbox-trust-guest-rx-filters"]',
+    cancel: '[data-test="button-cancel"]',
+    /** The primary button, labelled Add or Update. `testId="close"`, not `save`. */
+    submit: '[data-test="button-close"]',
   },
 
   /** `<tn-dialog-shell testId="delete-container">`. Delete enables once the confirmation is ticked. */

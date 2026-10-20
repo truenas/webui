@@ -5,9 +5,10 @@ import { expect, type Download, type Page } from '@playwright/test';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  datasetDetailsLocators, datasetLocators, deleteDatasetDialogLocators, downloadKeyDialogLocators,
-  manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators, poolScrubLocators, poolWizardLocators,
-  pruneDedupLocators, scheduledScrubLocators, type VdevCategory, zvolLocators,
+  autotrimLocators, datasetDetailsLocators, datasetLocators, dedupQuotaLocators, deleteDatasetDialogLocators,
+  downloadKeyDialogLocators, manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators,
+  poolScrubLocators, poolWizardLocators, pruneDedupLocators, scheduledScrubLocators, type VdevCategory,
+  zvolLocators,
 } from '../locators/storage';
 import { slowCallTimeoutMs } from '../support/timeouts';
 
@@ -21,7 +22,7 @@ const poolCreateTimeoutMs = 5 * 60_000;
 const saveTimeoutMs = 90_000;
 
 /** A `core.download` job, then the fetch of the file it wrote. */
-const keyDownloadTimeoutMs = 60_000;
+export const keyDownloadTimeoutMs = 60_000;
 
 /**
  * `pool.import_find` scans every disk before the Import Pool form renders, and
@@ -40,6 +41,9 @@ const poolExportTimeoutMs = 3 * 60_000;
 
 /** `pool.ddt_prune` is a job behind a progress dialog, and the Prune dialog closes after it. */
 const dedupPruneTimeoutMs = 2 * 60_000;
+
+/** Auto TRIM and the dedup quota save through a `pool.update` job, and their dialogs close after it. */
+const poolUpdateTimeoutMs = 60_000;
 
 /** Picks an option from a `tn-select` by opening it and clicking the option. */
 export async function selectOption(page: Page, select: string, option: string): Promise<void> {
@@ -630,6 +634,54 @@ export async function pruneDedupTable(
 
   // The dialog stays open on a failure, behind the error the job raised.
   await expect(page.locator(pruneDedupLocators.title)).toBeHidden({ timeout: dedupPruneTimeoutMs });
+}
+
+/**
+ * Opens the Auto TRIM dialog from the Advanced Actions menu in `pool`'s header
+ * on the Storage dashboard. Returns once the dialog has rendered.
+ */
+export async function openAutotrimDialog(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const menu = page.locator(autotrimLocators.menu(pool));
+  await expect(menu).toBeVisible({ timeout: saveTimeoutMs });
+  await menu.click();
+  await page.locator(autotrimLocators.open(pool)).click();
+  await expect(page.locator(autotrimLocators.title)).toBeVisible();
+}
+
+/** Saves the Auto TRIM dialog and waits for it to close, which it does once `pool.update` has finished. */
+export async function saveAutotrimDialog(page: Page): Promise<void> {
+  await page.locator(autotrimLocators.save).click();
+  await expect(page.locator(autotrimLocators.title)).toBeHidden({ timeout: poolUpdateTimeoutMs });
+}
+
+/**
+ * Opens the Set Quota dialog from the Deduplication Table line on `pool`'s
+ * Storage Health card. Returns once the dialog has rendered.
+ */
+export async function openSetDedupQuota(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const open = page.locator(dedupQuotaLocators.open(pool));
+  await expect(open).toBeVisible({ timeout: saveTimeoutMs });
+  await open.click();
+  await expect(page.locator(dedupQuotaLocators.title)).toBeVisible();
+}
+
+/** Picks Auto, Custom or None in the Set Quota dialog's Quota. */
+export async function chooseDedupQuotaType(page: Page, label: 'Auto' | 'Custom' | 'None'): Promise<void> {
+  await selectOption(page, dedupQuotaLocators.quotaType, dedupQuotaLocators.quotaTypeOption(label));
+}
+
+/**
+ * Saves the Set Quota dialog and waits for it to close. It closes only once the
+ * `pool.update` job behind its progress dialog has succeeded, and stays open on
+ * a failure, behind the error the job raised.
+ */
+export async function saveDedupQuota(page: Page): Promise<void> {
+  await page.locator(dedupQuotaLocators.save).click();
+  await expect(page.locator(dedupQuotaLocators.title)).toBeHidden({ timeout: poolUpdateTimeoutMs });
 }
 
 /**

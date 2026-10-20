@@ -107,6 +107,37 @@ export async function openUserDetails(page: Page, username: string): Promise<voi
 }
 
 /**
+ * Opens the edit form for a user, from the Users list as a user would.
+ *
+ * Edit is keyed on the *full name* (see `usersLocators.editUser`), so the caller
+ * passes the one the account has now. Waits on the username field, which the
+ * form fills from the record it was opened with.
+ */
+export async function openEditUserForm(
+  page: Page,
+  { username, fullName }: { username: string; fullName: string },
+): Promise<void> {
+  await openUserDetails(page, username);
+
+  await page.locator(usersLocators.editUser(fullName)).click();
+  await expect(page.locator(usersLocators.form.username)).toHaveValue(username);
+}
+
+/**
+ * Types a path into the user form's Home Directory field and leaves the field.
+ *
+ * Leaving it is part of the entry: the picker hands its value to the form when
+ * the input loses focus, so until then the path is on screen but the form still
+ * holds the old one. The Home Directory editable must already be open.
+ */
+export async function fillUserHome(page: Page, path: string): Promise<void> {
+  const field = page.locator(usersLocators.form.home);
+
+  await field.fill(path);
+  await field.blur();
+}
+
+/**
  * Locks or unlocks the user whose details are open, through the Access card.
  *
  * Both raise the shared confirmation without its tick box. The card swaps the

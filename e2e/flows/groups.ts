@@ -23,6 +23,21 @@ export async function openAddGroupForm(page: Page): Promise<void> {
 }
 
 /**
+ * Opens the edit side panel for a group, from the sidebar as a user would.
+ *
+ * Waits for Name to hold the group's own name: the form is drawn from the row
+ * it was opened from, so that is the sign it is this group's form and not a
+ * stale one — and typing before then would type into a field still filling.
+ */
+export async function openEditGroupForm(page: Page, group: string): Promise<void> {
+  await goToGroups(page);
+  await expandGroupRow(page, group);
+
+  await page.locator(groupsLocators.rowAction.edit(group)).click();
+  await expect(page.locator(groupsLocators.form.name)).toHaveValue(group);
+}
+
+/**
  * Saves the form and waits for the panel to close.
  *
  * The panel closing is the app's own signal that the save succeeded — a

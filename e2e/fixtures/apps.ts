@@ -7,9 +7,9 @@
  * before its pool goes.
  */
 import { expect } from '@playwright/test';
-import { JobState, isJobFinished } from '@truenas/api-client';
+import { JobState, isJobFinished, type QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, of, timeout } from 'rxjs';
-import type { E2eApiClient } from '../support/api/client';
+import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -180,6 +180,28 @@ export async function setPreferredTrains(client: E2eApiClient, trains: string[])
 }
 
 /**
+ * The trains the Preferred Trains field offers. Middleware answers from the cache a catalog sync
+ * fills and never reads the catalog itself, so this is empty until a sync has filled it.
+ */
+export async function readCatalogTrains(client: E2eApiClient): Promise<string[]> {
+  return firstValueFrom(client.api.call('catalog.trains').pipe(timeout(readTimeoutMs)));
+}
+
+/** The train an Enterprise-entitled appliance must keep preferred. */
+export const enterpriseTrain = 'enterprise';
+
+/**
+ * Whether `catalog.update` refuses a list without `enterprise`. Middleware decides that from this
+ * one entitlement, not from the license type, so it is read the same way.
+ */
+export async function readEnterpriseTrainRequired(client: E2eApiClient): Promise<boolean> {
+  const entry = await firstValueFrom(
+    client.api.call('truenas.entitlements.check', ['CATALOG_ENTERPRISE_TRAIN']).pipe(timeout(readTimeoutMs)),
+  );
+  return entry.entitled;
+}
+
+/**
  * Pulls the catalog from github.com/truenas/apps. A ceiling, not a wait: the CI appliance has
  * outbound access and a sync with nothing new is done in seconds.
  */
@@ -264,12 +286,25 @@ export async function readAppState(client: E2eApiClient, name: string): Promise<
 }
 
 /**
- * Installs `catalogApp` from `train` as `name` with the catalog's defaults, for a test that is not
- * about installing one. The job finishes once the app is deployed.
+ * Installs `catalogApp` from `train` as `name`, for a test that is not about installing one. Without
+ * `version` it installs the catalog's latest revision, and without `values` the catalog's defaults.
+ * The job finishes once the app is deployed.
  */
 export async function seedCatalogApp(
   client: E2eApiClient,
-  { name, catalogApp, train }: { name: string; catalogApp: string; train: string },
+  {
+    name,
+    catalogApp,
+    train,
+    version,
+    values = {},
+  }: {
+    name: string;
+    catalogApp: string;
+    train: string;
+    version?: string;
+    values?: Record<string, unknown>;
+  },
 ): Promise<void> {
   await runJob(
     client,
@@ -277,29 +312,88 @@ export async function seedCatalogApp(
       app_name: name,
       catalog_app: catalogApp,
       train,
-      values: {},
+      values,
+      ...(version === undefined ? {} : { version }),
     }]),
     {
       timeoutMs: appInstallTimeoutMs,
-      whatItCosts: `app ${name} was not installed, so there is nothing to stop, start or delete`,
+      whatItCosts: `app ${name} was not installed, so the test has no installed app to act on`,
       confirm: async () => (await findApp(client, name)) !== undefined,
     },
   );
 }
 
+/** One row of `app.query`, typed from the client's own directory. */
+type AppEntry = QueryEntity<E2eApiDirectory['call'], 'app.query'>;
+
+/** Which catalog revision an app runs, and what the catalog offers it. */
+export interface AppVersions {
+  /** The installed catalog revision, e.g. `1.0.5`. The Application Info card shows it as Revision. */
+  version: AppEntry['version'];
+  /** The catalog's newest revision of the app. */
+  latestVersion: AppEntry['latest_version'];
+  /** What enables Update on the card and fills the Updates column. */
+  upgradeAvailable: AppEntry['upgrade_available'];
+}
+
+/** The app's revisions as middleware reports them, or undefined when there is no such app. */
+export async function readAppVersions(client: E2eApiClient, name: string): Promise<AppVersions | undefined> {
+  const [app] = await firstValueFrom(
+    client.api.query('app.query', [['name', '=', name]]).pipe(timeout(readTimeoutMs)),
+  );
+  if (!app) {
+    return undefined;
+  }
+
+  return {
+    version: app.version,
+    latestVersion: app.latest_version,
+    upgradeAvailable: app.upgrade_available,
+  };
+}
+
+/** The revisions `app.rollback` can take the app back to, newest first. Empty when there are none. */
+export async function readRollbackVersions(client: E2eApiClient, name: string): Promise<string[]> {
+  return firstValueFrom(
+    client.api.call('app.rollback_versions', [name]).pipe(timeout(readTimeoutMs)),
+  );
+}
+
 /**
- * Deletes an app by name if present, with its images and ix-volumes.
+ * Upgrades an installed app to the catalog's latest revision, for a test that is not about
+ * upgrading. Middleware pulls the new images first, so this shares the install's ceiling.
+ */
+export async function seedAppUpgrade(client: E2eApiClient, name: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('app.upgrade', [name, { app_version: 'latest' }]),
+    {
+      timeoutMs: appInstallTimeoutMs,
+      whatItCosts: `app ${name} was not upgraded, so there is no earlier revision to roll back to`,
+      confirm: async () => (await readAppVersions(client, name))?.upgradeAvailable === false,
+    },
+  );
+}
+
+/**
+ * Deletes an app by name if present, with its ix-volumes, and with its images unless `keepImages`.
+ * Keeping them spares the next install a pull, for a spec that installs the same app again and
+ * deletes the images itself at the end.
  *
  * Has to run before the Apps pool is unset: the app's datasets are under `<pool>/ix-apps`.
  */
-export async function ensureAppAbsent(client: E2eApiClient, name: string): Promise<void> {
+export async function ensureAppAbsent(
+  client: E2eApiClient,
+  name: string,
+  { keepImages = false }: { keepImages?: boolean } = {},
+): Promise<void> {
   if (!(await findApp(client, name))) {
     return;
   }
 
   await runJob(
     client,
-    () => client.api.callAndGetJobId('app.delete', [name, { remove_images: true, remove_ix_volumes: true }]),
+    () => client.api.callAndGetJobId('app.delete', [name, { remove_images: !keepImages, remove_ix_volumes: true }]),
     {
       timeoutMs: appInstallTimeoutMs,
       whatItCosts: `app ${name} is still installed, so the next run's install is refused`,
@@ -336,14 +430,70 @@ export async function readIsCustomApp(client: E2eApiClient, name: string): Promi
   return app?.custom_app;
 }
 
+/**
+ * The part of a catalog app's saved values the readers below read. The app's own section, which
+ * holds `additional_envs`, is named after the app (`it_tools`), so it is looked up by name.
+ */
+interface AppValues {
+  TZ?: string;
+  network?: { web_port?: { port_number?: number } };
+  [section: string]: unknown;
+}
+
+/**
+ * A catalog app's saved values: what its install form holds, not the compose file rendered from
+ * them. Undefined when there is no such app. `app.query` returns the values only when asked for them.
+ */
+async function readAppValues(client: E2eApiClient, name: string): Promise<AppValues | undefined> {
+  const apps = await firstValueFrom(
+    client.api.query(
+      'app.query',
+      [['name', '=', name]],
+      { extra: { retrieve_config: true } },
+    ).pipe(timeout(readTimeoutMs)),
+  ) as unknown as { config?: AppValues }[];
+
+  return apps[0]?.config;
+}
+
+/**
+ * The WebUI port a catalog app's values hold, `network.web_port.port_number`, or undefined when the
+ * app or the value is absent.
+ */
+export async function readAppPortNumber(client: E2eApiClient, name: string): Promise<number | undefined> {
+  return (await readAppValues(client, name))?.network?.web_port?.port_number;
+}
+
+/** The timezone a catalog app's values hold, `TZ`, or undefined when the app or the value is absent. */
+export async function readAppTimezone(client: E2eApiClient, name: string): Promise<string | undefined> {
+  return (await readAppValues(client, name))?.TZ;
+}
+
+/**
+ * A catalog app's Additional Environment Variables, `<section>.additional_envs` in its values, as a
+ * map. Empty when the app or the list is absent. For a custom app, read its compose file with
+ * `readServiceEnvironment` instead.
+ */
+export async function readAppAdditionalEnvs(
+  client: E2eApiClient,
+  name: string,
+  section: string,
+): Promise<Record<string, string>> {
+  const values = await readAppValues(client, name);
+  const appSection = values?.[section] as { additional_envs?: { name: string; value: string }[] } | undefined;
+
+  return Object.fromEntries((appSection?.additional_envs ?? []).map((env) => [env.name, env.value]));
+}
+
 /** The part of a compose file `readServiceEnvironment` reads. */
 interface ComposeConfig {
   services?: Record<string, { environment?: string[] | Record<string, unknown> }>;
 }
 
 /**
- * One service's environment in the app's compose config, as `app.config` returns it. Compose takes
- * either a map or a list of `KEY=value`, so both are read into a map.
+ * One service's environment in a custom app's compose config, as `app.config` returns it. Compose
+ * takes either a map or a list of `KEY=value`, so both are read into a map. For a catalog app,
+ * `app.config` returns the saved values instead, which have no `services`: use `readAppAdditionalEnvs`.
  */
 export async function readServiceEnvironment(
   client: E2eApiClient,

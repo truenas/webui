@@ -20,12 +20,17 @@ export async function findImageId(client: E2eApiClient, repoTag: string): Promis
 
 /**
  * Pulls the image tagged `repoTag` unless it is already there, for a test that installs an app and
- * is not about pulling. Compose's `up` leaves a local image alone, so the install then never reaches
- * the registry.
+ * is not about pulling.
  *
  * A registry's anonymous rate limit answers a pull with `toomanyrequests` within seconds, and on CI
  * it failed an install on both attempts while a pull minutes later went through. So a failed pull
  * is tried again, whole, until the ceiling.
+ *
+ * The image is read back after the job, because a job that ended `SUCCESS` does not mean it
+ * arrived. Middleware fails `app.image.pull` only when Docker refuses the request outright; a
+ * `toomanyrequests` that arrives inside the pull's stream ends the job `SUCCESS` with no image. That
+ * returned here as a pulled image, and the install's own `up` then went to the registry and was
+ * throttled.
  */
 export async function ensureImagePresent(client: E2eApiClient, repoTag: string): Promise<void> {
   await expect(async () => {
@@ -42,6 +47,10 @@ export async function ensureImagePresent(client: E2eApiClient, repoTag: string):
         confirm: async () => (await findImageId(client, repoTag)) !== undefined,
       },
     );
+
+    if ((await findImageId(client, repoTag)) === undefined) {
+      throw new Error(`the pull of image ${repoTag} succeeded and left no image, as a throttled pull does`);
+    }
   }).toPass({ intervals: [10_000, 30_000], timeout: imagePullTimeoutMs });
 }
 

@@ -26,7 +26,8 @@
  * so the install test meets the warning every time, as a first install does. Both settings are
  * written back to what the appliance held.
  *
- * Not covered: editing an installed app, upgrades and rollback, and the Workloads card.
+ * Not covered: editing an installed app (`apps-edit.e2e.ts`), upgrades and rollback
+ * (`apps-upgrade.e2e.ts`), and the Workloads card.
  */
 import {
   appInstallTimeoutMs,

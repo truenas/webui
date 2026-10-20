@@ -42,11 +42,21 @@ interface RunJobOptions {
    * `destroy: true` wipe is still running.
    */
   confirm?: () => Promise<boolean>;
+  /**
+   * Ask `core.get_jobs` for the result unredacted. Middleware masks every
+   * `Secret` in a job's result for an external caller unless it asks, and
+   * refuses the asking without full administrative privileges. Only a caller
+   * that needs a secret out of the result sets this.
+   */
+  rawResult?: boolean;
 }
 
 /**
- * Starts a middleware job and returns when it has finished, or throws saying
- * what that cost.
+ * Starts a middleware job and returns its result when it has finished, or
+ * throws saying what that cost.
+ *
+ * The result is `undefined` when `confirm` settled the outcome instead, since
+ * no finished job was read.
  *
  * Polls `core.get_jobs` rather than following job events. `api.job()` waits for
  * `collection_update` frames, and the jobs this suite runs restart services
@@ -67,8 +77,10 @@ interface RunJobOptions {
 export async function runJob(
   client: E2eApiClient,
   startJob: () => Observable<number>,
-  { timeoutMs, whatItCosts, confirm }: RunJobOptions,
-): Promise<void> {
+  {
+    timeoutMs, whatItCosts, confirm, rawResult = false,
+  }: RunJobOptions,
+): Promise<unknown> {
   // Started before the deadline so the whole call, not just the polling, is
   // covered by `timeoutMs`.
   const deadline = Date.now() + timeoutMs;
@@ -87,7 +99,7 @@ export async function runJob(
     // `confirm` before reporting an unknown outcome — this is the one path
     // where it can be decisive rather than a tie-break.
     if (confirm && await confirmedQuietly(confirm)) {
-      return;
+      return undefined;
     }
 
     throw new Error(
@@ -105,17 +117,19 @@ export async function runJob(
     // try would land in this function's own catch, which exists to absorb
     // transport failures, and telling the two apart afterwards means matching on
     // message text.
-    let finished: { state: string; error: string | null } | undefined;
+    let finished: { state: string; error: string | null; result: unknown } | undefined;
 
     try {
       const [job] = await firstValueFrom(
-        client.api.query('core.get_jobs', [['id', '=', jobId]]).pipe(timeout(attemptTimeout())),
+        client.api
+          .query('core.get_jobs', [['id', '=', jobId]], rawResult ? { extra: { raw_result: true } } : {})
+          .pipe(timeout(attemptTimeout())),
       );
 
       middlewareHasNoRecord = job === undefined;
 
       if (job && isJobFinished({ state: job.state as JobState })) {
-        finished = { state: job.state, error: job.error };
+        finished = { state: job.state, error: job.error, result: job.result };
       }
 
       lastError = undefined;
@@ -132,11 +146,11 @@ export async function runJob(
         const reason = finished.error ? `: ${finished.error}` : '';
         throw new Error(`${whatItCosts} (job ${jobId} ended ${finished.state}${reason})`);
       }
-      return;
+      return finished.result;
     }
 
     if (middlewareHasNoRecord && confirm && await confirmedQuietly(confirm)) {
-      return;
+      return undefined;
     }
 
     if (Date.now() > deadline) {

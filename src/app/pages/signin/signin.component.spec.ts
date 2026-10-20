@@ -142,6 +142,18 @@ describe('SigninComponent', () => {
       expect(loggingInMessage).toHaveText('Logging in...');
     });
 
+    it('keeps the sign-in form once the stored token has been cleared, whatever the token timeline says', () => {
+      // A refused token login clears the token while this page is up; the page must not go on
+      // reading it as a session being restored and swap the form out from under the user.
+      Object.defineProperty(spectator.inject(AuthService), 'hasAuthToken', { get: () => false });
+      isTokenWithinTimeline$.next(true);
+
+      spectator.detectChanges();
+
+      expect(spectator.query('.logging-in')).not.toExist();
+      expect(spectator.query(SigninFormComponent)).toExist();
+    });
+
     it('shows "Logging in..." message while a submitted login is still completing', () => {
       // A first login has no auth token yet, so this state is the only thing covering the
       // post-login sequence - otherwise the sign-in form sits there looking idle.

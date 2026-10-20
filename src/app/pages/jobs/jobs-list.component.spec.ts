@@ -1,7 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { Router, ActivatedRoute } from '@angular/router';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { Router, ActivatedRoute, Params } from '@angular/router';
+import {
+  createComponentFactory, mockProvider, Spectator, SpectatorFactory,
+} from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonToggleHarness, TnEmptyHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
@@ -46,12 +48,8 @@ const fakeJobDataSource: Job[] = [{
   time_started: { $date: 1653721201440 },
 }] as Job[];
 
-describe('JobsListComponent', () => {
-  let spectator: Spectator<JobsListComponent>;
-  let loader: HarnessLoader;
-  let store$: MockStore<JobsState>;
-
-  const createComponent = createComponentFactory({
+function createJobsListFactory(queryParams: Params): SpectatorFactory<JobsListComponent> {
+  return createComponentFactory({
     component: JobsListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
@@ -62,7 +60,7 @@ describe('JobsListComponent', () => {
       }),
       mockProvider(DialogService),
       mockProvider(ActivatedRoute, {
-        queryParams: of({}),
+        queryParams: of(queryParams),
       }),
       mockTypedApi([
         mockTypedCall('core.job_download_logs', 'http://localhost/download/log'),
@@ -84,6 +82,14 @@ describe('JobsListComponent', () => {
       }),
     ],
   });
+}
+
+describe('JobsListComponent', () => {
+  let spectator: Spectator<JobsListComponent>;
+  let loader: HarnessLoader;
+  let store$: MockStore<JobsState>;
+
+  const createComponent = createJobsListFactory({});
 
   beforeEach(() => {
     spectator = createComponent();
@@ -294,5 +300,31 @@ describe('JobsListComponent', () => {
       queryParams: { jobId: null },
       queryParamsHandling: 'merge',
     });
+  });
+});
+
+// A real arrival at `/jobs?jobId=`: the parameter is on the route and the job is in the store before
+// the page first renders, and `ngOnInit` runs once. The page's effect then sees the table before the
+// table has bound its inputs, which the tests above never do because they call `ngOnInit()` again
+// on a page that has already rendered.
+describe('JobsListComponent arriving at ?jobId=', () => {
+  const createComponent = createJobsListFactory({ jobId: '446' });
+
+  it('opens that job\'s detail row and leaves the parameter in the URL', async () => {
+    const spectator = createComponent({ detectChanges: false });
+    const store$ = spectator.inject(MockStore);
+    store$.overrideSelector(selectJobs, fakeJobDataSource);
+    store$.refreshState();
+    const navigateSpy = jest.spyOn(spectator.inject(Router), 'navigate');
+
+    spectator.detectChanges();
+    // The open is reconciled from an effect, so let any follow-up pass land before reading the table.
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    const table = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(TnTableHarness);
+    expect(await table.getExpandedRowCount()).toBe(1);
+    expect(await table.isRowExpanded(0)).toBe(true);
+    expect(navigateSpy).not.toHaveBeenCalled();
   });
 });

@@ -132,6 +132,13 @@ export class JobsListComponent implements OnInit {
         return;
       }
       const tableId = [...table.expandedRows()].map((row) => (row as Job).id).at(0) ?? null;
+      const wantedRow = rows.find((job) => job.id === wantedId);
+      // Read for its dependency on the table's own inputs. On arrival at `?jobId=` this effect runs
+      // before the table has bound them, while `expandRow` is still a no-op, and it has to run again
+      // once they land.
+      if (wantedRow) {
+        table.canExpandRow(wantedRow);
+      }
 
       untracked(() => {
         if (tableId === wantedId) {
@@ -139,7 +146,7 @@ export class JobsListComponent implements OnInit {
           return;
         }
 
-        if (tableId === null && wantedId !== null && !rows.some((job) => job.id === wantedId)) {
+        if (tableId === null && wantedId !== null && !wantedRow) {
           // The job is not on the current page — another tab, a search. `expandedRows` only ever
           // holds visible rows, so an empty set here is not the user collapsing anything: the
           // table retains the row under `expansionKey` and re-opens it once the job is listed
@@ -164,7 +171,13 @@ export class JobsListComponent implements OnInit {
     });
   }
 
-  /** Opens the row rendering `jobId` through the table's own API, so its retained set stays in step. */
+  /**
+   * Opens the row rendering `jobId` through the table's own API, so its retained set stays in step.
+   *
+   * Only an open the table reports back counts as synced. `expandRow` can return having done nothing,
+   * and marking the row synced anyway would make the effect read the still-closed table as the user
+   * collapsing it, and clear `?jobId=`.
+   */
   private openExpandedRow(table: TnTableComponent<Job>, rows: Job[], jobId: number | null): void {
     if (jobId === null) {
       table.clearExpansion();
@@ -175,8 +188,10 @@ export class JobsListComponent implements OnInit {
     if (!expandedRow) {
       return;
     }
-    this.lastSyncedExpandedId = jobId;
     table.expandRow(expandedRow);
+    if (table.isRowExpanded(expandedRow)) {
+      this.lastSyncedExpandedId = jobId;
+    }
   }
 
   emptyType$: Observable<EmptyType> = combineLatest([

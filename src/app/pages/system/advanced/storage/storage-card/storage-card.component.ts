@@ -4,7 +4,7 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { finalize, forkJoin, map, take } from 'rxjs';
@@ -33,6 +33,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
     UiSearchDirective,
     RequiresRolesDirective,
     TnButtonComponent,
+    TnTestIdDirective,
     TranslateModule,
     NgxSkeletonLoaderModule,
   ],

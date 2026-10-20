@@ -36,7 +36,7 @@
     </tn-form-field>
 
     @if (this.form.value.priorityResilver.enabled) {
-      <tn-form-field [label]="'Days of the Week' | translate" [required]="true">
+      <tn-form-field testId="weekday" [label]="'Days of the Week' | translate" [required]="true">
         <tn-select
           formControlName="weekday"
           [multiple]="true"

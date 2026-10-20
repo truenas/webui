@@ -27,6 +27,9 @@ export const confirmDialogLocators = {
   /** `<tn-dialog-shell testId="confirm">`. What to wait on before acting on it. */
   title: '[data-test="dialog-title-confirm"]',
 
+  /** The caller's message, rendered as HTML, so its text is read without the markup. */
+  message: '[data-test="text-confirm-message"]',
+
   confirm: '[data-test="button-dialog-confirm"]',
   cancel: '[data-test="button-dialog-cancel"]',
 } as const;
@@ -78,6 +81,17 @@ export const errorDialogLocators = {
    */
   showLogsExcerpt: '[data-test="link-show-detail-logs-excerpt"]',
   logsExcerpt: '[data-test="text-error-detail-logs-excerpt"]',
+
+  /** "Download Logs" in the footer. Rendered for a failed job, and only when the job has a log excerpt. */
+  downloadLogs: '[data-test="button-download-logs"]',
+
+  /**
+   * A failed job's "View Details" action in the footer, which opens that job on
+   * the Jobs page. Not {@link viewDetails}, the link that unfolds the details
+   * table. Its id is `'action-'` plus the translated label, so this one holds in
+   * English only.
+   */
+  viewJobDetails: '[data-test="button-action-view-details"]',
 } as const;
 
 /**

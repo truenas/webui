@@ -142,16 +142,28 @@ export async function startCronRun(client: E2eApiClient, cronjobId: number): Pro
  * its own — so `core.get_jobs` is where a run that really happened shows up,
  * and its state says whether the command exited cleanly. Matched on the cron
  * job's id, which is the job's first argument.
+ *
+ * `error` is middleware's reason for a failed run, and `logs` the job log's
+ * excerpt: what the command printed. Both are empty until the run has ended,
+ * and `error` stays empty for a run that succeeded.
  */
 export async function findCronRuns(
   client: E2eApiClient,
   cronjobId: number,
-): Promise<{ id: number; state: string }[]> {
+): Promise<{ id: number; state: string; error: string; logs: string }[]> {
   const jobs = await firstValueFrom(
     client.api.query('core.get_jobs', [['method', '=', 'cronjob.run']]).pipe(timeout(readTimeoutMs)),
   );
 
   return jobs
     .filter((job) => Array.isArray(job.arguments) && job.arguments[0] === cronjobId)
-    .map((job) => ({ id: job.id, state: String(job.state) }));
+    .map((job) => {
+      const { error, logs_excerpt: logs } = job as { error?: unknown; logs_excerpt?: unknown };
+      return {
+        id: job.id,
+        state: String(job.state),
+        error: typeof error === 'string' ? error : '',
+        logs: typeof logs === 'string' ? logs : '',
+      };
+    });
 }

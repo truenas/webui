@@ -17,6 +17,7 @@ import {
 import { BehaviorSubject, map, Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { getDynamicFormSchemaNode } from 'app/helpers/get-dynamic-form-schema-node';
+import { helptextReportingExporters } from 'app/helptext/reporting/reporting-exporters';
 import {
   DynamicFormSchema, DynamicFormSchemaNode,
 } from 'app/interfaces/dynamic-form-schema.interface';
@@ -97,6 +98,7 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
   protected readonly exporterTypeOptions = signal<Option[]>([]);
   protected reportingExporterList: ReportingExporterList[] = [];
   readonly requiredRoles = [Role.ReportingWrite];
+  protected readonly helptext = helptextReportingExporters;
 
   ngOnInit(): void {
     this.editingExporter = this.exporter();
@@ -222,7 +224,11 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
   private parseSchemaForDynamicSchema(schema: ReportingExporterSchema): DynamicFormSchemaNode[] {
     return schema.schema
       .filter((field) => !field.const)
-      .map((field) => getDynamicFormSchemaNode(field));
+      .map((field) => ({
+        ...getDynamicFormSchemaNode(field),
+        // The legacy schema carries no field descriptions, so the help text lives in the UI.
+        tooltip: helptextReportingExporters.attributes[field._name_],
+      }));
   }
 
   private parseSchemaForExporterList(schema: ReportingExporterSchema): ReportingExporterList {

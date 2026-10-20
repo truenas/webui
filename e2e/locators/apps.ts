@@ -26,6 +26,9 @@ export const appsLocators = {
 
   /** `<tn-menu-item testId="update-preferred-trains">`, labelled "Settings". Opens the Apps Settings panel. */
   settings: '[data-test="button-update-preferred-trains"]',
+
+  /** `<tn-menu-item testId="docker-registries">`, "Sign-in to a Docker registry". Disabled until Apps has a pool. */
+  dockerRegistries: '[data-test="button-docker-registries"]',
 } as const;
 
 /**
@@ -36,6 +39,17 @@ export const appsLocators = {
  * `row-environment-variable-<i>` does on the container form.
  */
 export const appsSettingsLocators = {
+  /**
+   * The Preferred Trains field, `<tn-form-field testId="preferred-trains">`. It holds the checkbox
+   * group and the line a refusal of `catalog.update` is pinned to, which renders no id of its own.
+   */
+  preferredTrains: '[data-test="form-field-preferred-trains"]',
+  /**
+   * One train's checkbox. `tn-checkbox-group` scopes each option by its label, which is the train's
+   * name, under the group's id, which falls back to `formControlName="preferred_trains"`.
+   */
+  preferredTrain: (train: string): string => `[data-test="checkbox-preferred-trains-${kebabTestSegment(train)}"]`,
+
   /**
    * One address pool, by its position. The base is an `ix-ip-input-with-netmask` with no `testId`,
    * so its address is `input-base` and its prefix `select-netmasks`. The prefix's options render in
@@ -66,6 +80,7 @@ export const appsSettingsLocators = {
 
   /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
   save: '[data-test="button-save"]',
+  closePanel: '[data-test="button-close-side-panel"]',
 } as const;
 
 /** `SelectPoolDialog`, `<tn-dialog-shell testId="select-pool-dialog">`. */
@@ -89,9 +104,14 @@ export const installedAppLocators = (name: string): {
   row: string;
   name: string;
   state: string;
+  updates: string;
   start: string;
   stop: string;
   delete: string;
+  edit: string;
+  convert: string;
+  catalogName: string;
+  customName: string;
 } => {
   const rowTag = `app-${legacyKebabTestSegment(name)}`;
   const row = `[data-test="row-${rowTag}"]`;
@@ -101,14 +121,98 @@ export const installedAppLocators = (name: string): {
     row,
     name: `[data-test="text-application-${rowTag}-row-text"]`,
     state: `[data-test="text-status-${rowTag}-row-state"]`,
+    /**
+     * The Updates cell, `ix-app-update-cell`: "Up to date", or "Revision available" / "Update
+     * available" while `upgrade_available`, depending on whether the upstream version changes too.
+     */
+    updates: `[data-test="text-updates-${rowTag}-row-text"]`,
     // The info card renders Start and Stop under the same ids for the narrow layout, hidden by CSS
     // on a wide one, so the row's own are scoped to the row.
     start: `${row} [data-test="button-${app}-start"]`,
     stop: `${row} [data-test="button-${app}-stop"]`,
     // The info card's Delete. The list has none of its own.
     delete: `[data-test="button-${app}-delete"]`,
+    /**
+     * The info card's Edit, the same button for both kinds of app: a catalog app's goes to the install
+     * wizard in edit mode, a custom app's opens the YAML side panel.
+     */
+    edit: `[data-test="button-${app}-edit"]`,
+    /** "Convert to custom app" in the card's menu, `appInfoCardLocators.menu`. Disabled on a custom app. */
+    convert: `[data-test="button-${app}-convert"]`,
+    /** The card's Name: a link to the catalog page on a catalog app, plain text on a custom one. */
+    catalogName: `[data-test="link-${app}-name-details"]`,
+    customName: `[data-test="text-${app}-name"]`,
   };
 };
+
+/** The Application Info card's own controls, the same whichever app is selected. */
+export const appInfoCardLocators = {
+  /** `<tn-icon-button testId="app-info-menu">`, "More Options", which opens Update and Convert. */
+  menu: '[data-test="button-app-info-menu"]',
+} as const;
+
+/**
+ * The Application Info card's Revision readout and the two actions that change it. Every id is
+ * `[app.name, …]` through the library's normalizer, so the name is left as it is.
+ */
+export const appRevisionLocators = (name: string): {
+  revision: string;
+  update: string;
+  rollback: string;
+} => {
+  const app = kebabTestSegment(name);
+
+  return {
+    /** Revision: the catalog revision the app runs, `app.version`. */
+    revision: `[data-test="text-${app}-revision"]`,
+    /** A `tn-menu-item` in `appInfoCardLocators.menu`, disabled unless `upgrade_available`. */
+    update: `[data-test="button-${app}-update"]`,
+    /** Rendered only once `app.rollback_versions` has returned a revision. */
+    rollback: `[data-test="button-${app}-rollback"]`,
+  };
+};
+
+/** `AppUpdateDialog`, `<tn-dialog-shell testId="app-update">`. */
+export const appUpdateDialogLocators = {
+  title: '[data-test="dialog-title-app-update"]',
+  /** The installed `human_version`, e.g. `v1_1.0.5`. */
+  installedVersion: '[data-test="text-installed-version"]',
+  /** "Revision: <installed> → <target>". */
+  revisionChange: '[data-test="text-revision-change"]',
+  update: '[data-test="button-update"]',
+} as const;
+
+/** `AppRollbackModalComponent`, `<tn-dialog-shell testId="app-rollback">`. */
+export const appRollbackDialogLocators = {
+  title: '[data-test="dialog-title-app-rollback"]',
+  /** Filled from `app.rollback_versions`, with the first preselected. */
+  version: '[data-test="select-app-version"]',
+  rollbackSnapshot: '[data-test="checkbox-rollback-snapshot"]',
+  rollBack: '[data-test="button-roll-back"]',
+} as const;
+
+/**
+ * The install wizard in edit mode (`/apps/installed/<train>/<app>/edit`), on IT Tools' form.
+ *
+ * Every dynamic field takes its id from the schema variable, so these hold only for an app whose
+ * questions name them so. The input-type fields' `tn-form-field` carries the same id, which is what
+ * a field's error text is read through.
+ */
+export const catalogAppEditLocators = {
+  /** `network.web_port.port_number`, an int with the schema's `min` and `max` as validators. */
+  portNumber: '[data-test="input-port-number"]',
+  portNumberField: '[data-test="form-field-port-number"]',
+  /** "Add" under Additional Environment Variables: `tn-form-list` names it `['add-item', label]`. */
+  addEnvironmentVariable: '[data-test="button-add-item-additional-environment-variables"]',
+  /**
+   * A row's `name` and `value`. Every row's controls keep those names, so these are unique only while
+   * the list holds one row, which the caller checks.
+   */
+  environmentName: '[data-test="input-name"]',
+  environmentValue: '[data-test="input-value"]',
+  /** The wizard's Update, `testId="save"`. */
+  update: '[data-test="button-save"]',
+} as const;
 
 /** `AppDeleteDialog`, `<tn-dialog-shell testId="app-delete">`. */
 export const appDeleteDialogLocators = {
@@ -158,7 +262,4 @@ export const customAppLocators = {
   config: '[data-test="code-editor-custom-config"]',
   /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
   save: '[data-test="button-save"]',
-
-  /** The installed app's Edit on its Application Info card. A custom app's opens this panel. */
-  edit: (name: string): string => `[data-test="button-${kebabTestSegment(name)}-edit"]`,
 } as const;

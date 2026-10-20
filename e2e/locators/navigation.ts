@@ -39,6 +39,8 @@ export const navLocators = {
   certificates: '[data-test="link-certificates"]',
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
+  /** `Update` under System, raw item name again. */
+  update: '[data-test="link-update"]',
   /** `General Settings` under System, raw item name again. */
   generalSettings: '[data-test="link-general-settings"]',
   advancedSettings: '[data-test="link-advanced-settings"]',

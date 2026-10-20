@@ -32,8 +32,9 @@ export async function installCustomAppFromYaml(page: Page, name: string, compose
  * replaces it with `compose` and saves.
  */
 export async function editCustomAppYaml(page: Page, name: string, loaded: string, compose: string): Promise<void> {
-  await page.locator(installedAppLocators(name).name).click();
-  await page.locator(customAppLocators.edit(name)).click();
+  const app = installedAppLocators(name);
+  await page.locator(app.name).click();
+  await page.locator(app.edit).click();
 
   const config = page.locator(customAppLocators.config);
   await expect(config).toContainText(loaded);
