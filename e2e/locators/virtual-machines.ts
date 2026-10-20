@@ -137,6 +137,10 @@ export const virtualMachinesLocators = {
     /** Options come from `vm.resolution_choices`, labelled like `1280x720`. */
     resolution: '[data-test="select-resolution"]',
     resolutionOption: (label: string): string => `[data-test="option-resolution-${kebabTestSegment(label)}"]`,
+    /** Port, named after its control. */
+    port: '[data-test="input-port"]',
+    /** Web Port, shown for SPICE only. The control is `web_port`, which the normalizer dashes. */
+    webPort: '[data-test="input-web-port"]',
 
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',

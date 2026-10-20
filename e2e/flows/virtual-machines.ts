@@ -320,7 +320,7 @@ export async function addNicFromDevicesPage(page: Page, adapterLabel: string): P
   return generated;
 }
 
-/** What {@link addDisplayFromDevicesPage} fills in. Both port fields are left empty. */
+/** What {@link addDisplayFromDevicesPage} fills in. */
 export interface NewDisplay {
   type: 'SPICE' | 'VNC';
   /** An address `vm.device.bind_choices` lists, such as `0.0.0.0`. */
@@ -328,6 +328,13 @@ export interface NewDisplay {
   password: string;
   /** A resolution `vm.resolution_choices` lists, such as `1280x720`. */
   resolution: string;
+  /**
+   * Typed into Port. Middleware refuses a SPICE display whose two ports are both empty, since it
+   * finds them equal, so a free one is given.
+   */
+  port: number;
+  /** Typed into Web Port, which only SPICE shows. */
+  webPort?: number;
 }
 
 /** Opens Add on the open Devices page and picks Display as the device type. */
@@ -352,6 +359,10 @@ export async function addDisplayFromDevicesPage(page: Page, display: NewDisplay)
   await selectOption(page, form.bind, form.bindOption(display.bind));
   await page.locator(form.password).fill(display.password);
   await selectOption(page, form.resolution, form.resolutionOption(display.resolution));
+  await page.locator(form.port).fill(String(display.port));
+  if (display.webPort !== undefined) {
+    await page.locator(form.webPort).fill(String(display.webPort));
+  }
 
   await page.locator(form.save).click();
   await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });

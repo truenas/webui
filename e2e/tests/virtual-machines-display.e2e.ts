@@ -25,6 +25,7 @@ import {
   type DisplaySetup,
   ensureVmAbsent,
   ensureVmPresent,
+  findFreeDisplayPorts,
   findVm,
   findVmDevices,
   getDisplayWebUri,
@@ -201,25 +202,30 @@ test('an admin adds a SPICE display with the web interface to a VM, at a resolut
     throw new Error('vm.resolution_choices lists no resolution besides the two defaults.');
   }
 
+  // Free ports, as the wizard would pick them: left empty, the two compare equal and middleware
+  // refuses the display.
+  const ports = await findFreeDisplayPorts(api);
+
   await openVmDevices(page, spiceVm, id);
   await addDisplayFromDevicesPage(page, {
     type: 'SPICE',
     bind: '0.0.0.0',
     password: spicePassword,
     resolution,
+    port: ports.port,
+    webPort: ports.web,
   });
 
   await expect(page.locator(virtualMachinesLocators.devices.rowsOfType('DISPLAY'))).toHaveCount(1);
 
-  // Both port fields were left empty, so middleware assigns both.
   const display = onlyDevice(await findVmDevices(api, id), 'DISPLAY');
   expect(display.attributes).toMatchObject({
     type: 'SPICE',
     bind: '0.0.0.0',
     resolution,
     web: true,
-    port: expect.any(Number),
-    web_port: expect.any(Number),
+    port: ports.port,
+    web_port: ports.web,
   });
   expect(answersTo(page, 'vm.resolution_choices')).toContain('result');
 
@@ -235,11 +241,13 @@ test('Display on a running VM with a SPICE web display opens a new tab at the ad
   const { host, protocol } = new URL(page.url());
   const expected = await getDisplayWebUri(api, id, host, protocol === 'http:' ? 'HTTP' : 'HTTPS');
 
-  // Every navigation another page of this context requests. The new tab's first one is the
-  // address it was opened at, whatever it is redirected to or fails to load afterwards.
+  // Every navigation this context requests. The new tab's first one is the address it was opened
+  // at, whatever it is redirected to or fails to load afterwards. Which page made it is not asked:
+  // a new tab's first request comes before its frame exists, and `request.frame()` throws on it.
+  // The address is the display's own port, which this single-page app never navigates to.
   const navigations: string[] = [];
   page.context().on('request', (request) => {
-    if (request.isNavigationRequest() && request.frame().page() !== page) {
+    if (request.isNavigationRequest()) {
       navigations.push(request.url());
     }
   });

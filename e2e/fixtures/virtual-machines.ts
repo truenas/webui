@@ -291,18 +291,35 @@ export interface DisplaySetup {
   web: boolean;
 }
 
+/** A display port and a web port that no other service holds, as `vm.port_wizard` picks them. */
+export interface FreeDisplayPorts {
+  port: number;
+  web: number;
+}
+
+/**
+ * Two free ports for a display, from `vm.port_wizard`, as the wizard gets its own.
+ *
+ * A SPICE display needs both given: saved with neither, middleware compares the two empty ports,
+ * finds them equal and refuses the device ("Spice server port must not be same as web port").
+ */
+export async function findFreeDisplayPorts(client: E2eApiClient): Promise<FreeDisplayPorts> {
+  const { port, web } = await firstValueFrom(client.api.call('vm.port_wizard').pipe(timeout(readTimeoutMs)));
+  return { port, web };
+}
+
 /**
  * Attaches a display to a VM and returns it as middleware stored it.
  *
- * Its ports come from `vm.port_wizard`, as the wizard's do, so the device is saved with ports no
- * other service holds rather than whatever middleware would pick for a null.
+ * Its ports come from {@link findFreeDisplayPorts}, so the device is saved with ports no other
+ * service holds.
  */
 export async function addVmDisplay(
   client: E2eApiClient,
   vmId: number,
   display: DisplaySetup,
 ): Promise<VmDeviceSummary> {
-  const ports = await firstValueFrom(client.api.call('vm.port_wizard').pipe(timeout(readTimeoutMs)));
+  const ports = await findFreeDisplayPorts(client);
 
   const created = await firstValueFrom(
     client.api.call('vm.device.create', [{
