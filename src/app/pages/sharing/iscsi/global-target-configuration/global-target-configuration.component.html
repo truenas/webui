@@ -43,11 +43,13 @@
       </tn-form-field>
     }
 
-    <tn-form-field [tooltip]="tooltips.iser | translate">
-      <tn-checkbox
-        formControlName="iser"
-        [label]="'Enable iSCSI Extensions for RDMA (iSER)' | translate"
-      ></tn-checkbox>
+    <tn-form-field>
+      <ix-licensed-feature [locked]="form.controls.iser.disabled" [tooltip]="tooltips.iser | translate">
+        <tn-checkbox
+          formControlName="iser"
+          [label]="'Enable iSCSI Extensions for RDMA (iSER)' | translate"
+        ></tn-checkbox>
+      </ix-licensed-feature>
     </tn-form-field>
   </tn-form-section>
 </ix-form>

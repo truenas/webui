@@ -2,9 +2,9 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 
 export const helptextNvmeOf = {
   baseNqnTooltip: T('NQN to be used as the prefix on the creation of a subsystem, if a subnqn is not supplied. Modifying this value will not change the subnqn of any existing subsystems.'),
-  rdmaTooltip: T('Once enabled one or more ports may be configured with RDMA selected as the transport.\
- Requires an Enterprise license, RDMA-capable system and network equipment.'),
-  rdmaDisabledTooltip: T('Not enabled, because this system does not support RDMA.'),
+  rdmaTooltip: T('Once enabled, one or more ports may be configured with RDMA selected as the transport.\
+ Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system and network environment\
+ have Remote Direct Memory Access (RDMA)-capable hardware.'),
   anaDisabledTooltip: T('Not enabled, because this feature requires an HA license.'),
   implementationTooltip: T('Experimental. This option is geared towards experimentation with client compatibility.\
  Try this if having issues with certain clients, such as hypervisors that may require specific capabilities.'),

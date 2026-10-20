@@ -18,6 +18,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { LicensedFeatureComponent } from 'app/modules/forms/licensed-feature/licensed-feature.component';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -41,6 +42,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCheckboxComponent,
     ReactiveFormsModule,
     TnTooltipDirective,
+    LicensedFeatureComponent,
   ],
 })
 export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnInit {

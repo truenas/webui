@@ -19,6 +19,7 @@ import { helptextIscsi } from 'app/helptext/sharing';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { LicensedFeatureComponent } from 'app/modules/forms/licensed-feature/licensed-feature.component';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -36,6 +37,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     TnInputComponent,
     TnChipInputComponent,
     TnCheckboxComponent,
+    LicensedFeatureComponent,
     TranslateModule,
   ],
 })
