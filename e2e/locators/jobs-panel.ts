@@ -24,6 +24,8 @@ export const jobsPanelLocators = {
    * be missed.
    */
   finishedList: '[data-test="list-finished-jobs"]',
+  /** "View All Jobs" in the footer: closes the panel and opens the Jobs page, which has no sidebar entry. */
+  viewAllJobs: '[data-test="button-history"]',
 
   /** A job anywhere in the panel. */
   job: (jobId: number): string => `[data-test="row-job-${jobId}"]`,
