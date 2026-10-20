@@ -5,6 +5,12 @@ import { Preferences, TableDisplayedColumns } from 'app/interfaces/preferences.i
 export const preferencesLoaded = createAction('[Preferences API] Loaded', props<{ preferences: Preferences }>());
 export const noPreferencesFound = createAction('[Preferences API] No Preferences Found');
 
+/**
+ * Reads the preferences again without anything having been saved here: for a page that shows them,
+ * since another tab or session of the same account may have changed them, and middleware sends no event.
+ */
+export const preferencesRefreshRequested = createAction('[Preferences] Refresh Requested');
+
 // TODO: These actions will be moved elsewhere in the future
 export const themeNotFound = createAction('[Preferences] Theme Not Found');
 export const preferredColumnsUpdated = createAction(

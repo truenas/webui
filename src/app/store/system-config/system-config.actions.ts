@@ -9,4 +9,10 @@ export const systemConfigLoaded = createAction(
 
 export const generalConfigUpdated = createAction('[System Config] General Config Updated');
 export const advancedConfigUpdated = createAction('[System Config] Advanced Config Updated');
+
+/**
+ * Reloads both configs without anything having been saved here: for a page that shows them, since
+ * another tab, another admin or the CLI may have changed them after this app loaded them.
+ */
+export const systemConfigRefreshRequested = createAction('[System Config] Refresh Requested');
 export const loginBannerUpdated = createAction('[System Config] Login Banner Updated', props<{ loginBanner: string }>());

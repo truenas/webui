@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { Store } from '@ngrx/store';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
@@ -17,6 +18,9 @@ import {
 } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
+import { AppState } from 'app/store';
+import { preferencesRefreshRequested } from 'app/store/preferences/preferences.actions';
+import { systemConfigRefreshRequested } from 'app/store/system-config/system-config.actions';
 import { AccessCardComponent } from './access/access-card/access-card.component';
 import { AllowedAddressesCardComponent } from './allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AuditCardComponent } from './audit/audit-card/audit-card.component';
@@ -68,6 +72,7 @@ export class AdvancedSettingsComponent {
   private entitlements = inject(EntitlementsService);
   private license = inject(LicenseService);
   private searchDirectives = inject(UiSearchDirectivesService);
+  private store$ = inject<Store<AppState>>(Store);
 
   // Re-uses LicenseService.hasSystemSecurity$ so the global search filter and
   // this card share a single `system.security.info.fips_available` call
@@ -81,6 +86,11 @@ export class AdvancedSettingsComponent {
   protected readonly hasFailover$ = this.license.hasFailover$;
 
   constructor() {
+    // Most cards and forms here read the advanced config from the store, which is otherwise only
+    // reloaded after a save made in this tab, so a change made elsewhere would never show up.
+    this.store$.dispatch(systemConfigRefreshRequested());
+    // The Access card shows the session timeout, which is the account's own preference.
+    this.store$.dispatch(preferencesRefreshRequested());
     setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 5);
   }
 

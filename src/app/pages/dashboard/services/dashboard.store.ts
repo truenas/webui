@@ -3,8 +3,9 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Store } from '@ngrx/store';
 import {
   EMPTY,
-  Observable, catchError, combineLatest, filter, finalize, map, of, switchMap, tap,
+  Observable, catchError, combineLatest, finalize, map, switchMap, tap,
 } from 'rxjs';
+import { toLoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
@@ -75,18 +76,10 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   readonly entered = this.effect((trigger$) => {
     return trigger$.pipe(
       tap(() => this.toggleLoadingState(true)),
-      switchMap(() => {
-        if (this.state().groups === null) {
-          // Skip refresh user if loading dashboard for first time
-          return of(null);
-        }
-        return this.authService.refreshUser();
-      }),
+      // Read fresh rather than from the user cached at sign-in: the layout may have been saved from
+      // another tab since, and saving this tab's stale copy would overwrite it.
       switchMap(() => combineLatest([
-        this.authService.user$.pipe(
-          filter(Boolean),
-          map((user) => user.attributes.dashState),
-        ),
+        this.api.call('auth.me').pipe(map((user) => toLoggedInUser(user).attributes.dashState)),
         this.store$.select(selectIsHaLicensed),
       ])),
       tap(([dashState, isHaLicensed]) => {
@@ -107,6 +100,9 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     this.toggleLoadingState(true);
 
     return this.api.call('auth.set_attribute', ['dashState', groups]).pipe(
+      // Kept here too: `entered()` reads the layout once, so nothing else would tell the store, and
+      // cancelling the next edit would bring back the layout from before this save.
+      tap(() => this.patchState({ groups })),
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );

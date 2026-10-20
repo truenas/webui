@@ -1,8 +1,11 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom, of } from 'rxjs';
+import { CallResponse } from '@truenas/api-client';
+import { filter, firstValueFrom, of } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
@@ -24,6 +27,11 @@ const initialGroups = [
   },
 ];
 
+/** An `auth.me` answer carrying only the account attributes the store reads. */
+function authMe(attributes: Record<string, unknown>): CallResponse<WebUiApiDirectory, 'auth.me'> {
+  return { attributes } as unknown as CallResponse<WebUiApiDirectory, 'auth.me'>;
+}
+
 describe('DashboardStore', () => {
   let spectator: SpectatorService<DashboardStore>;
   const createService = createServiceFactory({
@@ -31,11 +39,6 @@ describe('DashboardStore', () => {
     providers: [
       mockProvider(AuthService, {
         refreshUser: jest.fn(() => of(null)),
-        user$: of({
-          attributes: {
-            dashState: initialGroups,
-          },
-        }),
       }),
       provideMockStore({
         selectors: [
@@ -47,6 +50,7 @@ describe('DashboardStore', () => {
       }),
       mockTypedApi([
         mockTypedCall('auth.set_attribute', null),
+        mockTypedCall('auth.me', authMe({ dashState: initialGroups })),
       ]),
     ],
   });
@@ -55,6 +59,11 @@ describe('DashboardStore', () => {
     spectator = createService();
   });
 
+  /** The state once the last `entered()` has finished loading, since `auth.me` answers asynchronously. */
+  function loadedState(): Promise<typeof initialState> {
+    return firstValueFrom(spectator.service.state$.pipe(filter((state) => !state.isLoading)));
+  }
+
   it('correctly initializes dashboard store and converts old dashboard widgets to new ones', async () => {
     expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
       ...initialState,
@@ -62,7 +71,7 @@ describe('DashboardStore', () => {
 
     spectator.service.entered();
 
-    expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
+    expect(await loadedState()).toMatchObject({
       ...initialState,
       groups: [
         {
@@ -110,15 +119,38 @@ describe('DashboardStore', () => {
     expect(finalizeSpy).toHaveBeenCalledWith(false);
   });
 
+  it('keeps the saved layout, so cancelling the next edit does not bring back the one before', async () => {
+    spectator.service.entered();
+    await loadedState();
+    const saved = [{ layout: WidgetGroupLayout.Full, slots: [{ type: WidgetType.Cpu }] }];
+
+    await firstValueFrom(spectator.service.save(saved));
+
+    expect(await firstValueFrom(spectator.service.groups$)).toEqual(saved);
+  });
+
   it('should load demoWidgets if user does not have dashState', async () => {
-    const authService = spectator.inject(AuthService);
-    Object.defineProperty(authService, 'user$', { value: of({ attributes: {} }) });
+    spectator.inject(MockTypedApiService).mockCall('auth.me', authMe({}));
 
     spectator.service.entered();
 
-    expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
+    expect(await loadedState()).toMatchObject({
       ...initialState,
       groups: getDefaultWidgets(true),
+    });
+  });
+
+  it('reads the layout from the server on every entry, not the one cached at sign-in', async () => {
+    spectator.service.entered();
+    await loadedState();
+    spectator.inject(MockTypedApiService).mockCall('auth.me', authMe({
+      dashState: [{ layout: WidgetGroupLayout.Full, slots: [{ type: WidgetType.Cpu }] }],
+    }));
+
+    spectator.service.entered();
+
+    expect(await loadedState()).toMatchObject({
+      groups: [{ layout: WidgetGroupLayout.Full, slots: [{ type: WidgetType.Cpu }] }],
     });
   });
 

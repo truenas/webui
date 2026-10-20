@@ -249,6 +249,8 @@ export class S3BucketListComponent implements OnInit {
 
     // Prime the tier config so `displayedColumns` reactively reveals the tier
     // column when tiering is enabled, and reload the list on tier-job ticks.
+    // Fetched again on each visit: tiering can be changed outside this tab.
+    this.tierService.refresh();
     this.tierService.getTierConfig().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     this.tierService.wireTierJobRefresh({
       destroyRef: this.destroyRef,

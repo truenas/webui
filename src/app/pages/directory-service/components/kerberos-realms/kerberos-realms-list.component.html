@@ -74,7 +74,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Realm' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Realm', uniqueRowTag(row), 'row-text']"
         >{{ row.realm }}</span>
       </ng-template>
     </ng-container>
@@ -84,7 +84,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('KDC' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['KDC', uniqueRowTag(row), 'row-text']"
         >{{ row.kdc_string }}</span>
       </ng-template>
     </ng-container>
@@ -94,7 +94,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Admin Server' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Admin Server', uniqueRowTag(row), 'row-text']"
         >{{ row.admin_server_string }}</span>
       </ng-template>
     </ng-container>
@@ -104,7 +104,7 @@
       <ng-template let-row tnCellDef>
         <span
           tnTestIdType="text"
-          [tnTestId]="[('Password Server' | translate), uniqueRowTag(row), 'row-text']"
+          [tnTestId]="['Password Server', uniqueRowTag(row), 'row-text']"
         >{{ row.kpasswd_server_string }}</span>
       </ng-template>
     </ng-container>

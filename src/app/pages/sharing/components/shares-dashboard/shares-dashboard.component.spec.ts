@@ -12,6 +12,7 @@ import { S3CardComponent } from 'app/pages/sharing/components/shares-dashboard/s
 import { SharesDashboardComponent } from 'app/pages/sharing/components/shares-dashboard/shares-dashboard.component';
 import { SmbCardComponent } from 'app/pages/sharing/components/shares-dashboard/smb-card/smb-card.component';
 import { WebShareCardComponent } from 'app/pages/sharing/components/shares-dashboard/webshare-card/webshare-card.component';
+import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { LicenseService } from 'app/services/license.service';
 
@@ -26,6 +27,7 @@ describe('SharesDashboardComponent', () => {
       mockProvider(poolStore, {
         call: of([{ id: 1 }] as Pool[]),
       }),
+      mockProvider(SharingTierService),
       provideMockStore({
         initialState: {
           systemInfo: {
@@ -74,6 +76,13 @@ describe('SharesDashboardComponent', () => {
     expect(spectator.query(NvmeOfCardComponent)).toExist();
     expect(spectator.query(S3CardComponent)).toExist();
     expect(spectator.query(WebShareCardComponent)).toExist();
+  });
+
+  it('fetches the pools and the tier config again when opened, since either can change outside this tab', () => {
+    setup();
+
+    expect(spectator.inject(poolStore).invalidate).toHaveBeenCalled();
+    expect(spectator.inject(SharingTierService).refresh).toHaveBeenCalled();
   });
 
   it('hides WebShare card when WebShare should not be shown', () => {

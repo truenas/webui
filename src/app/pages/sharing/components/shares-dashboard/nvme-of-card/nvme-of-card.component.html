@@ -74,7 +74,7 @@
           <ix-subsystem-name-cell
             tnTestIdType="text"
             [subsystem]="row"
-            [tnTestId]="[('Name' | translate), uniqueRowTag(row), 'row-text']"
+            [tnTestId]="['Name', uniqueRowTag(row), 'row-text']"
           ></ix-subsystem-name-cell>
         </ng-template>
       </ng-container>
@@ -82,21 +82,21 @@
       <ng-container [tnColumnDef]="'namespaces'">
         <ng-template tnHeaderCellDef>{{ 'Namespaces' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span tnTestIdType="text" [tnTestId]="[('Namespaces' | translate), cellRowTag(row), 'row-text']">{{ row.namespaces.length }}</span>
+          <span tnTestIdType="text" [tnTestId]="['Namespaces', cellRowTag(row), 'row-text']">{{ row.namespaces.length }}</span>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'ports'">
         <ng-template tnHeaderCellDef>{{ 'Ports' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span tnTestIdType="text" [tnTestId]="[('Ports' | translate), cellRowTag(row), 'row-text']">{{ row.ports.length }}</span>
+          <span tnTestIdType="text" [tnTestId]="['Ports', cellRowTag(row), 'row-text']">{{ row.ports.length }}</span>
         </ng-template>
       </ng-container>
 
       <ng-container [tnColumnDef]="'hosts'">
         <ng-template tnHeaderCellDef>{{ 'Hosts' | translate }}</ng-template>
         <ng-template let-row tnCellDef>
-          <span tnTestIdType="text" [tnTestId]="[('Hosts' | translate), cellRowTag(row), 'row-text']">{{ row.hosts.length }}</span>
+          <span tnTestIdType="text" [tnTestId]="['Hosts', cellRowTag(row), 'row-text']">{{ row.hosts.length }}</span>
         </ng-template>
       </ng-container>
 
