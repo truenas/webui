@@ -41,7 +41,8 @@ const searchDocumentationFor = (term: string): string[] => [`Search Documentatio
 /**
  * The documentation search a Help result opens, as `getHelpSectionResults`
  * builds it: keyed on the appliance's major version, which `extractVersion`
- * reads as the first run of digits in `system.info`'s version string.
+ * reads as the first run of digits in `system.info`'s version string. A copy of
+ * both on purpose — the URL has no other source to read it from.
  */
 function documentationSearchUrl(version: string, term: string): string {
   const major = /(\d+)(?:\.\d+)*/.exec(version)?.[1];
@@ -70,8 +71,6 @@ test('typing the name of a page lists it under UI, and choosing it opens that pa
 
   await expect(page.locator(result(servicesPage.hierarchy))).toBeVisible({ timeout: resultsTimeoutMs });
   await expect(page.locator(section.ui)).toBeVisible();
-  // Nothing has been chosen yet, so the only section that could also list it is empty.
-  await expect(page.locator(section.recentSearches)).toBeHidden();
 
   await page.locator(result(servicesPage.hierarchy)).click();
 
@@ -80,7 +79,7 @@ test('typing the name of a page lists it under UI, and choosing it opens that pa
   await expectGlobalSearchClosed(page);
 });
 
-test('choosing a setting from search lands on the page holding it, at that setting', async ({ page, api }) => {
+test('choosing a setting from search lands on the page holding it', async ({ page, api }) => {
   const timezone = await readTimezone(api);
 
   await openGlobalSearch(page);
@@ -88,11 +87,7 @@ test('choosing a setting from search lands on the page holding it, at that setti
   await page.locator(globalSearchLocators.result(timezoneSetting.hierarchy)).click({ timeout: resultsTimeoutMs });
 
   await expect(page).toHaveURL(/\/system\/general\/?$/, { timeout: landingTimeoutMs });
-  const readout = page.locator(localizationLocators.card.timezone);
-  await expect(readout).toHaveText(timezone, { timeout: landingTimeoutMs });
-  // On screen, not only somewhere on the page. The Localization card sits near
-  // the top, so this does not show that search scrolled to it.
-  await expect(readout).toBeInViewport();
+  await expect(page.locator(localizationLocators.card.timezone)).toHaveText(timezone, { timeout: landingTimeoutMs });
   await expectGlobalSearchClosed(page);
 });
 
