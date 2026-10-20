@@ -3,10 +3,12 @@
  *
  * Neither is a page. Both open over whatever the test is already looking at,
  * which is why these flows start from wherever the test is rather than
- * navigating anywhere.
+ * navigating anywhere. The Jobs page is here too, because the jobs panel is the
+ * only way a user reaches it.
  */
 import { expect, type Page } from '@playwright/test';
 import { alertsPanelLocators } from '../locators/alerts-panel';
+import { jobsPageLocators } from '../locators/jobs';
 import { jobsPanelLocators } from '../locators/jobs-panel';
 import { topbarLocators } from '../locators/topbar';
 
@@ -27,4 +29,18 @@ export async function openJobsPanel(page: Page): Promise<void> {
 
   await expect(page.locator(jobsPanelLocators.runningCount)).toBeVisible();
   await expect(page.locator(jobsPanelLocators.finishedList)).toBeAttached();
+}
+
+/**
+ * Opens the Jobs page the way a user reaches it: the jobs panel, then its
+ * "View All Jobs". The page has no sidebar entry. Waits for the page's filter,
+ * and for the panel to have closed behind it.
+ */
+export async function openJobsPage(page: Page): Promise<void> {
+  await openJobsPanel(page);
+  await page.locator(jobsPanelLocators.viewAllJobs).click();
+
+  await expect(page).toHaveURL(/\/jobs(\?|$)/);
+  await expect(page.locator(jobsPageLocators.filter.all)).toBeVisible();
+  await expect(page.locator(jobsPanelLocators.runningCount)).toBeHidden();
 }
