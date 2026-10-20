@@ -7,7 +7,9 @@
  * internal test domain from the `E2EUI_AD_*` repository secrets, so this spec
  * is in `tests/unpublished/`, whose project publishes nothing: its
  * credentials are typed into the form, and a trace would keep them. For the
- * same reason no credential goes into a title, a step name or a message here.
+ * same reason no `TN_AD_*` value goes into a title or a step name, and every
+ * hook and test runs inside `withActiveDirectoryRedacted`: JUnit is published,
+ * and a failure's message would otherwise name the domain or a controller.
  *
  * The domain is shared and outlives the run. Every join is under a fresh
  * `e2eui-` computer name, with DNS updates off, and teardown leaves the domain
@@ -24,6 +26,7 @@ import {
   adJoinTimeoutMs,
   ensureActiveDirectoryLeft,
   joinActiveDirectory,
+  withActiveDirectoryRedacted,
 } from '../../fixtures/active-directory';
 import { readDirectoryServices } from '../../fixtures/directory-services';
 import {
@@ -112,9 +115,11 @@ test.beforeEach(async ({ api, config }) => {
   // Every story here joins a real domain, and only a run given one has it.
   test.skip(!config.activeDirectory, 'no Active Directory domain for this run (TN_AD_DOMAIN unset)');
   const ad = domainOf(config);
-  networkBefore = await readNetworkConfig(api);
-  await setNameservers(api, ad.nameservers);
-  await ensureActiveDirectoryLeft(api, ad);
+  await withActiveDirectoryRedacted(ad, async () => {
+    networkBefore = await readNetworkConfig(api);
+    await setNameservers(api, ad.nameservers);
+    await ensureActiveDirectoryLeft(api, ad);
+  });
 });
 
 /**
@@ -128,60 +133,63 @@ test.afterEach(async ({ api, config }) => {
   }
 
   const restore = networkBefore;
-  await runCleanupSteps([
+  await withActiveDirectoryRedacted(ad, () => runCleanupSteps([
     ['leave the domain and clear the configuration', () => ensureActiveDirectoryLeft(api, ad)],
     ['restore the nameservers', async () => {
       if (restore) {
         await restoreNetworkConfig(api, restore);
       }
     }],
-  ]);
+  ]));
 });
 
 test('joining Active Directory from the form shows the domain healthy on the card', async ({ page, api, config }) => {
   const ad = domainOf(config);
+  await withActiveDirectoryRedacted(ad, async () => {
+    await openDirectoryServicesForm(page);
+    await fillActiveDirectoryJoin(page, ad, adComputerName());
+    await saveDirectoryServicesForm(page, adJoinTimeoutMs);
 
-  await openDirectoryServicesForm(page);
-  await fillActiveDirectoryJoin(page, ad, adComputerName());
-  await saveDirectoryServicesForm(page, adJoinTimeoutMs);
+    const { card } = directoryServicesLocators;
+    await expect(page.locator(card.status)).toHaveText('HEALTHY', { timeout: cardTimeoutMs });
+    await expect(page.locator(card.domainName)).toHaveText(domainPattern(ad));
+    await expect(page.locator(card.accountCache)).toHaveText('Enabled');
 
-  const { card } = directoryServicesLocators;
-  await expect(page.locator(card.status)).toHaveText('HEALTHY', { timeout: cardTimeoutMs });
-  await expect(page.locator(card.domainName)).toHaveText(domainPattern(ad));
-  await expect(page.locator(card.accountCache)).toHaveText('Enabled');
-
-  const { config: stored, status } = await readDirectoryServices(api);
-  expect(status).toMatchObject({ type: 'ACTIVEDIRECTORY', status: 'HEALTHY' });
-  expect(stored).toMatchObject({ enable: true, service_type: 'ACTIVEDIRECTORY', enable_dns_updates: false });
-  // Middleware swaps the user it joined with for the machine account's principal.
-  expect(stored.credential?.credential_type).toBe('KERBEROS_PRINCIPAL');
+    const { config: stored, status } = await readDirectoryServices(api);
+    expect(status).toMatchObject({ type: 'ACTIVEDIRECTORY', status: 'HEALTHY' });
+    expect(stored).toMatchObject({ enable: true, service_type: 'ACTIVEDIRECTORY', enable_dns_updates: false });
+    // Middleware swaps the user it joined with for the machine account's principal.
+    expect(stored.credential?.credential_type).toBe('KERBEROS_PRINCIPAL');
+  });
 });
 
 test('leaving the domain from the card brings back the disabled state', async ({ page, api, config }) => {
   const ad = domainOf(config);
-  await joinActiveDirectory(api, ad, adComputerName());
+  await withActiveDirectoryRedacted(ad, async () => {
+    await joinActiveDirectory(api, ad, adComputerName());
 
-  await goToDirectoryServices(page);
-  const { card, leaveDialog } = directoryServicesLocators;
-  await expect(page.locator(card.status)).toHaveText('HEALTHY', { timeout: cardTimeoutMs });
+    await goToDirectoryServices(page);
+    const { card, leaveDialog } = directoryServicesLocators;
+    await expect(page.locator(card.status)).toHaveText('HEALTHY', { timeout: cardTimeoutMs });
 
-  await page.locator(card.actionsMenu).click();
-  await page.locator(card.leave).click();
-  await expect(page.locator(leaveDialog.title)).toBeVisible();
+    await page.locator(card.actionsMenu).click();
+    await page.locator(card.leave).click();
+    await expect(page.locator(leaveDialog.title)).toBeVisible();
 
-  const leave = page.locator(leaveDialog.leave);
-  await expect(leave).toBeDisabled();
-  await page.locator(leaveDialog.username).fill(ad.username);
-  await page.locator(leaveDialog.password).fill(ad.password);
-  await expect(leave).toBeEnabled();
-  await leave.click();
+    const leave = page.locator(leaveDialog.leave);
+    await expect(leave).toBeDisabled();
+    await page.locator(leaveDialog.username).fill(ad.username);
+    await page.locator(leaveDialog.password).fill(ad.password);
+    await expect(leave).toBeEnabled();
+    await leave.click();
 
-  await expect(page.locator(leaveDialog.title)).toBeHidden({ timeout: adJoinTimeoutMs });
-  await expect(page.locator(directoryServicesLocators.disabled)).toBeVisible({ timeout: cardTimeoutMs });
+    await expect(page.locator(leaveDialog.title)).toBeHidden({ timeout: adJoinTimeoutMs });
+    await expect(page.locator(directoryServicesLocators.disabled)).toBeVisible({ timeout: cardTimeoutMs });
 
-  const { config: stored, status } = await readDirectoryServices(api);
-  expect(stored.enable).toBe(false);
-  expect(status.status ?? null).toBeNull();
+    const { config: stored, status } = await readDirectoryServices(api);
+    expect(stored.enable).toBe(false);
+    expect(status.status ?? null).toBeNull();
+  });
 });
 
 test('a join through a nameserver that cannot resolve the domain is refused on the form', async ({
@@ -190,26 +198,28 @@ test('a join through a nameserver that cannot resolve the domain is refused on t
   config,
 }) => {
   const ad = domainOf(config);
-  // The first controller stays: the refusal must be about the second nameserver alone.
-  await setNameservers(api, [...ad.nameservers.slice(0, 1), deadNameserver]);
+  await withActiveDirectoryRedacted(ad, async () => {
+    // The first controller stays: the refusal must be about the second nameserver alone.
+    await setNameservers(api, [...ad.nameservers.slice(0, 1), deadNameserver]);
 
-  const form = directoryServicesLocators.configForm;
-  const serviceTypeField = page.locator(form.serviceTypeField);
-  const save = page.locator(form.save);
+    const form = directoryServicesLocators.configForm;
+    const serviceTypeField = page.locator(form.serviceTypeField);
+    const save = page.locator(form.save);
 
-  await openDirectoryServicesForm(page);
-  await fillActiveDirectoryJoin(page, ad, adComputerName());
-  await expect(serviceTypeField).not.toContainText('Forward lookup of');
-  await expect(save).toBeEnabled();
-  await save.click();
+    await openDirectoryServicesForm(page);
+    await fillActiveDirectoryJoin(page, ad, adComputerName());
+    await expect(serviceTypeField).not.toContainText('Forward lookup of');
+    await expect(save).toBeEnabled();
+    await save.click();
 
-  // `validate_kerberos_dns` checks every nameserver, before anything is joined or stored.
-  await expect(serviceTypeField).toContainText('Forward lookup of', { timeout: adJoinTimeoutMs });
-  await expect(serviceTypeField).toContainText(`failed with nameserver ${deadNameserver}`);
-  await expect(save).toBeDisabled();
-  await expect(page.locator(errorDialogLocators.title)).toHaveCount(0);
+    // `validate_kerberos_dns` checks every nameserver, before anything is joined or stored.
+    await expect(serviceTypeField).toContainText('Forward lookup of', { timeout: adJoinTimeoutMs });
+    await expect(serviceTypeField).toContainText(`failed with nameserver ${deadNameserver}`);
+    await expect(save).toBeDisabled();
+    await expect(page.locator(errorDialogLocators.title)).toHaveCount(0);
 
-  await discardDirectoryServicesForm(page);
-  const { config: stored } = await readDirectoryServices(api);
-  expect(stored.service_type).toBeNull();
+    await discardDirectoryServicesForm(page);
+    const { config: stored } = await readDirectoryServices(api);
+    expect(stored.service_type).toBeNull();
+  });
 });
