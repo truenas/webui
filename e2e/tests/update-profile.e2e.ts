@@ -134,6 +134,9 @@ test('the select offers exactly the available profiles', async ({ page, api }) =
   const available = profiles.filter((profile) => profile.available);
   const notAvailable = profiles.filter((profile) => !profile.available);
 
+  // With one profile on offer the card disables the select, so it cannot be opened.
+  test.skip(available.length < 2, 'fewer than two update profiles are available on this appliance');
+
   await openUpdateProfileCard(page, nameOf(choices, current));
   await page.locator(updateLocators.profile.select).click();
 
