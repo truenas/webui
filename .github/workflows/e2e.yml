@@ -165,11 +165,18 @@ jobs:
       # middleware clone the whole apps catalog into the tmpfs at /run, which
       # is sized from RAM. At 6GB that fills /run, and dockerd then cannot
       # write its pid file (#14633). The HA nodes boot with the same 8GB.
+      #
+      # One 32GB disk beside the ten 10GB data disks, for boot-pool.e2e.ts to
+      # mirror the boot pool onto: boot.attach needs a disk at least as large as
+      # the boot disk, and the boot partition alone is about 15.5GB (#14710).
+      # Sparse, and after the data disks, so the specs that take unused disks of
+      # one size still get 10GB ones.
       - name: Boot the appliance
         uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
         with:
           baseline: fresh-install
           memory-mb: 8192
+          extra-disk-gb: '32'
 
       # A non-HA Enterprise license, so the journeys behind an entitlement
       # (ZFS tiering, S3 audit and versioning) run here rather than skip.

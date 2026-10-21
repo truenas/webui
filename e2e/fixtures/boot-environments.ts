@@ -9,6 +9,7 @@
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import { listDisks } from './disks';
+import { getSelectableDisks } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -109,28 +110,35 @@ export async function listBootDisks(client: E2eApiClient): Promise<string[]> {
 }
 
 /**
- * Whether `disk` is smaller, in bytes, than the largest of `bootDisks`.
+ * An unused disk to mirror the boot pool onto: the smallest one at least as large,
+ * in bytes, as the largest of `bootDisks`, by name among equals. Undefined when
+ * every unused disk is smaller.
  *
  * `boot.attach` partitions the new disk to hold a copy of the boot partition and
  * refuses one without the room ("does not have enough space to hold the required
- * new partitions"). A disk at least as large as the boot disk always has it.
+ * new partitions"). A disk at least as large as the boot disk always has it. The
+ * CI appliance's ten data disks are smaller than its boot disk, so it is given
+ * one larger disk for this (`extra-disk-gb` in `.github/workflows/e2e.yml`).
  */
-export async function isSmallerThanBootDisk(
+export async function pickBootMirrorDisk(
   client: E2eApiClient,
   bootDisks: string[],
-  disk: string,
-): Promise<boolean> {
+): Promise<string | undefined> {
   const disks = await listDisks(client);
-  const sizeOf = (name: string): number => {
+  const bootSize = Math.max(...bootDisks.map((name) => {
     const entry = disks.find((candidate) => candidate.name === name);
     if (!entry) {
       throw new Error(`disk.query reports no disk named "${name}".`);
     }
 
     return Number(entry.size);
-  };
+  }));
 
-  return sizeOf(disk) < Math.max(...bootDisks.map(sizeOf));
+  const [disk] = (await getSelectableDisks(client))
+    .filter((candidate) => candidate.size >= bootSize)
+    .sort((a, b) => a.size - b.size || a.name.localeCompare(b.name));
+
+  return disk?.name;
 }
 
 /** The boot pool's scrub interval in days, `boot_scrub` in `system.advanced.config`. */
