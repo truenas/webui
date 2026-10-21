@@ -395,7 +395,8 @@ periodic reinstall is also **E1**'s installer-fidelity run.
 **R2.2** said 8 virtual disks while `fresh-install.e2e.ts` builds a 9-wide
 RAIDZ2 and calls `requireUnusedDisks(api, 9)` — was met in CI exactly as
 predicted, as a fail-fast on a one-disk guest, and is closed: `appliance.sh`
-provisions ten identical 10GB data disks with distinct serials. The lesson
+provisions ten identical 10GB data disks with distinct serials, and CI adds
+one 32GB disk after them for mirroring the boot pool. The lesson
 stands: disk inventory is part of a baseline's definition, not an assumption.
 
 ---

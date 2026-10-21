@@ -6,6 +6,7 @@ import {
   InputType,
   TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnIconComponent, TnInputComponent, TnProgressBarComponent, TnSelectComponent,
+  TnTestIdDirective,
 } from '@truenas/ui-components';
 import { forkJoin } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -42,6 +43,7 @@ import { SystemGeneralService } from 'app/services/system-general.service';
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnTestIdDirective,
     WithManageCertificatesLinkComponent,
     TranslateModule,
   ],

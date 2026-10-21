@@ -487,21 +487,15 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   }
 
   private setupObjectLockDependency(): void {
-    // Read here rather than in a field initializer: inputs are not set yet when fields initialize.
-    this.defaultModeOffered = !!this.bucket()?.object_lock;
     this.syncObjectLockAvailability();
     this.syncVersioningLock(this.form.controls.object_lock.value);
     this.form.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.syncObjectLockAvailability();
     });
-    // Compliance is offered once, the first time object lock is turned on for a bucket that did not
-    // have it. After that a "no default rule", whether stored or picked here, survives an uncheck and
-    // re-check: it is the only way to express object lock without a default rule.
+    // Turning object lock on leaves the default retention mode alone. No default rule is middleware's
+    // default and what backup software such as Veeam expects, since it sets retention per object itself;
+    // a Compliance rule picked for the user would make every new object undeletable for its period.
     this.form.controls.object_lock.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((objectLock) => {
-      if (objectLock && !this.defaultModeOffered && this.form.controls.object_lock_default_mode.value === null) {
-        this.defaultModeOffered = true;
-        this.form.controls.object_lock_default_mode.setValue(S3ObjectLockMode.Compliance);
-      }
       this.syncVersioningLock(objectLock);
     });
     // The gated validators above read sibling controls, so the switches they depend on re-run them.
@@ -552,9 +546,6 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   /** What versioning was set to before object lock forced it on, restored when object lock is released. */
   private versioningBeforeLock: S3Versioning | null = null;
-
-  /** Whether the Compliance default has been offered; a bucket stored with object lock starts offered. */
-  private defaultModeOffered = false;
 
   /**
    * Object lock requires versioning, so the select is set to Enabled and held there while it is on.
