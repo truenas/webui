@@ -65,7 +65,12 @@
         [label]="'Default Retention Mode' | translate"
         [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
       >
-        <tn-select formControlName="object_lock_default_mode" [options]="objectLockModeOptions"></tn-select>
+        <!-- tn-select shows its placeholder for a null value, even with a null option, so the placeholder names it. -->
+        <tn-select
+          formControlName="object_lock_default_mode"
+          [options]="objectLockModeOptions"
+          [placeholder]="'No default rule' | translate"
+        ></tn-select>
       </tn-form-field>
 
       @if (form.controls.object_lock_default_mode.value) {

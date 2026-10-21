@@ -94,8 +94,8 @@ test('an admin publishes an S3 bucket with object lock and starts the service', 
 
   // Through the API, deliberately: the screens confirmed a row appeared, and
   // this asks whether the bucket is really configured the way the form
-  // promised. Versioning and the retention mode are not even visible in basic
-  // mode — object lock is meant to set both — so only middleware can say.
+  // promised. Versioning is not even visible in basic mode — object lock is
+  // meant to set it — so only middleware can say.
   await test.step('confirm the bucket is locked, versioned and served', async () => {
     const created = await findS3Bucket(api, bucket);
 
