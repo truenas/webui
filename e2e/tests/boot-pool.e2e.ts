@@ -2,11 +2,10 @@
  * Stories: an admin scrubs the boot pool; changes how often it is scrubbed, and
  * the dialog refuses an interval under a day; activates another boot environment
  * and then the original again; and attaches an unused disk to the boot pool as a
- * mirror. All from System > Boot and the Boot Pool Status page it links to.
- * Detaching it again through the UI is written but not run, because Boot Pool
- * Status cannot do it yet (#14710) — the reason is above that test. Both mirror
- * tests skip where no unused disk is as large as the boot disk, because
- * middleware refuses that attach. The CI appliance is given one for them.
+ * mirror, then detaches that disk again from its own row. All from System > Boot
+ * and the Boot Pool Status page it links to. Both mirror tests skip where no
+ * unused disk is as large as the boot disk, because middleware refuses that
+ * attach. The CI appliance is given one for them.
  *
  * Each is asserted twice: the screen, and middleware's own record —
  * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
@@ -265,20 +264,21 @@ test('an admin mirrors the boot pool onto an unused disk', async ({ page, api })
   }
 });
 
-// Not run until Boot Pool Status can detach a disk from the mirror: it draws Detach
-// only on a MIRROR row whose topology entry has a `path`, which a ZFS mirror vdev
-// does not have, and it sends `boot.detach` the row's name minus its first five
-// characters (`r-0` for `mirror-0`). Read from the source; the product fix is
-// #14710. Remove this marker with that fix.
-test.fixme('an admin detaches the disk the boot pool was mirrored onto', async ({ page, api }) => {
+test('an admin detaches the disk the boot pool was mirrored onto', async ({ page, api }) => {
   const { startingDisks, disk } = await prepareMirror(api);
   const bootDevice = await findBootDevice(api);
   await attachBootDiskOverApi(api, disk);
-  const mirrorName = await findBootDevice(api);
+
+  const [mirror] = await findBootPoolTopology(api);
+  const partition = mirror?.children.find((device) => device.disk === disk);
+  if (!mirror || !partition) {
+    throw new Error(`boot.get_state reports no mirror holding a partition on "${disk}" after the attach`);
+  }
 
   await goToBootEnvironments(page);
-  await openBootPoolStatus(page, mirrorName);
-  await page.locator(status.actions(mirrorName)).click();
+  await openBootPoolStatus(page, mirror.name);
+  await page.locator(status.toggle(mirror.guid)).click();
+  await page.locator(status.actions(partition.name)).click();
   await page.locator(status.detach).click();
 
   await expect(page.locator(header.status)).toBeVisible({ timeout: activateTimeoutMs });
@@ -286,5 +286,6 @@ test.fixme('an admin detaches the disk the boot pool was mirrored onto', async (
   expect(await findBootDevice(api)).toBe(bootDevice);
 
   await openBootPoolStatus(page, bootDevice);
-  await expect(page.locator(status.deviceName(mirrorName))).toHaveCount(0);
+  await expect(page.locator(status.deviceName(mirror.name))).toHaveCount(0);
+  await expect(page.locator(status.deviceName(partition.name))).toHaveCount(0);
 });

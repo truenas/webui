@@ -56,7 +56,7 @@
         }
       </ng-container>
       <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isMirror()) {
+        @if (isMirrorMember()) {
           <tn-menu-item
             iconLibrary="mdi"
             [icon]="detachIcon"
