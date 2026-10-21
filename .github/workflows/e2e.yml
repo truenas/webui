@@ -213,20 +213,64 @@ jobs:
         with:
           upstream: ${{ env.TN_HOST_HTTP }}
 
+      # Whether the runner reaches the Active Directory test domain's
+      # controllers, for `directory-services-ad`. The appliance is behind
+      # qemu's user-mode NAT, so it reaches what the runner reaches; a closed
+      # port here is the reason a join fails, said before the suite rather
+      # than as a timeout inside it. A warning, not a failure: only those
+      # tests need the domain. Skipped when the secrets are not there.
+      - name: Check the domain controllers are reachable
+        env:
+          TN_AD_DC1: ${{ secrets.E2EUI_AD_DC1 }}
+          TN_AD_DC2: ${{ secrets.E2EUI_AD_DC2 }}
+        run: |
+          if [ -z "$TN_AD_DC1" ]; then
+            echo "No E2EUI_AD_DC1 secret: the Active Directory tests will skip."
+            exit 0
+          fi
+          # DNS, Kerberos, LDAP, SMB and kpasswd: what a join and a leave use.
+          for dc in "$TN_AD_DC1" ${TN_AD_DC2:+"$TN_AD_DC2"}; do
+            for port in 53 88 389 445 464; do
+              if ! timeout 5 bash -c ">/dev/tcp/$dc/$port" 2> /dev/null; then
+                echo "::warning::A domain controller does not answer on TCP $port; the Active Directory tests will fail"
+              fi
+            done
+          done
+
       # As the `shipped` profile with TN_UI_BASE_URL pointing at the served
       # UI: it *is* the production build at /ui/ over https, just not from
       # the appliance, and that profile is the one that tolerates a
       # self-signed certificate. With `ui: shipped` there is no override,
       # and the suite derives the appliance's own /ui/ from TN_HOST.
+      #
+      # The TN_AD_* variables are the Active Directory test domain, from the
+      # E2EUI_AD_* repository secrets; `directory-services-ad` skips without
+      # TN_AD_DOMAIN. Unlike everything else the suite is given, they outlive
+      # the job, which is why the specs that use them publish no trace (the
+      # `unpublished` project in playwright.config.ts). Set on this step
+      # only, not the job, so no other step or action sees them.
       - name: Run the suite
         uses: ./.github/actions/e2e-run
         env:
           TN_UI_BASE_URL: ${{ steps.ui.outputs.url }}
           TN_UI_BASE_URL_HTTP: ${{ steps.ui.outputs.http-url }}
+          TN_AD_DOMAIN: ${{ secrets.E2EUI_AD_DOMAIN }}
+          TN_AD_DC1: ${{ secrets.E2EUI_AD_DC1 }}
+          TN_AD_DC2: ${{ secrets.E2EUI_AD_DC2 }}
+          TN_AD_USERNAME: ${{ secrets.E2EUI_AD_USERNAME }}
+          TN_AD_PASSWORD: ${{ secrets.E2EUI_AD_PASSWORD }}
+          TN_AD_COMPUTER_OU: ${{ secrets.E2EUI_AD_COMPUTER_OU }}
         with:
           shard: ${{ matrix.shard }}/${{ needs.plan.outputs.total }}
           grep: ${{ inputs.grep }}
           artifact-suffix: -${{ matrix.shard }}
+          env: |
+            TN_AD_DOMAIN
+            TN_AD_DC1
+            TN_AD_DC2
+            TN_AD_USERNAME
+            TN_AD_PASSWORD
+            TN_AD_COMPUTER_OU
 
       # What the appliance says, when anything failed or the job ran out of
       # time: its serial console, then from inside it Docker's and
@@ -240,7 +284,11 @@ jobs:
       # This repository's logs are public: everything taken from middleware
       # or from inside the appliance goes through `grep -iv license`, as
       # e2e-ha.yml filters its middleware log, and the admin password is
-      # masked by the boot step.
+      # masked by the boot step. And every line of the step goes through one
+      # more filter, which drops any line naming a `TN_AD_*` value in any
+      # case: the AD spec's refused join logs a traceback naming the domain in
+      # capitals every run, which GitHub's masking, verbatim only, lets
+      # through.
       #
       # appliance.sh has no `ssh` (ha.sh does). Its `boot-report` turns ssh
       # on for the admin, with a key and passwordless sudo, prints where the
@@ -248,7 +296,22 @@ jobs:
       # which is what the sections after it log in with.
       - name: The appliance's console, Docker, middleware and network
         if: failure() || cancelled()
+        env:
+          TN_AD_DOMAIN: ${{ secrets.E2EUI_AD_DOMAIN }}
+          TN_AD_DC1: ${{ secrets.E2EUI_AD_DC1 }}
+          TN_AD_DC2: ${{ secrets.E2EUI_AD_DC2 }}
+          TN_AD_USERNAME: ${{ secrets.E2EUI_AD_USERNAME }}
+          TN_AD_PASSWORD: ${{ secrets.E2EUI_AD_PASSWORD }}
+          TN_AD_COMPUTER_OU: ${{ secrets.E2EUI_AD_COMPUTER_OU }}
         run: |
+          # One fixed string per line, empties dropped: an empty pattern would
+          # match, and so drop, every line. With no domain the file is empty
+          # and nothing is dropped.
+          ad_values="$RUNNER_TEMP/ad-values"
+          printf '%s\n' "$TN_AD_DOMAIN" "$TN_AD_DC1" "$TN_AD_DC2" "$TN_AD_USERNAME" \
+            "$TN_AD_PASSWORD" "$TN_AD_COMPUTER_OU" | sed '/^$/d' > "$ad_values"
+
+          report() {
           echo "::group::The appliance's console"
           timeout 20 truenas-appliance console 300 || true
           echo "::endgroup::"
@@ -296,6 +359,9 @@ jobs:
             ip route
             sudo -n cat /etc/docker/daemon.json'
           echo "::endgroup::"
+          }
+
+          report 2>&1 | grep -ivF -f "$ad_values" || true
 
       # A leftover UI container would go on proxying to a destroyed appliance
       # and sit on the daemon forever. `--rm` covers a clean exit; this covers

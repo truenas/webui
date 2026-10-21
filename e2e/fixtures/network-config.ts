@@ -70,6 +70,20 @@ export async function findActivityLabel(client: E2eApiClient, activity: string):
 }
 
 /**
+ * Sets the three nameservers to `nameservers`, in order, emptying the rest.
+ * Setup for a spec that depends on what the appliance resolves through — a
+ * domain join — never the change under test. Restore with
+ * {@link restoreNetworkConfig} from a {@link readNetworkConfig} taken first.
+ */
+export async function setNameservers(client: E2eApiClient, nameservers: readonly string[]): Promise<void> {
+  const [nameserver1 = '', nameserver2 = '', nameserver3 = ''] = nameservers;
+  await firstValueFrom(
+    client.api.call('network.configuration.update', [{ nameserver1, nameserver2, nameserver3 }])
+      .pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Writes `settings` back, and only if the appliance holds something else. Never
  * for the change under test, which goes through the form.
  */

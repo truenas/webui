@@ -46,6 +46,12 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   the pull. `tests/apps-settings.e2e.ts` needs github.com: its preferred-trains
   tests sync the catalog so that the form has trains to offer. Without it they
   fail at the sync, and the file's other tests still run.
+- **An Active Directory domain it can reach and join**, for
+  `tests/unpublished/directory-services-ad.e2e.ts`, named by the `TN_AD_*` variables
+  (`.env.example`); without `TN_AD_DOMAIN` that file skips. The domain
+  controllers must serve its DNS, since the spec points the nameservers at
+  them, and the account must be allowed to create and delete computer objects
+  in `TN_AD_COMPUTER_OU`. CI uses the internal test domain (`docs/05-ci.md`).
 
 ## Known gaps
 
@@ -108,6 +114,11 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   contradict each other, added at different times. Deciding which one is right
   is a product call rather than a test one; the tooltip ("Groups with privileges
   or members cannot be deleted") reads like the deliberate half.
+- **A run that dies mid-join leaves a computer account in the shared domain.**
+  Teardown leaves the domain, which deletes it, but a runner that is cancelled
+  or lost never gets there. Every account the suite creates is named `e2eui-`
+  and eight random characters, in `TN_AD_COMPUTER_OU`, so the leftovers can be
+  told apart; nothing sweeps them yet.
 - **`AuthResponseType` is declared but not exported** while
   `AuthResponse.response_type` is typed as it, so `support/api/client.ts` checks
   a successful login by comparing `String(...)` against `'SUCCESS'`. Still true

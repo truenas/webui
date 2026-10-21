@@ -67,6 +67,35 @@ export const directoryServicesLocators = {
   /** "Configure Directory Services", under the disabled state. The id predates its label. */
   configure: '[data-test="button-configure-active-directory"]',
 
+  /**
+   * The card shown once a service is configured. Each line is a label and a
+   * value, tagged `[item.label, 'value']`, so the ids follow the English labels
+   * in `helptextDashboard` rather than the card.
+   */
+  card: {
+    /** The `DirectoryServiceStatus` itself — `HEALTHY`, `FAULTED` — not a translated word. */
+    status: '[data-test="text-status-value"]',
+    domainName: '[data-test="text-domain-name-value"]',
+    /** "Enabled" or "Disabled". */
+    accountCache: '[data-test="text-account-cache-value"]',
+    /** The card header's menu trigger, `menuTriggerTestId`. */
+    actionsMenu: '[data-test="button-directory-services-actions-menu"]',
+    /**
+     * Leave, in that menu, offered only while the status is `HEALTHY`. Keyed by
+     * the card's title: `button-<title>-leave`.
+     */
+    leave: '[data-test="button-active-directory-leave"]',
+  },
+
+  /** The Leave Domain dialog, `<tn-dialog-shell testId="leave-domain">`. */
+  leaveDialog: {
+    title: '[data-test="dialog-title-leave-domain"]',
+    username: '[data-test="input-username"]',
+    password: '[data-test="input-password"]',
+    /** Disabled until both fields are filled. */
+    leave: '[data-test="button-leave-domain"]',
+  },
+
   configForm: {
     serviceType: '[data-test="select-service-type"]',
     serviceTypeOption: (label: string): string => `[data-test="option-service-type-${kebabTestSegment(label)}"]`,
@@ -78,6 +107,7 @@ export const directoryServicesLocators = {
     serviceTypeField: '[data-test="form-field-service-type"]',
     enable: '[data-test="checkbox-enable"]',
     enableAccountCache: '[data-test="checkbox-enable-account-cache"]',
+    enableDnsUpdates: '[data-test="checkbox-enable-dns-updates"]',
     timeout: '[data-test="input-timeout"]',
     /** The `tn-form-field` around Timeout, which holds its validation error. */
     timeoutField: '[data-test="form-field-timeout"]',
