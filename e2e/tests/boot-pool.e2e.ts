@@ -5,8 +5,8 @@
  * mirror. All from System > Boot and the Boot Pool Status page it links to.
  * Detaching it again through the UI is written but not run, because Boot Pool
  * Status cannot do it yet (#14710) — the reason is above that test. Both mirror
- * tests skip where the spare disk is smaller than the boot disk, as on the CI
- * appliance, because middleware refuses that attach.
+ * tests skip where no unused disk is as large as the boot disk, because
+ * middleware refuses that attach. The CI appliance is given one for them.
  *
  * Each is asserted twice: the screen, and middleware's own record —
  * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
@@ -40,13 +40,11 @@ import {
   findBootScrubJobStateAfter,
   findLatestBootScrubJobId,
   findRunningBootEnvironment,
-  isSmallerThanBootDisk,
   listBootDisks,
+  pickBootMirrorDisk,
   readBootScrubInterval,
   setBootScrubInterval,
 } from '../fixtures/boot-environments';
-import { pickUnusedDisk } from '../fixtures/disks';
-import { requireUnusedDisks } from '../fixtures/storage';
 import {
   activateBootEnvironment, attachBootDisk, openBootPoolStats, openBootPoolStatus, scrubBootPool,
 } from '../flows/boot-environments';
@@ -226,18 +224,18 @@ async function prepareMirror(api: E2eApiClient): Promise<{ startingDisks: string
   expect(startingDisks, 'the boot pool should start on a single disk').toHaveLength(1);
   originalBootDisks = startingDisks;
 
-  await requireUnusedDisks(api, 1);
-  const disk = await pickUnusedDisk(api);
+  const disk = await pickBootMirrorDisk(api, startingDisks);
   // Skipped rather than failed: middleware refuses the attach, and the ticket rules
-  // out working round it. The CI appliance's spare disks are 10 GiB and its boot
-  // partition alone is about 15.5 GiB, so this skips there (#14670).
+  // out working round it. The CI appliance's data disks are 10 GiB and its boot
+  // partition alone is about 15.5 GiB (#14670), so CI boots it with one larger disk
+  // for this (`extra-disk-gb` in `.github/workflows/e2e.yml`).
   test.skip(
-    await isSmallerThanBootDisk(api, startingDisks, disk),
-    `${disk} is smaller than the boot disk, so boot.attach has no room on it for the boot partitions`,
+    disk === undefined,
+    'no unused disk is as large as the boot disk, so boot.attach has no room on any for the boot partitions',
   );
-  attachedDisk = disk;
+  attachedDisk = disk ?? '';
 
-  return { startingDisks, disk };
+  return { startingDisks, disk: attachedDisk };
 }
 
 test('an admin mirrors the boot pool onto an unused disk', async ({ page, api }) => {
