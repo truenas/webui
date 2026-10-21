@@ -2,14 +2,16 @@
  * The System Security card's form, driven through the UI from System > Advanced Settings.
  */
 import { expect, type Page } from '@playwright/test';
-import { closeFirstTimeWarning } from './advanced-settings';
 import { systemSecuritySaveTimeoutMs } from '../fixtures/system-security';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { jobDialogLocators } from '../locators/encryption';
 import { systemSecurityLocators } from '../locators/system-security';
 
 /**
- * Opens the form from the card, on Advanced Settings already, as the first form the page opens.
+ * Opens the form from the card, on Advanced Settings already.
+ *
+ * Unlike the other cards there, this one raises no first-time warning: `onConfigure` opens the
+ * form directly, without `FirstTimeWarningService`.
  *
  * The form fills itself from `system.security.config` after it opens, so a value typed before
  * then could be overwritten by the load. Save is enabled only once that load has finished.
@@ -17,7 +19,6 @@ import { systemSecurityLocators } from '../locators/system-security';
 export async function openSystemSecurityForm(page: Page): Promise<void> {
   const { card, form } = systemSecurityLocators;
   await page.locator(card.configure).click();
-  await closeFirstTimeWarning(page);
   await expect(page.locator(form.minPasswordAge)).toBeVisible();
   await expect(page.locator(form.save)).toBeEnabled();
 }

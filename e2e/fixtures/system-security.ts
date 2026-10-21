@@ -11,13 +11,14 @@
  * `change-own-password`) would have their passwords refused by it, and an age or history
  * limit can stop a password being changed at all.
  */
-import type { CallResponse } from '@truenas/api-client';
+import type { CallResponse, JobParams } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 type SystemSecurityEntry = CallResponse<E2eApiDirectory, 'system.security.config'>;
+type SystemSecurityUpdate = JobParams<E2eApiDirectory, 'system.security.update'>[0];
 
 export type PasswordComplexityRule = 'UPPER' | 'LOWER' | 'NUMBER' | 'SPECIAL';
 
@@ -101,11 +102,21 @@ export async function isSystemSecurityAvailable(client: E2eApiClient): Promise<b
 /**
  * Writes the five password fields and nothing else. For the state a test starts from and for
  * teardown — never for the change under test, which goes through the form.
+ *
+ * A ruleset goes back in the `{ $set: [...] }` envelope it was read in, as the form sends it:
+ * middleware refuses a plain list with "Input should be a valid set", whatever the generated
+ * types declare. Null needs no envelope.
  */
 export async function setPasswordPolicy(client: E2eApiClient, policy: PasswordPolicy): Promise<void> {
+  const ruleset = policy.password_complexity_ruleset;
+  const update = {
+    ...policy,
+    password_complexity_ruleset: ruleset === null ? null : { $set: ruleset },
+  } as unknown as SystemSecurityUpdate;
+
   await runJob(
     client,
-    () => client.api.callAndGetJobId('system.security.update', [{ ...policy }]),
+    () => client.api.callAndGetJobId('system.security.update', [update]),
     {
       timeoutMs: systemSecuritySaveTimeoutMs,
       whatItCosts: 'The password policy was not restored, so later user and password specs may have '
