@@ -94,6 +94,8 @@ const s3CredentialName = 'e2e-cloudsync-form-s3';
 const s3ProviderLabel = 'Amazon S3';
 /** The appliance's own S3 service, plain HTTP, as rclone on the appliance reaches it. */
 const s3Endpoint = 'http://127.0.0.1:9000';
+/** The same endpoint as middleware stores it: the form sends it as typed, and it is saved with a trailing slash. */
+const s3StoredEndpoint = 'http://127.0.0.1:9000/';
 
 /** Distinct from the other S3 specs' owners, so no spec's cleanup removes another's user. */
 const s3Owner = 'cloudsyncs3owner';
@@ -301,7 +303,7 @@ test('an admin adds an S3 credential pointed at the appliance\'s own S3 service,
   expect(s3Fields(await findCloudCredential(api, s3CredentialName))).toMatchObject({
     type: 'S3',
     access_key_id: key.accessKeyId,
-    endpoint: s3Endpoint,
+    endpoint: s3StoredEndpoint,
   });
 });
 
