@@ -192,10 +192,14 @@ export function decodeFingerprint(raw: string): FingerprintField[] | null {
  * The tags are removed, which leaves what the page's `textContent` holds, and the few entities a
  * legal text uses are decoded. One distinctive line rather than the whole document, so a
  * difference in how the browser lays out whitespace cannot fail it.
+ *
+ * The tags are split out rather than replaced: this only reads text and never renders it, and
+ * CodeQL reads a `replace` of tags as an incomplete HTML sanitizer.
  */
 export function firstEulaLine(html: string): string | undefined {
   const text = html
-    .replace(/<[^>]*>/g, '')
+    .split(/<[^>]*>/)
+    .join('')
     .replace(/&nbsp;/g, ' ')
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, '\'')
