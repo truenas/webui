@@ -36,20 +36,55 @@ export const interfacesCardLocators = {
 } as const;
 
 /**
- * "Add Interface". Every control falls back to its `formControlName`. Save is
+ * "Add Interface" and "Edit Interface", one form. Every control falls back to its
+ * `formControlName`, and every select's options are keyed by label. Save is
  * `haInterfaceLocators.form.save`, which `saveInterface` in `flows/ha.ts` presses.
  */
 export const interfaceFormLocators = {
   /** Shown only when adding. Options are keyed by label: `Bridge`, `Link Aggregation`, `VLAN`. */
   type: '[data-test="select-type"]',
   typeOption: (label: string): string => `[data-test="option-type-${kebabTestSegment(label)}"]`,
+  /** Read-only when editing. */
   name: '[data-test="input-name"]',
   description: '[data-test="input-description"]',
+  /**
+   * The `ipv4_dhcp` radio for DHCP. Its sibling, and why the base is spelled
+   * `ipv-4-dhcp`, is `haInterfaceLocators.form.staticAddresses`.
+   */
+  dhcp: '[data-test="radio-button-ipv-4-dhcp-get-ip-address-automatically-from-dhcp"]',
+  mtu: '[data-test="input-mtu"]',
+  /** Shown only when editing, with `NETWORK_FEC`, and once `interface.available_fec_modes` named a mode. */
+  fecMode: '[data-test="select-fec-mode"]',
+  fecModeOptions: '[data-test^="option-fec-mode-"]',
 
   /** VLAN Settings, shown once the type is VLAN. Parents are keyed by label, the NIC's name. */
   vlanParent: '[data-test="select-vlan-parent-interface"]',
   vlanParentOption: (name: string): string => `[data-test="option-vlan-parent-interface-${kebabTestSegment(name)}"]`,
   vlanTag: '[data-test="input-vlan-tag"]',
+
+  /** Bridge Settings, shown once the type is Bridge. Members are a multiple select of interface names. */
+  bridgeMembers: '[data-test="select-bridge-members"]',
+  bridgeMembersOptions: '[data-test^="option-bridge-members-"]',
+  bridgeMemberOption: (name: string): string => `[data-test="option-bridge-members-${kebabTestSegment(name)}"]`,
+  /** On by default. */
+  enableLearning: '[data-test="checkbox-enable-learning"]',
+
+  /** Link Aggregation, shown once the type is Link Aggregation. */
+  lagProtocol: '[data-test="select-lag-protocol"]',
+  lagProtocolOption: (label: string): string => `[data-test="option-lag-protocol-${kebabTestSegment(label)}"]`,
+  /** Shown for LACP and LOADBALANCE. */
+  xmitHashPolicy: '[data-test="select-xmit-hash-policy"]',
+  /** Shown for LACP only. */
+  lacpduRate: '[data-test="select-lacpdu-rate"]',
+  lacpduRateOptions: '[data-test^="option-lacpdu-rate-"]',
+  lacpduRateOption: (label: string): string => `[data-test="option-lacpdu-rate-${kebabTestSegment(label)}"]`,
+  /** A multiple select for every protocol but FAILOVER, which has an ordered listbox instead. */
+  lagPorts: '[data-test="select-lag-ports"]',
+  lagPortsOptions: '[data-test^="option-lag-ports-"]',
+  lagPortOption: (name: string): string => `[data-test="option-lag-ports-${kebabTestSegment(name)}"]`,
+
+  /** The side panel is opened with no `testId`, so this is the panel's generic close. */
+  closePanel: '[data-test="button-close-side-panel"]',
 } as const;
 
 /**
