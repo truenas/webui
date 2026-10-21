@@ -69,4 +69,9 @@ export const entitlementFeature = {
    * `isNotDenied`.
    */
   sed: 'SED',
+  /**
+   * Not a lock either: the interface edit form asks `interface.available_fec_modes`, and so can
+   * show FEC Mode, unless the key is explicitly denied. Ask with `isNotDenied`.
+   */
+  networkFec: 'NETWORK_FEC',
 } as const;

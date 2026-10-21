@@ -13,6 +13,7 @@
  * `interface.bridge_members_choices` and `interface.lag_ports_choices` rather
  * than written down, since both depend on how the NIC was set up.
  */
+import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';
 import {
   ensureNoPendingInterfaceChanges, findInterface, findManagementInterface, hasNetworkConfigToBeRemoved,
   hasPendingInterfaceChanges, listInterfaces, readAvailableFecModes, readBridgeMembersChoices,
@@ -145,7 +146,7 @@ test('an admin deletes a staged VLAN from the card, and nothing else changes', a
 test.describe('the NIC\'s edit form', () => {
   test.use({ recordApiCalls: true });
 
-  test('loads its settings and FEC modes, and closing it changes nothing', async ({ page, api }) => {
+  test('loads its settings and FEC modes, and closing it changes nothing', async ({ page, api, entitlements }) => {
     const { name, ipv4Addresses } = await findManagementInterface(api);
     const before = await findInterface(api, name);
     if (!before) {
@@ -162,18 +163,25 @@ test.describe('the NIC\'s edit form', () => {
     await expect(page.locator(form.mtu)).toHaveValue(String(before.mtu ?? 1500));
     await expect(page.locator(before.ipv4_dhcp ? form.dhcp : haInterfaceLocators.form.staticAddresses)).toBeChecked();
 
-    // The form asks whatever the answer, so the request is the evidence: on a
-    // NIC without FEC, as a virtio one is, it answers `[]` and nothing shows.
-    await expect.poll(
-      () => apiCallsTo(page, 'interface.available_fec_modes').map((call) => call.answer),
-      { timeout: fecModesTimeoutMs },
-    ).toEqual(['result']);
+    if (isNotDenied(entitlements, entitlementFeature.networkFec)) {
+      // The form asks whatever the answer, so the request is the evidence: on a
+      // NIC without FEC, as a virtio one is, it answers `[]` and nothing shows.
+      await expect.poll(
+        () => apiCallsTo(page, 'interface.available_fec_modes').map((call) => call.answer),
+        { timeout: fecModesTimeoutMs },
+      ).toEqual(['result']);
 
-    if (fecModes.length > 0) {
-      await openFormSelect(page, form.fecMode);
-      await expect(page.locator(form.fecModeOptions)).toHaveCount(fecModes.length);
-      await closeFormSelect(page, form.fecModeOptions);
+      if (fecModes.length > 0) {
+        await openFormSelect(page, form.fecMode);
+        await expect(page.locator(form.fecModeOptions)).toHaveCount(fecModes.length);
+        await closeFormSelect(page, form.fecModeOptions);
+      } else {
+        await expect(page.locator(form.fecMode)).toHaveCount(0);
+      }
     } else {
+      // Denied, the form never asks. The form has loaded the record by now, so
+      // this is a backstop rather than a wait: a late request would still pass.
+      expect(apiCallsTo(page, 'interface.available_fec_modes')).toEqual([]);
       await expect(page.locator(form.fecMode)).toHaveCount(0);
     }
 
