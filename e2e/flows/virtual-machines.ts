@@ -160,8 +160,9 @@ export async function discardVmWizard(page: Page): Promise<void> {
  * interface the appliance lists first, since a run cannot know their names.
  *
  * With an image, Save first creates the zvol and converts the image into it in a job dialog, and
- * only then creates the VM. The panel closing is still the sign every call succeeded: a failed
- * conversion sends the wizard back to Disks instead.
+ * only then creates the VM. A failed conversion sends the wizard back to Disks, which hides Save
+ * just as closing the panel does, so with an image the caller's read-back of the VM is what tells
+ * the two apart.
  */
 export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvol): Promise<void> {
   const { wizard } = virtualMachinesLocators;
@@ -584,9 +585,10 @@ export async function addUsbPassthroughFromDevicesPage(page: Page, usb: CustomUs
  * The autocomplete only accepts one of its own options, and clicking the option is what commits
  * it: the typed text alone does not.
  *
- * Save asks first, in webui's shared confirm, for a device with no reset mechanism. That is
- * accepted here, and a device that has one goes straight through. The panel closing is the sign
- * either way: declining would leave it open.
+ * Save asks first, in webui's shared confirm, for a device with no reset mechanism. That confirm
+ * keeps its tick box, which has to be ticked before Confirm enables. It is accepted here, and a
+ * device that has a reset mechanism goes straight through. The panel closing is the sign either
+ * way: declining would leave it open.
  */
 export async function addPciPassthroughFromDevicesPage(page: Page, label: string): Promise<void> {
   const form = virtualMachinesLocators.deviceForm;
@@ -605,6 +607,8 @@ export async function addPciPassthroughFromDevicesPage(page: Page, label: string
     .poll(async () => await warning.isVisible() || !(await save.isVisible()), { timeout: saveTimeoutMs })
     .toBe(true);
   if (await warning.isVisible()) {
+    await page.locator(confirmDialogLocators.checkbox).click();
+    await expect(page.locator(confirmDialogLocators.confirm)).toBeEnabled();
     await page.locator(confirmDialogLocators.confirm).click();
   }
   await expect(save).toBeHidden({ timeout: saveTimeoutMs });

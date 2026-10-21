@@ -466,6 +466,10 @@ export interface PassthroughSurvey {
  * The first PCI device `vm.device.passthrough_device_choices` lists as available and not critical
  * to the host, which is the one the passthrough journey adds. Never one the appliance itself
  * relies on: `critical` is middleware's word for that.
+ *
+ * Only a device whose label no other listed device shares. The autocomplete keys each option's id
+ * on its label, so two devices with one description (several virtio controllers on a QEMU guest)
+ * render the same id, and the journey could not tell which one it picked.
  */
 export async function findPassthroughCandidate(client: E2eApiClient): Promise<PassthroughSurvey> {
   const choices = await firstValueFrom(
@@ -476,16 +480,22 @@ export async function findPassthroughCandidate(client: E2eApiClient): Promise<Pa
   );
 
   const entries = Object.entries(choices);
-  const found = entries.find(([, device]) => device.available && !device.critical);
+  const labelOf = (id: string): string => choices[id]?.description || id;
+  const labels = entries.map(([id]) => labelOf(id));
+  const found = entries.find(([id, device]) => (
+    device.available && !device.critical && labels.filter((label) => label === labelOf(id)).length === 1
+  ));
 
   return {
     candidate: found && {
       id: found[0],
-      label: found[1].description || found[0],
+      label: labelOf(found[0]),
       drivers: found[1].drivers,
     },
     iommuEnabled,
-    listed: entries.map(([id, device]) => `${id} (available: ${device.available}, critical: ${device.critical})`),
+    listed: entries.map(([id, device]) => (
+      `${id} "${labelOf(id)}" (available: ${device.available}, critical: ${device.critical})`
+    )),
   };
 }
 

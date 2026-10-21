@@ -8,7 +8,8 @@
  *
  * The USB device is given by vendor and product id through Specify custom, so the journey needs no
  * USB device on the host. The PCI device has to be a real one: the first that
- * `vm.device.passthrough_device_choices` lists as available and not critical to the host. The CI
+ * `vm.device.passthrough_device_choices` lists as available, not critical to the host, and with a
+ * label no other device shares, since the autocomplete keys its options on the label. The CI
  * appliance is itself a QEMU guest, so whether it lists one at all depends on what the host gives
  * it. When it lists none, the PCI test is skipped and says what middleware answered.
  *
@@ -74,7 +75,7 @@ test('an admin adds a PCI passthrough device', async ({ page, api }) => {
   // hardware, not the form. The reason carries middleware's own answer, so a run records it.
   test.skip(
     !candidate,
-    'vm.device.passthrough_device_choices lists no available, non-critical device '
+    'vm.device.passthrough_device_choices lists no available, non-critical device with a label of its own '
     + `(iommu_enabled: ${survey.iommuEnabled}; listed: ${survey.listed.join(', ') || 'none'}).`,
   );
   if (!candidate) {
