@@ -232,7 +232,10 @@ export const containersLocators = {
      * shows the state only as a class.
      */
     shell: '[data-test="link-open-shell"]',
-    /** The Shell item's trailing icon. Its `aria-label` says why the item is disabled, or is empty. */
+    /**
+     * The Shell item's trailing icon. Its `aria-label` says why the item is disabled; while it is
+     * enabled, `tn-icon` falls back to the icon's name.
+     */
     shellIcon: '[data-test="icon-open-shell"]',
   },
 
