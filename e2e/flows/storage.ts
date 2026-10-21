@@ -6,9 +6,9 @@ import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
   autotrimLocators, datasetDetailsLocators, datasetLocators, dedupQuotaLocators, deleteDatasetDialogLocators,
-  downloadKeyDialogLocators, manualDiskSelectionLocators, poolDisconnectLocators, poolImportLocators,
-  poolScrubLocators, poolWizardLocators, pruneDedupLocators, scheduledScrubLocators, type VdevCategory,
-  zvolLocators,
+  downloadKeyDialogLocators, expandPoolLocators, manualDiskSelectionLocators, poolDisconnectLocators,
+  poolImportLocators, poolScrubLocators, poolWizardLocators, pruneDedupLocators, scheduledScrubLocators,
+  type VdevCategory, zvolLocators,
 } from '../locators/storage';
 import { slowCallTimeoutMs } from '../support/timeouts';
 
@@ -648,6 +648,23 @@ export async function openAutotrimDialog(page: Page, pool: string): Promise<void
   await menu.click();
   await page.locator(autotrimLocators.open(pool)).click();
   await expect(page.locator(autotrimLocators.title)).toBeVisible();
+}
+
+/**
+ * Picks Expand Pool from the Advanced Actions menu in `pool`'s header on the
+ * Storage dashboard, and accepts its confirm.
+ *
+ * Returns once the confirm is accepted. The `pool.expand` job runs on under the
+ * page loader with no dialog of its own, so waiting for it is the caller's.
+ */
+export async function expandPool(page: Page, pool: string): Promise<void> {
+  await goToStorage(page);
+
+  const menu = page.locator(autotrimLocators.menu(pool));
+  await expect(menu).toBeVisible({ timeout: saveTimeoutMs });
+  await menu.click();
+  await page.locator(expandPoolLocators.open(pool)).click();
+  await confirmDestructiveAction(page);
 }
 
 /** Saves the Auto TRIM dialog and waits for it to close, which it does once `pool.update` has finished. */

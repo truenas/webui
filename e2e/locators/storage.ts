@@ -633,6 +633,17 @@ export const autotrimLocators = {
   line: (pool: string) => `[data-test="text-${kebabTestSegment(pool)}-auto-trim"]`,
 } as const;
 
+/**
+ * Expand Pool: the first item in a pool header's Advanced Actions menu
+ * ({@link autotrimLocators.menu}). It raises the shared confirm, with its tick box,
+ * and then runs `pool.expand` under the page loader with no job dialog. Its success
+ * snackbar has no `data-test`.
+ */
+export const expandPoolLocators = {
+  /** "Expand Pool", `['expand', pool()?.name]` on a tn-menu-item. */
+  open: (pool: string) => `[data-test="button-expand-${kebabTestSegment(pool)}"]`,
+} as const;
+
 /** The Set Quota dialog that the Deduplication Table line's Set Quota opens. */
 export const dedupQuotaLocators = {
   /**

@@ -50,5 +50,10 @@ export const emailLocators = {
     password: '[data-test="input-pass"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+    /**
+     * The form's one extra footer action, `testId: 'send-test-mail'` in `footerActions`,
+     * which the side panel container renders as a `tn-button` beside Save.
+     */
+    sendTestMail: '[data-test="button-send-test-mail"]',
   },
 } as const;

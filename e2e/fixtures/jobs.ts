@@ -43,6 +43,36 @@ export async function readJob(client: E2eApiClient, jobId: number): Promise<JobR
 }
 
 /**
+ * The id of the newest job of `method` middleware remembers, or 0 when there is none.
+ *
+ * Taken before the UI starts a job, as the mark {@link findJobStateAfter} reads past.
+ */
+export async function findLatestJobId(client: E2eApiClient, method: string): Promise<number> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', method]]).pipe(timeout(readTimeoutMs)),
+  );
+
+  // `?? 0`: the generated query entity declares `id` optional, as `UserRecord` explains.
+  return Math.max(0, ...jobs.map((job) => job.id ?? 0));
+}
+
+/** The state of the oldest job of `method` newer than `afterId`, or undefined when there is none yet. */
+export async function findJobStateAfter(
+  client: E2eApiClient,
+  method: string,
+  afterId: number,
+): Promise<string | undefined> {
+  const jobs = await firstValueFrom(
+    client.api
+      .query('core.get_jobs', [['method', '=', method], ['id', '>', afterId]])
+      .pipe(timeout(readTimeoutMs)),
+  );
+  const [first] = [...jobs].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+
+  return first?.state;
+}
+
+/**
  * Makes sure a job a test started is no longer running, for teardown.
  *
  * Aborts it if it has not finished, then waits for its state to turn final. A job that already
