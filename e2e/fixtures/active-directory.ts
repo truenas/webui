@@ -69,6 +69,8 @@ function adValuePlaceholders(ad: ActiveDirectoryTarget): [string, string][] {
   ];
   return values
     .filter((entry): entry is [string, string] => Boolean(entry[0]))
+    // A failed regex assertion prints the regex's source, which has the value escaped.
+    .flatMap(([value, placeholder]): [string, string][] => [[value, placeholder], [escapeRegExp(value), placeholder]])
     .sort(([a], [b]) => b.length - a.length);
 }
 
