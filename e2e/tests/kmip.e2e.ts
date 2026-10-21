@@ -11,10 +11,11 @@
  * the server name suggests: `kmip.update` requires a `certificate_authority`
  * whenever KMIP is enabled, and this page has no control for one. So the
  * refusal is "Please specify a valid id.", filed under
- * `kmip_update.certificate_authority`, on any appliance whose KMIP row has none
- * — a refusal the UI cannot avoid. The `.invalid` server stays as a second
- * guard: were a certificate authority ever set, RFC 2606 reserves the name, so
- * the connection test fails on DNS rather than reaching anything.
+ * `kmip_update.certificate_authority` — a refusal the UI cannot avoid. That
+ * test skips on an appliance whose KMIP row already holds a certificate
+ * authority, since the page sends none and so keeps it. The `.invalid` server
+ * stays as a second guard: RFC 2606 reserves the name, so a connection test
+ * would fail on DNS rather than reach anything.
  *
  * The page does not reload after a save, so its key status reflects what was
  * read on arrival. Each stored value is read back by leaving through the
@@ -186,11 +187,16 @@ test('an admin saves a server, port and certificate with KMIP left disabled, and
   });
 });
 
-test('enabling KMIP with Validate Connection, against a server that cannot be reached, is refused and changes nothing', async ({
+test('enabling KMIP from the page, with no certificate authority stored, is refused and changes nothing', async ({
   page,
   api,
 }) => {
   const form = kmipLocators.form;
+  // With one stored, middleware would go on to try the connection, and refuse with a different message.
+  test.skip(
+    startingKmip?.certificate_authority !== null,
+    'a KMIP certificate authority is already stored on this appliance',
+  );
   await ensureImportedCertificatePresent(api, certificateName);
   const starting = await readKmipConfig(api);
 
