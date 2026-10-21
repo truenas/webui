@@ -22,7 +22,10 @@ type SystemSecurityUpdate = JobParams<E2eApiDirectory, 'system.security.update'>
 
 export type PasswordComplexityRule = 'UPPER' | 'LOWER' | 'NUMBER' | 'SPECIAL';
 
-/** The five fields of the password policy, as `system.security.update` takes them. */
+/**
+ * The five fields of the password policy, as `system.security.update` takes them but with the
+ * ruleset unwrapped; {@link setPasswordPolicy} puts it back in `$set`.
+ */
 export interface PasswordPolicy {
   min_password_age: number | null;
   max_password_age: number | null;
