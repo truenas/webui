@@ -65,6 +65,21 @@ export const cloudCredentialLocators = {
       ),
     },
 
+    /** The S3 provider's own fields, rendered once Amazon S3 is the provider. */
+    s3: {
+      accessKeyId: '[data-test="input-access-key-id"]',
+      secretAccessKey: '[data-test="input-secret-access-key"]',
+      /**
+       * Endpoint URL is an inline editable under Advanced Options. Its trigger's id is built from
+       * the value it shows (`editable.component.ts`), and an empty one shows nothing, so the
+       * trigger is reached through the editable's own id, `editable-endpoint-url`. The view inside
+       * it is an empty `<div>` until an endpoint is set, which Playwright cannot click.
+       */
+      endpointTrigger: '[data-test="editable-endpoint-url"] [data-test="button-edit"]',
+      /** The input the editable renders once opened. */
+      endpoint: '[data-test="input-endpoint"]',
+    },
+
     /** `<tn-button [testId]="'verify-credential'">`, disabled while the form is invalid or busy. */
     verify: '[data-test="button-verify-credential"]',
     /** `<tn-button [testId]="'save'">` on the side panel container. */
