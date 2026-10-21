@@ -79,9 +79,13 @@ export const s3BucketLocators = {
     objectLock: '[data-test="checkbox-object-lock"]',
     /**
      * Rendered only while object lock is checked, so it doubles as a readback
-     * that the box went the intended way. Defaults to Compliance.
+     * that the box went the intended way. Defaults to "No default rule", as middleware does.
      */
     defaultRetentionMode: '[data-test="select-object-lock-default-mode"]',
+    /** "Governance" or "Compliance". */
+    defaultRetentionModeOption: (label: string) => (
+      `[data-test="option-object-lock-default-mode-${kebabTestSegment(label)}"]`
+    ),
     /** Rendered only while a default retention mode is selected. */
     defaultRetentionDays: '[data-test="input-object-lock-default-days"]',
     /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */

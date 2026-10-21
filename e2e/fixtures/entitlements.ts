@@ -69,4 +69,9 @@ export const entitlementFeature = {
    * `isNotDenied`.
    */
   sed: 'SED',
+  /**
+   * Not a lock either: the KMIP sidebar entry hides only when the key is explicitly denied, and
+   * `kmip.update` refuses turning KMIP on without it. Ask with `isNotDenied`.
+   */
+  kmip: 'KMIP',
 } as const;

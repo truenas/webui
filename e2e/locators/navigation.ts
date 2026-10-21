@@ -57,6 +57,8 @@ export const navLocators = {
   backupCredentials: '[data-test="link-backup-credentials"]',
   /** `Certificates` under Credentials, raw item name again. */
   certificates: '[data-test="link-certificates"]',
+  /** `KMIP` under Credentials, raw item name again. Hidden only when the KMIP entitlement is denied. */
+  kmip: '[data-test="link-kmip"]',
   /** A slide-out, like Credentials. */
   system: '[data-test="link-system-menu"]',
   /** `Update` under System, raw item name again. */

@@ -31,6 +31,7 @@ const expectedRoute = {
   s3AccessKeys: /\/credentials\/s3-access-keys/,
   backupCredentials: /\/credentials\/backup-credentials\/?$/,
   certificates: /\/credentials\/certificates\/?$/,
+  kmip: /\/credentials\/kmip\/?$/,
   update: /\/system\/update\/?$/,
   generalSettings: /\/system\/general\/?$/,
   advancedSettings: /\/system\/advanced\/?$/,
@@ -176,6 +177,12 @@ export async function goToBackupCredentials(page: Page): Promise<void> {
 export async function goToCertificates(page: Page): Promise<void> {
   await visibleNavLink(page, navLocators.credentials).click();
   await clickAndArrive(page, navLocators.certificates, expectedRoute.certificates);
+}
+
+/** KMIP is under Credentials too, and is shown unless the KMIP entitlement is denied. */
+export async function goToKmip(page: Page): Promise<void> {
+  await visibleNavLink(page, navLocators.credentials).click();
+  await clickAndArrive(page, navLocators.kmip, expectedRoute.kmip);
 }
 
 /** Update is the first entry under the System slide-out. */
