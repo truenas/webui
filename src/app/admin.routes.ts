@@ -32,8 +32,8 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'services',
-        loadComponent: () => import('./pages/services/services.component').then((module) => module.ServicesComponent),
-        data: { title: T('Services'), breadcrumb: T('Services') },
+        redirectTo: '/system/services',
+        pathMatch: 'full',
       },
       {
         path: 'directoryservice',
@@ -78,8 +78,8 @@ export const adminRoutes: Routes = [
       },
       {
         path: 'shell',
-        loadComponent: () => import('./pages/shell/shell.component').then((module) => module.ShellComponent),
-        data: { title: T('Shell'), breadcrumb: T('Shell') },
+        redirectTo: '/system/shell',
+        pathMatch: 'full',
       },
       {
         path: 'two-factor-auth',

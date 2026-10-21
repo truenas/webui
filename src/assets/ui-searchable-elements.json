@@ -55,8 +55,7 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials",
-      "two-factor"
+      "/two-factor-auth"
     ],
     "routerLink": null,
     "anchor": "two-factor",
@@ -73,8 +72,7 @@
     "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
-      "/credentials",
-      "two-factor"
+      "/two-factor-auth"
     ],
     "routerLink": null,
     "anchor": "configure-2fa-secret",

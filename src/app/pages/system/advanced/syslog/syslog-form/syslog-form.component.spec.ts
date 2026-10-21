@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -13,7 +12,6 @@ import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -48,10 +46,6 @@ describe('SyslogFormComponent', () => {
           1: 'Certificate 1',
           2: 'Certificate 2',
         }),
-        mockTypedCall('system.advanced.syslog_certificate_authority_choices', {
-          1: 'Authority 1',
-          2: 'Authority 2',
-        } as unknown as CallResponse<WebUiApiDirectory, 'system.advanced.syslog_certificate_authority_choices'>),
         mockTypedCall('system.advanced.update', null),
         mockTypedJob('systemdataset.update', { state: JobState.Success }),
       ]),

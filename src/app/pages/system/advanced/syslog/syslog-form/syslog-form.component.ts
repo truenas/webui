@@ -96,9 +96,6 @@ export class SyslogFormComponent extends IxFormHostForm implements OnInit {
     }))),
   );
 
-  readonly certificateAuthorityOptions$ = this.api.call('system.advanced.syslog_certificate_authority_choices')
-    .pipe(choicesToOptions());
-
   constructor() {
     super();
     this.destroyRef.onDestroy(() => {

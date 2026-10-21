@@ -121,8 +121,6 @@ describe('DatasetAclEditorComponent', () => {
     mockProvider(UserService, {
       userQueryDsCache: () => of(),
       groupQueryDsCache: () => of(),
-      getUserByName: (username: string) => of({ username } as { username: string }),
-      getGroupByName: (groupName: string) => of({ group: groupName }),
     }),
     mockProvider(TnDialog, {
       open: jest.fn(() => ({
