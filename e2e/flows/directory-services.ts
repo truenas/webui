@@ -3,9 +3,11 @@
  * Configuration form, and the Kerberos realms and keytabs behind the page's
  * Advanced Settings.
  *
- * Joining AD, LDAP or IPA needs a directory server the CI appliance does not
- * have, so the configuration form is only ever saved disabled, which binds to
- * nothing. The two Kerberos cards need no server, which is why they are saved.
+ * Joining LDAP or IPA needs a directory server the CI appliance does not have,
+ * so for those the configuration form is only ever saved disabled, which binds
+ * to nothing. Active Directory is joined only when the run has a domain
+ * (`TN_AD_*`), by `directory-services-ad`. The two Kerberos cards need no
+ * server, which is why they are saved.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDirectoryServices } from './navigation';
@@ -60,13 +62,14 @@ export async function openStoredDirectoryServicesForm(page: Page): Promise<void>
  * Saves the configuration form and waits for the panel to close.
  *
  * The save runs as a job behind a progress dialog; the panel closing is the
- * app's own signal that it succeeded — a refusal leaves it open.
+ * app's own signal that it succeeded — a refusal leaves it open. A save that
+ * joins a domain passes a longer `timeoutMs`.
  */
-export async function saveDirectoryServicesForm(page: Page): Promise<void> {
+export async function saveDirectoryServicesForm(page: Page, timeoutMs = saveTimeoutMs): Promise<void> {
   const { save } = directoryServicesLocators.configForm;
   await expect(page.locator(save)).toBeEnabled();
   await page.locator(save).click();
-  await expect(page.locator(save)).toBeHidden({ timeout: saveTimeoutMs });
+  await expect(page.locator(save)).toBeHidden({ timeout: timeoutMs });
 }
 
 /**

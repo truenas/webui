@@ -458,6 +458,17 @@ certification or contractual commitment to a named provider that a stand-in
 would fail to evidence. So there is no vendor credential in CI, no third-party
 uptime in our results, and no spend.
 
+**The exception: Active Directory uses the internal test domain** (decided
+2026-10-20, issue #14527). A Samba AD DC beside the appliance would have to
+advertise the runner's address (`10.0.2.2`) in its own DNS records, or the
+appliance, behind qemu's user-mode NAT, would be sent to the container's
+internal address — the hard part, where an existing domain needs nothing: NAT
+only has to carry the appliance's outbound connections. The cost is a
+credential that outlives the job, in a repository that publishes its traces,
+and a domain shared with other automation. How both are contained is in
+`docs/05-ci.md` ("What it needs") and `fixtures/active-directory.ts`. LDAP and
+IPA have no internal server yet and stay as below.
+
 **Where they run.** The host already runs Docker for the browser (**E12**), so
 these are further containers on the same host. Under `hostfwd` the guest can
 reach them only outbound, through NAT, which is the direction it needs.

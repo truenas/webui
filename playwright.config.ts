@@ -150,9 +150,35 @@ const singleApplianceProjects = [
      */
     name: 'authenticated',
     testDir: './e2e/tests',
-    testIgnore: '**/unauthenticated/**',
+    testIgnore: ['**/unauthenticated/**', '**/unpublished/**'],
     dependencies: ['setup'],
     use: { ...devices['Desktop Chrome'] },
+  },
+  {
+    /**
+     * Authenticated tests that type a secret which outlives the job — the
+     * Active Directory test domain's credentials — into the UI.
+     *
+     * The appliance password in every other trace is made per job and dies
+     * with its runner; these do not, and this public repository publishes
+     * `test-results/`. A trace records every `fill` value and every input's
+     * value in its DOM snapshots, password fields included, and a failure's
+     * `error-context.md` holds input values too — which no option turns off
+     * for one file. So, as `ha-license` does for its license, CI traces
+     * nothing here and everything is written to an `outputDir` outside
+     * `test-results/`, which only a project can set. Locally a trace stays on
+     * your own disk, so it is kept on failure as usual.
+     *
+     * A spec joins by living in `tests/unpublished/`.
+     */
+    name: 'unpublished',
+    testDir: './e2e/tests/unpublished',
+    outputDir: 'test-results-unpublished/unpublished',
+    dependencies: ['setup'],
+    use: {
+      ...devices['Desktop Chrome'],
+      trace: isCi ? 'off' as const : 'retain-on-failure' as const,
+    },
   },
   {
     /**
