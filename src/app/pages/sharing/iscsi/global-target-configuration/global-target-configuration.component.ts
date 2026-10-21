@@ -20,6 +20,7 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { LicensedFeatureComponent } from 'app/modules/forms/licensed-feature/licensed-feature.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -42,6 +43,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     IxInputComponent,
     IxChipsComponent,
     IxCheckboxComponent,
+    LicensedFeatureComponent,
     FormActionsComponent,
     RequiresRolesDirective,
     MatButton,
