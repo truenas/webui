@@ -56,10 +56,11 @@ export interface CreateBucketOptions {
  * otherwise — and starts the S3 service when the app offers to.
  *
  * Object lock is the basic-mode option the form leads with, because backup
- * targets are what S3 on a NAS is mostly for. Checking it is meant to do three
- * things at once — turn versioning on, default the retention mode to
- * Compliance, and ask for a retention period — and the API check in the test
- * is what confirms the first two, since neither is visible in basic mode.
+ * targets are what S3 on a NAS is mostly for. Checking it turns versioning on
+ * behind the basic-mode form and offers a default retention rule, which starts
+ * at none, as middleware's does; this picks Compliance and a period. The API
+ * check in the test is what confirms versioning, since it is not visible in
+ * basic mode.
  *
  * Starting the service matters for the same reason as SMB: a bucket on a
  * stopped service is configuration that serves nothing.
@@ -87,6 +88,8 @@ export async function createS3Bucket(
     // toggling whatever state it was in.
     await page.locator(form.objectLock).click();
     await expect(page.locator(form.defaultRetentionMode)).toBeVisible();
+    await expect(page.locator(form.defaultRetentionDays)).toBeHidden();
+    await selectOption(page, form.defaultRetentionMode, form.defaultRetentionModeOption('Compliance'));
     await expect(page.locator(form.defaultRetentionDays)).toBeVisible();
     await page.locator(form.defaultRetentionDays).fill(String(bucket.retentionDays));
   }
