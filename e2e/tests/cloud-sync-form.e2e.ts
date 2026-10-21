@@ -331,7 +331,8 @@ test('a push task to that bucket, with the bucket picked from the list, saves an
   });
   await expect(page.locator(form.bucket)).toContainText(s3Bucket);
   await expect(page.locator(form.bucketInput)).toHaveCount(0);
-  // The schedule is left at the form's default, Daily at midnight, which no run of this test reaches.
+  // The schedule is left at the form's default, Daily at midnight. A run that crossed midnight would
+  // only add one more sync of the same file.
   await saveCloudSyncForm(page);
 
   await expect(page.locator(card.description(s3TaskDescription))).toHaveText(s3TaskDescription);
@@ -347,10 +348,9 @@ test('a push task to that bucket, with the bucket picked from the list, saves an
   // Saving does not sync. Running it over the API checks that what the form saved really does, and
   // the bucket's own listing — through the same credential — is what says the file arrived. The
   // bucket is made empty for each test, so the file there can only be this run's.
-  await runCloudSyncTask(api, task?.id ?? -1);
-  expect(await findRemoteFileNames(api, {
-    credentialId,
-    bucket: listed?.Path ?? s3Bucket,
-    folder: s3Folder,
-  })).toEqual([seededFile]);
+  if (!task) {
+    throw new Error(`no task "${s3TaskDescription}" was saved`);
+  }
+  await runCloudSyncTask(api, task.id);
+  expect(await findRemoteFileNames(api, task)).toEqual([seededFile]);
 });

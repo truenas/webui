@@ -312,22 +312,24 @@ export async function findCloudSyncOnetimeRuns(
 }
 
 /**
- * The names of the files directly inside a folder of a bucket, as the remote lists them through a
- * credential.
+ * The names of the files directly inside a task's remote folder, as the remote lists them through
+ * the task's credential.
  *
  * `cloudsync.list_directory` is the form's own Folder browser call, so this reads the remote the
  * way the task does — for a remote that is not a directory on the appliance, which
- * {@link findFileNames} cannot see.
+ * {@link findFileNames} cannot see. It is given the task's own stored `attributes`, not just its
+ * bucket and folder: saving an S3 task also stores the bucket's region, and a listing signed for
+ * another region is refused.
  */
-export async function findRemoteFileNames(
-  client: E2eApiClient,
-  { credentialId, bucket, folder }: { credentialId: number; bucket: string; folder: string },
-): Promise<string[]> {
+export async function findRemoteFileNames(client: E2eApiClient, task: CloudSyncTaskRecord): Promise<string[]> {
+  const { credentials, attributes } = task;
+  if (!credentials || !attributes) {
+    throw new Error(`task ${task.id} has no credential or no attributes, so there is no remote to list`);
+  }
+
   const listing = await firstValueFrom(
-    client.api.call('cloudsync.list_directory', [{
-      credentials: credentialId,
-      attributes: { bucket, folder },
-    }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('cloudsync.list_directory', [{ credentials: credentials.id, attributes }])
+      .pipe(timeout(slowCallTimeoutMs)),
   );
 
   // Middleware declares the rows as free-form dicts; these are rclone's `lsjson` fields.
