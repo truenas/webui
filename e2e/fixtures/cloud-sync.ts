@@ -317,9 +317,8 @@ export async function findCloudSyncOnetimeRuns(
  *
  * `cloudsync.list_directory` is the form's own Folder browser call, so this reads the remote the
  * way the task does — for a remote that is not a directory on the appliance, which
- * {@link findFileNames} cannot see. It is given the task's own stored `attributes`, not just its
- * bucket and folder: saving an S3 task also stores the bucket's region, and a listing signed for
- * another region is refused.
+ * {@link findFileNames} cannot see. It is given the task's own stored `attributes`, so what it lists
+ * is exactly what the task syncs to.
  */
 export async function findRemoteFileNames(client: E2eApiClient, task: CloudSyncTaskRecord): Promise<string[]> {
   const { credentials, attributes } = task;
