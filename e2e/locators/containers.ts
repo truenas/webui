@@ -223,6 +223,19 @@ export const containersLocators = {
     delete: '[data-test="button-delete-container"]',
   },
 
+  /** The details panel's Tools card, `container-tools.component.html`. */
+  tools: {
+    /**
+     * "Shell", a `tn-list-item` with `[testId]="['link', 'open-shell']"`, written as is. Opens
+     * `/containers/view/<id>/shell`. Clickable only while the container runs and the user has
+     * `web_shell`; otherwise `aria-disabled="true"`, which the call site sets because the library
+     * shows the state only as a class.
+     */
+    shell: '[data-test="link-open-shell"]',
+    /** The Shell item's trailing icon. Its `aria-label` says why the item is disabled, or is empty. */
+    shellIcon: '[data-test="icon-open-shell"]',
+  },
+
   /**
    * The details panel's Filesystem Devices card,
    * `container-filesystem-devices.component.html`. A device's menu ids are keyed
