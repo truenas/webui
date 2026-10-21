@@ -284,7 +284,11 @@ jobs:
       # This repository's logs are public: everything taken from middleware
       # or from inside the appliance goes through `grep -iv license`, as
       # e2e-ha.yml filters its middleware log, and the admin password is
-      # masked by the boot step.
+      # masked by the boot step. And every line of the step goes through one
+      # more filter, which drops any line naming a `TN_AD_*` value in any
+      # case: the AD spec's refused join logs a traceback naming the domain in
+      # capitals every run, which GitHub's masking, verbatim only, lets
+      # through.
       #
       # appliance.sh has no `ssh` (ha.sh does). Its `boot-report` turns ssh
       # on for the admin, with a key and passwordless sudo, prints where the
@@ -292,7 +296,22 @@ jobs:
       # which is what the sections after it log in with.
       - name: The appliance's console, Docker, middleware and network
         if: failure() || cancelled()
+        env:
+          TN_AD_DOMAIN: ${{ secrets.E2EUI_AD_DOMAIN }}
+          TN_AD_DC1: ${{ secrets.E2EUI_AD_DC1 }}
+          TN_AD_DC2: ${{ secrets.E2EUI_AD_DC2 }}
+          TN_AD_USERNAME: ${{ secrets.E2EUI_AD_USERNAME }}
+          TN_AD_PASSWORD: ${{ secrets.E2EUI_AD_PASSWORD }}
+          TN_AD_COMPUTER_OU: ${{ secrets.E2EUI_AD_COMPUTER_OU }}
         run: |
+          # One fixed string per line, empties dropped: an empty pattern would
+          # match, and so drop, every line. With no domain the file is empty
+          # and nothing is dropped.
+          ad_values="$RUNNER_TEMP/ad-values"
+          printf '%s\n' "$TN_AD_DOMAIN" "$TN_AD_DC1" "$TN_AD_DC2" "$TN_AD_USERNAME" \
+            "$TN_AD_PASSWORD" "$TN_AD_COMPUTER_OU" | sed '/^$/d' > "$ad_values"
+
+          report() {
           echo "::group::The appliance's console"
           timeout 20 truenas-appliance console 300 || true
           echo "::endgroup::"
@@ -340,6 +359,9 @@ jobs:
             ip route
             sudo -n cat /etc/docker/daemon.json'
           echo "::endgroup::"
+          }
+
+          report 2>&1 | grep -ivF -f "$ad_values" || true
 
       # A leftover UI container would go on proxying to a destroyed appliance
       # and sit on the daemon forever. `--rm` covers a clean exit; this covers

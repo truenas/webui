@@ -33,10 +33,13 @@ type KerberosUserCredential = JobParams<E2eApiDirectory, 'directoryservices.leav
 
 /**
  * A ceiling on a join or a leave. Either one runs `net ads`, Kerberos and a
- * restart of the directory services stack; against the CI domain a join takes
- * well under a minute.
+ * restart of the directory services stack, and a join with the account cache on
+ * also waits for the cache's first fill from the domain. On CI a join has
+ * taken from under two minutes to over three, so three was too tight. Five,
+ * three times over (leave before, join, leave after), is still inside the
+ * twenty-minute test timeout.
  */
-export const adJoinTimeoutMs = 3 * 60_000;
+export const adJoinTimeoutMs = 5 * 60_000;
 
 /**
  * The prefix of every computer account this suite creates. Anything in the
