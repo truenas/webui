@@ -26,7 +26,8 @@ export type PasswordComplexityRule = 'UPPER' | 'LOWER' | 'NUMBER' | 'SPECIAL';
 export interface PasswordPolicy {
   min_password_age: number | null;
   max_password_age: number | null;
-  password_complexity_ruleset: PasswordComplexityRule[] | null;
+  /** Never null: see {@link unwrapRuleset}. An empty list is no rules. */
+  password_complexity_ruleset: PasswordComplexityRule[];
   min_password_length: number | null;
   password_history_length: number | null;
 }
@@ -41,7 +42,7 @@ export interface SystemSecurityState extends PasswordPolicy {
 export const noPasswordPolicy: PasswordPolicy = {
   min_password_age: null,
   max_password_age: null,
-  password_complexity_ruleset: null,
+  password_complexity_ruleset: [],
   min_password_length: null,
   password_history_length: null,
 };
@@ -53,15 +54,19 @@ export const noPasswordPolicy: PasswordPolicy = {
 export const systemSecuritySaveTimeoutMs = 60_000;
 
 /**
- * The ruleset as a plain list, or null.
+ * The ruleset as a plain list.
  *
- * The generated types declare a list, but middleware stores a JSON set and hands it back as
- * `{ $set: [...] }`, which is the shape the card and the form read. Both are accepted here, so
+ * The generated types declare a nullable list, but middleware stores a JSON set and hands it back
+ * as `{ $set: [...] }`, which is the shape the card and the form read. Both are accepted here, so
  * the readers do not depend on which one a given appliance sends.
+ *
+ * It is never null on read: the column is `JSON(set)`, which middleware's `sqlalchemy.py` binds
+ * a null as `set()` and reads a NULL back as `set()`. So a cleared ruleset reads as an empty list,
+ * and an empty list is what this returns for anything else too.
  */
-function unwrapRuleset(value: unknown): PasswordComplexityRule[] | null {
+function unwrapRuleset(value: unknown): PasswordComplexityRule[] {
   const list = value && typeof value === 'object' && '$set' in value ? value.$set : value;
-  return Array.isArray(list) ? list as PasswordComplexityRule[] : null;
+  return Array.isArray(list) ? list as PasswordComplexityRule[] : [];
 }
 
 export async function readSystemSecurity(client: E2eApiClient): Promise<SystemSecurityState> {
@@ -105,13 +110,12 @@ export async function isSystemSecurityAvailable(client: E2eApiClient): Promise<b
  *
  * A ruleset goes back in the `{ $set: [...] }` envelope it was read in, as the form sends it:
  * middleware refuses a plain list with "Input should be a valid set", whatever the generated
- * types declare. Null needs no envelope.
+ * types declare.
  */
 export async function setPasswordPolicy(client: E2eApiClient, policy: PasswordPolicy): Promise<void> {
-  const ruleset = policy.password_complexity_ruleset;
   const update = {
     ...policy,
-    password_complexity_ruleset: ruleset === null ? null : { $set: ruleset },
+    password_complexity_ruleset: { $set: policy.password_complexity_ruleset },
   } as unknown as SystemSecurityUpdate;
 
   await runJob(

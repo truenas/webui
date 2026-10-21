@@ -143,7 +143,7 @@ test('an admin sets a password policy, and the card and the appliance keep it', 
     min_password_length: 12,
     password_history_length: 3,
   });
-  expect([...saved.password_complexity_ruleset ?? []].sort((a, b) => a.localeCompare(b))).toEqual(['NUMBER', 'UPPER']);
+  expect([...saved.password_complexity_ruleset].sort((a, b) => a.localeCompare(b))).toEqual(['NUMBER', 'UPPER']);
 });
 
 test('the form refuses out-of-range values before anything is sent', async ({ page, api }) => {
