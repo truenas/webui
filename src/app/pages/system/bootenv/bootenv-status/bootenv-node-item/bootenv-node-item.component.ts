@@ -75,6 +75,14 @@ export class BootenvNodeItemComponent {
     return Boolean(this.topologyItem().type === TopologyItemType.Disk && this.topologyItem().path);
   });
 
+  // A mirror vdev carries no `path`, so detaching is offered on its member disks instead.
+  protected readonly isMirrorMember = computed(() => {
+    const guid = this.topologyItem().guid;
+    return this.isDisk() && this.poolInstance().topology.data.some((vdev) => {
+      return vdev.type === TopologyItemType.Mirror && vdev.children.some((child) => child.guid === guid);
+    });
+  });
+
   protected readonly statusColor = computed(() => {
     switch (this.topologyItem().status as (PoolStatus | TopologyItemStatus)) {
       case PoolStatus.Faulted:
