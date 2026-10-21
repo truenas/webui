@@ -17,12 +17,22 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /** The fields of an `interface.query` row the Interfaces card shows or a spec checks. */
 export interface InterfaceRecord {
+  /** The same as `name`, and what `interface.available_fec_modes` takes. */
+  id: string;
   name: string;
   /** `PHYSICAL`, `VLAN`, `LINK_AGGREGATION`, `BRIDGE` or `UNKNOWN`. */
   type: string;
   description: string;
+  ipv4_dhcp: boolean;
+  /** Configured addresses, not DHCP's lease: that is in `state.aliases`. */
+  aliases: { address: string; netmask: number }[];
+  mtu: number | null;
   vlan_parent_interface?: string | null;
   vlan_tag?: number | null;
+  bridge_members?: string[];
+  enable_learning?: boolean;
+  lag_protocol?: string;
+  lag_ports?: string[];
   state: {
     permanent_link_address?: string | null;
     aliases: {
@@ -113,6 +123,34 @@ export async function hasNetworkConfigToBeRemoved(client: E2eApiClient): Promise
   );
 
   return Object.keys(response as unknown as Record<string, unknown>).length > 0;
+}
+
+/**
+ * What the Add form offers as Bridge Members: every interface not already a
+ * bridge's member, a LAGG's port or a VM's NIC.
+ */
+export async function readBridgeMembersChoices(client: E2eApiClient): Promise<Record<string, string>> {
+  return firstValueFrom(client.api.call('interface.bridge_members_choices', []).pipe(timeout(readTimeoutMs)));
+}
+
+/**
+ * What the Add form offers as Link Aggregation Interfaces. Middleware leaves out
+ * any interface with a row in its database, so a NIC left to autoconfigure is
+ * offered and one that was ever saved is not.
+ */
+export async function readLagPortsChoices(client: E2eApiClient): Promise<Record<string, string>> {
+  return firstValueFrom(client.api.call('interface.lag_ports_choices', []).pipe(timeout(readTimeoutMs)));
+}
+
+export async function readLacpduRateChoices(client: E2eApiClient): Promise<Record<string, string>> {
+  const choices = await firstValueFrom(client.api.call('interface.lacpdu_rate_choices').pipe(timeout(readTimeoutMs)));
+
+  return { ...choices };
+}
+
+/** Empty for a NIC that does not support FEC, which a virtio NIC does not. */
+export async function readAvailableFecModes(client: E2eApiClient, id: string): Promise<string[]> {
+  return firstValueFrom(client.api.call('interface.available_fec_modes', [id]).pipe(timeout(readTimeoutMs)));
 }
 
 /**
