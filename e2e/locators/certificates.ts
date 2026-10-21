@@ -50,6 +50,11 @@ export const csrLocators = {
     rowMenuDelete: (name: string): string => (
       `[data-test="button-${rowTag(name)}-more-action-mdi-delete-row-action"]`
     ),
+
+    /** Download, inside that menu. One click saves two files, `<name>.csr` and `<name>.key`. */
+    rowMenuDownload: (name: string): string => (
+      `[data-test="button-${rowTag(name)}-more-action-mdi-download-row-action"]`
+    ),
   },
 
   /**
@@ -132,6 +137,11 @@ export const certificateLocators = {
 
     rowMenuDelete: (name: string): string => (
       `[data-test="button-${certificateRowTag(name)}-more-action-mdi-delete-row-action"]`
+    ),
+
+    /** Download, inside that menu. One click saves two files, `<name>.crt` and `<name>.key`. */
+    rowMenuDownload: (name: string): string => (
+      `[data-test="button-${certificateRowTag(name)}-more-action-mdi-download-row-action"]`
     ),
   },
 
