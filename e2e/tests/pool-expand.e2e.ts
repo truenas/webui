@@ -9,8 +9,9 @@
  * test, and every partition there already fills its disk, so the resize returns
  * early and the online changes nothing (`plugins/pool_/expand.py`). That no-op is
  * the only case this suite can run. What it still proves is that the menu item
- * starts the job for this pool, that the job succeeds, and that the pool is
- * unharmed afterwards.
+ * starts a `pool.expand` job, that the job succeeds, and that the pool is unharmed
+ * afterwards. Which pool the job was for is not read: this spec's pool is the only
+ * one an expand is started for while it runs.
  *
  * ## What is evidence
  *
@@ -112,8 +113,9 @@ test('Expand Pool on a pool whose disks are already full finishes, and leaves th
   ).toMatch(/^(SUCCESS|FAILED|ABORTED)$/);
   expect(await findJobStateAfter(api, 'pool.expand', lastJobId)).toBe('SUCCESS');
 
-  // A failed job would raise the error dialog. The dashboard reloads after a
-  // success, so the line is read again from the reloaded card.
+  // A failed job would raise the error dialog. These two hold before the
+  // dashboard's reload as well as after it, so they back up the job's state and
+  // the topology read below rather than prove anything alone.
   await expect(page.locator(errorDialogLocators.title)).toBeHidden();
   await expect(dataVdevs).toHaveText(dataVdevsBefore, { timeout: dashboardTimeoutMs });
 
