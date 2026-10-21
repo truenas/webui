@@ -37,7 +37,7 @@ describe('EulaComponent', () => {
     expect(spectator.query('#eula')).toHaveText('License terms');
   });
 
-  it('shows a Back to Support button once the EULA has loaded', async () => {
+  it('shows a Back to Support button with the loaded EULA', async () => {
     const backButton = await loader.getHarness(TnButtonHarness.with({ label: 'Back to Support' }));
     expect(backButton).toBeTruthy();
   });
