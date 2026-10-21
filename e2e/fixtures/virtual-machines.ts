@@ -8,7 +8,11 @@
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
+import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
+
+/** A ceiling on `vm.device.convert` for the small sparse zvols the specs give it. */
+const convertTimeoutMs = 120_000;
 
 /** The part of a `vm.query` row the specs read. */
 export interface VmSummary {
@@ -45,6 +49,12 @@ interface DeviceAttributes {
   web?: boolean;
   web_port?: number | null;
   resolution?: string;
+  /** A USB device's controller, and the host device it names, or null when `usb` names one instead. */
+  controller_type?: string;
+  device?: string | null;
+  usb?: { vendor_id: string; product_id: string } | null;
+  /** A PCI device's host address, as `vm.device.passthrough_device_choices` keys it. */
+  pptdev?: string;
 }
 
 /** One device of a VM, as `vm.device.query` gives it. */
@@ -363,4 +373,127 @@ export async function getDisplayWebUri(
   }
 
   return answer.uri;
+}
+
+/**
+ * Writes a zvol's contents to a disk image file, by the zvol's full name (`pool/…/zvol`), through
+ * the same `vm.device.convert` job the Devices page's Export to Image runs. The format follows the
+ * destination's extension.
+ */
+export async function exportZvolToImage(client: E2eApiClient, zvol: string, destination: string): Promise<void> {
+  await runJob(
+    client,
+    () => client.api.callAndGetJobId('vm.device.convert', [{ source: `/dev/zvol/${zvol}`, destination }]),
+    {
+      timeoutMs: convertTimeoutMs,
+      whatItCosts: `The image ${destination} was not written from ${zvol}, so there is nothing to import`,
+    },
+  );
+}
+
+/** The size, in bytes, of the disk a disk image file holds, as `vm.device.virtual_size` reads it. */
+export async function readImageVirtualSize(client: E2eApiClient, path: string): Promise<number> {
+  return firstValueFrom(client.api.call('vm.device.virtual_size', [{ path }]).pipe(timeout(readTimeoutMs)));
+}
+
+/** What {@link findFile} reads of a path. */
+export interface FileSummary {
+  /** `FILE`, `DIRECTORY`, `SYMLINK` or `OTHER`. */
+  type: string;
+  size: number;
+}
+
+/**
+ * A path's type and size through `filesystem.stat`, or undefined when nothing is there.
+ *
+ * Middleware answers a missing path with `[ENOENT]`; anything else still throws, so a refused call
+ * cannot read as an absent file.
+ */
+export async function findFile(client: E2eApiClient, path: string): Promise<FileSummary | undefined> {
+  try {
+    const stat = await firstValueFrom(client.api.call('filesystem.stat', [path]).pipe(timeout(readTimeoutMs)));
+    return { type: String(stat.type), size: stat.size };
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('ENOENT')) {
+      return undefined;
+    }
+    throw error;
+  }
+}
+
+/** A USB controller the device form offers: what is saved, and what the select shows. */
+export interface UsbController {
+  value: string;
+  label: string;
+}
+
+/**
+ * The USB controller the passthrough journey picks: `qemu-xhci` where middleware lists it, as it
+ * does for every machine it can define, and otherwise the first it lists.
+ */
+export async function pickUsbController(client: E2eApiClient): Promise<UsbController> {
+  const choices = await firstValueFrom(
+    client.api.call('vm.device.usb_controller_choices').pipe(timeout(readTimeoutMs)),
+  ) as Record<string, string>;
+  const entries = Object.entries(choices);
+  const [value, label] = entries.find(([key]) => key === 'qemu-xhci') ?? entries[0] ?? [];
+  if (!value || !label) {
+    throw new Error('vm.device.usb_controller_choices lists no controller, so no USB device can be added.');
+  }
+
+  return { value, label };
+}
+
+/** A PCI device the host could pass through, as the device form lists it. */
+export interface PassthroughCandidate {
+  /** The host address, which is what `pptdev` stores. */
+  id: string;
+  /** What the autocomplete shows: the description, or the id when there is none. */
+  label: string;
+  /** The host drivers bound to it. Saving the device must not change them; only a VM start may. */
+  drivers: string[];
+}
+
+/** What {@link findPassthroughCandidate} found, and enough about the host to say why when it found none. */
+export interface PassthroughSurvey {
+  candidate: PassthroughCandidate | undefined;
+  iommuEnabled: boolean;
+  /** Every device listed, with whether it is available and critical, for a skip's reason. */
+  listed: string[];
+}
+
+/**
+ * The first PCI device `vm.device.passthrough_device_choices` lists as available and not critical
+ * to the host, which is the one the passthrough journey adds. Never one the appliance itself
+ * relies on: `critical` is middleware's word for that.
+ */
+export async function findPassthroughCandidate(client: E2eApiClient): Promise<PassthroughSurvey> {
+  const choices = await firstValueFrom(
+    client.api.call('vm.device.passthrough_device_choices').pipe(timeout(readTimeoutMs)),
+  );
+  const iommuEnabled = await firstValueFrom(
+    client.api.call('vm.device.iommu_enabled').pipe(timeout(readTimeoutMs)),
+  );
+
+  const entries = Object.entries(choices);
+  const found = entries.find(([, device]) => device.available && !device.critical);
+
+  return {
+    candidate: found && {
+      id: found[0],
+      label: found[1].description || found[0],
+      drivers: found[1].drivers,
+    },
+    iommuEnabled,
+    listed: entries.map(([id, device]) => `${id} (available: ${device.available}, critical: ${device.critical})`),
+  };
+}
+
+/** The host drivers bound to a PCI device now, by its address. */
+export async function readPassthroughDrivers(client: E2eApiClient, id: string): Promise<string[] | undefined> {
+  const choices = await firstValueFrom(
+    client.api.call('vm.device.passthrough_device_choices').pipe(timeout(readTimeoutMs)),
+  );
+
+  return choices[id]?.drivers;
 }
