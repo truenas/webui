@@ -391,6 +391,29 @@ export async function exportZvolToImage(client: E2eApiClient, zvol: string, dest
   );
 }
 
+/**
+ * The state of every `vm.device.convert` job middleware has a record of from `source` to
+ * `destination`, oldest first, so a caller can tell a conversion that ran and succeeded from one
+ * that never ran.
+ */
+export async function findConvertJobStates(
+  client: E2eApiClient,
+  source: string,
+  destination: string,
+): Promise<string[]> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'vm.device.convert']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs
+    .filter((job) => {
+      // The arguments are the call's own, untyped: one object with the two paths.
+      const [request] = (job.arguments ?? []) as { source?: string; destination?: string }[];
+      return request?.source === source && request?.destination === destination;
+    })
+    .map((job) => String(job.state));
+}
+
 /** The size, in bytes, of the disk a disk image file holds, as `vm.device.virtual_size` reads it. */
 export async function readImageVirtualSize(client: E2eApiClient, path: string): Promise<number> {
   return firstValueFrom(client.api.call('vm.device.virtual_size', [{ path }]).pipe(timeout(readTimeoutMs)));

@@ -8,8 +8,9 @@
  *
  * The export is asserted through `filesystem.stat` and `vm.device.virtual_size`: the file exists,
  * and the disk it holds is the size of the zvol it came from. The import is asserted through
- * `pool.dataset.query` and `vm.device.query`: one new zvol, at the typed size, and the VM's disk is
- * that zvol and not a second one the wizard made beside it.
+ * `pool.dataset.query`, `core.get_jobs` and `vm.device.query`: one new zvol, at the typed size, a
+ * conversion from the image into it that succeeded, and the VM's disk is that zvol and not a
+ * second one the wizard made beside it.
  *
  * Everything goes under one dataset of this spec's own, below the shared pool: a plain filesystem,
  * so it is at once a directory an image can be exported into and a Zvol Location the wizard
@@ -20,8 +21,8 @@ import {
   datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent, ensureZvolPresent, findDataset, listZvolsUnder,
 } from '../fixtures/storage';
 import {
-  addVmDisk, ensureVmAbsent, ensureVmPresent, exportZvolToImage, findFile, findVm, readImageVirtualSize,
-  readVmDevices, requireVirtualization,
+  addVmDisk, ensureVmAbsent, ensureVmPresent, exportZvolToImage, findConvertJobStates, findFile, findVm,
+  readImageVirtualSize, readVmDevices, requireVirtualization,
 } from '../fixtures/virtual-machines';
 import {
   createVmWithWizard, discardVmWizard, exportDiskFromDevicesPage, fillExportDiskDialog, fillNewDiskStep,
@@ -148,6 +149,10 @@ test('an admin creates a VM in the wizard from an image, and it gets a new zvol 
   expect(zvol).toMatch(new RegExp(`^${images}/${importedVm}-`));
   const volsize = (await findDataset(api, zvol ?? ''))?.volsize?.parsed;
   expect(volsize).toBe(await readImageVirtualSize(api, image));
+
+  // The image was really converted into it. Without this the test would pass on a wizard that
+  // ignored Import Image, since its ordinary path names and sizes the new zvol the same way.
+  expect(await findConvertJobStates(api, image, `/dev/zvol/${zvol}`)).toEqual(['SUCCESS']);
 
   // The disk is the zvol the image was converted into, not a second one created beside it.
   const created = await findVm(api, importedVm);
