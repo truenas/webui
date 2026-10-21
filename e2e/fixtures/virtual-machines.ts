@@ -467,6 +467,39 @@ export async function pickUsbController(client: E2eApiClient): Promise<UsbContro
   return { value, label };
 }
 
+/** What {@link findUsbPassthroughIds} found, and enough about the host to say why when it found none. */
+export interface UsbPassthroughSurvey {
+  /** A connected device's ids, verbatim as middleware reports them (`0x`-prefixed hex). */
+  ids: { vendorId: string; productId: string } | undefined;
+  /** Every device listed, with its ids and whether it is available, for a skip's reason. */
+  listed: string[];
+}
+
+/**
+ * The vendor and product id of the first USB device `vm.device.usb_passthrough_choices` lists as
+ * available. Specify custom is refused for ids no connected device has ("No USB device with vendor
+ * ID … is connected to this system"), so the journey types a real device's ids.
+ */
+export async function findUsbPassthroughIds(client: E2eApiClient): Promise<UsbPassthroughSurvey> {
+  const choices = await firstValueFrom(
+    client.api.call('vm.device.usb_passthrough_choices').pipe(timeout(readTimeoutMs)),
+  );
+
+  const entries = Object.entries(choices);
+  const found = entries.find(([, device]) => (
+    device.available && device.capability.vendor_id && device.capability.product_id
+  ));
+  const vendorId = found?.[1].capability.vendor_id;
+  const productId = found?.[1].capability.product_id;
+
+  return {
+    ids: vendorId && productId ? { vendorId, productId } : undefined,
+    listed: entries.map(([name, device]) => (
+      `${name} ${device.capability.vendor_id}:${device.capability.product_id} (available: ${device.available})`
+    )),
+  };
+}
+
 /** A PCI device the host could pass through, as the device form lists it. */
 export interface PassthroughCandidate {
   /** The host address, which is what `pptdev` stores. */

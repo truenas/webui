@@ -553,7 +553,7 @@ async function startAddingDevice(page: Page, typeLabel: string): Promise<void> {
   await selectOption(page, form.deviceType, form.deviceTypeOption(typeLabel));
 }
 
-/** What {@link addUsbPassthroughFromDevicesPage} fills in: a device the host need not have. */
+/** What {@link addUsbPassthroughFromDevicesPage} fills in. Middleware takes only a connected device's ids. */
 export interface CustomUsbDevice {
   /** The Controller Type's label, as the select shows it. */
   controllerLabel: string;

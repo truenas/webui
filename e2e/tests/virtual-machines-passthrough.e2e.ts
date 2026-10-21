@@ -6,8 +6,10 @@
  * when the machine starts, so a stopped VM can carry one without the appliance losing anything.
  * The PCI test reads the device's host drivers before and after, to show that holds.
  *
- * The USB device is given by vendor and product id through Specify custom, so the journey needs no
- * USB device on the host. The PCI device has to be a real one: the first that
+ * The USB device is given by vendor and product id through Specify custom. Middleware refuses ids
+ * no connected device has, so they are the first available device's that
+ * `vm.device.usb_passthrough_choices` lists; when it lists none, the USB test is skipped and says
+ * what middleware answered. The PCI device has to be a real one too: the first that
  * `vm.device.passthrough_device_choices` lists as available, not critical to the host, and with a
  * label no other device shares, since the autocomplete keys its options on the label. The CI
  * appliance is itself a QEMU guest, so whether it lists one at all depends on what the host gives
@@ -17,8 +19,8 @@
  * order and nothing about which host device it names.
  */
 import {
-  ensureVmAbsent, ensureVmPresent, findPassthroughCandidate, findVmDevices, pickUsbController,
-  readPassthroughDrivers, requireVirtualization,
+  ensureVmAbsent, ensureVmPresent, findPassthroughCandidate, findUsbPassthroughIds, findVmDevices,
+  pickUsbController, readPassthroughDrivers, requireVirtualization,
 } from '../fixtures/virtual-machines';
 import {
   addPciPassthroughFromDevicesPage, addUsbPassthroughFromDevicesPage, openVmDevices,
@@ -29,9 +31,6 @@ import { expect, test } from '../support/fixtures';
 
 /** Provisioned over the API with no devices (`ensureVmPresent`). */
 const vmName = 'e2e_vm_passthrough';
-
-/** A vendor and product no host here has, in the `0x`-prefixed hex libvirt reads them as. */
-const customUsb = { vendorId: '0x1234', productId: '0x5678' } as const;
 
 test.beforeEach(async ({ api }) => {
   await requireVirtualization(api);
@@ -49,6 +48,18 @@ test.afterEach(async ({ api }) => {
 });
 
 test('an admin adds a USB passthrough device by vendor and product id', async ({ page, api }) => {
+  const survey = await findUsbPassthroughIds(api);
+  const customUsb = survey.ids;
+  // Skipped, not failed, when the appliance has no USB device: that is the host's hardware, not
+  // the form. The reason carries middleware's own answer, so a run records it.
+  test.skip(
+    !customUsb,
+    `vm.device.usb_passthrough_choices lists no available device (listed: ${survey.listed.join(', ') || 'none'}).`,
+  );
+  if (!customUsb) {
+    return;
+  }
+
   const vmId = await ensureVmPresent(api, vmName);
   const controller = await pickUsbController(api);
 
