@@ -7,6 +7,7 @@ import { EmailCardComponent } from './email/email-card/email-card.component';
 import { GuiCardComponent } from './gui/gui-card/gui-card.component';
 import { LocalizationCardComponent } from './localization/localization-card/localization-card.component';
 import { SupportCardComponent } from './support/support-card/support-card.component';
+import { TncFeaturesCardComponent } from './tnc-features/tnc-features-card/tnc-features-card.component';
 
 @Component({
   selector: 'ix-general-settings',
@@ -16,6 +17,7 @@ import { SupportCardComponent } from './support/support-card/support-card.compon
   imports: [
     UiSearchDirective,
     SupportCardComponent,
+    TncFeaturesCardComponent,
     GuiCardComponent,
     LocalizationCardComponent,
     EmailCardComponent,
