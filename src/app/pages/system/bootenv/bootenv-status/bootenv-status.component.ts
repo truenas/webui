@@ -133,8 +133,9 @@ export class BootStatusListComponent implements OnInit {
       .subscribe(() => this.loadPoolInstance());
   }
 
-  protected detach(diskPath: string): void {
-    const disk = diskPath.substring(5, diskPath.length);
+  protected detach(diskName: string): void {
+    // boot.get_state names a mirror member `/dev/vdb3`, while middleware matches `vdb3`.
+    const disk = diskName.replace(/^\/dev\//, '');
     this.api.call('boot.detach', [disk])
       .pipe(
         this.loader.withLoader(),
