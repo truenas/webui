@@ -130,9 +130,11 @@ jobs:
     # A runner with a TrueNAS appliance disk attached: the GARM pool's extra
     # specs are {"disks": ["truenas_appliance:nightly"]}.
     runs-on: [self-hosted, truenas-appliance]
-    # Bounded so that a hang gives the runner back in an hour and a half,
-    # not GitHub's 360-minute default.
-    timeout-minutes: 90
+    # Bounded so that a hang gives the runner back in two hours, not GitHub's
+    # 360-minute default. It was 90 until the one-shard suite outgrew it: from
+    # 2026-10-20 a master run took 91 minutes and was cancelled after its last
+    # test, with no report. When a green run nears this again, shard instead.
+    timeout-minutes: 120
 
     # The steps e2e-ha.yml shares are the e2e-* and webui-dist actions under
     # .github/actions; what is here is what only this job does.
