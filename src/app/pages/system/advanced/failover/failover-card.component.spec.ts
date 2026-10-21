@@ -4,6 +4,7 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
@@ -59,14 +60,26 @@ describe('FailoverCardComponent', () => {
     formPanel = spectator.inject(FormSidePanelService);
   });
 
-  it('displays failover configuration', () => {
-    const items = spectator.queryAll('.details-item');
-    const itemTexts = items.map((item) => item.textContent.replace(/\s+/g, ' ').trim());
+  function getItemTexts(): string[] {
+    return spectator.queryAll('.details-item').map((item) => item.textContent.replace(/\s+/g, ' ').trim());
+  }
 
-    expect(itemTexts).toEqual([
+  it('displays the failover timeout but not the default controller when failover is enabled', () => {
+    expect(getItemTexts()).toEqual([
       'Enabled: Yes',
-      'Default Controller: Yes',
       'Network Timeout Before Initiating Failover: 5s',
+    ]);
+  });
+
+  it('displays the default controller but not the timeout when failover is disabled', async () => {
+    spectator.inject(MockTypedApiService).mockCall('failover.config', { ...fakeConfig, disabled: true });
+    spectator = createComponent();
+    await spectator.fixture.whenStable();
+    spectator.detectChanges();
+
+    expect(getItemTexts()).toEqual([
+      'Enabled: No',
+      'Default Controller: Yes',
     ]);
   });
 
