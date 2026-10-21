@@ -1,10 +1,12 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
+import { TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
-import { TopologyDisk } from 'app/interfaces/storage.interface';
+import { TopologyDisk, VDev } from 'app/interfaces/storage.interface';
+import { BootPoolActionType } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 import { BootenvNodeItemComponent } from './bootenv-node-item.component';
 
 describe('BootenvNodeItemComponent', () => {
@@ -64,5 +66,53 @@ describe('BootenvNodeItemComponent', () => {
 
   it('shows pool status', () => {
     expect(spectator.query('.cell-status')).toHaveText('Online');
+  });
+
+  async function openActionsMenu(): Promise<TnMenuHarness> {
+    spectator.click(spectator.query('button[aria-label="Actions"]')!);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
+
+  it('does not offer Detach on the disk of a single-disk boot pool', async () => {
+    spectator.setInput('oneDisk', true);
+
+    const menu = await openActionsMenu();
+    expect(await menu.getItemLabels()).toEqual(['Replace', 'Attach']);
+  });
+
+  describe('mirrored boot pool', () => {
+    const member = {
+      ...topologyItem,
+      name: '/dev/vdb3',
+      path: '/dev/vdb3',
+      guid: '5513806441215632751',
+    } as TopologyDisk;
+
+    const mirror = {
+      name: 'mirror-0',
+      type: TopologyItemType.Mirror,
+      guid: '8047127003581040126',
+      status: TopologyItemStatus.Online,
+      children: [topologyItem, member],
+    } as VDev;
+
+    beforeEach(() => {
+      spectator.setInput({
+        node: member,
+        poolInstance: { ...poolInstance, topology: { data: [mirror] } } as PoolInstance,
+        oneDisk: false,
+      });
+    });
+
+    it('offers Detach on a member disk of the mirror, and emits it for that disk', async () => {
+      const emitted = jest.fn();
+      spectator.output('invokeAction').subscribe(emitted);
+
+      const menu = await openActionsMenu();
+      expect(await menu.getItemLabels()).toEqual(['Replace', 'Detach']);
+
+      await menu.clickItem({ label: 'Detach' });
+      expect(emitted).toHaveBeenCalledWith({ action: BootPoolActionType.Detach, node: member });
+    });
   });
 });

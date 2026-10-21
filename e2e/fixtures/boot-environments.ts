@@ -227,9 +227,11 @@ export async function attachBootDiskOverApi(client: E2eApiClient, disk: string):
  * anything. Only a disk outside that list is ever detached or wiped, so the disk
  * the appliance boots from cannot be either.
  *
- * Detached by the partition's name in the topology, which is what
- * `zfs.pool.detach` matches on. Wiped because a detach leaves the boot partitions
- * on the disk.
+ * Detached by the partition's guid, which `zfs.pool.detach` matches before it
+ * tries a path. Not by its name: `boot.get_state` reports a member of a mirror as
+ * `/dev/vdl3`, and middleware compares names with `/dev/` stripped, so it answers
+ * "Failed to find vdev for /dev/vdl3" (E2E run 39657038725). Wiped because a
+ * detach leaves the boot partitions on the disk.
  */
 export async function ensureBootPoolDisksOnly(
   client: E2eApiClient,
@@ -250,7 +252,7 @@ export async function ensureBootPoolDisksOnly(
       );
     }
 
-    await firstValueFrom(client.api.call('boot.detach', [partition.name]).pipe(timeout(slowCallTimeoutMs)));
+    await firstValueFrom(client.api.call('boot.detach', [partition.guid]).pipe(timeout(slowCallTimeoutMs)));
   }
 
   const toWipe = new Set(extras);

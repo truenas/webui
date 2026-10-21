@@ -173,7 +173,7 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getSelect('multipart_etag')).getDisplayText()).toBe('Minted (opaque token)');
     });
 
-    it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
+    it('turns versioning on and leaves no default retention rule when object lock is enabled', async () => {
       await clickAdvancedOptions();
       expect(await (await getSelect('versioning')).getDisplayText()).toBe('Off');
 
@@ -182,7 +182,8 @@ describe('S3BucketFormComponent', () => {
       const versioning = await getSelect('versioning');
       expect(await versioning.getDisplayText()).toBe('Enabled');
       expect(await versioning.isDisabled()).toBe(true);
-      expect(await (await getSelect('object_lock_default_mode')).getDisplayText()).toBe('Compliance');
+      expect(await (await getSelect('object_lock_default_mode')).getDisplayText()).toBe('No default rule');
+      expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Default Retention Days' }))).toBe(false);
 
       await (await getCheckbox('object_lock')).uncheck();
       const released = await getSelect('versioning');
@@ -204,13 +205,33 @@ describe('S3BucketFormComponent', () => {
       expect(objectLockSection()).not.toContain('permanent');
     });
 
-    it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
+    it('creates a bucket with object lock and versioning but no default rule unless one is picked', async () => {
       await (await getInput('name')).setValue('backups');
       await form.fillForm({
         'Parent Dataset': 'tank',
       });
       await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Enabled,
+        object_lock: true,
+        object_lock_default_mode: null,
+        object_lock_default_days: null,
+      })]);
+    });
+
+    it('creates a bucket with the Compliance default rule when it is picked', async () => {
+      await (await getInput('name')).setValue('backups');
+      await form.fillForm({
+        'Parent Dataset': 'tank',
+      });
+      await setOwner('alice');
+      await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('Compliance');
       await (await getInput('object_lock_default_days')).setValue('30');
 
       spectator.component.submit();
@@ -222,15 +243,6 @@ describe('S3BucketFormComponent', () => {
         object_lock_default_mode: S3ObjectLockMode.Compliance,
         object_lock_default_days: 30,
       })]);
-    });
-
-    it('keeps a "no default rule" chosen in this session when object lock is re-checked', async () => {
-      await (await getCheckbox('object_lock')).check();
-      await (await getSelect('object_lock_default_mode')).selectOption('No default rule');
-      await (await getCheckbox('object_lock')).uncheck();
-      await (await getCheckbox('object_lock')).check();
-
-      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
     });
 
     it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
@@ -708,6 +720,9 @@ describe('S3BucketFormComponent', () => {
 
     it('requires retention days once object lock is on with a default retention mode', async () => {
       await (await getCheckbox('object_lock')).check();
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      await (await getSelect('object_lock_default_mode')).selectOption('Compliance');
 
       expect(spectator.component.form.controls.object_lock_default_days.errors).toMatchObject({ required: true });
       expect(spectator.component.canSubmit()).toBe(false);
@@ -715,6 +730,7 @@ describe('S3BucketFormComponent', () => {
 
     it('stops requiring retention days once object lock is turned off again', async () => {
       await (await getCheckbox('object_lock')).check();
+      await (await getSelect('object_lock_default_mode')).selectOption('Compliance');
       expect(spectator.component.canSubmit()).toBe(false);
 
       await (await getCheckbox('object_lock')).uncheck();

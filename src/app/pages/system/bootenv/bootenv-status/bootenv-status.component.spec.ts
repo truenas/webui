@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
-import { TnTreeHarness } from '@truenas/ui-components';
+import { TnMenuHarness, TnMenuTesting, TnTreeHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -104,5 +104,47 @@ describe('BootStatusListComponent', () => {
     expect(secondNodeText).toContain('sda3');
     expect(secondNodeText).toContain('Online');
     expect(secondNodeText).toContain('No Errors');
+  });
+
+  describe('mirrored boot pool', () => {
+    // boot.get_state names a mirror's members by their /dev path.
+    const mirroredPool = {
+      ...poolInstance,
+      topology: {
+        data: [{
+          name: 'mirror-0',
+          type: TopologyItemType.Mirror,
+          guid: '8047127003581040126',
+          status: TopologyItemStatus.Online,
+          children: [
+            { ...oneDisk, name: '/dev/sda3' },
+            {
+              ...oneDisk, name: '/dev/sdb3', path: '/dev/sdb3', guid: '5513806441215632751',
+            },
+          ],
+        }],
+      },
+    } as PoolInstance;
+
+    beforeEach(() => {
+      api.mockCall('boot.get_state', mirroredPool as unknown as CallResponse<WebUiApiDirectory, 'boot.get_state'>);
+      spectator.component.ngOnInit();
+      spectator.detectChanges();
+    });
+
+    it('detaches a member disk by its partition name, without the /dev/ prefix', async () => {
+      const tree = await loader.getHarness(TnTreeHarness);
+      const [mirror] = await tree.getNodes({ text: /^mirror-0/ });
+      await mirror.expand();
+
+      const row = spectator.queryAll('ix-bootenv-node-item')
+        .find((item) => item.querySelector('.cell-name')?.textContent?.trim() === '/dev/sdb3')!;
+      spectator.click(row.querySelector('button[aria-label="Actions"]')!);
+
+      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+      await menu.clickItem({ label: 'Detach' });
+
+      expect(api.call).toHaveBeenCalledWith('boot.detach', ['sdb3']);
+    });
   });
 });
