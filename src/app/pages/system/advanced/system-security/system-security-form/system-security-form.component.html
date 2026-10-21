@@ -86,6 +86,7 @@
     <div class="stig-hints">{{ 'Restart is required after changing these settings.' | translate }}</div>
 
     <tn-form-field
+      testId="min-password-age"
       [label]="'Min Password Age' | translate"
       [tooltip]="'Minimum number of days a password must be used before it can be changed.' | translate"
     >
@@ -97,6 +98,7 @@
     </tn-form-field>
 
     <tn-form-field
+      testId="max-password-age"
       [label]="'Max Password Age' | translate"
       [tooltip]="'Maximum number of days a password can be used before it must be changed.' | translate"
     >
@@ -120,6 +122,7 @@
     </tn-form-field>
 
     <tn-form-field
+      testId="min-password-length"
       [label]="'Min Password Length' | translate"
       [tooltip]="'Minimum number of characters in a password. Must be at least 8 characters.' | translate"
     >
@@ -131,6 +134,7 @@
     </tn-form-field>
 
     <tn-form-field
+      testId="password-history-length"
       [label]="'Password History Length' | translate"
       [tooltip]="'Number of previous passwords to remember. Must be between 1 and 10.' | translate"
     >
