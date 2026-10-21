@@ -3,7 +3,8 @@
  *
  * An administrator switches a bucket to the Multiprotocol permissions model,
  * and separately turns versioning on with snapshot versions, a listing cap
- * and an opaque ETag. Both start from a bucket the API created.
+ * and an opaque ETag, and on a bucket already versioned forces it back off.
+ * All three start from a bucket the API created.
  *
  * What only an appliance can answer: that choosing Multiprotocol folds the
  * ownership to Object Writer on screen *and* in what middleware stores, and
@@ -19,9 +20,12 @@ import {
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import {
-  expectObjectOwnershipShown, openBucketEditor, saveBucketEditor, setBucketPermissionsModel,
-  setBucketVersioningOptions, showAdvancedBucketOptions,
+  confirmForceDisableBucketVersioning, expectBucketVersioningOffRefused, expectObjectOwnershipShown, openBucketEditor,
+  openForceDisableBucketVersioning, saveBucketEditor, setBucketPermissionsModel, setBucketVersioningOptions,
+  showAdvancedBucketOptions,
 } from '../flows/s3';
+import { confirmDialogLocators } from '../locators/dialogs';
+import { s3BucketLocators } from '../locators/s3';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -102,5 +106,57 @@ test('an admin turns on versioning with snapshot versions and an opaque ETag', a
       snapshot_versions_max: versioning.snapshotVersionsMax,
       multipart_etag: versioning.multipartEtag,
     });
+  });
+});
+
+test('an admin force-disables versioning on a versioned bucket', async ({
+  page, api, pool, entitlements,
+}) => {
+  // Seeding versioning needs the entitlement as well, so the skip comes first. See the test above.
+  test.skip(
+    !isEntitled(entitlements, entitlementFeature.s3Versioning),
+    'This appliance is not entitled to S3_VERSIONING, so versioning cannot be turned on to turn off.',
+  );
+
+  const { form } = s3BucketLocators;
+  await ensureS3BucketPresent(api, {
+    name: bucket,
+    parentDataset: `${pool}/${parentDataset}`,
+    owner,
+    versioning: 'ENABLED',
+    snapshotVersions: [...versioning.snapshotVersions],
+  });
+  // Read before, so OFF and the cleared patterns afterwards are the button's doing.
+  const before = await findS3Bucket(api, bucket);
+  expect(before).toMatchObject({ versioning: 'ENABLED', snapshot_versions: [...versioning.snapshotVersions] });
+
+  await test.step('the editor refuses Off and offers the forced way instead', async () => {
+    await openBucketEditor(page, bucket);
+    await showAdvancedBucketOptions(page);
+    await expectBucketVersioningOffRefused(page);
+    await expect(page.locator(form.versioningField)).toContainText('Versioning cannot be turned off');
+  });
+
+  await test.step('force versioning off through its confirm', async () => {
+    await openForceDisableBucketVersioning(page);
+    await expect(page.locator(confirmDialogLocators.title)).toContainText(
+      `Force disable versioning on "${bucket}"?`,
+    );
+    await expect(page.locator(confirmDialogLocators.confirm)).toHaveText('Force Disable');
+    await confirmForceDisableBucketVersioning(page);
+  });
+
+  await test.step('confirm middleware turned it off, and nothing asked about the service', async () => {
+    expect(await findS3Bucket(api, bucket)).toMatchObject({
+      versioning: 'OFF',
+      snapshot_versions: [],
+      // Not touched by the call: only the patterns are cleared.
+      snapshot_versions_max: before?.snapshot_versions_max,
+    });
+    // A backstop rather than a proof: Save raises this as the editor closes, so by the
+    // time the read above has returned a prompt here would already be on screen.
+    // Middleware re-renders and restarts S3 on this call; cleanup stops the service
+    // first either way.
+    await expect(page.locator(s3BucketLocators.doNotStartService)).toBeHidden();
   });
 });

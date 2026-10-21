@@ -43,6 +43,14 @@ export interface S3BucketSpec {
   /** Dataset the bucket's own dataset is created under. */
   parentDataset: string;
   owner: string;
+  /**
+   * Applied with `sharing.s3.update` once the bucket exists, whether it was just
+   * created or already there. Turning versioning on needs `S3_VERSIONING`, and
+   * middleware never lets it return to OFF through an update.
+   */
+  versioning?: 'ENABLED' | 'SUSPENDED';
+  /** Snapshot name patterns, applied with {@link versioning}. */
+  snapshotVersions?: string[];
 }
 
 /**
@@ -50,15 +58,28 @@ export interface S3BucketSpec {
  * editing, toggling, deleting. Middleware creates `<parent>/<name>` with it.
  */
 export async function ensureS3BucketPresent(client: E2eApiClient, bucket: S3BucketSpec): Promise<void> {
-  if (await findS3Bucket(client, bucket.name)) {
+  if (!await findS3Bucket(client, bucket.name)) {
+    await firstValueFrom(
+      client.api.call('sharing.s3.create', [{
+        name: bucket.name,
+        dataset: `${bucket.parentDataset}/${bucket.name}`,
+        owner: bucket.owner,
+      }]).pipe(timeout(slowCallTimeoutMs)),
+    );
+  }
+
+  if (!bucket.versioning) {
     return;
   }
 
+  const created = await findS3Bucket(client, bucket.name);
+  if (!created) {
+    throw new Error(`bucket "${bucket.name}" is absent straight after it was created`);
+  }
   await firstValueFrom(
-    client.api.call('sharing.s3.create', [{
-      name: bucket.name,
-      dataset: `${bucket.parentDataset}/${bucket.name}`,
-      owner: bucket.owner,
+    client.api.call('sharing.s3.update', [created.id, {
+      versioning: bucket.versioning,
+      snapshot_versions: bucket.snapshotVersions ?? [],
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }

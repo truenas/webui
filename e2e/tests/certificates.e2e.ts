@@ -14,7 +14,9 @@
 import {
   countCsrs, ensureCertificateAbsent, ensureCsrPresent, findCertificate, type CsrSeed,
 } from '../fixtures/certificates';
-import { addCsr, deleteCsr, type CsrSubject } from '../flows/certificates';
+import {
+  addCsr, deleteCsr, fillCsrWizard, saveCsrWizard, type CsrSubject,
+} from '../flows/certificates';
 import { csrCardPageSize, csrLocators } from '../locators/certificates';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -45,7 +47,19 @@ const bystander: CsrSeed = {
   name: 'e2e-csr-bystander', common: 'e2e-csr-bystander.example.com', san: ['e2e-csr-bystander.example.com'],
 };
 
-const allNames = [createdName, target.name, bystander.name];
+/** Created through the wizard with an EC key. */
+const ecName = 'e2e-csr-ec';
+
+const ecSubject: CsrSubject = { ...createdSubject, common: 'e2e-csr-ec.example.com', san: ['e2e-csr-ec.example.com'] };
+
+/**
+ * Picked rather than left at the form's default, `BrainpoolP384R1`, which is not among
+ * the curves `certificate.create` is typed to accept (`SECP256R1`, `SECP384R1`,
+ * `SECP521R1`, `ed25519`) — so an untouched curve is not a journey to assert.
+ */
+const ecCurve = 'SECP384R1';
+
+const allNames = [createdName, ecName, target.name, bystander.name];
 
 async function removeEverything(api: E2eApiClient): Promise<void> {
   await runCleanupSteps(allNames.map((name): [string, () => Promise<void>] => [
@@ -110,6 +124,30 @@ test('an admin creates a certificate signing request, and the appliance really h
   });
   // Middleware may store a SAN with its `DNS:` type in front, so the host is matched within it.
   expect(created?.san).toEqual([expect.stringContaining(createdSan)]);
+});
+
+test('an admin creates a certificate signing request with an EC key', async ({ page, api }) => {
+  const { list, wizard } = csrLocators;
+  await requireRoomOnCard(api, 1);
+
+  await fillCsrWizard(page, ecName, ecSubject, { ecCurve });
+
+  // What Confirm Options says it is about to send: the curve, in Key Length's place.
+  await expect(page.locator(wizard.summaryKeyType)).toHaveText('EC');
+  await expect(page.locator(wizard.summaryEcCurve)).toHaveText(ecCurve);
+
+  await saveCsrWizard(page);
+
+  await expect(page.locator(list.name(ecName))).toHaveText(ecName);
+
+  // `certificate.query` does not return the curve, so the key type is what can be read
+  // back — and RSA, the wizard's default, is what it would be had the pick been lost.
+  expect(await findCertificate(api, ecName)).toMatchObject({
+    name: ecName,
+    cert_type_CSR: true,
+    key_type: 'EC',
+    CSR: expect.stringContaining('-----BEGIN CERTIFICATE REQUEST-----'),
+  });
 });
 
 test('deleting a certificate signing request from its row removes the one that was picked', async ({ page, api }) => {

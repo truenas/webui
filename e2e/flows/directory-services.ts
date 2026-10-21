@@ -210,22 +210,15 @@ export async function openEditKerberosRealmForm(page: Page, realm: string): Prom
 }
 
 /**
- * Adds a keytab from the card, uploading `contents` as the file, and waits for
- * the panel to close.
+ * In the open keytab form: picks `contents` as the file, named `<name>.keytab`.
  *
  * The file goes in through the file chooser the Choose File button opens, the way
  * a user picks one. That button has no id of its own — see
  * `directoryServicesLocators.keytabForm.file` — and sits at the left of the
  * field, so the click lands on the field's left edge.
  */
-export async function addKerberosKeytab(page: Page, name: string, contents: Buffer): Promise<void> {
-  const form = directoryServicesLocators.keytabForm;
-  await openKerberosSettings(page);
-  await page.locator(directoryServicesLocators.keytabs.add).click();
-
-  await page.locator(form.name).fill(name);
-
-  const field = page.locator(form.file);
+export async function chooseKerberosKeytabFile(page: Page, name: string, contents: Buffer): Promise<void> {
+  const field = page.locator(directoryServicesLocators.keytabForm.file);
   const box = await field.boundingBox();
   expect(box, 'the keytab file field has no box to click').not.toBeNull();
 
@@ -237,8 +230,30 @@ export async function addKerberosKeytab(page: Page, name: string, contents: Buff
     mimeType: 'application/octet-stream',
     buffer: contents,
   });
+}
+
+/** Adds a keytab from the card, uploading `contents` as the file, and waits for the panel to close. */
+export async function addKerberosKeytab(page: Page, name: string, contents: Buffer): Promise<void> {
+  const form = directoryServicesLocators.keytabForm;
+  await openKerberosSettings(page);
+  await page.locator(directoryServicesLocators.keytabs.add).click();
+
+  await page.locator(form.name).fill(name);
+  await chooseKerberosKeytabFile(page, name, contents);
 
   await saveKerberosForm(page, form.save);
+}
+
+/**
+ * Opens the edit form for a keytab from its row.
+ *
+ * Waits on the name having been patched in, which is what says the panel is
+ * editing *this* keytab. The name is all it patches: the file is never sent back.
+ */
+export async function openEditKerberosKeytabForm(page: Page, name: string): Promise<void> {
+  await openKerberosSettings(page);
+  await page.locator(directoryServicesLocators.keytabs.edit(name)).click();
+  await expect(page.locator(directoryServicesLocators.keytabForm.name)).toHaveValue(name);
 }
 
 /**

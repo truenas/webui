@@ -20,9 +20,9 @@ import {
 } from '../fixtures/nvme-of';
 import { ensureDatasetAbsent } from '../fixtures/storage';
 import {
-  cancelPortOrHostDelete, changeManagedPortServiceId, closeManageDialog, confirmPortOrHostDelete, discardHostForm,
-  openManagedHostEdit, openManageHosts, openManagePorts, openNvmeOfSubsystemDetails, openPortOrHostDelete,
-  saveHostWithGeneratedKeys, tryHostNqn,
+  cancelPortOrHostDelete, changeManagedPortServiceId, closeHostForm, closeManageDialog, confirmPortOrHostDelete,
+  discardHostForm, generateHostKeys, openManagedHostEdit, openManageHosts, openManagePorts, openNvmeOfSubsystemDetails,
+  openPortOrHostDelete, pickHostDhGroup, saveHostForm, saveHostWithGeneratedKeys, tryHostNqn,
 } from '../flows/nvme-of';
 import { nvmeOfLocators } from '../locators/nvme-of';
 import type { E2eApiClient } from '../support/api/client';
@@ -59,6 +59,15 @@ const hosts = [targetHost, bystanderHost];
 
 /** Differs from the empty description a host is created with over the API. */
 const editedDescription = 'e2e edited host';
+
+/**
+ * Differs from the form's own default, `4096-BIT`, and from the none a host is created
+ * with over the API — so reading it back can only be the pick.
+ */
+const pickedDhGroup = '6144-BIT';
+
+/** What the DH Group row reads while the form holds no group (`helptextNvmeOf.noDhText`). */
+const noDhGroupText = 'Don\'t use DH key exchange.';
 
 async function removeEverything(api: E2eApiClient, pool: string): Promise<void> {
   await runCleanupSteps([
@@ -185,6 +194,49 @@ test('an admin adds host authentication to an existing host from Manage Hosts', 
     dhchap_hash: 'SHA-256',
     // Diffie–Hellman was not asked for, so none is stored.
     dhchap_dhgroup: null,
+  });
+  expect((await requireNvmeOfSubsystem(api, targetName)).hosts).toEqual([host.id]);
+  await expectBystanderUntouched(api, bystanderBefore);
+});
+
+test('an admin gives an authenticated host a Diffie–Hellman group from Manage Hosts', async ({ page, api, pool }) => {
+  const { manageHostsDialog, hostForm } = nvmeOfLocators;
+  await requireRoomOnNvmeOfCard(api, 2);
+  const target = await ensureNvmeOfSubsystemPresent(api, targetName);
+  const host = await ensureNvmeOfHostPresent(api, targetHost);
+  await setNvmeOfAllowAnyHost(api, { subsystemId: target.id, allowAnyHost: false });
+  await associateNvmeOfHost(api, { subsystemId: target.id, hostId: host.id });
+  const bystanderBefore = await provisionBystander(api, pool);
+
+  await openNvmeOfSubsystemDetails(page, targetName);
+  await openManageHosts(page);
+  await openManagedHostEdit(page, targetHost);
+  await generateHostKeys(page);
+  await page.locator(hostForm.addDhKeyExchange).check();
+
+  // Not the form's `4096-BIT` default: editing patches in the host as stored, and a
+  // host made over the API has no group, so the row starts on the empty choice.
+  await expect(page.locator(hostForm.dhGroupValue)).toHaveText(noDhGroupText, { timeout: 10_000 });
+
+  await pickHostDhGroup(page, pickedDhGroup);
+  await saveHostForm(page);
+
+  await expect(page.locator(manageHostsDialog.hasAuthentication(targetHost))).toHaveText('Yes', {
+    timeout: 10_000,
+  });
+
+  // Reopened, the form ticks the box from the stored group and reads it back.
+  await openManagedHostEdit(page, targetHost);
+  await expect(page.locator(hostForm.addDhKeyExchange)).toBeChecked();
+  await expect(page.locator(hostForm.dhGroupValue)).toHaveText(pickedDhGroup);
+  await closeHostForm(page);
+
+  expect(await findNvmeOfHost(api, targetHost)).toMatchObject({
+    id: host.id,
+    dhchap_key: expect.stringMatching(/^DHHC-1:/),
+    dhchap_ctrl_key: expect.stringMatching(/^DHHC-1:/),
+    dhchap_hash: 'SHA-256',
+    dhchap_dhgroup: pickedDhGroup,
   });
   expect((await requireNvmeOfSubsystem(api, targetName)).hosts).toEqual([host.id]);
   await expectBystanderUntouched(api, bystanderBefore);

@@ -439,6 +439,54 @@ export async function saveBucketEditor(page: Page): Promise<void> {
 }
 
 /**
+ * In the open bucket editor (Advanced Options), on a bucket whose versioning is on:
+ * opens the Versioning select and asserts that Off is offered but refused.
+ *
+ * Closed again by picking Enabled, which it already holds — Escape would also reach
+ * the side panel.
+ */
+export async function expectBucketVersioningOffRefused(page: Page): Promise<void> {
+  const { form } = s3BucketLocators;
+  await expect(page.locator(form.versioning)).toContainText(versioningLabels.ENABLED);
+
+  await page.locator(form.versioning).click();
+  const off = page.locator(form.versioningOption(versioningLabels.OFF));
+  await expect(off).toBeVisible();
+  await expect(off).toHaveAttribute('aria-disabled', 'true');
+
+  await page.locator(form.versioningOption(versioningLabels.ENABLED)).click();
+  await expect(off).toBeHidden();
+}
+
+/**
+ * Presses Force Disable Versioning in the open bucket editor (Advanced Options), and
+ * waits for the confirm it raises.
+ */
+export async function openForceDisableBucketVersioning(page: Page): Promise<void> {
+  await page.locator(s3BucketLocators.form.forceDisableVersioning).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Confirms the open Force Disable Versioning dialog, and waits for the editor to close.
+ *
+ * The dialog asks for the destruction explicitly, so its button stays **disabled**
+ * until the box is ticked — asserted on the way, so a dialog that lost its gate
+ * fails here. The call is made at once, with no Save; the editor closes as a
+ * success once it returns.
+ */
+export async function confirmForceDisableBucketVersioning(page: Page): Promise<void> {
+  const confirm = page.locator(confirmDialogLocators.confirm);
+  await expect(confirm).toBeDisabled();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+  await expect(page.locator(s3BucketLocators.form.name)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
  * Flips a bucket's Enabled toggle in the dashboard card.
  *
  * The toggle calls `sharing.s3.update` straight from the row; there is no

@@ -4,6 +4,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToCertificates } from './navigation';
+import { selectOption } from './storage';
 import { certificateLocators, csrLocators } from '../locators/certificates';
 import { confirmDialogLocators } from '../locators/dialogs';
 
@@ -34,17 +35,20 @@ async function nextFrom(page: Page, stepField: string): Promise<void> {
   await page.locator(csrLocators.wizard.next).click();
 }
 
+/** An EC key in place of the default RSA 2048, picked on Certificate Options. */
+export interface CsrEcKey {
+  /** One of what `certificate.ec_curve_choices` returns, such as `SECP384R1`. */
+  ecCurve: string;
+}
+
 /**
- * Adds a CSR through the Add CSR wizard, starting from the sidebar, and waits for
- * the panel to close.
+ * Takes the Add CSR wizard, starting from the sidebar, as far as Confirm Options,
+ * and stops there without saving — see {@link addCsr}.
  *
- * Type, profile, key options and extensions are left at their defaults: a CSR,
- * no profile, RSA 2048 with SHA256, and no extensions. Country defaults to US.
- *
- * The panel closing is the app's own signal that the create job succeeded — a
- * failure raises an error dialog and leaves the wizard open.
+ * With `ecKey`, Key Type is switched to EC and the curve is picked; the swap of Key
+ * Length for EC Curve is waited on, since the curve select is not there before it.
  */
-export async function addCsr(page: Page, name: string, subject: CsrSubject): Promise<void> {
+export async function fillCsrWizard(page: Page, name: string, subject: CsrSubject, ecKey?: CsrEcKey): Promise<void> {
   const { list, wizard } = csrLocators;
   await goToCertificates(page);
   await page.locator(list.add).click();
@@ -52,6 +56,13 @@ export async function addCsr(page: Page, name: string, subject: CsrSubject): Pro
   await page.locator(wizard.name).fill(name);
   await nextFrom(page, wizard.name);
 
+  if (ecKey) {
+    await expect(page.locator(wizard.keyType)).toBeVisible();
+    await selectOption(page, wizard.keyType, wizard.keyTypeOption('EC'));
+    await expect(page.locator(wizard.keyLength)).toBeHidden();
+    await expect(page.locator(wizard.ecCurve)).toBeVisible();
+    await selectOption(page, wizard.ecCurve, wizard.ecCurveOption(ecKey.ecCurve));
+  }
   await nextFrom(page, wizard.keyType);
 
   await page.locator(wizard.state).fill(subject.state);
@@ -66,9 +77,28 @@ export async function addCsr(page: Page, name: string, subject: CsrSubject): Pro
   await nextFrom(page, wizard.state);
 
   await nextFrom(page, wizard.basicConstraints);
+}
 
-  await page.locator(wizard.save).click();
-  await expect(page.locator(wizard.save)).toBeHidden({ timeout: saveTimeoutMs });
+/** Saves the Add CSR wizard from Confirm Options, and waits for the panel to close — see {@link addCsr}. */
+export async function saveCsrWizard(page: Page): Promise<void> {
+  const { save } = csrLocators.wizard;
+  await page.locator(save).click();
+  await expect(page.locator(save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Adds a CSR through the Add CSR wizard, starting from the sidebar, and waits for
+ * the panel to close.
+ *
+ * Type, profile, key options and extensions are left at their defaults: a CSR,
+ * no profile, RSA 2048 with SHA256, and no extensions. Country defaults to US.
+ *
+ * The panel closing is the app's own signal that the create job succeeded — a
+ * failure raises an error dialog and leaves the wizard open.
+ */
+export async function addCsr(page: Page, name: string, subject: CsrSubject): Promise<void> {
+  await fillCsrWizard(page, name, subject);
+  await saveCsrWizard(page);
 }
 
 /**

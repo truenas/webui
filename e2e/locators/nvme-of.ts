@@ -238,6 +238,17 @@ export const nvmeOfLocators = {
     /** "Generate Key" under Key For TrueNAS To Present, generated from the global base NQN. */
     generateTrueNasKey: '[data-test="button-generate-key-ctrl"]',
     trueNasKey: '[data-test="textarea-dhchap-ctrl-key"]',
+    /** "Also use Diffie–Hellman key exchange…". Rendered only while authentication is required. */
+    addDhKeyExchange: '[data-test="checkbox-add-dh-key-exchange"]',
+    /**
+     * The DH Group editable's view, which reads the group the form holds. The editable's own
+     * trigger id is built from that value, so clicking this is how it is opened.
+     */
+    dhGroupValue: '[data-test="text-dh-group"]',
+    /** The select the DH Group editable renders once opened. Id via control-name fallback. */
+    dhGroup: '[data-test="select-dhchap-dhgroup"]',
+    /** By label, which is the group itself: `2048-BIT` to `8192-BIT`. */
+    dhGroupOption: (group: string): string => `[data-test="option-dhchap-dhgroup-${kebabTestSegment(group)}"]`,
     save: '[data-test="button-save"]',
     /** The side panel's dismiss control. It asks first only when the form has unsaved edits. */
     closePanel: '[data-test="button-close-side-panel"]',
