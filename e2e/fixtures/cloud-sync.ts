@@ -262,6 +262,82 @@ export async function findCloudSyncRuns(
     });
 }
 
+/** The ids of every `cloudsync.sync_onetime` job middleware remembers, so a later read can tell new ones from old. */
+export async function findCloudSyncOnetimeJobIds(client: E2eApiClient): Promise<number[]> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'cloudsync.sync_onetime']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs.map((job) => job.id);
+}
+
+/**
+ * Every `cloudsync.sync_onetime` job that is not in `earlier`.
+ *
+ * The form's Dry Run sends the unsaved task itself as the job's first argument, and
+ * `{ dry_run: true }` as its second, so there is no task id to match on — `description` is the
+ * first argument's, which is what ties a job to the form that sent it. `logs` is as in
+ * {@link findCloudSyncRuns}.
+ */
+export async function findCloudSyncOnetimeRuns(
+  client: E2eApiClient,
+  earlier: number[],
+): Promise<{
+  id: number;
+  state: string;
+  dryRun: boolean;
+  description: string;
+  logs: string;
+}[]> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'cloudsync.sync_onetime']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs
+    .filter((job) => !earlier.includes(job.id))
+    .map((job) => {
+      const args: unknown[] = Array.isArray(job.arguments) ? job.arguments : [];
+      const task = args[0] as { description?: unknown } | undefined;
+      const options = args[1] as { dry_run?: unknown } | undefined;
+      const { logs_excerpt: logs } = job as { logs_excerpt?: unknown };
+
+      return {
+        id: job.id,
+        state: String(job.state),
+        dryRun: options?.dry_run === true,
+        description: typeof task?.description === 'string' ? task.description : '',
+        logs: typeof logs === 'string' ? logs : '',
+      };
+    });
+}
+
+/**
+ * The names of the files directly inside a folder of a bucket, as the remote lists them through a
+ * credential.
+ *
+ * `cloudsync.list_directory` is the form's own Folder browser call, so this reads the remote the
+ * way the task does — for a remote that is not a directory on the appliance, which
+ * {@link findFileNames} cannot see.
+ */
+export async function findRemoteFileNames(
+  client: E2eApiClient,
+  { credentialId, bucket, folder }: { credentialId: number; bucket: string; folder: string },
+): Promise<string[]> {
+  const listing = await firstValueFrom(
+    client.api.call('cloudsync.list_directory', [{
+      credentials: credentialId,
+      attributes: { bucket, folder },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  // Middleware declares the rows as free-form dicts; these are rclone's `lsjson` fields.
+  return (listing as { Name?: unknown; IsDir?: unknown }[])
+    .filter((entry) => entry.IsDir === false)
+    .map((entry) => entry.Name)
+    .filter((name): name is string => typeof name === 'string')
+    .sort((a, b) => a.localeCompare(b));
+}
+
 /**
  * Runs a task and waits for it, over the API.
  *
