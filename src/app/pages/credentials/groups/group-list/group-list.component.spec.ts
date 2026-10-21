@@ -167,6 +167,8 @@ describe('GroupListComponent', () => {
       'text-allows-sudo-commands-group-mock-row-yesno',
       'text-samba-authentication-group-mock-row-yesno',
       'text-roles-group-mock-row-text',
+      // The chevron is drawn by tn-table, and scoped by the same row tag.
+      'button-expand-group-mock',
     ]);
   });
 

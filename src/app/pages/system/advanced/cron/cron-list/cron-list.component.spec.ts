@@ -143,6 +143,8 @@ describe('CronListComponent', () => {
       'text-schedule-cron-echo-hello-world-test-row-text',
       'text-enabled-cron-echo-hello-world-test-row-yesno',
       'text-next-run-cron-echo-hello-world-test-row-text',
+      // The chevron is drawn by tn-table, and scoped by the same row tag.
+      'button-expand-cron-echo-hello-world-test',
     ]);
   });
 
