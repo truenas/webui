@@ -65,7 +65,7 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   so they have no coverage in the repository that emits them. NAS-142069 was one
   such attribute deleted by a migration and caught by a person, not by CI.
 - **Per-test token login** replaced `storageState` once two authenticated tests
-  ran back to back (the S3 pair). `setup` still gates the authenticated project
+  ran back to back (the S3 pair). `setup` still gates the authenticated projects
   as the earliest report of a broken token login. Each login mints its own
   token: middleware stops honouring one once the session that redeemed it ends,
   so a per-worker token carried exactly one test too. Cost: one authenticated
@@ -147,7 +147,7 @@ comment instead.
 | R3.1 | Preconditions via API, assertions via UI. Never use the API to do the thing under test |
 | R3.2 | Teardown runs over the API, unconditionally, including after failure |
 | R3.3 | Run-scoped naming, so concurrent runs cannot collide (not yet implemented) |
-| R3.4 | Serial execution; scale by sharding across appliances, not workers |
+| R3.4 | Serial execution, except the specs `e2e/support/spec-groups.ts` lists, which share one appliance across `TN_WORKERS` workers; beyond that, scale by sharding across appliances |
 | R3.5 | Every test passes when run alone against an already-dirty appliance |
 | R4.1 | Token-based session reuse via `auth.generate_token`, not `reconnect_token` |
 | R4.2 | One real login: sign-in tests use no token bypass |

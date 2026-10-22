@@ -275,14 +275,25 @@ coverage value is nil.
 
 ## E3. Scale by sharding across appliances, not workers
 
-Concurrency comes from N appliances each executing a disjoint slice serially. It
-never comes from raising Playwright's `workers`.
+Concurrency beyond one appliance's worth comes from N appliances each executing
+a disjoint slice. Raising Playwright's `workers` buys only what one appliance can
+absorb.
 
-**Why.** `playwright.config.ts` pins `workers: 1` because pools, services
-and system settings are global to an appliance — two workers against one box
-interfere by construction (**R3.4**). That reasoning does not change; the unit
-of parallelism just has to be the appliance. This is **D2**
-(D2 in `status.md`), promoted from deferred to load-bearing.
+**Why.** Pools, services and system settings are global to an appliance — two
+workers against one box interfere by construction (**R3.4**) whenever either
+touches them. That reasoning does not change; the unit of parallelism for those
+specs has to be the appliance. This is **D2** (D2 in `status.md`), promoted
+from deferred to load-bearing.
+
+**What one appliance can share.** Specs that touch only what they created
+themselves — a Local or Contained test in **E4**'s terms that also reads no
+global collection — can run side by side on one box. `e2e/support/spec-groups.ts`
+lists them, opt-in: a `parallel` group that shares the appliance freely, and a
+`data-protection` group that shares it with those but takes turns among itself,
+since its specs count and act on the same four-row cards. `TN_WORKERS` sets the
+worker count; every other spec still runs alone, behind a run-wide lock
+(`e2e/support/appliance-lock.ts`). On the 2026-10-21 run that was about a third
+of the suite's time.
 
 **Blocked on Q5.** §0.2 records one VM per run as affordable on the interim
 host. **E2** needs `1 + ⌈restore ÷ test⌉` per shard — between 4 and 12

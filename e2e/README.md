@@ -82,6 +82,20 @@ disagree, sign-in fails with nothing explaining why.
 grep remote: src/environments/environment.ts
 ```
 
+## Running specs side by side
+
+`TN_WORKERS=<n>` runs the specs listed in `e2e/support/spec-groups.ts` on n
+workers against the one appliance; every other spec still runs alone. Unset, it
+is one worker, as before. CI uses three.
+
+```bash
+TN_WORKERS=3 yarn e2e
+```
+
+A new spec runs alone until it is added to a list there. Read that file's
+header before adding one: a spec wrongly listed fails other people's tests
+intermittently, which is far more expensive than the minutes it saves.
+
 ## Watching and debugging
 
 Watch it run, slowed down enough to follow:

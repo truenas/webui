@@ -22,6 +22,7 @@ import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { clearRateLimit, enablePrivateMethods } from './api/rate-limit';
 import { recordApiCalls } from './api-calls';
+import { acquireApplianceLock, type ApplianceAccess, withRunMutex } from './appliance-lock';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig, throughVip } from './config';
@@ -67,7 +68,7 @@ const maxConcurrentCallsDismissals = 3;
  * Dismisses the development build's concurrency diagnostic wherever it appears.
  *
  * Page scope, not sign-in scope: it blocks any chatty page, and the
- * `authenticated` project enters by token URL onto `/dashboard`, not the form.
+ * authenticated projects enter by token URL onto `/dashboard`, not the form.
  * `addLocatorHandler` runs before actionability checks.
  */
 async function dismissConcurrencyDialogs(page: Page): Promise<void> {
@@ -170,6 +171,21 @@ export interface E2eTestOptions {
    * `test.use`. See `support/api-calls.ts`.
    */
   recordApiCalls: boolean;
+  /**
+   * A lane this test takes turns in with every other test of the same lane, on
+   * any worker: the `data-protection` project sets one. Undefined for none.
+   *
+   * The project's own one-worker limit already does this, except for the moment
+   * Playwright briefly runs two of its workers — see the `serial` project in
+   * `playwright.config.ts`. Per test, unlike the appliance lock, so a worker
+   * left idle by that cannot hold it.
+   */
+  applianceLane: string | undefined;
+}
+
+interface E2eTestFixtures {
+  /** Held for the test, when it has a lane. */
+  applianceLaneLock: void;
 }
 
 export interface E2eWorkerFixtures {
@@ -180,6 +196,15 @@ export interface E2eWorkerFixtures {
    * in `playwright.config.ts`. See `throughVip`.
    */
   haThroughVip: boolean;
+  /**
+   * Whether this worker shares the appliance with other workers or needs it to
+   * itself. Exclusive by default, so a project that says nothing is safe; the
+   * `parallel` and `data-protection` projects opt into `shared` in `playwright.config.ts`. See
+   * `support/appliance-lock.ts`.
+   */
+  applianceAccess: ApplianceAccess;
+  /** Held for the worker's life, before anything touches the appliance. */
+  applianceLock: void;
   /** Resolved target configuration for this run. */
   config: TargetConfig;
   /**
@@ -194,7 +219,8 @@ export interface E2eWorkerFixtures {
    * The name of an online pool for datasets to live under.
    *
    * An existing pool where the appliance has one; otherwise a one-disk pool
-   * the suite builds and exports when the worker ends. Worker-scoped so every
+   * the suite builds and exports when the worker ends — unless the worker
+   * shares the appliance, when another worker may still be using it. Worker-scoped so every
    * spec in a worker shares one build, and lazy so a spec that never asks for
    * a pool never builds one. Not for tests *about* pools — those drive the
    * wizard. See `fixtures/pool.ts`.
@@ -214,11 +240,12 @@ export interface E2eWorkerFixtures {
  *
  * Each connection costs a sign-in, and middleware rate-limits *unauthenticated*
  * calls at 20 per method per IP per minute — so connections, not queries, are
- * the scarce resource. One per worker means one for the whole run at the
- * current `workers: 1`, rather than one per spec file.
+ * the scarce resource. One per worker means a handful for the whole run, one
+ * per `TN_WORKERS` and per worker restarted after a failure, rather than one per
+ * spec file.
  *
- * Both are lazy in principle, but in practice every test in the `authenticated`
- * project opens the socket: the `page` override below names `api` so it can
+ * Both are lazy in principle, but in practice every test in the authenticated
+ * projects opens the socket: the `page` override below names `api` so it can
  * mint a login token. The `unauthenticated` project's `page` does not need it,
  * yet Playwright builds the fixture graph from the destructuring pattern rather
  * than from the branch taken, so its tests open the socket too — harmlessly,
@@ -226,11 +253,40 @@ export interface E2eWorkerFixtures {
  * sign-in test ever need to run with middleware unreachable, the token would
  * have to move behind a fixture that project overrides.
  */
-export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
+export const test = base.extend<E2eTestOptions & E2eTestFixtures, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
   recordApiCalls: [false, { option: true }],
+  applianceLane: [undefined, { option: true }],
+
+  applianceLaneLock: [
+    async ({ applianceLane }, use) => {
+      if (!applianceLane) {
+        await use();
+        return;
+      }
+      await withRunMutex(`lane-${applianceLane}`, () => use());
+    },
+    { auto: true },
+  ],
 
   haThroughVip: [false, { option: true, scope: 'worker' }],
+
+  applianceAccess: ['exclusive', { option: true, scope: 'worker' }],
+
+  applianceLock: [
+    async ({ applianceAccess }, use) => {
+      const release = await acquireApplianceLock(applianceAccess);
+      try {
+        await use();
+      } finally {
+        release();
+      }
+    },
+    // An exclusive worker waits for every parallel worker to finish, and the
+    // two exclusive projects take turns — the wait is the serial half of the
+    // run, not a hang, so the per-test ceiling is the wrong bound for it.
+    { scope: 'worker', auto: true, timeout: 3 * 60 * 60_000 },
+  ],
 
   config: [
     async ({ haThroughVip }, use) => {
@@ -263,8 +319,17 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   ],
 
   pool: [
-    async ({ api }, use) => {
+    async ({ api, applianceAccess }, use) => {
       const lifecycle = poolLifecycle();
+      if (applianceAccess === 'shared') {
+        // Parallel workers start together, and each would find no pool and
+        // build one. One builds it; the rest find it. None exports it: the
+        // others may still have datasets on it, and the serial project's
+        // worker, which has the appliance to itself, releases it at the end.
+        await use(await withRunMutex('pool', () => lifecycle.provide(api)));
+        return;
+      }
+
       // `provide` is inside the try on purpose: it records responsibility for
       // the pool *before* starting `pool.create`, so a build that lands and
       // then times out or loses its socket must still reach `release`.

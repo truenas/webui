@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
+import { prepareApplianceLock } from './e2e/support/appliance-lock';
 import { describeTarget, loadTargetConfig } from './e2e/support/config';
 import type { E2eTestOptions, E2eWorkerFixtures } from './e2e/support/fixtures';
+import { dataProtectionSpecs, parallelSpecs } from './e2e/support/spec-groups';
 
 /**
  * Load local configuration if present. Uses Node's built-in env-file support
@@ -126,6 +128,29 @@ const slowMoMs = (() => {
   return parsed;
 })();
 
+/**
+ * `TN_WORKERS=<n>` runs the `parallel` project's specs on n workers at once,
+ * against the one appliance. Unset, it is one — the suite as it always ran.
+ *
+ * Parsed like `TN_SLOW_MO`, and for the same reason: `Number('abc')` is `NaN`.
+ */
+const workerCount = (() => {
+  const raw = process.env.TN_WORKERS;
+  if (!raw) {
+    return 1;
+  }
+
+  const parsed = Number(raw);
+  if (!Number.isInteger(parsed) || parsed < 1) {
+    console.warn(`Ignoring TN_WORKERS="${raw}" — expected a whole number of workers, 1 or more.`);
+    return 1;
+  }
+
+  return parsed;
+})();
+
+prepareApplianceLock();
+
 /** Token sign-in, checked once before either suite: see `e2e/support/auth/auth.setup.ts`. */
 const setupProject = {
   name: 'setup',
@@ -138,19 +163,60 @@ const setupProject = {
  */
 const singleApplianceProjects = [
   setupProject,
+  /*
+   * Everything that starts from an authenticated session, in three projects,
+   * by what a spec may run beside (`support/spec-groups.ts`): `parallel` specs
+   * share the appliance with every other one running, `data-protection` specs
+   * share it with those but take turns among themselves, and `serial` — every
+   * spec in neither list — has it to itself.
+   *
+   * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
+   * not through a `storageState` captured by `setup`: the app rotates the
+   * persisted token into a five-minute single-use one on every login, so a
+   * snapshot of it only ever carries the first test. `setup` still runs
+   * first — it is the earliest, clearest report that token login is broken.
+   *
+   * The order of the three is what schedules them. Playwright queues projects
+   * in the order they appear and gives a free worker the first queued spec
+   * file whose project is under its `workers` limit. So `data-protection`, at
+   * one worker, starts at once and keeps that worker busy; `parallel` fills
+   * the rest; and `serial` starts only once both queues have been handed out.
+   * The appliance lock (`support/appliance-lock.ts`) keeps serial specs from
+   * overlapping the others at that boundary, and each other. None depends on
+   * another: a dependency's failure would skip the whole dependent project.
+   */
   {
-    /**
-     * Everything that starts from an authenticated session.
-     *
-     * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
-     * not through a `storageState` captured by `setup`: the app rotates the
-     * persisted token into a five-minute single-use one on every login, so a
-     * snapshot of it only ever carries the first test. `setup` still runs
-     * first — it is the earliest, clearest report that token login is broken.
-     */
-    name: 'authenticated',
+    // One worker at a time among these specs, and the `applianceLane` mutex
+    // for the moment Playwright briefly runs two (see `serial` below).
+    name: 'data-protection',
+    workers: 1,
     testDir: './e2e/tests',
-    testIgnore: ['**/unauthenticated/**', '**/unpublished/**'],
+    testMatch: dataProtectionSpecs,
+    dependencies: ['setup'],
+    use: { ...devices['Desktop Chrome'], applianceAccess: 'shared' as const, applianceLane: 'data-protection' },
+  },
+  {
+    name: 'parallel',
+    testDir: './e2e/tests',
+    testMatch: parallelSpecs,
+    dependencies: ['setup'],
+    use: { ...devices['Desktop Chrome'], applianceAccess: 'shared' as const },
+  },
+  {
+    /*
+     * No `workers` limit, unlike `data-protection`: one worker at a time is
+     * the lock's job here, because a limit would deadlock it. Playwright counts
+     * a project's busy workers by each slot's *current* worker, and a slot
+     * switching projects keeps its old one until that has stopped — so two
+     * slots freed together can both start this project. The second waits on the
+     * lock the first holds for life, and the first, now idle, can take no more
+     * of its queue while the limit counts the waiting one, nor stop while that
+     * queue is not empty. Unlimited, the extra workers simply wait their turn,
+     * and the holder stops, letting go, when the queue has been handed out.
+     */
+    name: 'serial',
+    testDir: './e2e/tests',
+    testIgnore: ['**/unauthenticated/**', '**/unpublished/**', ...dataProtectionSpecs, ...parallelSpecs],
     dependencies: ['setup'],
     use: { ...devices['Desktop Chrome'] },
   },
@@ -275,11 +341,19 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
   testMatch: '**/*.e2e.ts',
 
   /**
-   * Serial execution (R3.4). Pools, services and system settings are global to
-   * the appliance, so parallel workers against one instance interfere. Scaling
-   * out means sharding across VM *instances*, not workers — that is D2.
+   * Pools, services and system settings are global to the appliance, so
+   * workers against one instance interfere unless every spec they run only
+   * touches what it created itself. Only the `parallel` and `data-protection`
+   * projects' specs are allowed to share it, and only whole files at a time:
+   * the tests inside one file still run in order, in one worker. Every other
+   * project's specs take the appliance to themselves, one worker at a time,
+   * through the lock. See `support/spec-groups.ts` and
+   * `support/appliance-lock.ts`.
+   *
+   * The HA chain stays on one worker whatever this says: each of its links
+   * reshapes the pair the next one runs on.
    */
-  workers: 1,
+  workers: target.ha ? 1 : workerCount,
   fullyParallel: false,
 
   /**

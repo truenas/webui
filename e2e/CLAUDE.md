@@ -332,6 +332,20 @@ a failure, which is when it matters most.
 - Cleanup runs in `beforeEach` too, so a test is re-runnable against a dirty
   appliance.
 
+## Running beside other specs
+
+With `TN_WORKERS` above one (CI uses three), the specs listed in
+`support/spec-groups.ts` run at the same time as each other against the one
+appliance. Everything else runs alone. **A new spec is not listed, so it runs
+alone** — add it to a list only when it touches nothing it did not create and
+asserts on nothing another spec can change. That file's header lists what rules
+a spec out, and every item was found in this suite: a service a cleanup stops,
+a "room on the card" count, the admin's preferences, a fixed shared account.
+
+Listing a spec also makes a promise for the others there. A card check like
+`certificates`' holds only while every other spec creating certificates stays
+unlisted, so adding one that does breaks a spec you did not touch.
+
 ## Layout
 
 ```

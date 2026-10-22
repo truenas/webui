@@ -91,6 +91,13 @@ on:
           across (Playwright's --shard). One until sharding is measured.
         type: number
         default: 1
+      workers:
+        description: >-
+          How many Playwright workers share each appliance (TN_WORKERS). Only
+          the specs listed in e2e/support/spec-groups.ts run side by side; the
+          rest still run one at a time.
+        type: number
+        default: 3
 
 # Reads code, uploads artifacts, and reads the WebUI workflow's runs and
 # artifacts for its build of the UI. No reason to write to the repository.
@@ -267,11 +274,14 @@ jobs:
           TN_AD_USERNAME: ${{ secrets.E2EUI_AD_USERNAME }}
           TN_AD_PASSWORD: ${{ secrets.E2EUI_AD_PASSWORD }}
           TN_AD_COMPUTER_OU: ${{ secrets.E2EUI_AD_COMPUTER_OU }}
+          # A schedule, push or pull request has no inputs: three for those too.
+          TN_WORKERS: ${{ inputs.workers || 3 }}
         with:
           shard: ${{ matrix.shard }}/${{ needs.plan.outputs.total }}
           grep: ${{ inputs.grep }}
           artifact-suffix: -${{ matrix.shard }}
           env: |
+            TN_WORKERS
             TN_AD_DOMAIN
             TN_AD_DC1
             TN_AD_DC2
