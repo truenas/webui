@@ -59,6 +59,24 @@ test.describe('as a sharing administrator', () => {
   /** FTP as this test found it, before it was stopped, so the teardown can put it back. */
   let foundFtp: ServiceState | undefined;
 
+  // The account is created once for the file: no test here changes it, and each one costs
+  // middleware about a second to create and another to delete. A failed test restarts the
+  // worker, which runs afterAll and then beforeAll again, so a retry still starts clean.
+  test.beforeAll(async ({ api }) => {
+    await ensureRoleAdminAbsent(api, account);
+    await ensureRoleAdminPresent(api, account);
+  });
+
+  test.afterAll(async ({ api }) => {
+    if (leavingTestData(`user "${account.username}"`)) {
+      return;
+    }
+
+    await runCleanupSteps([
+      [`remove user ${account.username}`, () => ensureRoleAdminAbsent(api, account)],
+    ]);
+  });
+
   test.beforeEach(async ({ api, pool }) => {
     const dataset = `${pool}/${datasetLeaf}`;
 
@@ -67,23 +85,20 @@ test.describe('as a sharing administrator', () => {
       throw new Error('service.query returned no ftp row, so there is no service to start.');
     }
 
-    await ensureRoleAdminAbsent(api, account);
     await ensureServiceStopped(api, 'ftp', ftpLeftChanged);
     // Absent first, so a comment left by an earlier run cannot already match the edit.
     await ensureDatasetAbsent(api, dataset);
     await ensureDatasetPresent(api, dataset);
-    await ensureRoleAdminPresent(api, account);
   });
 
   test.afterEach(async ({ api, pool }) => {
     const dataset = `${pool}/${datasetLeaf}`;
-    if (leavingTestData(`user "${account.username}", dataset "${dataset}" and FTP as the test left it`)) {
+    if (leavingTestData(`dataset "${dataset}" and FTP as the test left it`)) {
       return;
     }
 
     const ftp = foundFtp;
     await runCleanupSteps([
-      [`remove user ${account.username}`, () => ensureRoleAdminAbsent(api, account)],
       ['restore the FTP service', async () => {
         if (ftp) {
           await restoreService(api, 'ftp', ftp, ftpLeftChanged);

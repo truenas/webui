@@ -29,13 +29,28 @@ let createdSecret: string;
 async function cleanUp(api: E2eApiClient): Promise<void> {
   await runCleanupSteps([
     ['remove the access keys', () => ensureS3AccessKeysAbsent(api, owner)],
+  ]);
+}
+
+/** After `cleanUp`: a key outlives its account, so the keys go first. */
+async function removeOwner(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps([
     ['delete the owner', () => ensureUserAbsent(api, owner)],
   ]);
 }
 
+// The owner is created once for the file: it only owns the key here, and it
+// costs middleware about a second to create and another to delete. A failed
+// test restarts the worker, which runs `afterAll` and then this again, so a
+// retry still starts from a fresh owner.
+test.beforeAll(async ({ api }) => {
+  await cleanUp(api);
+  await removeOwner(api);
+  await ensureUserPresent(api, owner);
+});
+
 test.beforeEach(async ({ api }) => {
   await cleanUp(api);
-  await ensureUserPresent(api, owner);
   const created = await provisionS3AccessKey(api, { name: accessKey, username: owner });
   // `secret` is nullable by design — redacted without SHARING_S3_WRITE, or
   // lost to a config restore. A null here would make the rotation check
@@ -48,10 +63,17 @@ test.beforeEach(async ({ api }) => {
 });
 
 test.afterEach(async ({ api }) => {
-  if (leavingTestData(`access key "${accessKey}" and user "${owner}"`)) {
+  if (leavingTestData(`access key "${accessKey}"`)) {
     return;
   }
   await cleanUp(api);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${owner}"`)) {
+    return;
+  }
+  await removeOwner(api);
 });
 
 test('an admin rotates an access key and is shown the new secret once', async ({ page, api }) => {

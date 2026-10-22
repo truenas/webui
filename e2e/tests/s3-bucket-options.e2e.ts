@@ -46,22 +46,44 @@ async function cleanUp(api: E2eApiClient, pool: string): Promise<void> {
     ['stop the S3 service', () => ensureS3ServiceStopped(api)],
     ['remove the bucket', () => ensureS3BucketAbsent(api, bucket)],
     ['delete the parent dataset', () => ensureDatasetAbsent(api, `${pool}/${parentDataset}`)],
+  ]);
+}
+
+/** After `cleanUp`, so no bucket is left that names the owner. */
+async function removeOwner(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps([
     ['delete the owner', () => ensureUserAbsent(api, owner)],
   ]);
 }
 
+// The owner is created once for the file: it only owns the bucket here, and it
+// costs middleware about a second to create and another to delete. A failed
+// test restarts the worker, which runs `afterAll` and then this again, so a
+// retry still starts from a fresh owner.
+test.beforeAll(async ({ api, pool }) => {
+  await cleanUp(api, pool);
+  await removeOwner(api);
+  await ensureUserPresent(api, owner);
+});
+
 test.beforeEach(async ({ api, pool }) => {
   await cleanUp(api, pool);
-  await ensureUserPresent(api, owner);
   await ensureDatasetPresent(api, `${pool}/${parentDataset}`);
   await ensureS3BucketPresent(api, { name: bucket, parentDataset: `${pool}/${parentDataset}`, owner });
 });
 
 test.afterEach(async ({ api, pool }) => {
-  if (leavingTestData(`bucket "${bucket}", its datasets, and user "${owner}"`)) {
+  if (leavingTestData(`bucket "${bucket}" and its datasets`)) {
     return;
   }
   await cleanUp(api, pool);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${owner}"`)) {
+    return;
+  }
+  await removeOwner(api);
 });
 
 test('an admin switches a bucket to Multiprotocol and object ownership follows', async ({ page, api }) => {
