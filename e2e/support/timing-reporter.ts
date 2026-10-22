@@ -21,14 +21,15 @@
  * `Fill "<the password>"` — and this file is published with the run, including
  * for the `unpublished` project. The middleware side is `timings.ts`.
  *
- * Written once, at the end, to `test-results/e2e-timings/tests.json`.
+ * Written once, at the end, to `tests.json` in the directory `timings.ts`
+ * records into.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import type {
   FullConfig, Reporter, TestCase, TestResult, TestStep,
 } from '@playwright/test/reporter';
-import { timingsDirName } from './timings';
+import { timingsDirVar } from './timings';
 
 export interface PhaseTiming {
   /** `beforeEach hook`, `afterAll hook`, `Fixture "page"`, … */
@@ -70,8 +71,6 @@ export interface RunTimings {
   end: number;
   tests: TestTiming[];
 }
-
-const timingsFile = join(import.meta.dirname, '..', '..', 'test-results', timingsDirName, 'tests.json');
 
 function stepEnd(step: TestStep): number {
   return step.startTime.getTime() + step.duration;
@@ -151,8 +150,13 @@ export default class TimingReporter implements Reporter {
 
   onEnd(): void {
     this.run.end = Date.now();
+    const timingsDir = process.env[timingsDirVar];
+    if (!timingsDir) {
+      return;
+    }
+    const timingsFile = join(timingsDir, 'tests.json');
     try {
-      mkdirSync(join(timingsFile, '..'), { recursive: true });
+      mkdirSync(timingsDir, { recursive: true });
       writeFileSync(timingsFile, JSON.stringify(this.run));
     } catch (error) {
       console.warn(`Could not write test timings to ${timingsFile}: ${String(error)}`);

@@ -477,8 +477,10 @@ jobs:
           results="$RUNNER_TEMP/e2e-timings"
           mkdir -p "$results"
           uploaded=0
+          # `tests.json` is written only when a shard's suite ends; one killed
+          # partway uploads its middleware records alone, and counts as missing.
           for dir in "$RUNNER_TEMP"/shards/e2e-timings-*/; do
-            [ -d "$dir" ] || continue
+            [ -f "$dir/tests.json" ] || continue
             uploaded=$((uploaded + 1))
             cp -r "$dir" "$results/$(basename "$dir")"
           done

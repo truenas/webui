@@ -1,6 +1,8 @@
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { describeTarget, loadTargetConfig } from './e2e/support/config';
 import type { E2eTestOptions, E2eWorkerFixtures } from './e2e/support/fixtures';
+import { timingsDirName, timingsDirVar } from './e2e/support/timings';
 
 /**
  * Load local configuration if present. Uses Node's built-in env-file support
@@ -68,6 +70,13 @@ const target = loadTargetConfig();
 if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
+
+/**
+ * Where `support/timings.ts` and `support/timing-reporter.ts` record, set here
+ * because Jest compiles `timings.ts` too and could not parse the
+ * `import.meta.dirname` locating it there. Workers inherit it.
+ */
+process.env[timingsDirVar] ??= join(import.meta.dirname, 'test-results', timingsDirName);
 
 /**
  * Announce the resolved target before anything runs.

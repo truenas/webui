@@ -202,7 +202,7 @@ function percent(part: number, whole: number): string {
 }
 
 function cell(value: string): string {
-  return value.replace(/\|/g, '\\|').replace(/\n/g, ' ');
+  return value.replace(/\\/g, '\\\\').replace(/\|/g, '\\|').replace(/\n/g, ' ');
 }
 
 function topMethod(byMethod: Map<string, number>): string {

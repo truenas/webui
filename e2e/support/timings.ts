@@ -7,8 +7,12 @@
  * the middleware side, so the script can say which calls a phase spent its time
  * in.
  *
- * Each worker appends one JSON line per call to its own file in
- * `test-results/e2e-timings/`. A line names the method and when it ran, never
+ * Each worker appends one JSON line per call to its own file in the directory
+ * {@link timingsDirVar} names, which `playwright.config.ts` sets to
+ * `test-results/e2e-timings/`. Unset, nothing is recorded: Jest runs `runJob`
+ * too (`e2e-run-job.spec.ts`), and compiles to CommonJS, where the
+ * `import.meta.dirname` that would locate the directory here does not parse.
+ * A line names the method and when it ran, never
  * its parameters or result, so the file is safe to publish with the rest of a
  * run — including the `unpublished` project's, whose parameters carry the
  * Active Directory credentials. Calls are matched to tests afterwards by time
@@ -38,11 +42,15 @@ import type { E2eApiClient } from './api/client';
 
 export const timingsDirName = 'e2e-timings';
 
+/**
+ * The environment variable holding where timings go, inherited by every worker.
+ * Relative to the repository, not a project's `outputDir`, for the reason
+ * `coverage.ts` gives.
+ */
+export const timingsDirVar = 'E2E_TIMINGS_DIR';
+
 /** What `connectAndLogin` is recorded as: no single method covers it. */
 export const connectMethod = '(connect and sign in)';
-
-/** Relative to the repository, not a project's `outputDir`, for the reason `coverage.ts` gives. */
-const timingsDir = join(import.meta.dirname, '..', '..', 'test-results', timingsDirName);
 
 export interface MiddlewareTiming {
   kind: 'call' | 'job';
@@ -67,8 +75,6 @@ const parallelIndex = process.env.TEST_PARALLEL_INDEX === undefined
   ? undefined
   : Number(process.env.TEST_PARALLEL_INDEX);
 
-const timingsFile = join(timingsDir, `middleware-${process.pid}.jsonl`);
-
 /** Which method started each job this process has seen, so a job is reported by name. */
 const jobMethods = new Map<number, string>();
 
@@ -76,6 +82,12 @@ let directoryReady = false;
 let reportedWriteFailure = false;
 
 function record(timing: MiddlewareTiming): void {
+  // Read here, not at load: the config that sets it imports this module first.
+  const timingsDir = process.env[timingsDirVar];
+  if (!timingsDir) {
+    return;
+  }
+  const timingsFile = join(timingsDir, `middleware-${process.pid}.jsonl`);
   try {
     if (!directoryReady) {
       mkdirSync(timingsDir, { recursive: true });
