@@ -110,17 +110,37 @@ export async function addNfsNetwork(
 /**
  * Picks a user or group in one of the Access section's mapping fields.
  *
- * The field is an autocomplete over a middleware query, so the row is not in the
- * DOM until the typed text has been sent and answered. Clicking the row is what
+ * The field is an autocomplete over a middleware query. Clicking the row is what
  * commits the value — the text alone does not.
+ *
+ * Focusing the field shows the directory's first page at once, and the typed
+ * text is only sent after a debounce. `name` can be on that first page, so its
+ * row is visible before the search has been answered — and when the answer
+ * lands it redraws the list under the pointer, and the click commits whichever
+ * row now sits there (`truenas_container_unpriv_root` for `root`, E2E run
+ * 39751172401). So the click waits for the search's own answer: middleware
+ * matches the name anywhere in it, so every row it returns contains `name`, and
+ * the unsearched first page does not.
  */
 export async function pickNfsMappingPrincipal(
   page: Page,
-  { field, option, name }: { field: string; option: string; name: string },
+  {
+    field,
+    options,
+    option,
+    name,
+  }: { field: string; options: string; option: string; name: string },
 ): Promise<void> {
   await page.locator(field).fill(name);
-  await expect(page.locator(option)).toBeVisible({ timeout: formSettleTimeoutMs });
+
+  const term = name.toLowerCase();
+  await expect.poll(async () => {
+    const labels = await page.locator(options).allTextContents();
+    return labels.length > 0 && labels.every((label) => label.toLowerCase().includes(term));
+  }, { timeout: formSettleTimeoutMs }).toBe(true);
+
   await page.locator(option).click();
+  await expect(page.locator(field)).toHaveValue(name);
 }
 
 /**
