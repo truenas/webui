@@ -309,6 +309,20 @@ export async function findApp(
   return app ? { name: app.name, state: app.state } : undefined;
 }
 
+/**
+ * The ids of every `app.start` job middleware remembers for the app, matched on its first argument,
+ * the app's name. The installed apps list's Start, and its bulk Start, each run one per app.
+ */
+export async function findAppStartJobIds(client: E2eApiClient, name: string): Promise<number[]> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'app.start']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs
+    .filter((job) => Array.isArray(job.arguments) && job.arguments[0] === name)
+    .map((job) => job.id);
+}
+
 /** The app's state as middleware reports it, or `ABSENT` when there is no such app. */
 export async function readAppState(client: E2eApiClient, name: string): Promise<string> {
   return (await findApp(client, name))?.state ?? 'ABSENT';

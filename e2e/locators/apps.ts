@@ -93,6 +93,31 @@ export const selectAppsPoolDialogLocators = {
 } as const;
 
 /**
+ * `app-<name>`, as `toUniqueRowTag` writes it. Exported for the controls `tn-table` draws on the row
+ * (`locators/table.ts`).
+ */
+export function installedAppRowTag(name: string): string {
+  return `app-${legacyKebabTestSegment(name)}`;
+}
+
+/**
+ * The bulk bar above the installed apps list, `installed-apps-list-bulk-actions.component.html`.
+ * Drawn only while at least one row is ticked.
+ */
+export const installedAppsBulkLocators = {
+  /** How many rows are ticked, as a bare number. */
+  selectedCount: '[data-test="text-selected-count"]',
+  /** "Select action", which opens the menu holding the items below. */
+  menu: '[data-test="button-bulk-actions-menu"]',
+  /** Disabled while every ticked app is Running or Deploying. Starts only the stopped or crashed ones. */
+  startSelected: '[data-test="button-start-selected"]',
+  /** Disabled while every ticked app is Stopped or Crashed. Stops only the running or deploying ones. */
+  stopSelected: '[data-test="button-stop-selected"]',
+  /** Opens `AppDeleteDialog` for every ticked app at once. */
+  deleteSelected: '[data-test="button-delete-selected"]',
+} as const;
+
+/**
  * One installed app on Apps > Installed: its row in `installed-apps-list.component.html` and the
  * Application Info card the details panel shows for the selected row.
  *
@@ -113,7 +138,7 @@ export const installedAppLocators = (name: string): {
   catalogName: string;
   customName: string;
 } => {
-  const rowTag = `app-${legacyKebabTestSegment(name)}`;
+  const rowTag = installedAppRowTag(name);
   const row = `[data-test="row-${rowTag}"]`;
   const app = kebabTestSegment(name);
 
@@ -265,11 +290,17 @@ export const catalogAppEditLocators = {
   update: '[data-test="button-save"]',
 } as const;
 
-/** `AppDeleteDialog`, `<tn-dialog-shell testId="app-delete">`. */
+/**
+ * `AppDeleteDialog`, `<tn-dialog-shell testId="app-delete">`. The bulk Delete opens the same dialog
+ * with every ticked app's name, in the table's order, joined with `", "`.
+ */
 export const appDeleteDialogLocators = {
   title: '[data-test="dialog-title-app-delete"]',
   /** Delete stays disabled until this holds the app's name. */
   confirmName: '[data-test="input-confirm-app-name"]',
+  /** Rendered only when one of the apps has ix-volumes, which a custom app has not. */
+  removeVolumes: '[data-test="checkbox-remove-volumes"]',
+  /** Ticked by default. */
   removeImages: '[data-test="checkbox-remove-images"]',
   delete: '[data-test="button-delete"]',
 } as const;
