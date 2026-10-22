@@ -1,6 +1,8 @@
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { describeTarget, loadTargetConfig } from './e2e/support/config';
 import type { E2eTestOptions, E2eWorkerFixtures } from './e2e/support/fixtures';
+import { timingsDirName, timingsDirVar } from './e2e/support/timings';
 
 /**
  * Load local configuration if present. Uses Node's built-in env-file support
@@ -68,6 +70,13 @@ const target = loadTargetConfig();
 if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
+
+/**
+ * Where `support/timings.ts` and `support/timing-reporter.ts` record, set here
+ * because Jest compiles `timings.ts` too and could not parse the
+ * `import.meta.dirname` locating it there. Workers inherit it.
+ */
+process.env[timingsDirVar] ??= join(import.meta.dirname, 'test-results', timingsDirName);
 
 /**
  * Announce the resolved target before anything runs.
@@ -319,6 +328,10 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
     // In CI, a warning annotation and a job summary row per flaky test, so a
     // green run that needed retries says so on its page. See the file.
     ['./e2e/support/flaky-reporter.ts'],
+    // Where each test's time went — hooks, fixtures, the body — for
+    // `yarn e2e:timings`, beside what `support/timings.ts` records of
+    // middleware. See the file.
+    ['./e2e/support/timing-reporter.ts'],
     ['html', { open: 'never' }],
     // Feeds the Jenkins JUnit plugin, which is what makes per-test flake history
     // — and therefore the R8.4 quarantine policy — measurable (R7.4).

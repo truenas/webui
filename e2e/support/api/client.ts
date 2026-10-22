@@ -12,6 +12,7 @@ import {
 } from '@truenas/api-client';
 import { filter, firstValueFrom, take, timeout } from 'rxjs';
 import type { TargetConfig } from '../config';
+import { connectMethod, recordSpan, timeMiddleware } from '../timings';
 
 /**
  * The API surface the suite is written against.
@@ -80,6 +81,7 @@ const loginTimeoutMs = 30_000;
  * treat as errors, such as a two-factor challenge.
  */
 export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClient> {
+  const start = Date.now();
   const client = await createTrueNasClient<E2eApiDirectory>({
     uuid: clientUuid,
     hostnames: [config.middlewareHost],
@@ -152,6 +154,8 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
     );
   }
 
+  recordSpan('call', connectMethod, start, true);
+  timeMiddleware(client);
   return client;
 }
 

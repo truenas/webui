@@ -2,8 +2,11 @@
  * Running middleware jobs and knowing whether they worked.
  */
 import { JobState, isJobFinished } from '@truenas/api-client';
-import { firstValueFrom, timeout, type Observable } from 'rxjs';
+import {
+  firstValueFrom, tap, timeout, type Observable,
+} from 'rxjs';
 import type { E2eApiClient } from './api/client';
+import { jobMethod, recordSpan } from './timings';
 
 const jobPollIntervalMs = 2_000;
 
@@ -75,6 +78,26 @@ interface RunJobOptions {
  * emissions, so a job reporting steady progress would reset it forever.
  */
 export async function runJob(
+  client: E2eApiClient,
+  startJob: () => Observable<number>,
+  options: RunJobOptions,
+): Promise<unknown> {
+  // The whole wait, for `timings.ts`: polls alone leave out the sleeps between them.
+  const start = Date.now();
+  let jobId: number | undefined;
+  let finished = false;
+  try {
+    const result = await followJob(client, () => startJob().pipe(tap((id) => {
+      jobId = id;
+    })), options);
+    finished = true;
+    return result;
+  } finally {
+    recordSpan('job', jobMethod(jobId), start, finished);
+  }
+}
+
+async function followJob(
   client: E2eApiClient,
   startJob: () => Observable<number>,
   {

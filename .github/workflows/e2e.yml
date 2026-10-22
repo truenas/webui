@@ -272,8 +272,8 @@ jobs:
           shard: ${{ matrix.shard }}/${{ needs.plan.outputs.total }}
           grep: ${{ inputs.grep }}
           artifact-suffix: -${{ matrix.shard }}
-          # The `coverage` job below reports over every shard at once.
-          coverage-report: 'false'
+          # The `report` job below reports over every shard at once.
+          reports: 'false'
           env: |
             TN_AD_DOMAIN
             TN_AD_DC1
@@ -385,16 +385,19 @@ jobs:
       # No release step: the appliance is deleted with the runner, on success,
       # failure and cancellation alike.
 
-  # One coverage report for the whole run. A shard's own would count only the
-  # tests it ran, so the shards upload their per-test results (`e2e-coverage-<n>`)
-  # and write no report, and this job reports over all of them together.
+  # One coverage report and one timing report for the whole run. A shard's own
+  # would count only the tests it ran, so the shards upload their records
+  # (`e2e-coverage-<n>`, `e2e-timings-<n>`) and write no report, and this job
+  # reports over all of them together.
   #
-  # The files are named by test id and attempt, so no shard's overwrite
+  # Coverage files are named by test id and attempt, so no shard's overwrite
   # another's; only `setup`, which every shard runs, keeps one copy of its
-  # identical result. A shard that never reached the suite uploads nothing,
-  # and the report says so rather than passing off part of the run as all of
-  # it. Informational, as it was in each shard: never fails the run.
-  coverage:
+  # identical result. Timings stay a directory per shard, since a shard's
+  # middleware calls are matched to its own tests by time. A shard that never
+  # reached the suite uploads nothing, and each report says so rather than
+  # passing off part of the run as all of it. Informational, as they were in
+  # each shard: never fails the run.
+  report:
     needs: [plan, e2e]
     if: ${{ !cancelled() && needs.plan.result == 'success' }}
     runs-on: ubuntu-latest
@@ -402,11 +405,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # A shard's artifact per directory, so the report can count them.
+      # A shard's artifact per directory, so the reports can count them.
       - uses: actions/download-artifact@v4
         continue-on-error: true
         with:
           pattern: e2e-coverage-*
+          path: ${{ runner.temp }}/shards
+
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: e2e-timings-*
           path: ${{ runner.temp }}/shards
 
       # For the inventory side: the TypeScript compiler and tsx.
@@ -455,6 +464,47 @@ jobs:
         with:
           name: e2e-coverage
           path: ${{ runner.temp }}/e2e-coverage/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 14
+
+      - name: Report timings over every shard
+        continue-on-error: true
+        env:
+          SHARDS: ${{ needs.plan.outputs.total }}
+        run: |
+          set -euo pipefail
+          results="$RUNNER_TEMP/e2e-timings"
+          mkdir -p "$results"
+          uploaded=0
+          # `tests.json` is written only when a shard's suite ends; one killed
+          # partway uploads its middleware records alone, and counts as missing.
+          for dir in "$RUNNER_TEMP"/shards/e2e-timings-*/; do
+            [ -f "$dir/tests.json" ] || continue
+            uploaded=$((uploaded + 1))
+            cp -r "$dir" "$results/$(basename "$dir")"
+          done
+          if [ "$uploaded" -eq 0 ]; then
+            echo "No shard uploaded timings: none reached the suite."
+            exit 0
+          fi
+
+          report="$results/report.md"
+          yarn e2e:timings "$results" --out "$report" > /dev/null
+          {
+            if [ "$uploaded" -lt "$SHARDS" ]; then
+              echo "> Only $uploaded of $SHARDS shards uploaded timings, so this covers only the tests they ran."
+              echo
+            fi
+            cat "$report"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Every shard's records, the report and each test's breakdown
+      # (`summary.json`), for `yarn e2e:timings <dir>` or a closer look.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-timings
+          path: ${{ runner.temp }}/e2e-timings/
           if-no-files-found: ignore
           overwrite: true
           retention-days: 14
