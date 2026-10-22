@@ -4,9 +4,15 @@
 import { expect, type Page } from '@playwright/test';
 import { goToStorage } from './navigation';
 import { selectOption } from './storage';
+import { selectRow } from './table';
 import { confirmDialogLocators, generalDialogLocators } from '../locators/dialogs';
 import {
-  diskFormLocators, diskListLocators, diskWipeLocators, type DiskPowerLevel, type DiskStandby,
+  diskFormLocators,
+  diskListLocators,
+  diskRowTag,
+  diskWipeLocators,
+  type DiskPowerLevel,
+  type DiskStandby,
 } from '../locators/disks';
 
 /** `disk.update` applies power settings to the device before it answers. */
@@ -46,6 +52,24 @@ export async function openDiskForm(page: Page, disk: string): Promise<void> {
   await expandDisk(page, disk);
   await page.locator(diskListLocators.edit(disk)).click();
   await expect(page.locator(diskFormLocators.name)).toHaveValue(disk);
+}
+
+/** Ticks each disk's row, which brings up the batch bar above the table. */
+export async function selectDisks(page: Page, disks: string[]): Promise<void> {
+  for (const disk of disks) {
+    await selectRow(page, diskRowTag(disk));
+  }
+}
+
+/**
+ * Presses the batch bar's Edit Disk(s), which opens the single Edit Disk form for
+ * one ticked disk and the Bulk Edit Disks panel for more. Both have a Save, so
+ * it showing is what says a panel opened. Which panel it is is the caller's to
+ * assert.
+ */
+export async function openSelectedDisksForEdit(page: Page): Promise<void> {
+  await page.locator(diskListLocators.editSelected).click();
+  await expect(page.locator(diskFormLocators.save)).toBeVisible();
 }
 
 export async function chooseHddStandby(page: Page, standby: DiskStandby): Promise<void> {

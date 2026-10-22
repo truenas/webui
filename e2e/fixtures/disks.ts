@@ -60,21 +60,39 @@ async function getDisk(client: E2eApiClient, name: string): Promise<DiskEntry> {
 }
 
 /**
- * A disk for a test to edit: the first, by name, that is in no pool.
+ * The disks in no pool, by name.
  *
- * In no pool so that nothing else the suite does leans on it, and by name so the
- * choice is the same from run to run on one appliance.
+ * In no pool so that nothing else the suite does leans on them, and by name so
+ * the choice is the same from run to run on one appliance.
  */
-export async function pickUnusedDisk(client: E2eApiClient): Promise<string> {
-  const [disk] = (await getSelectableDisks(client))
+async function unusedDiskNames(client: E2eApiClient): Promise<string[]> {
+  return (await getSelectableDisks(client))
     .map(({ name }) => name)
     .sort((a, b) => a.localeCompare(b));
+}
+
+/** A disk for a test to edit: the first of {@link unusedDiskNames}. */
+export async function pickUnusedDisk(client: E2eApiClient): Promise<string> {
+  const [disk] = await unusedDiskNames(client);
 
   if (!disk) {
     throw new Error('The appliance has no unused disk, so there is no disk this test can edit.');
   }
 
   return disk;
+}
+
+/** The first `count` of {@link unusedDiskNames}, for a test that edits several disks at once. */
+export async function pickUnusedDisks(client: E2eApiClient, count: number): Promise<string[]> {
+  const disks = (await unusedDiskNames(client)).slice(0, count);
+
+  if (disks.length < count) {
+    throw new Error(
+      `The appliance has ${disks.length} unused disk(s), and this test needs ${count} that no pool holds.`,
+    );
+  }
+
+  return disks;
 }
 
 /** The disk's editable settings as the appliance holds them. */
@@ -88,13 +106,18 @@ export async function readDiskSettings(client: E2eApiClient, name: string): Prom
   };
 }
 
-/** Writes the baseline over a disk's settings. Used before and after each test. */
-export async function resetDiskSettings(client: E2eApiClient, name: string): Promise<void> {
+/** Writes the given settings over a disk's own. */
+export async function writeDiskSettings(client: E2eApiClient, name: string, settings: DiskSettings): Promise<void> {
   const { identifier } = await getDisk(client, name);
 
   await firstValueFrom(
-    client.api.call('disk.update', [identifier, diskBaseline]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('disk.update', [identifier, settings]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/** Writes the baseline over a disk's settings. Used before and after each test. */
+export async function resetDiskSettings(client: E2eApiClient, name: string): Promise<void> {
+  await writeDiskSettings(client, name, diskBaseline);
 }
 
 interface DetailsDisk {

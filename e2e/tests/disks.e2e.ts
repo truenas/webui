@@ -15,8 +15,10 @@
  * Ticking a row and opening one by its chevron are covered here too, as the
  * cheapest proof of the ids `tn-table` gives those controls (`locators/table.ts`).
  *
- * Not covered: the bulk edit, the column picker, the SED password and the SED
- * Unlock and Reset actions, which need a self-encrypting drive.
+ * The bulk edit is `disks-bulk-edit.e2e.ts`.
+ *
+ * Not covered: the column picker, the SED password and the SED Unlock and Reset
+ * actions, which need a self-encrypting drive.
  */
 import {
   diskBaseline,
