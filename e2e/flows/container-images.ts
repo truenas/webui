@@ -1,5 +1,6 @@
 /**
- * Apps > Configuration > Manage Container Images: pulling an image and deleting one from its row.
+ * Apps > Configuration > Manage Container Images: pulling an image, deleting one from its row, and
+ * deleting the ticked rows from the Batch Operations toolbar.
  */
 import { expect, type Page } from '@playwright/test';
 import { openAppsConfigMenu } from './apps';
@@ -42,4 +43,26 @@ export async function deleteImage(page: Page, id: string): Promise<void> {
   await page.locator(deleteImageDialogLocators.delete).click();
 
   await expect(page.locator(deleteImageDialogLocators.title)).toBeHidden({ timeout: slowCallTimeoutMs });
+}
+
+/** The Batch Operations toolbar's Delete, for the rows already ticked. Returns once the dialog is open. */
+export async function openBatchImageDelete(page: Page): Promise<void> {
+  await page.locator(containerImagesLocators.batchDelete).click();
+  await expect(page.locator(deleteImageDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * In the open delete dialog: checks Delete is disabled until Confirm is ticked, ticks it, leaves
+ * Force as it is, and presses Delete. With more than one image the dialog stays open and reports
+ * the outcome, which replaces Delete with Close once the `core.bulk` job has ended.
+ */
+export async function confirmBatchImageDelete(page: Page): Promise<void> {
+  const deleteButton = page.locator(deleteImageDialogLocators.delete);
+
+  await expect(deleteButton).toBeDisabled();
+  await page.locator(deleteImageDialogLocators.confirm).click();
+  await expect(deleteButton).toBeEnabled();
+  await deleteButton.click();
+
+  await expect(page.locator(deleteImageDialogLocators.close)).toBeVisible({ timeout: slowCallTimeoutMs });
 }
