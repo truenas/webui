@@ -31,8 +31,8 @@
  * Teardown deletes the app before and after every test, and the images, Apps and the pool after the
  * last.
  *
- * Not covered: Update All, Update All Selected, rolling back ix-volume snapshots, and image-only
- * updates.
+ * Not covered: rolling back ix-volume snapshots, and image-only updates. Update All and Update All
+ * Selected are `apps-bulk-update.e2e.ts`.
  */
 import {
   appInstallTimeoutMs,

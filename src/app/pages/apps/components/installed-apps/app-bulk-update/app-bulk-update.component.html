@@ -12,6 +12,7 @@
         elevation="none"
         padding="small"
         [background]="false"
+        [toggleTestId]="['expand', bulkItem.key]"
         (expandedChange)="$event && onExpand(bulkItem)"
       >
         <div slot="title">
