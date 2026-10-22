@@ -52,26 +52,48 @@ async function cleanUp(api: E2eApiClient, pool: string): Promise<void> {
     ['remove the access keys', () => ensureS3AccessKeysAbsent(api, owner)],
     ['remove the bucket', () => ensureS3BucketAbsent(api, bucket)],
     ['delete the parent dataset', () => ensureDatasetAbsent(api, `${pool}/${parentDataset}`)],
+  ]);
+}
+
+/** After `cleanUp`, so nothing is left that refers to the accounts. */
+async function removeAccounts(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps([
     ['delete the group', () => ensureGroupAbsent(api, group)],
     ['delete the reader', () => ensureUserAbsent(api, reader)],
     ['delete the owner', () => ensureUserAbsent(api, owner)],
   ]);
 }
 
-test.beforeEach(async ({ api, pool }) => {
+// The accounts are created once for the file: they only own the bucket and are
+// granted access to it here, and each one costs middleware about a second to
+// create and another to delete. A failed test restarts the worker, which runs
+// `afterAll` and then this again, so a retry still starts from fresh accounts.
+test.beforeAll(async ({ api, pool }) => {
   await cleanUp(api, pool);
+  await removeAccounts(api);
   await ensureUserPresent(api, owner);
   await ensureUserPresent(api, reader);
   await ensureGroupPresent(api, group);
+});
+
+test.beforeEach(async ({ api, pool }) => {
+  await cleanUp(api, pool);
   await ensureDatasetPresent(api, `${pool}/${parentDataset}`);
   await ensureS3BucketPresent(api, { name: bucket, parentDataset: `${pool}/${parentDataset}`, owner });
 });
 
 test.afterEach(async ({ api, pool }) => {
-  if (leavingTestData(`bucket "${bucket}", its datasets, and the accounts`)) {
+  if (leavingTestData(`bucket "${bucket}" and its datasets`)) {
     return;
   }
   await cleanUp(api, pool);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`users "${owner}" and "${reader}" and group "${group}"`)) {
+    return;
+  }
+  await removeAccounts(api);
 });
 
 test('an admin grants a user and a group access to a bucket', async ({ page, api }) => {

@@ -8,7 +8,8 @@
  *
  * The dataset is the spec's own and starts every test from one known owner, group and mode with a
  * trivial ACL, set over the API. A trivial ACL is what makes the card offer this editor at all.
- * Deleting the dataset is the teardown for all of it.
+ * Deleting the dataset is the teardown for all of it. The users and groups are removed once the
+ * file is done.
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import { readOwnership, setOwnership, type Ownership } from '../fixtures/permissions';
@@ -37,31 +38,47 @@ const startingPoint: Ownership = { user: users.start, group: groups.start, mode:
 const card = permissionsLocators.card;
 
 test.describe('dataset permissions', () => {
-  test.beforeEach(async ({ api, pool }) => {
-    const dataset = `${pool}/${datasetLeaf}`;
-    await ensureDatasetAbsent(api, dataset);
-    await ensureDatasetPresent(api, dataset);
+  // Users and groups are created once for the file: they only stand in for owners here, and each
+  // user costs middleware about a second to create and another to delete. A failed test restarts
+  // the worker, which runs `afterAll` and then this again, so a retry starts clean.
+  test.beforeAll(async ({ api }) => {
     await ensureUserPresent(api, users.start);
     await ensureUserPresent(api, users.changed);
     await ensureGroupPresent(api, groups.start);
     await ensureGroupPresent(api, groups.changed);
+  });
+
+  test.afterAll(async ({ api }) => {
+    const principals = [users.start, users.changed, groups.start, groups.changed].join(', ');
+    if (leavingTestData(`the users and groups ${principals}`)) {
+      return;
+    }
+
+    // `afterEach` has already removed the dataset, so nothing is left owned by an account that no
+    // longer exists.
+    await runCleanupSteps([
+      [`remove the user "${users.start}"`, () => ensureUserAbsent(api, users.start)],
+      [`remove the user "${users.changed}"`, () => ensureUserAbsent(api, users.changed)],
+      [`remove the group "${groups.start}"`, () => ensureGroupAbsent(api, groups.start)],
+      [`remove the group "${groups.changed}"`, () => ensureGroupAbsent(api, groups.changed)],
+    ]);
+  });
+
+  test.beforeEach(async ({ api, pool }) => {
+    const dataset = `${pool}/${datasetLeaf}`;
+    await ensureDatasetAbsent(api, dataset);
+    await ensureDatasetPresent(api, dataset);
     await setOwnership(api, datasetMountPath(dataset), startingPoint);
   });
 
   test.afterEach(async ({ api, pool }) => {
     const dataset = `${pool}/${datasetLeaf}`;
-    const principals = [users.start, users.changed, groups.start, groups.changed].join(', ');
-    if (leavingTestData(`the dataset "${dataset}" and the users and groups ${principals}`)) {
+    if (leavingTestData(`the dataset "${dataset}"`)) {
       return;
     }
 
-    // The dataset goes first, so nothing is left owned by an account that no longer exists.
     await runCleanupSteps([
       [`remove the dataset "${dataset}"`, () => ensureDatasetAbsent(api, dataset)],
-      [`remove the user "${users.start}"`, () => ensureUserAbsent(api, users.start)],
-      [`remove the user "${users.changed}"`, () => ensureUserAbsent(api, users.changed)],
-      [`remove the group "${groups.start}"`, () => ensureGroupAbsent(api, groups.start)],
-      [`remove the group "${groups.changed}"`, () => ensureGroupAbsent(api, groups.changed)],
     ]);
   });
 

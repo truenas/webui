@@ -11,7 +11,7 @@
  * principal and still look right on screen.
  *
  * Quotas live on a dataset of the spec's own, so deleting the dataset is the teardown for all of
- * them.
+ * them. The principals are removed once the file is done.
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import { findQuota, setQuota, type QuotaKind } from '../fixtures/quotas';
@@ -69,24 +69,39 @@ for (const kind of ['user', 'group'] as const) {
   } = principals[kind];
 
   test.describe(`${kind} quotas`, () => {
-    test.beforeEach(async ({ api, pool }) => {
-      const dataset = `${pool}/${datasetLeaf}`;
-      await ensureDatasetAbsent(api, dataset);
-      await ensureDatasetPresent(api, dataset);
+    // The principals are created once for the describe: they only stand in for quota subjects, and
+    // each one costs middleware about a second to create and another to delete. A failed test
+    // restarts the worker, which runs `afterAll` and then this again, so a retry starts clean.
+    test.beforeAll(async ({ api }) => {
       await ensurePresent(api, target);
       await ensurePresent(api, bystander);
     });
 
+    test.afterAll(async ({ api }) => {
+      if (leavingTestData(`the ${kind}s ${target}, ${bystander}`)) {
+        return;
+      }
+
+      await runCleanupSteps([
+        [`remove the ${kind} "${target}"`, () => ensureAbsent(api, target)],
+        [`remove the ${kind} "${bystander}"`, () => ensureAbsent(api, bystander)],
+      ]);
+    });
+
+    test.beforeEach(async ({ api, pool }) => {
+      const dataset = `${pool}/${datasetLeaf}`;
+      await ensureDatasetAbsent(api, dataset);
+      await ensureDatasetPresent(api, dataset);
+    });
+
     test.afterEach(async ({ api, pool }) => {
       const dataset = `${pool}/${datasetLeaf}`;
-      if (leavingTestData(`the dataset "${dataset}" and the ${kind}s ${target}, ${bystander}`)) {
+      if (leavingTestData(`the dataset "${dataset}"`)) {
         return;
       }
 
       await runCleanupSteps([
         [`remove the dataset "${dataset}"`, () => ensureDatasetAbsent(api, dataset)],
-        [`remove the ${kind} "${target}"`, () => ensureAbsent(api, target)],
-        [`remove the ${kind} "${bystander}"`, () => ensureAbsent(api, bystander)],
       ]);
     });
 

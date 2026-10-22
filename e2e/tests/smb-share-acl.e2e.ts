@@ -67,6 +67,14 @@ function entriesFor(acl: SmbShareAce[], uid: number): SmbShareAce[] {
   return acl.filter((entry) => namesUser(entry, uid));
 }
 
+// The user is created once for the file: it only stands in for ACL entries
+// here, and each one costs middleware about a second to create and another to
+// delete. A failed test restarts the worker, which runs afterAll and then
+// beforeAll again, so a retry still starts clean.
+test.beforeAll(async ({ api }) => {
+  await ensureSmbUserPresent(api, smbUser);
+});
+
 test.beforeEach(async ({ api, pool }) => {
   const dataset = `${pool}/${datasetLeaf}`;
 
@@ -75,22 +83,30 @@ test.beforeEach(async ({ api, pool }) => {
   // Absent first, so every story starts from the ACL the preset gives.
   await ensureDatasetAbsent(api, dataset);
   await ensureSmbDatasetPresent(api, dataset);
-  await ensureSmbUserPresent(api, smbUser);
   await ensureSmbSharePresent(api, { name: share, path: datasetMountPath(dataset) });
 });
 
 test.afterEach(async ({ api, pool }) => {
   const dataset = `${pool}/${datasetLeaf}`;
-  if (leavingTestData(`shares "${share}" and "${rootShare}", dataset "${dataset}" and user "${smbUser.username}"`)) {
+  if (leavingTestData(`shares "${share}" and "${rootShare}" and dataset "${dataset}"`)) {
     return;
   }
 
-  // Shares before the dataset they point at, and the user last, so no ACL is
-  // left naming an account that no longer exists.
+  // Shares before the dataset they point at, and the user only after the file,
+  // so no ACL is left naming an account that no longer exists.
   await runCleanupSteps([
     [`remove share ${share}`, () => ensureSmbShareAbsent(api, share)],
     [`remove share ${rootShare}`, () => ensureSmbShareAbsent(api, rootShare)],
     [`remove dataset ${dataset}`, () => ensureDatasetAbsent(api, dataset)],
+  ]);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${smbUser.username}"`)) {
+    return;
+  }
+
+  await runCleanupSteps([
     [`remove user ${smbUser.username}`, () => ensureUserAbsent(api, smbUser.username)],
   ]);
 });

@@ -38,31 +38,47 @@ const smbLeaf = 'e2e_acl_nfs4_smb';
 const aclOwner = 'e2e_acl_owner';
 const aclGroup = 'e2e_acl_group';
 
+// The owner and group are created once for the file: they only stand in for Apply Owner and Apply
+// Group here, and the user costs middleware about a second to create and another to delete. A
+// failed test restarts the worker, which runs `afterAll` and then this again, so a retry starts clean.
+test.beforeAll(async ({ api }) => {
+  await ensureUserPresent(api, aclOwner);
+  await ensureGroupPresent(api, aclGroup);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${aclOwner}" and group "${aclGroup}"`)) {
+    return;
+  }
+
+  // `afterEach` has already removed the datasets, so nothing is left owned by an account that no
+  // longer exists.
+  await runCleanupSteps([
+    [`remove user ${aclOwner}`, () => ensureUserAbsent(api, aclOwner)],
+    [`remove group ${aclGroup}`, () => ensureGroupAbsent(api, aclGroup)],
+  ]);
+});
+
 test.beforeEach(async ({ api, pool }) => {
   // Absent first, so every story starts from the ACL the dataset is created with.
   await ensureDatasetAbsent(api, `${pool}/${trivialLeaf}`);
   await ensureDatasetAbsent(api, `${pool}/${smbLeaf}`);
   await ensureAclDatasetPresent(api, `${pool}/${trivialLeaf}`, 'NFSV4');
   await ensureSmbDatasetPresent(api, `${pool}/${smbLeaf}`);
-  await ensureUserPresent(api, aclOwner);
-  await ensureGroupPresent(api, aclGroup);
 });
 
 test.afterEach(async ({ api, pool }) => {
   const trivial = `${pool}/${trivialLeaf}`;
   const smb = `${pool}/${smbLeaf}`;
-  if (leavingTestData(`datasets "${trivial}" and "${smb}", user "${aclOwner}" and group "${aclGroup}"`)) {
+  if (leavingTestData(`datasets "${trivial}" and "${smb}"`)) {
     return;
   }
 
-  // Datasets first, so no ACL is left naming an account that no longer exists.
   // These NFSv4 datasets sit under a POSIX pool root, and `smb-share-acl.e2e.ts`
   // skips its root-share story while any such child exists.
   await runCleanupSteps([
     [`remove dataset ${trivial}`, () => ensureDatasetAbsent(api, trivial)],
     [`remove dataset ${smb}`, () => ensureDatasetAbsent(api, smb)],
-    [`remove user ${aclOwner}`, () => ensureUserAbsent(api, aclOwner)],
-    [`remove group ${aclGroup}`, () => ensureGroupAbsent(api, aclGroup)],
   ]);
 });
 
