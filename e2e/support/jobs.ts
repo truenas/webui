@@ -8,6 +8,11 @@ import {
 import type { E2eApiClient } from './api/client';
 import { jobMethod, recordSpan } from './timings';
 
+/**
+ * The longest a finished job can go unnoticed when its events are lost. Most
+ * jobs end well inside it, and their events end the wait as soon as they do;
+ * see `watchForFinish`.
+ */
 const jobPollIntervalMs = 2_000;
 
 /**
@@ -61,13 +66,18 @@ interface RunJobOptions {
  * The result is `undefined` when `confirm` settled the outcome instead, since
  * no finished job was read.
  *
- * Polls `core.get_jobs` rather than following job events. `api.job()` waits for
- * `collection_update` frames, and the jobs this suite runs restart services
- * over the socket those frames arrive on — `pool.export` with
- * `restart_services: true`, `service.control` by definition. That stream goes
- * quiet rather than erroring, so waiting on it stalls until the deadline on
- * work that finished seconds in. Every poll is a fresh request, so a reconnect
- * costs one interval.
+ * Polls `core.get_jobs` for the verdict rather than following job events alone.
+ * `api.job()` waits for `collection_update` frames, and the jobs this suite runs
+ * restart services over the socket those frames arrive on — `pool.export` with
+ * `restart_services: true`, `service.control` by definition. A job that finishes
+ * while that socket is down sends its last event to nobody, so waiting on events
+ * alone stalls until the deadline on work that finished seconds in. Every poll
+ * is a fresh request, so a reconnect costs one interval.
+ *
+ * The events still end each wait between polls early: a job is usually seen
+ * finished there first, and polled at once. Without them every job paid at
+ * least one whole interval — 269 of a run's 385 jobs took 2.0–2.5s, most of
+ * them sub-second jobs waiting out the sleep.
  *
  * Acquiring the job id still needs one job event: `callAndGetJobId` correlates
  * on it because what a job method returns on the wire differs by version. A
@@ -135,53 +145,112 @@ async function followJob(
   let lastError: unknown;
   let middlewareHasNoRecord = false;
 
-  for (;;) {
-    // The verdict is computed here and acted on below. Throwing from inside the
-    // try would land in this function's own catch, which exists to absorb
-    // transport failures, and telling the two apart afterwards means matching on
-    // message text.
-    let finished: { state: string; error: string | null; result: unknown } | undefined;
+  // Stopped however the loop ends: a job whose finish no event reported would
+  // leave it watching.
+  const finish = watchForFinish(client, jobId);
+  try {
+    for (;;) {
+      // The verdict is computed here and acted on below. Throwing from inside the
+      // try would land in this function's own catch, which exists to absorb
+      // transport failures, and telling the two apart afterwards means matching on
+      // message text.
+      let finished: { state: string; error: string | null; result: unknown } | undefined;
 
-    try {
-      const [job] = await firstValueFrom(
-        client.api
-          .query('core.get_jobs', [['id', '=', jobId]], rawResult ? { extra: { raw_result: true } } : {})
-          .pipe(timeout(attemptTimeout())),
-      );
+      try {
+        const [job] = await firstValueFrom(
+          client.api
+            .query('core.get_jobs', [['id', '=', jobId]], rawResult ? { extra: { raw_result: true } } : {})
+            .pipe(timeout(attemptTimeout())),
+        );
 
-      middlewareHasNoRecord = job === undefined;
+        middlewareHasNoRecord = job === undefined;
 
-      if (job && isJobFinished({ state: job.state as JobState })) {
-        finished = { state: job.state, error: job.error, result: job.result };
+        if (job && isJobFinished({ state: job.state as JobState })) {
+          finished = { state: job.state, error: job.error, result: job.result };
+        }
+
+        lastError = undefined;
+      } catch (error) {
+        // Transient: the restart this job performs drops the connection used to
+        // ask about it. An unanswered query says nothing about the job, so it
+        // must not leave the tie-break enabled from a previous answer.
+        middlewareHasNoRecord = false;
+        lastError = error;
       }
 
-      lastError = undefined;
-    } catch (error) {
-      // Transient: the restart this job performs drops the connection used to
-      // ask about it. An unanswered query says nothing about the job, so it
-      // must not leave the tie-break enabled from a previous answer.
-      middlewareHasNoRecord = false;
-      lastError = error;
-    }
-
-    if (finished) {
-      if (jobFailed(finished.state)) {
-        const reason = finished.error ? `: ${finished.error}` : '';
-        throw new Error(`${whatItCosts} (job ${jobId} ended ${finished.state}${reason})`);
+      if (finished) {
+        if (jobFailed(finished.state)) {
+          const reason = finished.error ? `: ${finished.error}` : '';
+          throw new Error(`${whatItCosts} (job ${jobId} ended ${finished.state}${reason})`);
+        }
+        return finished.result;
       }
-      return finished.result;
-    }
 
-    if (middlewareHasNoRecord && confirm && await confirmedQuietly(confirm)) {
-      return undefined;
-    }
+      if (middlewareHasNoRecord && confirm && await confirmedQuietly(confirm)) {
+        return undefined;
+      }
 
-    if (Date.now() > deadline) {
-      throw deadlineError(jobId, timeoutMs, whatItCosts, middlewareHasNoRecord, lastError);
-    }
+      if (Date.now() > deadline) {
+        throw deadlineError(jobId, timeoutMs, whatItCosts, middlewareHasNoRecord, lastError);
+      }
 
-    await sleep(jobPollIntervalMs);
+      await finish.wait(jobPollIntervalMs);
+    }
+  } finally {
+    finish.stop();
   }
+}
+
+interface FinishWatch {
+  /** Waits `ms`, or less if the job's events say it has finished. */
+  wait(ms: number): Promise<void>;
+  stop(): void;
+}
+
+/**
+ * Watches `jobId`'s events for it finishing, to end the wait between polls.
+ *
+ * `trackJob` filters the client's one `core.get_jobs` subscription, which it
+ * renews after every reconnect, so this asks the server for nothing per job but
+ * the single read `trackJob` opens with. It is only a wake-up: the poll it
+ * hurries still reads the verdict, and an event lost to a dropped socket, or a
+ * stream that errors, leaves the polls to find the job finished on their own.
+ *
+ * A finish wakes one wait only. Should the poll it hurries not see the job
+ * finished yet, the next wait is a whole interval rather than a tight loop.
+ */
+function watchForFinish(client: E2eApiClient, jobId: number): FinishWatch {
+  let finished = false;
+  let wake: (() => void) | undefined;
+
+  const watching = client.api.trackJob(jobId).subscribe({
+    next: (job) => {
+      if (isJobFinished(job)) {
+        finished = true;
+        wake?.();
+      }
+    },
+    error: () => undefined,
+  });
+
+  return {
+    wait: (ms) => new Promise((resolve) => {
+      if (finished) {
+        finished = false;
+        resolve();
+        return;
+      }
+      const timer = setTimeout(done, ms);
+      function done(): void {
+        clearTimeout(timer);
+        wake = undefined;
+        finished = false;
+        resolve();
+      }
+      wake = done;
+    }),
+    stop: () => watching.unsubscribe(),
+  };
 }
 
 /**
@@ -226,8 +295,3 @@ function deadlineError(
   return new Error(`${whatItCosts} (${whatHappened}.${detail})`, { cause: lastError });
 }
 
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}

@@ -433,7 +433,9 @@ generated API per version. There is no escape hatch and none is needed.
   work that actually finished. `runJob` re-reads `core.get_jobs` instead: every
   attempt is a fresh request, so a reconnect costs one poll rather than the whole
   budget, and the verdict is the job's own terminal state rather than something
-  inferred from a side effect.
+  inferred from a side effect. The job's events only end the wait between polls
+  early, so a job is seen finished a round trip after it ends rather than up to
+  a whole poll interval later.
 - **Which API surface?** `E2eApiClient` in `support/api/client.ts` pins it to
   **v27**. Raising it needs the appliance to advertise the version *and* the
   client to implement it. Unparameterised it defaults to v25.10.0, and most
