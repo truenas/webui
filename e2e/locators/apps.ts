@@ -302,8 +302,6 @@ export const appCatalogLocators = {
    */
   viewAll: (title: string): string => `[data-test="button-${kebabTestSegment(title)}-view-all"]`,
 
-  /** A category page's title (`page-header.component.html`): the category, titlecased. */
-  pageTitle: '[data-test="text-page-title"]',
   /** "Back to Discover Page" on a category page. Rendered only once the category has loaded. */
   backToDiscover: '[data-test="button-back-to-discover-page"]',
   /** A category page's empty state for a search term that matches no app. */

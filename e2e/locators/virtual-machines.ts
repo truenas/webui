@@ -78,6 +78,8 @@ export const virtualMachinesLocators = {
      * Opens the SPICE web client in a new tab, or a dialog saying how to connect.
      */
     display: (id: number): string => `[data-test="button-open-display-${id}"]`,
+    /** `['open_serial_shell', id]`. Shown only while the VM runs. Opens `/vm/<id>/serial`. */
+    serialShell: (id: number): string => `[data-test="button-open-serial-shell-${id}"]`,
   },
 
   /** `<tn-dialog-shell testId="stop-vm">`, raised by the row's Stop. */
