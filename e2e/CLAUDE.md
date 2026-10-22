@@ -131,6 +131,13 @@ wrote, so it is the same value the older suites used.
 |---|---|
 | `<tn-table [rowTestId]="uniqueRowTag">` | `row-user-<name>` on the `<tr>` |
 
+**The controls the table draws on it.** A `[selectable]` row's tick box and an
+`[expandable]` row's chevron come from the same tag — `checkbox-select-user-<name>`
+and `button-expand-user-<name>` — and the select-all box is `checkbox-all-rows`.
+Tick and expand rows with `selectRow` and `expandRow` in `flows/table.ts`, passing
+the row tag your screen's locator module already builds; never by `aria-label` or
+position.
+
 **Its cells.** A row id says nothing about what a row *contains*, and descending
 into a column by `[data-column]` is a CSS selector, which rule 1 rules out — so
 reading or asserting one column goes through that cell's own id. Every column of

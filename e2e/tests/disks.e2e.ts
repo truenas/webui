@@ -12,6 +12,9 @@
  * really ran leaves `disk.details` reporting no pool on it. Only Quick is used.
  * The other methods write all of a disk.
  *
+ * Ticking a row and opening one by its chevron are covered here too, as the
+ * cheapest proof of the ids `tn-table` gives those controls (`locators/table.ts`).
+ *
  * Not covered: the bulk edit, the column picker, the SED password and the SED
  * Unlock and Reset actions, which need a self-encrypting drive.
  */
@@ -36,7 +39,10 @@ import {
   saveDiskForm,
   wipeDisk,
 } from '../flows/disks';
-import { diskFormLocators, diskListLocators, diskWipeLocators } from '../locators/disks';
+import { deselectRow, expandRow, selectRow } from '../flows/table';
+import {
+  diskFormLocators, diskListLocators, diskRowTag, diskWipeLocators,
+} from '../locators/disks';
 import { leavingTestData } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
@@ -69,6 +75,32 @@ test('the Disks page lists every disk on the appliance, and search narrows it to
   await page.locator(diskListLocators.search).fill(targetSerial);
   await expect(page.locator(diskListLocators.row(target))).toBeVisible();
   await expect(page.locator(diskListLocators.row(other ?? ''))).toBeHidden();
+});
+
+test('ticking a disk\'s row brings up the batch bar for it, and clearing it takes the bar away', async ({ page, api }) => {
+  const disk = await pickUnusedDisk(api);
+
+  await openDisksPage(page, disk);
+  // The bar is not drawn until something is ticked, so its appearing is the tick's doing.
+  await expect(page.locator(diskListLocators.editSelected)).toBeHidden();
+
+  await selectRow(page, diskRowTag(disk));
+  await expect(page.locator(diskListLocators.selectionCount)).toHaveText('1 disk selected');
+  await expect(page.locator(diskListLocators.editSelected)).toBeVisible();
+
+  await deselectRow(page, diskRowTag(disk));
+  await expect(page.locator(diskListLocators.editSelected)).toBeHidden();
+});
+
+test('a disk\'s chevron opens its row on the actions for that disk', async ({ page, api }) => {
+  const disk = await pickUnusedDisk(api);
+
+  await openDisksPage(page, disk);
+  // Edit is in the expanded row only, so it is hidden until the chevron opens the row.
+  await expect(page.locator(diskListLocators.edit(disk))).toBeHidden();
+
+  await expandRow(page, diskRowTag(disk));
+  await expect(page.locator(diskListLocators.edit(disk))).toBeVisible();
 });
 
 test.describe('editing a disk', () => {

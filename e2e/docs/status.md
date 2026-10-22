@@ -100,9 +100,6 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   `smb-service.e2e.ts` covers the Apple-extensions gate and leaves the restart
   prompt alone: pinning the current behaviour would encode something that reads
   as unintended. Worth a product answer before it is tested either way.
-- **A snapshot row's selection tick box has no id**, so batch delete has no
-  test. `tn-table` renders the box itself (`aria-label="Select row N"`), which
-  the template cannot tag; it needs a row-scoped id from the library.
 - **The batch-delete dialog's clone guard never fires.** It disables Delete on
   `properties.clones`, which middleware does not return from either snapshot
   query, requested or not. The details row had the same dead guard and now asks
