@@ -310,17 +310,48 @@ export async function findApp(
 }
 
 /**
- * The ids of every `app.start` job middleware remembers for the app, matched on its first argument,
- * the app's name. The installed apps list's Start, and its bulk Start, each run one per app.
+ * The ids of every `method` job middleware remembers for the app, matched on its first argument, the
+ * app's name. A `core.bulk` over `method` runs one such job per app.
  */
-export async function findAppStartJobIds(client: E2eApiClient, name: string): Promise<number[]> {
+export async function findAppJobIds(
+  client: E2eApiClient,
+  method: 'app.start' | 'app.upgrade',
+  name: string,
+): Promise<number[]> {
   const jobs = await firstValueFrom(
-    client.api.query('core.get_jobs', [['method', '=', 'app.start']]).pipe(timeout(readTimeoutMs)),
+    client.api.query('core.get_jobs', [['method', '=', method]]).pipe(timeout(readTimeoutMs)),
   );
 
   return jobs
     .filter((job) => Array.isArray(job.arguments) && job.arguments[0] === name)
     .map((job) => job.id);
+}
+
+/** One `core.bulk` job over `app.upgrade`: its state, and the argument list it ran each upgrade with. */
+export interface BulkUpgradeJob {
+  id: number;
+  state: string;
+  /** One entry per app: `[name]`, or `[name, { app_version }]` for a row the dialog had expanded. */
+  upgrades: unknown[];
+}
+
+/** Every `core.bulk` job over `app.upgrade` middleware remembers. The bulk Update dialog runs one. */
+export async function findBulkUpgradeJobs(client: E2eApiClient): Promise<BulkUpgradeJob[]> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['method', '=', 'core.bulk']]).pipe(timeout(readTimeoutMs)),
+  );
+
+  return jobs
+    .filter((job) => Array.isArray(job.arguments) && job.arguments[0] === 'app.upgrade')
+    .map((job) => ({ id: job.id, state: job.state, upgrades: (job.arguments as unknown[])[1] as unknown[] }));
+}
+
+/**
+ * The ids of every `app.start` job middleware remembers for the app. The installed apps list's
+ * Start, and its bulk Start, each run one per app.
+ */
+export async function findAppStartJobIds(client: E2eApiClient, name: string): Promise<number[]> {
+  return findAppJobIds(client, 'app.start', name);
 }
 
 /** The app's state as middleware reports it, or `ABSENT` when there is no such app. */

@@ -12,6 +12,7 @@
         elevation="none"
         padding="small"
         [background]="false"
+        [toggleTestId]="['expand', bulkItem.key]"
         (expandedChange)="$event && onExpand(bulkItem)"
       >
         <div slot="title">
@@ -65,6 +66,7 @@
                     [testId]="['app-version', bulkItem.key]"
                     [formControlName]="bulkItem.key"
                     [options]="(optionsMap.get(bulkItem.key) | async) ?? []"
+                    [optionTestIdKey]="versionOptionTestId"
                   ></tn-select>
                 </tn-form-field>
               }

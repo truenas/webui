@@ -1,17 +1,19 @@
 /**
  * Catalog apps: finding one on Discover, opening a category's page from Discover, installing an app
- * through the wizard, editing an installed one in the same wizard, and updating, rolling back,
- * deleting or converting one from its Application Info card.
+ * through the wizard, editing an installed one in the same wizard, updating, rolling back, deleting
+ * or converting one from its Application Info card, and updating several at once.
  */
 import { expect, type Page } from '@playwright/test';
 import { confirmDestructiveAction } from './storage';
 import { appInstallTimeoutMs, catalogSyncTimeoutMs } from '../fixtures/apps';
 import {
+  appBulkUpdateDialogLocators,
   appCatalogLocators,
   appDeleteDialogLocators,
   appInfoCardLocators,
   appRevisionLocators,
   appRollbackDialogLocators,
+  appsLocators,
   appUpdateDialogLocators,
   catalogAppEditLocators,
   installedAppLocators,
@@ -110,6 +112,25 @@ export async function openAppUpdateDialog(page: Page, name: string): Promise<voi
 export async function confirmAppUpdate(page: Page): Promise<void> {
   await page.locator(appUpdateDialogLocators.update).click();
   await expect(page.locator(appUpdateDialogLocators.title)).toBeHidden();
+}
+
+/** Presses Update All in the Installed page's header. Returns once the bulk Update dialog is open. */
+export async function openAppsUpdateAll(page: Page): Promise<void> {
+  await page.locator(appsLocators.updateAll).click();
+  await expect(page.locator(appBulkUpdateDialogLocators.title)).toBeVisible();
+}
+
+/**
+ * Presses Update in the open bulk Update dialog, every row left collapsed, so no row sends a version
+ * and middleware takes each app to its latest revision.
+ *
+ * The dialog closes on the first update it hears about the `core.bulk` job, not when the job ends,
+ * and closes the same way when an upgrade inside it fails. So its closing says only that the job
+ * started: the caller waits on the job and reads the outcome from `app.query`.
+ */
+export async function confirmAppsBulkUpdate(page: Page): Promise<void> {
+  await page.locator(appBulkUpdateDialogLocators.update).click();
+  await expect(page.locator(appBulkUpdateDialogLocators.title)).toBeHidden({ timeout: appInstallTimeoutMs });
 }
 
 /**

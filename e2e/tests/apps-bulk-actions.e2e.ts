@@ -25,7 +25,7 @@
  * the same one, and then deletes the extra images; BusyBox 1.36, the Apps pool and the pool go after
  * the last test.
  *
- * Not covered: Update All Selected (#14676), select-all, a selection with a search filter, the
+ * Not covered: Update All Selected (`apps-bulk-update.e2e.ts`), select-all, a selection with a search filter, the
  * narrow layout's cards, Remove iXVolumes, which needs a catalog app with ix-volumes, and Force.
  */
 import type { Page } from '@playwright/test';

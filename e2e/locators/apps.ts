@@ -29,6 +29,13 @@ export const appsLocators = {
 
   /** `<tn-menu-item testId="docker-registries">`, "Sign-in to a Docker registry". Disabled until Apps has a pool. */
   dockerRegistries: '[data-test="button-docker-registries"]',
+
+  /**
+   * "Update All (<n>)" in the page header, where n counts the installed apps with
+   * `upgrade_available`. Rendered only while there is at least one. Opens `appBulkUpdateDialogLocators`
+   * with every one of them.
+   */
+  updateAll: '[data-test="button-update-all"]',
 } as const;
 
 /**
@@ -113,6 +120,11 @@ export const installedAppsBulkLocators = {
   startSelected: '[data-test="button-start-selected"]',
   /** Disabled while every ticked app is Stopped or Crashed. Stops only the running or deploying ones. */
   stopSelected: '[data-test="button-stop-selected"]',
+  /**
+   * Disabled unless a ticked app has `upgrade_available`. Opens `appBulkUpdateDialogLocators` with the
+   * ticked apps, and the dialog drops those without an update.
+   */
+  updateSelected: '[data-test="button-update-selected"]',
   /** Opens `AppDeleteDialog` for every ticked app at once. */
   deleteSelected: '[data-test="button-delete-selected"]',
 } as const;
@@ -255,6 +267,21 @@ export const appUpdateDialogLocators = {
   installedVersion: '[data-test="text-installed-version"]',
   /** "Revision: <installed> → <target>". */
   revisionChange: '[data-test="text-revision-change"]',
+  update: '[data-test="button-update"]',
+} as const;
+
+/**
+ * `AppBulkUpdateComponent`, `<tn-dialog-shell testId="app-bulk-update">`, which Update All and Update
+ * All Selected both open. It lists each app it was given that has `upgrade_available`, as a collapsed
+ * row. Update runs one `core.bulk` job over `app.upgrade`, and the dialog closes as soon as it hears
+ * from that job.
+ */
+export const appBulkUpdateDialogLocators = {
+  title: '[data-test="dialog-title-app-bulk-update"]',
+  /** One app's row, by the name in its heading. */
+  appName: (name: string): string => `[data-test="text-app-name-${kebabTestSegment(name)}"]`,
+  /** Every row's name, for counting them. */
+  anyAppName: '[data-test^="text-app-name-"]',
   update: '[data-test="button-update"]',
 } as const;
 
