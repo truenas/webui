@@ -6,9 +6,10 @@
  * plain calls, and none of them reaches the remote: only `verify` does, which is
  * the form's Verify Credential button and never called from here.
  *
- * Every credential these helpers make is SFTP to `127.0.0.1` as root, signing
- * in with a keypair the spec authorized through `fixtures/loopback-ssh.ts`, so
- * no outside service is involved.
+ * Every credential these helpers make points back at the appliance, so no
+ * outside service is involved: SFTP to `127.0.0.1` as root, signing in with a
+ * keypair the spec authorized through `fixtures/loopback-ssh.ts`, or S3 to the
+ * appliance's own S3 service.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -31,6 +32,26 @@ export interface SftpProviderFields {
   host?: string;
   user?: string;
   private_key?: number | null;
+}
+
+/**
+ * The S3 fields of a credential's provider, as middleware stores them. Cast for the same reason
+ * as {@link SftpProviderFields}.
+ */
+export interface S3ProviderFields {
+  type?: string;
+  access_key_id?: string;
+  endpoint?: string;
+}
+
+/**
+ * One bucket as `cloudsync.list_buckets` lists it — rclone's `lsjson` fields, which the form's
+ * options are built from.
+ */
+export interface CloudBucket {
+  Name: string;
+  Path: string;
+  Enabled: boolean;
 }
 
 /**
@@ -63,6 +84,11 @@ export async function findCloudCredentialById(
 /** A credential's provider fields, read as SFTP; empty for no credential. */
 export function sftpFields(credential: CloudCredentialRecord | undefined): SftpProviderFields {
   return (credential?.provider ?? {}) as unknown as SftpProviderFields;
+}
+
+/** A credential's provider fields, read as S3; empty for no credential. */
+export function s3Fields(credential: CloudCredentialRecord | undefined): S3ProviderFields {
+  return (credential?.provider ?? {}) as unknown as S3ProviderFields;
 }
 
 /** How many cloud credentials the appliance holds, whoever made them. */
@@ -119,4 +145,58 @@ export async function ensureLoopbackCloudCredentialPresent(
       },
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/**
+ * Creates an S3 credential with these keys and endpoint, if none has this name already, and
+ * returns its id.
+ *
+ * For a task that syncs to a bucket, when the credential is not what is under test. Never for the
+ * credential under test in an add — that one goes through the form.
+ */
+export async function ensureS3CloudCredentialPresent(
+  client: E2eApiClient,
+  {
+    name,
+    accessKeyId,
+    secretAccessKey,
+    endpoint,
+  }: {
+    name: string;
+    accessKeyId: string;
+    secretAccessKey: string;
+    endpoint: string;
+  },
+): Promise<number> {
+  const existing = await findCloudCredential(client, name);
+  if (existing) {
+    return existing.id;
+  }
+
+  const created = await firstValueFrom(
+    client.api.call('cloudsync.credentials.create', [{
+      name,
+      provider: {
+        type: 'S3',
+        access_key_id: accessKeyId,
+        secret_access_key: secretAccessKey,
+        endpoint,
+      },
+    }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return (created as { id: number }).id;
+}
+
+/**
+ * The buckets a credential reaches, as the task form's Bucket select is filled from them.
+ *
+ * Middleware declares the rows as free-form dicts, hence the cast.
+ */
+export async function listCloudCredentialBuckets(client: E2eApiClient, credentialId: number): Promise<CloudBucket[]> {
+  const buckets = await firstValueFrom(
+    client.api.call('cloudsync.list_buckets', [credentialId]).pipe(timeout(slowCallTimeoutMs)),
+  );
+
+  return buckets as unknown as CloudBucket[];
 }

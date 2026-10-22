@@ -2,7 +2,7 @@
  * Certificates and certificate signing requests, driven through the UI from
  * Credentials > Certificates.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Download, type Page } from '@playwright/test';
 import { goToCertificates } from './navigation';
 import { selectOption } from './storage';
 import { certificateLocators, csrLocators } from '../locators/certificates';
@@ -13,6 +13,9 @@ import { confirmDialogLocators } from '../locators/dialogs';
  * certificate are all jobs; none of them is instant.
  */
 const saveTimeoutMs = 90_000;
+
+/** Each file is a `core.download` job, then the fetch of the file it wrote. */
+const downloadTimeoutMs = 60_000;
 
 export interface CsrSubject {
   state: string;
@@ -194,6 +197,35 @@ export async function viewCertificatePem(page: Page, which: 'certificate' | 'key
   await expect(page.locator(viewDialog.title)).toBeHidden();
 
   return pem;
+}
+
+/**
+ * Clicks Download in a row's menu on either card, starting from the sidebar, and
+ * returns the two files it saves, in the order `fileNames` names them.
+ *
+ * One click starts two `core.download`s, the certificate or request and then the
+ * key. Each wait picks its file by name, so the two cannot both settle on whichever
+ * arrives first, and a file that never arrives fails its own wait by name.
+ */
+export async function downloadFromRow(
+  page: Page,
+  row: { menu: string; download: string },
+  fileNames: [string, string],
+): Promise<[Download, Download]> {
+  await goToCertificates(page);
+  await page.locator(row.menu).click();
+
+  const waitFor = (fileName: string): Promise<Download> => page.waitForEvent('download', {
+    predicate: (download) => download.suggestedFilename() === fileName,
+    timeout: downloadTimeoutMs,
+  });
+  const [first, second] = await Promise.all([
+    waitFor(fileNames[0]),
+    waitFor(fileNames[1]),
+    page.locator(row.download).click(),
+  ]);
+
+  return [first, second];
 }
 
 /**

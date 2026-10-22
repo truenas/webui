@@ -36,14 +36,13 @@ import {
   findBootEnvironment,
   findBootPoolScan,
   findBootPoolTopology,
-  findBootScrubJobStateAfter,
-  findLatestBootScrubJobId,
   findRunningBootEnvironment,
   listBootDisks,
   pickBootMirrorDisk,
   readBootScrubInterval,
   setBootScrubInterval,
 } from '../fixtures/boot-environments';
+import { findJobStateAfter, findLatestJobId } from '../fixtures/jobs';
 import {
   activateBootEnvironment, attachBootDisk, openBootPoolStats, openBootPoolStatus, scrubBootPool,
 } from '../flows/boot-environments';
@@ -128,7 +127,7 @@ test.afterEach(async ({ api }) => {
 });
 
 test('an admin scrubs the boot pool, and the scrub runs to the end', async ({ page, api }) => {
-  const lastJobId = await findLatestBootScrubJobId(api);
+  const lastJobId = await findLatestJobId(api, 'boot.scrub');
   // Compared by the appliance's own clock, so a runner whose clock differs cannot pass or fail this.
   const previousStart = (await findBootPoolScan(api))?.start_time?.$date ?? 0;
 
@@ -137,10 +136,10 @@ test('an admin scrubs the boot pool, and the scrub runs to the end', async ({ pa
   // Polled to any end state and then judged, so a failed scrub reports itself
   // in seconds rather than as a timeout.
   await expect.poll(
-    () => findBootScrubJobStateAfter(api, lastJobId),
+    () => findJobStateAfter(api, 'boot.scrub', lastJobId),
     { message: 'a boot.scrub job newer than the last should finish', timeout: bootScrubTimeoutMs },
   ).toMatch(/^(SUCCESS|FAILED|ABORTED)$/);
-  expect(await findBootScrubJobStateAfter(api, lastJobId)).toBe('SUCCESS');
+  expect(await findJobStateAfter(api, 'boot.scrub', lastJobId)).toBe('SUCCESS');
 
   const scan = await findBootPoolScan(api);
   expect(scan).toMatchObject({ function: 'SCRUB', state: 'FINISHED' });

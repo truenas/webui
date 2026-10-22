@@ -5,6 +5,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToVirtualMachines } from './navigation';
 import { selectFirstOption, selectOption } from './storage';
 import { confirmDialogLocators, infoDialogLocators } from '../locators/dialogs';
+import { jobDialogLocators } from '../locators/encryption';
 import { virtualMachinesLocators } from '../locators/virtual-machines';
 
 /**
@@ -45,6 +46,11 @@ export interface NewVm extends WizardVm {
   datastore: string;
   /** As typed into the size input, e.g. `1 GiB`. */
   volsize: string;
+  /**
+   * A disk image file to import, by its full path. Import Image is ticked and this typed into
+   * Image Source, so the wizard converts it into the new zvol before it creates the VM.
+   */
+  importImage?: string;
 }
 
 /** A VM on a zvol that already exists, which the wizard attaches and does not create. */
@@ -74,14 +80,13 @@ async function goToNextWizardStep(page: Page, current: string, next: string): Pr
 }
 
 /**
- * Creates a Linux VM with the wizard, from the sidebar, on a new zvol or an existing one.
+ * Opens the wizard from the sidebar and fills in its first two steps, leaving it on Disks.
  *
  * Start on Boot is turned off, since it would start the machine the next time the appliance boots.
  * The VNC display is turned off too unless `vncPassword` is given, because it opens a listening
- * port that only a journey about the display has a use for. The NIC attaches to whichever
- * interface the appliance lists first, since a run cannot know their names.
+ * port that only a journey about the display has a use for.
  */
-export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvol): Promise<void> {
+export async function openVmWizardOnDisks(page: Page, vm: WizardVm): Promise<void> {
   const { wizard } = virtualMachinesLocators;
   await goToVirtualMachines(page);
   await page.locator(virtualMachinesLocators.add).click();
@@ -105,6 +110,63 @@ export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvo
   await page.locator(wizard.memory).fill(vm.memory);
   await page.locator(wizard.memory).blur();
   await goToNextWizardStep(page, wizard.memory, wizard.datastore);
+}
+
+/**
+ * On the wizard's Disks step, keeps Create new disk image and fills it in: Import Image when
+ * `importImage` is given, then Zvol Location and Size.
+ *
+ * The image goes first. Its path is what Size is checked against, and leaving the size input is
+ * part of the entry, as on the zvol form, so the check runs on the value finally typed.
+ */
+export async function fillNewDiskStep(
+  page: Page,
+  disk: Pick<NewVm, 'datastore' | 'volsize' | 'importImage'>,
+): Promise<void> {
+  const { wizard } = virtualMachinesLocators;
+
+  if (disk.importImage !== undefined) {
+    await page.locator(wizard.importImage).click();
+    await expect(page.locator(wizard.importImage)).toBeChecked();
+    const source = page.locator(wizard.imageSource);
+    await source.fill(disk.importImage);
+    await source.blur();
+  }
+
+  await selectOption(page, wizard.datastore, wizard.datastoreOption(disk.datastore));
+  await page.locator(wizard.volsize).fill(disk.volsize);
+  await page.locator(wizard.volsize).blur();
+}
+
+/**
+ * Closes the wizard without saving, confirming the discard its unsaved steps ask for, and waits
+ * for the panel to go.
+ */
+export async function discardVmWizard(page: Page): Promise<void> {
+  const { wizard } = virtualMachinesLocators;
+  await page.locator(wizard.closePanel).click();
+
+  const discard = page.locator(confirmDialogLocators.confirm);
+  await expect(discard).toBeVisible();
+  await discard.click();
+  await expect(page.locator(wizard.volsize)).toBeHidden();
+}
+
+/**
+ * Creates a Linux VM with the wizard, from the sidebar, on a new zvol or an existing one, and
+ * optionally from a disk image (`importImage`).
+ *
+ * See {@link openVmWizardOnDisks} for what the first step turns off. The NIC attaches to whichever
+ * interface the appliance lists first, since a run cannot know their names.
+ *
+ * With an image, Save first creates the zvol and converts the image into it in a job dialog, and
+ * only then creates the VM. A failed conversion sends the wizard back to Disks, which hides Save
+ * just as closing the panel does, so with an image the caller's read-back of the VM is what tells
+ * the two apart.
+ */
+export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvol): Promise<void> {
+  const { wizard } = virtualMachinesLocators;
+  await openVmWizardOnDisks(page, vm);
 
   // Disks. Picking Existing swaps Zvol Location and Size for Select Existing Zvol.
   if ('existingZvol' in vm) {
@@ -112,9 +174,7 @@ export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvo
     await selectOption(page, wizard.hddPath, wizard.hddPathOption(vm.existingZvol));
     await goToNextWizardStep(page, wizard.hddPath, wizard.nicAttach);
   } else {
-    await selectOption(page, wizard.datastore, wizard.datastoreOption(vm.datastore));
-    await page.locator(wizard.volsize).fill(vm.volsize);
-    await page.locator(wizard.volsize).blur();
+    await fillNewDiskStep(page, vm);
     await goToNextWizardStep(page, wizard.volsize, wizard.nicAttach);
   }
 
@@ -433,4 +493,123 @@ export async function deleteDeviceFromList(page: Page, device: DeviceRow, zvolNa
   await expect(page.locator(dialog.delete)).toBeEnabled();
   await page.locator(dialog.delete).click();
   await expect(page.locator(dialog.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens Export to Image from a disk row's menu, and waits for the dialog to show the disk it is
+ * exporting: `sourcePath`, the zvol's `/dev/zvol/…` path.
+ */
+export async function openExportDiskDialog(page: Page, disk: DeviceRow, sourcePath: string): Promise<void> {
+  const dialog = virtualMachinesLocators.exportDiskDialog;
+  await clickDeviceAction(page, disk, virtualMachinesLocators.devices.exportToImage(disk.id));
+
+  await expect(page.locator(dialog.title)).toBeVisible();
+  await expect(page.locator(dialog.sourceDisk)).toHaveText(sourcePath);
+}
+
+/**
+ * Types a destination directory and an image name into the open export dialog. Leaving the
+ * directory field is part of the entry, since that is when its value is checked.
+ */
+export async function fillExportDiskDialog(page: Page, destinationDir: string, imageName: string): Promise<void> {
+  const dialog = virtualMachinesLocators.exportDiskDialog;
+  const destination = page.locator(dialog.destinationDir);
+  await destination.fill(destinationDir);
+  await destination.blur();
+  await page.locator(dialog.imageName).fill(imageName);
+}
+
+/**
+ * Exports a disk from the open Devices page into `destinationDir` as `<imageName>.qcow2`, keeping
+ * the default format, and waits for the dialog and the job dialog after it to go.
+ *
+ * Export closes the dialog at once and the page then runs `vm.device.convert` in a job dialog. A
+ * small zvol converts in moments, so that dialog can be gone before it is looked for; whether the
+ * file was written is the caller's to read back.
+ */
+export async function exportDiskFromDevicesPage(
+  page: Page,
+  disk: DeviceRow,
+  sourcePath: string,
+  destinationDir: string,
+  imageName: string,
+): Promise<void> {
+  const dialog = virtualMachinesLocators.exportDiskDialog;
+  await openExportDiskDialog(page, disk, sourcePath);
+  await fillExportDiskDialog(page, destinationDir, imageName);
+
+  await expect(page.locator(dialog.export)).toBeEnabled();
+  await page.locator(dialog.export).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
+  await expect(page.locator(jobDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/** Opens Add on the open Devices page and picks a device type by its label in the Type select. */
+async function startAddingDevice(page: Page, typeLabel: string): Promise<void> {
+  const form = virtualMachinesLocators.deviceForm;
+  await page.locator(virtualMachinesLocators.devices.add).click();
+
+  await expect(page.locator(form.deviceType)).toBeVisible();
+  await selectOption(page, form.deviceType, form.deviceTypeOption(typeLabel));
+}
+
+/** What {@link addUsbPassthroughFromDevicesPage} fills in. Middleware takes only a connected device's ids. */
+export interface CustomUsbDevice {
+  /** The Controller Type's label, as the select shows it. */
+  controllerLabel: string;
+  vendorId: string;
+  productId: string;
+}
+
+/**
+ * Adds a USB passthrough device from the open Devices page, by Specify custom with a vendor and
+ * product id, and waits for the panel to close.
+ */
+export async function addUsbPassthroughFromDevicesPage(page: Page, usb: CustomUsbDevice): Promise<void> {
+  const form = virtualMachinesLocators.deviceForm;
+  await startAddingDevice(page, 'USB Passthrough Device');
+
+  await selectOption(page, form.controllerType, form.controllerTypeOption(usb.controllerLabel));
+  await selectOption(page, form.usbDevice, form.usbDeviceSpecifyCustom);
+  await page.locator(form.vendorId).fill(usb.vendorId);
+  await page.locator(form.productId).fill(usb.productId);
+
+  await page.locator(form.save).click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Adds a PCI passthrough device from the open Devices page, by its label in the autocomplete, and
+ * waits for the panel to close.
+ *
+ * The autocomplete only accepts one of its own options, and clicking the option is what commits
+ * it: the typed text alone does not.
+ *
+ * Save asks first, in webui's shared confirm, for a device with no reset mechanism. That confirm
+ * keeps its tick box, which has to be ticked before Confirm enables. It is accepted here, and a
+ * device that has a reset mechanism goes straight through. The panel closing is the sign either
+ * way: declining would leave it open.
+ */
+export async function addPciPassthroughFromDevicesPage(page: Page, label: string): Promise<void> {
+  const form = virtualMachinesLocators.deviceForm;
+  await startAddingDevice(page, 'PCI Passthrough Device');
+
+  await page.locator(form.pptdev).fill(label);
+  const option = page.locator(form.pptdevOption(label));
+  await expect(option).toBeVisible();
+  await option.click();
+
+  const save = page.locator(form.save);
+  const warning = page.locator(confirmDialogLocators.title);
+  await save.click();
+  // Whichever comes first: the warning, or the panel closing because there was none.
+  await expect
+    .poll(async () => await warning.isVisible() || !(await save.isVisible()), { timeout: saveTimeoutMs })
+    .toBe(true);
+  if (await warning.isVisible()) {
+    await page.locator(confirmDialogLocators.checkbox).click();
+    await expect(page.locator(confirmDialogLocators.confirm)).toBeEnabled();
+    await page.locator(confirmDialogLocators.confirm).click();
+  }
+  await expect(save).toBeHidden({ timeout: saveTimeoutMs });
 }

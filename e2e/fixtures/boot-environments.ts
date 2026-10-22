@@ -152,28 +152,6 @@ export async function setBootScrubInterval(client: E2eApiClient, days: number): 
   await firstValueFrom(client.api.call('boot.set_scrub_interval', [days]).pipe(timeout(slowCallTimeoutMs)));
 }
 
-/** The id of the newest `boot.scrub` job middleware remembers, or 0 when there is none. */
-export async function findLatestBootScrubJobId(client: E2eApiClient): Promise<number> {
-  const jobs = await firstValueFrom(
-    client.api.query('core.get_jobs', [['method', '=', 'boot.scrub']]).pipe(timeout(readTimeoutMs)),
-  );
-
-  // `?? 0`: the generated query entity declares `id` optional, as `UserRecord` explains.
-  return Math.max(0, ...jobs.map((job) => job.id ?? 0));
-}
-
-/** The state of the oldest `boot.scrub` job newer than `afterId`, or undefined when there is none yet. */
-export async function findBootScrubJobStateAfter(client: E2eApiClient, afterId: number): Promise<string | undefined> {
-  const jobs = await firstValueFrom(
-    client.api
-      .query('core.get_jobs', [['method', '=', 'boot.scrub'], ['id', '>', afterId]])
-      .pipe(timeout(readTimeoutMs)),
-  );
-  const [first] = [...jobs].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
-
-  return first?.state;
-}
-
 /**
  * Makes the running boot environment the one set to boot next, if another one is.
  *

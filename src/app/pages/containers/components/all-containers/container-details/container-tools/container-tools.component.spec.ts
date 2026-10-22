@@ -79,6 +79,18 @@ describe('ContainerToolsComponent', () => {
       expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
     });
 
+    it('marks the Shell row aria-disabled only while it cannot be opened', () => {
+      expect(spectator.query('tn-list-item')).toHaveAttribute('aria-disabled', 'false');
+
+      selectedContainer.set(fakeContainer({
+        id: 1,
+        status: { state: ContainerStatus.Stopped, pid: null, domain_state: null },
+      }));
+      spectator.detectChanges();
+
+      expect(spectator.query('tn-list-item')).toHaveAttribute('aria-disabled', 'true');
+    });
+
     it('locks the Shell row with a lock icon when the user lacks web_shell access', async () => {
       denyWebShellAccess();
 

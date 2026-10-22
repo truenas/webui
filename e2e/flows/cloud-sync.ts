@@ -13,6 +13,7 @@ import { goToDataProtection } from './navigation';
 import { selectOption } from './storage';
 import { cloudSyncLocators } from '../locators/cloud-sync';
 import { confirmDialogLocators } from '../locators/dialogs';
+import { jobDialogLocators } from '../locators/encryption';
 
 /** Creating, updating, restoring and deleting a task are middleware calls, not instant. */
 const saveTimeoutMs = 60_000;
@@ -132,6 +133,86 @@ export async function saveCloudSyncWizard(page: Page): Promise<void> {
   await expect(save).toBeEnabled();
   await save.click();
   await expect(save).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens the wizard from the card and leaves it for the full form through Advanced Options.
+ *
+ * The form replaces the wizard in the same panel, so its Dry Run footer action is what says the
+ * swap happened: the wizard is footerless and has none.
+ */
+export async function openCloudSyncAdvancedForm(page: Page): Promise<void> {
+  await openCloudSyncWizard(page);
+
+  await page.locator(cloudSyncLocators.wizard.advanced).click();
+  await expect(page.locator(cloudSyncLocators.form.dryRun)).toBeVisible();
+}
+
+/**
+ * Fills the full form for a push from a local directory, through a credential, to a folder on the
+ * remote — and a bucket, when the credential's provider has them — and names the task if given a
+ * description.
+ *
+ * In this order because the direction decides which explorers render, the remote folder and the
+ * bucket render only once a credential is picked, and the bucket's options load after that.
+ */
+export async function fillCloudSyncFormPush(
+  page: Page,
+  {
+    path,
+    credential,
+    bucket,
+    remoteFolder,
+    description,
+  }: {
+    path: string;
+    credential: { name: string; provider: string };
+    bucket?: string;
+    remoteFolder: string;
+    description?: string;
+  },
+): Promise<void> {
+  const { form } = cloudSyncLocators;
+
+  await selectOption(page, form.direction, form.directionOption('PUSH'));
+  await fillExplorer(page, form.pathSource, path);
+  await selectOption(page, form.credential, form.credentialOption(credential.name, credential.provider));
+  if (bucket !== undefined) {
+    await selectOption(page, form.bucket, form.bucketOption(bucket));
+  }
+  await fillExplorer(page, form.folderDestination, remoteFolder);
+  if (description !== undefined) {
+    await page.locator(form.description).fill(description);
+  }
+}
+
+/**
+ * Presses the form's Dry Run and waits for its job dialog to open and then close.
+ *
+ * The dialog closes once `cloudsync.sync_onetime` has finished, whatever its outcome, so the
+ * caller reads the job's state from the appliance. Even a one-file dry run starts rclone, which
+ * keeps the dialog up for long enough to be seen open.
+ */
+export async function dryRunCloudSyncForm(page: Page): Promise<void> {
+  const dryRun = page.locator(cloudSyncLocators.form.dryRun);
+
+  await expect(dryRun).toBeEnabled();
+  await dryRun.click();
+  await expect(page.locator(jobDialogLocators.title)).toBeVisible();
+  await expect(page.locator(jobDialogLocators.title)).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Closes the edited form without saving. The form is dirty, so the unsaved-changes question is
+ * asserted rather than looked for.
+ */
+export async function discardCloudSyncForm(page: Page): Promise<void> {
+  const { form } = cloudSyncLocators;
+
+  await page.locator(form.closePanel).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(form.save)).toBeHidden();
 }
 
 /** Opens a row's kebab menu, starting from the sidebar. */

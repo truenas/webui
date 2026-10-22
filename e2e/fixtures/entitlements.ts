@@ -70,6 +70,11 @@ export const entitlementFeature = {
    */
   sed: 'SED',
   /**
+   * Not a lock either: the interface edit form asks `interface.available_fec_modes`, and so can
+   * show FEC Mode, unless the key is explicitly denied. Ask with `isNotDenied`.
+   */
+  networkFec: 'NETWORK_FEC',
+  /**
    * Not a lock either: the KMIP sidebar entry hides only when the key is explicitly denied, and
    * `kmip.update` refuses turning KMIP on without it. Ask with `isNotDenied`.
    */

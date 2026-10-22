@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnIn
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonComponent, TnCardComponent, TnDividerComponent } from '@truenas/ui-components';
+import {
+  TnButtonComponent, TnCardComponent, TnDividerComponent, TnTestIdDirective,
+} from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
@@ -14,6 +16,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   styleUrls: ['./eula.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnTestIdDirective,
     TnCardComponent,
     TnDividerComponent,
     TnButtonComponent,
