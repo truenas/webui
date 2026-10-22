@@ -272,6 +272,8 @@ jobs:
           shard: ${{ matrix.shard }}/${{ needs.plan.outputs.total }}
           grep: ${{ inputs.grep }}
           artifact-suffix: -${{ matrix.shard }}
+          # The `coverage` job below reports over every shard at once.
+          coverage-report: 'false'
           env: |
             TN_AD_DOMAIN
             TN_AD_DC1
@@ -382,3 +384,77 @@ jobs:
 
       # No release step: the appliance is deleted with the runner, on success,
       # failure and cancellation alike.
+
+  # One coverage report for the whole run. A shard's own would count only the
+  # tests it ran, so the shards upload their per-test results (`e2e-coverage-<n>`)
+  # and write no report, and this job reports over all of them together.
+  #
+  # The files are named by test id and attempt, so no shard's overwrite
+  # another's; only `setup`, which every shard runs, keeps one copy of its
+  # identical result. A shard that never reached the suite uploads nothing,
+  # and the report says so rather than passing off part of the run as all of
+  # it. Informational, as it was in each shard: never fails the run.
+  coverage:
+    needs: [plan, e2e]
+    if: ${{ !cancelled() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # A shard's artifact per directory, so the report can count them.
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          pattern: e2e-coverage-*
+          path: ${{ runner.temp }}/shards
+
+      # For the inventory side: the TypeScript compiler and tsx.
+      - uses: ./.github/actions/prepare
+
+      - name: Report coverage over every shard
+        continue-on-error: true
+        env:
+          SHARDS: ${{ needs.plan.outputs.total }}
+        run: |
+          set -euo pipefail
+          shards="$RUNNER_TEMP/shards"
+          results="$RUNNER_TEMP/e2e-coverage"
+          mkdir -p "$results"
+          uploaded=0
+          for dir in "$shards"/e2e-coverage-*/; do
+            [ -d "$dir" ] || continue
+            uploaded=$((uploaded + 1))
+            find "$dir" -name '*.json' ! -name summary.json -exec cp {} "$results"/ \;
+          done
+          if [ "$uploaded" -eq 0 ]; then
+            echo "No shard uploaded coverage: none reached the suite."
+            exit 0
+          fi
+
+          report="$RUNNER_TEMP/e2e-coverage.md"
+          yarn e2e:coverage "$results" --out "$report"
+          {
+            if [ "$uploaded" -lt "$SHARDS" ]; then
+              echo "> Only $uploaded of $SHARDS shards uploaded coverage, so this counts only the tests they ran."
+              echo
+            fi
+            cat "$report"
+          } >> "$GITHUB_STEP_SUMMARY"
+          node -e '
+            const { methods, routes } = require(process.argv[1]);
+            const part = (name, { covered, total }) => `${name} ${covered}/${total} (${Math.round(covered / total * 100)}%)`;
+            const partial = Number(process.argv[2]) < Number(process.argv[3]) ? ` (${process.argv[2]} of ${process.argv[3]} shards)` : "";
+            console.log(`::notice title=E2E coverage${partial}::${part("methods", methods)}, ${part("routes", routes)}`);
+          ' "$results/summary.json" "$uploaded" "$SHARDS"
+
+      # The merged results and their summary.json, for `yarn e2e:coverage <dir>`
+      # or a look at which tests covered what. Not `e2e-coverage-*`, which is
+      # the shards' pattern above. Overwritten when the job is re-run.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: e2e-coverage
+          path: ${{ runner.temp }}/e2e-coverage/
+          if-no-files-found: ignore
+          overwrite: true
+          retention-days: 14
