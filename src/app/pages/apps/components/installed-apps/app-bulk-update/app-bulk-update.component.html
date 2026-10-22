@@ -66,7 +66,6 @@
                     [testId]="['app-version', bulkItem.key]"
                     [formControlName]="bulkItem.key"
                     [options]="(optionsMap.get(bulkItem.key) | async) ?? []"
-                    [optionTestIdKey]="versionOptionTestId"
                   ></tn-select>
                 </tn-form-field>
               }

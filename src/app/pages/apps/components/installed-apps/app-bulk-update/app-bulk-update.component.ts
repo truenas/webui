@@ -14,7 +14,6 @@ import {
   TnFormFieldComponent,
   TnIconComponent,
   TnSelectComponent,
-  TnSelectOption,
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
@@ -120,10 +119,6 @@ export class AppBulkUpdateComponent {
   }
 
   protected readonly extractAppVersion = extractAppVersion;
-
-  // Key each option by its catalog version rather than by its label, which also carries the
-  // app version and so changes with it.
-  protected versionOptionTestId = (option: TnSelectOption): string => String(option.value);
 
   getVersionInfo(app: App, appName: string): {
     currentAppVersion: string;
