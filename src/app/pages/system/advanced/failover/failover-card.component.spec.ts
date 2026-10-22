@@ -4,6 +4,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatListItemHarness } from '@angular/material/list/testing';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
@@ -42,14 +43,26 @@ describe('FailoverCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('displays failover configuration', async () => {
+  async function getItemTexts(): Promise<string[]> {
     const items = await loader.getAllHarnesses(MatListItemHarness);
-    const itemTexts = await parallel(() => items.map((item) => item.getFullText()));
+    return parallel(() => items.map((item) => item.getFullText()));
+  }
 
-    expect(itemTexts).toEqual([
+  it('displays the failover timeout but not the default controller when failover is enabled', async () => {
+    expect(await getItemTexts()).toEqual([
       'Enabled: Yes',
-      'Default Controller: Yes',
       'Network Timeout Before Initiating Failover: 5s',
+    ]);
+  });
+
+  it('displays the default controller but not the timeout when failover is disabled', async () => {
+    spectator.inject(MockApiService).mockCall('failover.config', { ...fakeConfig, disabled: true });
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+    expect(await getItemTexts()).toEqual([
+      'Enabled: No',
+      'Default Controller: Yes',
     ]);
   });
 
