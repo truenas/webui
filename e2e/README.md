@@ -146,8 +146,30 @@ router config. A method name built at runtime, or held in anything typed more
 loosely than a literal union, is missed, and is listed under "seen in the run
 but not in the inventory" when a test calls it. Routes no link reaches are
 listed on their own and left out of the total. CI writes one report for the
-whole run, over every shard's results, into the summary of its `coverage` job. The header of `scripts/e2e-coverage.ts` explains how it works and
+whole run, over every shard's results, into the summary of its `report` job. The header of `scripts/e2e-coverage.ts` explains how it works and
 where it falls short.
+
+### Timings
+
+Every run also records where its time went, into `test-results/e2e-timings/`:
+each test's hooks, fixtures and body from Playwright's step tree, and every
+middleware request and job by method name. The step tree matters because the
+duration Playwright reports for a test, and JUnit with it, leaves out
+`beforeAll` and `afterAll` hooks and the worker fixtures it was first to need.
+
+```bash
+yarn e2e:timings                      # markdown to stdout
+yarn e2e:timings --out timings.md     # and to a file
+yarn e2e:timings <dir>                # a downloaded `e2e-timings` CI artifact
+```
+
+It shows how the run divides between signing in, hooks, test bodies and the
+gaps between tests, how much of each was spent waiting on middleware, and the
+slowest tests, files, jobs and calls. Each test's own breakdown goes to
+`summary.json` beside the records. CI writes it into the summary of the same
+`report` job. The records name hooks, fixtures and methods only, never what a
+test typed or a call sent; see `e2e/support/timing-reporter.ts` and
+`e2e/support/timings.ts`.
 
 ## Layout
 

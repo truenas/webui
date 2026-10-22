@@ -319,6 +319,10 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
     // In CI, a warning annotation and a job summary row per flaky test, so a
     // green run that needed retries says so on its page. See the file.
     ['./e2e/support/flaky-reporter.ts'],
+    // Where each test's time went — hooks, fixtures, the body — for
+    // `yarn e2e:timings`, beside what `support/timings.ts` records of
+    // middleware. See the file.
+    ['./e2e/support/timing-reporter.ts'],
     ['html', { open: 'never' }],
     // Feeds the Jenkins JUnit plugin, which is what makes per-test flake history
     // — and therefore the R8.4 quarantine policy — measurable (R7.4).
