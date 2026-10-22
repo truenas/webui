@@ -11,10 +11,16 @@
  *
  * Every exporter points at `127.0.0.1`, where nothing listens. Middleware stores an exporter without
  * contacting its destination, so nothing leaves the appliance. See `fixtures/reporting-exporters.ts`.
+ *
+ * Creating or deleting an exporter takes middleware about 16 seconds, as it regenerates netdata's
+ * configuration, and seeding and removing one per test was most of this spec's time. So one exporter
+ * is carried through the stories — the add test creates it, the edit test changes it, the delete test
+ * removes it — and the bystander lasts the whole file. Each test that needs an exporter still makes
+ * sure it is there, over the API, so a retry or a test run on its own pays for the seeding instead.
  */
 import {
   countExporters, ensureExporterAbsent, ensureGraphiteExporterPresent, findExporter,
-  type GraphiteDestination,
+  type GraphiteDestination, type StoredExporter,
 } from '../fixtures/reporting-exporters';
 import {
   chooseGraphiteType, deleteExporter, fillGraphiteDestination, openAddExporterForm, openEditExporterForm,
@@ -26,22 +32,21 @@ import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 import { slowCallTimeoutMs } from '../support/timeouts';
 
-/** Created through the form, never over the API: that is the thing under test. */
-const created = 'e2e-exporter-created';
+/**
+ * Created through the form by the add test — never over the API there, since that is the thing under
+ * test — then edited and deleted by the tests after it.
+ */
+const subject = 'e2e-exporter-subject';
 
-/** Provisioned over the API so there is something to edit or delete. */
-const target = 'e2e-exporter-target';
-
-/** The exporter that must survive whatever is done to the target. */
+/** The exporter that must survive whatever is done to the subject. Created once, for the file. */
 const bystander = 'e2e-exporter-bystander';
 
-const allNames = [created, target, bystander];
+const allNames = [subject, bystander];
 
 /** Graphite's plaintext port on the appliance itself, where nothing listens. */
 const loopback = { destinationIp: '127.0.0.1', destinationPort: 2003 };
 
-const createdDestination: GraphiteDestination = { ...loopback, namespace: 'e2e-created' };
-const targetDestination: GraphiteDestination = { ...loopback, namespace: 'e2e-target' };
+const subjectDestination: GraphiteDestination = { ...loopback, namespace: 'e2e-subject' };
 const bystanderDestination: GraphiteDestination = { ...loopback, namespace: 'e2e-bystander' };
 
 /** How a stored Graphite exporter's required attributes read back. */
@@ -54,23 +59,27 @@ function graphiteAttributes(destination: GraphiteDestination): Record<string, un
   };
 }
 
-/** Both exporters over the API: acting on one from its row is the thing under test. */
-async function seedTargetAndBystander(api: E2eApiClient): Promise<void> {
-  await ensureGraphiteExporterPresent(api, target, targetDestination);
-  await ensureGraphiteExporterPresent(api, bystander, bystanderDestination);
+/**
+ * The subject as the add test leaves it, or as close as the API makes it when that test did not run
+ * first: an enabled Graphite exporter. Acting on it from its row is the thing under test.
+ */
+async function ensureSubject(api: E2eApiClient): Promise<StoredExporter> {
+  return ensureGraphiteExporterPresent(api, subject, subjectDestination);
 }
 
 /**
- * Removed before each test as well as after, so an interrupted run leaves the next one able to
- * start, and unconditionally so a failure still cleans up.
+ * Removed before the file as well as after, so an interrupted run leaves the next one able to
+ * start, and unconditionally so a failure still cleans up. A failed test restarts the worker, which
+ * runs `afterAll` and then this again, so a retry starts from here too.
  */
-test.beforeEach(async ({ api }) => {
+test.beforeAll(async ({ api }) => {
   for (const name of allNames) {
     await ensureExporterAbsent(api, name);
   }
+  await ensureGraphiteExporterPresent(api, bystander, bystanderDestination);
 });
 
-test.afterEach(async ({ api }) => {
+test.afterAll(async ({ api }) => {
   if (leavingTestData(`the reporting exporters ${allNames.join(', ')}`)) {
     return;
   }
@@ -84,22 +93,22 @@ test('an admin adds a Graphite exporter, and the appliance really has one', asyn
   const { list, form } = reportingExportersLocators;
 
   await openAddExporterForm(page);
-  await page.locator(form.name).fill(created);
+  await page.locator(form.name).fill(subject);
   await chooseGraphiteType(page);
-  await fillGraphiteDestination(page, createdDestination);
+  await fillGraphiteDestination(page, subjectDestination);
   await saveExporterForm(page);
 
-  await expect(page.locator(list.name(created))).toHaveText(created);
-  await expect(page.locator(list.type(created))).toHaveText('GRAPHITE');
-  await expect(page.locator(list.enabled(created))).toBeChecked();
+  await expect(page.locator(list.name(subject))).toHaveText(subject);
+  await expect(page.locator(list.type(subject))).toHaveText('GRAPHITE');
+  await expect(page.locator(list.enabled(subject))).toBeChecked();
 
   // The optional attributes were left blank. The form drops a blank attribute rather than sending
   // `''`, so middleware fills in its own defaults: a `prefix` of `''`, which middleware accepts,
   // would have meant the blank was sent.
-  expect(await findExporter(api, created)).toMatchObject({
+  expect(await findExporter(api, subject)).toMatchObject({
     enabled: true,
     attributes: {
-      ...graphiteAttributes(createdDestination),
+      ...graphiteAttributes(subjectDestination),
       prefix: 'scale',
       update_every: 1,
       buffer_on_failures: 10,
@@ -111,25 +120,24 @@ test('an admin adds a Graphite exporter, and the appliance really has one', asyn
 
 test('editing an exporter from its row changes the exporter that was picked', async ({ page, api }) => {
   const { list, form } = reportingExportersLocators;
-  await seedTargetAndBystander(api);
-  const before = await findExporter(api, target);
-  const edited: GraphiteDestination = { ...targetDestination, destinationPort: 2004, namespace: 'e2e-edited' };
+  const before = await ensureSubject(api);
+  const edited: GraphiteDestination = { ...subjectDestination, destinationPort: 2004, namespace: 'e2e-edited' };
 
-  await openEditExporterForm(page, target, targetDestination.destinationIp);
+  await openEditExporterForm(page, subject, subjectDestination.destinationIp);
   await page.locator(form.destinationPort).fill(String(edited.destinationPort));
   await page.locator(form.namespace).fill(edited.namespace);
-  // Enabled on the seeded exporter, so a stored `enabled: false` can only have come from this click.
+  // Enabled on the subject, so a stored `enabled: false` can only have come from this click.
   await page.locator(form.enabled).click();
   await saveExporterForm(page);
 
   // The name is the row tag and was left alone, so the row keeps its ids.
-  await expect(page.locator(list.enabled(target))).not.toBeChecked();
+  await expect(page.locator(list.enabled(subject))).not.toBeChecked();
   await expect(page.locator(list.enabled(bystander))).toBeChecked();
 
   // The same record, by id: an update, not a delete and a create that happen to leave the list
   // looking the same.
-  expect(await findExporter(api, target)).toMatchObject({
-    id: before?.id,
+  expect(await findExporter(api, subject)).toMatchObject({
+    id: before.id,
     enabled: false,
     attributes: graphiteAttributes(edited),
   });
@@ -141,13 +149,13 @@ test('editing an exporter from its row changes the exporter that was picked', as
 });
 
 test('deleting an exporter from its row removes the exporter that was picked', async ({ page, api }) => {
-  await seedTargetAndBystander(api);
+  await ensureSubject(api);
 
-  await deleteExporter(page, target);
+  await deleteExporter(page, subject);
 
   // Polled rather than read once: a row can also be hidden while the list is between loads, which
   // proves nothing.
-  await expect.poll(() => findExporter(api, target), { timeout: slowCallTimeoutMs }).toBeUndefined();
+  await expect.poll(() => findExporter(api, subject), { timeout: slowCallTimeoutMs }).toBeUndefined();
 
   // The whole point of the second exporter: the list looks right either way.
   await expect(page.locator(reportingExportersLocators.list.row(bystander))).toBeVisible();
@@ -159,7 +167,6 @@ test('deleting an exporter from its row removes the exporter that was picked', a
 
 test('the form refuses a second exporter under a name already in use', async ({ page, api }) => {
   const { form } = reportingExportersLocators;
-  await ensureGraphiteExporterPresent(api, bystander, bystanderDestination);
 
   // A complete, valid Graphite exporter in every field but the name, so the refusal can only be
   // the name. The form has no unique-name check of its own: this is middleware's answer to the
@@ -167,7 +174,7 @@ test('the form refuses a second exporter under a name already in use', async ({ 
   await openAddExporterForm(page);
   await page.locator(form.name).fill(bystander);
   await chooseGraphiteType(page);
-  await fillGraphiteDestination(page, createdDestination);
+  await fillGraphiteDestination(page, subjectDestination);
   await page.locator(form.save).click();
 
   await expect(page.locator(form.nameField))
