@@ -74,16 +74,6 @@ export const datasetRoutes: Routes = [
         ],
       },
       {
-        path: 'user-quotas/:pk',
-        component: DatasetQuotasListComponent,
-        data: { title: T('User Quotas'), breadcrumb: null, ...userQuotasData },
-      },
-      {
-        path: 'group-quotas/:pk',
-        component: DatasetQuotasListComponent,
-        data: { title: T('Group Quotas'), breadcrumb: null, ...groupQuotasData },
-      },
-      {
         path: '**',
         redirectTo: '/datasets/',
         pathMatch: 'full',

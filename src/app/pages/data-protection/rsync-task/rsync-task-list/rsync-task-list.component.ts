@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit, Type, inject, signal, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   tnIconMarker,
@@ -91,7 +90,6 @@ export class RsyncTaskListComponent implements OnInit {
   private crontabExplanation = inject(CrontabExplanationPipe);
   private taskService = inject(TaskService);
   private snackbar = inject(SnackbarService);
-  private route = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.SnapshotTaskWrite];
@@ -266,8 +264,6 @@ export class RsyncTaskListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
-
     this.refresh();
     this.dataProvider.emptyType$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.onListFiltered(this.searchQuery());

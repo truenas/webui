@@ -57,19 +57,11 @@ interface TestCoverage {
 
 /**
  * Routes in the router config that no user can reach, so no test could cover them. They are left
- * out of the route total and listed on their own. Removing them is a product change; the report
- * only stops counting them. An entry that matches no route fails the script, so a deleted or
- * renamed route takes its entry with it.
+ * out of the route total and listed on their own, as a stopgap until the route is removed or
+ * linked. An entry that matches no route fails the script, so a deleted or renamed route takes
+ * its entry with it.
  */
-const unlinkedRoutes = new Map<string, string>([
-  ['/datasets/user-quotas/:pk', 'Nothing links to it, and its component reads a `datasetId` param this route lacks; the reachable page is `/datasets/:datasetId/user-quotas`.'],
-  ['/datasets/group-quotas/:pk', 'Nothing links to it, and its component reads a `datasetId` param this route lacks; the reachable page is `/datasets/:datasetId/group-quotas`.'],
-  ['/data-protection/cloudsync/:dataset', 'No template links to it; only the snapshot task list is linked per dataset.'],
-  ['/data-protection/replication/:dataset', 'No template links to it; only the snapshot task list is linked per dataset.'],
-  ['/data-protection/rsync/:dataset', 'No template links to it; only the snapshot task list is linked per dataset.'],
-  ['/data-protection/replication/wizard', 'Declared after `replication/:dataset`, which matches the URL first; the wizard opens as a side panel anyway.'],
-  ['/shell', 'The sidebar links to `/system/shell`, which loads the same component.'],
-]);
+const unlinkedRoutes = new Map<string, string>();
 
 /**
  * Walks the router config from `rootRoutes`, following `children`, spreads and lazy
@@ -388,13 +380,18 @@ function main(): void {
     ...groupTable(methodGroups, 'Namespace'),
     '',
     '</details>',
-    '',
-    '<details><summary>Routes no link reaches (not counted)</summary>',
-    '',
-    ...[...unlinkedRoutes].map(([route, reason]) => `- ${code(route)}: ${reason}`),
-    '',
-    '</details>',
   ];
+
+  if (unlinkedRoutes.size) {
+    lines.push(
+      '',
+      '<details><summary>Routes no link reaches (not counted)</summary>',
+      '',
+      ...[...unlinkedRoutes].map(([route, reason]) => `- ${code(route)}: ${reason}`),
+      '',
+      '</details>',
+    );
+  }
 
   if (methodsNotInSource.length || unmatchedUrls.length) {
     lines.push(

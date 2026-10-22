@@ -54,8 +54,8 @@ export const credentialsRoutes: Routes = [{
     },
     {
       path: 'two-factor',
-      loadComponent: () => import('app/pages/two-factor-auth/two-factor.component').then((module) => module.TwoFactorComponent),
-      data: { title: T('Two-Factor Auth'), breadcrumb: T('Two-Factor Auth') },
+      redirectTo: '/two-factor-auth',
+      pathMatch: 'full',
     },
     {
       path: 'kmip',

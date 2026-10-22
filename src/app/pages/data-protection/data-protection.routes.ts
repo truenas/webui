@@ -7,7 +7,6 @@ import { SnapshotTaskListComponent } from 'app/pages/data-protection/snapshot-ta
 import { VmwareSnapshotListComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.component';
 import { CloudSyncListComponent } from './cloudsync/cloudsync-list/cloudsync-list.component';
 import { ReplicationListComponent } from './replication/replication-list/replication-list.component';
-import { ReplicationWizardComponent } from './replication/replication-wizard/replication-wizard.component';
 
 export const dataProtectionRoutes: Routes = [{
   path: '',
@@ -22,10 +21,6 @@ export const dataProtectionRoutes: Routes = [{
       data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       children: [{
         path: '',
-        component: CloudSyncListComponent,
-        data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
-      }, {
-        path: ':dataset',
         component: CloudSyncListComponent,
         data: { title: T('Cloud Sync Tasks'), breadcrumb: null },
       }],
@@ -55,26 +50,13 @@ export const dataProtectionRoutes: Routes = [{
         path: '',
         component: ReplicationListComponent,
         data: { title: T('Replication Tasks'), breadcrumb: null },
-      }, {
-        path: ':dataset',
-        component: ReplicationListComponent,
-        data: { title: T('Replication Tasks'), breadcrumb: null },
-      }, {
-        path: 'wizard',
-        component: ReplicationWizardComponent,
-        data: { title: T('Wizard'), breadcrumb: null },
-      },
-      ],
+      }],
     },
     {
       path: 'rsync',
       data: { title: T('Rsync Tasks'), breadcrumb: null },
       children: [{
         path: '',
-        component: RsyncTaskListComponent,
-        data: { title: T('Rsync Tasks'), breadcrumb: null },
-      }, {
-        path: ':dataset',
         component: RsyncTaskListComponent,
         data: { title: T('Rsync Tasks'), breadcrumb: null },
       }],

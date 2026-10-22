@@ -154,7 +154,6 @@ describe('SmbFormComponent', () => {
       mockEntitlements(),
       mockTypedApi([
         mockTypedQuery('group.query', [{ id: 1, group: 'test', builtin: false }] as WebUiQueryEntity<'group.query'>[]),
-        mockTypedCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
         mockTypedQuery('user.query', []),
         mockTypedCall('sharing.smb.create', { ...existingShareEntry }),
         mockTypedCall('sharing.smb.update', { ...existingShareEntry }),
