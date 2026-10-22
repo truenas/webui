@@ -1,6 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnMenuHarness, TnMenuTesting, TnTreeHarness } from '@truenas/ui-components';
@@ -128,6 +129,8 @@ describe('BootStatusListComponent', () => {
 
     beforeEach(() => {
       api.mockCall('boot.get_state', mirroredPool as unknown as CallResponse<WebUiApiDirectory, 'boot.get_state'>);
+      // Detaching navigates back to the boot page; the testing router has no routes to match.
+      jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
       spectator.component.ngOnInit();
       spectator.detectChanges();
     });

@@ -1,7 +1,5 @@
 // eslint-disable-next-line max-classes-per-file
 import '@angular/compiler';
-import 'zone.js';
-import 'zone.js/testing';
 import { HighContrastModeDetector } from '@angular/cdk/a11y';
 import { APP_BASE_HREF } from '@angular/common';
 import { provideHttpClient } from '@angular/common/http';
@@ -21,7 +19,7 @@ import {
   TnMenuTriggerDirective, TnTablePagerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import failOnConsole from 'jest-fail-on-console';
-import { setupZoneTestEnv } from 'jest-preset-angular/setup-env/zone';
+import { setupZonelessTestEnv } from 'jest-preset-angular/setup-env/zoneless';
 import { MockComponent, MockProvider, ngMocks } from 'ng-mocks';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
 import {
@@ -67,7 +65,8 @@ class GlobalDeclarationsAnchorComponent {}
 /* eslint-enable @angular-eslint/prefer-standalone, @angular-eslint/prefer-on-push-component-change-detection,
    angular-file-naming/component-filename-suffix */
 
-setupZoneTestEnv();
+// The app runs without zone.js (see `main.ts`), so specs render zoneless too.
+setupZonelessTestEnv();
 
 // `TnCardComponent` imports `TnButtonComponent`, which imports `LabelMarkupPipe`
 // (the pipe that renders a tn-button's `[label]`). When ng-mocks deep-mocks any

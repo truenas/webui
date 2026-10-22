@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 
@@ -15,6 +14,7 @@ describe('DuplicateCallTrackerService', () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     jest.restoreAllMocks();
   });
 
@@ -52,15 +52,16 @@ describe('DuplicateCallTrackerService', () => {
     expect(console.warn).not.toHaveBeenCalled();
   });
 
-  it('does not warn when same call is made after time window expires', fakeAsync(() => {
+  it('does not warn when same call is made after time window expires', () => {
+    jest.useFakeTimers();
     spectator.service.trackCall('system.info', []);
 
-    tick(51);
+    jest.advanceTimersByTime(51);
 
     spectator.service.trackCall('system.info', []);
 
     expect(console.warn).not.toHaveBeenCalled();
-  }));
+  });
 
   it('handles calls with no params', () => {
     spectator.service.trackCall('system.info');
@@ -90,10 +91,11 @@ describe('DuplicateCallTrackerService', () => {
     );
   });
 
-  it('cleans up old calls from tracking', fakeAsync(() => {
+  it('cleans up old calls from tracking', () => {
+    jest.useFakeTimers();
     spectator.service.trackCall('system.info', []);
 
-    tick(55);
+    jest.advanceTimersByTime(55);
 
     // Call a different method to trigger cleanup
     spectator.service.trackCall('pool.query', []);
@@ -102,7 +104,7 @@ describe('DuplicateCallTrackerService', () => {
     spectator.service.trackCall('system.info', []);
 
     expect(console.warn).not.toHaveBeenCalled();
-  }));
+  });
 
   it('does not track calls when disabled', () => {
     spectator.service.setEnabled(false);

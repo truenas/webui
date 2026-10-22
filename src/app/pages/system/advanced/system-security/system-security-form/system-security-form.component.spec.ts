@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator, SpectatorFactory } from '@ngneat/spectator/jest';
@@ -778,7 +777,7 @@ describe('SystemSecurityFormComponent', () => {
       })]);
     });
 
-    it('handles API error when checking users and shows error modal', fakeAsync(async () => {
+    it('handles API error when checking users and shows error modal', async () => {
       const error = new Error('API Error');
       const errorHandler = warningSpectator.inject(ErrorHandlerService);
 
@@ -838,7 +837,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(showErrorModalSpy).toHaveBeenCalledWith(error);
       // Verify save was not attempted
       expect(apiService.job).not.toHaveBeenCalled();
-    }));
+    });
 
     it('does not check users when disabling STIG', async () => {
       // The form loads its config from the API, so seed STIG as already enabled there.

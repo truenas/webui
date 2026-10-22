@@ -1,5 +1,4 @@
 import { ElementRef, Renderer2 } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -107,15 +106,17 @@ describe('UiSearchDirectivesService', () => {
     }
 
     beforeEach(() => {
+      jest.useFakeTimers();
       spectator = createService();
     });
 
     afterEach(() => {
       spectator.service.cancelPendingHighlight();
       document.body.innerHTML = '';
+      jest.useRealTimers();
     });
 
-    it('highlights immediately when the directive is registered and the target is visible', fakeAsync(() => {
+    it('highlights immediately when the directive is registered and the target is visible', () => {
       const directive = fakeDirective('a-card');
       const target = makeVisibleElement('a-card');
       spectator.service.register(directive);
@@ -124,9 +125,9 @@ describe('UiSearchDirectivesService', () => {
 
       expect(directive.highlight).toHaveBeenCalledWith({ anchor: 'a-card' }, target);
       expect(spectator.service.pendingUiHighlightElement).toBeNull();
-    }));
+    });
 
-    it('skips a directive whose target is in the DOM but not visible (offsetParent null)', fakeAsync(() => {
+    it('skips a directive whose target is in the DOM but not visible (offsetParent null)', () => {
       const directive = fakeDirective('hidden-card');
       makeHiddenElement('hidden-card');
       spectator.service.register(directive);
@@ -137,27 +138,27 @@ describe('UiSearchDirectivesService', () => {
       // Pending element stays set while polling continues.
       expect(spectator.service.pendingUiHighlightElement).toEqual({ anchor: 'hidden-card' });
 
-      tick(5000);
+      jest.advanceTimersByTime(5000);
       expect(directive.highlight).not.toHaveBeenCalled();
       // Cleared after exhausting all attempts.
       expect(spectator.service.pendingUiHighlightElement).toBeNull();
-    }));
+    });
 
-    it('polls until the directive registers and the target becomes visible', fakeAsync(() => {
+    it('polls until the directive registers and the target becomes visible', () => {
       const directive = fakeDirective('late-card');
 
       spectator.service.requestHighlight({ anchor: 'late-card' });
-      tick(150);
+      jest.advanceTimersByTime(150);
       expect(directive.highlight).not.toHaveBeenCalled();
 
       spectator.service.register(directive);
       const target = makeVisibleElement('late-card');
 
-      tick(150);
+      jest.advanceTimersByTime(150);
       expect(directive.highlight).toHaveBeenCalledWith({ anchor: 'late-card' }, target);
-    }));
+    });
 
-    it('fires the parent triggerAnchor exactly once across the polling lifetime', fakeAsync(() => {
+    it('fires the parent triggerAnchor exactly once across the polling lifetime', () => {
       const trigger = makeVisibleElement('parent-trigger');
       trigger.click = jest.fn();
 
@@ -168,15 +169,15 @@ describe('UiSearchDirectivesService', () => {
         triggerAnchor: 'parent-trigger',
       });
 
-      tick(150);
+      jest.advanceTimersByTime(150);
       expect(trigger.click).toHaveBeenCalledTimes(1);
 
       // Several more poll iterations should NOT re-fire the trigger.
-      tick(500);
+      jest.advanceTimersByTime(500);
       expect(trigger.click).toHaveBeenCalledTimes(1);
-    }));
+    });
 
-    it('also fires the trigger when triggerAnchor equals the directive id (self-trigger)', fakeAsync(() => {
+    it('also fires the trigger when triggerAnchor equals the directive id (self-trigger)', () => {
       const directive = fakeDirective('settings-menu');
       const target = makeVisibleElement('settings-menu');
       target.click = jest.fn();
@@ -197,11 +198,11 @@ describe('UiSearchDirectivesService', () => {
       // toggle the menu closed (and reopen it, etc.). Letting the timers
       // advance ensures the no-op path holds even if a future change adds
       // late-arriving directives.
-      tick(500);
+      jest.advanceTimersByTime(500);
       expect(target.click).toHaveBeenCalledTimes(1);
-    }));
+    });
 
-    it('does not fire a self-trigger click after the parent triggerAnchor branch already fired it', fakeAsync(() => {
+    it('does not fire a self-trigger click after the parent triggerAnchor branch already fired it', () => {
       // Repro for the double-click race: directive registers AFTER iteration 0,
       // so iteration 0 takes the parent-trigger path (line 117) and iteration 1
       // would otherwise hit the self-trigger branch in applyHighlight.
@@ -220,16 +221,16 @@ describe('UiSearchDirectivesService', () => {
       // must NOT click the trigger a second time.
       const directive = fakeDirective('settings-menu');
       spectator.service.register(directive);
-      tick(150);
+      jest.advanceTimersByTime(150);
 
       expect(directive.highlight).toHaveBeenCalledWith(
         { anchor: 'settings-menu', triggerAnchor: 'settings-menu' },
         trigger,
       );
       expect(trigger.click).toHaveBeenCalledTimes(1);
-    }));
+    });
 
-    it('cancels an in-flight poll when requestHighlight is called again', fakeAsync(() => {
+    it('cancels an in-flight poll when requestHighlight is called again', () => {
       const firstDirective = fakeDirective('first');
       const secondDirective = fakeDirective('second');
 
@@ -242,19 +243,19 @@ describe('UiSearchDirectivesService', () => {
       makeVisibleElement('first');
       const secondTarget = makeVisibleElement('second');
 
-      tick(150);
+      jest.advanceTimersByTime(150);
 
       expect(firstDirective.highlight).not.toHaveBeenCalled();
       expect(secondDirective.highlight).toHaveBeenCalledWith({ anchor: 'second' }, secondTarget);
-    }));
+    });
 
-    it('clears the pending highlight after the poll deadline expires', fakeAsync(() => {
+    it('clears the pending highlight after the poll deadline expires', () => {
       spectator.service.requestHighlight({ anchor: 'never-appears' });
       expect(spectator.service.pendingUiHighlightElement).toEqual({ anchor: 'never-appears' });
 
-      tick(5000);
+      jest.advanceTimersByTime(5000);
 
       expect(spectator.service.pendingUiHighlightElement).toBeNull();
-    }));
+    });
   });
 });

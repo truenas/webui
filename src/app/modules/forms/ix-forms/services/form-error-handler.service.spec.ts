@@ -1,5 +1,4 @@
 import { DOCUMENT } from '@angular/common';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { Validators } from '@angular/forms';
 import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
@@ -133,6 +132,10 @@ describe('FormErrorHandlerService', () => {
   });
 
   describe('handleValidationErrors', () => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
     it('sets errors for controls for a call validation error', () => {
       jest.spyOn(formGroup.controls.test_control_1, 'setErrors').mockImplementation();
       jest.spyOn(formGroup.controls.test_control_1, 'markAsTouched').mockImplementation();
@@ -195,16 +198,18 @@ describe('FormErrorHandlerService', () => {
       );
     });
 
-    it('scrolls element with an error into view', fakeAsync(() => {
+    it('scrolls element with an error into view', () => {
+      jest.useFakeTimers();
       spectator.service.handleValidationErrors(callError, formGroup);
 
-      tick();
+      jest.runOnlyPendingTimers();
 
       expect(elementMock.scrollIntoView).toHaveBeenCalledWith(expect.objectContaining({ block: 'center' }));
       expect(elementMock.focus).toHaveBeenCalled();
-    }));
+    });
 
-    it('focuses the native control inside a tn-* component host', fakeAsync(() => {
+    it('focuses the native control inside a tn-* component host', () => {
+      jest.useFakeTimers();
       // `data-control-name` sits on the tn-* component host, which carries no tabindex and so
       // ignores focus() — the focusable element is the native control it wraps.
       const innerInput = { focus: jest.fn() } as unknown as HTMLElement;
@@ -212,12 +217,12 @@ describe('FormErrorHandlerService', () => {
       (elementMock.querySelector as jest.Mock).mockReturnValueOnce(innerInput);
 
       spectator.service.handleValidationErrors(callError, formGroup);
-      tick();
+      jest.runOnlyPendingTimers();
 
       expect(elementMock.scrollIntoView).toHaveBeenCalled();
       expect(innerInput.focus).toHaveBeenCalled();
       expect(elementMock.focus).not.toHaveBeenCalled();
-    }));
+    });
 
     it('notifies EditableComponents through secure service', () => {
       spectator.service.handleValidationErrors(callError, formGroup);

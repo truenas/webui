@@ -1,4 +1,3 @@
-import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
@@ -93,7 +92,7 @@ describe('WidgetAppComponent', () => {
     });
   });
 
-  it('checks components', fakeAsync(() => {
+  it('checks components', () => {
     spectator.detectChanges();
     expect(spectator.query(AppControlsComponent)).toBeTruthy();
     expect(spectator.query(AppCardLogoComponent)).toBeTruthy();
@@ -102,5 +101,5 @@ describe('WidgetAppComponent', () => {
     expect(spectator.query(AppMemoryInfoComponent)).toBeTruthy();
     expect(spectator.query(AppNetworkInfoComponent)).toBeTruthy();
     expect(spectator.query(AppDiskInfoComponent)).toBeTruthy();
-  }));
+  });
 });

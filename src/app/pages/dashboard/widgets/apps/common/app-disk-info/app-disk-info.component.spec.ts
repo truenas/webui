@@ -1,4 +1,3 @@
-import { fakeAsync } from '@angular/core/testing';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -58,11 +57,11 @@ describe('AppDiskInfoComponent', () => {
     expect(chartComponent.unit).toBe('B');
   });
 
-  it('updates chart with delta of disk stats', fakeAsync(() => {
+  it('updates chart with delta of disk stats', () => {
     const chartComponent = spectator.query(RateChartComponent)!;
     expect(chartComponent).toBeTruthy();
 
-    spectator.tick(1);
+    spectator.detectChanges();
 
     // First measurement only sets baseline, doesn't add to chart
     let diskStats = spectator.component.diskStats();
@@ -82,10 +81,10 @@ describe('AppDiskInfoComponent', () => {
       },
     } as LoadingState<AppStats>);
 
-    spectator.tick(1);
+    spectator.detectChanges();
 
     diskStats = spectator.component.diskStats();
     // Last point should have the delta (100000 bytes for both read and write)
     expect(diskStats[diskStats.length - 1]).toEqual([100000, 100000]);
-  }));
+  });
 });

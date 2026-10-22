@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
@@ -160,15 +159,15 @@ describe('CloudBackupFormComponent', () => {
       expect(await useAbsolutePathsControl.isChecked()).toBe(false);
     });
 
-    it('does not call getBuckets when credentials value is ADD_NEW', fakeAsync(() => {
+    it('does not call getBuckets when credentials value is ADD_NEW', async () => {
       const cloudCredentialService = spectator.inject(CloudCredentialService);
       cloudCredentialService.getBuckets = jest.fn(() => of([]));
 
       spectator.component.form.controls.credentials.setValue(addNewSelectOptionValueType as unknown as number);
-      tick();
+      await spectator.fixture.whenStable();
 
       expect(cloudCredentialService.getBuckets).not.toHaveBeenCalled();
-    }));
+    });
 
     it('adds a new cloud backup task and creates a new bucket', async () => {
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="credentials"]' }))).selectOption('Storj (Storj)');

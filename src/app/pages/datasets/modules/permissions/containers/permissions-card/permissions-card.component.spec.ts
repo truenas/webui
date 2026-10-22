@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
@@ -186,7 +185,7 @@ describe('PermissionsCardComponent', () => {
     expect(spectator.fixture.nativeElement).toHaveText('Dataset has no mountpoint');
   });
 
-  it('shows nfs permissions when acltype is NFS', fakeAsync(() => {
+  it('shows nfs permissions when acltype is NFS', async () => {
     const acl = {
       trivial: false,
       acltype: AclType.Nfs4,
@@ -198,14 +197,14 @@ describe('PermissionsCardComponent', () => {
       ...dataset,
       mountpoint: '/mnt/test/nfs',
     });
-    spectator.tick();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
     const permissionsComponent = spectator.query(ViewNfsPermissionsComponent)!;
     expect(permissionsComponent).toExist();
     expect(permissionsComponent.acl).toBe(cardState().acl);
     expect(permissionsComponent.acl).toEqual(acl);
-  }));
+  });
 
   describe('edit button', () => {
     it('shows a button to edit permissions when dataset can be edited', async () => {

@@ -3,9 +3,7 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import {
   ChangeDetectionStrategy, Component, computed, signal,
 } from '@angular/core';
-import {
-  ComponentFixture, fakeAsync, TestBed, tick,
-} from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
@@ -539,7 +537,7 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
     (node) => node.componentInstance instanceof HostedIxFormComponent,
   ).componentInstance as HostedIxFormComponent;
 
-  // Read from the DOM rather than through a harness: harness calls await zone stability, which the
+  // Read from the DOM rather than through a harness: harness calls await app stability, which the
   // pending hold timer would block until it has already fired — exactly the window under test.
   // Queried from `document` because tn-side-panel renders its panel outside the fixture's host, and
   // addressed by `saveButtonSelector` so a second footer button can't shift what is read.
@@ -569,20 +567,26 @@ describe('FormSidePanelContainerComponent footer Save with a real <ix-form>', ()
     fixture.detectChanges();
   });
 
-  it('shows Saving… for as long as the production feedback hold runs', fakeAsync(() => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('shows Saving… for as long as the production feedback hold runs', () => {
     expect(getSaveLabel()).toBe('Save');
 
+    // Switched on after the panel rendered, so only the hold timer started by the submit is faked.
+    jest.useFakeTimers();
     getForm().submit();
     fixture.detectChanges();
 
     expect(getSaveLabel()).toBe('Saving…');
 
-    tick(defaultMinSubmitFeedbackMs - 1);
+    jest.advanceTimersByTime(defaultMinSubmitFeedbackMs - 1);
     fixture.detectChanges();
     expect(getSaveLabel()).toBe('Saving…');
 
-    tick(1);
+    jest.advanceTimersByTime(1);
     fixture.detectChanges();
     expect(getSaveLabel()).toBe('Save');
-  }));
+  });
 });

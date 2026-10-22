@@ -122,10 +122,11 @@ describe('CategoryViewComponent', () => {
   });
 
   it('applies a term typed on the page and mirrors it in the url', async () => {
-    // The harness stabilizes the fixture after typing, and the debounce timer is scheduled inside
-    // the Angular zone, so awaiting setValue already waits the term out - no sleep needed.
     const searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
+    jest.useFakeTimers();
     await searchInput.setValue('plex');
+    await jest.advanceTimersByTimeAsync(200);
+    jest.useRealTimers();
 
     expect(store$.applySearchQuery).toHaveBeenLastCalledWith('plex');
     expect(spectator.inject(Router).navigate).toHaveBeenLastCalledWith([], expect.objectContaining({

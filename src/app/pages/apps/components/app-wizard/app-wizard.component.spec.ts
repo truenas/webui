@@ -390,7 +390,10 @@ describe('AppWizardComponent', () => {
   });
 
   describe('Create app', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
+      // `show_if` relations are wired up and re-evaluated on `timer(0)` / `debounceTime(0)`, which
+      // nothing waits for without zone.js, so the tests advance them explicitly.
+      jest.useFakeTimers();
       spectator = createComponent({
         providers: [
           {
@@ -406,6 +409,11 @@ describe('AppWizardComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       spectator.inject(ApplicationsService);
+      await jest.runAllTimersAsync();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
     });
 
     it('navigates to app detail page if pool is not set', () => {
@@ -479,6 +487,7 @@ describe('AppWizardComponent', () => {
       expect(await swarmPort.getValue()).toBe('9401');
       expect(await updateStrategy.getInputValue()).toBe('Kill existing containers before creating new ones');
 
+      await jest.runAllTimersAsync();
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install' }));
       await saveButton.click();
 

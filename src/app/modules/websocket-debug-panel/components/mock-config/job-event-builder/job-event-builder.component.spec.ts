@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/dot-notation */
 /* eslint-disable jest/prefer-to-have-length */
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { JobState } from 'app/enums/job-state.enum';
@@ -162,7 +161,15 @@ describe('JobEventBuilderComponent', () => {
   });
 
   describe('form value changes', () => {
-    it('should emit events when form changes', fakeAsync(() => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('should emit events when form changes', () => {
       const eventsChangeSpy = jest.spyOn(spectator.component.eventsChange, 'emit');
 
       spectator.component['addEvent']();
@@ -170,7 +177,7 @@ describe('JobEventBuilderComponent', () => {
 
       eventControl.patchValue({ state: JobState.Failed, error: 'Test error' });
 
-      tick(350); // Wait for debounce
+      jest.advanceTimersByTime(350); // Wait for debounce
 
       expect(eventsChangeSpy).toHaveBeenCalledWith([
         expect.objectContaining({
@@ -181,9 +188,9 @@ describe('JobEventBuilderComponent', () => {
           }),
         }),
       ]);
-    }));
+    });
 
-    it('should emit events after input updates and debounce', fakeAsync(() => {
+    it('should emit events after input updates and debounce', () => {
       const eventsChangeSpy = jest.spyOn(spectator.component.eventsChange, 'emit');
 
       spectator.setInput('events', mockEvents);
@@ -192,7 +199,7 @@ describe('JobEventBuilderComponent', () => {
       // No immediate emission
       expect(eventsChangeSpy).not.toHaveBeenCalled();
 
-      tick(350); // Wait for debounce
+      jest.advanceTimersByTime(350); // Wait for debounce
 
       // Should emit after debounce - check that the emitted data has the expected structure
       expect(eventsChangeSpy).toHaveBeenCalled();
@@ -202,7 +209,7 @@ describe('JobEventBuilderComponent', () => {
       expect(emittedEvents[0].fields.state).toBe('RUNNING');
       expect(emittedEvents[1].delay).toBe(3000);
       expect(emittedEvents[1].fields.result).toEqual({ success: true, data: 'test' });
-    }));
+    });
   });
 
   describe('result visibility', () => {

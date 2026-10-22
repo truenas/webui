@@ -1,5 +1,7 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { ReactiveFormsModule, FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl, ReactiveFormsModule, FormArray, FormControl, FormGroup, Validators,
+} from '@angular/forms';
 import { createHostFactory, mockProvider, SpectatorHost } from '@ngneat/spectator/jest';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 
@@ -12,6 +14,12 @@ describe('IxErrorsComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [mockProvider(LiveAnnouncer)],
   });
+
+  /** Zoneless: the host template only re-renders once its view is marked dirty. */
+  function setControl(newControl: AbstractControl): void {
+    spectator.fixture.changeDetectorRef.markForCheck();
+    spectator.setHostInput('control', newControl);
+  }
 
   beforeEach(() => {
     spectator = createHost('<ix-errors [control]="control" [label]="label"></ix-errors>', {
@@ -46,7 +54,7 @@ describe('IxErrorsComponent', () => {
   it('displays errors immediately when control has errors on init', () => {
     const invalidControl = new FormControl(5, [Validators.min(10)]);
 
-    spectator.setHostInput('control', invalidControl);
+    setControl(invalidControl);
     spectator.detectComponentChanges();
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: Minimum value is 10');
@@ -61,7 +69,7 @@ describe('IxErrorsComponent', () => {
       asyncValidators: () => new Promise(() => {}),
     });
 
-    spectator.setHostInput('control', asyncControl);
+    setControl(asyncControl);
     spectator.detectComponentChanges();
 
     expect(spectator.inject(LiveAnnouncer).announce).not.toHaveBeenCalled();
@@ -70,7 +78,7 @@ describe('IxErrorsComponent', () => {
   it('clears errors when control becomes valid', () => {
     const dynamicControl = new FormControl('invalid', [Validators.minLength(10)]);
 
-    spectator.setHostInput('control', dynamicControl);
+    setControl(dynamicControl);
     spectator.detectComponentChanges();
 
     expect(spectator.inject(LiveAnnouncer).announce).toHaveBeenCalledWith('Errors in Name: The length of Name should be at least 10');
@@ -88,7 +96,7 @@ describe('IxErrorsComponent', () => {
 
     const emptyRequiredControl = new FormControl('', [Validators.required]);
 
-    spectator.setHostInput('control', emptyRequiredControl);
+    setControl(emptyRequiredControl);
     spectator.detectComponentChanges();
 
     expect(spectator.query('.form-error')).not.toExist();
@@ -98,7 +106,7 @@ describe('IxErrorsComponent', () => {
   it('does not mark control as touched when displaying initial errors', () => {
     const invalidControl = new FormControl(5, [Validators.min(10)]);
 
-    spectator.setHostInput('control', invalidControl);
+    setControl(invalidControl);
     spectator.detectComponentChanges();
 
     expect(invalidControl.touched).toBe(false);
@@ -111,7 +119,7 @@ describe('IxErrorsComponent', () => {
       errored.setErrors({ ixManualValidateError: { message: 'Custom error' } });
       // The whole block is behind `touched || dirty`, so an untouched control renders nothing.
       errored.markAsTouched();
-      spectator.setHostInput('control', errored);
+      setControl(errored);
       spectator.detectComponentChanges();
     }
 

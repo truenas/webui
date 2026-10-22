@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/dot-notation */
-import { ElementRef } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { firstValueFrom } from 'rxjs';
@@ -8,6 +7,13 @@ import { WebSocketDebugMessage, MessageDirection } from 'app/modules/websocket-d
 import * as WebSocketDebugActions from 'app/modules/websocket-debug-panel/store/websocket-debug.actions';
 import { selectMessages } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { MessageListComponent } from './message-list.component';
+
+/** Lets a promise chain settle — a rejection needs more than one microtask to reach `.catch()`. */
+function flushPromises(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve);
+  });
+}
 
 describe('MessageListComponent', () => {
   let spectator: Spectator<MessageListComponent>;
@@ -220,7 +226,7 @@ describe('MessageListComponent', () => {
       Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
 
       spectator.component['copyMessage'](copyTestMessage);
-      await Promise.resolve();
+      await flushPromises();
 
       expect(writeText).toHaveBeenCalledWith(JSON.stringify(copyTestMessage.message, null, 2));
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Message copied to clipboard');
@@ -232,7 +238,7 @@ describe('MessageListComponent', () => {
       Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
 
       spectator.component['copyMessage'](copyTestMessage);
-      await Promise.resolve();
+      await flushPromises();
 
       expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to copy message to clipboard');
       expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
@@ -244,15 +250,20 @@ describe('MessageListComponent', () => {
       expect(spectator.component.autoScroll).toBe(true);
     });
 
-    it('should setup auto-scroll subscription on init', async () => {
-      const mockViewport = {
-        nativeElement: {
-          scrollTop: 0,
-          scrollHeight: 1000,
-        },
-      } as ElementRef<HTMLDivElement>;
+    // The real viewport, with layout faked: jsdom computes no scroll geometry. Replacing the
+    // `messageViewport` query result with a stub doesn't hold — the next change detection
+    // re-resolves the view query back to the real element.
+    async function getViewport(): Promise<HTMLDivElement> {
+      // The viewport replaces the empty state once the first message batch has rendered.
+      await spectator.fixture.whenStable();
+      const viewport = spectator.query<HTMLDivElement>('.message-viewport')!;
+      Object.defineProperty(viewport, 'scrollHeight', { value: 1000, configurable: true });
+      Object.defineProperty(viewport, 'scrollTop', { value: 0, writable: true, configurable: true });
+      return viewport;
+    }
 
-      spectator.component['messageViewport'] = mockViewport;
+    it('should setup auto-scroll subscription on init', async () => {
+      const viewport = await getViewport();
       spectator.component.autoScroll = true;
 
       // Trigger ngAfterViewInit
@@ -262,18 +273,11 @@ describe('MessageListComponent', () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 150);
       });
-      expect(mockViewport.nativeElement.scrollTop).toBe(mockViewport.nativeElement.scrollHeight);
+      expect(viewport.scrollTop).toBe(viewport.scrollHeight);
     });
 
     it('should not scroll when auto-scroll is disabled', async () => {
-      const mockViewport = {
-        nativeElement: {
-          scrollTop: 0,
-          scrollHeight: 1000,
-        },
-      } as ElementRef<HTMLDivElement>;
-
-      spectator.component['messageViewport'] = mockViewport;
+      const viewport = await getViewport();
       spectator.component.autoScroll = false;
 
       // Trigger ngAfterViewInit
@@ -283,7 +287,7 @@ describe('MessageListComponent', () => {
       await new Promise((resolve) => {
         setTimeout(resolve, 150);
       });
-      expect(mockViewport.nativeElement.scrollTop).toBe(0);
+      expect(viewport.scrollTop).toBe(0);
     });
   });
 

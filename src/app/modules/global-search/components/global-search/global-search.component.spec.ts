@@ -1,6 +1,5 @@
 import { A11yModule } from '@angular/cdk/a11y';
 import { DialogRef } from '@angular/cdk/dialog';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { provideRouter } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
@@ -73,9 +72,14 @@ describe('GlobalSearchComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     jest.clearAllMocks();
+    jest.useFakeTimers();
   });
 
-  it('should update search results for "Filtered" input & show help section', fakeAsync(() => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('should update search results for "Filtered" input & show help section', () => {
     const inputElement = spectator.query('.search-input');
 
     const mockSearchMethod = spectator.inject(UiSearchProvider).search as unknown as jest.Mock;
@@ -90,7 +94,7 @@ describe('GlobalSearchComponent', () => {
     });
 
     spectator.typeInElement('Filtered', inputElement!);
-    tick(150);
+    jest.advanceTimersByTime(150);
     spectator.detectChanges();
 
     expect(spectator.component.searchResults).toEqual([
@@ -103,11 +107,11 @@ describe('GlobalSearchComponent', () => {
     ]);
 
     expect(spectator.component.searchResults).toHaveLength(2);
-  }));
+  });
 
   it(
     'should handle empty UI search results for "Unknown" input and show only "Documentation Search" section result',
-    fakeAsync(() => {
+    () => {
       const inputElement = spectator.query('.search-input');
 
       const mockSearchMethod = spectator.inject(UiSearchProvider).search as unknown as jest.Mock;
@@ -120,7 +124,7 @@ describe('GlobalSearchComponent', () => {
       });
 
       spectator.typeInElement('Unknown', inputElement!);
-      tick(150);
+      jest.advanceTimersByTime(150);
       spectator.detectChanges();
 
       expect(spectator.component.searchResults).toEqual([
@@ -131,7 +135,7 @@ describe('GlobalSearchComponent', () => {
         },
       ]);
       expect(spectator.component.searchResults).toHaveLength(1);
-    }),
+    },
   );
 
   it('should reset search input and results', () => {
@@ -145,7 +149,7 @@ describe('GlobalSearchComponent', () => {
     expect(document.activeElement).toBe(spectator.query('input'));
   });
 
-  it('submits the first result on Enter from the input (skips the reset button)', fakeAsync(() => {
+  it('submits the first result on Enter from the input (skips the reset button)', () => {
     const inputElement = spectator.query<HTMLInputElement>('.search-input');
 
     'Filtered'.split('').forEach((symbol) => {
@@ -154,7 +158,7 @@ describe('GlobalSearchComponent', () => {
       }
       spectator.dispatchKeyboardEvent(inputElement!, 'keydown', symbol);
     });
-    tick(150);
+    jest.advanceTimersByTime(150);
     spectator.detectChanges();
     expect(spectator.component.searchControl.value).toBe('Filtered');
     expect(spectator.component.searchResults).toHaveLength(3);
@@ -169,7 +173,7 @@ describe('GlobalSearchComponent', () => {
     // Reset button is right after the input in tab order; if Enter were
     // falling through to moveToNextFocusableElement it would clear the field.
     expect(spectator.component.searchControl.value).toBe('Filtered');
-  }));
+  });
 
   it('should close all backdrops', () => {
     const sidenavService = spectator.inject(SidenavService);

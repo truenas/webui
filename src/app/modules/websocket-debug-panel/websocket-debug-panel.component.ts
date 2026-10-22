@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -75,7 +75,8 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     { initialValue: 0 },
   );
 
-  protected panelWidth = panelWidthDefault;
+  /** A signal: it changes from a `document` mousemove listener, which nothing else would re-render. */
+  protected readonly panelWidth = signal(panelWidthDefault);
   private retryTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   ngOnInit(): void {
@@ -119,7 +120,7 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       if (adminLayout) {
         try {
           if (isOpen) {
-            this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth}px`);
+            this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth()}px`);
             this.renderer.setStyle(adminLayout, 'transition', 'margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1)');
           } else {
             this.renderer.removeStyle(adminLayout, 'margin-right');
@@ -177,12 +178,12 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   onResizeStart(event: MouseEvent): void {
     event.preventDefault();
     const startX = event.clientX;
-    const startWidth = this.panelWidth;
+    const startWidth = this.panelWidth();
 
     const handleMouseMove = (moveEvent: MouseEvent): void => {
       const diff = startX - moveEvent.clientX;
-      this.panelWidth = Math.max(panelWidthMin, Math.min(panelWidthMax, startWidth + diff));
-      document.documentElement.style.setProperty('--debug-panel-width', `${this.panelWidth}px`);
+      this.panelWidth.set(Math.max(panelWidthMin, Math.min(panelWidthMax, startWidth + diff)));
+      document.documentElement.style.setProperty('--debug-panel-width', `${this.panelWidth()}px`);
 
       // Update admin layout margin if panel is open
       if (this.isPanelOpen()) {

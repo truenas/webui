@@ -203,8 +203,7 @@
     "typescript-eslint": "~8.71.1",
     "utility-types": "~3.11.0",
     "uuid": "~14.0.2",
-    "vinyl": "~3.0.0",
-    "zone.js": "~0.15.0"
+    "vinyl": "~3.0.0"
   },
   "lint-staged": {
     "*.{ts,html}": [

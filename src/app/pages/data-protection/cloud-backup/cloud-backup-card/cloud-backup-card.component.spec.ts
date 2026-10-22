@@ -285,7 +285,11 @@ describe('CloudBackupCardComponent', () => {
     const [toggle1, toggle2] = await loader.getAllHarnesses(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
 
     expect(spectator.component.dataProvider.load).toHaveBeenCalledTimes(0);
-    await Promise.all([toggle1.check(), toggle2.check()]);
+    jest.useFakeTimers();
+    const checked = Promise.all([toggle1.check(), toggle2.check()]);
+    await jest.advanceTimersByTimeAsync(10);
+    await checked;
+    jest.useRealTimers();
 
     expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'cloud_backup.update',

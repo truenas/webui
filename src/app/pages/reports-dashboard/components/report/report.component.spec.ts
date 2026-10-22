@@ -167,8 +167,9 @@ describe('ReportComponent', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (spectator.component as any).resizeChart();
 
-      // Fast-forward timers to trigger the setTimeout in resizeChart
-      jest.runAllTimers();
+      // Fast-forward only the setTimeout(0) in resizeChart. Running every timer would also fire the
+      // 1s `isReady` timeout, and the zoneless scheduler would then render the real line chart.
+      jest.advanceTimersByTime(0);
 
       expect(mockLineChart.resize).toHaveBeenCalled();
     });

@@ -78,6 +78,7 @@ describe('AvailableAppsHeaderComponent', () => {
   });
 
   beforeEach(async () => {
+    jest.useFakeTimers();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
@@ -90,6 +91,10 @@ describe('AvailableAppsHeaderComponent', () => {
     appsFilterStore = spectator.inject(AppsFilterStore);
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('checks the displayed numbers', () => {
     const numbers = spectator.queryAll('.header-number h2');
 
@@ -99,11 +104,14 @@ describe('AvailableAppsHeaderComponent', () => {
 
   it('calls applySearchQuery when user types in the search input', async () => {
     await searchInput.setValue('search string');
+    await jest.advanceTimersByTimeAsync(200);
+
     expect(appsFilterStore.applySearchQuery).toHaveBeenLastCalledWith('search string');
   });
 
   it('calls applyFilters when user selects sort', async () => {
     await sortItems.setValue(['Updated Date']);
+    await jest.advanceTimersByTimeAsync(400);
 
     expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       sort: AppsFiltersSort.LastUpdate,
@@ -121,7 +129,7 @@ describe('AvailableAppsHeaderComponent', () => {
       await categoriesSelect.removeChip(category);
     }
     await categoriesSelect.addChip('storage');
-    await spectator.fixture.whenStable();
+    await jest.advanceTimersByTimeAsync(400);
 
     expect(appsFilterStore.applyFilters).toHaveBeenLastCalledWith({
       sort: null,
