@@ -47,7 +47,9 @@ const statusTimeoutMs = 2 * 60_000;
  */
 let appsOnSomebodyElsesPool = false;
 
-test.beforeAll(async ({ api }) => {
+test.beforeAll(async ({ api, appsPool: sharedPool }) => {
+  // The other apps specs share `e2e_apps` through the fixture; it has to go before these build their own.
+  await sharedPool.release();
   const { pool: appsPool } = await readDocker(api);
   appsOnSomebodyElsesPool = appsPool !== null && appsPool !== pool;
 });

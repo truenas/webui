@@ -19,11 +19,10 @@
  *
  * ## Setup
  *
- * Apps run on `e2e_apps`, set up once for the file as `apps-custom-yaml.e2e.ts` does it. BusyBox
- * 1.36 is pulled once and kept for the file; the extra images are pulled by the tests that need
- * them. Teardown deletes the three apps with their images kept, because the other two may still run
- * the same one, and then deletes the extra images; BusyBox 1.36, the Apps pool and the pool go after
- * the last test.
+ * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
+ * per worker. BusyBox 1.36 is pulled once and kept for the file; the extra images are pulled by the
+ * tests that need them. Teardown deletes the three apps with their images kept, because the other two
+ * may still run the same one, and then deletes the extra images; BusyBox 1.36 goes after the last test.
  *
  * Not covered: Update All Selected (`apps-bulk-update.e2e.ts`), select-all, a selection with a search filter, the
  * narrow layout's cards, Remove iXVolumes, which needs a catalog app with ix-volumes, and Force.
@@ -32,16 +31,11 @@ import type { Page } from '@playwright/test';
 import {
   appInstallTimeoutMs,
   ensureAppAbsent,
-  ensureAppsPoolUnset,
   findAppStartJobIds,
   readAppState,
-  readDocker,
   seedCustomApp,
-  setAppsPool,
 } from '../fixtures/apps';
 import { ensureImageAbsent, ensureImagePresent, findImageId } from '../fixtures/container-images';
-import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import { openAppsBulkMenu } from '../flows/apps';
 import { confirmBatchImageDelete, goToContainerImages, openBatchImageDelete } from '../flows/container-images';
 import { goToApps } from '../flows/navigation';
@@ -57,9 +51,6 @@ import type { E2eApiClient } from '../support/api/client';
 import { type CleanupStep, leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 import { slowCallTimeoutMs } from '../support/timeouts';
-
-/** Built, given to Apps and destroyed here. Not a name any other spec looks for. */
-const pool = 'e2e_apps';
 
 /** Acted on. They sort before the bystander, and in this order. */
 const appA = 'e2e-bulk-a';
@@ -85,8 +76,9 @@ const compose = [
 ].join('\n');
 
 /**
- * Apps on a pool this spec did not make is somebody's. Unsetting it, which teardown does, would
- * stop their apps, so the spec does not run there. On the CI appliance Apps has no pool.
+ * Apps on a pool the suite did not make is somebody's. Moving Apps off it onto the shared pool would
+ * stop their apps, so `appsPool.ensure` leaves it and the spec does not run there. On the CI
+ * appliance Apps has no pool.
  */
 let appsOnSomebodyElsesPool = false;
 
@@ -119,29 +111,23 @@ async function expectJobDialogsClosed(page: Page): Promise<void> {
   await expect(page.locator(jobDialogLocators.title)).toHaveCount(0, { timeout: appInstallTimeoutMs });
 }
 
-test.beforeAll(async ({ api }) => {
-  const { pool: appsPool } = await readDocker(api);
-  appsOnSomebodyElsesPool = appsPool !== null && appsPool !== pool;
+test.beforeAll(async ({ api, appsPool }) => {
+  appsOnSomebodyElsesPool = !(await appsPool.ensure());
   if (appsOnSomebodyElsesPool) {
     return;
   }
 
-  // In this order: the apps and images are on `e2e_apps/ix-apps`, and Docker keeps the pool busy.
+  // What a run of this spec left on the shared pool, if its cleanup failed.
   await runCleanupSteps([
     ...deleteAppsSteps(api),
     ...deleteImagesSteps(api, [...extraImages, sharedImage]),
   ]);
-  await ensureAppsPoolUnset(api);
-  await ensurePoolAbsent(api, pool);
-  await requireUnusedDisks(api, 1);
-  await ensurePoolPresent(api, pool);
-  await setAppsPool(api, pool);
   await ensureImagePresent(api, sharedImage);
 });
 
 test.beforeEach(async ({ api }) => {
-  // Apps on another pool is a developer's own setup, and teardown would unset it.
-  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool this spec did not create.');
+  // Apps on another pool is a developer's own setup, which moving Apps onto `e2e_apps` would stop.
+  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool the suite did not create.');
 
   await runCleanupSteps([...deleteAppsSteps(api), ...deleteImagesSteps(api, extraImages)]);
 });
@@ -155,16 +141,13 @@ test.afterEach(async ({ api }) => {
 });
 
 test.afterAll(async ({ api }) => {
-  if (appsOnSomebodyElsesPool || leavingTestData(`image "${sharedImage}", pool "${pool}" and the Apps pool`)) {
+  if (appsOnSomebodyElsesPool || leavingTestData(`apps ${apps.join(', ')} and image "${sharedImage}"`)) {
     return;
   }
 
-  // In this order: the export fails while Docker holds `e2e_apps/ix-apps`.
   await runCleanupSteps([
     ...deleteAppsSteps(api),
     ...deleteImagesSteps(api, [...extraImages, sharedImage]),
-    ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
-    [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
   ]);
 });
 

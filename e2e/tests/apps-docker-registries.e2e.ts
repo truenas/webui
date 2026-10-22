@@ -19,16 +19,14 @@
  *
  * ## Setup
  *
- * The menu item is disabled until Apps has a pool, so Apps runs on `e2e_apps`, a one-disk pool
- * built, given to Apps and destroyed here, as `apps-install.e2e.ts` does. It is set up once for the
- * file: moving Apps onto a pool takes minutes, and no test here changes it. Every registry name the
- * spec uses is deleted before and after each test, and Apps is unset and the pool exported after
- * the last.
+ * The menu item is disabled until Apps has a pool, so Apps runs on `e2e_apps`, the pool the apps
+ * specs share through the `appsPool` fixture, built once per worker: moving Apps onto a pool takes
+ * minutes, and no test here changes it. Every registry name the spec uses is deleted before and
+ * after each test.
  *
  * Not covered: signing in to Docker Hub, the Docker Hub rate-limit dialog, pulling with registry
  * credentials, and the list's search, sorting and column picker.
  */
-import { ensureAppsPoolUnset, readDocker, setAppsPool } from '../fixtures/apps';
 import {
   ensureRegistryAbsent,
   findRegistry,
@@ -37,8 +35,6 @@ import {
   seedRegistry,
   type RegistryProbe,
 } from '../fixtures/docker-registries';
-import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import {
   addRegistry, deleteRegistry, goToDockerRegistries, openOtherRegistryForm, saveRegistry,
 } from '../flows/docker-registries';
@@ -47,9 +43,6 @@ import { dockerRegistriesLocators, dockerRegistryFormLocators } from '../locator
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
-
-/** Built, given to Apps and destroyed here. The same name `apps-install.e2e.ts` uses. */
-const pool = 'e2e_apps';
 
 const registryName = 'e2e-registry';
 const renamedRegistryName = 'e2e-registry-renamed';
@@ -65,7 +58,7 @@ const schemelessUri = 'registry.e2e.invalid';
 const wellFormedUri = `https://${schemelessUri}`;
 const patternMessage = 'Invalid format or character';
 
-/** As in `apps-install.e2e.ts`: Apps on a pool this spec did not make is somebody's. */
+/** As in `apps-install.e2e.ts`: Apps on a pool the suite did not make is somebody's. */
 let appsOnSomebodyElsesPool = false;
 
 /** Undefined until `beforeAll` has looked. */
@@ -87,27 +80,19 @@ function removeRegistries(api: E2eApiClient): CleanupStep[] {
   ]);
 }
 
-test.beforeAll(async ({ api }) => {
-  const { pool: appsPool } = await readDocker(api);
-  appsOnSomebodyElsesPool = appsPool !== null && appsPool !== pool;
+test.beforeAll(async ({ api, appsPool }) => {
+  appsOnSomebodyElsesPool = !(await appsPool.ensure());
   if (appsOnSomebodyElsesPool) {
     return;
   }
-
-  // In this order: Docker keeps `e2e_apps/ix-apps` busy, so the pool cannot go while Apps uses it.
-  await ensureAppsPoolUnset(api);
-  await ensurePoolAbsent(api, pool);
-  await requireUnusedDisks(api, 1);
-  await ensurePoolPresent(api, pool);
-  await setAppsPool(api, pool);
 
   // Docker has to be running for any `app.registry.*` call, which it is once Apps has a pool.
   probe = await findRegistryAcceptingAnyLogin(api, probeName);
 });
 
 test.beforeEach(async ({ api }) => {
-  // Apps on another pool is a developer's own setup, and teardown would unset it.
-  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool this spec did not create.');
+  // Apps on another pool is a developer's own setup, which moving Apps onto `e2e_apps` would stop.
+  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool the suite did not create.');
 
   await runCleanupSteps(removeRegistries(api));
 });
@@ -121,16 +106,12 @@ test.afterEach(async ({ api }) => {
 });
 
 test.afterAll(async ({ api }) => {
-  if (appsOnSomebodyElsesPool || leavingTestData(`pool "${pool}" and the Apps pool`)) {
+  if (appsOnSomebodyElsesPool || leavingTestData(`registries ${registryNames.join(', ')}`)) {
     return;
   }
 
-  // In this order: the registries need Docker, and the export fails while Docker holds the pool.
-  await runCleanupSteps([
-    ...removeRegistries(api),
-    ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
-    [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
-  ]);
+  // The registries need Docker, which stays up on the shared pool.
+  await runCleanupSteps(removeRegistries(api));
 });
 
 test('an admin adds a registry, and it is listed under the URI middleware stored', async ({ page, api }) => {
