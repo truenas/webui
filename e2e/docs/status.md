@@ -166,4 +166,4 @@ comment instead.
 | T5 | Authentication via a setup project plus `storageState` — the `storageState` half was dropped 2026-09-08: the app rotates the persisted token into a five-minute single-use one, so the snapshot carried exactly one test. Each authenticated test now signs in through the token URL in the `page` fixture |
 | T10 | Configuration through target profiles, resolved in one module |
 | D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
-| D2 | Parallel execution by sharding across appliances — deferred |
+| D2 | Parallel execution by sharding across appliances — two shards by default since 2026-10-22 |

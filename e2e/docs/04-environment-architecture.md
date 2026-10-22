@@ -624,7 +624,7 @@ arrangement possible on an appliance at all.
 
 **Sharding is native.** Playwright accepts `--shard=i/n`, and a matrix job maps
 onto it directly: each leg claims one appliance, so **E2**'s appliance count
-*is* the matrix size. No bespoke orchestration. Not yet used: one shard.
+*is* the matrix size. No bespoke orchestration. Two shards by default.
 
 **The concurrency guard is declarative.** §0.1's problem — two runs against one
 appliance destroying each other — is a `concurrency:` group. It is also how
