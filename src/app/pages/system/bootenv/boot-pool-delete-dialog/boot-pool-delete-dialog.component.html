@@ -41,7 +41,7 @@
     }
   </form>
 
-  <ix-form-actions tnDialogAction>
+  <ix-form-actions tnDialogAction tnTestIdType="actions" [tnTestId]="'boot-pool-delete'">
     @if (!isJobCompleted()) {
       <tn-button
         variant="outline"
