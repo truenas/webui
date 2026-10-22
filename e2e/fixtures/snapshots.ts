@@ -140,6 +140,18 @@ export async function ensureSnapshotPresent(client: E2eApiClient, dataset: strin
 }
 
 /**
+ * Places a hold on a snapshot, so that destroying it is refused until the hold
+ * is released. {@link ensureSnapshotsAbsent} releases it.
+ *
+ * For a hold a test depends on. Holding through the UI is `snapshot-list.e2e.ts`'s.
+ */
+export async function holdSnapshot(client: E2eApiClient, dataset: string, name: string): Promise<void> {
+  await firstValueFrom(
+    client.api.call('pool.snapshot.hold', [snapshotId(dataset, name)]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
  * Clones a snapshot to a new dataset, `datasetDst` by full name.
  *
  * For a clone a test acts *on*. Cloning through the UI is `snapshot-list.e2e.ts`'s.

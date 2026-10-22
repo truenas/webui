@@ -6,7 +6,8 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
-import { snapshotLocators } from '../locators/snapshots';
+import { selectRow } from './table';
+import { snapshotLocators, snapshotRowTag } from '../locators/snapshots';
 import { datasetLocators } from '../locators/storage';
 
 /** How long the datasets tree, or the snapshot list, may take to render. */
@@ -98,6 +99,50 @@ export async function confirmAndSubmitRollback(page: Page): Promise<void> {
   await expect(submit).toBeEnabled();
 
   await submit.click();
+}
+
+/**
+ * Ticks the rows of some of a dataset's snapshots, from the list already open,
+ * and opens the batch-delete dialog on them from the Batch Operations toolbar.
+ */
+export async function openBatchDeleteDialog(page: Page, dataset: string, names: string[]): Promise<void> {
+  for (const name of names) {
+    await expect(page.locator(snapshotLocators.list.row(dataset, name))).toBeVisible({ timeout: pageSettleTimeoutMs });
+    await selectRow(page, snapshotRowTag(dataset, name));
+  }
+
+  await page.locator(snapshotLocators.list.deleteSelected).click();
+  await expect(page.locator(snapshotLocators.batchDeleteDialog.title)).toBeVisible();
+}
+
+/**
+ * Ticks Confirm and submits the open batch-delete dialog.
+ *
+ * Asserts the gate on the way through, as {@link confirmAndSubmitRollback} does.
+ * Stops at the click — what the dialog reports next is the caller's claim.
+ */
+export async function confirmAndSubmitBatchDelete(page: Page): Promise<void> {
+  const submit = page.locator(snapshotLocators.batchDeleteDialog.submit);
+
+  await expect(submit).toBeDisabled();
+  await page.locator(snapshotLocators.batchDeleteDialog.confirm).click();
+  await expect(submit).toBeEnabled();
+
+  await submit.click();
+}
+
+/**
+ * Waits for the batch-delete job to finish, then closes the dialog by Close.
+ *
+ * "Go to Storage" replaces the form whatever the outcome, so it is the sign the
+ * job has answered — success or not is for the caller to read before this.
+ */
+export async function closeBatchDeleteDialog(page: Page): Promise<void> {
+  const dialog = snapshotLocators.batchDeleteDialog;
+
+  await expect(page.locator(dialog.goToStorage)).toBeVisible({ timeout: actionTimeoutMs });
+  await page.locator(dialog.close).click();
+  await expect(page.locator(dialog.title)).toBeHidden();
 }
 
 /** Waits for the rollback dialog to report success, then closes it. */
