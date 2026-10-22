@@ -167,3 +167,24 @@ export async function ensureActiveDirectoryLeft(client: E2eApiClient, ad: Active
     await ensureDirectoryServicesCleared(client);
   });
 }
+
+/**
+ * Joins the domain as `hostname` unless the appliance is already in it and
+ * healthy, for a test that only needs to start joined. `directory-services-ad`
+ * leaves its join test's domain joined for the leave test, and a join costs
+ * minutes; this joins only when that test did not run first or did not get
+ * there. The nameservers must point at the domain already.
+ */
+export async function ensureActiveDirectoryJoined(
+  client: E2eApiClient,
+  ad: ActiveDirectoryTarget,
+  hostname: string,
+): Promise<void> {
+  const { status } = await readDirectoryServices(client);
+  if (status.type === 'ACTIVEDIRECTORY' && status.status === 'HEALTHY') {
+    return;
+  }
+  // A `FAULTED` join still holds a computer account, and a stored configuration blocks a fresh one.
+  await ensureActiveDirectoryLeft(client, ad);
+  await joinActiveDirectory(client, ad, hostname);
+}
