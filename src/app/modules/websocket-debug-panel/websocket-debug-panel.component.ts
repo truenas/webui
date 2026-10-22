@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, NgZone, OnDestroy, OnInit, Renderer2, signal,
+  ChangeDetectionStrategy, Component, DestroyRef, inject, OnDestroy, OnInit, Renderer2, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -59,7 +59,6 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
   private store$ = inject(Store);
   private renderer = inject(Renderer2);
   private document = inject<Document>(DOCUMENT);
-  private ngZone = inject(NgZone);
   // Ensure the service is instantiated
   enclosureMockService = inject(EnclosureMockService);
   private destroyRef = inject(DestroyRef);
@@ -88,17 +87,13 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
     // The service is injected in constructor, so it's already created
 
     // Restore panel state from localStorage asynchronously
-    this.ngZone.runOutsideAngular(() => {
-      Promise.resolve().then(() => {
-        const isOpen = safeGetItem<boolean>(storageKeys.PANEL_OPEN, false);
-        if (isOpen) {
-          this.ngZone.run(() => {
-            this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
-            // Immediately try to update margin when restoring panel state
-            this.updateAdminLayoutMargin(true);
-          });
-        }
-      });
+    Promise.resolve().then(() => {
+      const isOpen = safeGetItem<boolean>(storageKeys.PANEL_OPEN, false);
+      if (isOpen) {
+        this.store$.dispatch(WebSocketDebugActions.setPanelOpen({ isOpen }));
+        // Immediately try to update margin when restoring panel state
+        this.updateAdminLayoutMargin(true);
+      }
     });
 
     // Manage body margin when panel opens/closes
@@ -114,30 +109,27 @@ export class WebSocketDebugPanelComponent implements OnInit, OnDestroy {
       this.retryTimeoutId = null;
     }
 
-    // Run outside Angular to avoid unnecessary change detection
-    this.ngZone.runOutsideAngular(() => {
-      const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
-      if (adminLayout) {
-        try {
-          if (isOpen) {
-            this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth()}px`);
-            this.renderer.setStyle(adminLayout, 'transition', 'margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1)');
-          } else {
-            this.renderer.removeStyle(adminLayout, 'margin-right');
-            this.renderer.removeStyle(adminLayout, 'transition');
-          }
-        } catch (error) {
-          console.warn('Failed to update admin layout margin:', error);
+    const adminLayout = this.document.querySelector('.fn-maincontent') as HTMLElement;
+    if (adminLayout) {
+      try {
+        if (isOpen) {
+          this.renderer.setStyle(adminLayout, 'margin-right', `${this.panelWidth()}px`);
+          this.renderer.setStyle(adminLayout, 'transition', 'margin-right 300ms cubic-bezier(0.4, 0, 0.2, 1)');
+        } else {
+          this.renderer.removeStyle(adminLayout, 'margin-right');
+          this.renderer.removeStyle(adminLayout, 'transition');
         }
-      } else if (isOpen && retryCount < maxRetryAttempts) {
-        // If admin layout is not found yet and panel should be open, try again
-        // Use exponential backoff for better performance
-        const delay = Math.min(retryIntervalMs * (1.5 ** Math.floor(retryCount / 5)), 1000);
-        this.retryTimeoutId = setTimeout(() => {
-          this.updateAdminLayoutMargin(isOpen, retryCount + 1);
-        }, delay);
+      } catch (error) {
+        console.warn('Failed to update admin layout margin:', error);
       }
-    });
+    } else if (isOpen && retryCount < maxRetryAttempts) {
+      // If admin layout is not found yet and panel should be open, try again
+      // Use exponential backoff for better performance
+      const delay = Math.min(retryIntervalMs * (1.5 ** Math.floor(retryCount / 5)), 1000);
+      this.retryTimeoutId = setTimeout(() => {
+        this.updateAdminLayoutMargin(isOpen, retryCount + 1);
+      }, delay);
+    }
   }
 
   ngOnDestroy(): void {

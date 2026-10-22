@@ -101,6 +101,8 @@ export class MyComponent {
 
 **Dynamic Components**: Use `inputBinding('prop', () => value)` with `createComponent` instead of `componentRef.setInput()`.
 
+**Zoneless**: The app runs without zone.js (`provideZonelessChangeDetection()`), so nothing re-renders just because a timer, promise or event fired. State a template reads must be a signal, or the code that writes it must call `cdr.markForCheck()` — this matters for plain fields written from `subscribe`, `setTimeout`, promises, `document`/`window` listeners and third-party callbacks. Nothing lints for it. Don't add `NgZone` (`run`/`runOutsideAngular` are no-ops).
+
 ## Testing Guidelines
 - Cover main happy paths.
 - Write tests using Jest and Spectator.
@@ -109,6 +111,7 @@ export class MyComponent {
 - When mocking data, always provide minimally sufficient number of properties in the object and use `as Interface` casting. Do NOT provide full objects.
 - When mocking services, `mockProvider(MyService)` without mocking specific methods is usually enough.
 - Do not use done callbacks - use async/await
+- Specs run zoneless too: `fakeAsync`/`tick`/`flush` don't work. Use Jest fake timers (`jest.useFakeTimers()` + `jest.advanceTimersByTime[Async]`) or `await fixture.whenStable()`. `whenStable()` waits for mocked API answers but not for timers, debounces or tooltip delays — advance those explicitly.
 
 ## Branch and Commit Guidelines
 - Branch naming: `NAS-<issue number>` (e.g., `NAS-12345`) when a ticket exists; otherwise a short descriptive name.
