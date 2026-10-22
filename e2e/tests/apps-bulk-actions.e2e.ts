@@ -300,7 +300,6 @@ test('an admin deletes two unused container images at once, and the image in use
 
   // More than one image, so the dialog stays and reports.
   await expect(page.locator(deleteImageDialogLocators.deletedCount)).toHaveText(
-    // The template's plural reads "have"; the string catalog still holds an older "has".
     /^\s*2 docker images (has|have) been deleted\.\s*$/,
   );
   await expect(page.locator(deleteImageDialogLocators.failedCount)).toBeHidden();
