@@ -187,7 +187,8 @@ const singleApplianceProjects = [
    */
   {
     // One worker at a time among these specs, and the `applianceLane` mutex
-    // for the moment Playwright briefly runs two (see `serial` below).
+    // for the moment Playwright briefly runs two (see `serial` below). Each
+    // spec sets `laneSpec`, for a worker, and so a turn, of its own.
     name: 'data-protection',
     workers: 1,
     testDir: './e2e/tests',
@@ -355,6 +356,9 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
    */
   workers: target.ha ? 1 : workerCount,
   fullyParallel: false,
+
+  /** Exports the suite's pool when only shared workers used it — see the file. */
+  globalTeardown: './e2e/support/global-teardown.ts',
 
   /**
    * R8.2 — one retry absorbs environmental noise in CI; it does not hide flakes.

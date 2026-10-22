@@ -55,6 +55,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'ssh-connections' });
+
 /** Created through the form, never over the API — that is the thing under test. */
 const manualName = 'e2e-sshcon-manual';
 const semiAutomaticName = 'e2e-sshcon-semi';

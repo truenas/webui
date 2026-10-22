@@ -54,6 +54,8 @@ import { replicationTaskLocators } from '../locators/replication-tasks';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'replication-ssh' });
+
 /** A run of one empty dataset over loopback SSH is seconds; this is room for a slow appliance. */
 const runTimeoutMs = 120_000;
 

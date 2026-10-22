@@ -70,6 +70,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'periodic-snapshot-tasks' });
+
 /** Snapshotted by a task created through the form, never over the API — that is the thing under test. */
 const createdLeaf = 'e2e_snaptask_created';
 

@@ -54,6 +54,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'cloud-sync-task-list' });
+
 /** The task an action is aimed at. */
 const targetDescription = 'E2E cloud sync list target';
 

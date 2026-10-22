@@ -46,6 +46,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'snapshot-task-list' });
+
 /** Snapshotted by the task an action is aimed at. */
 const targetLeaf = 'e2e_snaplist_target';
 const targetNamingSchema = 'e2e-snaplist-target-%Y-%m-%d_%H-%M';

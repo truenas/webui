@@ -19,8 +19,10 @@
  * behind the holder, which is what a limit would have done.
  *
  * Separately, {@link withRunMutex} keeps a *lane* — a set of shared specs that
- * break each other but nothing else, the `data-protection` project — to one test
- * at a time. That one is per test, so it cannot be held by an idle worker.
+ * break each other but nothing else, the `data-protection` project — to one spec
+ * file at a time. It is held for the worker's life too, and each spec of a lane
+ * gets a worker of its own, so that life is one file — see `laneSpec` in
+ * `support/fixtures.ts`.
  *
  * Ordering is the scheduler's job; correctness is this lock's. The config lists
  * the shared projects before the exclusive ones, and Playwright hands out
@@ -65,7 +67,7 @@
  * is checked against a live pid and a dead one's is cleared.
  */
 import {
-  mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync,
+  existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, rmSync, writeFileSync,
 } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -74,6 +76,13 @@ export type ApplianceAccess = 'shared' | 'exclusive';
 
 const lockDirVar = 'TN_APPLIANCE_LOCK_DIR';
 const pollMs = 500;
+
+/**
+ * How long a worker waits for the lock or its lane. An exclusive worker waits
+ * out every shared one, which is a large part of the run, not a hang, so the
+ * per-test ceiling is the wrong bound for it.
+ */
+export const lockWaitTimeoutMs = 3 * 60 * 60_000;
 
 /**
  * Makes this run's lock directory, once, in the runner process.
@@ -262,4 +271,22 @@ export async function withRunMutex<T>(name: string, fn: () => Promise<T>): Promi
   } finally {
     rmSync(dir, { recursive: true, force: true });
   }
+}
+
+function sharedPoolMarker(): string {
+  return join(lockDir(), 'shared-pool');
+}
+
+/**
+ * Records that a shared worker was handed the suite's own pool. No shared
+ * worker exports it — another may still be using it — so this is what tells
+ * `support/global-teardown.ts` to, once every worker has stopped.
+ */
+export function markSharedPoolUsed(): void {
+  writeFileSync(sharedPoolMarker(), '');
+}
+
+/** Whether {@link markSharedPoolUsed} was called by any worker of this run. */
+export function wasSharedPoolUsed(): boolean {
+  return existsSync(sharedPoolMarker());
 }

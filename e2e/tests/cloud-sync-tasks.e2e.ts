@@ -72,6 +72,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'cloud-sync-tasks' });
+
 /** Made through the wizard, never over the API — that is the thing under test. */
 const createdDescription = 'E2E cloud sync created';
 const pulledDescription = 'E2E cloud sync pulled';

@@ -43,6 +43,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'dataset-snapshot-tasks-link' });
+
 /** The dataset whose card the journey starts on. */
 const targetLeaf = 'e2e_dstasks_target';
 const targetNamingSchema = 'e2e-dstasks-target-%Y-%m-%d_%H-%M';

@@ -58,6 +58,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'data-protection-dashboard' });
+
 /** What every card's task points at: the snapshot task's dataset, and the rsync and cloud sync tasks' path. */
 const taskLeaf = 'e2e_dpdash_task';
 

@@ -30,6 +30,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'snapshot-task-validation' });
+
 /** The dataset every test picks in the form. */
 const datasetLeaf = 'e2e_snapval_ds';
 

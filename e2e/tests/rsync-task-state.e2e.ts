@@ -45,6 +45,8 @@ import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { errorDialogClose } from '../support/constants';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'rsync-task-state' });
+
 /** A refused connection fails at once and a one-file push is seconds; this is room for a slow appliance. */
 const runTimeoutMs = 120_000;
 

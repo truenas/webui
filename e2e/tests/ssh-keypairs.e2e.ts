@@ -22,6 +22,8 @@ import { sshKeypairLocators } from '../locators/ssh-keypairs';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'ssh-keypairs' });
+
 /** Created through the form, never over the API — that is the thing under test. */
 const generatedKeypair = 'e2e-keypair-generated';
 

@@ -21,6 +21,8 @@ import { replicationLocators } from '../locators/replication';
 import { leavingTestData } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'replication-settings' });
+
 /** What the appliance held before this file ran, and therefore what `afterEach` writes back. */
 let found: ReplicationTasksLimit | undefined;
 

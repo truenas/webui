@@ -43,6 +43,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'rsync-tasks' });
+
 const user = 'root';
 
 /** Synced by a task created through the form, never over the API — that is the thing under test. */

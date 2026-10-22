@@ -45,6 +45,8 @@ import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { errorDialogClose } from '../support/constants';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'cloud-credentials' });
+
 /** Verify's answer is the only signal the form gives for a valid credential — see `verifyCloudCredential`. */
 test.use({ recordApiCalls: true });
 

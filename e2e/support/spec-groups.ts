@@ -122,6 +122,9 @@ export const parallelSpecs = specGlobs([
  * cloud sync or TrueCloud Backup tasks, cloud credentials, SSH keypairs or
  * connections — or touches SSH or root's keys belongs here or in `serial`,
  * never in {@link parallelSpecs}.
+ *
+ * Each spec here also sets `test.use({ laneSpec: '<its name>' })`, for a worker
+ * of its own — see `laneSpec` in `support/fixtures.ts`.
  */
 export const dataProtectionSpecs = specGlobs([
   'cloud-backup-tasks',

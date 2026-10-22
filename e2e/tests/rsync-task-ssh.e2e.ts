@@ -54,6 +54,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'rsync-task-ssh' });
+
 /** A pull of one small file over loopback SSH is seconds; this is room for a slow appliance. */
 const runTimeoutMs = 120_000;
 

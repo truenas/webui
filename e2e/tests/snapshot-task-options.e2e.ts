@@ -38,6 +38,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'snapshot-task-options' });
+
 /** Snapshotted recursively, with {@link skipChild} excluded and {@link keepChild} left in. */
 const parentLeaf = 'e2e_snapx_parent';
 const keepChild = `${parentLeaf}/keep`;

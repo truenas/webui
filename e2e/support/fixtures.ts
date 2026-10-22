@@ -17,12 +17,15 @@
  * shell — see the `page` override below for why that is done per test rather
  * than once through `storageState`.
  */
+import { basename } from 'node:path';
 import { expect, type Page, test as base } from '@playwright/test';
 import type { E2eApiClient } from './api/client';
 import { connectAndLogin } from './api/client';
 import { clearRateLimit, enablePrivateMethods } from './api/rate-limit';
 import { recordApiCalls } from './api-calls';
-import { acquireApplianceLock, type ApplianceAccess, withRunMutex } from './appliance-lock';
+import {
+  acquireApplianceLock, type ApplianceAccess, lockWaitTimeoutMs, markSharedPoolUsed, withRunMutex,
+} from './appliance-lock';
 import { buildTokenLoginUrl, generateAuthToken } from './auth/token';
 import { keepTestData } from './cleanup';
 import { loadTargetConfig, type TargetConfig, throughVip } from './config';
@@ -31,7 +34,7 @@ import {
 } from './constants';
 import { CoverageRecorder } from './coverage';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
-import { poolLifecycle } from '../fixtures/pool';
+import { poolLifecycle, suiteOwnedPoolName } from '../fixtures/pool';
 
 /**
  * The wall-clock budget for signing in, how long one attempt may wait for the
@@ -171,21 +174,11 @@ export interface E2eTestOptions {
    * `test.use`. See `support/api-calls.ts`.
    */
   recordApiCalls: boolean;
-  /**
-   * A lane this test takes turns in with every other test of the same lane, on
-   * any worker: the `data-protection` project sets one. Undefined for none.
-   *
-   * The project's own one-worker limit already does this, except for the moment
-   * Playwright briefly runs two of its workers — see the `serial` project in
-   * `playwright.config.ts`. Per test, unlike the appliance lock, so a worker
-   * left idle by that cannot hold it.
-   */
-  applianceLane: string | undefined;
 }
 
 interface E2eTestFixtures {
-  /** Held for the test, when it has a lane. */
-  applianceLaneLock: void;
+  /** Fails a test of a lane whose spec does not set `laneSpec` to its own name. */
+  laneSpecCheck: void;
 }
 
 export interface E2eWorkerFixtures {
@@ -205,6 +198,31 @@ export interface E2eWorkerFixtures {
   applianceAccess: ApplianceAccess;
   /** Held for the worker's life, before anything touches the appliance. */
   applianceLock: void;
+  /**
+   * A lane this worker takes turns in with every other worker of the same
+   * lane: the `data-protection` project sets one. Undefined for none.
+   *
+   * The project's own one-worker limit already does this, except for the moment
+   * Playwright briefly runs two of its workers — see the `serial` project in
+   * `playwright.config.ts`.
+   */
+  applianceLane: string | undefined;
+  /**
+   * The spec's own name, set with `test.use` by every spec of a lane:
+   *
+   *     test.use({ laneSpec: 'rsync-task-run' });
+   *
+   * A worker-scoped option a spec sets gives that spec a worker of its own, so
+   * the lane, held for the worker's life, covers exactly one spec file — its
+   * `beforeAll` and `afterAll` included — and is let go as soon as the file is
+   * done, because Playwright stops a worker nothing else queued can use. Held
+   * by a worker shared between files, an idle holder would deadlock the lane:
+   * the project's limit counts the worker waiting for it, so the holder could
+   * take no more of the queue, nor stop while the queue was not empty.
+   */
+  laneSpec: string | undefined;
+  /** Held for the worker's life, when it has a lane. */
+  applianceLaneLock: void;
   /** Resolved target configuration for this run. */
   config: TargetConfig;
   /**
@@ -256,15 +274,16 @@ export interface E2eWorkerFixtures {
 export const test = base.extend<E2eTestOptions & E2eTestFixtures, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
   recordApiCalls: [false, { option: true }],
-  applianceLane: [undefined, { option: true }],
-
-  applianceLaneLock: [
-    async ({ applianceLane }, use) => {
-      if (!applianceLane) {
-        await use();
-        return;
+  laneSpecCheck: [
+    async ({ applianceLane, laneSpec }, use, testInfo) => {
+      const spec = basename(testInfo.file, '.e2e.ts');
+      if (applianceLane && laneSpec !== spec) {
+        throw new Error(
+          `${spec} runs in the "${applianceLane}" lane, so it needs \`test.use({ laneSpec: '${spec}' })\` `
+          + 'at its top level, for a worker of its own. See `laneSpec` in e2e/support/fixtures.ts.',
+        );
       }
-      await withRunMutex(`lane-${applianceLane}`, () => use());
+      await use();
     },
     { auto: true },
   ],
@@ -285,7 +304,24 @@ export const test = base.extend<E2eTestOptions & E2eTestFixtures, E2eWorkerFixtu
     // An exclusive worker waits for every parallel worker to finish, and the
     // two exclusive projects take turns — the wait is the serial half of the
     // run, not a hang, so the per-test ceiling is the wrong bound for it.
-    { scope: 'worker', auto: true, timeout: 3 * 60 * 60_000 },
+    { scope: 'worker', auto: true, timeout: lockWaitTimeoutMs },
+  ],
+
+  applianceLane: [undefined, { option: true, scope: 'worker' }],
+
+  laneSpec: [undefined, { option: true, scope: 'worker' }],
+
+  applianceLaneLock: [
+    // After `applianceLock`, so a worker queues for its lane already holding its
+    // share, and a serial spec cannot slip in between the two.
+    async ({ applianceLane, applianceLock: _ }, use) => {
+      if (!applianceLane) {
+        await use();
+        return;
+      }
+      await withRunMutex(`lane-${applianceLane}`, () => use());
+    },
+    { scope: 'worker', auto: true, timeout: lockWaitTimeoutMs },
   ],
 
   config: [
@@ -323,10 +359,14 @@ export const test = base.extend<E2eTestOptions & E2eTestFixtures, E2eWorkerFixtu
       const lifecycle = poolLifecycle();
       if (applianceAccess === 'shared') {
         // Parallel workers start together, and each would find no pool and
-        // build one. One builds it; the rest find it. None exports it: the
-        // others may still have datasets on it, and the serial project's
-        // worker, which has the appliance to itself, releases it at the end.
-        await use(await withRunMutex('pool', () => lifecycle.provide(api)));
+        // build one. One builds it; the rest find it. None exports it, since
+        // the others may still have datasets on it: `support/global-teardown.ts`
+        // does, once every worker has stopped.
+        const name = await withRunMutex('pool', () => lifecycle.provide(api));
+        if (name === suiteOwnedPoolName) {
+          markSharedPoolUsed();
+        }
+        await use(name);
         return;
       }
 

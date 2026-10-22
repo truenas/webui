@@ -49,6 +49,8 @@ import { apiCallsTo } from '../support/api-calls';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'snapshot-task-retention' });
+
 const targetLeaf = 'e2e_snapret_target';
 
 /** What the edit form asks middleware each time a field that bears on retention settles. */

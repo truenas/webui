@@ -46,6 +46,8 @@ import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'replication-task-list' });
+
 /** A run of one empty dataset is seconds; this is room for a slow appliance, not an estimate. */
 const runTimeoutMs = 120_000;
 

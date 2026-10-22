@@ -346,6 +346,11 @@ Listing a spec also makes a promise for the others there. A card check like
 `certificates`' holds only while every other spec creating certificates stays
 unlisted, so adding one that does breaks a spec you did not touch.
 
+A spec added to `dataProtectionSpecs` also needs `test.use({ laneSpec: '<its
+name>' })` after its imports, which gives it a worker of its own so the lane
+covers its `beforeAll` and `afterAll`. Its tests fail with that line spelled out
+until it has it.
+
 ## Layout
 
 ```

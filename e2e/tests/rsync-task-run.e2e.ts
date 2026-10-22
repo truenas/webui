@@ -43,6 +43,8 @@ import { rsyncTaskLocators } from '../locators/rsync-tasks';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'rsync-task-run' });
+
 /** A push of one small file over loopback SSH is seconds; this is room for a slow appliance. */
 const runTimeoutMs = 120_000;
 

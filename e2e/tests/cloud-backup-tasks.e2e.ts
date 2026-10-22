@@ -18,6 +18,8 @@ import { cloudBackupLocators } from '../locators/cloud-backup';
 import type { E2eApiClient } from '../support/api/client';
 import { expect, test } from '../support/fixtures';
 
+test.use({ laneSpec: 'cloud-backup-tasks' });
+
 /**
  * What a field shows once its required validator has refused it. Matched loosely
  * because the wording is the form field's, from the component library, and
