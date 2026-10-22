@@ -22,12 +22,15 @@
  * domain and often a controller, so everything here runs inside
  * {@link withActiveDirectoryRedacted}, and so must a spec's tests and hooks.
  */
+import { expect } from '@playwright/test';
 import type { JobParams } from '@truenas/api-client';
 import { escapeRegExp } from 'lodash-es';
+import { firstValueFrom, timeout } from 'rxjs';
 import { ensureDirectoryServicesCleared, readDirectoryServices } from './directory-services';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import type { ActiveDirectoryTarget } from '../support/config';
 import { runJob } from '../support/jobs';
+import { readTimeoutMs } from '../support/timeouts';
 
 type KerberosUserCredential = JobParams<E2eApiDirectory, 'directoryservices.leave'>[0]['credential'];
 
@@ -141,6 +144,38 @@ export async function joinActiveDirectory(
   ));
 }
 
+/** The directory services jobs still running or queued, by method. */
+async function directoryServicesJobsInFlight(client: E2eApiClient): Promise<string[]> {
+  const jobs = await firstValueFrom(
+    client.api.query('core.get_jobs', [['state', 'in', ['RUNNING', 'WAITING']]]).pipe(timeout(readTimeoutMs)),
+  );
+  return jobs.map((job) => job.method).filter((method) => method.startsWith('directoryservices.'));
+}
+
+/**
+ * Waits until no directory services job is running or queued.
+ *
+ * A join can report the domain healthy before the work it starts is done, such as filling the
+ * account cache from the domain. A leave started from the card right after a join through the form
+ * outlived the Leave dialog's five minutes, twice, and queueing behind that work is the likeliest
+ * reason. A status read meanwhile can be neither joined nor left, which `ensureActiveDirectoryLeft`
+ * would take for left. What it waited for is logged, by method only, so a run shows which it was.
+ */
+export async function waitForDirectoryServicesJobs(client: E2eApiClient): Promise<void> {
+  const inFlight = await directoryServicesJobsInFlight(client);
+  if (inFlight.length === 0) {
+    return;
+  }
+
+  const start = Date.now();
+  await expect.poll(() => directoryServicesJobsInFlight(client), {
+    message: `directory services jobs still running: ${inFlight.join(', ')}`,
+    timeout: adJoinTimeoutMs,
+    intervals: [500, 1_000, 2_000],
+  }).toEqual([]);
+  console.warn(`Waited ${Math.round((Date.now() - start) / 1000)}s for ${inFlight.join(', ')} to finish.`);
+}
+
 /**
  * Leaves the domain if the appliance is in it, then clears the configuration.
  * A no-op on the baseline, so it is safe in `beforeEach` as well.
@@ -150,6 +185,7 @@ export async function joinActiveDirectory(
  */
 export async function ensureActiveDirectoryLeft(client: E2eApiClient, ad: ActiveDirectoryTarget): Promise<void> {
   await withActiveDirectoryRedacted(ad, async () => {
+    await waitForDirectoryServicesJobs(client);
     const { status } = await readDirectoryServices(client);
     const joined = status.type === 'ACTIVEDIRECTORY' && (status.status === 'HEALTHY' || status.status === 'FAULTED');
 
@@ -180,6 +216,8 @@ export async function ensureActiveDirectoryJoined(
   ad: ActiveDirectoryTarget,
   hostname: string,
 ): Promise<void> {
+  // Settled first, whoever joined: the leave this sets up queues behind whatever the join started.
+  await waitForDirectoryServicesJobs(client);
   const { status } = await readDirectoryServices(client);
   if (status.type === 'ACTIVEDIRECTORY' && status.status === 'HEALTHY') {
     return;
