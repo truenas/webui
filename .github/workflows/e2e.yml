@@ -88,9 +88,9 @@ on:
       shards:
         description: >-
           How many runners, each with its own appliance, to split the suite
-          across (Playwright's --shard). One until sharding is measured.
+          across (Playwright's --shard). Two by default, on every run.
         type: number
-        default: 1
+        default: 2
 
 # Reads code, uploads artifacts, and reads the WebUI workflow's runs and
 # artifacts for its build of the UI. No reason to write to the repository.
@@ -115,7 +115,7 @@ jobs:
     steps:
       - id: shards
         env:
-          SHARDS: ${{ inputs.shards || 1 }}
+          SHARDS: ${{ inputs.shards || 2 }}
         run: |
           echo "total=$SHARDS" >> "$GITHUB_OUTPUT"
           echo "shards=$(jq -cn --argjson n "$SHARDS" '[range(1; $n + 1)]')" >> "$GITHUB_OUTPUT"
@@ -133,7 +133,8 @@ jobs:
     # Bounded so that a hang gives the runner back in two hours, not GitHub's
     # 360-minute default. It was 90 until the one-shard suite outgrew it: from
     # 2026-10-20 a master run took 91 minutes and was cancelled after its last
-    # test, with no report. When a green run nears this again, shard instead.
+    # test, with no report. Two shards since; when a green shard nears this
+    # again, add a shard rather than raise it.
     timeout-minutes: 120
 
     # The steps e2e-ha.yml shares are the e2e-* and webui-dist actions under
