@@ -101,6 +101,19 @@ export const diskFormLocators = {
   ),
 
   save: '[data-test="button-save"]',
+  closePanel: '[data-test="button-close-side-panel"]',
+} as const;
+
+/**
+ * The Bulk Edit Disks side panel, opened by Edit Disks with two or more rows
+ * ticked. Its two selects carry the same ids as the single form's, so
+ * `diskFormLocators.hddStandby*`, `advPowerManagement*` and `save` apply to it.
+ */
+export const diskBulkEditLocators = {
+  /** One per disk the panel will edit. `[tnTestId]="['bulk-edit-disk', diskName]"`. */
+  disk: (disk: string): string => `[data-test="text-bulk-edit-disk-${kebabTestSegment(disk)}"]`,
+  /** Any of them, to say that a panel is not the bulk one. */
+  anyDisk: '[data-test^="text-bulk-edit-disk-"]',
 } as const;
 
 /**
