@@ -24,8 +24,10 @@
  *
  * - `call`: a request until its reply, or until the caller stopped waiting.
  *   Starting a job counts as one, up to the job id.
- * - `job`: a job from its start until the suite saw it finish, through
- *   `runJob` or the client's own `trackJob`.
+ * - `job`: a job from its start until `runJob` saw it finish. Not `trackJob`
+ *   on its own: `runJob` follows every job with it, to end its waits early,
+ *   and the span would be the same job twice. The suite starts no job any
+ *   other way.
  *
  * Opening a connection and signing it in is a `call` named
  * {@link connectMethod}, since `withClient` pays it every time.
@@ -64,11 +66,10 @@ export interface MiddlewareTiming {
   parallelIndex?: number;
 }
 
-/** `TrueNasApi` members this patches, two of them private to the package. */
+/** `TrueNasApi` members this patches, one of them private to the package. */
 interface PatchableApi {
   dispatch(method: string, params: unknown): Observable<unknown>;
   callAndGetJobId(method: string, ...params: unknown[]): Observable<number>;
-  trackJob(jobId: number): Observable<unknown>;
 }
 
 const parallelIndex = process.env.TEST_PARALLEL_INDEX === undefined
@@ -141,7 +142,6 @@ export function timeMiddleware(client: E2eApiClient): void {
   const api = client.api as unknown as PatchableApi;
   const dispatch = api.dispatch.bind(api);
   const callAndGetJobId = api.callAndGetJobId.bind(api);
-  const trackJob = api.trackJob.bind(api);
 
   api.dispatch = (method, params) => timed('call', () => method, dispatch(method, params));
   api.callAndGetJobId = (method, ...params) => timed(
@@ -149,5 +149,4 @@ export function timeMiddleware(client: E2eApiClient): void {
     () => method,
     callAndGetJobId(method, ...params).pipe(tap((jobId) => jobMethods.set(jobId, method))),
   );
-  api.trackJob = (jobId) => timed('job', () => jobMethod(jobId), trackJob(jobId));
 }
