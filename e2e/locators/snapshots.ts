@@ -11,9 +11,12 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
  *
  * Through lodash, whole — `toUniqueRowTag` pre-normalizes the tag before the
  * library sees it — so `e2e_tank/data@first` is `e-2-e-tank-data-first`. See
- * `locators/test-id.ts`.
+ * `locators/test-id.ts`. Exported for the controls `tn-table` draws on the row
+ * (`locators/table.ts`).
  */
-const rowTag = (dataset: string, name: string): string => legacyKebabTestSegment(`snapshot-${dataset}@${name}`);
+export function snapshotRowTag(dataset: string, name: string): string {
+  return legacyKebabTestSegment(`snapshot-${dataset}@${name}`);
+}
 
 export const snapshotLocators = {
   /**
@@ -52,15 +55,50 @@ export const snapshotLocators = {
     search: '[data-test="input-search"]',
 
     /** A snapshot's row. */
-    row: (dataset: string, name: string): string => `[data-test="row-${rowTag(dataset, name)}"]`,
+    row: (dataset: string, name: string): string => `[data-test="row-${snapshotRowTag(dataset, name)}"]`,
 
     /**
      * A row's Snapshot cell. What to click to expand the row: a click anywhere
      * on it does the same, but the row's first cell is its selection tick box.
      */
     nameCell: (dataset: string, name: string): string => (
-      `[data-test="text-snapshot-${rowTag(dataset, name)}-row-text"]`
+      `[data-test="text-snapshot-${snapshotRowTag(dataset, name)}-row-text"]`
     ),
+
+    /**
+     * "Delete" in the Batch Operations toolbar. The toolbar is drawn only while
+     * at least one row is ticked; tick rows with `selectRow` from `flows/table.ts`.
+     */
+    deleteSelected: '[data-test="button-delete-selected"]',
+  },
+
+  /** The dialog Batch Operations' Delete opens on the ticked rows. */
+  batchDeleteDialog: {
+    title: '[data-test="dialog-title-snapshot-batch-delete"]',
+
+    /** A dataset's heading. The snapshots are grouped under the dataset they belong to. */
+    dataset: (dataset: string): string => `[data-test="text-snapshot-dataset-${kebabTestSegment(dataset)}"]`,
+    /** A snapshot's line, by its short name — the part after `@`. */
+    snapshot: (name: string): string => `[data-test="text-snapshot-${kebabTestSegment(name)}"]`,
+
+    /** "Confirm". Required: Delete stays disabled until it is ticked. */
+    confirm: '[data-test="checkbox-confirm"]',
+    submit: '[data-test="button-delete"]',
+    cancel: '[data-test="button-cancel"]',
+
+    /**
+     * The result, in place of the form once the job has finished. The dialog
+     * stays open on it until Close; it does not close by itself.
+     */
+    success: '[data-test="text-snapshot-delete-success"]',
+    /** "Warning: N of M snapshots could not be deleted." — when any of them failed. */
+    warning: '[data-test="text-snapshot-delete-warning"]',
+    /** Middleware's own error for each snapshot that failed, beneath the warning. */
+    errors: '[data-test="text-snapshot-delete-errors"]',
+
+    /** Rendered only once the job has finished. Navigates away; Close is the exit. */
+    goToStorage: '[data-test="button-go-to-storage"]',
+    close: '[data-test="button-close"]',
   },
 
   /**
