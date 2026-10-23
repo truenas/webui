@@ -149,8 +149,8 @@ describe('ReplicationWizardComponent', () => {
     await setTnCheckbox('recursive', false);
     await setTnCheckbox('custom_snapshots', true);
     await setTnInput('name_regex', '.*');
-    await (await loader.getHarness(IxExplorerHarness.with({ label: 'Source' }))).setValue(['pool1/', 'pool2/']);
-    await (await loader.getHarness(IxExplorerHarness.with({ label: 'Destination' }))).setValue('pool3/');
+    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['pool1/', 'pool2/']);
+    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
 
     await goToNextStep();
 
@@ -224,8 +224,8 @@ describe('ReplicationWizardComponent', () => {
     await setTnCheckbox('recursive', false);
     await setTnCheckbox('custom_snapshots', true);
     await setTnInput('name_regex', '.*');
-    await (await loader.getHarness(IxExplorerHarness.with({ label: 'Source' }))).setValue(['pool1/']);
-    await (await loader.getHarness(IxExplorerHarness.with({ label: 'Destination' }))).setValue('pool3/');
+    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['pool1/']);
+    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
 
     await goToNextStep();
 

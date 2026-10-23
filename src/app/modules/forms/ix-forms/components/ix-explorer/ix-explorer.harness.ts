@@ -1,33 +1,28 @@
 import { BaseHarnessFilters, ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
-import { IxLabelHarness } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.harness';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
-export interface IxExplorerHarnessFilters extends BaseHarnessFilters {
-  /**
-   * Optional: an explorer projected into a `<tn-form-field>` renders no label of its own, so those
-   * are located by the inherited `selector` filter instead (e.g. `[formControlName="path"]`).
-   */
-  label?: string;
-}
+/**
+ * The explorer has no label of its own — the wrapping `<tn-form-field>` owns it — so locate one
+ * with the inherited `selector` filter, e.g. `[formControlName="path"]`.
+ */
+export type IxExplorerHarnessFilters = BaseHarnessFilters;
 
 export class IxExplorerHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-explorer';
 
   static with(options: IxExplorerHarnessFilters = {}): HarnessPredicate<IxExplorerHarness> {
-    return new HarnessPredicate(IxExplorerHarness, options)
-      .addOption('label', options.label, (harness, label) => HarnessPredicate.stringMatches(harness.getLabelText(), label));
+    return new HarnessPredicate(IxExplorerHarness, options);
   }
 
   getInput = this.locatorFor('tn-file-picker input');
-  getErrorText = getErrorText;
 
-  async getLabelText(): Promise<string> {
-    const label = await this.locatorForOptional(IxLabelHarness)();
-    if (!label) {
-      return '';
-    }
-    return label.getLabel();
+  /**
+   * Always '': the explorer renders no label of its own, so the enclosing `tn-form-field` is what
+   * names it. `TnFormControlHarness` reads the label off that field and only delegates the *value*
+   * here, so nothing asks this for a name.
+   */
+  getLabelText(): Promise<string> {
+    return Promise.resolve('');
   }
 
   async getValue(): Promise<string> {

@@ -88,10 +88,6 @@ describe('SmbFormComponent', () => {
   } as SmbShare;
   const existingShareEntry = existingShare as unknown as WebUiQueryEntity<'sharing.smb.query'>;
 
-  const formLabels: Record<string, string> = {
-    path: 'Path',
-  };
-
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
   let api: TypedApiService;
@@ -240,7 +236,7 @@ describe('SmbFormComponent', () => {
    * `Path` stays an ix-explorer; the rest are tn-* controls driven via their harnesses.
    */
   async function applyCommonValues(): Promise<void> {
-    const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+    const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
     await pathControl.setValue('/mnt/pool123/ds222');
     await (await getTnInput('name')).setValue('Default');
     await (await getTnInput('comment')).setValue('Description');
@@ -292,7 +288,7 @@ describe('SmbFormComponent', () => {
         state: ServiceStatus.Running,
       } as Service]);
 
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/new');
 
       await clickSave();
@@ -318,7 +314,7 @@ describe('SmbFormComponent', () => {
         state: ServiceStatus.Running,
       } as Service]);
 
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/new');
 
       await clickSave();
@@ -332,7 +328,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should show strip acl warning if acl is trivial when path changes', async () => {
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool2/ds22');
 
       // Wait for path change to be processed and ACL checkbox to appear
@@ -656,7 +652,7 @@ describe('SmbFormComponent', () => {
       expect(await (await getTnChipInput('hostsdeny')).getChips()).toEqual([]);
       expect(await (await getTnCheckbox('aapl_name_mangling')).isChecked()).toBe(true);
 
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       expect(await pathControl.getValue()).toBe('/mnt/pool123/ds222');
     });
 
@@ -785,7 +781,7 @@ describe('SmbFormComponent', () => {
     it('toggle between Basic/Advanced fields when corresponding buttons are pressed', async () => {
       // Start with advanced options visible because we opened it in beforeEach
       expect(await (await getTnSelect('purpose')).getDisplayText()).toBe('Default Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       expect(pathControl).toBeTruthy();
       expect(await getTnInput('name')).toBeTruthy();
       expect(await getTnInput('comment')).toBeTruthy();
@@ -852,7 +848,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.form.controls.name.value).toBeFalsy();
       expect(spectator.component.form.controls.name.dirty).toBeFalsy();
 
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool2/ds22');
 
       // Wait for debounced changes to trigger autofill
@@ -883,7 +879,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should change purpose to External when path contains IP address/share format', async () => {
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       const purposeControl = await getTnSelect('purpose');
 
       // Initially should be Default Share
@@ -903,7 +899,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should change purpose to External when path starts with EXTERNAL prefix', async () => {
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       const purposeControl = await getTnSelect('purpose');
 
       expect(await purposeControl.getDisplayText()).toBe('Default Share');
@@ -920,7 +916,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should change purpose to External when path starts with EXTERNAL only', async () => {
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       const purposeControl = await getTnSelect('purpose');
 
       expect(await purposeControl.getDisplayText()).toBe('Default Share');
@@ -980,7 +976,7 @@ describe('SmbFormComponent', () => {
 
     it('calls handleValidationErrors when an error occurs during save', async () => {
       jest.spyOn(console, 'warn').mockImplementation();
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/ds222');
       await (await getTnInput('name')).setValue('test-share');
       await selectPurpose('Default Share');
@@ -1056,7 +1052,7 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Legacy Share');
 
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool2/ds22');
 
       // Wait for path change to be processed
@@ -1085,7 +1081,7 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Default Share');
 
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: 'Path' }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool2/ds22');
 
       // Default shares don't have ACL checkbox, so this simulates the scenario
@@ -1152,7 +1148,7 @@ describe('SmbFormComponent', () => {
 
     it('should disable save button when audit logging is enabled without groups', async () => {
       // Fill in required fields first
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1167,7 +1163,7 @@ describe('SmbFormComponent', () => {
 
     it('should enable save button when group is added to watch list', async () => {
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1192,7 +1188,7 @@ describe('SmbFormComponent', () => {
 
     it('should enable save button when group is added to ignore list', async () => {
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1217,7 +1213,7 @@ describe('SmbFormComponent', () => {
 
     it('should enable save button when audit logging is disabled', async () => {
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1241,7 +1237,7 @@ describe('SmbFormComponent', () => {
 
     it('should display error message when audit logging is enabled without groups', async () => {
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1256,7 +1252,7 @@ describe('SmbFormComponent', () => {
 
     it('should re-validate and show error when group is added then removed (reactivity)', async () => {
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1294,7 +1290,7 @@ describe('SmbFormComponent', () => {
       spectator.inject(MockTypedApiService).mockQuery('group.query', []);
 
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1330,7 +1326,7 @@ describe('SmbFormComponent', () => {
       spectator.inject(MockTypedApiService).mockQuery('group.query', []);
 
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1372,7 +1368,7 @@ describe('SmbFormComponent', () => {
       } as Group));
 
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1414,7 +1410,7 @@ describe('SmbFormComponent', () => {
       userService.isGroupCachedAsNonExistent = jest.fn(() => false);
 
       // Fill in required fields and enable audit logging
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/test');
       await (await getTnInput('name')).setValue('TestShare');
       await selectPurpose('Default Share');
@@ -1461,7 +1457,7 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/time-machine');
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
@@ -1476,7 +1472,7 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/time-machine');
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
@@ -1499,7 +1495,7 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/time-machine');
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
@@ -1525,7 +1521,7 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/time-machine');
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
@@ -1557,7 +1553,7 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/time-machine');
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
@@ -1603,7 +1599,7 @@ describe('SmbFormComponent', () => {
       await setupTest();
 
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/time-machine');
       await (await getTnInput('name')).setValue('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
@@ -1647,7 +1643,7 @@ describe('SmbFormComponent', () => {
     it('should disable submit button when extensions warning is shown', async () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/timemachine');
       await (await getTnInput('name')).setValue('timemachine');
 
@@ -1673,7 +1669,7 @@ describe('SmbFormComponent', () => {
     it('should enable submit button after extensions are enabled', async () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
       await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/timemachine');
       await (await getTnInput('name')).setValue('timemachine');
 
@@ -1705,7 +1701,7 @@ describe('SmbFormComponent', () => {
     it('should show warning reactively when switching between purposes requiring extensions', async () => {
       // Start with Default Share (no warning)
       await selectPurpose('Default Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool/default');
       await (await getTnInput('name')).setValue('default');
 
@@ -1774,7 +1770,7 @@ describe('SmbFormComponent', () => {
 
     it('should disable save button when grace_period is below minimum (60)', async () => {
       await selectPurpose('Time Locked Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/locked');
       await (await getTnInput('name')).setValue('locked-share');
       await (await getTnInput('grace_period')).setValue('59');
@@ -1784,7 +1780,7 @@ describe('SmbFormComponent', () => {
 
     it('should disable save button when grace_period is above maximum (15552000)', async () => {
       await selectPurpose('Time Locked Share');
-      const pathControl = await loader.getHarness(IxExplorerHarness.with({ label: formLabels.path }));
+      const pathControl = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
       await pathControl.setValue('/mnt/pool123/locked');
       await (await getTnInput('name')).setValue('locked-share');
       await (await getTnInput('grace_period')).setValue('15552001');

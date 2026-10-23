@@ -3,13 +3,11 @@ import { TnCheckboxHarness } from '@truenas/ui-components';
 import { PosixPermission } from 'app/enums/posix-acl.enum';
 import { parseMode } from 'app/helpers/mode.helper';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
 export class IxPermissionsHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-permissions';
 
   getCheckboxHarnesses = this.locatorForAll(TnCheckboxHarness);
-  getErrorText = getErrorText;
 
   /**
    * Always '': the control renders no label of its own since it became a bare control, so the

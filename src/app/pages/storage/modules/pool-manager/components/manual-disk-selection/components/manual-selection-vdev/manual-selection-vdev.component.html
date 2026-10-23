@@ -85,10 +85,7 @@
       }
     </div>
     @if (editable()) {
-      <ix-label
-        class="drag-hint"
-        [label]="'Drag & drop disks to add or remove them' | translate"
-      ></ix-label>
+      <p class="drag-hint">{{ 'Drag & drop disks to add or remove them' | translate }}</p>
     }
 
     @if (vdevErrorMessage) {

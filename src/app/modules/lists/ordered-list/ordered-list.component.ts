@@ -7,6 +7,7 @@ import { NgControl } from '@angular/forms';
 import { ControlValueAccessor } from '@ngneat/reactive-forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  injectTnFormFieldAria,
   TnIconComponent,
   TnListComponent,
   TnListIconDirective,
@@ -15,10 +16,7 @@ import {
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 interface OrderedOption extends Option {
   /**
@@ -37,7 +35,6 @@ interface OrderedOption extends Option {
   templateUrl: 'ordered-list.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxLabelComponent,
     CdkDropList,
     CdkDrag,
     TnListComponent,
@@ -45,7 +42,6 @@ interface OrderedOption extends Option {
     TnListItemComponent,
     TnSlideToggleComponent,
     TnIconComponent,
-    IxErrorsComponent,
     TranslateModule,
   ],
 })
@@ -54,9 +50,11 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  readonly label = input<TranslatedString>();
-  readonly tooltip = input<TranslatedString>();
-  readonly required = input(false);
+  /**
+   * Label, tooltip, required marker and validation message all come from the wrapping
+   * `<tn-form-field>`; these link the list to them for assistive technology.
+   */
+  protected readonly aria = injectTnFormFieldAria();
 
   readonly options = input.required<Observable<Option[]>>();
   readonly minHeight = input('100px');

@@ -1,16 +1,19 @@
 <tn-form-section [heading]="'Destination' | translate" [formGroup]="form">
-  <ix-explorer
-    formControlName="target_dataset"
+  <tn-form-field
     [label]="'Destination' | translate"
-    [required]="true"
-    [rootNodes]="emptyRootNode"
     [tooltip]="helptext.targetDatasetTooltip | translate"
-    [nodeProvider]="nodeProvider()"
+    [required]="true"
   >
-    @if (isLocal()) {
-      <ix-explorer-create-dataset></ix-explorer-create-dataset>
-    }
-  </ix-explorer>
+    <ix-explorer
+      formControlName="target_dataset"
+      [rootNodes]="emptyRootNode"
+      [nodeProvider]="nodeProvider()"
+    >
+      @if (isLocal()) {
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      }
+    </ix-explorer>
+  </tn-form-field>
   <tn-form-field
     [label]="'Destination Dataset Read-only Policy' | translate"
     [tooltip]="helptext.readonlyTooltip | translate"

@@ -143,17 +143,6 @@
     margin-bottom: 10px;
   }
 
-  // `ix-errors` renders each message through [innerHTML], so the injected markup
-  // carries no component scope attribute and the component's own styles can't reach
-  // it. Colour the messages (and any links inside them) from here instead.
-  ix-errors .error-message {
-    color: var(--error);
-
-    a {
-      text-decoration: underline;
-    }
-  }
-
   /// Slide-in menu ///////////////////////////////
 
   .nav-list .sidebar-list-item {

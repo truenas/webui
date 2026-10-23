@@ -14,13 +14,17 @@
     </div>
 
     <tn-form-section>
-      <ix-explorer
-        formControlName="destinationDir"
+      <tn-form-field
+        [testId]="'destination-dir'"
         [label]="'Destination Directory' | translate"
-        [required]="true"
-        [nodeProvider]="treeNodeProvider"
         [tooltip]="'Select the directory where the disk image will be exported' | translate"
-      ></ix-explorer>
+        [required]="true"
+      >
+        <ix-explorer
+          formControlName="destinationDir"
+          [nodeProvider]="treeNodeProvider"
+        ></ix-explorer>
+      </tn-form-field>
 
       <tn-form-field
         [label]="'Image Name' | translate"

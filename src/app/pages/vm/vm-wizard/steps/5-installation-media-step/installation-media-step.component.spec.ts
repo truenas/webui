@@ -6,7 +6,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnDialog, TnStepperComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { InstallationMediaStepComponent } from './installation-media-step.component';
@@ -14,7 +14,7 @@ import { InstallationMediaStepComponent } from './installation-media-step.compon
 describe('InstallationMediaStepComponent', () => {
   let spectator: Spectator<InstallationMediaStepComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+  let explorer: IxExplorerHarness;
 
   const createComponent = createComponentFactory({
     component: InstallationMediaStepComponent,
@@ -39,13 +39,11 @@ describe('InstallationMediaStepComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+    explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="iso_path"]' }));
   });
 
   it('shows form with form field to select ISO path', async () => {
-    await form.fillForm({
-      'Optional: Choose installation media image': '/mnt/iso/windows.iso',
-    });
+    await explorer.setValue('/mnt/iso/windows.iso');
 
     expect(spectator.component.form.value).toEqual({
       iso_path: '/mnt/iso/windows.iso',
@@ -53,9 +51,7 @@ describe('InstallationMediaStepComponent', () => {
   });
 
   it('returns summary when getSummary() is called', async () => {
-    await form.fillForm({
-      'Optional: Choose installation media image': '/mnt/iso/windows.iso',
-    });
+    await explorer.setValue('/mnt/iso/windows.iso');
 
     expect(spectator.component.getSummary()).toEqual([
       {

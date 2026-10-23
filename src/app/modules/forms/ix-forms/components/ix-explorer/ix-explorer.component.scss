@@ -1,24 +1,6 @@
 :host {
   color: var(--fg1);
   display: block;
-  margin-bottom: 12px;
-  margin-top: 18px;
-  padding: 8px 0;
-
-  :host-context(ix-editable) & {
-    margin-bottom: 0;
-    margin-top: 0;
-  }
-
-  // In migrated tn-* forms the explorer sits inside a `<tn-form-section>` (whose flex-gap already
-  // spaces it) and/or inside a `<tn-form-field>` (which owns the row's label/error chrome and its
-  // own spacing). The legacy margin/padding then stacks on top and leaves a large empty band —
-  // drop it there so the explorer lines up with the surrounding tn-form-field rows.
-  :host-context(tn-form-section) &,
-  :host-context(tn-form-field) & {
-    margin: 0;
-    padding: 0;
-  }
 }
 
 .loading-error {

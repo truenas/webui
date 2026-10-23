@@ -12,7 +12,6 @@ import {
   FilePickerCreateActionEvent,
   FilePickerError,
   FileSystemItem,
-  TN_FORM_FIELD_CONTEXT,
   TnFilePickerComponent,
   tnIconMarker,
   TnTestIdDirective,
@@ -24,14 +23,16 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
 import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
+/**
+ * Adapts a {@link TreeNodeProvider} (middleware filesystem/dataset listings) to `tn-file-picker`.
+ * Place it inside a `<tn-form-field>`, which owns the label, tooltip, required marker and
+ * validation message.
+ */
 @Component({
   selector: 'ix-explorer',
   templateUrl: './ix-explorer.component.html',
@@ -39,8 +40,6 @@ import { ErrorParserService } from 'app/services/errors/error-parser.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnTestIdDirective,
-    IxLabelComponent,
-    IxErrorsComponent,
     ReactiveFormsModule,
     TnFilePickerComponent,
   ],
@@ -53,21 +52,8 @@ export class IxExplorerComponent implements ControlValueAccessor {
   private errorParser = inject(ErrorParserService);
   private destroyRef = inject(DestroyRef);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-  /**
-   * Present when the explorer is projected into a `<tn-form-field>`, which then owns the label,
-   * the required indicator, the tooltip and the validation message — so this component renders
-   * none of its own chrome and is just the picker. Absent when used standalone, where the legacy
-   * `ix-label` / `ix-errors` chrome is still rendered.
-   */
-  private readonly formField = inject(TN_FORM_FIELD_CONTEXT, { optional: true });
-
-  protected readonly hasFieldChrome = Boolean(this.formField);
-
-  readonly label = input<TranslatedString>();
   readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
-  readonly tooltip = input<TranslatedString>();
-  readonly required = input<boolean>(false);
   readonly rootNodes = input<ExplorerNodeData[]>([datasetsRootNode]);
   readonly nodeProvider = input.required<TreeNodeProvider>();
 

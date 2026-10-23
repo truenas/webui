@@ -158,8 +158,8 @@ export const usersLocators = {
      * anything but `700` leaves it unticked once that read has landed.
      */
     defaultPermissions: '[data-test="checkbox-default-permissions"]',
-    /** The home path's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
-    homeErrors: '[data-test="text-home-errors"]',
+    /** The home path's validation message: the alert of the wrapping `tn-form-field`, which has no id of its own. */
+    homeErrors: '[data-test="form-field-home"] [role="alert"]',
     /** The Shell editable's readout. The row is rendered only while Shell Access is ticked. */
     shellValue: '[data-test="text-shell"]',
     /** `<tn-select [testId]="'shell'">`. */
