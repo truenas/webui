@@ -15,11 +15,10 @@
  *
  * ## Setup
  *
- * As `apps-install.e2e.ts`: Apps run on `e2e_apps`, a one-disk pool built, given to Apps and
- * destroyed here, once for the file. `community` is added to the preferred trains if it is missing,
- * and written back afterwards. No test installs through Discover, so the apps agreement is left alone.
- * Teardown deletes both apps after every test, custom or not, and unsets Apps and exports the pool
- * after the last.
+ * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
+ * per worker. `community` is added to the preferred trains if it is missing, and written back
+ * afterwards. No test installs through Discover, so the apps agreement is left alone. Teardown
+ * deletes both apps after every test, custom or not.
  *
  * Not covered: editing a custom app (`apps-custom-yaml.e2e.ts`), storage, GPU, networks and labels in
  * the form, and whether the new port serves IT Tools.
@@ -28,21 +27,16 @@ import {
   appInstallTimeoutMs,
   communityTrain,
   ensureAppAbsent,
-  ensureAppsPoolUnset,
   readAppAdditionalEnvs,
   readAppPortNumber,
   readAppState,
   readAppTimezone,
-  readDocker,
   readIsCustomApp,
   readPreferredTrains,
   seedCatalogApp,
-  setAppsPool,
   setPreferredTrains,
   syncCatalog,
 } from '../fixtures/apps';
-import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import {
   addEnvironmentVariable, convertToCustomApp, openCatalogAppEdit, updateCatalogApp,
 } from '../flows/catalog-apps';
@@ -53,9 +47,6 @@ import {
 import { jobDialogLocators } from '../locators/encryption';
 import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
-
-/** Built, given to Apps and destroyed here. The same pool `apps-install.e2e.ts` builds. */
-const pool = 'e2e_apps';
 
 const catalogApp = 'it-tools';
 /** The compose service IT Tools' environment is on, once converted to a custom app. */
@@ -74,41 +65,36 @@ const maxPort = 65535;
 /** Neither the default nor anything else on the appliance. */
 const editedPort = 30163;
 
-/** Apps on a pool this spec did not make is somebody's, as `apps-install.e2e.ts` explains. */
+/** Apps on a pool the suite did not make is somebody's, as `apps-install.e2e.ts` explains. */
 let appsOnSomebodyElsesPool = false;
 
 /** Written back in `afterAll`. Undefined until read, so a failed setup writes back nothing. */
 let preferredTrainsBefore: string[] | undefined;
 
-test.beforeAll(async ({ api }) => {
-  const { pool: appsPool } = await readDocker(api);
-  appsOnSomebodyElsesPool = appsPool !== null && appsPool !== pool;
+test.beforeAll(async ({ api, appsPool }) => {
+  appsOnSomebodyElsesPool = !(await appsPool.ensure());
   if (appsOnSomebodyElsesPool) {
     return;
   }
 
   preferredTrainsBefore = await readPreferredTrains(api);
 
-  // In this order: the apps' datasets keep `e2e_apps/ix-apps` busy, and Docker keeps the pool busy.
+  // The pool outlives this file, so whatever a failed cleanup of these apps left goes first.
   for (const release of releases) {
     await ensureAppAbsent(api, release);
   }
-  await ensureAppsPoolUnset(api);
-  await ensurePoolAbsent(api, pool);
-  await requireUnusedDisks(api, 1);
-  await ensurePoolPresent(api, pool);
-  await setAppsPool(api, pool);
 
   if (!preferredTrainsBefore.includes(communityTrain)) {
     await setPreferredTrains(api, [...preferredTrainsBefore, communityTrain]);
   }
-  // A pool change starts a sync in the background. Seeding needs it finished.
+  // Moving Apps onto the pool, if `ensure` just did, starts a sync in the background. Seeding needs
+  // it finished.
   await syncCatalog(api);
 });
 
 test.beforeEach(async ({ api }) => {
-  // Apps on another pool is a developer's own setup, and teardown would unset it.
-  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool this spec did not create.');
+  // Apps on another pool is a developer's own setup, and moving Apps off it would stop their apps.
+  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool the suite did not create.');
 
   for (const release of releases) {
     await ensureAppAbsent(api, release);
@@ -132,19 +118,16 @@ test.afterAll(async ({ api }) => {
     return;
   }
 
-  // A setting, not test data: written back even when the apps and pool are kept.
+  // A setting, not test data: written back even when the apps are kept.
   const steps: CleanupStep[] = [];
   const trains = preferredTrainsBefore;
   if (trains !== undefined) {
     steps.push(['restore the preferred trains', () => setPreferredTrains(api, trains)]);
   }
 
-  if (!leavingTestData(`apps ${releases.join(', ')}, pool "${pool}" and the Apps pool`)) {
-    // In this order: the export fails while Docker holds `e2e_apps/ix-apps`.
+  if (!leavingTestData(`apps ${releases.join(', ')}`)) {
     steps.push(
       ...releases.map((release): CleanupStep => [`delete app "${release}"`, () => ensureAppAbsent(api, release)]),
-      ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
-      [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
     );
   }
 

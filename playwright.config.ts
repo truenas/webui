@@ -106,6 +106,9 @@ if (!process.env[announcedVar]) {
 
 const isCi = !!process.env.CI;
 
+/** The specs the `apps` project runs, and `authenticated` leaves to it. */
+const appsSpecs = '**/apps-*.e2e.ts';
+
 /**
  * Debugging flags are opt-in on `=1`, matching `TN_KEEP_TEST_DATA` in the specs.
  *
@@ -149,6 +152,22 @@ const singleApplianceProjects = [
   setupProject,
   {
     /**
+     * The Apps specs, which share one Apps pool: the `appsPool` fixture builds `e2e_apps` once and
+     * releases it when the worker ends. A project of their own because only a project is sure to
+     * end its worker, with the pool, when its specs are done. In `authenticated` the pool and Docker
+     * would stay up through every spec after them.
+     *
+     * Before `authenticated`: shards split the run by test count in this order, and the apps specs
+     * are few and slow, so they go at the start of the first shard, where they always ran.
+     */
+    name: 'apps',
+    testDir: './e2e/tests',
+    testMatch: appsSpecs,
+    dependencies: ['setup'],
+    use: { ...devices['Desktop Chrome'] },
+  },
+  {
+    /**
      * Everything that starts from an authenticated session.
      *
      * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
@@ -159,7 +178,7 @@ const singleApplianceProjects = [
      */
     name: 'authenticated',
     testDir: './e2e/tests',
-    testIgnore: ['**/unauthenticated/**', '**/unpublished/**'],
+    testIgnore: ['**/unauthenticated/**', '**/unpublished/**', appsSpecs],
     dependencies: ['setup'],
     use: { ...devices['Desktop Chrome'] },
   },

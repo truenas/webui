@@ -93,7 +93,9 @@ function sorted(trains: string[]): string[] {
   return [...trains].sort((a, b) => a.localeCompare(b));
 }
 
-test.beforeAll(async ({ api }) => {
+test.beforeAll(async ({ api, appsPool }) => {
+  // The shared `e2e_apps` the other apps specs run on is the suite's own, and in the way here.
+  await appsPool.release();
   appsHavePool = (await readDocker(api)).pool !== null;
   found = await readDockerSettings(api);
   preferredTrainsFound = await readPreferredTrains(api);

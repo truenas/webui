@@ -29,6 +29,7 @@ import {
   adminLayout, concurrentCallsDialogTitleId, errorDialog, errorDialogClose,
 } from './constants';
 import { CoverageRecorder } from './coverage';
+import { type SharedAppsPool, sharedAppsPool } from '../fixtures/apps';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
 
@@ -228,6 +229,15 @@ export interface E2eWorkerFixtures {
    * Ask with `isEntitled` and skip; see `fixtures/entitlements.ts`.
    */
   entitlements: EntitlementDecisions;
+  /**
+   * `e2e_apps`, given to Apps once for all the apps specs in a worker: each calls `ensure()` in its
+   * `beforeAll`, and the worker releases it when it ends. Building it and taking it down again costs
+   * about 20 seconds of pool and Docker jobs, which every apps spec used to pay.
+   *
+   * The apps specs run in a project of their own, the `apps` one in `playwright.config.ts`, so their
+   * worker ends when they do and no other spec runs beside Docker on a pool it did not ask for.
+   */
+  appsPool: SharedAppsPool;
 }
 
 /**
@@ -279,6 +289,18 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   entitlements: [
     async ({ api }, use) => {
       await use(await readEntitlements(api));
+    },
+    { scope: 'worker' },
+  ],
+
+  appsPool: [
+    async ({ api }, use) => {
+      const shared = sharedAppsPool(api);
+      try {
+        await use(shared);
+      } finally {
+        await shared.release({ keep: keepTestData });
+      }
     },
     { scope: 'worker' },
   ],
