@@ -13,6 +13,23 @@ export const usersLocators = {
   addUser: '[data-test="button-create-new-user"]',
 
   /**
+   * The list's search, in `users-search`. Typing does not search: Search, or Enter, runs the
+   * query against `user.query`, a page at a time.
+   */
+  search: {
+    /** The basic box, `<tn-input [testId]="'search'">`. */
+    input: '[data-test="input-search"]',
+    /** `<tn-button testId="search">` beside it. */
+    run: '[data-test="button-search"]',
+    /**
+     * Filter by Type, `<tn-select testId="filter-by-type" [multiple]="true">`, both types ticked by
+     * default. Directory Services is offered only while a directory service is enabled.
+     */
+    typeFilter: '[data-test="select-filter-by-type"]',
+    typeOption: (label: string): string => `[data-test="option-filter-by-type-${kebabTestSegment(label)}"]`,
+  },
+
+  /**
    * A user's row in the list.
    *
    * `memoizedRowTag` runs lodash `kebabCase`, not the library's

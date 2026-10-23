@@ -1,7 +1,16 @@
 /**
  * Stories: joining an Active Directory domain through the Directory Services
  * form, leaving it from the card's Leave dialog, and a join refused because one
- * of the appliance's nameservers cannot resolve the domain.
+ * of the appliance's nameservers cannot resolve the domain. While joined, the
+ * domain's accounts in the UI: a domain user found on the Users list and kept
+ * or dropped by its Filter by Type, a domain group on the Groups list with
+ * nothing offered that would change it, an ACL entry naming a domain group
+ * picked in the editor, and Sync on the Kerberos Keytab card, which renders
+ * only while joined.
+ *
+ * The accounts are the one the domain is joined with and `domain users`, which
+ * every domain has; nothing else of the domain's is named. The appliance lists
+ * them under the domain's NetBIOS name, which is redacted as well once read.
  *
  * Needs a real domain (`TN_AD_*`), and skips without one. In CI that is the
  * internal test domain from the `E2EUI_AD_*` repository secrets, so this spec
@@ -22,9 +31,11 @@
  */
 import type { Page } from '@playwright/test';
 import { escapeRegExp } from 'lodash-es';
+import { firstValueFrom, timeout } from 'rxjs';
 import {
   adComputerName,
   adJoinTimeoutMs,
+  domainAccountName,
   ensureActiveDirectoryJoined,
   ensureActiveDirectoryLeft,
   withActiveDirectoryRedacted,
@@ -36,25 +47,32 @@ import {
   restoreNetworkConfig,
   setNameservers,
 } from '../../fixtures/network-config';
+import { nfs4Entries, readAcl } from '../../fixtures/permissions';
+import { datasetMountPath, ensureDatasetAbsent, ensureSmbDatasetPresent } from '../../fixtures/storage';
 import {
   discardDirectoryServicesForm,
   openDirectoryServicesForm,
+  openKerberosSettings,
   saveDirectoryServicesForm,
   selectCredentialType,
   selectServiceType,
 } from '../../flows/directory-services';
-import { goToDirectoryServices } from '../../flows/navigation';
-import { errorDialogLocators } from '../../locators/dialogs';
+import { goToDirectoryServices, goToGroups, goToUsers } from '../../flows/navigation';
+import { addAclGroupEntry, openAclEditor, saveAcl } from '../../flows/permissions';
+import { confirmDialogLocators, errorDialogLocators } from '../../locators/dialogs';
 import {
   credentialTypeLabels,
   directoryServicesLocators,
   directoryServiceTypeLabels,
 } from '../../locators/directory-services';
 import { jobDialogLocators } from '../../locators/encryption';
+import { groupsLocators } from '../../locators/groups';
+import { usersLocators } from '../../locators/users';
 import type { E2eApiClient } from '../../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../../support/cleanup';
 import type { ActiveDirectoryTarget, TargetConfig } from '../../support/config';
 import { expect, test } from '../../support/fixtures';
+import { readTimeoutMs } from '../../support/timeouts';
 
 /**
  * An address in TEST-NET-1 (RFC 5737): nothing answers it, so a lookup through
@@ -183,11 +201,91 @@ async function leaveTheDomain(
 }
 
 /**
+ * A group every Active Directory domain has, under the name the appliance lists it by after the
+ * NetBIOS name. Naming it gives nothing away, unlike the domain's own accounts.
+ */
+const domainUsersGroup = 'domain users';
+
+/** The keytab a join adds, holding the machine account's keys. */
+const machineKeytab = 'AD_MACHINE_ACCOUNT';
+
+/**
+ * The Users and Groups lists, over a domain with thousands of accounts. The Groups list loads every
+ * group at once.
+ */
+const accountListTimeoutMs = 60_000;
+
+/**
+ * The domain's `name` as the appliance lists it, `NAME\name`, in the case middleware stores it,
+ * with its uid or gid. Fails when the appliance has no such non-local account, which would leave
+ * every assertion about it vacuous.
+ */
+async function findDomainAccount(
+  api: E2eApiClient,
+  kind: 'user' | 'group',
+  name: string,
+): Promise<{ name: string; id: number }> {
+  const pattern = `(?i)^${escapeRegExp(await domainAccountName(api, name))}$`;
+  if (kind === 'user') {
+    const [user] = await firstValueFrom(
+      api.api.query('user.query', [['username', '~', pattern], ['local', '=', false]]).pipe(timeout(readTimeoutMs)),
+    );
+    if (user?.username && typeof user.uid === 'number') {
+      return { name: user.username, id: user.uid };
+    }
+  } else {
+    const [group] = await firstValueFrom(
+      api.api.query('group.query', [['group', '~', pattern], ['local', '=', false]]).pipe(timeout(readTimeoutMs)),
+    );
+    if (group?.group && typeof group.gid === 'number') {
+      return { name: group.group, id: group.gid };
+    }
+  }
+  throw new Error(`The appliance lists no domain ${kind} "${name}" (account cache not filled?)`);
+}
+
+/**
+ * Sets Filter by Type on the Users list to exactly the types asked for. It is a multiple select,
+ * where a click toggles an option, so each is clicked only when it is not already as wanted.
+ * Local goes first, so the two are never both off on the way.
+ */
+async function chooseUserTypes(page: Page, wanted: { local: boolean; directory: boolean }): Promise<void> {
+  const { search } = usersLocators;
+  await page.locator(search.typeFilter).click();
+  for (const [label, selected] of [['Local', wanted.local], ['Directory Services', wanted.directory]] as const) {
+    const option = page.locator(search.typeOption(label));
+    if (await option.getAttribute('aria-selected') !== String(selected)) {
+      await option.click();
+    }
+    await expect(option).toHaveAttribute('aria-selected', String(selected));
+  }
+  await page.keyboard.press('Escape');
+}
+
+/** The newest job's id, so a test can tell the jobs its own click started from any before. */
+async function lastJobId(api: E2eApiClient): Promise<number> {
+  const [job] = await firstValueFrom(
+    api.api.query('core.get_jobs', [], { order_by: ['-id'], limit: 1 }).pipe(timeout(readTimeoutMs)),
+  );
+  return job?.id ?? 0;
+}
+
+/** The states of the `directoryservices.sync_keytab` jobs started after job `after`. */
+async function syncKeytabJobsSince(api: E2eApiClient, after: number): Promise<string[]> {
+  const jobs = await firstValueFrom(
+    api.api.query('core.get_jobs', [['method', '=', 'directoryservices.sync_keytab'], ['id', '>', after]])
+      .pipe(timeout(readTimeoutMs)),
+  );
+  return jobs.map((job) => job.state);
+}
+
+/**
  * The join test leaves the appliance in the domain, and the leave test leaves
  * that join: a join takes minutes of middleware time, and both tests paying it
  * once each doubled the spec. So the domain's nameservers, and the join, last
- * from `beforeAll` to `afterAll` rather than one test. The leave test still
- * joins over the API when it finds the appliance out of the domain — on a
+ * from `beforeAll` to `afterAll` rather than one test, and the stories that need
+ * the appliance joined run between the two. Each of them, and the leave test,
+ * still joins over the API when it finds the appliance out of the domain — on a
  * retry, which starts a fresh worker through `beforeAll`, or run on its own.
  */
 test.describe('joining and leaving', () => {
@@ -218,6 +316,129 @@ test.describe('joining and leaving', () => {
       expect(stored).toMatchObject({ enable: true, service_type: 'ACTIVEDIRECTORY', enable_dns_updates: false });
       // Middleware swaps the user it joined with for the machine account's principal.
       expect(stored.credential?.credential_type).toBe('KERBEROS_PRINCIPAL');
+    });
+  });
+
+  test('the Users list finds a domain user, and Filter by Type keeps it only with Directory Services', async ({
+    page,
+    api,
+    config,
+  }) => {
+    const ad = domainOf(config);
+    await withActiveDirectoryRedacted(ad, async () => {
+      await ensureActiveDirectoryJoined(api, ad, adComputerName());
+      // The account the domain was joined with: the one domain user every run is sure of.
+      const { name: account } = await findDomainAccount(api, 'user', ad.username);
+      const { search, row } = usersLocators;
+
+      await goToUsers(page);
+      await page.locator(search.input).fill(ad.username);
+      await page.locator(search.run).click();
+      await expect(page.locator(row(account))).toBeVisible({ timeout: accountListTimeoutMs });
+
+      // Both types are ticked to start with. Unticking one runs the search again.
+      await chooseUserTypes(page, { local: false, directory: true });
+      await expect(page.locator(row(account))).toBeVisible({ timeout: accountListTimeoutMs });
+
+      await chooseUserTypes(page, { local: true, directory: false });
+      await expect(page.locator(row(account))).toBeHidden({ timeout: accountListTimeoutMs });
+    });
+  });
+
+  test('the Groups list shows a domain group, and offers nothing that would change it', async ({
+    page,
+    api,
+    config,
+  }) => {
+    const ad = domainOf(config);
+    await withActiveDirectoryRedacted(ad, async () => {
+      await ensureActiveDirectoryJoined(api, ad, adComputerName());
+      const { name: group } = await findDomainAccount(api, 'group', domainUsersGroup);
+      const { search, row, rowAction } = groupsLocators;
+
+      await goToGroups(page);
+      await page.locator(search).fill(domainUsersGroup);
+      await page.locator(row(group)).click({ timeout: accountListTimeoutMs });
+
+      // Delete is rendered, disabled, for any group that is not built in: it is the sign the row
+      // has opened. Members and Edit are for local groups only.
+      await expect(page.locator(rowAction.delete(group))).toBeDisabled();
+      await expect(page.locator(rowAction.members(group))).toHaveCount(0);
+      await expect(page.locator(rowAction.edit(group))).toHaveCount(0);
+    });
+  });
+
+  test.describe('an ACL', () => {
+    /** Under the worker's pool, made with the SMB preset, so its ACL is NFSv4. */
+    const leaf = 'e2e_ad_acl';
+
+    test.afterEach(async ({ api, pool }) => {
+      const dataset = `${pool}/${leaf}`;
+      if (leavingTestData(`dataset "${dataset}"`)) {
+        return;
+      }
+
+      // Before the domain is left, so no ACL outlives the group it names.
+      await runCleanupSteps([
+        [`remove dataset ${dataset}`, () => ensureDatasetAbsent(api, dataset)],
+      ]);
+    });
+
+    test('an NFSv4 ACL entry names a domain group picked in the editor', async ({
+      page, api, config, pool,
+    }) => {
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: group, id: gid } = await findDomainAccount(api, 'group', domainUsersGroup);
+        const dataset = `${pool}/${leaf}`;
+        await ensureDatasetAbsent(api, dataset);
+        await ensureSmbDatasetPresent(api, dataset);
+
+        await openAclEditor(page, dataset);
+        // Typed as the appliance lists it, `NAME\domain users`: the picker searches every group
+        // middleware knows, the domain's included.
+        await addAclGroupEntry(page, group, 'Read');
+        await saveAcl(page);
+
+        const entries = nfs4Entries(await readAcl(api, datasetMountPath(dataset)));
+        expect(entries.filter((entry) => entry.tag === 'GROUP' && entry.id === gid)).toEqual([
+          expect.objectContaining({ type: 'ALLOW', perms: { BASIC: 'READ' } }),
+        ]);
+      });
+    });
+  });
+
+  // Last before the leave: middleware warns that a sync may disrupt the join, and the leave after
+  // it then shows that it did not.
+  test('Sync on the Kerberos Keytab card renews the machine keytab and keeps the domain healthy', async ({
+    page,
+    api,
+    config,
+  }) => {
+    const ad = domainOf(config);
+    await withActiveDirectoryRedacted(ad, async () => {
+      await ensureActiveDirectoryJoined(api, ad, adComputerName());
+      const lastJobBefore = await lastJobId(api);
+      const { keytabs } = directoryServicesLocators;
+
+      await openKerberosSettings(page);
+      await expect(page.locator(keytabs.row(machineKeytab))).toBeVisible();
+      await page.locator(keytabs.sync).click();
+
+      await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+      await page.locator(confirmDialogLocators.checkbox).check();
+      await page.locator(confirmDialogLocators.confirm).click();
+
+      await expect.poll(() => syncKeytabJobsSince(api, lastJobBefore), {
+        message: 'directoryservices.sync_keytab to run once and succeed',
+        timeout: adJoinTimeoutMs,
+      }).toEqual(['SUCCESS']);
+      await expect(page.locator(jobDialogLocators.title)).toBeHidden({ timeout: cardTimeoutMs });
+      await expect(page.locator(keytabs.row(machineKeytab))).toBeVisible();
+
+      const { status } = await readDirectoryServices(api);
+      expect(status).toMatchObject({ type: 'ACTIVEDIRECTORY', status: 'HEALTHY' });
     });
   });
 
