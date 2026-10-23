@@ -158,7 +158,7 @@ describe('S3BucketFormComponent', () => {
       expect(await (await getSelect('Multipart ETag')).getValue()).toBe('Minted (opaque token)');
     });
 
-    it('turns versioning on and defaults to Compliance retention when object lock is enabled', async () => {
+    it('turns versioning on and leaves no default retention rule when object lock is enabled', async () => {
       await clickAdvancedOptions();
       expect(await (await getSelect('Versioning')).getValue()).toBe('Off');
 
@@ -167,7 +167,8 @@ describe('S3BucketFormComponent', () => {
       const versioning = await getSelect('Versioning');
       expect(await versioning.getValue()).toBe('Enabled');
       expect(await versioning.isDisabled()).toBe(true);
-      expect(await (await getSelect('Default Retention Mode')).getValue()).toBe('Compliance');
+      expect(await (await getSelect('Default Retention Mode')).getValue()).toBe('No default rule');
+      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
 
       await form.fillForm({ 'Enable Object Lock': false });
       const released = await getSelect('Versioning');
@@ -185,13 +186,32 @@ describe('S3BucketFormComponent', () => {
       expect(sectionText('Object Lock')).not.toContain('permanent');
     });
 
-    it('creates a bucket with object lock, versioning and the Compliance default rule', async () => {
+    it('creates a bucket with object lock and versioning but no default rule unless one is picked', async () => {
       await form.fillForm({
         Name: 'backups',
         'Parent Dataset': 'tank',
         Owner: 'alice',
         'Enable Object Lock': true,
       });
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        versioning: S3Versioning.Enabled,
+        object_lock: true,
+        object_lock_default_mode: null,
+        object_lock_default_days: null,
+      })]);
+    });
+
+    it('creates a bucket with the Compliance default rule when it is picked', async () => {
+      await form.fillForm({
+        Name: 'backups',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+        'Enable Object Lock': true,
+      });
+      await form.fillForm({ 'Default Retention Mode': 'Compliance' });
       await form.fillForm({ 'Default Retention Days': 30 });
 
       await (await getSaveButton()).click();
@@ -202,15 +222,6 @@ describe('S3BucketFormComponent', () => {
         object_lock_default_mode: S3ObjectLockMode.Compliance,
         object_lock_default_days: 30,
       })]);
-    });
-
-    it('keeps a "no default rule" chosen in this session when object lock is re-checked', async () => {
-      await form.fillForm({ 'Enable Object Lock': true });
-      await form.fillForm({ 'Default Retention Mode': 'No default rule' });
-      await form.fillForm({ 'Enable Object Lock': false });
-      await form.fillForm({ 'Enable Object Lock': true });
-
-      expect(spectator.component.form.controls.object_lock_default_mode.value).toBeNull();
     });
 
     it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
@@ -283,6 +294,9 @@ describe('S3BucketFormComponent', () => {
         Owner: 'alice',
         'Enable Object Lock': true,
       });
+      expect(await (await getSaveButton()).isDisabled()).toBe(false);
+
+      await form.fillForm({ 'Default Retention Mode': 'Compliance' });
 
       expect(spectator.component.form.controls.object_lock_default_days.errors).toMatchObject({ required: true });
       expect(await (await getSaveButton()).isDisabled()).toBe(true);
@@ -295,6 +309,7 @@ describe('S3BucketFormComponent', () => {
         Owner: 'alice',
         'Enable Object Lock': true,
       });
+      await form.fillForm({ 'Default Retention Mode': 'Compliance' });
       expect(await (await getSaveButton()).isDisabled()).toBe(true);
 
       await form.fillForm({ 'Enable Object Lock': false });
