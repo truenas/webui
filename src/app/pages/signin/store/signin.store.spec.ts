@@ -4,7 +4,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import {
-  BehaviorSubject, firstValueFrom, of, throwError,
+  BehaviorSubject, firstValueFrom, NEVER, of, throwError,
 } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -383,6 +383,53 @@ describe('SigninStore', () => {
 
       expect(authService.setQueryToken).toHaveBeenCalledWith(token);
       expect(authService.loginWithToken).toHaveBeenCalled();
+    });
+
+    describe('with a token in the URL', () => {
+      beforeEach(() => {
+        isTokenWithinTimeline$.next(false);
+        jest.spyOn(spectator.inject(ActivatedRoute).snapshot.queryParamMap, 'get').mockReturnValueOnce('token');
+      });
+
+      it('is logging in with it from the start, before the login is even sent', async () => {
+        jest.spyOn(authService, 'loginWithToken').mockReturnValueOnce(NEVER);
+
+        spectator.service.init();
+
+        expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(true);
+      });
+
+      it('stops logging in with it when the token is refused, so the form comes back', async () => {
+        jest.spyOn(authService, 'loginWithToken').mockReturnValueOnce(of(LoginResult.IncorrectDetails));
+
+        spectator.service.init();
+        await new Promise<void>((resolve) => {
+          setTimeout(() => resolve(), 100);
+        });
+
+        expect(authService.loginWithToken).toHaveBeenCalled();
+        expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(false);
+      });
+
+      it('stops logging in with it when the navigation after it does not land', async () => {
+        jest.spyOn(authService, 'loginWithToken').mockReturnValueOnce(of(LoginResult.Success));
+        Object.defineProperty(authService, 'user$', { value: of(mockLoggedInUser) });
+        jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValueOnce(false);
+
+        spectator.service.init();
+        await new Promise<void>((resolve) => {
+          setTimeout(() => resolve(), 100);
+        });
+
+        expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalled();
+        expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(false);
+      });
+    });
+
+    it('is not logging in with a query token when the URL has none', async () => {
+      spectator.service.init();
+
+      expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(false);
     });
 
     it('should navigate after successful token login', async () => {
