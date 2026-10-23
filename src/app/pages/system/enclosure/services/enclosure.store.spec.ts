@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import {
   createServiceFactory,
   mockProvider,
@@ -83,7 +82,12 @@ describe('EnclosureStore', () => {
   });
 
   describe('listenForDiskUpdates', () => {
-    it('updates dashboard information when disks are changed', fakeAsync(() => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('updates dashboard information when disks are changed', async () => {
+      jest.useFakeTimers();
       jest.spyOn(spectator.service, 'patchState').mockImplementation();
       spectator.service.listenForDiskUpdates().subscribe();
 
@@ -94,12 +98,12 @@ describe('EnclosureStore', () => {
         fields: null,
       } as unknown as EventUnion<WebUiApiDirectory, 'disk.query'>);
 
-      tick(1 * 1000);
+      await jest.advanceTimersByTimeAsync(1 * 1000);
       expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('disk.query');
       expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('webui.enclosure.dashboard');
 
       expect(spectator.service.patchState).toHaveBeenLastCalledWith({ enclosures });
-    }));
+    });
   });
 
   describe('selectEnclosure', () => {

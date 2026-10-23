@@ -1,4 +1,5 @@
-import { Injectable, OnDestroy } from '@angular/core';
+import { inject, Injectable, Injector, OnDestroy } from '@angular/core';
+import { pendingUntilEvent } from '@angular/core/rxjs-interop';
 import {
   CallMethod, CallParams, CallResponse, EventName, EventUnion, JobMethod, JobResult, QueryEntity, QueryMethod,
 } from '@truenas/api-client';
@@ -62,31 +63,40 @@ export class MockTypedApiService implements OnDestroy {
     jest.fn,
   );
 
-  readonly call = jest.fn((method: string, params?: unknown) => dispatchTypedCall(this.client, method, params));
+  private injector = inject(Injector);
 
-  readonly callUnauthenticated = jest.fn(
-    (method: string, params?: unknown) => dispatchTypedCall(this.client, method, params),
-  );
+  readonly call = jest.fn((method: string, params?: unknown) => {
+    return dispatchTypedCall(this.client, method, params).pipe(this.untilAnswered());
+  });
+
+  readonly callUnauthenticated = jest.fn((method: string, params?: unknown) => {
+    return dispatchTypedCall(this.client, method, params).pipe(this.untilAnswered());
+  });
 
   readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
-    return this.api.query(method, filters, options);
+    return this.api.query(method, filters, options).pipe(this.untilAnswered());
   });
 
   readonly queryOne = jest.fn((method: string, filters?: unknown, options?: unknown) => {
-    return this.api.queryOne(method, filters, options);
+    return this.api.queryOne(method, filters, options).pipe(this.untilAnswered());
   });
 
-  readonly queryCount = jest.fn((method: string, filters?: unknown) => this.api.queryCount(method, filters));
+  readonly queryCount = jest.fn((method: string, filters?: unknown) => {
+    return this.api.queryCount(method, filters).pipe(this.untilAnswered());
+  });
 
   /** Same contract as `TypedApiService.job`: emits every update, throws `FailedJobError` on failure. */
   readonly job = jest.fn((method: string, params?: unknown) => {
     return this.api.job(method, params).pipe(
       map((job) => job as Job),
       observeJob(),
+      this.untilAnswered(),
     );
   });
 
-  readonly startJob = jest.fn((method: string, params?: unknown) => this.api.callAndGetJobId(method, params));
+  readonly startJob = jest.fn((method: string, params?: unknown) => {
+    return this.api.callAndGetJobId(method, params).pipe(this.untilAnswered());
+  });
 
   readonly subscribe = jest.fn((event: string) => this.api.events(event));
 
@@ -98,8 +108,19 @@ export class MockTypedApiService implements OnDestroy {
     return followCollection(
       this.api.query(method, filters, options) as Observable<{ id?: unknown }[]>,
       this.api.events(method) as Observable<{ msg: string; id?: unknown; fields?: { id?: unknown } }>,
-    );
+    ).pipe(this.untilAnswered());
   });
+
+  /**
+   * Holds the app unstable until the fake connection answers. The answers arrive on a
+   * microtask, and without zone.js `fixture.whenStable()` (and every harness) only waits
+   * for work registered as an Angular pending task, so this is what keeps a spec's
+   * `await whenStable()` meaning "the scripted responses have been rendered".
+   * `subscribe` is left out on purpose: an event stream may never emit.
+   */
+  private untilAnswered<T>(): (source$: Observable<T>) => Observable<T> {
+    return pendingUntilEvent<T>(this.injector);
+  }
 
   mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
     this.client.mock.call(method, response);

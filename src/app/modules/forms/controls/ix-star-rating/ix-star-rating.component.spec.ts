@@ -52,6 +52,8 @@ describe('IxStarRatingComponent', () => {
   });
 
   it('renders given number of stars based on maxRating input', async () => {
+    // Zoneless: the host template only re-renders once its view is marked dirty.
+    spectator.fixture.changeDetectorRef.markForCheck();
     spectator.setHostInput({ maxRating: 10 });
 
     expect(await ratingHarness.getButtons()).toHaveLength(10);

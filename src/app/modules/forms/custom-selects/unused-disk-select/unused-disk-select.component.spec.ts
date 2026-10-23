@@ -104,6 +104,8 @@ describe('UnusedDiskSelectComponent', () => {
   });
 
   it('writes another value from unused disk in formControl when valueField is used', async () => {
+    // Zoneless: the host template only re-renders once its view is marked dirty.
+    spectator.fixture.changeDetectorRef.markForCheck();
     spectator.setHostInput('valueField', 'identifier');
     await autocomplete.selectOption('da1 (20 TiB) (pool)');
 
@@ -119,6 +121,7 @@ describe('UnusedDiskSelectComponent', () => {
   });
 
   it('uses diskFilteringFn when it is supplied', async () => {
+    spectator.fixture.changeDetectorRef.markForCheck();
     spectator.setHostInput('diskFilteringFn', (disk: DetailsDisk) => disk.devname === 'da1');
 
     await autocomplete.focus();

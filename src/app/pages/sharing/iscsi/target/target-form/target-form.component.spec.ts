@@ -83,6 +83,29 @@ describe('TargetFormComponent', () => {
     TnRadioGroupHarness.with({ ancestor: 'tn-form-field' }),
   );
 
+  // The name's async validator debounces (TargetNameValidationService, 300ms) and whenStable()
+  // does not wait for timers, so type under fake timers and let the debounce elapse.
+  const nameValidationDebounceMs = 300;
+  const setName = async (value: string): Promise<void> => {
+    const input = await getTnInput('name');
+    jest.useFakeTimers();
+    try {
+      let isTyped = false;
+      const typed = input.setValue(value).finally(() => {
+        isTyped = true;
+      });
+      while (!isTyped) {
+        await jest.advanceTimersByTimeAsync(10);
+      }
+      await typed;
+      // With margin: the debounce may only start on the change detection after typing.
+      await jest.advanceTimersByTimeAsync(nameValidationDebounceMs * 2);
+    } finally {
+      jest.useRealTimers();
+    }
+    await spectator.fixture.whenStable();
+  };
+
   const setMode = async (label: string): Promise<void> => {
     await (await getModeGroup()).select(label);
   };
@@ -279,7 +302,7 @@ describe('TargetFormComponent', () => {
     });
 
     it('edits existing target when form opened for edit is submitted', async () => {
-      await (await getTnInput('name')).setValue('name_new');
+      await setName('name_new');
       await (await getTnInput('alias')).setValue('alias_new');
       await setMode('Fibre Channel');
 
@@ -380,7 +403,7 @@ describe('TargetFormComponent', () => {
     });
 
     it('should display an error message for invalid target name', async () => {
-      await (await getTnInput('name')).setValue('name_test');
+      await setName('name_test');
 
       const nameField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Target Name' }));
       expect(await nameField.getErrorMessage()).toBe('Target with this name already exists');
@@ -504,7 +527,7 @@ describe('TargetFormComponent', () => {
 
     it('preserves groups when switching from iSCSI to FC and back to iSCSI', async () => {
       // Start with iSCSI mode and add a group
-      await (await getTnInput('name')).setValue('test-target');
+      await setName('test-target');
       await setMode('iSCSI');
 
       const groupsList = await loader.getHarness(TnFormListHarness.with({ label: 'Add groups' }));
@@ -552,7 +575,7 @@ describe('TargetFormComponent', () => {
 
     it('submits correct API payload after mode switching: iSCSI with groups → FC (no groups) → iSCSI with groups', async () => {
       // Start with iSCSI mode and add a group
-      await (await getTnInput('name')).setValue('test-target');
+      await setName('test-target');
       await setMode('iSCSI');
 
       const groupsList = await loader.getHarness(TnFormListHarness.with({ label: 'Add groups' }));
@@ -604,7 +627,7 @@ describe('TargetFormComponent', () => {
     });
 
     it('preserves groups when switching from BOTH to FC and back to BOTH', async () => {
-      await (await getTnInput('name')).setValue('test-target');
+      await setName('test-target');
       await setMode('Both');
 
       const groupsList = await loader.getHarness(TnFormListHarness.with({ label: 'Add groups' }));

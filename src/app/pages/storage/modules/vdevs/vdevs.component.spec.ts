@@ -7,6 +7,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevType } from 'app/enums/v-dev-type.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -15,6 +16,7 @@ import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/vdevs
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { VDevsComponent } from 'app/pages/storage/modules/vdevs/vdevs.component';
 import { RoutePartsService } from 'app/services/route-parts/route-parts.service';
+import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors';
 
 describe('VDevsComponent', () => {
@@ -212,6 +214,7 @@ describe('VDevsComponent', () => {
         poolName$: of('test'),
         selectedTopologyCategory$: of(VDevType.Data),
         loadNodes: jest.fn(),
+        selectNodeByGuid: jest.fn(),
         selectedBranch$: of(selectedBranch),
       }),
       provideMockStore({
@@ -219,6 +222,10 @@ describe('VDevsComponent', () => {
           {
             selector: selectIsEnterprise,
             value: false,
+          },
+          {
+            selector: selectAdvancedConfig,
+            value: {} as AdvancedConfig,
           },
         ],
       }),

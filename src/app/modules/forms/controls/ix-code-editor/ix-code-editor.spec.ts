@@ -58,6 +58,8 @@ describe('IxCodeEditor', () => {
     });
 
     it('puts data-test on the editable element when set', () => {
+      // Zoneless: the host template only re-renders once its view is marked dirty.
+      spectator.fixture.changeDetectorRef.markForCheck();
       spectator.setHostInput('testId', 'custom-config');
       spectator.detectChanges();
 

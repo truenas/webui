@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnFormSectionComponent } from '@truenas/ui-components';
@@ -31,6 +30,10 @@ describe('PremiumFeatureDirective', () => {
   const createComponent = createComponentFactory({
     component: PremiumHostComponent,
     imports: [TranslateModule.forRoot()],
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   function render(entitled: boolean | undefined): void {
@@ -82,11 +85,12 @@ describe('PremiumFeatureDirective', () => {
     expect(badge()).toHaveAttribute('aria-label', `Premium: ${premiumFeatureExplanation}`);
   });
 
-  it('takes the denied content out of the tab order, leaving the badge in it', fakeAsync(() => {
+  it('takes the denied content out of the tab order, leaving the badge in it', () => {
+    jest.useFakeTimers();
     render(false);
     // `disableFocusableElements` defers a tick, so the attributes are not on
     // the elements until the timer it schedules has run.
-    tick();
+    jest.runOnlyPendingTimers();
 
     expect(action()).toHaveAttribute('tabindex', '-1');
     expect(action()).toHaveAttribute('disabled');
@@ -94,11 +98,12 @@ describe('PremiumFeatureDirective', () => {
     // and an unreachable explanation is worse than none.
     expect(badge()).not.toHaveAttribute('tabindex', '-1');
     expect(badge()).not.toHaveAttribute('disabled');
-  }));
+  });
 
-  it('leaves the denied content\'s tooltip triggers operable', fakeAsync(() => {
+  it('leaves the denied content\'s tooltip triggers operable', () => {
+    jest.useFakeTimers();
     render(false);
-    tick();
+    jest.runOnlyPendingTimers();
 
     // The section is shown so an administrator can read what the feature does, and the library
     // opens a pinned tooltip on a click of that button alone — disabling it withholds the help.
@@ -109,5 +114,5 @@ describe('PremiumFeatureDirective', () => {
     });
     // The control beside them is still out of reach.
     expect(action()).toHaveAttribute('disabled');
-  }));
+  });
 });

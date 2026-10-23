@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
@@ -104,6 +103,7 @@ describe('SigninStore', () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     jest.clearAllMocks();
     // Reset the shared BehaviorSubject to prevent test interference
     isTokenWithinTimeline$.next(true);
@@ -205,20 +205,22 @@ describe('SigninStore', () => {
       expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(true);
     });
 
-    it('stays in the "logging in" state once the navigation to the dashboard lands', fakeAsync(() => {
+    it('stays in the "logging in" state once the navigation to the dashboard lands', async () => {
+      jest.useFakeTimers();
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
       Object.defineProperty(spectator.inject(AuthService), 'user$', {
         value: of(mockLoggedInUser),
       });
 
       spectator.service.handleSuccessfulLogin();
-      tick();
+      await jest.advanceTimersByTimeAsync(0);
 
       expect(spectator.service.state().isLoading).toBe(true);
       expect(spectator.service.state().isLoggingIn).toBe(true);
-    }));
+    });
 
-    it('shows the form again when the navigation to the dashboard does not land', fakeAsync(() => {
+    it('shows the form again when the navigation to the dashboard does not land', async () => {
+      jest.useFakeTimers();
       // What a logout from the Password Change Required dialog does to the navigation it holds.
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(false);
       Object.defineProperty(spectator.inject(AuthService), 'user$', {
@@ -226,12 +228,12 @@ describe('SigninStore', () => {
       });
 
       spectator.service.handleSuccessfulLogin();
-      tick();
+      await jest.advanceTimersByTimeAsync(0);
 
       expect(spectator.service.state().isLoading).toBe(false);
       expect(spectator.service.state().isLoggingIn).toBe(false);
       expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
-    }));
+    });
 
     it('redirects user to url stored in sessionStorage', () => {
       const router = spectator.inject(Router);
@@ -474,7 +476,8 @@ describe('SigninStore', () => {
   });
 
   describe('session expired message', () => {
-    it('shows session expired message when token exists but is outside timeline', fakeAsync(() => {
+    it('shows session expired message when token exists but is outside timeline', async () => {
+      jest.useFakeTimers();
       isTokenWithinTimeline$.next(false);
 
       Object.defineProperty(authService, 'hasAuthToken', {
@@ -485,13 +488,14 @@ describe('SigninStore', () => {
       const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
 
       spectator.service.init();
-      tick();
+      await jest.advanceTimersByTimeAsync(0);
 
       expect(showSessionExpiredSpy).toHaveBeenCalled();
       expect(authService.clearAuthToken).toHaveBeenCalled();
-    }));
+    });
 
-    it('does not show session expired message when no token exists', fakeAsync(() => {
+    it('does not show session expired message when no token exists', async () => {
+      jest.useFakeTimers();
       isTokenWithinTimeline$.next(false);
 
       Object.defineProperty(authService, 'hasAuthToken', {
@@ -502,12 +506,13 @@ describe('SigninStore', () => {
       const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
 
       spectator.service.init();
-      tick();
+      await jest.advanceTimersByTimeAsync(0);
 
       expect(showSessionExpiredSpy).not.toHaveBeenCalled();
-    }));
+    });
 
-    it('shows session expired message when token login returns IncorrectDetails', fakeAsync(() => {
+    it('shows session expired message when token login returns IncorrectDetails', async () => {
+      jest.useFakeTimers();
       isTokenWithinTimeline$.next(true);
 
       Object.defineProperty(authService, 'hasAuthToken', {
@@ -520,12 +525,13 @@ describe('SigninStore', () => {
       const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
 
       spectator.service.init();
-      tick();
+      await jest.advanceTimersByTimeAsync(0);
 
       expect(showSessionExpiredSpy).toHaveBeenCalled();
-    }));
+    });
 
-    it('does not show session expired message when token login returns NoAccess', fakeAsync(() => {
+    it('does not show session expired message when token login returns NoAccess', async () => {
+      jest.useFakeTimers();
       isTokenWithinTimeline$.next(true);
 
       Object.defineProperty(authService, 'hasAuthToken', {
@@ -538,10 +544,10 @@ describe('SigninStore', () => {
       const showSessionExpiredSpy = jest.spyOn(sessionTimeoutService, 'showSessionExpiredMessage');
 
       spectator.service.init();
-      tick();
+      await jest.advanceTimersByTimeAsync(0);
 
       expect(showSessionExpiredSpy).not.toHaveBeenCalled();
-    }));
+    });
   });
 
   describe('getRedirectUrl', () => {

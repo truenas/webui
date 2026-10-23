@@ -3,7 +3,13 @@ import {
   provideHttpClient, withInterceptorsFromDi, withXhr, HttpClient,
 } from '@angular/common/http';
 import {
-  enableProdMode, ErrorHandler, importProvidersFrom, inject, provideAppInitializer,
+  enableProdMode,
+  ErrorHandler,
+  importProvidersFrom,
+  inject,
+  provideAppInitializer,
+  provideBrowserGlobalErrorListeners,
+  provideZonelessChangeDetection,
 } from '@angular/core';
 import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
 // Legacy animations engine required by @truenas/ui-components (tn-table's [@detailExpand]);
@@ -70,6 +76,14 @@ if (environment.production) {
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // No zone.js: change detection is scheduled by signals, `markForCheck()`, template/host
+    // listeners and `async` pipe emissions. Every component is OnPush, which already required
+    // all of those, so nothing relies on zone.js patching browser APIs to trigger a tick.
+    provideZonelessChangeDetection(),
+    // Without zone.js, errors thrown from timers, promises and event listeners outside Angular
+    // never reach `ErrorHandler` on their own; this forwards window `error` and
+    // `unhandledrejection` events to it.
+    provideBrowserGlobalErrorListeners(),
     importProvidersFrom(
       BrowserModule,
       TranslateModule.forRoot({
@@ -104,8 +118,7 @@ bootstrapApplication(AppComponent, {
         strictActionImmutability: true,
         strictStateSerializability: true,
         strictActionSerializability: true,
-        // Disabled due to Angular 21 zone handling changes causing false positives
-        // with conditionally loaded feature states (debug panel)
+        // The app runs without zone.js, so there is no zone for actions to be dispatched in.
         strictActionWithinNgZone: false,
         strictActionTypeUniqueness: true,
       },

@@ -213,7 +213,11 @@ describe('TargetGlobalConfigurationComponent', () => {
     // The `?` is swapped for a key icon carrying the same requirement text, which also shows on hover.
     const gate = spectator.query('[formControlName="iser"]')!.closest('ix-licensed-feature')!;
     expect(gate.querySelector('tn-icon[name="key-variant"]')).toExist();
+    // tn-tooltip opens on a setTimeout (showDelay, 0 by default), which whenStable() does not wait for.
+    jest.useFakeTimers();
     spectator.dispatchMouseEvent(gate.querySelector('.control')!, 'mouseenter');
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
 
     const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
       .getHarness(TnTooltipHarness);

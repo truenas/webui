@@ -1,5 +1,4 @@
 import 'jest-canvas-mock';
-import { fakeAsync } from '@angular/core/testing';
 import {
   createComponentFactory, Spectator,
 } from '@ngneat/spectator/jest';
@@ -17,6 +16,10 @@ describe('ViewChartAreaComponent', () => {
   const createComponent = createComponentFactory({
     component: ViewChartAreaComponent,
     detectChanges: false,
+    // Spectator defaults to destroying fixtures lazily (at the next test's setup), so the last
+    // chart would outlive the jsdom window. Chart.js' detach MutationObserver then fires on the
+    // closed document and crashes the worker — zone.js used to swallow that error.
+    teardown: { destroyAfterEach: true },
   });
 
   const generateDatasets = (dataSources: number, dataPoints: number): ChartDataset<'line'>[] => {
@@ -63,14 +66,14 @@ describe('ViewChartAreaComponent', () => {
    * Test Methods
    * */
 
-  it('should handle more than 8 data points and show maximum sources', fakeAsync(() => {
+  it('should handle more than 8 data points and show maximum sources', () => {
     const data = generateChartData(10, 2);
     expect(spectator.component.maxSources).toBe(8);
 
     spectator.setInput('data', data);
     spectator.setInput('options', { });
     expect(spectator.component.data().datasets).toHaveLength(8);
-  }));
+  });
 
   it('should render chart when data arrives', () => {
     const data = { labels: [], datasets: [] } as ChartData<'line'>;

@@ -1,4 +1,3 @@
-import { fakeAsync, tick, discardPeriodicTasks } from '@angular/core/testing';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnProgressBarComponent } from '@truenas/ui-components';
 import { FakeProgressBarComponent } from './fake-progress-bar.component';
@@ -10,77 +9,79 @@ describe('FakeProgressBarComponent', () => {
   });
 
   beforeEach(() => {
+    jest.useFakeTimers();
     spectator = createComponent();
   });
 
-  it('shows a progress bar when loading is true', fakeAsync(() => {
+  afterEach(() => {
+    // Drops the bar's still-running redraw interval.
+    jest.clearAllTimers();
+    jest.useRealTimers();
+  });
+
+  it('shows a progress bar when loading is true', () => {
     spectator.setInput('loading', true);
-    tick(200);
+    jest.advanceTimersByTime(200);
     spectator.detectChanges();
 
     const progressBar = spectator.query(TnProgressBarComponent);
     expect(progressBar).toBeTruthy();
+  });
 
-    discardPeriodicTasks();
-  }));
-
-  it('imitates progress by increasing % as time passes, but does so in a way that will never reach 100%', fakeAsync(() => {
+  it('imitates progress by increasing % as time passes, but does so in a way that will never reach 100%', () => {
     spectator.setInput({
       duration: 2000,
       loading: true,
     });
-    tick(200);
+    jest.advanceTimersByTime(200);
     spectator.detectChanges();
 
-    tick(500);
+    jest.advanceTimersByTime(500);
     spectator.detectChanges();
     expect(Math.floor(spectator.component.progress())).toBe(9);
 
-    tick(500);
+    jest.advanceTimersByTime(500);
     spectator.detectChanges();
     expect(Math.floor(spectator.component.progress())).toBe(28);
 
-    tick(500);
+    jest.advanceTimersByTime(500);
     spectator.detectChanges();
     expect(Math.floor(spectator.component.progress())).toBe(37);
 
-    tick(500);
+    jest.advanceTimersByTime(500);
     spectator.detectChanges();
     expect(Math.floor(spectator.component.progress())).toBe(47);
+  });
 
-    discardPeriodicTasks();
-  }));
-
-  it('reaches 100% when loading is switched back to false', fakeAsync(() => {
+  it('reaches 100% when loading is switched back to false', () => {
     spectator.setInput('loading', true);
-    tick(200);
+    jest.advanceTimersByTime(200);
     spectator.detectChanges();
     spectator.setInput('loading', false);
     spectator.detectChanges();
 
     expect(spectator.component.progress()).toBe(100);
-  }));
+  });
 
-  it('hides progress bar when loading is set back to false', fakeAsync(() => {
+  it('hides progress bar when loading is set back to false', () => {
     spectator.setInput('loading', true);
-    tick(200); // Wait for grace period
+    jest.advanceTimersByTime(200); // Wait for grace period
     spectator.detectChanges();
     spectator.setInput('loading', false);
-    tick(300); // Wait for animation
+    jest.advanceTimersByTime(300); // Wait for animation
     spectator.detectChanges();
 
     const progressBar = spectator.query(TnProgressBarComponent);
     expect(progressBar).toBeFalsy();
-  }));
+  });
 
-  it('does not start animating when destroyed during the grace period', fakeAsync(() => {
+  it('does not start animating when destroyed during the grace period', () => {
     spectator.setInput('loading', true);
     spectator.fixture.destroy();
 
-    tick(400);
+    jest.advanceTimersByTime(400);
 
     // Starting would leave an interval running that nothing stops once the bar is gone.
     expect(spectator.component.isAnimating()).toBe(false);
-    discardPeriodicTasks();
-  }));
+  });
 });

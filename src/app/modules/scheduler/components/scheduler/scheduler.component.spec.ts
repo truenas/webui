@@ -53,9 +53,13 @@ describe('SchedulerComponent', () => {
   });
 
   it('renders a label and passes properties to it', async () => {
-    spectator.setHostInput('label', 'Apply To Groups');
-    spectator.setHostInput('required', true);
-    spectator.setHostInput('tooltip', 'Enter the location of the system.');
+    // Zoneless: the host template only re-renders once its view is marked dirty.
+    spectator.fixture.changeDetectorRef.markForCheck();
+    spectator.setHostInput({
+      label: 'Apply To Groups',
+      required: true,
+      tooltip: 'Enter the location of the system.',
+    });
 
     const field = await loader.getHarness(TnFormFieldHarness);
     expect(await field.getLabel()).toBe('Apply To Groups');

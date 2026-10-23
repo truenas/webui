@@ -28,6 +28,17 @@ describe('AdvancedSearchComponent – autocomplete', () => {
     ],
   });
 
+  /**
+   * CodeMirror opens suggestions on its own timers (typing debounce, then a measure frame) and ignores
+   * picks made within its `interactionDelay` of opening. Zoneless harnesses do not wait for those
+   * timers, so give CodeMirror that time explicitly.
+   */
+  async function waitForSuggestions(): Promise<void> {
+    await new Promise((resolve) => {
+      setTimeout(resolve, 250);
+    });
+  }
+
   beforeEach(async () => {
     spectator = createComponent({
       props: {
@@ -77,6 +88,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
   describe('seeing suggestions', () => {
     it('shows autocomplete for column names when user clicks in the empty editor', async () => {
       await (await searchHarness.getInputArea()).click();
+      await waitForSuggestions();
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
         'Event',
@@ -88,6 +100,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('shows filtered column options as user types', async () => {
       await searchHarness.setValue('User');
+      await waitForSuggestions();
       const autocomplete = await searchHarness.getAutocomplete();
 
       expect(await autocomplete.getOptions()).toEqual([
@@ -97,6 +110,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('shows autocomplete for comparators after user types column name and space', async () => {
       await searchHarness.setValue('Username ');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -120,6 +134,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('shows autocomplete for values matching column name', async () => {
       await searchHarness.setValue('Username = ');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -130,6 +145,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('shows autocomplete for values matching column name after quote was typed', async () => {
       await searchHarness.setValue('Username = "');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -140,6 +156,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('shows autocomplete for connectors between statements', async () => {
       await searchHarness.setValue('Username = "Bob" ');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -150,6 +167,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('provides suggestions for IN statements', async () => {
       await searchHarness.setValue('Username IN (');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -160,6 +178,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('provides suggestions for new column after a connector', async () => {
       await searchHarness.setValue('Username = "Bob" OR ');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -172,6 +191,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('provides suggestions for connector after a group in quotes', async () => {
       await searchHarness.setValue('(Username = "Bob") ');
+      await waitForSuggestions();
 
       const autocomplete = await searchHarness.getAutocomplete();
       expect(await autocomplete.getOptions()).toEqual([
@@ -184,6 +204,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
   describe('selecting suggestions', () => {
     it('inserts column name when it is selected', async () => {
       await searchHarness.setValue('User');
+      await waitForSuggestions();
       const autocomplete = await searchHarness.getAutocomplete();
 
       await autocomplete.select('Username');
@@ -193,6 +214,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('inserts a comparator when it is selected', async () => {
       await searchHarness.setValue('Username ');
+      await waitForSuggestions();
       const autocomplete = await searchHarness.getAutocomplete();
 
       await autocomplete.select('= (Equals)');
@@ -202,6 +224,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('inserts a quoted value when it is selected', async () => {
       await searchHarness.setValue('Username = ');
+      await waitForSuggestions();
       const autocomplete = await searchHarness.getAutocomplete();
 
       await autocomplete.select('Bob');
@@ -211,6 +234,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('inserts a logical operator when it is selected', async () => {
       await searchHarness.setValue('Username = "Bob" ');
+      await waitForSuggestions();
       const autocomplete = await searchHarness.getAutocomplete();
 
       await autocomplete.select('AND');
@@ -220,6 +244,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
 
     it('inserts a suggestion when Enter is pressed', async () => {
       await searchHarness.setValue('User');
+      await waitForSuggestions();
 
       await (await searchHarness.getInputArea()).sendKeys(TestKey.ENTER);
 
@@ -230,6 +255,7 @@ describe('AdvancedSearchComponent – autocomplete', () => {
   describe('date suggestions', () => {
     it('shows and inserts a date for date properties', async () => {
       await searchHarness.setValue('Timestamp > ');
+      await waitForSuggestions();
 
       const calendar = spectator.query(TnCalendarComponent);
       expect(calendar).toExist();

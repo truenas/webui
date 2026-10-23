@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { EMPTY, of } from 'rxjs';
@@ -54,6 +53,15 @@ describe('EnclosureSvgComponent', () => {
     });
   }
 
+  // The component hands the loaded svg over after a `delay(0)`, which whenStable() does not wait for.
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   function setupComponent(loadSvgResponse?: string): void {
     spectator = createComponent({
       props: {
@@ -72,7 +80,7 @@ describe('EnclosureSvgComponent', () => {
         }),
       ],
     });
-    tick();
+    jest.runOnlyPendingTimers();
     spectator.detectChanges();
   }
 
@@ -84,10 +92,10 @@ describe('EnclosureSvgComponent', () => {
   }
 
   describe('svg is loaded', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
       mockGetBBox();
       setupComponent(testSvg);
-    }));
+    });
 
     it('loads svg and shows it using svgUrl and SvgCacheService service', () => {
       expect(spectator.query('.svg-container')).toHaveDescendant('svg');
@@ -185,15 +193,15 @@ describe('EnclosureSvgComponent', () => {
   });
 
   describe('svg is not loaded yet', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
       mockGetBBox();
       setupComponent();
-    }));
+    });
 
-    it('shows skeleton loader while SVG is loading', fakeAsync(() => {
+    it('shows skeleton loader while SVG is loading', () => {
       spectator.setInput('svgUrl', '/assets/m1.svg');
       spectator.detectChanges();
-      tick();
+      jest.runOnlyPendingTimers();
 
       const skeletonLoader = spectator.query(NgxSkeletonLoaderComponent)!;
       expect(skeletonLoader).toBeTruthy();
@@ -206,6 +214,6 @@ describe('EnclosureSvgComponent', () => {
       });
       expect(skeletonLoader.count).toBe(3);
       expect(spectator.query('.svg-container')).toBeFalsy();
-    }));
+    });
   });
 });
