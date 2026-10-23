@@ -1,0 +1,15 @@
+@if (app().action_required && app().notes) {
+  @let tooltip = 'Action required. Click to see required actions in the Notes card.' | translate;
+  <button
+    type="button"
+    class="action-required-badge"
+    tnTooltipPosition="above"
+    [ixTest]="[app().name, 'action-required']"
+    [tnTooltip]="tooltip"
+    [attr.aria-label]="tooltip"
+    (click)="onClick($event)"
+    (keydown.enter)="$event.stopPropagation()"
+  >
+    <tn-icon name="alert" library="mdi" aria-hidden="true"></tn-icon>
+  </button>
+}
