@@ -7,10 +7,12 @@
  * (Revert Changes) throws the staged edits away. So a spec here can stage
  * anything and revert it without the appliance's network ever changing.
  *
- * **Nothing here commits, and no spec using it may.** The CI appliance has one
- * NIC, the one the suite talks to; a commit re-applies its configuration and
- * can drop the socket the whole run depends on.
+ * **Only `network-interfaces-commit.e2e.ts` commits**, through the helpers at
+ * the end of this file, and only on an appliance with a spare NIC. A commit
+ * re-applies every interface, the one the suite talks to included, and can drop
+ * the socket the whole run depends on. Every other spec stages and reverts.
  */
+import { expect } from '@playwright/test';
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -35,6 +37,8 @@ export interface InterfaceRecord {
   lag_ports?: string[];
   state: {
     permanent_link_address?: string | null;
+    /** The MAC in use, which for a physical NIC is the one qemu was given. */
+    link_address?: string | null;
     aliases: {
       /** `INET`, `INET6` or `LINK`. */
       type: string;
@@ -158,9 +162,9 @@ export async function readAvailableFecModes(client: E2eApiClient, id: string): P
  *
  * Rollback first: whatever is staged is a spec's leftover, and throwing it away
  * is the only answer that cannot touch the NIC. A commit waiting for its check-in
- * should never be found here, since nothing in this suite commits; if one is,
- * rollback has already restored the previous configuration, and the check-in
- * only ends the wait so the UI stops counting down.
+ * is found here only when a spec stopped between Test Changes and Save Changes;
+ * rollback has then already restored the previous configuration, and the
+ * check-in only ends the wait so the UI stops counting down.
  */
 export async function ensureNoPendingInterfaceChanges(client: E2eApiClient): Promise<void> {
   if (await hasPendingInterfaceChanges(client)) {
@@ -192,4 +196,165 @@ export async function stageVlan(
       vlan_tag: tag,
     }]).pipe(timeout(slowCallTimeoutMs)),
   );
+}
+
+/*
+ * Committing, for `network-interfaces-commit.e2e.ts` alone: see the note at the top.
+ */
+
+/**
+ * Seconds middleware waits for `interface.checkin` before it rolls a commit
+ * back by itself. Twice the page's default: a commit that restarts DHCP on the
+ * NIC the suite talks to drops the socket, and the check-in has to wait for the
+ * reconnect.
+ */
+const apiCommitCheckinTimeoutSeconds = 120;
+
+/** A ceiling on a commit being seen waiting for its check-in, reconnect included. */
+const commitLandsTimeoutMs = 90_000;
+
+/**
+ * The physical NIC whose MAC is `mac`, as `TN_SPARE_NICS` names it, or
+ * undefined. Matched by MAC because nothing else picks it out: its name differs
+ * per machine, and "the NIC with no address" matches every NIC, since each one
+ * has an IPv6 link-local address.
+ */
+export async function findSpareInterface(client: E2eApiClient, mac: string): Promise<InterfaceRecord | undefined> {
+  const wanted = mac.toLowerCase();
+
+  return (await listInterfaces(client)).find((entry) => {
+    return entry.type === 'PHYSICAL' && entry.state.link_address?.toLowerCase() === wanted;
+  });
+}
+
+/** Every VLAN, bridge or LAGG that `nic` is the parent, a member or a port of. */
+export async function findInterfacesOn(client: E2eApiClient, nic: string): Promise<InterfaceRecord[]> {
+  return (await listInterfaces(client)).filter((entry) => {
+    return entry.vlan_parent_interface === nic
+      || Boolean(entry.bridge_members?.includes(nic))
+      || Boolean(entry.lag_ports?.includes(nic));
+  });
+}
+
+/**
+ * Whether `nic` has a row in `network.interfaces`. Nothing in `interface.query`
+ * says so, so this reads it off `interface.lag_ports_choices`, which leaves out
+ * every NIC that has a row. That choice also leaves out a NIC that is already a
+ * bridge member, a LAGG port or a VLAN parent, so call this only when `nic` is
+ * none of those.
+ */
+export async function hasInterfaceRow(client: E2eApiClient, nic: string): Promise<boolean> {
+  return !(nic in await readLagPortsChoices(client));
+}
+
+export async function readCheckinWaiting(client: E2eApiClient): Promise<number | null> {
+  return firstValueFrom(client.api.call('interface.checkin_waiting').pipe(timeout(readTimeoutMs)));
+}
+
+/**
+ * Applies whatever is staged and keeps it: `interface.commit` with a rollback
+ * timer, then `interface.checkin`, the API's Test Changes and Save Changes.
+ *
+ * A commit can restart DHCP on the NIC the suite talks to, and the answer can
+ * be lost with the socket, so a failed call does not mean a failed commit.
+ * `interface.checkin_waiting` says whether the commit landed. A commit that
+ * really failed has already rolled itself back, and the poll then reports what
+ * the call answered.
+ */
+export async function commitInterfaceChanges(client: E2eApiClient, whatItCosts: string): Promise<void> {
+  let commitAnswer = '';
+  try {
+    await firstValueFrom(
+      client.api.call('interface.commit', [{
+        rollback: true,
+        checkin_timeout: apiCommitCheckinTimeoutSeconds,
+      }]).pipe(timeout(slowCallTimeoutMs)),
+    );
+  } catch (error) {
+    commitAnswer = ` interface.commit answered: ${error instanceof Error ? error.message : String(error)}.`;
+  }
+
+  await expect.poll(
+    () => readCheckinWaiting(client),
+    {
+      message: `interface.commit should be waiting for its check-in.${commitAnswer} ${whatItCosts}`,
+      timeout: commitLandsTimeoutMs,
+    },
+  ).not.toBeNull();
+
+  await firstValueFrom(client.api.call('interface.checkin').pipe(timeout(slowCallTimeoutMs)));
+  expect(await hasPendingInterfaceChanges(client), `Nothing should be pending after the check-in. ${whatItCosts}`)
+    .toBe(false);
+}
+
+/**
+ * Saves the management NIC to the database as DHCP, as it already runs, and
+ * commits that. Returns whether it added the row. A NIC that already has a row
+ * is left alone, and this returns false.
+ *
+ * A fresh appliance has an empty `network.interfaces` table, and middleware
+ * runs DHCP on every NIC. Once the table holds any row, `interface.sync`
+ * unconfigures every NIC without one. So committing a VLAN on the spare NIC
+ * would take the management NIC's address away, unless this row is there first.
+ * Its lease does not change, so the socket survives the commit.
+ */
+export async function pinManagementInterface(client: E2eApiClient, nic: ManagementInterface): Promise<boolean> {
+  if (await hasInterfaceRow(client, nic.name)) {
+    return false;
+  }
+
+  await firstValueFrom(
+    client.api.call('interface.update', [nic.name, { ipv4_dhcp: true }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+  await commitInterfaceChanges(
+    client,
+    `${nic.name} was staged as DHCP and may still be, and a later commit would then unconfigure the NIC the suite talks to.`,
+  );
+
+  return true;
+}
+
+/**
+ * Removes the row `pinManagementInterface` added, so the table is empty again
+ * and middleware runs DHCP on every NIC, as on a fresh appliance. That restarts
+ * DHCP on the management NIC. The socket drops and reconnects, and qemu hands
+ * out the same address.
+ */
+export async function unpinManagementInterface(client: E2eApiClient, name: string): Promise<void> {
+  await firstValueFrom(client.api.call('interface.delete', [name]).pipe(timeout(slowCallTimeoutMs)));
+  await commitInterfaceChanges(
+    client,
+    `${name} keeps a DHCP row in network.interfaces, so every later spec runs on an appliance unlike a fresh one.`,
+  );
+}
+
+/**
+ * Deletes every VLAN, bridge and LAGG built on `nic`, and the row a bridge or
+ * LAGG can leave on `nic` itself when `hadRow` says it had none to start with.
+ * Then it commits, so `nic` ends with no address and no interface on it.
+ */
+export async function ensureNothingOnSpareInterface(
+  client: E2eApiClient,
+  nic: string,
+  hadRow: boolean,
+): Promise<void> {
+  await ensureNoPendingInterfaceChanges(client);
+
+  const built = await findInterfacesOn(client, nic);
+  for (const entry of built) {
+    await firstValueFrom(client.api.call('interface.delete', [entry.id]).pipe(timeout(slowCallTimeoutMs)));
+  }
+  const leftRow = !hadRow && await hasInterfaceRow(client, nic);
+  if (leftRow) {
+    await firstValueFrom(client.api.call('interface.delete', [nic]).pipe(timeout(slowCallTimeoutMs)));
+  }
+
+  if (built.length > 0 || leftRow) {
+    const names = built.map((entry) => entry.name).join(', ');
+    await commitInterfaceChanges(client, `${names || nic} may still be configured on ${nic}.`);
+  }
+
+  const spare = await findInterface(client, nic);
+  expect(spare && ipv4AddressesOf(spare), `${nic} should hold no IPv4 address once nothing is built on it`)
+    .toEqual([]);
 }

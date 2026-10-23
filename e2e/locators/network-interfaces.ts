@@ -2,7 +2,7 @@
  * The Interfaces card on System > Network, the interface form it opens, and the
  * pending-changes card the page shows above it while an edit is staged.
  */
-import { kebabTestSegment } from './test-id';
+import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
 /**
  * An interface's row tag: `convertStringToId('interface-' + name)`, as the
@@ -82,6 +82,11 @@ export const interfaceFormLocators = {
   lagPorts: '[data-test="select-lag-ports"]',
   lagPortsOptions: '[data-test^="option-lag-ports-"]',
   lagPortOption: (name: string): string => `[data-test="option-lag-ports-${kebabTestSegment(name)}"]`,
+  /**
+   * FAILOVER's ordered listbox: one switch per port, `toggle-` + `lag-ports` +
+   * the port's name, through webui's legacy normalizer, so `ens4` is `ens-4`.
+   */
+  lagFailoverPort: (name: string): string => `[data-test="toggle-lag-ports-${legacyKebabTestSegment(name)}"]`,
 
   /** The side panel is opened with no `testId`, so this is the panel's generic close. */
   closePanel: '[data-test="button-close-side-panel"]',
@@ -94,6 +99,8 @@ export const interfaceFormLocators = {
  */
 export const pendingChangesLocators = {
   checkinTimeout: '[data-test="input-checkin-timeout"]',
+  /** Shown in place of the timeout field while a commit waits: the seconds left, counting down. */
+  checkinRemaining: '[data-test="text-checkin-remaining"]',
   testChanges: '[data-test="button-test-changes"]',
   saveChanges: '[data-test="button-save-changes"]',
   revertChanges: '[data-test="button-revert-changes"]',
