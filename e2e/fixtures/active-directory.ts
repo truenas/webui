@@ -156,10 +156,8 @@ async function directoryServicesJobsInFlight(client: E2eApiClient): Promise<stri
  * Waits until no directory services job is running or queued.
  *
  * A join can report the domain healthy before the work it starts is done, such as filling the
- * account cache from the domain. A leave started from the card right after a join through the form
- * outlived the Leave dialog's five minutes, twice, and queueing behind that work is the likeliest
- * reason. A status read meanwhile can be neither joined nor left, which `ensureActiveDirectoryLeft`
- * would take for left. What it waited for is logged, by method only, so a run shows which it was.
+ * account cache from the domain. A status read meanwhile can be neither joined nor left, which
+ * `ensureActiveDirectoryLeft` would take for left. What it waited for is logged, by method only.
  */
 export async function waitForDirectoryServicesJobs(client: E2eApiClient): Promise<void> {
   const inFlight = await directoryServicesJobsInFlight(client);

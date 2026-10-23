@@ -50,6 +50,7 @@ import {
   directoryServicesLocators,
   directoryServiceTypeLabels,
 } from '../../locators/directory-services';
+import { jobDialogLocators } from '../../locators/encryption';
 import type { E2eApiClient } from '../../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../../support/cleanup';
 import type { ActiveDirectoryTarget, TargetConfig } from '../../support/config';
@@ -102,6 +103,41 @@ async function fillActiveDirectoryJoin(page: Page, ad: ActiveDirectoryTarget, ho
   await page.locator(form.activeDirectory.domain).fill(ad.domain);
   if (ad.computerOu) {
     await page.locator(form.activeDirectory.computerAccountOu).fill(ad.computerOu);
+  }
+}
+
+/**
+ * Waits for the Leave dialog to close once Leave is pressed.
+ *
+ * A refused leave raises the error dialog over it and keeps it open, which on its own reads as a
+ * leave still running until the timeout. A leave right after the join test's form join stayed
+ * open five minutes on every first attempt, while one over the API just after took seconds. So a
+ * refusal fails at once with middleware's message, and a timeout says whether the job dialog was
+ * still up. The caller's `withActiveDirectoryRedacted` takes the domain out of either.
+ */
+async function waitForLeave(page: Page): Promise<void> {
+  const { leaveDialog } = directoryServicesLocators;
+  const refused = page.locator(errorDialogLocators.title);
+
+  await expect.poll(async () => {
+    if (await refused.isVisible()) {
+      return 'refused';
+    }
+    if (!await page.locator(leaveDialog.title).isVisible()) {
+      return 'closed';
+    }
+    return await page.locator(jobDialogLocators.title).isVisible()
+      ? 'open, with the job dialog up'
+      : 'open, with no job dialog';
+  }, {
+    message: 'the Leave dialog to close',
+    timeout: adJoinTimeoutMs,
+    intervals: [1_000],
+  }).toMatch(/^(closed|refused)$/);
+
+  if (await refused.isVisible()) {
+    const message = await page.locator(errorDialogLocators.message).innerText();
+    throw new Error(`Leaving the domain was refused: ${message}`);
   }
 }
 
@@ -205,7 +241,7 @@ test.describe('joining and leaving', () => {
       await expect(leave).toBeEnabled();
       await leave.click();
 
-      await expect(page.locator(leaveDialog.title)).toBeHidden({ timeout: adJoinTimeoutMs });
+      await waitForLeave(page);
       await expect(page.locator(directoryServicesLocators.disabled)).toBeVisible({ timeout: cardTimeoutMs });
 
       const { config: stored, status } = await readDirectoryServices(api);
