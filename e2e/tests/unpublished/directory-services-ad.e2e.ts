@@ -47,7 +47,9 @@ import {
   setNameservers,
 } from '../../fixtures/network-config';
 import { nfs4Entries, readAcl } from '../../fixtures/permissions';
-import { datasetMountPath, ensureDatasetAbsent, ensureSmbDatasetPresent } from '../../fixtures/storage';
+import {
+  datasetMountPath, ensureDatasetAbsent, ensureSmbDatasetPresent, type Nfs4Ace,
+} from '../../fixtures/storage';
 import {
   discardDirectoryServicesForm,
   openDirectoryServicesForm,
@@ -391,8 +393,15 @@ test.describe('joining and leaving', () => {
         await ensureActiveDirectoryJoined(api, ad, adComputerName());
         const { name: group, id: gid } = await findDomainAccount(api, 'group', domainUsersGroup);
         const dataset = `${pool}/${leaf}`;
+        const path = datasetMountPath(dataset);
+        const forGroup = (entries: Nfs4Ace[]): Nfs4Ace[] => entries.filter(
+          (entry) => entry.tag === 'GROUP' && entry.id === gid,
+        );
         await ensureDatasetAbsent(api, dataset);
         await ensureSmbDatasetPresent(api, dataset);
+        // On a joined appliance the SMB preset already grants the domain's users Modify, so the
+        // new entry is the one after whatever the preset gave the group.
+        const before = forGroup(nfs4Entries(await readAcl(api, path)));
 
         await openAclEditor(page, dataset);
         // Typed as the appliance lists it, `NAME\domain users`: the picker searches every group
@@ -400,8 +409,8 @@ test.describe('joining and leaving', () => {
         await addAclGroupEntry(page, group, 'Read');
         await saveAcl(page);
 
-        const entries = nfs4Entries(await readAcl(api, datasetMountPath(dataset)));
-        expect(entries.filter((entry) => entry.tag === 'GROUP' && entry.id === gid)).toEqual([
+        expect(forGroup(nfs4Entries(await readAcl(api, path)))).toEqual([
+          ...before,
           expect.objectContaining({ type: 'ALLOW', perms: { BASIC: 'READ' } }),
         ]);
       });
