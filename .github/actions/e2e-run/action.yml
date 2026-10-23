@@ -77,7 +77,7 @@ runs:
         envFile="$RUNNER_TEMP/suite.env"
         trap 'rm -f "$envFile"' EXIT
         names=(CI TN_GREP TN_SHARD TN_PROFILE TN_UI_BASE_URL TN_UI_BASE_URL_HTTP TN_HOST
-               TN_USERNAME TN_PASSWORD TN_DOMAIN TN_BASELINE)
+               TN_USERNAME TN_PASSWORD TN_DOMAIN TN_BASELINE TN_SPARE_NICS)
         while read -r name; do
           [ -n "$name" ] && names+=("$name")
         done <<< "$EXTRA_ENV"
