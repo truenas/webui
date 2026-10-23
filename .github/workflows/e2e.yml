@@ -172,12 +172,20 @@ jobs:
       # the boot disk, and the boot partition alone is about 15.5GB (#14710).
       # Sparse, and after the data disks, so the specs that take unused disks of
       # one size still get 10GB ones.
+      #
+      # One spare NIC, alone on a qemu hub with nothing on the other end, for
+      # the specs that commit interface changes without touching the NIC the
+      # suite reaches the appliance on (#14537). Its MAC is in TN_SPARE_NICS.
+      #
+      # TEMPORARY: @appliance-spare-nics until iXsystems/ux-github-workflows#27
+      # merges. Back to @master before this merges.
       - name: Boot the appliance
-        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@master
+        uses: iXsystems/ux-github-workflows/.github/actions/truenas-appliance-runner@appliance-spare-nics
         with:
           baseline: fresh-install
           memory-mb: 8192
           extra-disk-gb: '32'
+          spare-nics: 1
 
       # A non-HA Enterprise license, so the journeys behind an entitlement
       # (ZFS tiering, S3 audit and versioning) run here rather than skip.
