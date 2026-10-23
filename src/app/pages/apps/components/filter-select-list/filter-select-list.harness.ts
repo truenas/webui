@@ -3,14 +3,12 @@ import { ComponentHarness } from '@angular/cdk/testing';
 import { TnIconHarness } from '@truenas/ui-components';
 import { isString } from 'lodash-es';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
 export class FilterSelectListHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-filter-select-list';
 
   getItems = this.locatorForAll('.item');
   getIcons = this.locatorForAll(TnIconHarness);
-  getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
     const label = await this.locatorForOptional('.label')();

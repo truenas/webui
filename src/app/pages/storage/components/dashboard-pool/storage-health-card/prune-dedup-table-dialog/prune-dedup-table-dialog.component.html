@@ -15,23 +15,24 @@
   </tn-form-field>
 
   @if (isPruningByPercentage) {
-    <ix-label [label]="'Percentage' | translate" [required]="true"></ix-label>
-    <tn-slider
-      class="percentage-slider"
-      testId="percentage"
-      labelSuffix="%"
-      labelType="handle"
-      [min]="1"
-      [max]="100"
-      [step]="1"
-    >
-      <input
-        tnSliderThumb
-        tnTestIdType="input"
-        formControlName="percentage"
-        [tnTestId]="'slider-thumb'"
+    <tn-form-field [label]="'Percentage' | translate" [required]="true">
+      <tn-slider
+        class="percentage-slider"
+        testId="percentage"
+        labelSuffix="%"
+        labelType="handle"
+        [min]="1"
+        [max]="100"
+        [step]="1"
       >
-    </tn-slider>
+        <input
+          tnSliderThumb
+          tnTestIdType="input"
+          formControlName="percentage"
+          [tnTestId]="'slider-thumb'"
+        >
+      </tn-slider>
+    </tn-form-field>
   } @else {
     <tn-form-field [label]="'Age (in days)' | translate">
       <tn-input

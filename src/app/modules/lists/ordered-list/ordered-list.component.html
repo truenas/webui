@@ -1,11 +1,3 @@
-@if (label() || tooltip()) {
-  <ix-label
-    [label]="label()"
-    [tooltip]="tooltip()"
-    [required]="required()"
-  ></ix-label>
-}
-
 <div
   class="container-items"
   cdkDropList
@@ -13,7 +5,12 @@
   [style.maxHeight]="maxHeight()"
   (cdkDropListDropped)="drop($event)"
   >
-  <tn-list [attr.aria-label]="label()">
+  <tn-list
+    [attr.aria-labelledby]="aria.labelledby()"
+    [attr.aria-describedby]="aria.describedby()"
+    [attr.aria-invalid]="aria.invalid()"
+    [attr.aria-required]="aria.required()"
+  >
     @for (item of items; track item.value) {
       <tn-list-item cdkDrag>
         <tn-icon
@@ -44,5 +41,3 @@
     }
   </tn-list>
 </div>
-
-<ix-errors [control]="controlDirective.control" [label]="label()"></ix-errors>

@@ -108,7 +108,7 @@
                 </tn-form-field>
               }
 
-              <ix-errors [control]="network"></ix-errors>
+              <tn-form-errors [control]="network"></tn-form-errors>
             </div>
           </tn-form-list-item>
         }
@@ -175,13 +175,16 @@
       }
 
       @if (isFailover) {
-        <ix-ordered-listbox
-          formControlName="lag_ports"
+        <tn-form-field
           [label]="'Link Aggregation Interfaces' | translate"
-          [options]="lagPorts$"
-          [required]="true"
           [tooltip]="helptext.lagg.interfacesFailoverTooltip | translate"
-        ></ix-ordered-listbox>
+          [required]="true"
+        >
+          <ix-ordered-listbox
+            formControlName="lag_ports"
+            [options]="lagPorts$"
+          ></ix-ordered-listbox>
+        </tn-form-field>
       } @else {
         <tn-form-field
           [label]="'Link Aggregation Interfaces' | translate"

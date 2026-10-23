@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness, TnStepperComponent,
+  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
@@ -161,7 +161,9 @@ describe('DiskStepComponent', () => {
         import_image: true,
       });
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Image Source' }));
+      const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Image Source' }));
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="image_source"]' }));
+      expect(field).toBeTruthy();
       expect(explorer).toBeTruthy();
     });
 

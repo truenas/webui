@@ -6,6 +6,7 @@ import { MockComponent } from 'ng-mocks';
 import {
   ExplorerCreateZvolComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
@@ -28,6 +29,15 @@ export function getNamespaceTypeToggle(loader: HarnessLoader, label: string): Pr
 export async function selectNamespaceType(loader: HarnessLoader, label: string): Promise<void> {
   const toggle = await getNamespaceTypeToggle(loader, label);
   await toggle.check();
+}
+
+/**
+ * The namespace form's device path explorer, whichever device type is selected — all three branches
+ * bind it to `device_path`. Located by control rather than label: the label belongs to the wrapping
+ * `tn-form-field`, which `IxFormHarness` indexes as a tn-* control it cannot drive.
+ */
+export function getNamespacePathExplorer(loader: HarnessLoader): Promise<IxExplorerHarness> {
+  return loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="device_path"]' }));
 }
 
 /** One entry of a spectator factory's `overrideComponents`. */

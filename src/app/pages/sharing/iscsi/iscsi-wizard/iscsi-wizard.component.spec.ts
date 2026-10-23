@@ -27,6 +27,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -126,6 +127,9 @@ describe('IscsiWizardComponent', () => {
   const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
     TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
+  const getDatasetExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: '[formControlName="dataset"]' }),
+  );
 
   /**
    * Fills controls addressed by their visible label. `IxFormHarness` is scoped to a `<form>`
@@ -165,9 +169,7 @@ describe('IscsiWizardComponent', () => {
     // Extent step
     await (await getTnInput('name')).setValue('test-name');
     await (await getTnSelect('disk')).selectOption('Create New');
-    await fillByLabel({
-      'Pool/Dataset': '/mnt/new_pool',
-    });
+    await (await getDatasetExplorer()).setValue('/mnt/new_pool');
     await (await getTnInput('volsize')).setValue('1024 MiB');
     await clickNext();
 
@@ -270,7 +272,7 @@ describe('IscsiWizardComponent', () => {
     // Extent step
     await (await getTnInput('name')).setValue('test-name');
     await (await getTnSelect('disk')).selectOption('Create New');
-    await fillByLabel({ 'Pool/Dataset': '/mnt/new_pool' });
+    await (await getDatasetExplorer()).setValue('/mnt/new_pool');
     await (await getTnInput('volsize')).setValue('1024 MiB');
     await clickNext();
 
@@ -314,9 +316,7 @@ describe('IscsiWizardComponent', () => {
       // Extent step
       await (await getTnInput('name')).setValue('test-fc-target');
       await (await getTnSelect('disk')).selectOption('Create New');
-      await fillByLabel({
-        'Pool/Dataset': '/mnt/new_pool',
-      });
+      await (await getDatasetExplorer()).setValue('/mnt/new_pool');
       await (await getTnInput('volsize')).setValue('1024 MiB');
       await clickNext();
 

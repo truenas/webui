@@ -108,7 +108,7 @@ describe('TargetSectionComponent', () => {
     });
 
     it('disables explorer when nodeProvider is not provided', async () => {
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Destination' }));
+      const explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }));
       spectator.setInput('nodeProvider', null);
       expect(await explorer.isDisabled()).toBe(true);
 

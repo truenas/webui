@@ -25,6 +25,7 @@ import {
   VmRawFileDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   fillControlValues, getControlValues, indexFormControls, IxFormBasicValueType,
@@ -71,16 +72,35 @@ describe('DeviceFormComponent', () => {
   let api: TypedApiService;
 
   /**
-   * The form mixes `ix-*` controls (explorer, combobox, and the two byte-formatted size inputs)
-   * with `tn-*` ones; `indexFormControls` indexes both by label, so the label-keyed call sites
-   * below reach either kind through one lookup.
+   * The path explorers (`CD-ROM Path`, `Raw File`) sit in a `tn-form-field` that owns their label,
+   * and `indexFormControls` cannot reach an `ix-explorer` through a field. Both bind the `path`
+   * control, and only one is on screen at a time, so they are driven through `IxExplorerHarness`
+   * and keyed by their field's label here.
+   */
+  const explorerFieldLabels = ['CD-ROM Path', 'Raw File'];
+
+  async function getPathExplorer(): Promise<IxExplorerHarness | null> {
+    return loader.getHarnessOrNull(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
+  }
+
+  /**
+   * Every other control is indexed by label through `indexFormControls`, which reaches both the
+   * `ix-*` and the `tn-*` controls this form mixes.
    *
    * Re-indexed per value rather than once per call because the fields are branch-switched on the
    * device type: filling `Type` changes which controls exist before the next value is filled.
    */
   async function fillForm(values: Record<string, unknown>): Promise<void> {
     for (const [label, value] of Object.entries(values)) {
-      await fillControlValues(await indexFormControls(loader), { [label]: value });
+      if (explorerFieldLabels.includes(label)) {
+        const explorer = await getPathExplorer();
+        if (!explorer) {
+          throw new Error(`Could not find control with label ${label}.`);
+        }
+        await explorer.setValue(value as string);
+      } else {
+        await fillControlValues(await indexFormControls(loader), { [label]: value });
+      }
       spectator.detectChanges();
     }
   }
@@ -91,7 +111,16 @@ describe('DeviceFormComponent', () => {
    * this spec's bookkeeping.
    */
   async function getValues(): Promise<Record<string, IxFormBasicValueType>> {
-    return getControlValues(await indexFormControls(loader));
+    const values = await getControlValues(await indexFormControls(loader));
+    const explorer = await getPathExplorer();
+    if (explorer) {
+      for (const label of explorerFieldLabels) {
+        if (await loader.getHarnessOrNull(TnFormFieldHarness.with({ label }))) {
+          values[label] = await explorer.getValue();
+        }
+      }
+    }
+    return values;
   }
 
   /**

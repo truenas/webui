@@ -14,7 +14,6 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { Pool, PruneDedupTableParams } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -47,7 +46,6 @@ export const pruneByLabels = new Map<PruneBy, string>([
     TnRadioComponent,
     TnSliderComponent,
     TnSliderThumbDirective,
-    IxLabelComponent,
   ],
 })
 export class PruneDedupTableDialog {

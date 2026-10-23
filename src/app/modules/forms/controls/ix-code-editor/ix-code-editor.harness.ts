@@ -2,13 +2,11 @@ import { ComponentHarness } from '@angular/cdk/testing';
 import { UnitTestElement } from '@angular/cdk/testing/testbed';
 import { EditorView } from 'codemirror';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
 export class IxCodeEditorHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-code-editor';
 
   getEditorLines = this.locatorForAll('.cm-line');
-  getErrorText = getErrorText;
 
   /**
    * Always '': the control renders no label of its own since it became a bare control, so the

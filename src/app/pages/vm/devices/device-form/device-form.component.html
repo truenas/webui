@@ -26,15 +26,18 @@
     <ng-container [formGroup]="typeSpecificForm">
       @switch (typeControl.value) {
         @case (VmDeviceType.Cdrom) {
-          <ix-explorer
-            formControlName="path"
+          <tn-form-field
             [label]="'CD-ROM Path' | translate"
-            [required]="true"
-            [nodeProvider]="fileNodeProvider"
             [tooltip]="helptext.cd_path_tooltip | translate"
+            [required]="true"
           >
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          </ix-explorer>
+            <ix-explorer
+              formControlName="path"
+              [nodeProvider]="fileNodeProvider"
+            >
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            </ix-explorer>
+          </tn-form-field>
         }
         @case (VmDeviceType.Disk) {
           @if (isNew) {
@@ -174,16 +177,19 @@
           </tn-form-field>
         }
         @case (VmDeviceType.Raw) {
-          <ix-explorer
-            #rawFileExplorer
-            formControlName="path"
+          <tn-form-field
             [label]="'Raw File' | translate"
-            [required]="true"
-            [nodeProvider]="fileNodeProvider"
             [tooltip]="helptext.raw_file_path_tooltip | translate"
+            [required]="true"
           >
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          </ix-explorer>
+            <ix-explorer
+              #rawFileExplorer
+              formControlName="path"
+              [nodeProvider]="fileNodeProvider"
+            >
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            </ix-explorer>
+          </tn-form-field>
 
           <tn-form-field
             [label]="'Disk Sector Size' | translate"
@@ -254,7 +260,7 @@
               <tn-form-field [label]="'Product ID' | translate" [required]="true">
                 <tn-input formControlName="product_id"></tn-input>
               </tn-form-field>
-              <ix-errors [control]="usbForm.controls.usb"></ix-errors>
+              <tn-form-errors [control]="usbForm.controls.usb"></tn-form-errors>
             </ng-container>
           }
         }

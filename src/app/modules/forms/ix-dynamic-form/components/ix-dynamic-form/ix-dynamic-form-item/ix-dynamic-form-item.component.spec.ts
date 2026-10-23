@@ -276,8 +276,9 @@ describe('IxDynamicFormItemComponent', () => {
         },
       });
       expect(spectator.query('ix-explorer')).toBeVisible();
-      expect(spectator.query(IxExplorerComponent)!.required()).toBe(explorerSchema.required);
-      expect(spectator.query(IxExplorerComponent)!.tooltip()).toBe(explorerSchema.tooltip);
+      const explorerField = spectator.query(TnFormFieldComponent)!;
+      expect(explorerField.required()).toBe(explorerSchema.required);
+      expect(explorerField.tooltip()).toBe(explorerSchema.tooltip);
 
       expect(spectator.query('ix-explorer')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.explorer as CustomUntypedFormField;
