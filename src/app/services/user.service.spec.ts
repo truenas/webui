@@ -114,7 +114,7 @@ describe('UserService', () => {
 
       await firstValueFrom(spectator.service.smbGroupQueryDsCache('smb', false, 0));
 
-      expect(apiService.query).toHaveBeenCalledWith('group.query', [['smb', '=', true], ['group', '^', 'smb']], { limit: 50, offset: 0, order_by: ['builtin'] });
+      expect(apiService.query).toHaveBeenCalledWith('group.query', [['smb', '=', true], ['group', '~', '(?i).*smb']], { limit: 50, offset: 0, order_by: ['builtin'] });
     });
 
     it('filters built-in SMB groups when hideBuiltIn is true', async () => {
@@ -134,7 +134,7 @@ describe('UserService', () => {
 
       await firstValueFrom(spectator.service.smbGroupQueryDsCache('ACME\\Domain Admins', false, 0));
 
-      expect(apiService.query).toHaveBeenCalledWith('group.query', [['smb', '=', true], ['group', '^', 'ACME\\\\Domain Admins']], { limit: 50, offset: 0, order_by: ['builtin'] });
+      expect(apiService.query).toHaveBeenCalledWith('group.query', [['smb', '=', true], ['group', '~', '(?i).*ACME\\\\Domain Admins']], { limit: 50, offset: 0, order_by: ['builtin'] });
     });
   });
 
@@ -268,7 +268,7 @@ describe('UserService', () => {
 
       const result = await firstValueFrom(spectator.service.smbUserQueryDsCache('smb', 0));
 
-      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '^', 'smb']], { limit: 50, offset: 0, order_by: ['builtin'] });
+      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '~', '(?i).*smb']], { limit: 50, offset: 0, order_by: ['builtin'] });
       expect(result).toEqual(mockUsers);
     });
 
@@ -278,7 +278,7 @@ describe('UserService', () => {
 
       await firstValueFrom(spectator.service.smbUserQueryDsCache('ACME\\admin', 0));
 
-      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '^', 'ACME\\\\admin']], { limit: 50, offset: 0, order_by: ['builtin'] });
+      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '~', '(?i).*ACME\\\\admin']], { limit: 50, offset: 0, order_by: ['builtin'] });
     });
 
     it('trims search input', async () => {
@@ -286,7 +286,7 @@ describe('UserService', () => {
 
       await firstValueFrom(spectator.service.smbUserQueryDsCache('  smbuser  ', 0));
 
-      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '^', 'smbuser']], { limit: 50, offset: 0, order_by: ['builtin'] });
+      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '~', '(?i).*smbuser']], { limit: 50, offset: 0, order_by: ['builtin'] });
     });
   });
 

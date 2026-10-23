@@ -68,8 +68,10 @@ export class UserService {
     const queryArgs: GroupFilter[] = [['smb', '=', true]];
 
     if (trimmedSearch) {
-      // Escape backslashes for domain-prefixed group names (e.g., "ACME\Domain Admins")
-      queryArgs.push(['group', '^', trimmedSearch.replaceAll('\\', '\\\\')]);
+      // A case-insensitive regex, as the other pickers search, so a domain group is found by its
+      // name alone or with its domain (`ACME\Domain Admins`). `^` is a plain startswith in
+      // middleware, which neither matches past the domain nor wants the backslash escaped.
+      queryArgs.push(['group', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
     }
     if (hideBuiltIn) {
       queryArgs.push(['builtin', '=', false]);
@@ -212,19 +214,19 @@ export class UserService {
   }
 
   /**
-   * Queries SMB users with prefix matching.
-   * Handles domain-prefixed usernames (e.g., "ACME\admin") by escaping backslashes.
+   * Queries SMB users whose name contains the search, case-insensitively.
+   * Handles domain-prefixed usernames (e.g., "ACME\admin") by escaping backslashes in the regex.
    *
    * @param search - Username or pattern to search for
    * @param offset - Pagination offset for results
-   * @returns Observable of SMB users matching the prefix
+   * @returns Observable of SMB users matching the search
    */
   smbUserQueryDsCache(search = '', offset = 0): Observable<User[]> {
     const trimmedSearch = search.trim();
     const queryArgs: UserFilter[] = [['smb', '=', true]];
     if (trimmedSearch) {
-      // Escape backslashes for domain-prefixed usernames (e.g., "ACME\admin")
-      queryArgs.push(['username', '^', trimmedSearch.replaceAll('\\', '\\\\')]);
+      // The same case-insensitive regex as `smbGroupQueryDsCache`, for `ACME\admin` or `admin`.
+      queryArgs.push(['username', '~', `(?i).*${trimmedSearch.replaceAll('\\', '\\\\')}`]);
     }
 
     return this.api.query('user.query', queryArgs, { ...this.queryOptions, offset, order_by: ['builtin'] }).pipe(
