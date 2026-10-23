@@ -98,7 +98,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
           ['OR', [['builtin', '=', false], ['local', '=', false]]],
-          ['OR', [['username', '~', '(?i)root'], ['full_name', '~', '(?i)root']]],
+          ['OR', [['username', '~', '(?i)(.+\\\\)?root'], ['full_name', '~', '(?i)root']]],
         ],
         {},
       ]);
@@ -118,7 +118,7 @@ describe('UsersSearchComponent', () => {
         [
           ['local', '=', true],
           ['builtin', '=', false],
-          ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
+          ['OR', [['username', '~', '(?i)(.+\\\\)?test'], ['full_name', '~', '(?i)test']]],
         ],
         {},
       ]);
@@ -137,7 +137,7 @@ describe('UsersSearchComponent', () => {
         [
           ['local', '=', true],
           ['builtin', '=', false],
-          ['OR', [['username', '~', '(?i).*user'], ['full_name', '~', '(?i).*user']]],
+          ['OR', [['username', '~', '(?i)(.+\\\\)?.*user'], ['full_name', '~', '(?i).*user']]],
         ],
         {},
       ]);
@@ -156,7 +156,7 @@ describe('UsersSearchComponent', () => {
         [
           ['local', '=', true],
           ['builtin', '=', false],
-          ['OR', [['username', '~', '(?i)\\(test\\)'], ['full_name', '~', '(?i)\\(test\\)']]],
+          ['OR', [['username', '~', '(?i)(.+\\\\)?\\(test\\)'], ['full_name', '~', '(?i)\\(test\\)']]],
         ],
         {},
       ]);
@@ -476,7 +476,7 @@ describe('UsersSearchComponent', () => {
         [
           ['local', '=', true],
           ['builtin', '=', false],
-          ['OR', [['username', '~', '(?i)localuser'], ['full_name', '~', '(?i)localuser']]],
+          ['OR', [['username', '~', '(?i)(.+\\\\)?localuser'], ['full_name', '~', '(?i)localuser']]],
         ],
         {},
       ]);
@@ -587,7 +587,7 @@ describe('UsersSearchComponent', () => {
       expect(mockDataProvider.setParams).toHaveBeenCalledWith([
         [
           ['local', '=', true],
-          ['OR', [['username', '~', '(?i)test'], ['full_name', '~', '(?i)test']]],
+          ['OR', [['username', '~', '(?i)(.+\\\\)?test'], ['full_name', '~', '(?i)test']]],
         ],
         {},
       ]);
