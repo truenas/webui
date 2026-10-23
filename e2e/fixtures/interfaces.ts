@@ -289,8 +289,9 @@ export async function commitInterfaceChanges(client: E2eApiClient, whatItCosts: 
 
 /**
  * Saves the management NIC to the database as DHCP, as it already runs, and
- * commits that. Returns whether it added the row. A NIC that already has a row
- * is left alone, and this returns false.
+ * commits that. For a NIC with no row: check `hasInterfaceRow` first, and
+ * record that this is being tried before calling it, since it can throw after
+ * the row has landed.
  *
  * A fresh appliance has an empty `network.interfaces` table, and middleware
  * runs DHCP on every NIC. Once the table holds any row, `interface.sync`
@@ -298,29 +299,30 @@ export async function commitInterfaceChanges(client: E2eApiClient, whatItCosts: 
  * would take the management NIC's address away, unless this row is there first.
  * Its lease does not change, so the socket survives the commit.
  */
-export async function pinManagementInterface(client: E2eApiClient, nic: ManagementInterface): Promise<boolean> {
-  if (await hasInterfaceRow(client, nic.name)) {
-    return false;
-  }
-
+export async function pinManagementInterface(client: E2eApiClient, name: string): Promise<void> {
   await firstValueFrom(
-    client.api.call('interface.update', [nic.name, { ipv4_dhcp: true }]).pipe(timeout(slowCallTimeoutMs)),
+    client.api.call('interface.update', [name, { ipv4_dhcp: true }]).pipe(timeout(slowCallTimeoutMs)),
   );
   await commitInterfaceChanges(
     client,
-    `${nic.name} was staged as DHCP and may still be, and a later commit would then unconfigure the NIC the suite talks to.`,
+    `${name} was staged as DHCP and may still be, and a later commit would then unconfigure the NIC the suite talks to.`,
   );
-
-  return true;
 }
 
 /**
- * Removes the row `pinManagementInterface` added, so the table is empty again
- * and middleware runs DHCP on every NIC, as on a fresh appliance. That restarts
- * DHCP on the management NIC. The socket drops and reconnects, and qemu hands
- * out the same address.
+ * Removes the row `pinManagementInterface` added, if it is there, so the table
+ * is empty again and middleware runs DHCP on every NIC, as on a fresh
+ * appliance. That restarts DHCP on the management NIC. The socket drops and
+ * reconnects, and qemu hands out the same address.
+ *
+ * Only once nothing else is in the table: any other row left there would make
+ * middleware unconfigure the management NIC instead.
  */
 export async function unpinManagementInterface(client: E2eApiClient, name: string): Promise<void> {
+  if (!await hasInterfaceRow(client, name)) {
+    return;
+  }
+
   await firstValueFrom(client.api.call('interface.delete', [name]).pipe(timeout(slowCallTimeoutMs)));
   await commitInterfaceChanges(
     client,

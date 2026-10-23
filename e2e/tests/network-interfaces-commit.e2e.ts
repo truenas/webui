@@ -24,7 +24,7 @@
  */
 import {
   commitInterfaceChanges, ensureNoPendingInterfaceChanges, ensureNothingOnSpareInterface, findInterface,
-  findManagementInterface, findSpareInterface, hasNetworkConfigToBeRemoved,
+  findManagementInterface, findSpareInterface, hasInterfaceRow, hasNetworkConfigToBeRemoved,
   hasPendingInterfaceChanges, type InterfaceRecord, type ManagementInterface, pinManagementInterface,
   readCheckinWaiting, readIpv4Addresses, stageVlan, unpinManagementInterface,
 } from '../fixtures/interfaces';
@@ -88,7 +88,11 @@ test.beforeAll(async ({ api }) => {
 
   await ensureNoPendingInterfaceChanges(api);
   // Before anything on the spare is committed away, which with no management row would unconfigure it.
-  pinnedManagement = await pinManagementInterface(api, management);
+  // Recorded before the pin, which can throw once its row has landed, so afterAll still removes it.
+  pinnedManagement = !await hasInterfaceRow(api, management.name);
+  if (pinnedManagement) {
+    await pinManagementInterface(api, management.name);
+  }
 
   // The pin must not have moved the management NIC: everything after it depends on that address.
   expect(await readIpv4Addresses(api, management.name)).toEqual(management.ipv4Addresses);
@@ -113,11 +117,10 @@ test.afterAll(async ({ api }) => {
     return;
   }
 
-  // The spare first: a row left in the table once the management row goes would unconfigure the management NIC.
-  await runCleanupSteps([
-    [`remove every interface built on ${spare.name}, and commit`, () => ensureNothingOnSpareInterface(api, spare.name)],
-    [`remove the DHCP row for ${management.name}, and commit`, () => unpinManagementInterface(api, management.name)],
-  ]);
+  // The spare first, and the unpin only if that worked: a row left in the table once the management
+  // row goes would unconfigure the management NIC. A pin left in place is the safe failure.
+  await ensureNothingOnSpareInterface(api, spare.name);
+  await unpinManagementInterface(api, management.name);
 
   // Middleware runs DHCP on every NIC again, and qemu hands out the same lease.
   await expect.poll(
