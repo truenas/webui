@@ -136,6 +136,14 @@ describe('UserService', () => {
 
       expect(apiService.query).toHaveBeenCalledWith('group.query', [['smb', '=', true], ['group', '~', '(?i).*ACME\\\\Domain Admins']], { limit: 50, offset: 0, order_by: ['builtin'] });
     });
+
+    it('escapes regex special characters, so a group name matches literally', async () => {
+      apiService.mockQuery('group.query', []);
+
+      await firstValueFrom(spectator.service.smbGroupQueryDsCache('C++ Devs (EU)', false, 0));
+
+      expect(apiService.query).toHaveBeenCalledWith('group.query', [['smb', '=', true], ['group', '~', '(?i).*C\\+\\+ Devs \\(EU\\)']], { limit: 50, offset: 0, order_by: ['builtin'] });
+    });
   });
 
   describe('getGroupByName (deprecated)', () => {
@@ -279,6 +287,14 @@ describe('UserService', () => {
       await firstValueFrom(spectator.service.smbUserQueryDsCache('ACME\\admin', 0));
 
       expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '~', '(?i).*ACME\\\\admin']], { limit: 50, offset: 0, order_by: ['builtin'] });
+    });
+
+    it('escapes regex special characters, so a computer account matches literally', async () => {
+      apiService.mockQuery('user.query', []);
+
+      await firstValueFrom(spectator.service.smbUserQueryDsCache('ACME\\HOST$', 0));
+
+      expect(apiService.query).toHaveBeenCalledWith('user.query', [['smb', '=', true], ['username', '~', '(?i).*ACME\\\\HOST\\$']], { limit: 50, offset: 0, order_by: ['builtin'] });
     });
 
     it('trims search input', async () => {
