@@ -24,10 +24,13 @@
  */
 import type { JobParams } from '@truenas/api-client';
 import { escapeRegExp } from 'lodash-es';
+import { firstValueFrom, timeout } from 'rxjs';
 import { ensureDirectoryServicesCleared, readDirectoryServices } from './directory-services';
+import { kebabTestSegment, legacyKebabTestSegment } from '../locators/test-id';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import type { ActiveDirectoryTarget } from '../support/config';
 import { runJob } from '../support/jobs';
+import { readTimeoutMs } from '../support/timeouts';
 
 type KerberosUserCredential = JobParams<E2eApiDirectory, 'directoryservices.leave'>[0]['credential'];
 
@@ -58,8 +61,11 @@ export function adComputerName(): string {
 
 /**
  * Each `TN_AD_*` value and the placeholder it becomes, longest first so that
- * the domain goes before its own first label — the NetBIOS name, which
- * middleware prints as `NAME\user`.
+ * the domain goes before its own first label.
+ *
+ * A value is also matched as a `data-test` id spells it, through both
+ * normalizers: a failed locator prints its selector, and an account's row id
+ * is its name kebab-cased.
  */
 function adValuePlaceholders(ad: ActiveDirectoryTarget): [string, string][] {
   const values: [string | undefined, string][] = [
@@ -72,8 +78,14 @@ function adValuePlaceholders(ad: ActiveDirectoryTarget): [string, string][] {
   ];
   return values
     .filter((entry): entry is [string, string] => Boolean(entry[0]))
-    // A failed regex assertion prints the regex's source, which has the value escaped.
-    .flatMap(([value, placeholder]): [string, string][] => [[value, placeholder], [escapeRegExp(value), placeholder]])
+    .flatMap(([value, placeholder]): [string, string][] => [
+      [value, placeholder],
+      // A failed regex assertion prints the regex's source, which has the value escaped.
+      [escapeRegExp(value), placeholder],
+      [kebabTestSegment(value), placeholder],
+      [legacyKebabTestSegment(value), placeholder],
+    ])
+    .filter(([value]) => value.length > 0)
     .sort(([a], [b]) => b.length - a.length);
 }
 
@@ -103,6 +115,16 @@ export async function withActiveDirectoryRedacted<T>(ad: ActiveDirectoryTarget, 
     }
     throw new Error(redactActiveDirectory(String(error), ad));
   }
+}
+
+/**
+ * `name` as the appliance lists the domain's account of that name: `NAME\name`,
+ * under the domain's NetBIOS name. That need not be the domain's first label,
+ * so it is read back once joined, as the SMB workgroup a join sets.
+ */
+export async function domainAccountName(client: E2eApiClient, name: string): Promise<string> {
+  const { workgroup } = await firstValueFrom(client.api.call('smb.config').pipe(timeout(readTimeoutMs)));
+  return `${workgroup}\\${name}`;
 }
 
 function kerberosUser(ad: ActiveDirectoryTarget): KerberosUserCredential {

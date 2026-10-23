@@ -187,6 +187,9 @@ export const smbLocators = {
      * comes from the label, so `e2e_acl_user` renders `option-user-e2e-acl-user`.
      */
     userOption: (username: string): string => `[data-test="option-user-${kebabTestSegment(username)}"]`,
+    /** `ix-group-combobox [testId]="'group'"`, the same control for SMB groups. Rendered while Who is Group. */
+    group: '[data-test="autocomplete-group"]',
+    groupOption: (group: string): string => `[data-test="option-group-${kebabTestSegment(group)}"]`,
     permission: '[data-test="select-ae-perm"]',
     /** By label: "FULL", "CHANGE" or "READ". */
     permissionOption: (label: string): string => `[data-test="option-ae-perm-${kebabTestSegment(label)}"]`,

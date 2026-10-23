@@ -21,6 +21,9 @@ export const groupsLocators = {
   /** `<tn-button [testId]="'add-group'">` in the page header. */
   addGroup: '[data-test="button-add-group"]',
 
+  /** The basic search box, `<tn-input [testId]="'search'">`. It narrows the loaded list as you type. */
+  search: '[data-test="input-search"]',
+
   /**
    * `<tn-slide-toggle [testId]="'show-built-in-groups'">`, off by default.
    *

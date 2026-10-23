@@ -202,6 +202,12 @@ export const servicesLocators = {
     multichannel: '[data-test="checkbox-multichannel"]',
     fileMask: '[data-test="input-filemask"]',
     dirMask: '[data-test="input-dirmask"]',
+    /**
+     * Administrators Group, `ix-group-combobox [testId]="'admin-group'"` under Other Options: an
+     * autocomplete over every group, the domain's included. Clicking the option commits it.
+     */
+    adminGroup: '[data-test="autocomplete-admin-group"]',
+    adminGroupOption: (group: string): string => `[data-test="option-admin-group-${kebabTestSegment(group)}"]`,
   },
 
   /** `service-nfs.component.html`. */

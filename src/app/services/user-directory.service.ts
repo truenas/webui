@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { QueryListOptions } from '@truenas/api-client';
 import { TnSelectOption } from '@truenas/ui-components';
+import { escapeRegExp } from 'lodash-es';
 import { Observable, from, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ComboboxQueryType } from 'app/enums/combobox.enum';
@@ -274,9 +275,9 @@ export class UserDirectoryService {
 
     const trimmed = search?.trim();
     if (trimmed) {
-      // Case-insensitive regex with backslashes escaped, so a domain-prefixed
-      // username ("ACME\admin") is searchable by typing it verbatim.
-      filters.unshift(['username', '~', `(?i).*${trimmed.replaceAll('\\', '\\\\')}`]);
+      // A case-insensitive regex with the text escaped, so it matches literally: a domain-prefixed
+      // username ("ACME\admin") typed verbatim, or a name with `$`, `(` or `+` in it.
+      filters.unshift(['username', '~', `(?i).*${escapeRegExp(trimmed)}`]);
     }
 
     return this.api.query('user.query', filters, { ...baseOptions, offset, limit: directoryPageSize }).pipe(
