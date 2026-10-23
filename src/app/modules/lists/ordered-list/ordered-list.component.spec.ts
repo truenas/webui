@@ -4,11 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgControl } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnSlideToggleHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 
 describe('OrderedListboxComponent', () => {
@@ -25,10 +22,6 @@ describe('OrderedListboxComponent', () => {
 
   const createComponent = createComponentFactory({
     component: OrderedListboxComponent,
-    declarations: [
-      MockComponent(IxLabelComponent),
-      MockComponent(IxErrorsComponent),
-    ],
     providers: [
       { provide: NgControl, useValue: { name: 'lag_ports' } },
     ],

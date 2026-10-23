@@ -32,19 +32,22 @@
         ></ix-ssh-credentials-select>
       }
       @if (form.controls.source_datasets.enabled) {
-        <ix-explorer
-          formControlName="source_datasets"
+        <tn-form-field
           [label]="helptext.sourceDatasetsLabel | translate"
           [tooltip]="helptext.sourceDatasetsTooltip | translate"
-          [multiple]="true"
           [required]="true"
-          [rootNodes]="sourceDatasetsRootNodes"
-          [nodeProvider]="sourceNodeProvider"
         >
-          @if (isSourceLocal) {
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          }
-        </ix-explorer>
+          <ix-explorer
+            formControlName="source_datasets"
+            [multiple]="true"
+            [rootNodes]="sourceDatasetsRootNodes"
+            [nodeProvider]="sourceNodeProvider"
+          >
+            @if (isSourceLocal) {
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            }
+          </ix-explorer>
+        </tn-form-field>
       }
 
       @if (form.controls.recursive.enabled) {
@@ -138,18 +141,21 @@
         ></ix-ssh-credentials-select>
       }
       @if (form.controls.target_dataset.enabled) {
-        <ix-explorer
-          formControlName="target_dataset"
+        <tn-form-field
           [label]="helptext.targetDatasetLabel | translate"
           [tooltip]="helptext.targetDatasetTooltip | translate"
           [required]="true"
-          [rootNodes]="targetDatasetsRootNodes"
-          [nodeProvider]="targetNodeProvider"
         >
-          @if (isTargetLocal) {
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          }
-        </ix-explorer>
+          <ix-explorer
+            formControlName="target_dataset"
+            [rootNodes]="targetDatasetsRootNodes"
+            [nodeProvider]="targetNodeProvider"
+          >
+            @if (isTargetLocal) {
+              <ix-explorer-create-dataset></ix-explorer-create-dataset>
+            }
+          </ix-explorer>
+        </tn-form-field>
       }
       @if (form.controls.encryption.enabled) {
         <tn-form-field [tooltip]="helptext.encryptionTooltip | translate">

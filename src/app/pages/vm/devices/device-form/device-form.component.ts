@@ -10,9 +10,9 @@ import {
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent,
-  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
-  TnTestIdDirective,
+  InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormErrorsComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
+  TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of, shareReplay } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
@@ -37,7 +37,6 @@ import {
   toVmDevice, VmDevice, VmDeviceUpdate, VmDiskDevice, VmDisplayDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -85,7 +84,7 @@ export interface DeviceFormData {
     ExplorerCreateDatasetComponent,
     RequiresRolesDirective,
     TnButtonComponent,
-    IxErrorsComponent,
+    TnFormErrorsComponent,
     TranslateModule,
     TnAutocompleteComponent,
     TnBannerComponent,

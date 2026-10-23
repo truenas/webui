@@ -96,10 +96,10 @@ export const nfsLocators = {
     ),
 
     /**
-     * The path's validation message, when it has one. Rendered by `ix-explorer`
-     * under the picker, and named for the control: `text-<control>-errors`.
+     * The path's validation message, when it has one. The wrapping `tn-form-field`
+     * renders it, and gives it no id of its own, so it is the field's alert.
      */
-    pathErrors: '[data-test="text-path-errors"]',
+    pathErrors: '[data-test="form-field-path"] [role="alert"]',
 
     /** "Add" under Networks, which appends an empty address/prefix pair. */
     addNetwork: '[data-test="button-add-item-networks"]',

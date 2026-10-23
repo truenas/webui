@@ -98,8 +98,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getExplorer = (label: string): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ label }),
+  const getExplorer = (name: string): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: `[formControlName="${name}"]` }),
   );
   const setRadio = async (label: string): Promise<void> => {
     await (await loader.getHarness(TnRadioHarness.with({ label }))).check();
@@ -114,8 +114,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
     await setCheckbox('recursive', true);
     await setCheckbox('custom_snapshots', true);
     await setCheckbox('encryption', true);
-    await (await getExplorer('Source')).setValue(['pool1/', 'pool2/']);
-    await (await getExplorer('Destination')).setValue('pool3/');
+    await (await getExplorer('source_datasets')).setValue(['pool1/', 'pool2/']);
+    await (await getExplorer('target_dataset')).setValue('pool3/');
     await (await getSelect('encryption_key_format')).selectOption('HEX');
   });
 

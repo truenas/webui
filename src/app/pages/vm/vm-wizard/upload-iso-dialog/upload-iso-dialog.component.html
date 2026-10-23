@@ -5,15 +5,18 @@
     (closed)="dialogRef.close($event)"
   >
     <tn-form-section>
-      <ix-explorer
-        formControlName="path"
-        [required]="true"
+      <tn-form-field
         [label]="'ISO save location' | translate"
-        [nodeProvider]="directoryNodeProvider"
         [tooltip]="helptext.upload_iso_path_tooltip | translate"
+        [required]="true"
       >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        <ix-explorer
+          formControlName="path"
+          [nodeProvider]="directoryNodeProvider"
+        >
+          <ix-explorer-create-dataset></ix-explorer-create-dataset>
+        </ix-explorer>
+      </tn-form-field>
 
       <tn-form-field
         [label]="'Installer image file' | translate"

@@ -1,14 +1,13 @@
-import { HarnessLoader } from '@angular/cdk/testing';
+import { HarnessLoader, parallel } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormBuilder, Validators } from '@angular/forms';
 import { createHostFactory, SpectatorHost, mockProvider } from '@ngneat/spectator/jest';
-import { TnInputHarness } from '@truenas/ui-components';
+import { TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MiB } from 'app/constants/bytes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
@@ -16,7 +15,7 @@ import {
   createNamespaceForm, NamespaceFormGroup,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 import {
-  getNamespaceTypeToggle, mockExplorerCreateZvol, selectNamespaceType,
+  getNamespacePathExplorer, getNamespaceTypeToggle, mockExplorerCreateZvol, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -45,11 +44,7 @@ describe('BaseNamespaceFormComponent', () => {
   const setupHost = (namespace?: NvmeOfNamespace): void => {
     form = createNamespaceForm(new FormBuilder().nonNullable);
     spectator = createHost(
-      // The bare <form> carries no [formGroup] — the component binds the group it is handed. It is
-      // here because IxFormHarness anchors on a form element, and both real hosts render one.
-      `<form>
-        <ix-base-namespace-form [group]="form" [namespace]="namespace"></ix-base-namespace-form>
-      </form>`,
+      '<ix-base-namespace-form [group]="form" [namespace]="namespace"></ix-base-namespace-form>',
       { hostProps: { form, namespace } },
     );
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -60,10 +55,7 @@ describe('BaseNamespaceFormComponent', () => {
 
     it('writes a zvol path into the host form group', async () => {
       await selectNamespaceType(loader, 'Zvol');
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Path To Zvol': '/dev/zvol/tank/test-zvol',
-      });
+      await (await getNamespacePathExplorer(loader)).setValue('/dev/zvol/tank/test-zvol');
 
       expect(form.getRawValue()).toMatchObject({
         device_path: '/dev/zvol/tank/test-zvol',
@@ -76,10 +68,7 @@ describe('BaseNamespaceFormComponent', () => {
         .toHaveLength(0);
 
       await selectNamespaceType(loader, 'New File');
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Parent Directory': '/mnt/tank',
-      });
+      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank');
       await (await getTnInput('filename')).setValue('new-file.img');
 
       expect(form.getRawValue()).toMatchObject({
@@ -96,10 +85,7 @@ describe('BaseNamespaceFormComponent', () => {
       expect(form.status).toBe('INVALID');
 
       await selectNamespaceType(loader, 'Existing File');
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Path To File': '/mnt/tank/test-file',
-      });
+      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/test-file');
 
       expect(form.status).toBe('VALID');
       expect(form.controls.filename.disabled).toBe(true);
@@ -108,10 +94,7 @@ describe('BaseNamespaceFormComponent', () => {
 
     it('still requires filename and file size while New File is selected', async () => {
       await selectNamespaceType(loader, 'New File');
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Parent Directory': '/mnt/tank',
-      });
+      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank');
       expect(form.status).toBe('INVALID');
 
       await (await getTnInput('filename')).setValue('new-file.img');
@@ -120,13 +103,10 @@ describe('BaseNamespaceFormComponent', () => {
       expect(form.status).toBe('VALID');
     });
 
-    // Pinned on both sides of the inference: the validator is what `tn-form-field` / `ix-explorer`
-    // read, and the rendered required indicator is where that has to land for users. Dropping the
-    // factory's validator breaks both halves.
-    //
-    // Two indicators, because the two controls advertise required differently: `tn-input` inside
-    // `tn-form-field` emits `aria-required`, while `ix-explorer` — now a `<tn-file-picker>` wrapper
-    // (NAS-141877) — only marks its `<ix-label>`. Match either so every expected control counts.
+    // Pinned on both sides of the inference: the validator is what `tn-form-field` reads, and the
+    // rendered required indicator is where that has to land for users. Dropping the factory's
+    // validator breaks both halves. Every control here sits in its own `tn-form-field`, so the
+    // count of required fields is the count of required controls.
     it.each([
       ['Zvol', ['device_path']],
       ['Existing File', ['device_path']],
@@ -140,16 +120,14 @@ describe('BaseNamespaceFormComponent', () => {
         expect(control.enabled).toBe(true);
       });
 
-      expect(spectator.queryAll('[aria-required="true"], ix-explorer ix-label .required'))
-        .toHaveLength(expectedControls.length);
+      const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+      const required = await parallel(() => fields.map((field) => field.isRequired()));
+      expect(required.filter(Boolean)).toHaveLength(expectedControls.length);
     });
 
     it('clears a previously chosen path when the device type changes', async () => {
       await selectNamespaceType(loader, 'Existing File');
-      const ixForm = await loader.getHarness(IxFormHarness);
-      await ixForm.fillForm({
-        'Path To File': '/mnt/tank/test-file',
-      });
+      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/test-file');
       expect(form.getRawValue().device_path).toBe('/mnt/tank/test-file');
 
       await selectNamespaceType(loader, 'Zvol');
@@ -169,10 +147,7 @@ describe('BaseNamespaceFormComponent', () => {
       const checkedToggle = await getNamespaceTypeToggle(loader, 'Zvol');
       expect(await checkedToggle.isChecked()).toBe(true);
 
-      const ixForm = await loader.getHarness(IxFormHarness);
-      expect(await ixForm.getValues()).toEqual({
-        'Path To Zvol': 'zvol/tank/test-zvol',
-      });
+      expect(await (await getNamespacePathExplorer(loader)).getValue()).toBe('zvol/tank/test-zvol');
     });
 
     // The prefill must not seed New File's fields: switching branches would otherwise show the old

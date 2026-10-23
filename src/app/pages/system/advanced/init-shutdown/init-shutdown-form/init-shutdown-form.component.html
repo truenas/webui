@@ -29,17 +29,20 @@
         <tn-input formControlName="command"></tn-input>
       </tn-form-field>
     } @else {
-      <ix-explorer
-        formControlName="script"
+      <tn-form-field
         [label]="'Script' | translate"
-        [required]="true"
         [tooltip]="tooltips.script | translate"
-        [nodeProvider]="treeNodeProvider"
+        [required]="true"
       >
-        @if (isNew) {
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        }
-      </ix-explorer>
+        <ix-explorer
+          formControlName="script"
+          [nodeProvider]="treeNodeProvider"
+        >
+          @if (isNew) {
+            <ix-explorer-create-dataset></ix-explorer-create-dataset>
+          }
+        </ix-explorer>
+      </tn-form-field>
     }
 
     <tn-form-field

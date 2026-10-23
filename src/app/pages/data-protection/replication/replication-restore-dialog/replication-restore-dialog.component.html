@@ -13,14 +13,17 @@
       ></tn-input>
     </tn-form-field>
 
-    <ix-explorer
-      formControlName="target_dataset"
+    <tn-form-field
       [label]="'Destination' | translate"
-      [required]="true"
       [tooltip]="helptext.targetDatasetTooltip | translate"
-      [nodeProvider]="treeNodeProvider"
-      [rootNodes]="rootNodes"
-    ></ix-explorer>
+      [required]="true"
+    >
+      <ix-explorer
+        formControlName="target_dataset"
+        [nodeProvider]="treeNodeProvider"
+        [rootNodes]="rootNodes"
+      ></ix-explorer>
+    </tn-form-field>
   </ix-form>
 
   <ix-form-actions tnDialogAction>

@@ -8,7 +8,7 @@ import { TnButtonHarness } from '@truenas/ui-components';
 import { of, Subject, throwError } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
@@ -59,9 +59,9 @@ describe('UploadIsoDialogComponent', () => {
     ],
   });
 
-  /** Fills the form's fields by label, across the ix-* explorer and the tn-* controls alike. */
-  async function fillForm(values: Record<string, unknown>): Promise<void> {
-    await fillControlValues(await indexFormControls(loader), values);
+  async function setPath(path: string): Promise<void> {
+    const explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
+    await explorer.setValue(path);
     spectator.detectChanges();
   }
 
@@ -80,7 +80,7 @@ describe('UploadIsoDialogComponent', () => {
   it('uploads new image to the path provided and closes dialog with uploaded path', async () => {
     const upload = fakeFile('new-windows.iso');
 
-    await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    await setPath('/mnt/tank/iso');
     // Native file inputs cannot be populated programmatically; set the control directly.
     spectator.component.form.patchValue({ files: upload });
     spectator.detectChanges();
@@ -110,7 +110,7 @@ describe('UploadIsoDialogComponent', () => {
 
     // Neither is a path on its own.
     spectator.component.form.patchValue({ files: null });
-    await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    await setPath('/mnt/tank/iso');
     expect(await uploadButton.isDisabled()).toBe(true);
 
     spectator.component.form.patchValue({ files: fakeFile('test.iso') });
@@ -126,7 +126,7 @@ describe('UploadIsoDialogComponent', () => {
       cancel,
     });
 
-    await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    await setPath('/mnt/tank/iso');
     spectator.component.form.patchValue({ files: fakeFile('test-upload.iso') });
     spectator.detectChanges();
 
@@ -151,7 +151,7 @@ describe('UploadIsoDialogComponent', () => {
     const errorDialog = { close: jest.fn() } as unknown as DialogRef;
     jest.spyOn(spectator.inject(Dialog), 'openDialogs', 'get').mockReturnValue([errorDialog]);
 
-    await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    await setPath('/mnt/tank/iso');
     spectator.component.form.patchValue({ files: fakeFile('test-upload.iso') });
     spectator.detectChanges();
 
@@ -169,7 +169,7 @@ describe('UploadIsoDialogComponent', () => {
       cancel,
     });
 
-    await fillForm({ 'ISO save location': '/mnt/tank/iso' });
+    await setPath('/mnt/tank/iso');
     spectator.component.form.patchValue({ files: fakeFile('test-upload.iso') });
     spectator.detectChanges();
 

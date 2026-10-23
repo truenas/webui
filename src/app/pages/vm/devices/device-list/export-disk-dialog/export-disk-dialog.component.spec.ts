@@ -8,7 +8,7 @@ import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-co
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FilesystemService } from 'app/services/filesystem.service';
 import {
   ExportDiskDialogComponent,
@@ -18,7 +18,7 @@ import {
 describe('ExportDiskDialogComponent', () => {
   let spectator: Spectator<ExportDiskDialogComponent>;
   let loader: HarnessLoader;
-  let form: IxFormHarness;
+  let destinationDir: IxExplorerHarness;
   const mockDevice: VmDiskDevice = {
     id: 1,
     dtype: VmDeviceType.Disk,
@@ -60,7 +60,7 @@ describe('ExportDiskDialogComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    form = await loader.getHarness(IxFormHarness);
+    destinationDir = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="destinationDir"]' }));
   });
 
   it('shows the source disk path', () => {
@@ -69,8 +69,7 @@ describe('ExportDiskDialogComponent', () => {
   });
 
   it('initializes form with default values', async () => {
-    const values = await form.getValues();
-    expect(values['Destination Directory']).toBe('');
+    expect(await destinationDir.getValue()).toBe('');
 
     const imageNameInput = await loader.getHarness(TnInputHarness);
     expect(await imageNameInput.getValue()).toContain('test-vm_disk_');
@@ -80,9 +79,7 @@ describe('ExportDiskDialogComponent', () => {
   });
 
   it('closes dialog with export data when form is submitted', async () => {
-    await form.fillForm({
-      'Destination Directory': '/mnt/tank/exports',
-    });
+    await destinationDir.setValue('/mnt/tank/exports');
 
     const imageNameInput = await loader.getHarness(TnInputHarness);
     await imageNameInput.setValue('my-vm-disk');

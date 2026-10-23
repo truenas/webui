@@ -6,8 +6,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
 import { Container, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
@@ -39,9 +39,12 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
     ],
   });
 
+  const getSourceExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: '[formControlName="source"]' }),
+  );
+
   const setSource = async (value: string): Promise<void> => {
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'Host Directory Source': value });
+    await (await getSourceExplorer()).setValue(value);
   };
 
   const getTargetInput = (): Promise<TnInputHarness> => loader.getHarness(
@@ -103,12 +106,7 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
     });
 
     it('shows values for the filesystem device that is being edited', async () => {
-      const form = await loader.getHarness(IxFormHarness);
-      const values = await form.getValues();
-
-      expect(values).toMatchObject({
-        'Host Directory Source': '/mnt/from',
-      });
+      expect(await (await getSourceExplorer()).getValue()).toBe('/mnt/from');
       expect(await (await getTargetInput()).getValue()).toBe('/to');
     });
 

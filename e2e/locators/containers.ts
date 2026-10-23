@@ -271,8 +271,8 @@ export const containersLocators = {
      * `<input>` takes the control name. Typable, so the path goes in directly.
      */
     source: '[data-test="input-source"]',
-    /** The source's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
-    sourceErrors: '[data-test="text-source-errors"]',
+    /** The source's validation message: the alert of the wrapping `tn-form-field`, which has no id of its own. */
+    sourceErrors: '[data-test="form-field-source"] [role="alert"]',
     /** "Container Mount Path". */
     target: '[data-test="input-target"]',
   },
