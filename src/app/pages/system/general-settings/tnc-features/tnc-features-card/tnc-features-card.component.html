@@ -1,0 +1,90 @@
+@let tncSummary = summary();
+@if (tncSummary) {
+  <tn-card class="tnc-features-card">
+    <h3 tnCardHeader class="tn-card__title">{{ 'TrueNAS Connect Features' | translate }}</h3>
+
+    <ng-template tnCardFooterActions>
+      <tn-button
+        [testId]="'manage-tnc-subscription'"
+        [color]="tncSummary.urgency === Urgency.Active ? 'default' : 'primary'"
+        [label]="(tncSummary.urgency === Urgency.Active ? 'Manage Membership' : 'Renew Membership') | translate"
+        [ariaLabel]="'Manage your TrueNAS Connect membership (opens in new window)' | translate"
+        (onClick)="openMembership()"
+      ></tn-button>
+    </ng-template>
+
+    @let soonest = tncSummary.soonest;
+    @switch (tncSummary.urgency) {
+      @case (Urgency.Active) {
+        <tn-banner
+          class="tnc-banner"
+          [type]="bannerType()"
+          [heading]="(tierLabel()
+            ? 'Provided by your TrueNAS Connect {tier} membership'
+            : 'Provided by your TrueNAS Connect membership') | translate: { tier: tierLabel() }"
+          [message]="'These features stay available while your membership is active. If it lapses, they are disabled.' | translate"
+        ></tn-banner>
+      }
+      @case (Urgency.Expired) {
+        <tn-banner
+          class="tnc-banner"
+          [type]="bannerType()"
+          [heading]="'Your TrueNAS Connect membership has expired' | translate"
+          [message]="'The features below were provided by your membership and can be disabled at any time. Renew to keep using them.' | translate"
+        ></tn-banner>
+      }
+      @default {
+        <tn-banner
+          class="tnc-banner"
+          [type]="bannerType()"
+          [heading]="(soonest?.daysLeft === 0
+            ? 'TrueNAS Connect features expire today'
+            : 'TrueNAS Connect features expire in {n, plural, one {# day} other {# days}}') | translate: { n: soonest?.daysLeft }"
+          [message]="'Features marked below will be disabled after {date} unless you renew your membership.' | translate: { date: soonestDate() }"
+        ></tn-banner>
+      }
+    }
+
+    <tn-list class="tnc-feature-list">
+      @for (feature of tncSummary.features; track feature.name) {
+        <tn-list-item
+          class="tnc-feature"
+          [class.expiring]="feature.urgency === Urgency.Expiring"
+          [class.critical]="feature.urgency >= Urgency.Critical"
+        >
+          <div class="feature-row">
+            <tn-icon
+              class="feature-icon"
+              library="mdi"
+              [name]="feature.urgency === Urgency.Active ? 'check-circle' : 'alert-circle'"
+            ></tn-icon>
+            <span class="feature-label" tnTestIdType="text" [tnTestId]="['tnc-feature', feature.name]">
+              {{ feature.label | translate }}
+            </span>
+            <span class="feature-expiry" tnTestIdType="text" [tnTestId]="['tnc-feature-expiry', feature.name]">
+              @switch (feature.urgency) {
+                @case (Urgency.Active) {
+                  @if (feature.expiresAt) {
+                    {{ 'Until {date}' | translate: { date: formatDate(feature.expiresAt) } }}
+                  } @else {
+                    {{ 'Active' | translate }}
+                  }
+                }
+                @case (Urgency.Expired) {
+                  {{ 'Expired {date}' | translate: { date: formatDate(feature.expiresAt) } }}
+                }
+                @default {
+                  @if (feature.daysLeft === 0) {
+                    {{ 'Expires today' | translate }}
+                  } @else {
+                    {{ 'Expires in {n, plural, one {# day} other {# days}}' | translate: { n: feature.daysLeft } }}
+                  }
+                }
+              }
+            </span>
+          </div>
+        </tn-list-item>
+      }
+    </tn-list>
+  </tn-card>
+}
