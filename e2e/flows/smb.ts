@@ -240,6 +240,23 @@ export async function addShareAclUserEntry(
     type,
   }: { username: string; permission: string; type: string },
 ): Promise<void> {
+  await addShareAclEntry(page, 'User', username, { permission, type });
+}
+
+/** {@link addShareAclUserEntry} for a group: Who is Group, which swaps in the group autocomplete. */
+export async function addShareAclGroupEntry(
+  page: Page,
+  { group, permission, type }: { group: string; permission: string; type: string },
+): Promise<void> {
+  await addShareAclEntry(page, 'Group', group, { permission, type });
+}
+
+async function addShareAclEntry(
+  page: Page,
+  who: 'User' | 'Group',
+  name: string,
+  { permission, type }: { permission: string; type: string },
+): Promise<void> {
   const form = smbLocators.shareAcl;
   const rows = page.locator(form.who);
   const rowsBefore = await rows.count();
@@ -248,10 +265,15 @@ export async function addShareAclUserEntry(
   await expect(rows).toHaveCount(rowsBefore + 1);
 
   await rows.last().click();
-  await page.locator(form.whoOption('User')).click();
+  await page.locator(form.whoOption(who)).click();
 
-  await page.locator(form.user).last().fill(username);
-  await page.locator(form.userOption(username)).click();
+  if (who === 'User') {
+    await page.locator(form.user).last().fill(name);
+    await page.locator(form.userOption(name)).click();
+  } else {
+    await page.locator(form.group).last().fill(name);
+    await page.locator(form.groupOption(name)).click();
+  }
 
   await page.locator(form.permission).last().click();
   await page.locator(form.permissionOption(permission)).click();

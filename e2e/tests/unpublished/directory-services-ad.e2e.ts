@@ -40,16 +40,25 @@ import {
   withActiveDirectoryRedacted,
 } from '../../fixtures/active-directory';
 import { readDirectoryServices } from '../../fixtures/directory-services';
+import { entitlementFeature, isNotDenied } from '../../fixtures/entitlements';
 import {
   type NetworkSettings,
   readNetworkConfig,
   restoreNetworkConfig,
   setNameservers,
 } from '../../fixtures/network-config';
-import { nfs4Entries, readAcl } from '../../fixtures/permissions';
 import {
-  datasetMountPath, ensureDatasetAbsent, ensureSmbDatasetPresent, type Nfs4Ace,
+  nfs4Entries, readAcl, readOwnership, setOwnership, type Ownership,
+} from '../../fixtures/permissions';
+import { ensurePrivilegeAbsent, ensurePrivilegePresent, findPrivilege } from '../../fixtures/privileges';
+import { listQuotas } from '../../fixtures/quotas';
+import {
+  ensureSmbShareAbsent, ensureSmbSharePresent, readSmbShareAcl, type SmbShareAce,
+} from '../../fixtures/smb';
+import {
+  datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent, ensureSmbDatasetPresent, type Nfs4Ace,
 } from '../../fixtures/storage';
+import { expectSignedInAs, signIn, signOut } from '../../flows/auth';
 import {
   discardDirectoryServicesForm,
   openDirectoryServicesForm,
@@ -59,7 +68,15 @@ import {
   selectServiceType,
 } from '../../flows/directory-services';
 import { goToDirectoryServices, goToGroups, goToUsers } from '../../flows/navigation';
-import { addAclGroupEntry, openAclEditor, saveAcl } from '../../flows/permissions';
+import {
+  addAclGroupEntry, chooseGroup, openAclEditor, openPermissionsEditor, saveAcl, savePermissions,
+} from '../../flows/permissions';
+import { openAddPrivilegeForm, savePrivilegeForm, toggleRoles } from '../../flows/privileges';
+import {
+  fillQuotas, openAddQuotaForm, openQuotasPage, saveQuotaForm,
+} from '../../flows/quotas';
+import { openServiceForm, saveServiceForm } from '../../flows/services';
+import { addShareAclGroupEntry, openShareAclForm, saveShareAcl } from '../../flows/smb';
 import { confirmDialogLocators, errorDialogLocators } from '../../locators/dialogs';
 import {
   credentialTypeLabels,
@@ -68,12 +85,14 @@ import {
 } from '../../locators/directory-services';
 import { jobDialogLocators } from '../../locators/encryption';
 import { groupsLocators } from '../../locators/groups';
+import { privilegeLocators } from '../../locators/privileges';
+import { servicesLocators } from '../../locators/services';
 import { usersLocators } from '../../locators/users';
 import type { E2eApiClient } from '../../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../../support/cleanup';
 import type { ActiveDirectoryTarget, TargetConfig } from '../../support/config';
 import { expect, test } from '../../support/fixtures';
-import { readTimeoutMs } from '../../support/timeouts';
+import { readTimeoutMs, slowCallTimeoutMs } from '../../support/timeouts';
 
 /**
  * An address in TEST-NET-1 (RFC 5737): nothing answers it, so a lookup through
@@ -263,6 +282,16 @@ async function chooseUserTypes(page: Page, wanted: { local: boolean; directory: 
   await page.keyboard.press('Escape');
 }
 
+/**
+ * Turns directory services sign-in on or off, and says what it was. Directory users cannot sign in
+ * to the UI while it is off, whatever privilege they hold.
+ */
+async function setDsAuth(api: E2eApiClient, enabled: boolean): Promise<boolean> {
+  const { ds_auth: before } = await firstValueFrom(api.api.call('system.general.config').pipe(timeout(readTimeoutMs)));
+  await firstValueFrom(api.api.call('system.general.update', [{ ds_auth: enabled }]).pipe(timeout(slowCallTimeoutMs)));
+  return before;
+}
+
 /** The newest job's id, so a test can tell the jobs its own click started from any before. */
 async function lastJobId(api: E2eApiClient): Promise<number> {
   const [job] = await firstValueFrom(
@@ -285,11 +314,18 @@ async function syncKeytabJobsSince(api: E2eApiClient, after: number): Promise<st
  * that join: a join takes minutes of middleware time, and both tests paying it
  * once each doubled the spec. So the domain's nameservers, and the join, last
  * from `beforeAll` to `afterAll` rather than one test, and the stories that need
- * the appliance joined run between the two. Each of them, and the leave test,
- * still joins over the API when it finds the appliance out of the domain — on a
- * retry, which starts a fresh worker through `beforeAll`, or run on its own.
+ * the appliance joined run between the two.
+ *
+ * Serial, so a failure retries the group from the join rather than the one test.
+ * Playwright ends the worker on any failure, which runs `afterAll` and leaves the
+ * domain, so a retry rejoins either way. One test at a time, each failing test
+ * paid its own rejoin, and a run with three of them left the join unhealthy. Each
+ * test still joins over the API when it finds the appliance out of the domain, so
+ * it can run on its own.
  */
 test.describe('joining and leaving', () => {
+  test.describe.configure({ mode: 'serial' });
+
   let networkBefore: NetworkSettings | undefined;
 
   test.beforeAll(async ({ api, config }) => {
@@ -369,19 +405,26 @@ test.describe('joining and leaving', () => {
     });
   });
 
-  test.describe('an ACL', () => {
-    /** Under the worker's pool, made with the SMB preset, so its ACL is NFSv4. */
-    const leaf = 'e2e_ad_acl';
+  test.describe('on a dataset', () => {
+    /** Each under the worker's pool. The SMB preset makes an NFSv4 ACL; a plain dataset is POSIX. */
+    const leaves = {
+      acl: 'e2e_ad_acl', share: 'e2e_ad_share', permissions: 'e2e_ad_perms', quotas: 'e2e_ad_quotas',
+    };
+    const share = 'e2e_ad_share';
 
     test.afterEach(async ({ api, pool }) => {
-      const dataset = `${pool}/${leaf}`;
-      if (leavingTestData(`dataset "${dataset}"`)) {
+      const datasets = Object.values(leaves).map((leaf) => `${pool}/${leaf}`);
+      if (leavingTestData(`SMB share "${share}" and datasets ${datasets.join(', ')}`)) {
         return;
       }
 
-      // Before the domain is left, so no ACL outlives the group it names.
+      // Before the domain is left, so nothing outlives the accounts it names. The share first, so
+      // it is not left pointing at a removed path.
       await runCleanupSteps([
-        [`remove dataset ${dataset}`, () => ensureDatasetAbsent(api, dataset)],
+        [`remove SMB share ${share}`, () => ensureSmbShareAbsent(api, share)],
+        ...datasets.map((dataset): [string, () => Promise<void>] => [
+          `remove dataset ${dataset}`, () => ensureDatasetAbsent(api, dataset),
+        ]),
       ]);
     });
 
@@ -392,7 +435,7 @@ test.describe('joining and leaving', () => {
       await withActiveDirectoryRedacted(ad, async () => {
         await ensureActiveDirectoryJoined(api, ad, adComputerName());
         const { name: group, id: gid } = await findDomainAccount(api, 'group', domainUsersGroup);
-        const dataset = `${pool}/${leaf}`;
+        const dataset = `${pool}/${leaves.acl}`;
         const path = datasetMountPath(dataset);
         const forGroup = (entries: Nfs4Ace[]): Nfs4Ace[] => entries.filter(
           (entry) => entry.tag === 'GROUP' && entry.id === gid,
@@ -413,6 +456,198 @@ test.describe('joining and leaving', () => {
           ...before,
           expect.objectContaining({ type: 'ALLOW', perms: { BASIC: 'READ' } }),
         ]);
+      });
+    });
+
+    test('a share ACL entry names a domain group picked in Edit Share ACL', async ({
+      page, api, config, pool,
+    }) => {
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: group, id: gid } = await findDomainAccount(api, 'group', domainUsersGroup);
+        const dataset = `${pool}/${leaves.share}`;
+        await ensureSmbShareAbsent(api, share);
+        await ensureDatasetAbsent(api, dataset);
+        await ensureSmbDatasetPresent(api, dataset);
+        await ensureSmbSharePresent(api, { name: share, path: datasetMountPath(dataset) });
+        const forGroup = (entries: SmbShareAce[]): SmbShareAce[] => entries.filter(
+          (entry) => entry.ae_who_id?.id_type === 'GROUP' && entry.ae_who_id.id === gid,
+        );
+
+        await openShareAclForm(page, share);
+        // The share ACL picker lists SMB groups through its own query, apart from the others.
+        await addShareAclGroupEntry(page, { group, permission: 'READ', type: 'ALLOWED' });
+        await saveShareAcl(page);
+
+        expect(forGroup(await readSmbShareAcl(api, share))).toEqual([
+          expect.objectContaining({ ae_perm: 'READ', ae_type: 'ALLOWED' }),
+        ]);
+      });
+    });
+
+    test('a POSIX dataset takes a domain group as its owner group from Edit Permissions', async ({
+      page, api, config, pool,
+    }) => {
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: group } = await findDomainAccount(api, 'group', domainUsersGroup);
+        const dataset = `${pool}/${leaves.permissions}`;
+        const path = datasetMountPath(dataset);
+        const startingPoint: Ownership = { user: 'root', group: 'root', mode: '755' };
+        await ensureDatasetAbsent(api, dataset);
+        await ensureDatasetPresent(api, dataset);
+        // `filesystem.setperm` strips the ACL, so the Unix editor is the one that opens.
+        await setOwnership(api, path, startingPoint);
+
+        await openPermissionsEditor(page, dataset);
+        await chooseGroup(page, group);
+        await savePermissions(page, dataset);
+
+        // `filesystem.stat` names the group as the host resolves it, whose case may differ.
+        const ownership = await readOwnership(api, path);
+        expect({ ...ownership, group: ownership.group.toLowerCase() })
+          .toEqual({ ...startingPoint, group: group.toLowerCase() });
+      });
+    });
+
+    test('a user quota is set for a domain user from the Add Quota form', async ({
+      page, api, config, pool,
+    }) => {
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: account } = await findDomainAccount(api, 'user', ad.username);
+        const dataset = `${pool}/${leaves.quotas}`;
+        await ensureDatasetAbsent(api, dataset);
+        await ensureDatasetPresent(api, dataset);
+
+        await openQuotasPage(page, dataset, 'user');
+        await openAddQuotaForm(page, 'user', account);
+        await fillQuotas(page, { dataQuota: '1 GiB', objectQuota: 1000 });
+        await saveQuotaForm(page);
+
+        const quotas = await listQuotas(api, dataset, 'user');
+        expect(quotas.find((quota) => quota.name?.toLowerCase() === account.toLowerCase()))
+          .toMatchObject({ quota: 1024 ** 3, obj_quota: 1000 });
+      });
+    });
+  });
+
+  test.describe('a privilege', () => {
+    const privilege = 'e2e_ad_privilege';
+
+    test.afterEach(async ({ api }) => {
+      if (leavingTestData(`privilege "${privilege}"`)) {
+        return;
+      }
+      await runCleanupSteps([[`remove privilege ${privilege}`, () => ensurePrivilegeAbsent(api, privilege)]]);
+    });
+
+    test('a privilege grants a role to a domain group picked under Directory Services Groups', async ({
+      page, api, config, entitlements,
+    }) => {
+      // Without `DIRECTORY_SERVICES_AUTH` the form leaves the field out. See `fixtures/entitlements.ts`.
+      test.skip(
+        !isNotDenied(entitlements, entitlementFeature.directoryServicesAuth),
+        'DIRECTORY_SERVICES_AUTH is denied, which hides Directory Services Groups.',
+      );
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: group, id: gid } = await findDomainAccount(api, 'group', domainUsersGroup);
+        await ensurePrivilegeAbsent(api, privilege);
+        const { form } = privilegeLocators;
+
+        await openAddPrivilegeForm(page);
+        await page.locator(form.name).fill(privilege);
+        await page.locator(form.dsGroups).fill(group);
+        await page.locator(form.dsGroupOption(group)).click();
+        await toggleRoles(page, ['Readonly Admin']);
+        await savePrivilegeForm(page);
+
+        // Stored as the group's record, resolved from the name the form sent.
+        expect(await findPrivilege(api, privilege)).toMatchObject({
+          roles: ['READONLY_ADMIN'],
+          local_groups: [],
+          ds_groups: [expect.objectContaining({ gid })],
+        });
+      });
+    });
+  });
+
+  test.describe('the SMB service', () => {
+    let adminGroupBefore: string | null | undefined;
+
+    test.afterEach(async ({ api }) => {
+      if (adminGroupBefore === undefined || leavingTestData('the SMB Administrators Group')) {
+        return;
+      }
+      const restore = adminGroupBefore;
+      await runCleanupSteps([['restore the SMB Administrators Group', async () => {
+        await firstValueFrom(api.api.call('smb.update', [{ admin_group: restore }]).pipe(timeout(slowCallTimeoutMs)));
+      }]]);
+    });
+
+    test('a domain group becomes the SMB Administrators Group', async ({ page, api, config }) => {
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: group } = await findDomainAccount(api, 'group', domainUsersGroup);
+        const before = await firstValueFrom(api.api.call('smb.config').pipe(timeout(readTimeoutMs)));
+        adminGroupBefore = before.admin_group;
+        const form = servicesLocators.smbForm;
+
+        await openServiceForm(page, 'cifs', form.netbiosName, before.netbiosname);
+        await page.locator(form.advancedToggle).click();
+        await page.locator(form.adminGroup).fill(group);
+        await page.locator(form.adminGroupOption(group)).click();
+        await saveServiceForm(page);
+
+        const after = await firstValueFrom(api.api.call('smb.config').pipe(timeout(readTimeoutMs)));
+        expect(after.admin_group?.toLowerCase()).toBe(group.toLowerCase());
+      });
+    });
+  });
+
+  test.describe('signing in as a domain user', () => {
+    test.use({ authenticate: false });
+    const privilege = 'e2e_ad_sign_in';
+    let dsAuthBefore: boolean | undefined;
+
+    test.afterEach(async ({ api }) => {
+      if (leavingTestData(`privilege "${privilege}" and directory services sign-in`)) {
+        return;
+      }
+      const restore = dsAuthBefore;
+      await runCleanupSteps([
+        [`remove privilege ${privilege}`, () => ensurePrivilegeAbsent(api, privilege)],
+        ['restore directory services sign-in', async () => {
+          if (restore !== undefined) {
+            await setDsAuth(api, restore);
+          }
+        }],
+      ]);
+    });
+
+    test('a domain user in a privileged domain group signs in to the UI', async ({ page, api, config }) => {
+      const ad = domainOf(config);
+      await withActiveDirectoryRedacted(ad, async () => {
+        await ensureActiveDirectoryJoined(api, ad, adComputerName());
+        const { name: account } = await findDomainAccount(api, 'user', ad.username);
+        const { id: gid } = await findDomainAccount(api, 'group', domainUsersGroup);
+        // Sign-in for directory users is off until turned on, and a privilege is what gives one
+        // a role: the account is in its domain's `domain users`.
+        dsAuthBefore = await setDsAuth(api, true);
+        await ensurePrivilegeAbsent(api, privilege);
+        await ensurePrivilegePresent(api, {
+          name: privilege, roles: ['READONLY_ADMIN'], webShell: false, localGroupGids: [], dsGroupGids: [gid],
+        });
+
+        await signIn(page, account, ad.password);
+        await expectSignedInAs(page, account);
+        await signOut(page);
       });
     });
   });
