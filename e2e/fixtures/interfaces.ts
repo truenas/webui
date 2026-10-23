@@ -329,32 +329,31 @@ export async function unpinManagementInterface(client: E2eApiClient, name: strin
 }
 
 /**
- * Deletes every VLAN, bridge and LAGG built on `nic`, and the row a bridge or
- * LAGG can leave on `nic` itself when `hadRow` says it had none to start with.
- * Then it commits, so `nic` ends with no address and no interface on it.
+ * Deletes every VLAN, bridge and LAGG built on the spare NIC `nic`, and any row
+ * `nic` has itself. A bridge or LAGG can leave that row behind, and a spare is
+ * never configured, so a row there is always a leftover, whichever run left it.
+ * Then it commits, so `nic` ends with no address, no row and nothing built on it.
  */
-export async function ensureNothingOnSpareInterface(
-  client: E2eApiClient,
-  nic: string,
-  hadRow: boolean,
-): Promise<void> {
+export async function ensureNothingOnSpareInterface(client: E2eApiClient, nic: string): Promise<void> {
   await ensureNoPendingInterfaceChanges(client);
 
   const built = await findInterfacesOn(client, nic);
   for (const entry of built) {
     await firstValueFrom(client.api.call('interface.delete', [entry.id]).pipe(timeout(slowCallTimeoutMs)));
   }
-  const leftRow = !hadRow && await hasInterfaceRow(client, nic);
-  if (leftRow) {
+  // Read once nothing built on `nic` is left, which is when `hasInterfaceRow` can tell.
+  const hasRow = await hasInterfaceRow(client, nic);
+  if (hasRow) {
     await firstValueFrom(client.api.call('interface.delete', [nic]).pipe(timeout(slowCallTimeoutMs)));
   }
 
-  if (built.length > 0 || leftRow) {
+  if (built.length > 0 || hasRow) {
     const names = built.map((entry) => entry.name).join(', ');
     await commitInterfaceChanges(client, `${names || nic} may still be configured on ${nic}.`);
   }
 
+  expect(await findInterfacesOn(client, nic), `Nothing should be built on ${nic} any more`).toEqual([]);
+  expect(await hasInterfaceRow(client, nic), `${nic} should have no row in network.interfaces`).toBe(false);
   const spare = await findInterface(client, nic);
-  expect(spare && ipv4AddressesOf(spare), `${nic} should hold no IPv4 address once nothing is built on it`)
-    .toEqual([]);
+  expect(spare && ipv4AddressesOf(spare), `${nic} should hold no IPv4 address`).toEqual([]);
 }

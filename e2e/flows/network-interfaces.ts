@@ -173,9 +173,8 @@ export async function addFailoverLagg(page: Page, ports: string[]): Promise<void
   await expect(page.locator(form.lagPorts)).toHaveCount(0);
 
   for (const port of ports) {
-    const toggle = page.locator(form.lagFailoverPort(port));
-    await toggle.click();
-    await expect(toggle.locator('input[type="checkbox"]')).toBeChecked();
+    await page.locator(form.lagFailoverPort(port)).click();
+    await expect(page.locator(form.lagFailoverPortCheckbox(port))).toBeChecked();
   }
 
   await saveInterface(page, false);

@@ -87,6 +87,10 @@ export const interfaceFormLocators = {
    * the port's name, through webui's legacy normalizer, so `ens4` is `ens-4`.
    */
   lagFailoverPort: (name: string): string => `[data-test="toggle-lag-ports-${legacyKebabTestSegment(name)}"]`,
+  /** The switch's own checkbox, which is what reports whether the port is chosen. */
+  lagFailoverPortCheckbox: (name: string): string => {
+    return `[data-test="toggle-lag-ports-${legacyKebabTestSegment(name)}"] input[type="checkbox"]`;
+  },
 
   /** The side panel is opened with no `testId`, so this is the panel's generic close. */
   closePanel: '[data-test="button-close-side-panel"]',

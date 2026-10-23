@@ -24,7 +24,7 @@
  */
 import {
   commitInterfaceChanges, ensureNoPendingInterfaceChanges, ensureNothingOnSpareInterface, findInterface,
-  findManagementInterface, findSpareInterface, hasInterfaceRow, hasNetworkConfigToBeRemoved,
+  findManagementInterface, findSpareInterface, hasNetworkConfigToBeRemoved,
   hasPendingInterfaceChanges, type InterfaceRecord, type ManagementInterface, pinManagementInterface,
   readCheckinWaiting, readIpv4Addresses, stageVlan, unpinManagementInterface,
 } from '../fixtures/interfaces';
@@ -58,7 +58,6 @@ const pending = pendingChangesLocators;
 
 let management: ManagementInterface;
 let spare: InterfaceRecord;
-let spareHadRow = false;
 let pinnedManagement = false;
 
 /** `state.aliases` addresses of `name`, as applied: what Save Changes made permanent. */
@@ -88,7 +87,7 @@ test.beforeAll(async ({ api }) => {
   }
 
   await ensureNoPendingInterfaceChanges(api);
-  spareHadRow = await hasInterfaceRow(api, spare.name);
+  // Before anything on the spare is committed away, which with no management row would unconfigure it.
   pinnedManagement = await pinManagementInterface(api, management);
 
   // The pin must not have moved the management NIC: everything after it depends on that address.
@@ -96,7 +95,7 @@ test.beforeAll(async ({ api }) => {
 });
 
 test.beforeEach(async ({ api }) => {
-  await ensureNothingOnSpareInterface(api, spare.name, spareHadRow);
+  await ensureNothingOnSpareInterface(api, spare.name);
 });
 
 test.afterEach(async ({ api }) => {
@@ -105,9 +104,7 @@ test.afterEach(async ({ api }) => {
   }
 
   await runCleanupSteps([
-    [`remove every interface built on ${spare.name}, and commit`, () => {
-      return ensureNothingOnSpareInterface(api, spare.name, spareHadRow);
-    }],
+    [`remove every interface built on ${spare.name}, and commit`, () => ensureNothingOnSpareInterface(api, spare.name)],
   ]);
 });
 
@@ -116,8 +113,9 @@ test.afterAll(async ({ api }) => {
     return;
   }
 
+  // The spare first: a row left in the table once the management row goes would unconfigure the management NIC.
   await runCleanupSteps([
-    ['roll back anything still staged', () => ensureNoPendingInterfaceChanges(api)],
+    [`remove every interface built on ${spare.name}, and commit`, () => ensureNothingOnSpareInterface(api, spare.name)],
     [`remove the DHCP row for ${management.name}, and commit`, () => unpinManagementInterface(api, management.name)],
   ]);
 
