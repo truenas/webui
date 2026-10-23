@@ -21,10 +21,6 @@
  * upper-cased into a realm or escaped into a regex. A job's error names the
  * domain and often a controller, so everything here runs inside
  * {@link withActiveDirectoryRedacted}, and so must a spec's tests and hooks.
- * The domain's NetBIOS name is redacted too, once {@link adNetbiosName} has read
- * it: every domain account the appliance lists carries it, and no `TN_AD_*`
- * value does when it is not the domain's first label. So nothing that prints
- * job progress or account names may run before that read.
  */
 import type { JobParams } from '@truenas/api-client';
 import { escapeRegExp } from 'lodash-es';
@@ -64,15 +60,8 @@ export function adComputerName(): string {
 }
 
 /**
- * Names the domain gives away once joined, which no `TN_AD_*` value holds: its
- * NetBIOS name, set by {@link adNetbiosName}. Redacted beside those values for
- * the rest of the worker.
- */
-const learnedAdValues = new Set<string>();
-
-/**
- * Each `TN_AD_*` value, and each learned one, and the placeholder it becomes,
- * longest first so that the domain goes before its own first label.
+ * Each `TN_AD_*` value and the placeholder it becomes, longest first so that
+ * the domain goes before its own first label.
  *
  * A value is also matched as a `data-test` id spells it, through both
  * normalizers: a failed locator prints its selector, and an account's row id
@@ -86,7 +75,6 @@ function adValuePlaceholders(ad: ActiveDirectoryTarget): [string, string][] {
     [ad.username, '<TN_AD_USERNAME>'],
     [ad.computerOu, '<TN_AD_COMPUTER_OU>'],
     ...ad.nameservers.map((nameserver, i): [string, string] => [nameserver, `<TN_AD_DC${i + 1}>`]),
-    ...[...learnedAdValues].map((value): [string, string] => [value, '<AD NetBIOS name>']),
   ];
   return values
     .filter((entry): entry is [string, string] => Boolean(entry[0]))
@@ -130,19 +118,13 @@ export async function withActiveDirectoryRedacted<T>(ad: ActiveDirectoryTarget, 
 }
 
 /**
- * The domain's NetBIOS name, which the appliance puts before a domain account's
- * name: `NAME\user`. It need not be the domain's first label, so it is read
- * back once joined, as the SMB workgroup a join sets, and redacted from then on.
+ * `name` as the appliance lists the domain's account of that name: `NAME\name`,
+ * under the domain's NetBIOS name. That need not be the domain's first label,
+ * so it is read back once joined, as the SMB workgroup a join sets.
  */
-export async function adNetbiosName(client: E2eApiClient): Promise<string> {
-  const { workgroup } = await firstValueFrom(client.api.call('smb.config').pipe(timeout(readTimeoutMs)));
-  learnedAdValues.add(workgroup);
-  return workgroup;
-}
-
-/** `name` as the appliance lists the domain's account of that name: `NAME\name`. */
 export async function domainAccountName(client: E2eApiClient, name: string): Promise<string> {
-  return `${await adNetbiosName(client)}\\${name}`;
+  const { workgroup } = await firstValueFrom(client.api.call('smb.config').pipe(timeout(readTimeoutMs)));
+  return `${workgroup}\\${name}`;
 }
 
 function kerberosUser(ad: ActiveDirectoryTarget): KerberosUserCredential {

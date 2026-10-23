@@ -9,8 +9,7 @@
  * only while joined.
  *
  * The accounts are the one the domain is joined with and `domain users`, which
- * every domain has; nothing else of the domain's is named. The appliance lists
- * them under the domain's NetBIOS name, which is redacted as well once read.
+ * every domain has, listed by the appliance under the domain's NetBIOS name.
  *
  * Needs a real domain (`TN_AD_*`), and skips without one. In CI that is the
  * internal test domain from the `E2EUI_AD_*` repository secrets, so this spec
