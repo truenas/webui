@@ -1,6 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, computed, contentChildren, effect, inject, input, signal,
-  viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, computed, contentChildren, effect, inject, input, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -11,6 +10,7 @@ import {
   FilePickerCreateAction,
   FilePickerCreateActionEvent,
   FilePickerError,
+  FilePickerSelection,
   FileSystemItem,
   TnFilePickerComponent,
   tnIconMarker,
@@ -51,7 +51,6 @@ export class IxExplorerComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
   private errorParser = inject(ErrorParserService);
   private destroyRef = inject(DestroyRef);
-  private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   readonly readonly = input<boolean>(false);
   readonly multiple = input(false);
   readonly rootNodes = input<ExplorerNodeData[]>([datasetsRootNode]);
@@ -65,14 +64,17 @@ export class IxExplorerComponent implements ControlValueAccessor {
   private readonly formDisabled = signal(false);
   readonly isDisabled = computed(() => this.formDisabled() || this.readonly());
   readonly loadingError = signal<string | null>(null);
-  readonly lastSelectedNode = signal<ExplorerNodeData | null>(null);
+  /**
+   * The picker item behind the last selected entry, with `path` in value space (as stored in the form).
+   * `null` when nothing is selected or the entry was typed without ever being listed.
+   */
+  readonly lastSelectedItem = signal<FileSystemItem | null>(null);
 
   private value: string | string[] = '';
 
   /**
-   * Every node served to the picker, indexed by its picker-space path. Used to
-   * resolve selected paths back to node metadata (`lastSelectedNode`, `nodeAt`)
-   * and to serve children for providers that return a pre-built nested tree.
+   * Every node served to the picker, indexed by its picker-space path. Used for
+   * `nodeAt` and to serve children for providers that return a pre-built nested tree.
    */
   private nodesByPath = new Map<string, ExplorerNodeData>();
 
@@ -103,8 +105,8 @@ export class IxExplorerComponent implements ControlValueAccessor {
    * varies per system, so rooting inside one would make the same form behave
    * differently across systems) — falls back to `/`, with the top-level listing
    * synthesized from `rootNodes` (see `loadChildren`). Only popup *browsing* is
-   * confined — typed paths are committed verbatim through `commitTypedValue`,
-   * as in the legacy explorer.
+   * confined — typed paths are committed verbatim (`allowFreeText`), as in the
+   * legacy explorer.
    */
   protected readonly pickerRootPath = computed(() => {
     const roots = this.rootNodes();
@@ -176,58 +178,8 @@ export class IxExplorerComponent implements ControlValueAccessor {
       const roots = this.rootNodes();
       this.nodesByPath.clear();
       this.indexNodes(roots);
-      this.lastSelectedNode.set(null);
+      this.lastSelectedItem.set(null);
     });
-
-    // The legacy explorer accepted anything typed into the input — comma-separated
-    // lists in multiple mode, dataset names, even non-path strings like
-    // "EXTERNAL:192.168.0.200\SHARE" (SMB external shares). tn-file-picker's own
-    // commit handler rejects anything outside its root, so manual input is taken
-    // over here: the capture-phase listener runs before the picker's own `change`
-    // listener on the inner input and stops the event from reaching it. Popup
-    // interactions are unaffected — the popup renders in a CDK overlay outside
-    // this host, so its events never pass through here.
-    const host = this.elementRef.nativeElement;
-    host.addEventListener('change', this.onManualInputCapture, { capture: true });
-    this.destroyRef.onDestroy(() => {
-      host.removeEventListener('change', this.onManualInputCapture, { capture: true });
-    });
-  }
-
-  private onManualInputCapture = (event: Event): void => {
-    const target = event.target;
-    if (!(target instanceof HTMLInputElement) || !target.closest('tn-file-picker')) {
-      return;
-    }
-
-    event.stopPropagation();
-    this.commitTypedValue(target.value);
-  };
-
-  private commitTypedValue(inputValue: string): void {
-    this.loadingError.set(null);
-
-    // Typed values are stored verbatim, as in the legacy explorer — no
-    // picker-space mapping. Only popup selections go through `fromPickerPath`.
-    let newValue: string | string[];
-    if (this.multiple()) {
-      newValue = inputValue
-        .split(',')
-        .map((entry) => entry.trim())
-        .filter((entry) => entry.length > 0);
-    } else {
-      newValue = inputValue;
-    }
-
-    this.value = newValue;
-    const lastPath = Array.isArray(newValue) ? newValue[newValue.length - 1] : newValue;
-    this.lastSelectedNode.set(lastPath ? this.nodesByPath.get(this.toPickerPath(lastPath)) ?? null : null);
-    this.onChange(newValue);
-    this.syncPickerValue();
-    // A committed typed path settles the interaction — the popup (possibly
-    // auto-opened by openOnClick) has nothing left to pick.
-    this.filePicker().close();
-    this.onTouch();
   }
 
   writeValue(value: string | string[]): void {
@@ -252,12 +204,12 @@ export class IxExplorerComponent implements ControlValueAccessor {
     return this.nodesByPath.get(this.toPickerPath(path));
   }
 
-  protected onSelectionChange(selection: string | string[]): void {
-    const paths = Array.isArray(selection) ? selection : [selection];
+  protected onItemSelectionChange({ value, items }: FilePickerSelection): void {
+    const paths = Array.isArray(value) ? value : [value];
     const lastPath = paths[paths.length - 1];
-    // `selectionChange` payloads are in value space (relative dataset names
-    // when `valueRoot` is set), while `nodesByPath` is keyed by picker space.
-    this.lastSelectedNode.set(lastPath ? this.nodesByPath.get(this.toPickerPath(lastPath)) ?? null : null);
+    const lastItem = items[items.length - 1];
+    // Items carry picker-space paths; expose the value-space one the form holds.
+    this.lastSelectedItem.set(lastPath && lastItem ? { ...lastItem, path: lastPath } : null);
     this.onTouch();
   }
 
@@ -438,7 +390,8 @@ export class IxExplorerComponent implements ControlValueAccessor {
     }
 
     const cached = this.nodesByPath.get(this.toPickerPath(requestedPath));
-    if (cached?.children?.length) {
+    // An empty `children` array is a leaf in the pre-built tree, not a missing listing.
+    if (cached?.children) {
       return cached.children;
     }
     return response;
