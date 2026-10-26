@@ -341,8 +341,8 @@ Rename `TypedApiService` back to `ApiService` if that reads better.
 Things the wrapper works around today, in the order they block the phases
 above. Each is a change for `truenas/api-client-ts`.
 
-1. ~~**Errors lose their payload.**~~ Resolved by NAS-144007, on the release
-   after 9.0.0 that carries api-client-ts #68 (TNC-2582). The client now
+1. ~~**Errors lose their payload.**~~ Resolved by NAS-144007, on 9.0.1, which
+   carries api-client-ts #68 (TNC-2582). The client now
    throws `TrueNasApiError` with the whole JSON-RPC error from `call`, the
    query verbs, and a job method refused before it starts a job (which used
    to hang forever). Every `TypedApiService` verb rethrows it as `ApiCallError`

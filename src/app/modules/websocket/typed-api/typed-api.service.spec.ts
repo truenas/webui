@@ -151,7 +151,7 @@ describe('TypedApiService', () => {
       client.connection.replyError('user.query', fakeApiError({
         errname: 'EINVAL',
         reason: 'Invalid filter',
-        trace: { class: 'ValidationError', formatted: 'Traceback…', frames: [] },
+        trace: { class: 'ValidationError', formatted: 'Traceback…', repr: 'ValidationError()' },
       }));
 
       await expect(result).rejects.toBeInstanceOf(ApiCallError);
