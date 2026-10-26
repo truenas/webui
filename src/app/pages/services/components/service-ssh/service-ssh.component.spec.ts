@@ -92,13 +92,6 @@ describe('ServiceSshComponent', () => {
       mockProvider(DialogService),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of(fakeGroupDataSource)),
-        getGroupByName: jest.fn((groupName: string) => {
-          const existingGroup = fakeGroupDataSource.find((group) => group.group === groupName);
-          if (existingGroup) {
-            return of(existingGroup);
-          }
-          return of(null);
-        }),
         getGroupByNameCached: jest.fn((groupName: string) => {
           const existingGroup = fakeGroupDataSource.find((group) => group.group === groupName);
           if (existingGroup) {
@@ -106,7 +99,6 @@ describe('ServiceSshComponent', () => {
           }
           return of(null);
         }),
-        getUserByName: jest.fn(() => of(null)),
       }),
       mockAuth(),
     ],

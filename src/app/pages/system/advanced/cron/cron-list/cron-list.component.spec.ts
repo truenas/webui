@@ -103,7 +103,6 @@ describe('CronListComponent', () => {
       mockProvider(LocaleService),
       mockProvider(UserService, {
         userQueryDsCache: () => of([{ username: 'root' }] as User[]),
-        getUserByName: (username: string) => of({ username } as User),
         getUserByNameCached: (username: string) => of({ username } as User),
       }),
       mockProvider(TaskService, {

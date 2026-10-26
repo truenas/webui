@@ -41,9 +41,3 @@ export interface AuthMePrivilege {
   web_shell: boolean;
   webui_access: boolean;
 }
-
-export interface DsUncachedGroup {
-  gr_gid: number;
-  gr_mem: unknown[];
-  gr_name: string;
-}
