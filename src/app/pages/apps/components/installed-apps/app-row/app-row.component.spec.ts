@@ -10,6 +10,9 @@ import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.pipe';
+import {
+  AppActionRequiredBadgeComponent,
+} from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
 import { AppRowComponent } from 'app/pages/apps/components/installed-apps/app-row/app-row.component';
 import { AppStateCellComponent } from 'app/pages/apps/components/installed-apps/app-state-cell/app-state-cell.component';
 import { AppUpdateCellComponent } from 'app/pages/apps/components/installed-apps/app-update-cell/app-update-cell.component';
@@ -83,6 +86,23 @@ describe('AppRowComponent', () => {
     const updateCell = spectator.query(AppUpdateCellComponent)!;
     expect(updateCell).toBeTruthy();
     expect(updateCell.hasUpdate).toBeFalsy();
+  });
+
+  it('passes the app to the action required badge', () => {
+    const badge = spectator.query(AppActionRequiredBadgeComponent)!;
+    expect(badge).toBeTruthy();
+    expect(badge.app()).toBe(app);
+  });
+
+  it('forwards the badge actionRequiredClicked output through the row', () => {
+    spectator.setInput('app', { ...app, action_required: true, notes: 'do something' } as App);
+
+    const emitSpy = jest.fn();
+    spectator.component.actionRequiredClicked.subscribe(emitSpy);
+
+    spectator.click('.action-required-badge');
+
+    expect(emitSpy).toHaveBeenCalledTimes(1);
   });
 
   it('shows app usages stats', () => {
