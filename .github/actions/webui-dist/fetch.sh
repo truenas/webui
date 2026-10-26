@@ -35,13 +35,18 @@ while :; do
   fi
   id=$(jq -r .id <<< "$run")
   # The list keeps an artifact past its retention, marked expired, and
-  # it cannot be downloaded.
-  artifact=$(get "$api/runs/$id/artifacts?name=webui-dist" | jq -c '[.artifacts[] | select(.expired | not)][0] // empty')
-  if [ -n "$artifact" ]; then
-    echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
-    break
+  # it cannot be downloaded. A failed query says nothing about the
+  # artifact, finished run or not, so it is asked again next round.
+  listed=false
+  if artifacts=$(get "$api/runs/$id/artifacts?name=webui-dist"); then
+    listed=true
+    artifact=$(jq -c '[.artifacts[] | select(.expired | not)][0] // empty' <<< "$artifacts")
+    if [ -n "$artifact" ]; then
+      echo "Using the UI WebUI run $id built, $(jq -r .html_url <<< "$run"), after waiting ${SECONDS}s"
+      break
+    fi
   fi
-  if [ "$(jq -r .status <<< "$run")" = completed ]; then
+  if [ "$listed" = true ] && [ "$(jq -r .status <<< "$run")" = completed ]; then
     echo "::notice::WebUI run $id finished with no webui-dist to download (failed, or expired); building the UI here"
     exit 0
   fi
@@ -69,7 +74,10 @@ if [ -n "$digest" ] && [ "sha256:$(sha256sum "$zip" | cut -d ' ' -f 1)" != "$dig
   exit 0
 fi
 # Renamed into place whole, so a caller that stops waiting never finds half.
-python3 -m zipfile -e "$zip" "$out/dist.partial"
+if ! python3 -m zipfile -e "$zip" "$out/dist.partial"; then
+  echo "::notice::Could not unpack webui-dist from WebUI run $id; building the UI here"
+  exit 0
+fi
 mv "$out/dist.partial" "$out/dist"
 rm "$zip"
 echo "Downloaded webui-dist ($(jq -r .size_in_bytes <<< "$artifact") bytes) in $((SECONDS - started))s"
