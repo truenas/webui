@@ -19,6 +19,7 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
@@ -77,6 +78,9 @@ describe('S3BucketFormComponent', () => {
     locked: false,
   } as S3Bucket;
 
+  const getParentDatasetExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: '[formControlName="parent_dataset"]' }),
+  );
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -207,9 +211,7 @@ describe('S3BucketFormComponent', () => {
 
     it('creates a bucket with object lock and versioning but no default rule unless one is picked', async () => {
       await (await getInput('name')).setValue('backups');
-      await form.fillForm({
-        'Parent Dataset': 'tank',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank');
       await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
 
@@ -226,9 +228,7 @@ describe('S3BucketFormComponent', () => {
 
     it('creates a bucket with the Compliance default rule when it is picked', async () => {
       await (await getInput('name')).setValue('backups');
-      await form.fillForm({
-        'Parent Dataset': 'tank',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank');
       await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
       await (await getSelect('object_lock_default_mode')).selectOption('Compliance');
@@ -247,9 +247,7 @@ describe('S3BucketFormComponent', () => {
 
     it('does not leave versioning on after object lock is checked and unchecked in basic mode', async () => {
       await (await getInput('name')).setValue('plain');
-      await form.fillForm({
-        'Parent Dataset': 'tank',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank');
       await setOwner('alice');
       await (await getCheckbox('object_lock')).check();
       await (await getCheckbox('object_lock')).uncheck();
@@ -292,9 +290,7 @@ describe('S3BucketFormComponent', () => {
 
     it('sends Object Writer ownership for a Multiprotocol bucket', async () => {
       await (await getInput('name')).setValue('shared');
-      await form.fillForm({
-        'Parent Dataset': 'tank',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank');
       await setOwner('alice');
       await clickAdvancedOptions();
       await (await getSelect('permissions_model')).selectOption('Multiprotocol');
@@ -310,9 +306,7 @@ describe('S3BucketFormComponent', () => {
 
     it('rejects the /mnt root as a parent dataset', async () => {
       await (await getInput('name')).setValue('photos');
-      await form.fillForm({
-        'Parent Dataset': '/mnt',
-      });
+      await (await getParentDatasetExplorer()).setValue('/mnt');
       await setOwner('alice');
 
       expect(spectator.component.canSubmit()).toBe(false);
@@ -323,9 +317,7 @@ describe('S3BucketFormComponent', () => {
 
     it('rejects a bucket whose dataset already exists under the parent', async () => {
       await (await getInput('name')).setValue('photos');
-      await form.fillForm({
-        'Parent Dataset': 'tank/buckets',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank/buckets');
       await setOwner('alice');
 
       expect(spectator.component.canSubmit()).toBe(false);
@@ -339,9 +331,7 @@ describe('S3BucketFormComponent', () => {
 
     it('creates a bucket under the chosen parent dataset', async () => {
       await (await getInput('name')).setValue('videos');
-      await form.fillForm({
-        'Parent Dataset': 'tank/buckets',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank/buckets');
       await setOwner('alice');
 
       const closed = jest.fn();
@@ -373,9 +363,7 @@ describe('S3BucketFormComponent', () => {
 
     it('adds grants in advanced mode', async () => {
       await (await getInput('name')).setValue('shared');
-      await form.fillForm({
-        'Parent Dataset': 'tank',
-      });
+      await (await getParentDatasetExplorer()).setValue('tank');
       await setOwner('alice');
 
       await clickAdvancedOptions();
@@ -505,7 +493,7 @@ describe('S3BucketFormComponent', () => {
       expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Snapshot Versions Listed' }))).toBe(true);
 
       await (await getInput('name')).setValue('videos');
-      await (await loader.getHarness(IxFormHarness)).fillForm({ 'Parent Dataset': 'tank/buckets' });
+      await (await getParentDatasetExplorer()).setValue('tank/buckets');
       await setOwner('alice');
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -540,11 +528,9 @@ describe('S3BucketFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(TypedApiService);
 
-      await form.fillForm({
-        Name: 'videos',
-        'Parent Dataset': 'tank/buckets',
-        Owner: 'alice',
-      });
+      await form.fillForm({ Name: 'videos' });
+      await (await getParentDatasetExplorer()).setValue('tank/buckets');
+      await form.fillForm({ Owner: 'alice' });
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
@@ -577,11 +563,9 @@ describe('S3BucketFormComponent', () => {
       form = await loader.getHarness(IxFormHarness);
       api = spectator.inject(TypedApiService);
 
-      await form.fillForm({
-        Name: 'videos',
-        'Parent Dataset': 'tank/buckets',
-        Owner: 'alice',
-      });
+      await form.fillForm({ Name: 'videos' });
+      await (await getParentDatasetExplorer()).setValue('tank/buckets');
+      await form.fillForm({ Owner: 'alice' });
       spectator.component.submit();
       await spectator.fixture.whenStable();
 

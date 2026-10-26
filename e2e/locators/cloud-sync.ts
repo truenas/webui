@@ -150,6 +150,11 @@ export const cloudSyncLocators = {
     },
     /** The Provider step's Next. Disabled until a credential is picked. */
     next: '[data-test="button-next"]',
+    /**
+     * The Provider step's Advanced Options. Enabled whether or not a credential is picked, and swaps
+     * the wizard for the full form, {@link cloudSyncLocators.form}, in the same panel.
+     */
+    advanced: '[data-test="button-advanced"]',
 
     direction: '[data-test="select-direction"]',
     /** Labelled PUSH and PULL, so `option-direction-push`. */
@@ -219,6 +224,39 @@ export const cloudSyncLocators = {
     transfersOption: (label: string): string => `[data-test="option-transfers-${kebabTestSegment(label)}"]`,
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
+
+    /**
+     * The form's own footer action, beside Save: `footerActions` with `testId: 'dry-run'`, in create
+     * and edit mode alike. Disabled while the form is invalid, loading or submitting.
+     */
+    dryRun: '[data-test="button-dry-run"]',
+    /** The side panel's dismiss control. It asks first only when the form has unsaved edits. */
+    closePanel: '[data-test="button-close-side-panel"]',
+
+    /** The same control names as the wizard's, so the same ids. Starts as PULL in the form. */
+    direction: '[data-test="select-direction"]',
+    directionOption: (label: string): string => `[data-test="option-direction-${kebabTestSegment(label)}"]`,
+    /** A push's local directories, rendered only in Push. Multiple mode, like the wizard's. */
+    pathSource: '[data-test="input-path-source"]',
+    /** `ix-cloud-credentials-select`, as in the wizard; options are labelled `<name> (<provider>)`. */
+    credential: '[data-test="select-cloud-credentials"]',
+    credentialOption: (name: string, provider: string): string => {
+      const label = `${name} (${provider})`;
+      return `[data-test="option-cloud-credentials-${kebabTestSegment(label)}"]`;
+    },
+
+    /**
+     * Bucket, for a credential whose provider has buckets. Filled from `cloudsync.list_buckets`:
+     * each option is labelled with the bucket's `Name` and holds its `Path`.
+     */
+    bucket: '[data-test="select-bucket"]',
+    bucketOption: (name: string): string => `[data-test="option-bucket-${kebabTestSegment(name)}"]`,
+    /**
+     * The free-text Bucket the form falls back to when `cloudsync.list_buckets` fails. Rendered
+     * instead of {@link bucket}, never beside it — so which of the two is there says whether the
+     * call worked.
+     */
+    bucketInput: '[data-test="input-bucket-input"]',
   },
 
   customTransfers: {

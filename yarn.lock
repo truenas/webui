@@ -4541,12 +4541,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/api-client@npm:~9.0.0":
-  version: 9.0.0
-  resolution: "@truenas/api-client@npm:9.0.0"
+"@truenas/api-client@npm:~9.0.1":
+  version: 9.0.1
+  resolution: "@truenas/api-client@npm:9.0.1"
   peerDependencies:
     rxjs: ^7.8.0
-  checksum: 10/0341510844c37890c7e350f13afc83cfb1af4976e43242fc55cc1c3675676b55fe8ca50dbb3ed59b5c823e341a23fea5457dc8b585c396c79a00395a6e0988df
+  checksum: 10/0ddf78131b40a08f566d534b977960717caf4cb7384f51d53f435d9d2c932393ac72cb2e0479318f4bba2d22c701f916cdd9c36892015c2e254f60a3d9287298
   languageName: node
   linkType: hard
 
@@ -4578,9 +4578,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@truenas/ui-components@npm:~0.8.10":
-  version: 0.8.10
-  resolution: "@truenas/ui-components@npm:0.8.10"
+"@truenas/ui-components@npm:~0.8.14":
+  version: 0.8.14
+  resolution: "@truenas/ui-components@npm:0.8.14"
   dependencies:
     "@material-design-icons/svg": "npm:~0.14.13"
     "@mdi/svg": "npm:~7.4.47"
@@ -4605,7 +4605,7 @@ __metadata:
     rxjs: ^7.5.0
   bin:
     truenas-icons: scripts/icon-sprite/cli.cjs
-  checksum: 10/874f0575210202cc3118c60b594e2214e71c9670eabff5c7fe8f5952aed1bfc6880ddd134d4966698a207559a8148546c8fa1755cb66eb01e9a9d5aebbd63370
+  checksum: 10/58ce46d79414f46599c71817a1c4f652220ac55f6da1ff3b8137dfa9b8970c9ed8953387bca0c08c0275e3fcdff043f74004afce9f842c8c31fefe6413bfc1c3
   languageName: node
   linkType: hard
 
@@ -15460,9 +15460,9 @@ __metadata:
     "@shopify/eslint-plugin": "npm:~50.0.0"
     "@smarttools/eslint-plugin-rxjs": "npm:~1.0.22"
     "@stylistic/eslint-plugin": "npm:~2.9.0"
-    "@truenas/api-client": "npm:~9.0.0"
+    "@truenas/api-client": "npm:~9.0.1"
     "@truenas/common-typescript": "github:truenas/tn-common-typescript#master"
-    "@truenas/ui-components": "npm:~0.8.10"
+    "@truenas/ui-components": "npm:~0.8.14"
     "@types/cheerio": "npm:~0.22.35"
     "@types/d3": "npm:~7.4.3"
     "@types/dygraphs": "npm:^2.1.10"

@@ -1,5 +1,5 @@
 name: 'E2E: run the suite'
-description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results, coverage and failure traces."
+description: "Runs the Playwright suite in Playwright's image against the TN_* target in the job environment, and uploads its JUnit results, coverage, timings and failure traces."
 
 # Only the test run is containerised; the appliance stays on the runner,
 # under qemu.
@@ -48,6 +48,12 @@ inputs:
   artifact-suffix:
     description: Appended to the artifacts' names, to keep shards and jobs apart.
     default: ''
+  reports:
+    description: >-
+      Whether to write the coverage and timing reports into this job's
+      summary. Off for a shard, whose reports would count only its part of the
+      suite: e2e.yml reports once, over every shard's uploaded results.
+    default: 'true'
 
 runs:
   using: composite
@@ -71,7 +77,7 @@ runs:
         envFile="$RUNNER_TEMP/suite.env"
         trap 'rm -f "$envFile"' EXIT
         names=(CI TN_GREP TN_SHARD TN_PROFILE TN_UI_BASE_URL TN_UI_BASE_URL_HTTP TN_HOST
-               TN_USERNAME TN_PASSWORD TN_DOMAIN TN_BASELINE)
+               TN_USERNAME TN_PASSWORD TN_DOMAIN TN_BASELINE TN_SPARE_NICS)
         while read -r name; do
           [ -n "$name" ] && names+=("$name")
         done <<< "$EXTRA_ENV"
@@ -122,40 +128,53 @@ runs:
 
     # What the run exercised — middleware methods and routes against the UI's
     # inventory of both (scripts/e2e-coverage.ts). Informational: never fails
-    # the job. With more than one shard each report covers its own shard only;
-    # the per-test results are uploaded so they can be merged by hand
-    # (`yarn e2e:coverage <dir>`).
+    # the job.
     #
     # Written three ways, because the job summary is only on the run's Summary
     # page and is easy to miss from a job's log: the full report into the step
     # log and the summary, and the headline as a notice, which shows on both.
-    - if: always() && steps.suite.outcome != 'skipped'
+    # e2e.yml's `report` job does the same over every shard's results.
+    - if: always() && steps.suite.outcome != 'skipped' && inputs.reports == 'true'
       continue-on-error: true
       shell: bash
-      env:
-        TN_SHARD: ${{ inputs.shard }}
       run: |
         set -euo pipefail
         report="$RUNNER_TEMP/e2e-coverage.md"
         yarn e2e:coverage --out "$report"
-        {
-          if [ "$TN_SHARD" != 1/1 ]; then
-            echo "> Shard $TN_SHARD only."
-            echo
-          fi
-          cat "$report"
-        } >> "$GITHUB_STEP_SUMMARY"
+        cat "$report" >> "$GITHUB_STEP_SUMMARY"
         node -e '
           const { methods, routes } = require("./test-results/e2e-coverage/summary.json");
           const part = (name, { covered, total }) => `${name} ${covered}/${total} (${Math.round(covered / total * 100)}%)`;
-          console.log(`::notice title=E2E coverage (shard ${process.argv[1]})::${part("methods", methods)}, ${part("routes", routes)}`);
-        ' "$TN_SHARD"
+          console.log(`::notice title=E2E coverage::${part("methods", methods)}, ${part("routes", routes)}`);
+        '
 
     - if: always() && steps.suite.outcome != 'skipped'
       uses: actions/upload-artifact@v4
       with:
         name: e2e-coverage${{ inputs.artifact-suffix }}
         path: test-results/e2e-coverage/
+        if-no-files-found: ignore
+        retention-days: 14
+
+    # Where the run's time went — each test's hooks, fixtures and body, and
+    # the middleware calls and jobs in each (scripts/e2e-timings.ts).
+    # Informational: never fails the job. Safe to publish: the records name
+    # hooks, fixtures and middleware methods, never what a step typed or what
+    # a call sent, so the `unpublished` project's secrets stay out of them.
+    - if: always() && steps.suite.outcome != 'skipped' && inputs.reports == 'true'
+      continue-on-error: true
+      shell: bash
+      run: |
+        set -euo pipefail
+        report="$RUNNER_TEMP/e2e-timings.md"
+        yarn e2e:timings --out "$report" > /dev/null
+        cat "$report" >> "$GITHUB_STEP_SUMMARY"
+
+    - if: always() && steps.suite.outcome != 'skipped'
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-timings${{ inputs.artifact-suffix }}
+        path: test-results/e2e-timings/
         if-no-files-found: ignore
         retention-days: 14
 
@@ -188,6 +207,7 @@ runs:
           echo 'test-results/**'
           echo '!test-results/junit.xml'
           echo '!test-results/e2e-coverage/**'
+          echo '!test-results/e2e-timings/**'
           echo 'EOF'
         } >> "$GITHUB_OUTPUT"
 

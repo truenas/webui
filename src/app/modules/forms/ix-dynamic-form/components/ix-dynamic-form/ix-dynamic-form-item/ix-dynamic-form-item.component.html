@@ -101,10 +101,10 @@
                 }
               </tn-form-list-item>
             }
-            <ix-errors
+            <tn-form-errors
               [control]="dynamicForm()"
-              [label]="listSchema.title ? (listSchema.title | translate) : ''"
-            ></ix-errors>
+              [showWhenUntouched]="true"
+            ></tn-form-errors>
           </tn-form-list>
         }
 
@@ -180,17 +180,20 @@
 
         @case (DynamicFormSchemaType.Explorer) {
           @let explorerSchema = asExplorerSchema(schema);
-          <ix-explorer
-            [formControlName]="explorerSchema.controlName"
+          <tn-form-field
             [label]="explorerSchema.title ? (explorerSchema.title | translate) : ''"
             [tooltip]="explorerSchema.tooltip ? (explorerSchema.tooltip | translate) : ''"
             [required]="explorerSchema.required || false"
-            [nodeProvider]="explorerSchema.nodeProvider"
           >
-            @if (!isEditMode()) {
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            }
-          </ix-explorer>
+            <ix-explorer
+              [formControlName]="explorerSchema.controlName"
+              [nodeProvider]="explorerSchema.nodeProvider"
+            >
+              @if (!isEditMode()) {
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              }
+            </ix-explorer>
+          </tn-form-field>
         }
 
         @case (DynamicFormSchemaType.Checkbox) {

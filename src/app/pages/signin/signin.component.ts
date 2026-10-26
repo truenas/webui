@@ -59,6 +59,7 @@ export class SigninComponent implements OnInit {
 
   readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
   readonly isLoggingIn$ = this.signinStore.isLoggingIn$;
+  readonly isLoggingInWithQueryToken$ = this.signinStore.isLoggingInWithQueryToken$;
   readonly canLogin$ = this.signinStore.canLogin$;
   readonly isConnected$ = this.wsStatus.isConnected$;
   isConnectedDelayed$: Observable<boolean> = of(null).pipe(

@@ -153,6 +153,8 @@ describe('SnapshotListComponent', () => {
       .map((element) => element.getAttribute('data-test'));
 
     expect(testIds).toEqual([
+      // The tick box and the chevron are drawn by tn-table, and scoped by the same row tag.
+      'checkbox-select-snapshot-test-dataset-second-snapshot',
       'text-dataset-snapshot-test-dataset-second-snapshot-row-text',
       'text-snapshot-snapshot-test-dataset-second-snapshot-row-text',
       'text-used-snapshot-test-dataset-second-snapshot-row-size',
@@ -160,6 +162,7 @@ describe('SnapshotListComponent', () => {
       // segment that repeats the type prefix, so this one id is a rename, not a restoration.
       'date-created-snapshot-test-dataset-second-snapshot-row-date',
       'text-referenced-snapshot-test-dataset-second-snapshot-row-size',
+      'button-expand-snapshot-test-dataset-second-snapshot',
     ]);
   });
 

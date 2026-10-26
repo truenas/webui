@@ -68,15 +68,20 @@ export const nfsLocators = {
      * The four mapping fields, also in the Access section. Each is an
      * `ix-user-combobox` or `ix-group-combobox` with an explicit `testId`, which
      * renders a library `tn-autocomplete`: the input is `autocomplete-<testId>`
-     * and its rows are `option-<testId>-<name>`.
+     * and its rows are `option-<testId>-<name>`. The `…Options` prefix matches
+     * every row the field is showing, whatever the directory returned.
      */
     maprootUser: '[data-test="autocomplete-maproot-user"]',
+    maprootUserOptions: '[data-test^="option-maproot-user-"]',
     maprootUserOption: (user: string): string => `[data-test="option-maproot-user-${kebabTestSegment(user)}"]`,
     maprootGroup: '[data-test="autocomplete-maproot-group"]',
+    maprootGroupOptions: '[data-test^="option-maproot-group-"]',
     maprootGroupOption: (group: string): string => `[data-test="option-maproot-group-${kebabTestSegment(group)}"]`,
     mapallUser: '[data-test="autocomplete-mapall-user"]',
+    mapallUserOptions: '[data-test^="option-mapall-user-"]',
     mapallUserOption: (user: string): string => `[data-test="option-mapall-user-${kebabTestSegment(user)}"]`,
     mapallGroup: '[data-test="autocomplete-mapall-group"]',
+    mapallGroupOptions: '[data-test^="option-mapall-group-"]',
     mapallGroupOption: (group: string): string => `[data-test="option-mapall-group-${kebabTestSegment(group)}"]`,
 
     /**
@@ -91,10 +96,10 @@ export const nfsLocators = {
     ),
 
     /**
-     * The path's validation message, when it has one. Rendered by `ix-explorer`
-     * under the picker, and named for the control: `text-<control>-errors`.
+     * The path's validation message, when it has one. The wrapping `tn-form-field`
+     * renders it, and gives it no id of its own, so it is the field's alert.
      */
-    pathErrors: '[data-test="text-path-errors"]',
+    pathErrors: '[data-test="form-field-path"] [role="alert"]',
 
     /** "Add" under Networks, which appends an empty address/prefix pair. */
     addNetwork: '[data-test="button-add-item-networks"]',

@@ -3,14 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import {
-  mockExplorerCreateZvol, selectNamespaceType,
+  getNamespacePathExplorer, mockExplorerCreateZvol, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -40,8 +39,7 @@ describe('AddSubsystemNamespaceComponent', () => {
     await selectNamespaceType(loader, 'Existing File');
     // Controls are addressed one by one rather than through IxFormHarness: this component renders
     // no <form> element for the harness to anchor on — the panel host owns submission.
-    const path = await loader.getHarness(IxExplorerHarness.with({ label: 'Path To File' }));
-    await path.setValue('/mnt/dozer/file');
+    await (await getNamespacePathExplorer(loader)).setValue('/mnt/dozer/file');
 
     spectator.component.submit();
 

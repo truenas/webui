@@ -42,14 +42,14 @@
   </form>
 } @else {
   @if (jobErrors.length) {
-    <p class="result-message">
+    <p class="result-message" tnTestIdType="text" [tnTestId]="'snapshot-delete-warning'">
       {{ 'Warning: {n} of {total} snapshots could not be deleted.' | translate: { n: jobErrors.length, total } }}
     </p>
     <div class="error-message-container">
       <p tnTestIdType="text" [tnTestId]="'snapshot-delete-errors'">{{ getErrorMessage() }}</p>
     </div>
   } @else {
-    <p class="result-message">
+    <p class="result-message" tnTestIdType="text" [tnTestId]="'snapshot-delete-success'">
       {{ 'Deleted {n, plural, one {# snapshot} other {# snapshots} }' | translate:
       { n: jobSuccess.length} }}
     </p>

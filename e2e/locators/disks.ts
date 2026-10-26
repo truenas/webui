@@ -27,8 +27,11 @@ export type DiskColumn
     | 'HDD Standby'
     | 'Adv. Power Management';
 
-/** `disk-<name>`, as `toUniqueRowTag` writes it. */
-function rowTag(disk: string): string {
+/**
+ * `disk-<name>`, as `toUniqueRowTag` writes it. Exported for the controls
+ * `tn-table` draws on the row (`locators/table.ts`).
+ */
+export function diskRowTag(disk: string): string {
   return legacyKebabTestSegment(`disk-${disk}`);
 }
 
@@ -42,15 +45,22 @@ export const diskListLocators = {
   /** `ix-basic-search`, which filters on name, pool, serial and size. */
   search: '[data-test="input-search"]',
 
-  row: (disk: string): string => `[data-test="row-${rowTag(disk)}"]`,
+  row: (disk: string): string => `[data-test="row-${diskRowTag(disk)}"]`,
   cell: (column: DiskColumn, disk: string): string => (
-    `[data-test="text-${kebabTestSegment(column)}-${rowTag(disk)}-row-text"]`
+    `[data-test="text-${kebabTestSegment(column)}-${diskRowTag(disk)}-row-text"]`
   ),
 
   /** In the expanded row. `[testId]="[testIdTag(disk), 'edit']"`. */
   edit: (disk: string): string => `[data-test="button-${legacyKebabTestSegment(disk)}-edit"]`,
   /** In the expanded row, and only for a disk in no imported pool. */
   wipe: (disk: string): string => `[data-test="button-${legacyKebabTestSegment(disk)}-wipe"]`,
+
+  /**
+   * The batch bar, rendered above the table only while a row is ticked. Its count
+   * reads `1 disk selected`, `2 disks selected` and so on.
+   */
+  selectionCount: '[data-test="text-disks-selection-count"]',
+  editSelected: '[data-test="button-edit-selected"]',
 } as const;
 
 /** HDD Standby, in minutes, or `ALWAYS ON`. Middleware's values, and the select's option keys. */
@@ -91,6 +101,19 @@ export const diskFormLocators = {
   ),
 
   save: '[data-test="button-save"]',
+  closePanel: '[data-test="button-close-side-panel"]',
+} as const;
+
+/**
+ * The Bulk Edit Disks side panel, opened by Edit Disks with two or more rows
+ * ticked. Its two selects carry the same ids as the single form's, so
+ * `diskFormLocators.hddStandby*`, `advPowerManagement*` and `save` apply to it.
+ */
+export const diskBulkEditLocators = {
+  /** One per disk the panel will edit. `[tnTestId]="['bulk-edit-disk', diskName]"`. */
+  disk: (disk: string): string => `[data-test="text-bulk-edit-disk-${kebabTestSegment(disk)}"]`,
+  /** Any of them, to say that a panel is not the bulk one. */
+  anyDisk: '[data-test^="text-bulk-edit-disk-"]',
 } as const;
 
 /**

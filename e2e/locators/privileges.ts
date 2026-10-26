@@ -56,6 +56,14 @@ export const privilegeLocators = {
 
     webShell: '[data-test="checkbox-web-shell"]',
 
+    /**
+     * Directory Services Groups, `<ix-group-chips formControlName="ds_groups" [testId]="'ds-groups'">`.
+     * Rendered unless `DIRECTORY_SERVICES_AUTH` is explicitly denied. Its options are the domain's
+     * groups by full name, `NAME\domain users`; on save the form resolves the names to gids.
+     */
+    dsGroups: '[data-test="chip-input-ds-groups"]',
+    dsGroupOption: (group: string): string => `[data-test="option-ds-groups-${kebabTestSegment(group)}"]`,
+
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
   },

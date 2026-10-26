@@ -11,12 +11,14 @@
           [class.is-clickable]="canOpenShell()"
           [clickable]="canOpenShell()"
           [disabled]="!canOpenShell()"
+          [attr.aria-disabled]="!canOpenShell()"
           (itemClick)="openShell(container.id)"
         >
           <div class="shell-row">
             <span>{{ 'Shell' | translate }}</span>
             <tn-icon
               library="mdi"
+              [testId]="'open-shell'"
               [name]="hasWebShellAccess() ? 'console-line' : 'lock'"
               [ariaLabel]="shellTooltip() | translate"
             ></tn-icon>

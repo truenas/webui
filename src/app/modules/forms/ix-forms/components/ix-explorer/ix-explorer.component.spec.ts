@@ -6,14 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnFilePickerComponent } from '@truenas/ui-components';
+import { FileSystemItem, TnFilePickerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @Component({
@@ -94,9 +93,6 @@ describe('IxExplorerComponent', () => {
       `<ix-explorer
         [formControl]="formControl"
         [nodeProvider]="nodeProvider"
-        [label]="label"
-        [required]="required"
-        [tooltip]="tooltip"
         [rootNodes]="roots"
         [multiple]="multiple"
       >
@@ -107,9 +103,6 @@ describe('IxExplorerComponent', () => {
         hostProps: {
           formControl,
           nodeProvider: fakeNodeProvider,
-          label: undefined,
-          required: false,
-          tooltip: undefined,
           roots: [{
             hasChildren: true,
             name: mntPath,
@@ -166,43 +159,6 @@ describe('IxExplorerComponent', () => {
         { path: '/mnt/pool1', name: 'pool1', type: 'dataset' },
         { path: '/mnt/pool2', name: 'pool2', type: 'dataset' },
       ]);
-    });
-
-    it('renders a label and passes properties to it', () => {
-      spectator.setHostInput('label', 'Select dataset');
-      spectator.setHostInput('required', true);
-      spectator.setHostInput('tooltip', 'Enter the location of the system.');
-      spectator.detectComponentChanges();
-
-      const label = spectator.query(IxLabelComponent)!;
-      expect(label).toExist();
-      expect(label.label()).toBe('Select dataset');
-      expect(label.required()).toBe(true);
-      expect(label.tooltip()).toBe('Enter the location of the system.');
-    });
-
-    // Until NAS-143893 the label carried a test-id override that leaked, through the element
-    // injector, into the tooltip nested inside it — so the tooltip's *title* resolved to the
-    // control's name rather than its own id (a bare `text` here, where the control is anonymous;
-    // `text-anonpath` on Service FTP, and so on for the 21 other explorers with a tooltip).
-    //
-    // Nothing became unaddressable: the control's own ids come from `[testId]` on
-    // `<tn-file-picker>`, which that override never touched — Service FTP's explorer still
-    // renders `input-anonpath`, `file-picker-anonpath` and `button-toggle-anonpath` — and the
-    // tooltip is still reached through its trigger, `icon-tooltip-<label>`. What the override
-    // added was a *second*, duplicate-looking name for the control on a tooltip heading.
-    //
-    // Dumping the ids rather than selecting by one: this is about which ids exist.
-    it('no longer overrides the nested tooltip test id with the control name', () => {
-      spectator.setHostInput('label', 'Select dataset');
-      spectator.setHostInput('tooltip', 'Enter the location of the system.');
-      spectator.detectComponentChanges();
-
-      const ids = spectator.queryAll('ix-tooltip [data-test]')
-        .map((element) => element.getAttribute('data-test'));
-
-      expect(ids).toContain('text-tooltip-title');
-      expect(ids).not.toContain('text');
     });
   });
 
@@ -406,6 +362,19 @@ describe('IxExplorerComponent', () => {
       ]);
     });
 
+    it('lists nothing inside a leaf of a whole-tree provider', async () => {
+      fakeNodeProvider.mockReturnValue(of([
+        {
+          path: 'tank', name: 'tank', type: ExplorerNodeType.Directory, hasChildren: false, isMountpoint: true, children: [],
+        },
+      ]));
+
+      await getPicker().callbacks()!.getChildren!('/');
+      const childItems = await getPicker().callbacks()!.getChildren!('/tank');
+
+      expect(childItems).toEqual([]);
+    });
+
     it('stores typed values verbatim, without picker-space mapping', () => {
       typePath('tank/child');
 
@@ -437,47 +406,45 @@ describe('IxExplorerComponent', () => {
     });
   });
 
-  describe('lastSelectedNode', () => {
-    it('exposes node metadata for the last selected path', async () => {
-      const fileNode = {
-        path: '/mnt/file.txt', name: 'file.txt', type: ExplorerNodeType.File, hasChildren: false,
-      };
-      fakeNodeProvider.mockReturnValue(of([fileNode]));
-      await getPicker().callbacks()!.getChildren!(mntPath);
+  describe('lastSelectedItem', () => {
+    it('exposes picker metadata for the last selected path', () => {
+      const fileItem = { path: '/mnt/file.txt', name: 'file.txt', type: 'file' } as FileSystemItem;
 
-      getPicker().selectionChange.emit('/mnt/file.txt');
+      getPicker().itemSelectionChange.emit({ value: '/mnt/file.txt', items: [fileItem] });
 
-      expect(spectator.component.lastSelectedNode()).toBe(fileNode);
+      expect(spectator.component.lastSelectedItem()).toEqual(fileItem);
     });
 
-    it('resolves node metadata for relative value-space selections', async () => {
-      spectator.setHostInput('roots', [{
-        hasChildren: true, name: '', path: '', type: ExplorerNodeType.Directory,
-      }]);
-      spectator.detectComponentChanges();
+    it('reports the value-space path for relative selections', () => {
+      const datasetItem = { path: '/tank/child', name: 'child', type: 'dataset' } as FileSystemItem;
 
-      const datasetNode = {
-        path: 'tank/child', name: 'child', type: ExplorerNodeType.Directory, hasChildren: false, isMountpoint: true,
-      };
-      fakeNodeProvider.mockReturnValue(of([datasetNode]));
-      await getPicker().callbacks()!.getChildren!('/tank');
+      getPicker().itemSelectionChange.emit({ value: 'tank/child', items: [datasetItem] });
 
-      getPicker().selectionChange.emit('tank/child');
-
-      expect(spectator.component.lastSelectedNode()).toBe(datasetNode);
+      expect(spectator.component.lastSelectedItem()).toEqual({ ...datasetItem, path: 'tank/child' });
     });
 
-    it('clears lastSelectedNode when selection is emptied', async () => {
-      const fileNode = {
-        path: '/mnt/file.txt', name: 'file.txt', type: ExplorerNodeType.File, hasChildren: false,
-      };
-      fakeNodeProvider.mockReturnValue(of([fileNode]));
-      await getPicker().callbacks()!.getChildren!(mntPath);
-      getPicker().selectionChange.emit('/mnt/file.txt');
+    it('uses the last entry in multiple mode', () => {
+      const first = { path: '/mnt/a', name: 'a', type: 'folder' } as FileSystemItem;
+      const last = { path: '/mnt/b.txt', name: 'b.txt', type: 'file' } as FileSystemItem;
 
-      getPicker().selectionChange.emit('');
+      getPicker().itemSelectionChange.emit({ value: ['/mnt/a', '/mnt/b.txt'], items: [first, last] });
 
-      expect(spectator.component.lastSelectedNode()).toBeNull();
+      expect(spectator.component.lastSelectedItem()).toEqual(last);
+    });
+
+    it('is null for typed paths the picker never listed', () => {
+      getPicker().itemSelectionChange.emit({ value: '/mnt/typed', items: [null] });
+
+      expect(spectator.component.lastSelectedItem()).toBeNull();
+    });
+
+    it('clears when selection is emptied', () => {
+      const fileItem = { path: '/mnt/file.txt', name: 'file.txt', type: 'file' } as FileSystemItem;
+      getPicker().itemSelectionChange.emit({ value: '/mnt/file.txt', items: [fileItem] });
+
+      getPicker().itemSelectionChange.emit({ value: '', items: [] });
+
+      expect(spectator.component.lastSelectedItem()).toBeNull();
     });
   });
 

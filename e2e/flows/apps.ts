@@ -4,13 +4,24 @@
 import { expect, type Page } from '@playwright/test';
 import { selectOption } from './storage';
 import { dockerUpdateTimeoutMs } from '../fixtures/apps';
-import { appsLocators, appsSettingsLocators, selectAppsPoolDialogLocators } from '../locators/apps';
+import {
+  appsLocators, appsSettingsLocators, installedAppsBulkLocators, selectAppsPoolDialogLocators,
+} from '../locators/apps';
 import { confirmDialogLocators } from '../locators/dialogs';
 
 /** Opens the Configuration menu on the installed apps page. Choose Pool is in it for any admin. */
 export async function openAppsConfigMenu(page: Page): Promise<void> {
   await page.locator(appsLocators.configMenu).click();
   await expect(page.locator(appsLocators.choosePool)).toBeVisible();
+}
+
+/**
+ * Opens "Select action" in the bulk bar, which is there only while a row of the installed apps list
+ * is ticked. Delete All Selected is the one item that is never disabled.
+ */
+export async function openAppsBulkMenu(page: Page): Promise<void> {
+  await page.locator(installedAppsBulkLocators.menu).click();
+  await expect(page.locator(installedAppsBulkLocators.deleteSelected)).toBeVisible();
 }
 
 /**

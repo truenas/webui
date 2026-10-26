@@ -15,8 +15,8 @@
  * the device-less one in `virtual-machines-power.e2e.ts` does. Whether the console connects,
  * renders or takes the password is not asserted; the claim stops at where the page sends the user.
  *
- * Not covered: importing a disk image, editing a display, the zvol-in-use warning, and the serial
- * shell.
+ * Not covered: editing a display and the zvol-in-use warning. Importing a disk image is
+ * `virtual-machines-disk-images.e2e.ts`, and the serial shell `virtual-machines-serial.e2e.ts`.
  */
 import type { Page } from '@playwright/test';
 import { ensureDatasetAbsent, ensureDatasetPresent, ensureZvolPresent, listZvolsUnder } from '../fixtures/storage';

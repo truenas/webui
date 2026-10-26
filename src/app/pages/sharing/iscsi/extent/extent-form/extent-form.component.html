@@ -105,17 +105,20 @@
             </div>
           }
         } @else {
-          <ix-explorer
-            formControlName="path"
-            [nodeProvider]="treeNodeProvider"
+          <tn-form-field
             [label]="helptext.extent.pathLabel | translate"
             [tooltip]="helptext.extent.pathTooltip | translate"
             [required]="true"
           >
-            @if (isNew) {
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            }
-          </ix-explorer>
+            <ix-explorer
+              formControlName="path"
+              [nodeProvider]="treeNodeProvider"
+            >
+              @if (isNew) {
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              }
+            </ix-explorer>
+          </tn-form-field>
 
           <tn-form-field
             [label]="helptext.extent.filesizeLabel | translate"

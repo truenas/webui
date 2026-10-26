@@ -223,6 +223,22 @@ export const containersLocators = {
     delete: '[data-test="button-delete-container"]',
   },
 
+  /** The details panel's Tools card, `container-tools.component.html`. */
+  tools: {
+    /**
+     * "Shell", a `tn-list-item` with `[testId]="['link', 'open-shell']"`, written as is. Opens
+     * `/containers/view/<id>/shell`. Clickable only while the container runs and the user has
+     * `web_shell`; otherwise `aria-disabled="true"`, which the call site sets because the library
+     * shows the state only as a class.
+     */
+    shell: '[data-test="link-open-shell"]',
+    /**
+     * The Shell item's trailing icon. Its `aria-label` says why the item is disabled; while it is
+     * enabled, `tn-icon` falls back to the icon's name.
+     */
+    shellIcon: '[data-test="icon-open-shell"]',
+  },
+
   /**
    * The details panel's Filesystem Devices card,
    * `container-filesystem-devices.component.html`. A device's menu ids are keyed
@@ -255,8 +271,8 @@ export const containersLocators = {
      * `<input>` takes the control name. Typable, so the path goes in directly.
      */
     source: '[data-test="input-source"]',
-    /** The source's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
-    sourceErrors: '[data-test="text-source-errors"]',
+    /** The source's validation message: the alert of the wrapping `tn-form-field`, which has no id of its own. */
+    sourceErrors: '[data-test="form-field-source"] [role="alert"]',
     /** "Container Mount Path". */
     target: '[data-test="input-target"]',
   },

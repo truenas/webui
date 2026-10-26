@@ -64,6 +64,11 @@ export const entitlementFeature = {
    */
   nvmeOfSpdk: 'NVMEOF_SPDK',
   /**
+   * Not a lock either: the privilege form's Directory Services Groups hide only when the key is
+   * explicitly denied. Ask with `isNotDenied`.
+   */
+  directoryServicesAuth: 'DIRECTORY_SERVICES_AUTH',
+  /**
    * Not a lock either: the Self-Encrypting Drive card hides only when the key is explicitly
    * denied, and `system.advanced.update` refuses a SED password on the same terms. Ask with
    * `isNotDenied`.

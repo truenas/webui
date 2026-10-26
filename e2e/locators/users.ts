@@ -13,6 +13,23 @@ export const usersLocators = {
   addUser: '[data-test="button-create-new-user"]',
 
   /**
+   * The list's search, in `users-search`. Typing does not search: Search, or Enter, runs the
+   * query against `user.query`, a page at a time.
+   */
+  search: {
+    /** The basic box, `<tn-input [testId]="'search'">`. */
+    input: '[data-test="input-search"]',
+    /** `<tn-button testId="search">` beside it. */
+    run: '[data-test="button-search"]',
+    /**
+     * Filter by Type, `<tn-select testId="filter-by-type" [multiple]="true">`, both types ticked by
+     * default. Directory Services is offered only while a directory service is enabled.
+     */
+    typeFilter: '[data-test="select-filter-by-type"]',
+    typeOption: (label: string): string => `[data-test="option-filter-by-type-${kebabTestSegment(label)}"]`,
+  },
+
+  /**
    * A user's row in the list.
    *
    * `memoizedRowTag` runs lodash `kebabCase`, not the library's
@@ -158,8 +175,8 @@ export const usersLocators = {
      * anything but `700` leaves it unticked once that read has landed.
      */
     defaultPermissions: '[data-test="checkbox-default-permissions"]',
-    /** The home path's validation message, which `ix-explorer` renders as `text-<control>-errors`. */
-    homeErrors: '[data-test="text-home-errors"]',
+    /** The home path's validation message: the alert of the wrapping `tn-form-field`, which has no id of its own. */
+    homeErrors: '[data-test="form-field-home"] [role="alert"]',
     /** The Shell editable's readout. The row is rendered only while Shell Access is ticked. */
     shellValue: '[data-test="text-shell"]',
     /** `<tn-select [testId]="'shell'">`. */

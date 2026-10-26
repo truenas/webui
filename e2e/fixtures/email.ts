@@ -16,8 +16,9 @@
  * SMTP authentication is off, and the form does not send them then either.
  *
  * Every address and server is under `example.com`, which RFC 2606 reserves.
- * Saving the settings sends nothing. Only Send Test Mail would, and no test
- * presses it.
+ * Saving the settings sends nothing. Only Send Test Mail would. The one test that
+ * presses it, in `email-test-mail.e2e.ts`, first leaves no local administrator
+ * with an address, so the form stops before `mail.send`.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -57,6 +58,16 @@ export async function readMailSettings(client: E2eApiClient): Promise<MailSettin
     smtp: config.smtp,
     user: config.user,
   };
+}
+
+/**
+ * The address Send Test Mail would send to: the first local administrator's
+ * email middleware finds, or null when none has one.
+ */
+export async function readLocalAdministratorEmail(client: E2eApiClient): Promise<string | null> {
+  return await firstValueFrom(
+    client.api.call('mail.local_administrator_email').pipe(timeout(readTimeoutMs)),
+  );
 }
 
 /**

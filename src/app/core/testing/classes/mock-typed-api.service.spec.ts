@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { UnmockedCallError } from '@truenas/api-client/testing';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
@@ -37,6 +37,18 @@ describe('MockTypedApiService', () => {
     await expect(result).rejects.toBeInstanceOf(ApiCallError);
     await expect(result).rejects.toMatchObject({
       error: { data: { errname: 'EINVAL', extra: [['alert_dismiss.uuid', 'Not allowed', 22]] } },
+    });
+  });
+
+  it('throws an ApiCallError when a query or a job is scripted to fail', async () => {
+    spectator.service.mockCallError('user.query', { errname: 'EPERM' });
+    spectator.service.mockCallError('pool.dataset.export_key', { errname: 'EINVAL' });
+
+    await expect(firstValueFrom(spectator.service.query('user.query'))).rejects.toMatchObject({
+      error: { data: { errname: 'EPERM' } },
+    });
+    await expect(lastValueFrom(spectator.service.job('pool.dataset.export_key', ['tank/enc']))).rejects.toMatchObject({
+      error: { data: { errname: 'EINVAL' } },
     });
   });
 

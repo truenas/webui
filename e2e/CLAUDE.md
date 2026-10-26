@@ -131,6 +131,13 @@ wrote, so it is the same value the older suites used.
 |---|---|
 | `<tn-table [rowTestId]="uniqueRowTag">` | `row-user-<name>` on the `<tr>` |
 
+**The controls the table draws on it.** A `[selectable]` row's tick box and an
+`[expandable]` row's chevron come from the same tag — `checkbox-select-user-<name>`
+and `button-expand-user-<name>` — and the select-all box is `checkbox-all-rows`.
+Tick and expand rows with `selectRow` and `expandRow` in `flows/table.ts`, passing
+the row tag your screen's locator module already builds; never by `aria-label` or
+position.
+
 **Its cells.** A row id says nothing about what a row *contains*, and descending
 into a column by `[data-column]` is a CSS selector, which rule 1 rules out — so
 reading or asserting one column goes through that cell's own id. Every column of
@@ -426,7 +433,9 @@ generated API per version. There is no escape hatch and none is needed.
   work that actually finished. `runJob` re-reads `core.get_jobs` instead: every
   attempt is a fresh request, so a reconnect costs one poll rather than the whole
   budget, and the verdict is the job's own terminal state rather than something
-  inferred from a side effect.
+  inferred from a side effect. The job's events only end the wait between polls
+  early, so a job is seen finished a round trip after it ends rather than up to
+  a whole poll interval later.
 - **Which API surface?** `E2eApiClient` in `support/api/client.ts` pins it to
   **v27**. Raising it needs the appliance to advertise the version *and* the
   client to implement it. Unparameterised it defaults to v25.10.0, and most

@@ -77,11 +77,13 @@ test('a share saved with a maproot user and group has them on the appliance', as
 
   await pickNfsMappingPrincipal(page, {
     field: nfsLocators.form.maprootUser,
+    options: nfsLocators.form.maprootUserOptions,
     option: nfsLocators.form.maprootUserOption(maproot.user),
     name: maproot.user,
   });
   await pickNfsMappingPrincipal(page, {
     field: nfsLocators.form.maprootGroup,
+    options: nfsLocators.form.maprootGroupOptions,
     option: nfsLocators.form.maprootGroupOption(maproot.group),
     name: maproot.group,
   });
@@ -107,11 +109,13 @@ test('a share saved with a mapall user and group has those on the appliance', as
 
   await pickNfsMappingPrincipal(page, {
     field: nfsLocators.form.mapallUser,
+    options: nfsLocators.form.mapallUserOptions,
     option: nfsLocators.form.mapallUserOption(mapall.user),
     name: mapall.user,
   });
   await pickNfsMappingPrincipal(page, {
     field: nfsLocators.form.mapallGroup,
+    options: nfsLocators.form.mapallGroupOptions,
     option: nfsLocators.form.mapallGroupOption(mapall.group),
     name: mapall.group,
   });

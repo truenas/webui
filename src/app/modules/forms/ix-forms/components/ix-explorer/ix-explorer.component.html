@@ -1,22 +1,15 @@
-@if (!hasFieldChrome && (label() || tooltip())) {
-  <ix-label
-    [label]="label()"
-    [tooltip]="tooltip()"
-    [required]="required()"
-  ></ix-label>
-}
-
 <tn-file-picker
   [formControl]="pickerControl"
   [multiSelect]="multiple()"
   [openOnClick]="true"
+  [allowFreeText]="true"
   [rootPath]="pickerRootPath()"
   [startPath]="pickerRootPath()"
   [valueRoot]="pickerValueRoot()"
   [callbacks]="pickerCallbacks"
   [createActions]="pickerCreateActions()"
   [testId]="controlDirective.name || ''"
-  (selectionChange)="onSelectionChange($event)"
+  (itemSelectionChange)="onItemSelectionChange($event)"
   (pathChange)="onPathChange($event)"
   (createAction)="onCreateAction($event)"
   (error)="onPickerError($event)"
@@ -33,16 +26,4 @@
   >
     {{ loadingError }}
   </div>
-}
-
-@if (!hasFieldChrome) {
-  @let control = controlDirective.control;
-  @if (control) {
-    <ix-errors
-      tnTestIdType="text"
-      [tnTestId]="[controlDirective.name, 'errors']"
-      [control]="control"
-      [label]="label()"
-    ></ix-errors>
-  }
 }

@@ -24,7 +24,7 @@ import {
 import { apiKeyLocators } from '../locators/api-keys';
 import { errorDialogLocators } from '../locators/dialogs';
 import { signsInWithApiKey, type E2eApiClient } from '../support/api/client';
-import { leavingTestData, runCleanupSteps } from '../support/cleanup';
+import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { errorDialogClose } from '../support/constants';
 import { expect, test } from '../support/fixtures';
 import { slowCallTimeoutMs } from '../support/timeouts';
@@ -43,27 +43,43 @@ const bystanderKey = 'e2e-api-key-edit-bystander';
 
 const allKeys = [targetKey, renamedKey, bystanderKey];
 
-/** Keys before their owner, so no key is left behind on an account that is gone. */
-async function cleanUp(api: E2eApiClient): Promise<void> {
-  await runCleanupSteps([
-    ...allKeys.map((name): [string, () => Promise<void>] => [
-      `remove the API key "${name}"`, () => ensureApiKeyAbsent(api, name),
-    ]),
-    [`delete the user "${owner}"`, () => ensureUserAbsent(api, owner)],
-  ]);
+/** Every key a test can leave on the owner, but not the owner itself. */
+async function removeKeys(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps(allKeys.map((name): CleanupStep => [
+    `remove the API key "${name}"`, () => ensureApiKeyAbsent(api, name),
+  ]));
 }
 
-test.beforeEach(async ({ api }) => {
-  await cleanUp(api);
+// The owner is created once for the file: it only holds the keys here, and
+// each account costs middleware about a second to create and another to
+// delete. The keys stay per test. A failed test restarts the worker, which
+// runs afterAll and then beforeAll again, so a retry still starts clean.
+test.beforeAll(async ({ api }) => {
+  // Keys before their owner, so no key is left behind on an account that is gone.
+  await removeKeys(api);
+  await ensureUserAbsent(api, owner);
   await ensureUserPresent(api, owner, { administrator: true });
+});
+
+test.beforeEach(async ({ api }) => {
+  await removeKeys(api);
   await ensureApiKeyPresent(api, { name: bystanderKey, username: owner });
 });
 
 test.afterEach(async ({ api }) => {
-  if (leavingTestData(`API keys ${allKeys.join(', ')} and user "${owner}"`)) {
+  if (leavingTestData(`API keys ${allKeys.join(', ')}`)) {
     return;
   }
-  await cleanUp(api);
+  await removeKeys(api);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${owner}"`)) {
+    return;
+  }
+  await runCleanupSteps([
+    [`delete the user "${owner}"`, () => ensureUserAbsent(api, owner)],
+  ]);
 });
 
 test('an admin renames an API key, and the key itself keeps working', async ({ page, api, config }) => {

@@ -10,6 +10,7 @@ import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/controls/ix-permissions/ix-permissions.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import {
   IxFormControlHarness, unreadableControl,
@@ -68,6 +69,12 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    */
   private permissions = this.locatorForOptional(IxPermissionsHarness);
   private codeEditor = this.locatorForOptional(IxCodeEditorHarness);
+  /**
+   * `ix-explorer` renders a `tn-file-picker` whose inner `<input>` the tn-input locator does not
+   * match, and its value can be a list — driven through its own harness, which reads and writes
+   * comma-separated paths.
+   */
+  private explorer = this.locatorForOptional(IxExplorerHarness);
   /**
    * Any *other* projected ix-* control. `RegisteredControlDirective` — the host directive every
    * ix-* control carries — stamps `ix-label` on its own element once the control registers, so
@@ -156,7 +163,8 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   private async delegate(): Promise<IxFormControlHarness | null> {
     return (await this.ipInputWithNetmask())
       ?? (await this.permissions())
-      ?? (await this.codeEditor());
+      ?? (await this.codeEditor())
+      ?? (await this.explorer());
   }
 
 

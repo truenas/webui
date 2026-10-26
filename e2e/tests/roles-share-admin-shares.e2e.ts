@@ -60,11 +60,28 @@ const iscsiTarget = 'e2e-sa-target';
 test.describe('as a sharing administrator', () => {
   test.use({ authenticate: false });
 
+  // The account is created once for the file: no test here changes it, and each one costs
+  // middleware about a second to create and another to delete. A failed test restarts the
+  // worker, which runs afterAll and then beforeAll again, so a retry still starts clean.
+  test.beforeAll(async ({ api }) => {
+    await ensureRoleAdminAbsent(api, account);
+    await ensureRoleAdminPresent(api, account);
+  });
+
+  test.afterAll(async ({ api }) => {
+    if (leavingTestData(`user "${account.username}"`)) {
+      return;
+    }
+
+    await runCleanupSteps([
+      [`remove user ${account.username}`, () => ensureRoleAdminAbsent(api, account)],
+    ]);
+  });
+
   test.beforeEach(async ({ api, pool }) => {
     const nfsDataset = `${pool}/${nfsLeaf}`;
     const zvol = `${pool}/${iscsiTarget}`;
 
-    await ensureRoleAdminAbsent(api, account);
     await ensureSmbShareAbsent(api, newSmbShare);
     await ensureSmbShareAbsent(api, deletedSmbShare);
     await ensureNfsShareAbsent(api, datasetMountPath(nfsDataset));
@@ -86,19 +103,17 @@ test.describe('as a sharing administrator', () => {
     await ensureNfsSharePresent(api, { path: datasetMountPath(nfsDataset), comment: seededNfsComment });
     await ensureZvolPresent(api, zvol);
     await ensureIscsiSharePresent(api, { name: iscsiTarget, zvol });
-    await ensureRoleAdminPresent(api, account);
   });
 
   test.afterEach(async ({ api, pool }) => {
     const nfsDataset = `${pool}/${nfsLeaf}`;
     const zvol = `${pool}/${iscsiTarget}`;
-    if (leavingTestData(`user "${account.username}", its shares, iSCSI target and datasets`)) {
+    if (leavingTestData('the shares, iSCSI target and datasets')) {
       return;
     }
 
     // Shares before the datasets they point at, so nothing is left exporting a missing path.
     await runCleanupSteps([
-      [`remove user ${account.username}`, () => ensureRoleAdminAbsent(api, account)],
       [`remove SMB share ${newSmbShare}`, () => ensureSmbShareAbsent(api, newSmbShare)],
       [`remove SMB share ${deletedSmbShare}`, () => ensureSmbShareAbsent(api, deletedSmbShare)],
       [`remove NFS share on ${nfsDataset}`, () => ensureNfsShareAbsent(api, datasetMountPath(nfsDataset))],

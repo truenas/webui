@@ -5,7 +5,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent,
-  TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
@@ -68,6 +68,7 @@ interface ExportDiskFormValue {
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
+    TnTestIdDirective,
     FormActionsComponent,
     TnButtonComponent,
     TranslateModule,

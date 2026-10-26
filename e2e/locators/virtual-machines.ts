@@ -1,6 +1,6 @@
 /**
  * The Virtual Machines page, the Create Virtual Machine wizard, the Edit VM form, the delete, clone
- * and stop dialogs, and a VM's Devices page with its device form and delete dialog.
+ * and stop dialogs, and a VM's Devices page with its device form, delete dialog and export dialog.
  *
  * Derived from the templates rather than read off a running appliance; see `signin.ts` for the
  * type-prefixing that produces these values.
@@ -78,6 +78,8 @@ export const virtualMachinesLocators = {
      * Opens the SPICE web client in a new tab, or a dialog saying how to connect.
      */
     display: (id: number): string => `[data-test="button-open-display-${id}"]`,
+    /** `['open_serial_shell', id]`. Shown only while the VM runs. Opens `/vm/<id>/serial`. */
+    serialShell: (id: number): string => `[data-test="button-open-serial-shell-${id}"]`,
   },
 
   /** `<tn-dialog-shell testId="stop-vm">`, raised by the row's Stop. */
@@ -103,6 +105,30 @@ export const virtualMachinesLocators = {
     /** The menu items, `[testId]="[device.id, 'edit']"` and so on, keyed by the device's id. */
     edit: (id: number): string => `[data-test="button-${id}-edit"]`,
     delete: (id: number): string => `[data-test="button-${id}-delete"]`,
+    /** Only a disk's menu has it. Disabled while the VM runs. Opens the export dialog. */
+    exportToImage: (id: number): string => `[data-test="button-${id}-export"]`,
+  },
+
+  /** `<tn-dialog-shell testId="export-disk">`, raised by a disk's Export to Image. */
+  exportDiskDialog: {
+    title: '[data-test="dialog-title-export-disk"]',
+    /** "Source Disk": the path of the disk being exported, `/dev/zvol/…` for a zvol. */
+    sourceDisk: '[data-test="text-source-disk"]',
+    /**
+     * "Destination Directory". `ix-explorer` renders a `tn-file-picker`, whose inner `<input>`
+     * takes the control name, `destinationDir`. Typable, so the path goes in directly.
+     */
+    destinationDir: '[data-test="input-destination-dir"]',
+    /** Its validation message: the alert of the wrapping `tn-form-field`, which has no id of its own. */
+    destinationDirErrors: '[data-test="form-field-destination-dir"] [role="alert"]',
+    /**
+     * Defaults to `<vm>_disk_<YYYY-MM-DD>`. An extension typed here is replaced by that of Image
+     * Format, which defaults to QCOW2 and is left there.
+     */
+    imageName: '[data-test="input-image-name"]',
+    /** Disabled until the form is valid. */
+    export: '[data-test="button-export"]',
+    cancel: '[data-test="button-cancel"]',
   },
 
   /** The Add Device and Edit Device form in the side panel (`ix-device-form`). */
@@ -141,6 +167,30 @@ export const virtualMachinesLocators = {
     port: '[data-test="input-port"]',
     /** Web Port, shown for SPICE only. The control is `web_port`, which the normalizer dashes. */
     webPort: '[data-test="input-web-port"]',
+
+    /**
+     * A USB passthrough device's Controller Type. Options come from
+     * `vm.device.usb_controller_choices`, labelled with the controller's own name (`qemu-xhci`).
+     */
+    controllerType: '[data-test="select-controller-type"]',
+    controllerTypeOption: (label: string): string => `[data-test="option-controller-type-${kebabTestSegment(label)}"]`,
+    /**
+     * Its Device: the host's USB devices, then "Specify custom". Never prefix-match its options,
+     * `option-device-…`, because Type's options above start with it too.
+     */
+    usbDevice: '[data-test="select-device"]',
+    usbDeviceSpecifyCustom: '[data-test="option-device-specify-custom"]',
+    /** Shown only once Specify custom is picked. */
+    vendorId: '[data-test="input-vendor-id"]',
+    productId: '[data-test="input-product-id"]',
+
+    /**
+     * A PCI passthrough device, `<tn-autocomplete testId="pptdev">`. Options come from
+     * `vm.device.passthrough_device_choices`, labelled with a device's description, or its id
+     * when it has none.
+     */
+    pptdev: '[data-test="autocomplete-pptdev"]',
+    pptdevOption: (label: string): string => `[data-test="option-pptdev-${kebabTestSegment(label)}"]`,
 
     /** `<tn-button [testId]="'save'">` on the side panel container. */
     save: '[data-test="button-save"]',
@@ -183,6 +233,15 @@ export const virtualMachinesLocators = {
     /** Options come from `pool.filesystem_choices`, labelled with the full dataset name. */
     datastoreOption: (dataset: string): string => `[data-test="option-datastore-${kebabTestSegment(dataset)}"]`,
     volsize: '[data-test="input-volsize"]',
+    /** `<tn-form-field testId="volsize">` around {@link volsize}: its label and, once refused, the reason. */
+    volsizeField: '[data-test="form-field-volsize"]',
+    /** "Import Image". Unticked by default. Ticking it shows {@link imageSource}. */
+    importImage: '[data-test="checkbox-import-image"]',
+    /**
+     * "Image Source", an `ix-explorer` that lists files too. Its `tn-file-picker`'s inner `<input>`
+     * takes the control name, `image_source`, and is typable.
+     */
+    imageSource: '[data-test="input-image-source"]',
     /** "Use existing disk image", from `[testId]="['newOrExisting', option.value]"`. */
     existingDisk: '[data-test="radio-button-new-or-existing-existing"]',
     /** "Select Existing Zvol". Shown in place of Zvol Location and Size once Existing is picked. */
@@ -209,6 +268,8 @@ export const virtualMachinesLocators = {
 
     /** Step 7, Confirm Options. */
     save: '[data-test="button-save"]',
+    /** The side panel's own close. Once anything is filled in, it asks before discarding. */
+    closePanel: '[data-test="button-close-side-panel"]',
   },
 
   /** The Edit VM form in the side panel. Every control falls back to its `formControlName`. */

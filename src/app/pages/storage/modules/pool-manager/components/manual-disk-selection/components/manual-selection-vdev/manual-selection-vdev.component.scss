@@ -60,7 +60,10 @@ p {
 }
 
 .drag-hint {
-  justify-content: center;
+  font-size: x-small;
+  line-height: 24px;
+  margin: 0 0 1px;
+  text-align: center;
 }
 
 .no-enclosure {

@@ -29,6 +29,7 @@ import {
   adminLayout, concurrentCallsDialogTitleId, errorDialog, errorDialogClose,
 } from './constants';
 import { CoverageRecorder } from './coverage';
+import { type SharedAppsPool, sharedAppsPool } from '../fixtures/apps';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
 import { poolLifecycle } from '../fixtures/pool';
 
@@ -110,6 +111,26 @@ async function dismissConcurrencyDialogs(page: Page): Promise<void> {
  * `page`'s signature would run for the `unauthenticated` project too — whose
  * whole point is to keep running when token login is broken (R4.2).
  */
+/**
+ * Resolves on the first animation frame the admin shell is rendered in.
+ *
+ * A wait, not the check: `signInWithToken` still asserts the shell visible after it, which then
+ * passes on its first look. On its own, `toBeVisible` looks again only after 100, 250, 500 and
+ * then every 1000ms, and the shell appears a second or so into the navigation: traces had it on
+ * screen for up to 800ms before the assertion noticed, on every test's sign-in. Checking every
+ * frame costs a `querySelector` and a rect per frame for about a second.
+ */
+async function waitForAdminShell(page: Page, timeout: number): Promise<void> {
+  await page.waitForFunction((selector) => {
+    const shell = document.querySelector(selector);
+    if (!shell?.checkVisibility()) {
+      return false;
+    }
+    const { width, height } = shell.getBoundingClientRect();
+    return width > 0 && height > 0;
+  }, adminLayout, { polling: 'raf', timeout });
+}
+
 async function signInWithToken(page: Page, client: E2eApiClient, config: TargetConfig): Promise<void> {
   const deadline = Date.now() + tokenLoginBudgetMs;
   let attempts = 0;
@@ -131,6 +152,7 @@ async function signInWithToken(page: Page, client: E2eApiClient, config: TargetC
       // *no* timeout, so a spent budget has to stop the attempt here rather than
       // be clamped to zero and wait for the per-test ceiling instead.
       await page.goto(buildTokenLoginUrl(config.uiBaseUrl, token), { timeout: remainingOf(deadline) });
+      await waitForAdminShell(page, remainingOf(deadline));
       await expect(page.locator(adminLayout)).toBeVisible({ timeout: remainingOf(deadline) });
       return;
     } catch (error) {
@@ -207,6 +229,15 @@ export interface E2eWorkerFixtures {
    * Ask with `isEntitled` and skip; see `fixtures/entitlements.ts`.
    */
   entitlements: EntitlementDecisions;
+  /**
+   * `e2e_apps`, given to Apps once for all the apps specs in a worker: each calls `ensure()` in its
+   * `beforeAll`, and the worker releases it when it ends. Building it and taking it down again costs
+   * about 20 seconds of pool and Docker jobs, which every apps spec used to pay.
+   *
+   * The apps specs run in a project of their own, the `apps` one in `playwright.config.ts`, so their
+   * worker ends when they do and no other spec runs beside Docker on a pool it did not ask for.
+   */
+  appsPool: SharedAppsPool;
 }
 
 /**
@@ -258,6 +289,18 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   entitlements: [
     async ({ api }, use) => {
       await use(await readEntitlements(api));
+    },
+    { scope: 'worker' },
+  ],
+
+  appsPool: [
+    async ({ api }, use) => {
+      const shared = sharedAppsPool(api);
+      try {
+        await use(shared);
+      } finally {
+        await shared.release({ keep: keepTestData });
+      }
     },
     { scope: 'worker' },
   ],

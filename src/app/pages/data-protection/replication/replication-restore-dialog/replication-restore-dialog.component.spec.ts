@@ -53,7 +53,7 @@ describe('ReplicationRestoreDialogComponent', () => {
     const nameInput = await loader.getHarness(TnInputHarness);
     await nameInput.setValue('Reverse task');
 
-    const destinationExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Destination' }));
+    const destinationExplorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }));
     await destinationExplorer.setValue('/mnt/dataset');
 
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));

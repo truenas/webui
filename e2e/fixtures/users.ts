@@ -230,12 +230,13 @@ export async function giveUserHome(
  * Sets a user's email and login shell over the API, as the state an edit starts from.
  *
  * Either may be left out. For a test of the user form, where the starting value
- * has to be known — and, for the shell, differ from the one the test picks.
+ * has to be known — and, for the shell, differ from the one the test picks. An
+ * email of null clears it.
  */
 export async function setUserEmailAndShell(
   client: E2eApiClient,
   username: string,
-  fields: { email?: string; shell?: string },
+  fields: { email?: string | null; shell?: string },
 ): Promise<void> {
   const user = await findUser(client, username);
   if (!user) {

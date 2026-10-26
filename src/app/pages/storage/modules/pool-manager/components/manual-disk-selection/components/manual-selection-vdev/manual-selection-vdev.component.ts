@@ -8,7 +8,6 @@ import { MiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DiskIconComponent } from 'app/modules/disk-icon/disk-icon.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { WarningComponent } from 'app/modules/warning/warning.component';
 import { EnclosureWrapperComponent } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/components/enclosure-wrapper/enclosure-wrapper.component';
@@ -36,7 +35,6 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
     DndDraggableDirective,
     TnIconButtonComponent,
     TnTestIdDirective,
-    IxLabelComponent,
     TranslateModule,
     FileSizePipe,
     AsyncPipe,

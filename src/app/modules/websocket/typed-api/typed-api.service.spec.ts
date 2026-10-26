@@ -143,6 +143,53 @@ describe('TypedApiService', () => {
     });
   });
 
+  describe('query', () => {
+    it('throws an ApiCallError carrying the full JSON-RPC error payload', async () => {
+      await bringSessionUp();
+      const result = firstValueFrom(spectator.service.query('user.query', [['uid', '=', 1000]]));
+
+      client.connection.replyError('user.query', fakeApiError({
+        errname: 'EINVAL',
+        reason: 'Invalid filter',
+        trace: { class: 'ValidationError', formatted: 'Traceback…', repr: 'ValidationError()' },
+      }));
+
+      await expect(result).rejects.toBeInstanceOf(ApiCallError);
+      await expect(result).rejects.toMatchObject({
+        error: {
+          data: {
+            errname: 'EINVAL',
+            reason: 'Invalid filter',
+            trace: { formatted: 'Traceback…' },
+          },
+        },
+      });
+    });
+
+    it('throws an ApiCallError from queryOne and queryCount too', async () => {
+      await bringSessionUp();
+      const one = firstValueFrom(spectator.service.queryOne('user.query', [['uid', '=', 1000]]));
+      client.connection.replyError('user.query', fakeApiError({ errname: 'ENOENT' }));
+      await expect(one).rejects.toMatchObject({ error: { data: { errname: 'ENOENT' } } });
+
+      const count = firstValueFrom(spectator.service.queryCount('user.query'));
+      client.connection.replyError('user.query', fakeApiError({ errname: 'EPERM' }));
+      await expect(count).rejects.toMatchObject({ error: { data: { errname: 'EPERM' } } });
+    });
+
+    it('ends the app session when the appliance refuses the query for want of one', async () => {
+      await bringSessionUp();
+      const result = firstValueFrom(
+        spectator.service.query('user.query').pipe(defaultIfEmpty('refused')),
+      );
+
+      client.connection.replyError('user.query', fakeApiError({ errname: ApiErrorName.NotAuthenticated }));
+
+      expect(await result).toBe('refused');
+      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+    });
+  });
+
   describe('job', () => {
     it('follows a job through the real correlation and emits the final state', async () => {
       await bringSessionUp();
@@ -170,6 +217,30 @@ describe('TypedApiService', () => {
 
       await expect(lastValueFrom(spectator.service.job('pool.dataset.export_key', ['tank/enc'])))
         .rejects.toBeInstanceOf(FailedJobError);
+    });
+
+    it('throws an ApiCallError when the method is refused before a job starts', async () => {
+      await bringSessionUp();
+      const result = lastValueFrom(spectator.service.job('pool.dataset.export_key', ['tank/enc']));
+
+      client.connection.replyError('pool.dataset.export_key', fakeApiError({
+        errname: 'EINVAL',
+        extra: [['pool.dataset.export_key.id', 'Dataset does not exist', 22]],
+      }));
+
+      await expect(result).rejects.toBeInstanceOf(ApiCallError);
+      await expect(result).rejects.toMatchObject({
+        error: { data: { extra: [['pool.dataset.export_key.id', 'Dataset does not exist', 22]] } },
+      });
+    });
+
+    it('throws an ApiCallError from startJob when the method is refused', async () => {
+      await bringSessionUp();
+      const result = firstValueFrom(spectator.service.startJob('pool.dataset.export_key', ['tank/enc']));
+
+      client.connection.replyError('pool.dataset.export_key', fakeApiError({ errname: 'EACCES' }));
+
+      await expect(result).rejects.toMatchObject({ error: { data: { errname: 'EACCES' } } });
     });
   });
 

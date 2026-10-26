@@ -280,7 +280,13 @@ export class UsersSearchComponent implements OnInit {
       if (query.query) {
         const pattern = this.convertToRegexPattern(query.query);
         const term = `(?i)${pattern}`;
-        filters = [...filters, ['OR', [['username', '~', term], ['full_name', '~', term]]] as QueryFilters<User>[number]];
+        // `~` matches from the start of the value, and a directory user's name starts with its
+        // domain (`ACME\jdoe`), so the username may have that prefix before the text typed.
+        const usernameTerm = `(?i)(.+\\\\)?${pattern}`;
+        filters = [
+          ...filters,
+          ['OR', [['username', '~', usernameTerm], ['full_name', '~', term]]] as QueryFilters<User>[number],
+        ];
       }
 
       this.dataProvider().setParams([filters, {}]);

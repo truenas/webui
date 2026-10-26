@@ -4,10 +4,12 @@
 import { expect, type Page } from '@playwright/test';
 import { goToBootEnvironments } from './navigation';
 import { confirmDestructiveAction } from './storage';
-import { bootEnvironmentLocators } from '../locators/boot-environments';
+import { selectRow } from './table';
+import { bootEnvironmentLocators, bootEnvironmentRowTag } from '../locators/boot-environments';
 import { confirmDialogLocators, errorDialogLocators } from '../locators/dialogs';
 
 const {
+  batch,
   header,
   list,
   cloneForm,
@@ -158,6 +160,19 @@ export async function attachBootDisk(page: Page, bootDevice: string, disk: strin
 }
 
 /**
+ * Presses the delete dialog's Delete, checking first that it waited for Confirm
+ * to be ticked. Returns once it is pressed; the `core.bulk` job runs on after.
+ */
+export async function confirmBootEnvironmentDelete(page: Page): Promise<void> {
+  const confirm = page.locator(deleteDialog.delete);
+  await expect(confirm).toBeDisabled();
+  await page.locator(deleteDialog.confirm).click();
+  await expect(confirm).toBeEnabled();
+
+  await confirm.click();
+}
+
+/**
  * Deletes a boot environment from its row and waits for the row to go.
  *
  * The page's own dialog rather than the shared confirm: it lists what it is
@@ -171,11 +186,45 @@ export async function deleteBootEnvironment(page: Page, name: string): Promise<v
   await expect(page.locator(deleteDialog.title)).toBeVisible();
   await expect(page.locator(deleteDialog.item(name))).toBeVisible();
 
-  const confirm = page.locator(deleteDialog.delete);
-  await expect(confirm).toBeDisabled();
-  await page.locator(deleteDialog.confirm).click();
-  await expect(confirm).toBeEnabled();
-
-  await confirm.click();
+  await confirmBootEnvironmentDelete(page);
   await expect(page.locator(list.row(name))).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Opens System > Boot from the sidebar and ticks each named row's selection box,
+ * through the table's own `selectRow`.
+ */
+export async function selectBootEnvironments(page: Page, names: string[]): Promise<void> {
+  await goToBootEnvironments(page);
+  for (const name of names) {
+    await selectRow(page, bootEnvironmentRowTag(name));
+  }
+}
+
+/**
+ * Presses the batch toolbar's Delete and waits for the delete dialog.
+ *
+ * The toolbar's Delete is reached before the dialog opens, since the dialog's own
+ * Delete emits the same bare id.
+ */
+export async function openBatchDeleteDialog(page: Page): Promise<void> {
+  await page.locator(batch.delete).click();
+  await expect(page.locator(deleteDialog.title)).toBeVisible();
+}
+
+/**
+ * Waits for the delete dialog's report: the job has answered for every item and
+ * the dialog stayed open, which it does unless exactly one item was sent and it
+ * succeeded. Close replacing Cancel and Delete is what says the job is over.
+ */
+export async function waitForBootEnvironmentDeleteReport(page: Page): Promise<void> {
+  await expect(page.locator(deleteDialog.close)).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Waits for the delete dialog to close on its own, which it does once a job of
+ * exactly one item has succeeded. The list reloads behind it.
+ */
+export async function waitForBootEnvironmentDeleteDialogToClose(page: Page): Promise<void> {
+  await expect(page.locator(deleteDialog.title)).toBeHidden({ timeout: saveTimeoutMs });
 }

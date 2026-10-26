@@ -265,6 +265,13 @@ export const directoryServicesLocators = {
     /** `<tn-button [testId]="'add-kerberos-keytabs'">` in the card footer, and in the page header. */
     add: '[data-test="button-add-kerberos-keytabs"]',
 
+    /**
+     * `<tn-button [testId]="'sync-kerberos-keytab'">` beside {@link add}, rendered only while
+     * Active Directory is enabled. It asks first, in the shared confirm dialog with its tick box,
+     * then runs `directoryservices.sync_keytab` behind a job dialog.
+     */
+    sync: '[data-test="button-sync-kerberos-keytab"]',
+
     row: (name: string): string => `[data-test="row-${keytabRowTag(name)}"]`,
 
     name: (name: string): string => `[data-test="text-name-${keytabRowTag(name)}-row-text"]`,

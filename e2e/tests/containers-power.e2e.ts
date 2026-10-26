@@ -19,7 +19,7 @@
  * the pool.
  *
  * Not covered: the list's bulk Start and Stop, the graceful-only stop method, and
- * the shell and console.
+ * the console. The shell is `containers-shell.e2e.ts`.
  */
 import {
   type ContainerSettings, containersDataset, containerSettingsBaseline, ensureContainerAbsent,

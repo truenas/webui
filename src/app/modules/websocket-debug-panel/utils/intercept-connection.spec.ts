@@ -5,7 +5,6 @@ import { createFakeClient, FakeTrueNasClient } from '@truenas/api-client/testing
 import { environment } from 'environments/environment';
 import { firstValueFrom, take, toArray } from 'rxjs';
 import { MockGenerationError } from 'app/modules/websocket/errors';
-import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
@@ -56,7 +55,8 @@ describe('interceptConnection', () => {
   });
 
   it('answers a typed call from a mock config without writing it to the wire', async () => {
-    const answer = await firstValueFrom(dispatchTypedCall(client, 'truenas.get_eula', []));
+    // The client's verbs listen after sending, so this also proves a mocked answer arrives late enough.
+    const answer = await firstValueFrom(client.api.call('truenas.get_eula'));
 
     expect(answer).toBe('mocked eula');
     expect(sentMethods()).not.toContain('truenas.get_eula');
@@ -70,16 +70,10 @@ describe('interceptConnection', () => {
     );
   });
 
-  it('answers a call made through the client’s own verbs, which listen after sending', async () => {
-    const answer = await firstValueFrom(client.api.call('truenas.get_eula'));
-
-    expect(answer).toBe('mocked eula');
-  });
-
   it('sends and logs a call no mock config matches', async () => {
     client.mock.call('system.host_id', 'host-1');
 
-    const answer = await firstValueFrom(dispatchTypedCall(client, 'system.host_id', []));
+    const answer = await firstValueFrom(client.api.call('system.host_id'));
 
     expect(answer).toBe('host-1');
     expect(sentMethods()).toContain('system.host_id');

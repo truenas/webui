@@ -31,6 +31,7 @@ import {
 import { openCategoryPage } from '../flows/catalog-apps';
 import { goToApps } from '../flows/navigation';
 import { appCatalogLocators } from '../locators/apps';
+import { pageHeaderLocators } from '../locators/page-header';
 import { expect, test } from '../support/fixtures';
 
 /** Discover shows this many apps per section (`AppsFilterStore.appsPerCategory`). */
@@ -84,7 +85,7 @@ test('View All on a category row opens a page listing every app in that category
   await openCategoryPage(page, category);
 
   await expect(page).toHaveURL(new RegExp(`/apps/available/${category}$`));
-  await expect(page.locator(appCatalogLocators.pageTitle)).toHaveText(categoryTitle(category));
+  await expect(page.locator(pageHeaderLocators.title)).toHaveText(categoryTitle(category));
 
   // More than the section on Discover could show, which is what View All is for.
   await expect(page.locator(appCatalogLocators.anyAppCard)).toHaveCount(categoryApps.length);

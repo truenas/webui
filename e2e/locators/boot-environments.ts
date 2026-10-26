@@ -17,11 +17,29 @@
  */
 import { kebabTestSegment } from './test-id';
 
-function rowTag(name: string): string {
+/**
+ * `bootenv-<name>`, as `uniqueRowTag` writes it. Exported for the controls
+ * `tn-table` draws on the row (`locators/table.ts`).
+ */
+export function bootEnvironmentRowTag(name: string): string {
   return kebabTestSegment(`bootenv-${name}`);
 }
 
+const rowTag = bootEnvironmentRowTag;
+
 export const bootEnvironmentLocators = {
+  /**
+   * The Batch Operations toolbar, drawn only while at least one row is ticked.
+   *
+   * Its Delete is disabled unless the selection holds a boot environment that is
+   * neither running nor set to boot next. It emits the same `button-delete` as the
+   * delete dialog's own Delete, and stays in the page behind the dialog, so this
+   * bare id is only for before the dialog opens.
+   */
+  batch: {
+    delete: '[data-test="button-delete"]',
+  },
+
   /** The page header. Stats/Settings and Scrub Boot Pool need `BOOTENV_WRITE`; Boot Pool Status does not. */
   header: {
     stats: '[data-test="button-bootenv-stats"]',
@@ -135,13 +153,24 @@ export const bootEnvironmentLocators = {
    */
   deleteDialog: {
     title: '[data-test="dialog-title-boot-pool-delete"]',
+    /** "The following N boot environment(s) will be deleted…", until Delete has run. */
+    message: '[data-test="text-delete-message"]',
     /** One line per boot environment the dialog will delete. */
     item: (name: string): string => `[data-test="text-boot-environment-${kebabTestSegment(name)}"]`,
     confirm: '[data-test="checkbox-confirm"]',
     /**
-     * The dialog's own Delete. The list's batch toolbar emits the same id, but only
-     * while rows are selected, and the flows here never select one.
+     * The dialog's own Delete, scoped by its action row: the list's batch toolbar
+     * emits the same `button-delete` and stays in the page behind the dialog.
      */
-    delete: '[data-test="button-delete"]',
+    delete: '[data-test="actions-boot-pool-delete"] [data-test="button-delete"]',
+    /**
+     * The report once a job of more than one item has run, or of one that failed;
+     * a single successful item closes the dialog instead. Each is drawn only when
+     * its count is above zero.
+     */
+    failed: '[data-test="text-delete-failed"]',
+    succeeded: '[data-test="text-delete-succeeded"]',
+    /** Replaces Cancel and Delete once the job has run. Closes the dialog and reloads the list. */
+    close: '[data-test="actions-boot-pool-delete"] [data-test="button-close"]',
   },
 } as const;

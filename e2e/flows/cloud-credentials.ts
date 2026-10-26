@@ -77,6 +77,41 @@ export async function fillLoopbackSftpCredential(
   await selectOption(page, form.sftp.privateKey, form.sftp.privateKeyOption(keypairName));
 }
 
+/** What the form is filled with for an S3 credential: keys, and the endpoint to send them to. */
+export interface S3Credential {
+  name: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+  endpoint: string;
+}
+
+/**
+ * Picks Amazon S3 and fills the open add form in for a credential to this endpoint.
+ *
+ * The name goes in after the provider, for the same reason as in {@link fillLoopbackSftpCredential}.
+ * Endpoint URL is an inline editable, so it is opened before it is filled.
+ */
+export async function fillS3Credential(
+  page: Page,
+  {
+    name,
+    accessKeyId,
+    secretAccessKey,
+    endpoint,
+  }: S3Credential,
+): Promise<void> {
+  const { form } = cloudCredentialLocators;
+
+  await selectOption(page, form.provider, form.providerOption('Amazon S3'));
+  await expect(page.locator(form.s3.accessKeyId)).toBeVisible();
+
+  await page.locator(form.name).fill(name);
+  await page.locator(form.s3.accessKeyId).fill(accessKeyId);
+  await page.locator(form.s3.secretAccessKey).fill(secretAccessKey);
+  await page.locator(form.s3.endpointTrigger).click();
+  await page.locator(form.s3.endpoint).fill(endpoint);
+}
+
 /**
  * Presses Verify Credential and waits for middleware's answer to have arrived
  * and the form to have acted on it.

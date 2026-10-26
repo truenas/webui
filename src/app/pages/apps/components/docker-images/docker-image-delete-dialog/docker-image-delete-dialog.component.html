@@ -49,7 +49,7 @@
     </tn-form-field>
   }
 </form>
-<ix-form-actions tnDialogAction>
+<ix-form-actions tnDialogAction tnTestIdType="actions" [tnTestId]="'docker-image-delete'">
   @if (isJobCompleted) {
     <tn-button
       variant="outline"

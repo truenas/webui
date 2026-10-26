@@ -3,7 +3,6 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { Option } from 'app/interfaces/option.interface';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 
 type SelectListValue = string | number | null | (string | number | null)[];
 
@@ -14,7 +13,6 @@ type SelectListValue = string | number | null | (string | number | null)[];
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnIconComponent,
-    IxErrorsComponent,
     TranslateModule,
     TnTestIdDirective,
   ],

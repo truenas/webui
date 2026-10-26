@@ -30,13 +30,16 @@
     </tn-form-field>
 
     @if (isImportingImage) {
-      <ix-explorer
-        formControlName="image_source"
+      <tn-form-field
         [label]="'Image Source' | translate"
-        [required]="true"
-        [nodeProvider]="treeNodeProvider"
         [tooltip]="'Path to the disk image file to import. Supported formats: qcow2, qed, raw, vdi, vhdx, vmdk' | translate"
-      ></ix-explorer>
+        [required]="true"
+      >
+        <ix-explorer
+          formControlName="image_source"
+          [nodeProvider]="treeNodeProvider"
+        ></ix-explorer>
+      </tn-form-field>
     }
 
     <tn-form-field
@@ -63,6 +66,7 @@
       </tn-form-field>
 
       <tn-form-field
+        testId="volsize"
         [label]="'Size' | translate"
         [tooltip]="helptext.volsize_tooltip | translate"
       >
