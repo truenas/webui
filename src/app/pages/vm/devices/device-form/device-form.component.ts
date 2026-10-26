@@ -19,7 +19,6 @@ import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
 import { macAddressInvalidMessage } from 'app/constants/mac-address.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { Role } from 'app/enums/role.enum';
@@ -547,13 +546,13 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   setupRawFileExistsTracking(): void {
     this.rawFileForm.controls.path.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       const explorer = this.rawFileExplorer();
-      const selectedNode = explorer?.lastSelectedNode();
+      const selectedItem = explorer?.lastSelectedItem();
 
-      if (selectedNode?.type === ExplorerNodeType.File) {
+      if (selectedItem?.type === 'file') {
         // User selected an existing file from the tree
         this.rawFileForm.patchValue({ exists: true }, { emitEvent: false });
-      } else if (selectedNode?.type === ExplorerNodeType.Directory) {
-        // User selected a directory - reset exists
+      } else if (selectedItem) {
+        // User selected a directory or dataset - reset exists
         this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
       } else if (!this.rawFileForm.value.path) {
         // Path was cleared - reset exists
@@ -594,11 +593,11 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
     }
 
     const explorer = this.rawFileExplorer();
-    const selectedNode = explorer?.lastSelectedNode();
+    const selectedItem = explorer?.lastSelectedItem();
     const hasSize = !!this.rawFileForm.value.size;
 
     // User selected an existing file from the tree
-    if (selectedNode?.type === ExplorerNodeType.File) {
+    if (selectedItem?.type === 'file') {
       return true;
     }
 

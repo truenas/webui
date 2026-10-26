@@ -6,7 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { SpectatorHost } from '@ngneat/spectator';
 import { createHostFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnFilePickerComponent } from '@truenas/ui-components';
+import { FileSystemItem, TnFilePickerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -374,6 +374,19 @@ describe('IxExplorerComponent', () => {
       ]);
     });
 
+    it('lists nothing inside a leaf of a whole-tree provider', async () => {
+      fakeNodeProvider.mockReturnValue(of([
+        {
+          path: 'tank', name: 'tank', type: ExplorerNodeType.Directory, hasChildren: false, isMountpoint: true, children: [],
+        },
+      ]));
+
+      await getPicker().callbacks()!.getChildren!('/');
+      const childItems = await getPicker().callbacks()!.getChildren!('/tank');
+
+      expect(childItems).toEqual([]);
+    });
+
     it('stores typed values verbatim, without picker-space mapping', () => {
       typePath('tank/child');
 
@@ -405,49 +418,45 @@ describe('IxExplorerComponent', () => {
     });
   });
 
-  describe('lastSelectedNode', () => {
-    it('exposes node metadata for the last selected path', async () => {
-      const fileNode = {
-        path: '/mnt/file.txt', name: 'file.txt', type: ExplorerNodeType.File, hasChildren: false,
-      };
-      fakeNodeProvider.mockReturnValue(of([fileNode]));
-      await getPicker().callbacks()!.getChildren!(mntPath);
+  describe('lastSelectedItem', () => {
+    it('exposes picker metadata for the last selected path', () => {
+      const fileItem = { path: '/mnt/file.txt', name: 'file.txt', type: 'file' } as FileSystemItem;
 
-      getPicker().selectionChange.emit('/mnt/file.txt');
+      getPicker().itemSelectionChange.emit({ value: '/mnt/file.txt', items: [fileItem] });
 
-      expect(spectator.component.lastSelectedNode()).toBe(fileNode);
+      expect(spectator.component.lastSelectedItem()).toEqual(fileItem);
     });
 
-    it('resolves node metadata for relative value-space selections', async () => {
-      setHostProps({
-        roots: [{
-          hasChildren: true, name: '', path: '', type: ExplorerNodeType.Directory,
-        }],
-      });
-      spectator.detectComponentChanges();
+    it('reports the value-space path for relative selections', () => {
+      const datasetItem = { path: '/tank/child', name: 'child', type: 'dataset' } as FileSystemItem;
 
-      const datasetNode = {
-        path: 'tank/child', name: 'child', type: ExplorerNodeType.Directory, hasChildren: false, isMountpoint: true,
-      };
-      fakeNodeProvider.mockReturnValue(of([datasetNode]));
-      await getPicker().callbacks()!.getChildren!('/tank');
+      getPicker().itemSelectionChange.emit({ value: 'tank/child', items: [datasetItem] });
 
-      getPicker().selectionChange.emit('tank/child');
-
-      expect(spectator.component.lastSelectedNode()).toBe(datasetNode);
+      expect(spectator.component.lastSelectedItem()).toEqual({ ...datasetItem, path: 'tank/child' });
     });
 
-    it('clears lastSelectedNode when selection is emptied', async () => {
-      const fileNode = {
-        path: '/mnt/file.txt', name: 'file.txt', type: ExplorerNodeType.File, hasChildren: false,
-      };
-      fakeNodeProvider.mockReturnValue(of([fileNode]));
-      await getPicker().callbacks()!.getChildren!(mntPath);
-      getPicker().selectionChange.emit('/mnt/file.txt');
+    it('uses the last entry in multiple mode', () => {
+      const first = { path: '/mnt/a', name: 'a', type: 'folder' } as FileSystemItem;
+      const last = { path: '/mnt/b.txt', name: 'b.txt', type: 'file' } as FileSystemItem;
 
-      getPicker().selectionChange.emit('');
+      getPicker().itemSelectionChange.emit({ value: ['/mnt/a', '/mnt/b.txt'], items: [first, last] });
 
-      expect(spectator.component.lastSelectedNode()).toBeNull();
+      expect(spectator.component.lastSelectedItem()).toEqual(last);
+    });
+
+    it('is null for typed paths the picker never listed', () => {
+      getPicker().itemSelectionChange.emit({ value: '/mnt/typed', items: [null] });
+
+      expect(spectator.component.lastSelectedItem()).toBeNull();
+    });
+
+    it('clears when selection is emptied', () => {
+      const fileItem = { path: '/mnt/file.txt', name: 'file.txt', type: 'file' } as FileSystemItem;
+      getPicker().itemSelectionChange.emit({ value: '/mnt/file.txt', items: [fileItem] });
+
+      getPicker().itemSelectionChange.emit({ value: '', items: [] });
+
+      expect(spectator.component.lastSelectedItem()).toBeNull();
     });
   });
 

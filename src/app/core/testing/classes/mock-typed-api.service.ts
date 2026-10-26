@@ -9,14 +9,17 @@ import {
 import { map, Observable } from 'rxjs';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
-import { dispatchTypedCall } from 'app/modules/websocket/typed-api/dispatch-typed-call';
 import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
+import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-as-api-call-error';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type D = WebUiApiDirectory;
 
 /** Methods `mockCall` accepts: everything in the call directory except the `.query` family, which `mockQuery` owns. */
 export type TypedCallMethod = Exclude<CallMethod<D>, QueryMethod<D['call']>>;
+
+/** Methods `mockCallError` can refuse: calls, `.query` methods and job methods alike. */
+export type TypedRefusableMethod = TypedCallMethod | QueryMethod<D['call']> | JobMethod<D>;
 
 export type TypedCallResponseOrFactory<M extends TypedCallMethod>
   = | CallResponse<D, M>
@@ -30,6 +33,7 @@ export type TypedCallResponseOrFactory<M extends TypedCallMethod>
  * them the way they always have.
  */
 interface LooseApi {
+  call(method: string, params?: unknown): Observable<unknown>;
   query(method: string, filters?: unknown, options?: unknown): Observable<unknown[]>;
   queryOne(method: string, filters?: unknown, options?: unknown): Observable<unknown>;
   queryCount(method: string, filters?: unknown): Observable<number>;
@@ -48,10 +52,9 @@ interface LooseApi {
  * call nothing scripted fails with `UnmockedCallError` naming the method
  * rather than hanging.
  *
- * `call` goes through the same `dispatchTypedCall` as `TypedApiService`, not
- * the client's own `call`, so an error scripted with `mockCallError` surfaces
- * as the `ApiCallError` production throws, `extra` and all, rather than the
- * client's reduced `Error`.
+ * Every verb rethrows a refusal through the same `rethrowAsApiCallError` as
+ * `TypedApiService`, so an error scripted with `mockCallError` surfaces as the
+ * `ApiCallError` production throws, `extra` and all.
  *
  * Set it up with `mockTypedApi()`. For connection-level scenarios — a dropped
  * socket, a hand-written reply — reach the client through `client`.
@@ -66,28 +69,29 @@ export class MockTypedApiService implements OnDestroy {
   private injector = inject(Injector);
 
   readonly call = jest.fn((method: string, params?: unknown) => {
-    return dispatchTypedCall(this.client, method, params).pipe(this.untilAnswered());
+    return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
   readonly callUnauthenticated = jest.fn((method: string, params?: unknown) => {
-    return dispatchTypedCall(this.client, method, params).pipe(this.untilAnswered());
+    return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
   readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
-    return this.api.query(method, filters, options).pipe(this.untilAnswered());
+    return this.api.query(method, filters, options).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
   readonly queryOne = jest.fn((method: string, filters?: unknown, options?: unknown) => {
-    return this.api.queryOne(method, filters, options).pipe(this.untilAnswered());
+    return this.api.queryOne(method, filters, options).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
   readonly queryCount = jest.fn((method: string, filters?: unknown) => {
-    return this.api.queryCount(method, filters).pipe(this.untilAnswered());
+    return this.api.queryCount(method, filters).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
   /** Same contract as `TypedApiService.job`: emits every update, throws `FailedJobError` on failure. */
   readonly job = jest.fn((method: string, params?: unknown) => {
     return this.api.job(method, params).pipe(
+      rethrowAsApiCallError(),
       map((job) => job as Job),
       observeJob(),
       this.untilAnswered(),
@@ -95,7 +99,7 @@ export class MockTypedApiService implements OnDestroy {
   });
 
   readonly startJob = jest.fn((method: string, params?: unknown) => {
-    return this.api.callAndGetJobId(method, params).pipe(this.untilAnswered());
+    return this.api.callAndGetJobId(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
   readonly subscribe = jest.fn((event: string) => this.api.events(event));
@@ -128,10 +132,12 @@ export class MockTypedApiService implements OnDestroy {
 
   /**
    * Answers `method` with a JSON-RPC error frame, completed by the package's
-   * `fakeApiError`, which `call` throws as an `ApiCallError`. Use it for the
-   * error path of a form: `extra` carries the field-level validation errors.
+   * `fakeApiError`, which every verb throws as an `ApiCallError`: a `.query`
+   * method fails `query`, a job method fails `job` before a job starts. Use it
+   * for the error path of a form: `extra` carries the field-level validation
+   * errors.
    */
-  mockCallError(method: TypedCallMethod, error: FakeApiErrorOverrides = {}): void {
+  mockCallError(method: TypedRefusableMethod, error: FakeApiErrorOverrides = {}): void {
     const frame = fakeApiError(error);
     this.client.connection.autoReply(method, ({ id }) => {
       // On a microtask, as the package's own answers are.

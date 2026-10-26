@@ -159,10 +159,11 @@ Where things differ:
   generated entity (for example `CloudSyncCredentialEntry`), not the UI's
   reading of it. `mockTypedCall` refuses `.query` methods; script those with
   `mockTypedQuery`, which feeds `query`, `queryOne` and `queryCount` from one
-  set of rows. The double's `call` runs the same `dispatchTypedCall` as
+  set of rows. The double's verbs run the same `rethrowAsApiCallError` as
   `TypedApiService`, so an error scripted with `mockTypedCallError(method,
   { errname, extra })` is thrown as the `ApiCallError` production throws,
-  `extra` included, which is what a form's error-path spec needs. For
+  `extra` included, which is what a form's error-path spec needs. It takes
+  `.query` and job methods too, failing `query*` and `job` the same way. For
   connection-level scenarios reach the client itself:
   `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
   The fake answers frames on a microtask, as a socket would, so a spec that
@@ -340,20 +341,18 @@ Rename `TypedApiService` back to `ApiService` if that reads better.
 Things the wrapper works around today, in the order they block the phases
 above. Each is a change for `truenas/api-client-ts`.
 
-1. **Errors lose their payload.** `client.api.call` reduces a JSON-RPC error
-   to its `reason` string. The UI needs `errname` (auth handling) and `extra`
-   (field validation), so `TypedApiService.call` does its own round trip over
-   `client.connection` (`dispatchTypedCall`, shared with the spec double).
-   `query*` and `job` still go through the client and so
-   throw plain `Error`s: `ErrorParserService` takes its generic branch and
-   shows the reason alone, without the `errname`, `extra` and trace that the
-   legacy `call` path renders. A migrated `query` read is therefore a small
-   downgrade in error reporting today (`cloudsync.credentials.query`,
-   `keychaincredential.query`), and the first `job` site will inherit the
-   same. Unchanged as of 8.0.0. Fix: a typed error class carrying the full
-   payload; until then, route a query through `call` where the report
-   matters. `call` is also the only verb that can act on `ENOTAUTHENTICATED`,
-   which is why ending the app's session on that refusal lives there.
+1. ~~**Errors lose their payload.**~~ Resolved by NAS-144007, on 9.0.1, which
+   carries api-client-ts #68 (TNC-2582). The client now
+   throws `TrueNasApiError` with the whole JSON-RPC error from `call`, the
+   query verbs, and a job method refused before it starts a job (which used
+   to hang forever). Every `TypedApiService` verb rethrows it as `ApiCallError`
+   through `rethrowAsApiCallError`, shared with the spec double, so
+   `ErrorParserService` renders `errname`, `extra` and the trace exactly as
+   on the legacy path, and every verb that needs a session ends it on
+   `ENOTAUTHENTICATED`. `dispatchTypedCall`, the hand-rolled round trip
+   `call` used to work around this, is gone. A job that starts and then
+   fails is unaffected: it still throws `FailedJobError` from its `FAILED`
+   state.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.
