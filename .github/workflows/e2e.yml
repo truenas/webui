@@ -149,10 +149,18 @@ jobs:
       - uses: ./.github/actions/prepare
 
       # Before the appliance boots, so a runner without a usable Docker fails
-      # early. nginx only when this job serves the UI itself.
+      # early. nginx only when this job serves the UI itself. The pulls, and
+      # finding and downloading the built UI, run in the background during
+      # the boot: one after the other they added a minute and a half to
+      # three minutes to every shard. Each is waited for where it is needed.
       - uses: ./.github/actions/e2e-browser
         with:
           nginx: ${{ (inputs.ui || 'built') == 'built' }}
+          start: true
+      - if: (inputs.ui || 'built') == 'built'
+        uses: ./.github/actions/webui-dist
+        with:
+          start: true
 
       # Boots the appliance disk this runner's pool attached, under qemu,
       # inside the runner; gives the admin a password made for this job;
@@ -215,9 +223,14 @@ jobs:
             truenas-appliance snapshot "$TN_BASELINE"
           fi
 
-      # After the boot, so main.yml's build and this job's boot overlap.
+      # Waits for the download started before the boot, and builds the UI
+      # here only now, when it found none, so the build never runs while the
+      # appliance boots.
       - if: (inputs.ui || 'built') == 'built'
         uses: ./.github/actions/webui-dist
+
+      # The images, before e2e-serve-ui and the suite use them.
+      - uses: ./.github/actions/e2e-browser
 
       # Proxying to the appliance's forwarded port 80 on loopback.
       - id: ui

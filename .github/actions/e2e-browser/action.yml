@@ -9,6 +9,9 @@ description: 'Finds a usable Docker, pulls the Playwright image the suite runs i
 # Call it before the appliance boots, so a runner without a usable Docker
 # fails early. The caller must have run ./.github/actions/prepare.
 #
+# With `start: true` the pulls run in the background, during the boot, and
+# a second call without it, before the images are needed, waits for them.
+#
 # Sets DOCKER (the command: `docker`, or `sudo -n docker`), PLAYWRIGHT_IMAGE
 # and NGINX_IMAGE in the job environment, for the other e2e-* actions.
 
@@ -21,6 +24,9 @@ inputs:
       Serves the built UI. Debian-based on purpose: docker/nginx.conf runs as
       `www-data`, which the alpine image does not have.
     default: nginx:1.27
+  start:
+    description: "`true` pulls in the background; call the action again without it to wait for the pulls."
+    default: 'false'
 
 runs:
   using: composite
@@ -29,8 +35,21 @@ runs:
       env:
         NGINX: ${{ inputs.nginx }}
         NGINX_IMAGE: ${{ inputs.nginx-image }}
+        START: ${{ inputs.start }}
       run: |
         set -euo pipefail
+        if [ "$START" != true ] && [ -n "${E2E_BROWSER_PULL:-}" ]; then
+          dir="$E2E_BROWSER_PULL"
+          until [ -f "$dir.status" ] || [ "$SECONDS" -ge 900 ]; do sleep 2; done
+          cat "$dir.log" 2>/dev/null || true
+          echo "Waited ${SECONDS}s for the background pulls"
+          status=$(cat "$dir.status" 2>/dev/null || echo unfinished)
+          if [ "$status" != 0 ]; then
+            echo "::error::Pulling $PLAYWRIGHT_IMAGE or $NGINX_IMAGE in the background did not succeed ($status)"
+            exit 1
+          fi
+          exit 0
+        fi
         # The runner user may or may not be allowed at the Docker socket
         # directly. `sudo -n` fails rather than prompting, because a prompt
         # here would hang the job for its full timeout.
@@ -44,9 +63,23 @@ runs:
         fi
         version=$(node -p "require('@playwright/test/package.json').version")
         image="mcr.microsoft.com/playwright:v${version}-noble"
-        $docker pull --quiet "$image"
-        if [ "$NGINX" = true ]; then
-          $docker pull --quiet "$NGINX_IMAGE"
+        # One list, not two statements: run behind `||` below, a function
+        # ignores `set -e`, and a failed first pull would go unreported.
+        pull() {
+          $docker pull --quiet "$image" && { [ "$NGINX" != true ] || $docker pull --quiet "$NGINX_IMAGE"; }
+        }
+        if [ "$START" = true ]; then
+          dir="$RUNNER_TEMP/e2e-browser-pull"
+          # Detached from the step's output, or the step would wait for it.
+          (
+            status=0
+            pull > "$dir.log" 2>&1 || status=$?
+            echo "$status" > "$dir.status.partial" && mv "$dir.status.partial" "$dir.status"
+          ) < /dev/null > /dev/null 2>&1 &
+          echo "E2E_BROWSER_PULL=$dir" >> "$GITHUB_ENV"
+          echo "Pulling $image in the background"
+        else
+          pull
         fi
         {
           echo "DOCKER=$docker"
