@@ -2,7 +2,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -1033,7 +1032,7 @@ describe('IxFormComponent', () => {
 
   describe('minimum submit feedback (side-panel host)', () => {
     // Success is held for a minimum duration so the host's progress bar / dim overlay stay visible
-    // long enough to see. The `tick()`s below step across this boundary.
+    // long enough to see. The fake-timer advances below step across this boundary.
     const createSidePanelComponent = createComponentFactory({
       component: TestHostComponent,
       imports: [ReactiveFormsModule],
@@ -1045,7 +1044,15 @@ describe('IxFormComponent', () => {
       ],
     });
 
-    it('holds submitting and defers close + snackbar until the minimum duration elapses', fakeAsync(() => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('holds submitting and defers close + snackbar until the minimum duration elapses', () => {
       submitHandlerSpy.mockReturnValue({
         request$: of({ id: 1 }),
         successMessage: 'Saved!' as TranslatedString,
@@ -1064,17 +1071,17 @@ describe('IxFormComponent', () => {
       expect(closedSpy).not.toHaveBeenCalled();
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
 
-      tick(defaultMinSubmitFeedbackMs - 1);
+      jest.advanceTimersByTime(defaultMinSubmitFeedbackMs - 1);
       expect(ixForm.isSubmitting()).toBe(true);
       expect(closedSpy).not.toHaveBeenCalled();
 
-      tick(1);
+      jest.advanceTimersByTime(1);
       expect(ixForm.isSubmitting()).toBe(false);
       expect(closedSpy).toHaveBeenCalledWith(true);
       expect(sidePanelSpectator.inject(SnackbarService).success).toHaveBeenCalledWith('Saved!');
-    }));
+    });
 
-    it('surfaces a submit error immediately, without waiting out the minimum duration', fakeAsync(() => {
+    it('surfaces a submit error immediately, without waiting out the minimum duration', () => {
       submitHandlerSpy.mockReturnValue({
         request$: throwError(() => new Error('nope')),
         successMessage: 'Saved!' as TranslatedString,
@@ -1087,7 +1094,7 @@ describe('IxFormComponent', () => {
 
       ixForm.submit();
 
-      // No `tick()` above: the failure is reported before a single millisecond of the min-duration
+      // No timer advance above: the failure is reported before a single millisecond of the min-duration
       // timer, so a broken save never sits behind the loader waiting it out.
       expect(ixForm.isSubmitting()).toBe(false);
       expect(sidePanelSpectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalled();
@@ -1095,12 +1102,12 @@ describe('IxFormComponent', () => {
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
 
       // The paired timer is torn down with the errored forkJoin, so nothing closes or confirms
-      // late once the duration would have elapsed (and `fakeAsync` would throw on a leftover timer).
-      tick(defaultMinSubmitFeedbackMs);
+      // late once the duration would have elapsed.
+      jest.advanceTimersByTime(defaultMinSubmitFeedbackMs);
 
       expect(closedSpy).not.toHaveBeenCalled();
       expect(sidePanelSpectator.inject(SnackbarService).success).not.toHaveBeenCalled();
-    }));
+    });
 
     it('emits the closeWith payload through closed, so the host can hand it to its opener', () => {
       const apiResult = { id: 42 };

@@ -29,7 +29,14 @@ describe('LicensedFeatureComponent', () => {
   }
 
   async function hoverAndGetTooltip(element: Element): Promise<string> {
-    spectator.dispatchMouseEvent(element, 'mouseenter');
+    // tn-tooltip opens on a setTimeout, which zoneless harnesses do not wait for.
+    jest.useFakeTimers();
+    try {
+      spectator.dispatchMouseEvent(element, 'mouseenter');
+      await jest.advanceTimersByTimeAsync(0);
+    } finally {
+      jest.useRealTimers();
+    }
     const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
       .getHarness(TnTooltipHarness);
     return tooltip.getText();

@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
@@ -70,6 +69,18 @@ describe('EditableComponent', () => {
     editable = await loader.getHarness(EditableHarness);
   });
 
+  /**
+   * Zoneless: the host template reads plain state (`nameControl.value`, host props), so it only
+   * re-renders once its view is marked dirty.
+   */
+  function markHostForCheck(): void {
+    spectator.fixture.changeDetectorRef.markForCheck();
+  }
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   describe('view mode', () => {
     it('shows value in the view slot', async () => {
       expect(await editable.getShownValue()).toBe('Robert');
@@ -77,12 +88,14 @@ describe('EditableComponent', () => {
 
     it('shows new values as it is changed', async () => {
       nameControl.setValue('Juan');
+      markHostForCheck();
 
       expect(await editable.getShownValue()).toBe('Juan');
     });
 
     it('shows empty value when no value is rendered', async () => {
       nameControl.setValue('');
+      markHostForCheck();
 
       expect(await editable.getShownValue()).toBe('Not Set');
     });
@@ -100,12 +113,14 @@ describe('EditableComponent', () => {
     });
 
     it('applies readonly class when editable is readonly', () => {
+      markHostForCheck();
       spectator.setHostInput({ readonly: true });
 
       expect(spectator.query('.edit-trigger')).toHaveClass('readonly');
     });
 
     it('applies disabled class when editable is disabled', () => {
+      markHostForCheck();
       spectator.setHostInput({ disabled: true });
 
       expect(spectator.query('.edit-trigger')).toHaveClass('disabled');
@@ -129,6 +144,7 @@ describe('EditableComponent', () => {
     });
 
     it('does not focus on the first focusable element when autoFocus is false', async () => {
+      markHostForCheck();
       spectator.setHostInput({ autoFocus: false });
 
       await editable.open();
@@ -148,19 +164,20 @@ describe('EditableComponent', () => {
     });
 
 
-    it('restores focus to previously focused element when closing', fakeAsync(() => {
+    it('restores focus to previously focused element when closing', () => {
+      jest.useFakeTimers();
       const focusedElement = document.createElement('input');
       document.body.appendChild(focusedElement);
       focusedElement.focus();
 
       spectator.component.open();
       spectator.component.tryToClose();
-      tick(200);
+      jest.advanceTimersByTime(200);
 
       expect(document.activeElement).toBe(focusedElement);
 
       document.body.removeChild(focusedElement);
-    }));
+    });
   });
 
   describe('opened and closed outputs', () => {
@@ -439,7 +456,8 @@ describe('EditableComponent', () => {
   });
 
   describe('validation error handling', () => {
-    it('auto-opens editable when validation error notification is received and control has errors', fakeAsync(() => {
+    it('auto-opens editable when validation error notification is received and control has errors', () => {
+      jest.useFakeTimers();
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Set an error on the form control
@@ -453,13 +471,14 @@ describe('EditableComponent', () => {
       validationService.notifyValidationError('name');
 
       // Wait for the timer delay (50ms)
-      tick(50);
+      jest.advanceTimersByTime(50);
 
       // Should auto-open since control has errors
       expect(spectator.component.isOpen()).toBe(true);
-    }));
+    });
 
-    it('does not open editable when validation error notification is received but control has no errors', fakeAsync(() => {
+    it('does not open editable when validation error notification is received but control has no errors', () => {
+      jest.useFakeTimers();
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Ensure control has no errors
@@ -472,13 +491,14 @@ describe('EditableComponent', () => {
       validationService.notifyValidationError('name');
 
       // Wait for the setTimeout delay (100ms)
-      tick(100);
+      jest.advanceTimersByTime(100);
 
       // Should not open since control has no errors
       expect(spectator.component.isOpen()).toBe(false);
-    }));
+    });
 
-    it('does not open editable when validation error notification is received and editable is already open', fakeAsync(() => {
+    it('does not open editable when validation error notification is received and editable is already open', () => {
+      jest.useFakeTimers();
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Set an error on the form control
@@ -496,14 +516,15 @@ describe('EditableComponent', () => {
       validationService.notifyValidationError('name');
 
       // Wait for the setTimeout delay (100ms)
-      tick(100);
+      jest.advanceTimersByTime(100);
 
       // Should not call open again since already open
       expect(openSpy).not.toHaveBeenCalled();
       expect(spectator.component.isOpen()).toBe(true);
-    }));
+    });
 
-    it('handles validation error notification gracefully when no controls have errors', fakeAsync(() => {
+    it('handles validation error notification gracefully when no controls have errors', () => {
+      jest.useFakeTimers();
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Ensure control has no errors
@@ -516,13 +537,13 @@ describe('EditableComponent', () => {
       validationService.notifyValidationError('someField');
 
       // Wait for the setTimeout delay (100ms)
-      tick(100);
+      jest.advanceTimersByTime(100);
 
       // Should not open since no controls have errors
       expect(spectator.component.isOpen()).toBe(false);
-    }));
+    });
 
-    it('handles empty field name in validation error notification', fakeAsync(async () => {
+    it('handles empty field name in validation error notification', async () => {
       const validationService = spectator.inject(ValidationErrorCommunicationService);
 
       // Ensure editable is closed
@@ -531,11 +552,11 @@ describe('EditableComponent', () => {
       // Trigger validation error notification with empty field name
       validationService.notifyValidationError('');
 
-      // No tick needed since empty field name returns early
+      // No timer advance needed since empty field name returns early
 
       // Should not open since field name is empty
       expect(await editable.isOpen()).toBe(false);
-    }));
+    });
   });
 
 

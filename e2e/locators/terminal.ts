@@ -10,6 +10,11 @@ export const terminalLocators = {
   /** `<div #terminal tnTestId="terminal">`, xterm's host. Clicking it focuses xterm's input. */
   terminal: '[data-test="terminal"]',
   /**
+   * xterm's hidden input, which takes the keystrokes. The terminal focuses it once middleware has
+   * answered the first `core.resize_shell`, so focus here means the shell has been fitted.
+   */
+  input: '[data-test="terminal"] .xterm-helper-textarea',
+  /**
    * `ix-terminal-font-size`, which the page header renders only once the shell has connected. The
    * readiness signal: the "Connecting..." overlay before it has no id.
    */

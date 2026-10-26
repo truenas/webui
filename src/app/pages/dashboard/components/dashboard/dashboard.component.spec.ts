@@ -81,14 +81,22 @@ describe('DashboardComponent', () => {
   let formPanel: FormSidePanelService;
 
   beforeEach(() => {
+    // The group controls are enabled on a `timer(0)` and removals animate out on a timer, neither
+    // of which anything waits for without zone.js, so the tests advance them explicitly.
+    jest.useFakeTimers();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   async function enterConfiguration(): Promise<void> {
     const configureButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configure' }));
     await configureButton.click();
+    await jest.advanceTimersByTimeAsync(0);
   }
 
   describe('loading', () => {
@@ -159,9 +167,7 @@ describe('DashboardComponent', () => {
       await deleteButton.click();
 
       // Wait for animation to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 350);
-      });
+      await jest.advanceTimersByTimeAsync(350);
       spectator.detectChanges();
 
       const groups = spectator.queryAll(WidgetGroupComponent);
@@ -205,9 +211,7 @@ describe('DashboardComponent', () => {
       await deleteButton.click();
 
       // Wait for animation to complete
-      await new Promise<void>((resolve) => {
-        setTimeout(resolve, 350);
-      });
+      await jest.advanceTimersByTimeAsync(350);
       spectator.detectChanges();
 
       const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));

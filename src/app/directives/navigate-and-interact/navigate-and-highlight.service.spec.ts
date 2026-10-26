@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { NavigationStart, Router } from '@angular/router';
 import {
   createServiceFactory,
@@ -29,6 +28,7 @@ describe('NavigateAndHighlightService', () => {
   });
 
   beforeEach(() => {
+    jest.useFakeTimers();
     routerEvents$ = new Subject();
     spectator = createComponent({
       providers: [
@@ -41,6 +41,7 @@ describe('NavigateAndHighlightService', () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     document.body.innerHTML = '';
   });
 
@@ -49,16 +50,16 @@ describe('NavigateAndHighlightService', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/some-path'], { fragment: 'testHash' });
   });
 
-  it('should scroll to and highlight the element with the given ID', fakeAsync(() => {
+  it('should scroll to and highlight the element with the given ID', async () => {
     const element = makeVisibleElement('testHash');
 
     spectator.service.navigateAndHighlight(['/some-path'], 'testHash');
 
-    tick(150);
+    await jest.advanceTimersByTimeAsync(150);
 
     expect(element.scrollIntoView).toHaveBeenCalled();
     expect(element.classList.contains(highlightTargetClass)).toBe(true);
-  }));
+  });
 
   it('adds the highlight class and removes it on click', () => {
     const element = makeVisibleElement('clicker');
@@ -157,24 +158,24 @@ describe('NavigateAndHighlightService', () => {
     expect(target.scrollIntoView).toHaveBeenLastCalledWith({ block: 'start' });
   });
 
-  it('cancels an in-flight poll when waitForElement is called again', fakeAsync(() => {
+  it('cancels an in-flight poll when waitForElement is called again', () => {
     spectator.service.waitForElement('first-poll-target');
     spectator.service.waitForElement('second-poll-target');
 
     const firstElement = makeVisibleElement('first-poll-target');
     const secondElement = makeVisibleElement('second-poll-target');
 
-    tick(150);
+    jest.advanceTimersByTime(150);
 
     expect(firstElement.scrollIntoView).not.toHaveBeenCalled();
     expect(secondElement.scrollIntoView).toHaveBeenCalledTimes(1);
 
-    tick(500);
+    jest.advanceTimersByTime(500);
     expect(firstElement.scrollIntoView).not.toHaveBeenCalled();
     expect(secondElement.scrollIntoView).toHaveBeenCalledTimes(1);
-  }));
+  });
 
-  it('cancels an in-flight poll when the router fires NavigationStart', fakeAsync(() => {
+  it('cancels an in-flight poll when the router fires NavigationStart', () => {
     spectator.service.waitForElement('mid-flight-target');
 
     // Simulate the user navigating away mid-poll.
@@ -184,21 +185,21 @@ describe('NavigateAndHighlightService', () => {
     // otherwise we'd highlight an element on a page the user no longer cares
     // about (or worse, an element with the same id on the new page).
     const late = makeVisibleElement('mid-flight-target');
-    tick(5000);
+    jest.advanceTimersByTime(5000);
     expect(late.scrollIntoView).not.toHaveBeenCalled();
-  }));
+  });
 
-  it('keeps polling until the element appears in the DOM', fakeAsync(() => {
+  it('keeps polling until the element appears in the DOM', () => {
     spectator.service.waitForElement('late-poll-target');
 
     // Not in DOM yet — first poll attempt finds nothing.
-    tick(150);
+    jest.advanceTimersByTime(150);
 
     const target = makeVisibleElement('late-poll-target');
 
-    tick(150);
+    jest.advanceTimersByTime(150);
     expect(target.scrollIntoView).toHaveBeenCalled();
-  }));
+  });
 
   it('highlightResolved scrolls and highlights the given element without polling', () => {
     const target = makeVisibleElement('resolved-target');
@@ -209,7 +210,7 @@ describe('NavigateAndHighlightService', () => {
     expect(target.classList.contains(highlightTargetClass)).toBe(true);
   });
 
-  it('highlightResolved cancels an in-flight poll started by waitForElement', fakeAsync(() => {
+  it('highlightResolved cancels an in-flight poll started by waitForElement', () => {
     // Kick off a poll for an element that isn't in the DOM yet.
     spectator.service.waitForElement('pending-target');
 
@@ -222,9 +223,9 @@ describe('NavigateAndHighlightService', () => {
     // Even if the originally-awaited element appears later, the cancelled
     // poll must not re-highlight it.
     const late = makeVisibleElement('pending-target');
-    tick(5000);
+    jest.advanceTimersByTime(5000);
     expect(late.scrollIntoView).not.toHaveBeenCalled();
-  }));
+  });
 
   it('dispatches synthetic ArrowDown events to sync the menu KeyManager with the target item', () => {
     // Smoke test for the focus-target dance against tn-menu's `.tn-menu` panel —

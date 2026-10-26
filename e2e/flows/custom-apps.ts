@@ -3,7 +3,7 @@
  * the same side panel, whose Save runs `app.create` or `app.update` behind a job progress dialog and
  * closes the panel only once the job has succeeded.
  */
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 import { appInstallTimeoutMs } from '../fixtures/apps';
 import { appCatalogLocators, customAppLocators, installedAppLocators } from '../locators/apps';
 
@@ -26,10 +26,15 @@ export async function installCustomAppFromYaml(page: Page, name: string, compose
   await expect(page).toHaveURL(/\/apps\/installed(\/|$)/);
 }
 
+/** The editor's text as CodeMirror renders it, one `.cm-line` per line; enough for a short file. */
+async function readEditorText(config: Locator): Promise<string> {
+  return (await config.innerText()).trimEnd();
+}
+
 /**
- * Selects the app's row and presses Edit on its Application Info card. Waits for the editor to hold
- * the app's current config, which it reads after the panel opens and which contains `loaded`, then
- * replaces it with `compose` and saves.
+ * Selects the app's row and presses Edit on its Application Info card. Waits for the panel to finish
+ * loading the app's current config, which contains `loaded`, then replaces it with `compose` and
+ * saves.
  */
 export async function editCustomAppYaml(page: Page, name: string, loaded: string, compose: string): Promise<void> {
   const app = installedAppLocators(name);
@@ -37,9 +42,19 @@ export async function editCustomAppYaml(page: Page, name: string, loaded: string
   await page.locator(app.edit).click();
 
   const config = page.locator(customAppLocators.config);
+  const save = page.locator(customAppLocators.save);
   await expect(config).toContainText(loaded);
-  await config.fill(compose);
-  await page.locator(customAppLocators.save).click();
+  // Save stays disabled until the panel has loaded the real config, so this is "done loading".
+  await expect(save).toBeEnabled();
+
+  // A fill has once kept part of the loaded file next to the new one, which middleware rejects as
+  // invalid YAML and leaves the panel open until the install timeout. Confirm the editor holds
+  // exactly the new file before saving, and fill again if it does not.
+  await expect(async () => {
+    await config.fill(compose);
+    expect(await readEditorText(config)).toBe(compose.trimEnd());
+  }).toPass({ timeout: 30_000 });
+  await save.click();
 
   await expect(page.locator(customAppLocators.save)).toBeHidden({ timeout: appInstallTimeoutMs });
 }

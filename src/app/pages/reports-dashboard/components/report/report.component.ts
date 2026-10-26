@@ -229,6 +229,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       )
       .subscribe((timezone) => {
         this.timezone = timezone;
+        this.cdr.markForCheck();
       });
 
     this.store$.pipe(

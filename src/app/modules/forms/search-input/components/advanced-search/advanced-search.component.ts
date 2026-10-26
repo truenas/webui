@@ -303,13 +303,14 @@ export class AdvancedSearchComponent<T> implements OnInit {
 
     queueMicrotask(() => {
       this.hasQueryErrors = Boolean(this.queryInputValue.length && parsedQuery.hasErrors);
+      // Set before rendering: the template reads it, and nothing re-renders this OnPush view afterwards.
+      this.errorMessages = this.hasQueryErrors ? parsedQuery.errors : null;
       this.cdr.markForCheck();
       this.cdr.detectChanges();
 
       this.recalculateActivePresetsFromRawQuery(this.queryInputValue);
 
-      if (parsedQuery.hasErrors && this.queryInputValue?.length) {
-        this.errorMessages = parsedQuery.errors;
+      if (this.hasQueryErrors) {
         this.editorView.dispatch({
           effects: setDiagnostics.of(
             parsedQuery.errors.filter((error) => error.from !== error.to) as Diagnostic[],
@@ -321,7 +322,6 @@ export class AdvancedSearchComponent<T> implements OnInit {
       this.editorView.dispatch({
         effects: setDiagnostics.of([]),
       });
-      this.errorMessages = null;
 
       const filters = this.queryToApi.buildFilters(parsedQuery, this.properties());
       const mergedFilters = this.mergeConflictingFilters(filters);

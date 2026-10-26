@@ -1,5 +1,4 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
@@ -13,6 +12,20 @@ import { WebSocketDebugPanelComponent } from './websocket-debug-panel.component'
 describe('WebSocketDebugPanelComponent', () => {
   let spectator: Spectator<WebSocketDebugPanelComponent>;
   let store$: MockStore;
+  const defaultDebugState = {
+    isPanelOpen: false,
+    activeTab: 'websocket' as const,
+    messages: [] as WebSocketDebugMessage[],
+    mockConfigs: [] as MockConfig[],
+    messageLimit: 15,
+    hasActiveMocks: false,
+    enclosureMock: {
+      enabled: false,
+      controllerModel: null as EnclosureModel | null,
+      expansionModels: [] as EnclosureModel[],
+      scenario: MockEnclosureScenario.AllSlotsEmpty,
+    },
+  };
   const createComponent = createComponentFactory({
     component: WebSocketDebugPanelComponent,
     providers: [
@@ -118,34 +131,22 @@ describe('WebSocketDebugPanelComponent', () => {
 
   describe('layout margin management', () => {
     let mockAdminLayout: HTMLElement;
-    const defaultDebugState = {
-      isPanelOpen: false,
-      activeTab: 'websocket' as const,
-      messages: [] as WebSocketDebugMessage[],
-      mockConfigs: [] as MockConfig[],
-      messageLimit: 15,
-      hasActiveMocks: false,
-      enclosureMock: {
-        enabled: false,
-        controllerModel: null as EnclosureModel | null,
-        expansionModels: [] as EnclosureModel[],
-        scenario: MockEnclosureScenario.AllSlotsEmpty,
-      },
-    };
 
     beforeEach(() => {
+      jest.useFakeTimers();
       mockAdminLayout = document.createElement('div');
       mockAdminLayout.className = 'fn-maincontent';
       document.body.appendChild(mockAdminLayout);
     });
 
     afterEach(() => {
+      jest.useRealTimers();
       if (document.body.contains(mockAdminLayout)) {
         document.body.removeChild(mockAdminLayout);
       }
     });
 
-    it('should update admin layout margin when panel opens', fakeAsync(() => {
+    it('should update admin layout margin when panel opens', () => {
       // First initialize the component
       spectator.detectChanges();
 
@@ -158,13 +159,13 @@ describe('WebSocketDebugPanelComponent', () => {
       });
 
       spectator.detectChanges();
-      tick();
+      jest.advanceTimersByTime(0);
 
       expect(mockAdminLayout.style.marginRight).toBe('550px');
       expect(mockAdminLayout.style.transition).toContain('margin-right 300ms');
-    }));
+    });
 
-    it('should remove admin layout margin when panel closes', fakeAsync(() => {
+    it('should remove admin layout margin when panel closes', () => {
       // Spy on the private method to verify it's called correctly
       const updateMarginSpy = jest.spyOn(spectator.component, 'updateAdminLayoutMargin' as never);
 
@@ -178,7 +179,7 @@ describe('WebSocketDebugPanelComponent', () => {
 
       // Initialize the component
       spectator.detectChanges();
-      tick();
+      jest.advanceTimersByTime(0);
 
       // Verify margin is set
       expect(mockAdminLayout.style.marginRight).toBe('550px');
@@ -194,16 +195,16 @@ describe('WebSocketDebugPanelComponent', () => {
 
       // Let the store emit the new value
       spectator.detectChanges();
-      tick(); // Runs the setTimeout(..., 0) in updateAdminLayoutMargin
+      jest.advanceTimersByTime(0); // Runs the setTimeout(..., 0) in updateAdminLayoutMargin
 
       // Verify the method was called with false
       expect(updateMarginSpy).toHaveBeenCalledWith(false);
 
       // In a real browser, renderer.removeStyle would clear the style
       // but in tests it may not work the same way, so we just verify the method was called
-    }));
+    });
 
-    it('should retry finding admin layout if not initially available', fakeAsync(() => {
+    it('should retry finding admin layout if not initially available', () => {
       document.body.removeChild(mockAdminLayout);
 
       // Set the state to open before initializing
@@ -218,17 +219,17 @@ describe('WebSocketDebugPanelComponent', () => {
       spectator.detectChanges();
 
       // Run the initial timer (setTimeout(..., 0))
-      tick();
+      jest.advanceTimersByTime(0);
 
       // Admin layout not found, should schedule retry
       // Add admin layout back before the retry
       document.body.appendChild(mockAdminLayout);
 
       // Run the retry timer (setTimeout(..., 100))
-      tick(100);
+      jest.advanceTimersByTime(100);
 
       expect(mockAdminLayout.style.marginRight).toBe('550px');
-    }));
+    });
   });
 
   describe('keyboard shortcuts', () => {
@@ -367,6 +368,19 @@ describe('WebSocketDebugPanelComponent', () => {
       expect(setPropertySpy).toHaveBeenCalledWith('--debug-panel-width', '650px');
     });
 
+    it('re-renders the panel at the dragged width', async () => {
+      store$.setState({ webSocketDebug: { ...defaultDebugState, isPanelOpen: true } });
+      await spectator.fixture.whenStable();
+      const panel = spectator.query<HTMLElement>('.websocket-debug-panel')!;
+      expect(panel.style.width).toBe('550px');
+
+      spectator.dispatchMouseEvent('.resize-handle', 'mousedown', 500, 0);
+      document.dispatchEvent(new MouseEvent('mousemove', { clientX: 400 }));
+      await spectator.fixture.whenStable();
+
+      expect(panel.style.width).toBe('650px');
+    });
+
     it('should enforce minimum panel width of 450px', () => {
       spectator.component.onResizeStart(mockMouseEvent);
 
@@ -453,6 +467,7 @@ describe('WebSocketDebugPanelComponent', () => {
     let removeStyleSpy: jest.SpyInstance;
 
     beforeEach(() => {
+      jest.useFakeTimers();
       mockAdminLayout = document.createElement('div');
       mockAdminLayout.className = 'fn-maincontent';
       document.body.appendChild(mockAdminLayout);
@@ -461,6 +476,7 @@ describe('WebSocketDebugPanelComponent', () => {
     });
 
     afterEach(() => {
+      jest.useRealTimers();
       if (document.body.contains(mockAdminLayout)) {
         document.body.removeChild(mockAdminLayout);
       }

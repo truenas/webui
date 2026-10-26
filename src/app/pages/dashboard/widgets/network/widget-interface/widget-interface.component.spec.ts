@@ -1,4 +1,3 @@
-import { fakeAsync } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { ChartData } from 'chart.js';
 import { MockComponent } from 'ng-mocks';
@@ -104,31 +103,31 @@ describe('WidgetInterfaceComponent', () => {
       });
     });
 
-    it('shows widget header', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows widget header', () => {
+      spectator.detectChanges();
       expect(spectator.query('.header')).toHaveText('Interface');
-    }));
+    });
 
-    it('shows interface name', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface name', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
-    }));
+    });
 
-    it('shows interface description', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface description', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-header-description')).toHaveText('Management network');
-    }));
+    });
 
-    it('shows interface state', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface state', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
-    }));
+    });
 
-    it('shows interface traffic', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface traffic', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
       expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
-    }));
+    });
 
     it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
@@ -198,21 +197,21 @@ describe('WidgetInterfaceComponent', () => {
       expect(spectator.query('.header')).toBeNull();
     });
 
-    it('shows interface name', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface name', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
-    }));
+    });
 
-    it('shows interface state', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface state', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
-    }));
+    });
 
-    it('shows interface traffic', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface traffic', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
       expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
-    }));
+    });
 
     it('shows a chart with network traffic', () => {
       startDate = Date.now() - oneHourMillis - oneMinuteMillis;
@@ -271,31 +270,31 @@ describe('WidgetInterfaceComponent', () => {
       expect(spectator.query('.header')).toBeNull();
     });
 
-    it('shows interface name', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface name', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-header-title')).toHaveText('ens1');
-    }));
+    });
 
-    it('shows interface description', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface description', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-header-description')).toHaveText('Management network');
-    }));
+    });
 
-    it('shows interface state', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface state', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-list-item.state')).toHaveText('LINK STATE UP');
-    }));
+    });
 
-    it('shows interface traffic', fakeAsync(() => {
-      spectator.tick(1);
+    it('shows interface traffic', () => {
+      spectator.detectChanges();
       expect(spectator.query('.info-list-item.in')).toHaveText('In:16.38 kb/s');
       expect(spectator.query('.info-list-item.out')).toHaveText('Out:32.77 kb/s');
-    }));
+    });
 
-    it('ensures chart is not rendered', fakeAsync(() => {
-      spectator.tick(1);
+    it('ensures chart is not rendered', () => {
+      spectator.detectChanges();
       const chart = spectator.query(RateChartComponent);
       expect(chart).toBeNull();
-    }));
+    });
   });
 });

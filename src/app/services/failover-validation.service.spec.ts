@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import {
@@ -61,72 +60,77 @@ describe('FailoverValidationService', () => {
     api = spectator.inject(MockTypedApiService);
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   describe('validateFailover', () => {
-    it('returns success when failover is not licensed', () => {
+    it('returns success when failover is not licensed', async () => {
       api.mockCall('failover.licensed', false);
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true, isHaLicensed: false });
-        expect(api.call).toHaveBeenCalledWith('failover.licensed');
-        expect(api.call).not.toHaveBeenCalledWith('failover.status');
-      });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({ success: true, isHaLicensed: false });
+      expect(api.call).toHaveBeenCalledWith('failover.licensed');
+      expect(api.call).not.toHaveBeenCalledWith('failover.status');
     });
 
-    it('returns success when failover is licensed and status is MASTER with no ongoing failover', () => {
+    it('returns success when failover is licensed and status is MASTER with no ongoing failover', async () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoPong]);
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true, isHaLicensed: true });
-        expect(api.call).toHaveBeenCalledWith('failover.licensed');
-        expect(api.call).toHaveBeenCalledWith('failover.status');
-        expect(api.call).toHaveBeenCalledWith('failover.disabled.reasons');
-      });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({ success: true, isHaLicensed: true });
+      expect(api.call).toHaveBeenCalledWith('failover.licensed');
+      expect(api.call).toHaveBeenCalledWith('failover.status');
+      expect(api.call).toHaveBeenCalledWith('failover.disabled.reasons');
     });
 
-    it('returns success when status is SINGLE', () => {
+    it('returns success when status is SINGLE', async () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Single);
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true, isHaLicensed: true });
-        expect(api.call).toHaveBeenCalledWith('failover.licensed');
-        expect(api.call).toHaveBeenCalledWith('failover.status');
-        expect(api.call).not.toHaveBeenCalledWith('failover.disabled.reasons');
-      });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({ success: true, isHaLicensed: true });
+      expect(api.call).toHaveBeenCalledWith('failover.licensed');
+      expect(api.call).toHaveBeenCalledWith('failover.status');
+      expect(api.call).not.toHaveBeenCalledWith('failover.disabled.reasons');
     });
 
-    it('returns error when status is not MASTER and this node is not taking over', () => {
+    it('returns error when status is not MASTER and this node is not taking over', async () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Backup);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.NoPong]);
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({
-          success: false,
-          error: 'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
-          errorType: FailoverErrorType.FailoverFailed,
-          isHaLicensed: true,
-        });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({
+        success: false,
+        error: 'TrueNAS High Availability is in an inconsistent state. Please try again in a few minutes and contact the system administrator if the problem persists.',
+        errorType: FailoverErrorType.FailoverFailed,
+        isHaLicensed: true,
       });
     });
 
-    it('handles API errors during license check', () => {
+    it('handles API errors during license check', async () => {
       jest.spyOn(api, 'call').mockReturnValue(throwError(() => new Error('API Error')));
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({
-          success: false,
-          error: 'Unable to check failover status. Please try again later or contact the system administrator.',
-          errorType: FailoverErrorType.ApiError,
-        });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({
+        success: false,
+        error: 'Unable to check failover status. Please try again later or contact the system administrator.',
+        errorType: FailoverErrorType.ApiError,
+        isHaLicensed: false,
       });
     });
   });
 
   describe('validateFailover integration scenarios', () => {
-    it('handles full flow with status check and disabled reasons', () => {
+    it('handles full flow with status check and disabled reasons', async () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
@@ -145,16 +149,16 @@ describe('FailoverValidationService', () => {
       };
       jest.spyOn(api, 'subscribe').mockReturnValue(of(mockJobEvent));
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result).toEqual({ success: true, isHaLicensed: true });
-        expect(spectator.inject(LoaderService).open).toHaveBeenCalledWith(
-          'Waiting for failover operation to complete...',
-        );
-        expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
-      });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result).toEqual({ success: true, isHaLicensed: true });
+      expect(spectator.inject(LoaderService).open).toHaveBeenCalledWith(
+        'Waiting for failover operation to complete...',
+      );
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
     });
 
-    it('handles failover job failure in complete flow', () => {
+    it('handles failover job failure in complete flow', async () => {
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
@@ -173,11 +177,11 @@ describe('FailoverValidationService', () => {
       };
       jest.spyOn(api, 'subscribe').mockReturnValue(of(mockFailedJobEvent));
 
-      spectator.service.validateFailover().subscribe((result) => {
-        expect(result.success).toBe(false);
-        expect(result.error).toContain('Failover operation failed');
-        expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
-      });
+      const result = await firstValueFrom(spectator.service.validateFailover());
+
+      expect(result.success).toBe(false);
+      expect(result.error).toContain('Failover operation failed');
+      expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
     });
 
     it('waits for the takeover when the node signed in to still reports BACKUP, then lets the sign-in through', async () => {
@@ -210,7 +214,8 @@ describe('FailoverValidationService', () => {
       expect(result).toMatchObject({ success: false, errorType: FailoverErrorType.FailoverFailed });
     });
 
-    it('lets the sign-in through once the node stops reporting a takeover, when the job event is missed', fakeAsync(() => {
+    it('lets the sign-in through once the node stops reporting a takeover, when the job event is missed', async () => {
+      jest.useFakeTimers();
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
@@ -221,17 +226,18 @@ describe('FailoverValidationService', () => {
         result = response;
       });
 
-      tick(5000);
+      await jest.advanceTimersByTimeAsync(5000);
       expect(result).toBeUndefined();
 
       api.mockCall('failover.disabled.reasons', []);
-      tick(5000);
+      await jest.advanceTimersByTimeAsync(5000);
 
       expect(result).toEqual({ success: true, isHaLicensed: true });
       expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
-    }));
+    });
 
-    it('handles timeout during failover wait', fakeAsync(() => {
+    it('handles timeout during failover wait', async () => {
+      jest.useFakeTimers();
       api.mockCall('failover.licensed', true);
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
@@ -244,7 +250,7 @@ describe('FailoverValidationService', () => {
         result = response;
       });
 
-      tick(300001); // 5 minutes + 1ms
+      await jest.advanceTimersByTimeAsync(300001); // 5 minutes + 1ms
 
       expect(result).toEqual({
         success: false,
@@ -253,6 +259,6 @@ describe('FailoverValidationService', () => {
         isHaLicensed: true,
       });
       expect(spectator.inject(LoaderService).close).toHaveBeenCalled();
-    }));
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { Signal, signal } from '@angular/core';
+import { Signal, signal, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormControl } from '@ngneat/reactive-forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
@@ -21,19 +21,22 @@ describe('FilterSelectListComponent', () => {
   });
 
   describe('ix-filter-select-list when multiple is false', () => {
+    let label: WritableSignal<string | undefined>;
+
     beforeEach(() => {
       control = new FormControl();
+      label = signal<string | undefined>(undefined);
       spectator = createHost(
         `<ix-filter-select-list
           [formControl]="control"
           [options]="options()"
-          [label]="label"
+          [label]="label()"
         ></ix-filter-select-list>`,
         {
           hostProps: {
             control,
             options,
-            label: undefined,
+            label,
           },
         },
       );
@@ -41,11 +44,12 @@ describe('FilterSelectListComponent', () => {
     });
 
     it('renders a label', () => {
-      spectator.setHostInput('label', 'Filter Label');
+      label.set('Filter Label');
+      spectator.detectChanges();
 
-      const label = spectator.query('.label')!;
-      expect(label).toExist();
-      expect(label.textContent).toBe('Filter Label');
+      const labelElement = spectator.query('.label')!;
+      expect(labelElement).toExist();
+      expect(labelElement.textContent).toBe('Filter Label');
     });
 
     it('shows a list of options', () => {

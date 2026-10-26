@@ -1,4 +1,3 @@
-import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
@@ -29,12 +28,20 @@ describe('UserLastActionComponent', () => {
     ],
   });
 
-  it('loads last action lazily and displays it', fakeAsync(() => {
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('loads last action lazily and displays it', async () => {
     spectator = createComponent({ props: { username: 'john' } });
 
     expect(spectator.query('ngx-skeleton-loader')).toBeTruthy();
 
-    tick(500);
+    await jest.advanceTimersByTimeAsync(500);
     spectator.detectChanges();
 
     expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('audit.query', [{
@@ -45,12 +52,13 @@ describe('UserLastActionComponent', () => {
     expect(spectator.query('.label')).toHaveText('Last Action:');
     expect(spectator.query('.value')).toHaveText('LOGIN');
     expect(spectator.query(IxDateComponent, { parentSelector: '.value' }).date).toBe(1749822469 * 1000);
-  }));
+  });
 
-  it('has a Search Logs link that takes user to the audit page', fakeAsync(() => {
+  it('has a Search Logs link that takes user to the audit page', async () => {
     spectator = createComponent({ props: { username: 'john' } });
 
-    flush();
+    await jest.runAllTimersAsync();
+    spectator.detectChanges();
 
     const link = spectator.query(byText('See Logs'));
 
@@ -58,5 +66,5 @@ describe('UserLastActionComponent', () => {
       'href',
       '/system/audit/%7B%22searchQuery%22:%7B%22isBasicQuery%22:false,%22filters%22:%5B%5B%22username%22,%22%3D%22,%22john%22%5D%5D%7D%7D',
     );
-  }));
+  });
 });

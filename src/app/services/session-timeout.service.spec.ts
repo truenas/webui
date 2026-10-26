@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
@@ -9,6 +8,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -48,6 +48,9 @@ describe('SessionTimeoutService', () => {
         afterOpened$: of(),
       }),
       mockProvider(Router),
+      mockProvider(LocaleService, {
+        getPreferredTimeFormat: jest.fn(() => 'HH:mm:ss'),
+      }),
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
         logout: jest.fn(),
@@ -60,6 +63,10 @@ describe('SessionTimeoutService', () => {
     mockDialogRef.close.mockClear();
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('starts session timeout and adds event listeners', () => {
     const window = spectator.inject<Window>(WINDOW);
     jest.spyOn(window, 'open');
@@ -70,21 +77,23 @@ describe('SessionTimeoutService', () => {
     expect(window.addEventListener).toHaveBeenCalledWith('keypress', expect.any(Function), false);
   });
 
-  it('updates token lifetime when session starts', fakeAsync(() => {
+  it('updates token lifetime when session starts', async () => {
+    jest.useFakeTimers();
     const tokenLastUsedService = spectator.inject(TokenLastUsedService);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
-  }));
+  });
 
-  it('does not touch the stored token lifetime on user activity alone', fakeAsync(() => {
+  it('does not touch the stored token lifetime on user activity alone', async () => {
+    jest.useFakeTimers();
     const tokenLastUsedService = spectator.inject(TokenLastUsedService);
     const window = spectator.inject<Window>(WINDOW);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     const activityHandler = (window.addEventListener as jest.Mock).mock.calls.find(
       (call) => call[0] === 'mouseover',
@@ -95,18 +104,19 @@ describe('SessionTimeoutService', () => {
     // Simulate another mouseover event
     if (activityHandler) {
       activityHandler();
-      tick(1000);
+      await jest.advanceTimersByTimeAsync(1000);
     }
 
     // Still 1 — only a preferences emission writes the lifetime
     expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledTimes(1);
-  }));
+  });
 
-  it('rewrites the stored token lifetime on every start, even when the preference is unchanged', fakeAsync(() => {
+  it('rewrites the stored token lifetime on every start, even when the preference is unchanged', async () => {
+    jest.useFakeTimers();
     const tokenLastUsedService = spectator.inject(TokenLastUsedService);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
     expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
 
     // Signing out clears the stored lifetime, so signing back in has to write it again -
@@ -115,34 +125,36 @@ describe('SessionTimeoutService', () => {
     jest.mocked(tokenLastUsedService.updateTokenLifetime).mockClear();
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     expect(tokenLastUsedService.updateTokenLifetime).toHaveBeenCalledWith(300);
 
     spectator.service.stop();
-  }));
+  });
 
-  it('pauses session timeout', fakeAsync(() => {
+  it('pauses session timeout', async () => {
+    jest.useFakeTimers();
     spectator.service.start();
     spectator.service.pause();
 
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(spectator.inject(DialogService).sessionExpiring).not.toHaveBeenCalled();
-  }));
+  });
 
-  it('resumes session timeout and shows expiration dialog', fakeAsync(() => {
+  it('resumes session timeout and shows expiration dialog', async () => {
+    jest.useFakeTimers();
     const window = spectator.inject<Window>(WINDOW);
     jest.spyOn(window, 'open');
 
     spectator.service.start();
 
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(spectator.inject(DialogService).sessionExpiring).toHaveBeenCalledWith({
       buttonText: 'Extend session',
       message: expect.stringContaining('inactive for more than 5 minutes.'),
       title: 'Logout',
     });
-  }));
+  });
 
   it('stops session timeout and removes event listeners', () => {
     const window = spectator.inject<Window>(WINDOW);
@@ -170,12 +182,13 @@ describe('SessionTimeoutService', () => {
     });
   });
 
-  it('resets inactivity timer when user activity is detected', fakeAsync(() => {
+  it('resets inactivity timer when user activity is detected', async () => {
+    jest.useFakeTimers();
     const window = spectator.inject<Window>(WINDOW);
     const dialogService = spectator.inject(DialogService);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     const addEventListenerMock = window.addEventListener as jest.Mock;
     const mouseoverCall = addEventListenerMock.mock.calls.find(
@@ -184,21 +197,22 @@ describe('SessionTimeoutService', () => {
     const activityHandler = mouseoverCall[1] as () => void;
 
     // Wait 200 seconds (out of 300), then simulate activity
-    tick(200 * 1000);
+    await jest.advanceTimersByTimeAsync(200 * 1000);
     activityHandler();
     // Wait for debounce
-    tick(1000);
+    await jest.advanceTimersByTimeAsync(1000);
 
     // Wait another 200 seconds — should NOT have timed out (timer was reset)
-    tick(200 * 1000);
+    await jest.advanceTimersByTimeAsync(200 * 1000);
     expect(dialogService.sessionExpiring).not.toHaveBeenCalled();
 
     // Wait the remaining 100 seconds — now it should show the warning
-    tick(100 * 1000);
+    await jest.advanceTimersByTimeAsync(100 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalled();
-  }));
+  });
 
-  it('does not reset timer on mouse activity while warning dialog is open', fakeAsync(() => {
+  it('does not reset timer on mouse activity while warning dialog is open', async () => {
+    jest.useFakeTimers();
     const window = spectator.inject<Window>(WINDOW);
     const dialogService = spectator.inject(DialogService);
 
@@ -210,7 +224,7 @@ describe('SessionTimeoutService', () => {
     } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     const addEventListenerMock = window.addEventListener as jest.Mock;
     const mouseoverCall = addEventListenerMock.mock.calls.find(
@@ -219,21 +233,22 @@ describe('SessionTimeoutService', () => {
     const activityHandler = mouseoverCall[1] as () => void;
 
     // Wait for the timeout to fire and show the warning dialog
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     // Simulate mouse activity while dialog is open
     activityHandler();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     // Dialog should NOT be closed — user must click "Extend session"
     expect(dialogCloseSpy).not.toHaveBeenCalled();
 
     // Clean up to prevent expireSession from firing
     spectator.service.stop();
-  }));
+  });
 
-  it('expires session after warning dialog timeout elapses', fakeAsync(() => {
+  it('expires session after warning dialog timeout elapses', async () => {
+    jest.useFakeTimers();
     const dialogService = spectator.inject(DialogService);
     const authService = spectator.inject(AuthService);
     jest.spyOn(authService, 'logout').mockReturnValue(of(undefined));
@@ -245,21 +260,22 @@ describe('SessionTimeoutService', () => {
     } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     // Wait for warning dialog to appear
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     // Wait for the 30-second warning period to elapse without user action
-    tick(30 * 1000);
+    await jest.advanceTimersByTimeAsync(30 * 1000);
 
     expect(authService.clearAuthToken).toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/signin']);
     expect(dialogService.closeAllDialogs).toHaveBeenCalled();
-  }));
+  });
 
-  it('extends session when user clicks Extend in warning dialog', fakeAsync(() => {
+  it('extends session when user clicks Extend in warning dialog', async () => {
+    jest.useFakeTimers();
     const dialogService = spectator.inject(DialogService);
 
     const dialogClosed$ = new Subject<boolean>();
@@ -269,24 +285,25 @@ describe('SessionTimeoutService', () => {
     } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     // Wait for warning dialog to appear
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalledTimes(1);
 
     // User clicks "Extend session"
     dialogClosed$.next(true);
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     // Timer should restart — wait full lifetime again and expect a second warning
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalledTimes(2);
 
     spectator.service.stop();
-  }));
+  });
 
-  it('closes warning dialog and resets timer when preferences change during warning', fakeAsync(() => {
+  it('closes warning dialog and resets timer when preferences change during warning', async () => {
+    jest.useFakeTimers();
     const dialogService = spectator.inject(DialogService);
     const store$ = spectator.inject(MockStore);
 
@@ -298,25 +315,26 @@ describe('SessionTimeoutService', () => {
     } as unknown as ReturnType<typeof dialogService.sessionExpiring>);
 
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     // Wait for warning dialog to appear
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     // Change preferences while warning dialog is open
     store$.overrideSelector(selectPreferences, { lifetime: 600 } as Preferences);
     store$.refreshState();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     // Warning dialog should be closed by the preference-triggered reset
     expect(dialogCloseSpy).toHaveBeenCalled();
 
     // Clean up
     spectator.service.stop();
-  }));
+  });
 
-  it('re-arms the timer with the configured lifetime when preferences load after start', fakeAsync(() => {
+  it('re-arms the timer with the configured lifetime when preferences load after start', async () => {
+    jest.useFakeTimers();
     const dialogService = spectator.inject(DialogService);
     const store$ = spectator.inject(MockStore);
     jest.spyOn(dialogService, 'sessionExpiring').mockReturnValue({
@@ -329,18 +347,18 @@ describe('SessionTimeoutService', () => {
 
     // Preferences are not in the store yet, so start() arms the timer on the 300 second default.
     spectator.service.start();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
     store$.overrideSelector(selectPreferences, { lifetime: 14400 } as Preferences);
     store$.refreshState();
-    tick(0);
+    await jest.advanceTimersByTimeAsync(0);
 
-    tick(300 * 1000);
+    await jest.advanceTimersByTimeAsync(300 * 1000);
     expect(dialogService.sessionExpiring).not.toHaveBeenCalled();
 
-    tick(14400 * 1000 - 300 * 1000);
+    await jest.advanceTimersByTimeAsync(14400 * 1000 - 300 * 1000);
     expect(dialogService.sessionExpiring).toHaveBeenCalled();
 
     spectator.service.stop();
-  }));
+  });
 });

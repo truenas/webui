@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
@@ -354,17 +353,16 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(homeControl.value).toBe('/var/empty/2');
     });
 
-    it('checks zsh shell is selected when shell access is enabled', fakeAsync(async () => {
+    it('checks zsh shell is selected when shell access is enabled', async () => {
       setShellAccess(true);
       spectator.detectChanges();
-
-      tick();
+      await spectator.fixture.whenStable();
 
       const editables = await loader.getHarness(DetailsTableHarness);
       expect(await editables.getValues()).toEqual(expect.objectContaining({
         Shell: '/usr/bin/zsh',
       }));
-    }));
+    });
 
     it('pre-populates home with SMB share path for new users when a home share exists', async () => {
       const mockApiService = spectator.inject(MockTypedApiService);
@@ -412,7 +410,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       expect(Object.keys(values)).not.toContain('UID');
     });
 
-    it('switches shell from nologin to zsh when shell access is enabled', fakeAsync(() => {
+    it('switches shell from nologin to zsh when shell access is enabled', async () => {
       spectator = createComponent({
         props: {
           editingUser: { ...mockUser, shell: '/usr/sbin/nologin' } as User,
@@ -424,18 +422,18 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       setShellAccess(true);
       spectator.detectChanges();
-      tick();
+      await spectator.fixture.whenStable();
 
       expect(spectator.component.form.value.shell).toBe('/usr/bin/zsh');
-    }));
+    });
 
-    it('keeps current shell when shell access is enabled and shell is not nologin', fakeAsync(() => {
+    it('keeps current shell when shell access is enabled and shell is not nologin', async () => {
       setShellAccess(true);
       spectator.detectChanges();
-      tick();
+      await spectator.fixture.whenStable();
 
       expect(spectator.component.form.value.shell).toBe('/usr/bin/bash');
-    }));
+    });
 
     it('skips SMB home share query when editing a user to preserve existing home path', () => {
       const smbQueries = jest.mocked(spectator.inject(TypedApiService).query).mock.calls

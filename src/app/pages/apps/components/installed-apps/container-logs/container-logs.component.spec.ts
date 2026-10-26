@@ -1,7 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync } from '@angular/core/testing';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
   Spectator, SpectatorFactory, createComponentFactory, mockProvider,
@@ -168,9 +167,9 @@ describe('ContainerLogsComponent', () => {
       spectator = createComponent();
     });
 
-    it('cancelling the dialog returns user to installed apps with app selected', fakeAsync(() => {
+    it('cancelling the dialog returns user to installed apps with app selected', () => {
       expect(spectator.inject(Router).navigate).toHaveBeenCalled();
-    }));
+    });
   });
 
   function createComponentFactoryWithDialogResponse(cancel = false): SpectatorFactory<ContainerLogsComponent> {

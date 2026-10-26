@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
@@ -75,6 +74,10 @@ const existingTask: ReplicationTask = {
 };
 
 describe('ReplicationFormComponent', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   let spectator: Spectator<ReplicationFormComponent>;
   let closedSpy: jest.SpyInstance;
   const remoteNodeProvider = jest.fn();
@@ -180,11 +183,13 @@ describe('ReplicationFormComponent', () => {
   });
 
   describe('checks replication form', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
+      // The form re-evaluates section changes on `debounceTime(0)`, advanced explicitly below.
+      jest.useFakeTimers();
       spectator = createComponent();
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      tick();
-    }));
+      jest.advanceTimersByTime(0);
+    });
 
     // The section groups are module-level and shared by every test here, so anything a test
     // dirties or invalidates has to be put back even when that test fails part way through.
@@ -214,6 +219,7 @@ describe('ReplicationFormComponent', () => {
 
     it('creates a new replication task', async () => {
       spectator.component.submit();
+      await jest.runAllTimersAsync();
       await spectator.fixture.whenStable();
 
       expect(spectator.query(GeneralSectionComponent)!.getPayload).toHaveBeenCalled();
@@ -251,10 +257,10 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
     });
 
-    it('shows eligible snapshots message', fakeAsync(() => {
+    it('shows eligible snapshots message', () => {
       generalForm.controls.direction.setValue(Direction.Push);
       generalForm.controls.transport.setValue(TransportMode.Ssh);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
 
       expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
@@ -274,20 +280,23 @@ describe('ReplicationFormComponent', () => {
       );
 
       generalForm.controls.direction.setValue(Direction.Pull);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
-    }));
+    });
   });
 
   describe('updates task', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
+      // The form re-evaluates section changes on `debounceTime(0)`, advanced explicitly below.
+      jest.useFakeTimers();
       spectator = createComponent({ props: { replicationToEdit: { id: 1 } as ReplicationTask } });
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      tick();
-    }));
+      jest.advanceTimersByTime(0);
+    });
 
     it('updates an existing replication task', async () => {
       spectator.component.submit();
+      await jest.runAllTimersAsync();
       await spectator.fixture.whenStable();
 
       expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.update', [
@@ -309,63 +318,68 @@ describe('ReplicationFormComponent', () => {
   });
 
   describe('updates node providers when direction, transport or ssh credentials change', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
+      // The form re-evaluates section changes on `debounceTime(0)`, advanced explicitly below.
+      jest.useFakeTimers();
       spectator = createComponent();
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      tick();
-    }));
+      jest.advanceTimersByTime(0);
+    });
 
-    it('push from local to remote', fakeAsync(() => {
+    it('push from local to remote', () => {
       generalForm.controls.direction.setValue(Direction.Push);
       generalForm.controls.transport.setValue(TransportMode.Ssh);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
 
       expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(remoteNodeProvider);
-    }));
+    });
 
-    it('pull from remote to local', fakeAsync(() => {
+    it('pull from remote to local', () => {
       generalForm.controls.direction.setValue(Direction.Pull);
       generalForm.controls.transport.setValue(TransportMode.Ssh);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
 
       expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(remoteNodeProvider);
       expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
-    }));
+    });
 
-    it('from local to local', fakeAsync(() => {
+    it('from local to local', () => {
       generalForm.controls.direction.setValue(Direction.Push);
       generalForm.controls.transport.setValue(TransportMode.Local);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
       expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
 
       generalForm.controls.direction.setValue(Direction.Pull);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
       expect(spectator.query(SourceSectionComponent)!.nodeProvider).toBe(localNodeProvider);
       expect(spectator.query(TargetSectionComponent)!.nodeProvider).toBe(localNodeProvider);
-    }));
+    });
   });
 
   describe('host-driven submit', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
+      // The form re-evaluates section changes on `debounceTime(0)`, advanced explicitly below.
+      jest.useFakeTimers();
       spectator = createComponent({
         props: {
           replicationToEdit: { id: 1 } as ReplicationTask,
         },
       });
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      tick();
-    }));
+      jest.advanceTimersByTime(0);
+    });
 
     it('emits closed when saved via the host submit() entry point', async () => {
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
 
       spectator.component.submit();
+      await jest.runAllTimersAsync();
       await spectator.fixture.whenStable();
 
       expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.update', [1, expect.anything()]);
@@ -374,15 +388,17 @@ describe('ReplicationFormComponent', () => {
   });
 
   describe('sudo enabled dialog', () => {
-    beforeEach(fakeAsync(() => {
+    beforeEach(() => {
+      // The form re-evaluates section changes on `debounceTime(0)`, advanced explicitly below.
+      jest.useFakeTimers();
       spectator = createComponent();
       closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      tick();
-    }));
+      jest.advanceTimersByTime(0);
+    });
 
-    it('opens sudo enabled dialog when choosing to existing ssh credential', fakeAsync(() => {
+    it('opens sudo enabled dialog when choosing to existing ssh credential', () => {
       transportForm.controls.ssh_credentials.setValue(123);
-      tick();
+      jest.advanceTimersByTime(0);
       spectator.detectChanges();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
@@ -391,6 +407,6 @@ describe('ReplicationFormComponent', () => {
         message: helptextReplicationWizard.sudoWarning,
         title: 'Sudo Enabled',
       });
-    }));
+    });
   });
 });

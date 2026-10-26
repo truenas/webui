@@ -343,7 +343,8 @@ describe('DatasetAclEditorComponent', () => {
         },
       });
       const store = spectator.inject(DatasetAclEditorStore);
-      jest.spyOn(store, 'loadHomeSharePreset');
+      // Only the trigger is under test; loading the preset itself is covered in the store spec.
+      jest.spyOn(store, 'loadHomeSharePreset').mockImplementation();
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();

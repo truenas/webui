@@ -77,6 +77,12 @@ describe('IxExplorerComponent', () => {
     return spectator.query('tn-file-picker input')!;
   }
 
+  /** Zoneless: the host template only re-renders once its view is marked dirty. */
+  function setHostProps(props: Record<string, unknown>): void {
+    spectator.fixture.changeDetectorRef.markForCheck();
+    spectator.setHostInput(props);
+  }
+
   function typePath(value: string): void {
     const input = getInput();
     input.value = value;
@@ -122,11 +128,13 @@ describe('IxExplorerComponent', () => {
     });
 
     it('falls back to / for a dynamic single root, listing it at the top level', async () => {
-      spectator.setHostInput('roots', [
-        {
-          hasChildren: true, name: 'dozer', path: '/mnt/dozer', type: ExplorerNodeType.Directory, isMountpoint: true,
-        },
-      ]);
+      setHostProps({
+        roots: [
+          {
+            hasChildren: true, name: 'dozer', path: '/mnt/dozer', type: ExplorerNodeType.Directory, isMountpoint: true,
+          },
+        ],
+      });
       spectator.detectComponentChanges();
 
       expect(getPicker().rootPath()).toBe('/');
@@ -140,14 +148,16 @@ describe('IxExplorerComponent', () => {
     });
 
     it('falls back to / and lists rootNodes at the top level when there are several roots', async () => {
-      spectator.setHostInput('roots', [
-        {
-          hasChildren: true, name: 'pool1', path: '/mnt/pool1', type: ExplorerNodeType.Directory, isMountpoint: true,
-        },
-        {
-          hasChildren: true, name: 'pool2', path: '/mnt/pool2', type: ExplorerNodeType.Directory, isMountpoint: true,
-        },
-      ]);
+      setHostProps({
+        roots: [
+          {
+            hasChildren: true, name: 'pool1', path: '/mnt/pool1', type: ExplorerNodeType.Directory, isMountpoint: true,
+          },
+          {
+            hasChildren: true, name: 'pool2', path: '/mnt/pool2', type: ExplorerNodeType.Directory, isMountpoint: true,
+          },
+        ],
+      });
       spectator.detectComponentChanges();
 
       expect(getPicker().rootPath()).toBe('/');
@@ -196,7 +206,7 @@ describe('IxExplorerComponent', () => {
 
   describe('form control – multiple=true', () => {
     beforeEach(() => {
-      spectator.setHostInput('multiple', true);
+      setHostProps({ multiple: true });
       spectator.detectComponentChanges();
     });
 
@@ -313,9 +323,11 @@ describe('IxExplorerComponent', () => {
 
   describe('relative paths (dataset providers)', () => {
     beforeEach(() => {
-      spectator.setHostInput('roots', [{
-        hasChildren: true, name: '', path: '', type: ExplorerNodeType.Directory,
-      }]);
+      setHostProps({
+        roots: [{
+          hasChildren: true, name: '', path: '', type: ExplorerNodeType.Directory,
+        }],
+      });
       spectator.detectComponentChanges();
     });
 
@@ -501,7 +513,7 @@ describe('IxExplorerComponent', () => {
     });
 
     it('appends the created path to the value in multiple mode', () => {
-      spectator.setHostInput('multiple', true);
+      setHostProps({ multiple: true });
       formControl.setValue(['/mnt/existing']);
       spectator.detectComponentChanges();
       const refresh = jest.spyOn(getPicker(), 'refresh').mockResolvedValue();

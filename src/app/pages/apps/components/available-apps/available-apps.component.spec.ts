@@ -81,13 +81,20 @@ describe('Finding app', () => {
   });
 
   beforeEach(async () => {
+    jest.useFakeTimers();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     searchInput = await loader.getHarness(TnInputHarness.with({ placeholder: 'Search' }));
   });
 
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('find app', async () => {
     await searchInput.setValue('webdav');
+    await jest.advanceTimersByTimeAsync(200);
+    await spectator.fixture.whenStable();
     expect(spectator.inject(AppsFilterStore).applySearchQuery).toHaveBeenLastCalledWith('webdav');
 
     expect(spectator.query('.section-title')!.textContent!.trim()).toBe('Search Results for «webdav»');

@@ -15549,7 +15549,6 @@ __metadata:
     utility-types: "npm:~3.11.0"
     uuid: "npm:~14.0.2"
     vinyl: "npm:~3.0.0"
-    zone.js: "npm:~0.15.0"
   dependenciesMeta:
     lmdb:
       optional: true
@@ -16650,12 +16649,5 @@ __metadata:
   version: 4.6.5
   resolution: "zod@npm:4.6.5"
   checksum: 10/db004952e4dc6eab38b70f0cdef9251a65da84f5d08c5a0ef85e2590cfa9c477544ce734161ff5c05f89a15f0967137607a7feb16716195e04965f030db47213
-  languageName: node
-  linkType: hard
-
-"zone.js@npm:~0.15.0":
-  version: 0.15.1
-  resolution: "zone.js@npm:0.15.1"
-  checksum: 10/10f8b8651694e7c9484b32da677d4051b8aaa7e2cb3a6baa1f608ff789e249fbccca33820b0590f9d80a7bbfc860a3ae3a6969b5c433f77b1b66e896f3d5b4d5
   languageName: node
   linkType: hard

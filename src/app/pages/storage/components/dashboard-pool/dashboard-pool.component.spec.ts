@@ -1,7 +1,6 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, flush, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness,
@@ -76,17 +75,16 @@ describe('DashboardPoolComponent', () => {
     ],
   });
 
-  beforeEach(fakeAsync(() => {
+  beforeEach(async () => {
     spectator = createComponent({
       props: {
         pool,
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    tick();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
-    flush();
-  }));
+  });
 
   it('shows pool name', () => {
     expect(spectator.query('.pool-name')).toHaveText('deadpool');

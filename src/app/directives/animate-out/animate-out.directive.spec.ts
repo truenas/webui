@@ -1,4 +1,4 @@
-import { fakeAsync } from '@angular/core/testing';
+import { signal } from '@angular/core';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { AnimateOutDirective } from './animate-out.directive';
 
@@ -6,13 +6,16 @@ describe('AnimateOutDirective', () => {
   let spectator: SpectatorHost<AnimateOutDirective>;
   const createHost = createHostFactory(AnimateOutDirective);
 
-  it('should trigger animation and emit complete event', fakeAsync(() => {
+  it('should trigger animation and emit complete event', () => {
     const onAnimateOutComplete = jest.fn();
+    // A signal rather than a plain host prop: zoneless change detection does not refresh the host
+    // when spectator.setHostInput() assigns a plain field.
+    const shouldRemove = signal(false);
 
     spectator = createHost(`
       <div
         animateOutClass="fade-out"
-        [animateOut]="shouldRemove"
+        [animateOut]="shouldRemove()"
         (animateOutComplete)="onAnimateOutComplete()"
         style="transition: opacity 100ms ease-in-out;"
       >
@@ -21,7 +24,7 @@ describe('AnimateOutDirective', () => {
     `, {
       hostProps: {
         onAnimateOutComplete,
-        shouldRemove: false,
+        shouldRemove,
       },
     });
 
@@ -29,7 +32,8 @@ describe('AnimateOutDirective', () => {
 
     expect(element).not.toHaveClass('fade-out');
 
-    spectator.setHostInput({ shouldRemove: true });
+    shouldRemove.set(true);
+    spectator.detectChanges();
 
     expect(element).toHaveClass('fade-out');
 
@@ -38,5 +42,5 @@ describe('AnimateOutDirective', () => {
     element.dispatchEvent(transitionEvent);
 
     expect(onAnimateOutComplete).toHaveBeenCalled();
-  }));
+  });
 });

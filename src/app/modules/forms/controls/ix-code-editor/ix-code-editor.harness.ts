@@ -30,7 +30,7 @@ export class IxCodeEditorHarness extends ComponentHarness implements IxFormContr
 
     await inputArea.dispatchEvent('input');
 
-    // Using fakeAsync doesn't work for some reason.
+    // Give CodeMirror a macrotask to process the input event before reading back.
     await new Promise((resolve) => {
       setTimeout(resolve);
     });

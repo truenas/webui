@@ -560,7 +560,23 @@ describe('WebShareCardComponent - WebShare service not running', () => {
     const openButton = await loader.getHarness(
       TnButtonHarness.with({ label: 'Open WebShare' }),
     );
-    await (await openButton.host()).hover();
+    const openButtonHost = await openButton.host();
+
+    // tn-tooltip opens on a setTimeout (showDelay, 0 by default), which whenStable() does not wait for.
+    jest.useFakeTimers();
+    try {
+      let isHovered = false;
+      const hovered = openButtonHost.hover().finally(() => {
+        isHovered = true;
+      });
+      while (!isHovered) {
+        await jest.advanceTimersByTimeAsync(10);
+      }
+      await hovered;
+      await jest.runOnlyPendingTimersAsync();
+    } finally {
+      jest.useRealTimers();
+    }
 
     const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
       .getHarness(TnTooltipHarness);
