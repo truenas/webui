@@ -240,7 +240,7 @@ export class ApiService {
           // This service shares the typed client's connection and its session,
           // so a refusal here is the app's session lapsing, not one socket of
           // two falling out of step. It is answered the way
-          // `TypedApiService.endSessionOnRefusal` answers the same refusal:
+          // `TypedApiService.handleRefusal` answers the same refusal:
           // drop the call, end the session, and let `AppComponent` bounce to
           // /signin, which logs straight back in when the stored token is still
           // good and navigates back to `redirectUrl` — re-creating the
