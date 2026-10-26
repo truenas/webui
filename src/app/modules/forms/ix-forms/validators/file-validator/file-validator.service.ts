@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
-import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
@@ -28,7 +27,7 @@ export class FileValidatorService {
       }
 
       const path = control.value;
-      const lastSelectedPath = explorer.lastSelectedNode()?.path;
+      const lastSelectedPath = explorer.lastSelectedItem()?.path;
       const err = {
         selectionMustBeFile: true,
       };
@@ -42,7 +41,7 @@ export class FileValidatorService {
       // case: existing file or directory selected.
       if (path === lastSelectedPath) {
         // if the selected node is a file, no problems
-        if (explorer.lastSelectedNode()?.type === ExplorerNodeType.File) {
+        if (explorer.lastSelectedItem()?.type === 'file') {
           return null;
         }
 
