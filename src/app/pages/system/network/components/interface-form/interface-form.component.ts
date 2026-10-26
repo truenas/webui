@@ -8,8 +8,9 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
-  TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  InputType, TnCheckboxComponent, TnDialog, TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent,
+  TnFormListItemComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import { range } from 'lodash-es';
 import {
@@ -39,7 +40,6 @@ import {
   toNetworkInterfaceCreateArgs,
 } from 'app/interfaces/network-interface.interface';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -88,7 +88,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     TnFormListItemComponent,
     OrderedListboxComponent,
     IxIpInputWithNetmaskComponent,
-    IxErrorsComponent,
+    TnFormErrorsComponent,
     TranslateModule,
     AsyncPipe,
   ],

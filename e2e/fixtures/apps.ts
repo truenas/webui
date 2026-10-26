@@ -9,7 +9,11 @@
 import { expect } from '@playwright/test';
 import { JobState, isJobFinished, type QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, of, timeout } from 'rxjs';
+import { ensureImageAbsent } from './container-images';
+import { ensurePoolPresent } from './pool';
+import { ensurePoolAbsent, requireUnusedDisks } from './storage';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
+import { type CleanupStep, leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
@@ -602,4 +606,87 @@ export async function readServiceEnvironment(
     : Object.entries(environment).map(([key, value]) => [key, String(value)]);
 
   return Object.fromEntries(entries);
+}
+
+/** The pool the apps specs give to Apps. Not a name any other spec looks for. */
+export const appsPoolName = 'e2e_apps';
+
+/** `appsPoolName`, given to Apps once for every apps spec in a worker. See `appsPool` in `support/fixtures.ts`. */
+export interface SharedAppsPool {
+  /**
+   * Builds the pool on an unused disk and moves Apps onto it, the first time in this worker, and not
+   * again while Apps stay on it. From scratch, whatever a previous run left on it. Every later call
+   * empties it instead, so each spec starts as it would on a new pool: no apps and no images. Resolves false, touching
+   * nothing, when Apps already run on a pool the suite did not make: that one is somebody's, and
+   * taking Apps off it would stop their apps.
+   */
+  ensure(): Promise<boolean>;
+  /**
+   * Takes Apps off the pool and exports it, if this worker built it: for a spec about choosing the
+   * pool, and for the worker's end. The next `ensure` builds it again.
+   */
+  release(options?: { keep?: boolean }): Promise<void>;
+}
+
+/**
+ * Deletes every app and every tagged image on the shared pool, which only the suite uses. An earlier
+ * spec's cleanup can fail, or be skipped to keep test data, and a later one asserts an empty
+ * installed list, counts the apps Update All offers, or force-deletes an image a leftover app runs.
+ * Two reads when there is nothing to delete.
+ */
+async function emptyAppsPool(client: E2eApiClient): Promise<void> {
+  const apps = await firstValueFrom(client.api.query('app.query', []).pipe(timeout(readTimeoutMs)));
+  // Apps first: a running app holds its image.
+  await runCleanupSteps(apps.map(({ name }) => [`delete app "${name}"`, () => ensureAppAbsent(client, name)]));
+
+  const images = await firstValueFrom(client.api.query('app.image.query', []).pipe(timeout(readTimeoutMs)));
+  await runCleanupSteps(images.flatMap(({ repo_tags: [repoTag] }): CleanupStep[] => (
+    repoTag ? [[`delete image "${repoTag}"`, () => ensureImageAbsent(client, repoTag)]] : []
+  )));
+}
+
+export function sharedAppsPool(client: E2eApiClient): SharedAppsPool {
+  let built = false;
+
+  return {
+    async ensure() {
+      const { pool } = await readDocker(client);
+      // Read rather than trusted: a spec that took Apps off it without `release` has to be rebuilt for.
+      if (built && pool === appsPoolName) {
+        try {
+          await emptyAppsPool(client);
+          return true;
+        } catch {
+          // Built again below instead, which takes whatever would not delete with the pool.
+        }
+      }
+      if (pool !== null && pool !== appsPoolName) {
+        return false;
+      }
+
+      // In this order: Docker keeps the pool busy, and exporting it takes whatever apps and images a
+      // previous run left on its `ix-apps`.
+      await ensureAppsPoolUnset(client);
+      await ensurePoolAbsent(client, appsPoolName);
+      await requireUnusedDisks(client, 1);
+      // Before the build, so one that half lands is still released.
+      built = true;
+      await ensurePoolPresent(client, appsPoolName);
+      await setAppsPool(client, appsPoolName);
+      return true;
+    },
+
+    async release({ keep = false } = {}) {
+      if (!built || (keep && leavingTestData(`pool "${appsPoolName}" and the Apps pool`))) {
+        return;
+      }
+
+      built = false;
+      // In this order: the export fails while Docker holds the pool's `ix-apps`.
+      await runCleanupSteps([
+        ['unset the Apps pool', () => ensureAppsPoolUnset(client)],
+        [`export pool "${appsPoolName}"`, () => ensurePoolAbsent(client, appsPoolName)],
+      ]);
+    },
+  };
 }

@@ -24,9 +24,9 @@
  *
  * ## Setup
  *
- * Apps run on `e2e_apps`, built, given to Apps and destroyed here, as `apps-install.e2e.ts` does.
- * `community` is added to the preferred trains if it is missing, and the trains are written back
- * after the last test. Teardown deletes the three apps before and after every test.
+ * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
+ * per worker. `community` is added to the preferred trains if it is missing, and the trains are
+ * written back after the last test. Teardown deletes the three apps before and after every test.
  *
  * Not covered: picking a version for one app in the dialog. From `1.0.5` the only newer revision
  * the catalog keeps is the latest, so the dialog offers no choice, and `1.0.4`, which would offer
@@ -37,22 +37,17 @@ import {
   appInstallTimeoutMs,
   communityTrain,
   ensureAppAbsent,
-  ensureAppsPoolUnset,
   findAppJobIds,
   findBulkUpgradeJobs,
   readAppState,
   readAppVersions,
-  readDocker,
   readPreferredTrains,
   seedCatalogApp,
-  setAppsPool,
   setPreferredTrains,
   syncCatalog,
   type AppVersions,
 } from '../fixtures/apps';
 import { ensureImageAbsent, ensureImagePresent } from '../fixtures/container-images';
-import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import { openAppsBulkMenu } from '../flows/apps';
 import { confirmAppsBulkUpdate, openAppsUpdateAll } from '../flows/catalog-apps';
 import { goToApps } from '../flows/navigation';
@@ -67,9 +62,6 @@ import {
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
-
-/** Built, given to Apps and destroyed here. Not a name any other spec looks for. */
-const pool = 'e2e_apps';
 
 const updatedApp = { catalogApp: 'nginx', train: 'test' };
 /** The oldest revision the catalog keeps that runs without a host path. */
@@ -88,9 +80,10 @@ const revisionAvailable = 'Revision available';
 const upToDate = 'Up to date';
 
 /**
- * Apps on a pool this spec did not make is somebody's. Unsetting it, which teardown does, would
- * stop their apps, so the spec does not run there. On the CI appliance Apps has no pool. It also
- * means Update All sees only this spec's apps.
+ * Apps on a pool the suite did not make is somebody's. Moving Apps off it onto the shared pool would
+ * stop their apps, so `appsPool.ensure` leaves it and the spec does not run there. On the CI
+ * appliance Apps has no pool. Update All counts every app on the pool with an update, and sees only
+ * this spec's apps because `appsPool.ensure` empties the shared pool before each spec.
  */
 let appsOnSomebodyElsesPool = false;
 
@@ -102,35 +95,30 @@ function deleteAppsSteps(api: E2eApiClient): CleanupStep[] {
   return apps.map((name) => [`delete app "${name}"`, () => ensureAppAbsent(api, name, { keepImages: true })]);
 }
 
-test.beforeAll(async ({ api }) => {
-  const { pool: appsPool } = await readDocker(api);
-  appsOnSomebodyElsesPool = appsPool !== null && appsPool !== pool;
+test.beforeAll(async ({ api, appsPool }) => {
+  appsOnSomebodyElsesPool = !(await appsPool.ensure());
   if (appsOnSomebodyElsesPool) {
     return;
   }
 
   preferredTrainsBefore = await readPreferredTrains(api);
 
-  // In this order: the apps' datasets keep `e2e_apps/ix-apps` busy, and Docker keeps the pool busy.
+  // What a run of this spec left on the shared pool, if its cleanup failed.
   await runCleanupSteps(deleteAppsSteps(api));
-  await ensureAppsPoolUnset(api);
-  await ensurePoolAbsent(api, pool);
-  await requireUnusedDisks(api, 1);
-  await ensurePoolPresent(api, pool);
-  await setAppsPool(api, pool);
 
   if (!preferredTrainsBefore.includes(communityTrain)) {
     await setPreferredTrains(api, [...preferredTrainsBefore, communityTrain]);
   }
-  // A pool change starts a sync in the background. The seeded installs need it finished.
+  // `community` lists nothing until a sync, and a pool change starts one in the background. The seeded
+  // installs need it finished.
   await syncCatalog(api);
 
   await Promise.all(images.map((image) => ensureImagePresent(api, image)));
 });
 
 test.beforeEach(async ({ api }) => {
-  // Apps on another pool is a developer's own setup, and teardown would unset it.
-  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool this spec did not create.');
+  // Apps on another pool is a developer's own setup, which moving Apps onto `e2e_apps` would stop.
+  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool the suite did not create.');
 
   await runCleanupSteps(deleteAppsSteps(api));
 });
@@ -148,21 +136,18 @@ test.afterAll(async ({ api }) => {
     return;
   }
 
-  // A setting, not test data: written back even when the apps and pool are kept.
+  // A setting, not test data: written back even when the apps are kept.
   const steps: CleanupStep[] = [];
   const trains = preferredTrainsBefore;
   if (trains !== undefined) {
     steps.push(['restore the preferred trains', () => setPreferredTrains(api, trains)]);
   }
 
-  if (!leavingTestData(`apps ${apps.join(', ')}, their images, pool "${pool}" and the Apps pool`)) {
-    // In this order: the images live in Docker's storage on the pool, and the export fails while
-    // Docker holds `e2e_apps/ix-apps`.
+  if (!leavingTestData(`apps ${apps.join(', ')} and their images`)) {
+    // Apps first, since they run the images.
     steps.push(
       ...apps.map((name): CleanupStep => [`delete app "${name}"`, () => ensureAppAbsent(api, name)]),
       ...images.map((image): CleanupStep => [`delete image "${image}"`, () => ensureImageAbsent(api, image)]),
-      ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
-      [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
     );
   }
 

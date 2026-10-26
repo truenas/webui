@@ -9,6 +9,7 @@ import {
   InputType,
   TnAutocompleteComponent,
   TnCheckboxComponent,
+  TnFormErrorsComponent,
   TnFormFieldComponent,
   TnFormListComponent,
   TnFormListItemComponent,
@@ -34,7 +35,6 @@ import {
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
 import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
@@ -56,7 +56,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
     TnTooltipDirective,
     TnIconComponent,
     IxCodeEditorComponent,
-    IxErrorsComponent,
+    TnFormErrorsComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,

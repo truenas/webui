@@ -30,6 +30,8 @@ import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 
+const homeExplorer = IxExplorerHarness.with({ selector: '[formControlName="home"]' });
+
 describe('AdditionalDetailsSectionComponent', () => {
   let spectator: Spectator<AdditionalDetailsSectionComponent>;
   let loader: HarnessLoader;
@@ -285,7 +287,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await homeEditable.open();
 
       // Set a real path so we can close
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(homeExplorer);
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 
@@ -321,7 +323,7 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       await homeEditable.open();
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(homeExplorer);
       await explorer.setValue('/mnt');
       spectator.detectChanges();
 
@@ -456,7 +458,7 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       await homeEditable.open();
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(homeExplorer);
       await explorer.setValue('/mnt');
       spectator.detectChanges();
 
@@ -510,7 +512,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
       await createCheckbox.check();
 
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(homeExplorer);
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 
@@ -537,16 +539,18 @@ describe('AdditionalDetailsSectionComponent', () => {
       await createCheckbox.check();
 
       // Before setting a path, label should be 'Home Directory'
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
-      expect(explorer).toBeTruthy();
+      expect(await loader.getHarnessOrNull(TnFormFieldHarness.with({ label: 'Home Directory' }))).toBeTruthy();
+      const explorer = await loader.getHarness(homeExplorer);
 
       // Set a real path
       await explorer.setValue('/mnt/tank/user');
       spectator.detectChanges();
 
       // After setting a path, label should switch to 'Create Home Directory Under'
-      const explorerWithNewLabel = await loader.getHarnessOrNull(IxExplorerHarness.with({ label: 'Create Home Directory Under' }));
-      expect(explorerWithNewLabel).toBeTruthy();
+      const fieldWithNewLabel = await loader.getHarnessOrNull(
+        TnFormFieldHarness.with({ label: 'Create Home Directory Under' }),
+      );
+      expect(fieldWithNewLabel).toBeTruthy();
     });
 
     it('resets permissions when create home directory is checked', async () => {
@@ -593,7 +597,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await homeEditable.open();
 
       // Get the explorer and clear the value
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(homeExplorer);
       await explorer.setValue('');
       spectator.detectChanges();
 
@@ -615,7 +619,7 @@ describe('AdditionalDetailsSectionComponent', () => {
 
       // Should be able to open and edit again
       await homeEditable.open();
-      const reopenedExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const reopenedExplorer = await loader.getHarness(homeExplorer);
       expect(await reopenedExplorer.isDisabled()).toBe(false);
     });
 
@@ -633,7 +637,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       await homeEditable.open();
 
       // Set a valid path
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarness(homeExplorer);
       await explorer.setValue('/mnt/tank/users/testuser');
       spectator.detectChanges();
 
@@ -671,7 +675,7 @@ describe('AdditionalDetailsSectionComponent', () => {
       const homeEditable = await table.getHarnessForItem('Home Directory', EditableHarness);
       await homeEditable.open();
 
-      const explorer = await loader.getHarnessOrNull(IxExplorerHarness.with({ label: 'Home Directory' }));
+      const explorer = await loader.getHarnessOrNull(homeExplorer);
       const perms = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'Home Directory Permissions' }));
       const createCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Create Home Directory' }));
 

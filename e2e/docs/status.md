@@ -52,6 +52,15 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   controllers must serve its DNS, since the spec points the nameservers at
   them, and the account must be allowed to create and delete computer objects
   in `TN_AD_COMPUTER_OU`. CI uses the internal test domain (`docs/05-ci.md`).
+- **A spare NIC with no address and no peer**, for
+  `tests/network-interfaces-commit.e2e.ts`. That file commits interface
+  changes, and a commit on the NIC the suite talks to can cut the run off. List
+  the spare's MAC in `TN_SPARE_NICS` (comma-separated, the first is used).
+  Without it the file skips. CI boots its appliance with one
+  (`spare-nics: 1`, `docs/05-ci.md`). The spec pins the management NIC as DHCP
+  in the database while it runs and removes that row afterwards. On an
+  appliance whose management NIC is already configured, it leaves that row
+  alone.
 
 ## Known gaps
 
@@ -166,4 +175,4 @@ comment instead.
 | T5 | Authentication via a setup project plus `storageState` — the `storageState` half was dropped 2026-09-08: the app rotates the persisted token into a five-minute single-use one, so the snapshot carried exactly one test. Each authenticated test now signs in through the token URL in the `page` fixture |
 | T10 | Configuration through target profiles, resolved in one module |
 | D1 | PR gating — deferred; needs a measured flake rate first. The `e2e` check runs on same-repo PRs touching the suite, but it is not a required check, so a red run informs and does not block |
-| D2 | Parallel execution by sharding across appliances — deferred |
+| D2 | Parallel execution by sharding across appliances — two shards by default since 2026-10-22 |

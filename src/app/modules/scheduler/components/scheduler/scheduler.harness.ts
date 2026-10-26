@@ -2,7 +2,6 @@ import { ComponentHarness, HarnessPredicate } from '@angular/cdk/testing';
 import { TnFormFieldHarness, TnSelectHarness, SelectHarnessFilters } from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 import { SchedulerModalHarness } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal.harness';
 
 export interface SchedulerFilters extends SelectHarnessFilters {
@@ -18,7 +17,6 @@ export class SchedulerHarness extends ComponentHarness implements IxFormControlH
   }
 
   getSelectHarness = this.locatorFor(TnSelectHarness);
-  getErrorText = getErrorText;
 
   async getLabelText(): Promise<string> {
     const formField = await this.locatorForOptional(TnFormFieldHarness)();

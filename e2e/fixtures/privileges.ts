@@ -46,6 +46,8 @@ export interface PrivilegeSeed {
   webShell: boolean;
   /** Gids, not group row ids — see `ensureNoWebUiAccessAccountPresent` in `fixtures/users.ts`. */
   localGroupGids: number[];
+  /** A directory service's groups, by gid. None unless given. */
+  dsGroupGids?: number[];
 }
 
 /**
@@ -63,7 +65,7 @@ export async function ensurePrivilegePresent(client: E2eApiClient, seed: Privile
     client.api.call('privilege.create', [{
       name: seed.name,
       local_groups: seed.localGroupGids,
-      ds_groups: [],
+      ds_groups: seed.dsGroupGids ?? [],
       roles: seed.roles,
       web_shell: seed.webShell,
     }]).pipe(timeout(slowCallTimeoutMs)),

@@ -36,12 +36,12 @@ const serviceStartTimeoutMs = 60_000;
 
 /**
  * Order matters: the service first, so nothing is serving what is about to be
- * removed; keys before the user, because a key outlives its account; the
- * bucket before its datasets, so the share is never left pointing at a dataset
- * that is gone.
+ * removed; the bucket before its datasets, so the share is never left pointing
+ * at a dataset that is gone.
  *
  * The pool is not here: it is the worker-scoped `pool` fixture's, provided
- * once per worker and exported by it if the suite built it.
+ * once per worker and exported by it if the suite built it. Nor is the owner,
+ * which is the file's: `removeOwner` deletes it once this has run.
  */
 async function cleanUp(api: E2eApiClient): Promise<void> {
   // Read, not provided: a leftover dataset can only exist under a pool that
@@ -57,20 +57,42 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
         await ensureDatasetAbsent(api, `${pool}/${parentDataset}`);
       }
     }],
+  ]);
+}
+
+/** After `cleanUp`: a key outlives its account, so the keys go first. */
+async function removeOwner(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps([
     ['delete the owner', () => ensureUserAbsent(api, owner)],
   ]);
 }
 
-test.beforeEach(async ({ api }) => {
+// The owner is created once for the file: it only owns the bucket and the key
+// here, and it costs middleware about a second to create and another to delete.
+// A failed test restarts the worker, which runs `afterAll` and then this again,
+// so a retry still starts from a fresh owner.
+test.beforeAll(async ({ api }) => {
   await cleanUp(api);
+  await removeOwner(api);
   await ensureUserPresent(api, owner);
 });
 
+test.beforeEach(async ({ api }) => {
+  await cleanUp(api);
+});
+
 test.afterEach(async ({ api }) => {
-  if (leavingTestData(`bucket "${bucket}", the "${parentDataset}" dataset, the access keys and user "${owner}"`)) {
+  if (leavingTestData(`bucket "${bucket}", the "${parentDataset}" dataset and the access keys`)) {
     return;
   }
   await cleanUp(api);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${owner}"`)) {
+    return;
+  }
+  await removeOwner(api);
 });
 
 test('an admin publishes an S3 bucket with object lock and starts the service', async ({

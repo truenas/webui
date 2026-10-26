@@ -106,24 +106,40 @@ async function aclUserUid(api: E2eApiClient): Promise<number> {
   return uid;
 }
 
+// The user is created once for the file: it only stands in for ACL entries here, and each one
+// costs middleware about a second to create and another to delete. A failed test restarts the
+// worker, which runs afterAll and then beforeAll again, so a retry still starts clean.
+test.beforeAll(async ({ api }) => {
+  await ensureUserPresent(api, aclUser);
+});
+
 test.beforeEach(async ({ api, pool }) => {
   const dataset = `${pool}/${datasetLeaf}`;
 
   // Absent first, so every story starts from the trivial ACL the dataset is created with.
   await ensureDatasetAbsent(api, dataset);
   await ensureAclDatasetPresent(api, dataset, 'POSIX');
-  await ensureUserPresent(api, aclUser);
 });
 
 test.afterEach(async ({ api, pool }) => {
   const dataset = `${pool}/${datasetLeaf}`;
-  if (leavingTestData(`dataset "${dataset}" and user "${aclUser}"`)) {
+  if (leavingTestData(`dataset "${dataset}"`)) {
     return;
   }
 
-  // The dataset first, so no ACL is left naming an account that no longer exists.
+  // The dataset after each test and the user after the file, so no ACL is left naming an
+  // account that no longer exists.
   await runCleanupSteps([
     [`remove dataset ${dataset}`, () => ensureDatasetAbsent(api, dataset)],
+  ]);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${aclUser}"`)) {
+    return;
+  }
+
+  await runCleanupSteps([
     [`remove user ${aclUser}`, () => ensureUserAbsent(api, aclUser)],
   ]);
 });

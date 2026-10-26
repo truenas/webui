@@ -119,8 +119,8 @@ export const virtualMachinesLocators = {
      * takes the control name, `destinationDir`. Typable, so the path goes in directly.
      */
     destinationDir: '[data-test="input-destination-dir"]',
-    /** Its validation message, which `ix-explorer` renders as `text-<control>-errors`. */
-    destinationDirErrors: '[data-test="text-destination-dir-errors"]',
+    /** Its validation message: the alert of the wrapping `tn-form-field`, which has no id of its own. */
+    destinationDirErrors: '[data-test="form-field-destination-dir"] [role="alert"]',
     /**
      * Defaults to `<vm>_disk_<YYYY-MM-DD>`. An extension typed here is replaced by that of Image
      * Format, which defaults to QCOW2 and is left there.

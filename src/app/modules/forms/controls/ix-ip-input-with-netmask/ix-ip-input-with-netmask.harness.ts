@@ -1,14 +1,12 @@
 import { ComponentHarness } from '@angular/cdk/testing';
 import { TnSelectHarness } from '@truenas/ui-components';
 import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
-import { getErrorText } from 'app/modules/forms/ix-forms/utils/harness.utils';
 
 export class IxIpInputWithNetmaskHarness extends ComponentHarness implements IxFormControlHarness {
   static readonly hostSelector = 'ix-ip-input-with-netmask';
 
   getAddressInput = this.locatorFor('input');
   getNetmaskHarness = this.locatorFor(TnSelectHarness);
-  getErrorText = getErrorText;
 
   /**
    * Always '': the control renders no label of its own since it became a bare control, so the

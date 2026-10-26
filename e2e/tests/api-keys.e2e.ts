@@ -19,7 +19,7 @@ import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import { createApiKey, deleteApiKey, openUserApiKeys } from '../flows/api-keys';
 import { apiKeyLocators } from '../locators/api-keys';
 import type { E2eApiClient } from '../support/api/client';
-import { leavingTestData, runCleanupSteps } from '../support/cleanup';
+import { leavingTestData, runCleanupSteps, type CleanupStep } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
 /** Distinct from the S3 specs' owners, so no other spec's teardown removes it. */
@@ -36,31 +36,50 @@ const bystanderKey = 'e2e-api-key-bystander';
 
 const allKeys = [createdKey, targetKey, bystanderKey];
 
-/** Keys before their owner, so no key is left behind on an account that is gone. */
-async function cleanUp(api: E2eApiClient): Promise<void> {
-  await runCleanupSteps([
-    ...allKeys.map((name): [string, () => Promise<void>] => [
-      `remove the API key "${name}"`, () => ensureApiKeyAbsent(api, name),
-    ]),
-    [`delete the user "${owner}"`, () => ensureUserAbsent(api, owner)],
-  ]);
+/** Every key a test can leave on the owner, but not the owner itself. */
+async function removeKeys(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps(allKeys.map((name): CleanupStep => [
+    `remove the API key "${name}"`, () => ensureApiKeyAbsent(api, name),
+  ]));
 }
 
 /**
- * Removed before each test as well as after, so an interrupted run leaves the
- * next one able to start, and unconditionally so a failure still cleans up.
+ * The owner is created once for the file: it only holds the keys here, and
+ * each account costs middleware about a second to create and another to
+ * delete. A failed test restarts the worker, which runs afterAll and then
+ * beforeAll again, so a retry still starts clean.
+ */
+test.beforeAll(async ({ api }) => {
+  // Keys before their owner, so no key is left behind on an account that is gone.
+  await removeKeys(api);
+  await ensureUserAbsent(api, owner);
+  await ensureUserPresent(api, owner, { administrator: true });
+});
+
+/**
+ * The keys are removed before each test as well as after, so an interrupted run
+ * leaves the next one able to start, and unconditionally so a failure still
+ * cleans up.
  */
 test.beforeEach(async ({ api }) => {
-  await cleanUp(api);
-  await ensureUserPresent(api, owner, { administrator: true });
+  await removeKeys(api);
   await ensureApiKeyPresent(api, { name: bystanderKey, username: owner });
 });
 
 test.afterEach(async ({ api }) => {
-  if (leavingTestData(`API keys ${allKeys.join(', ')} and user "${owner}"`)) {
+  if (leavingTestData(`API keys ${allKeys.join(', ')}`)) {
     return;
   }
-  await cleanUp(api);
+  await removeKeys(api);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${owner}"`)) {
+    return;
+  }
+  await runCleanupSteps([
+    [`delete the user "${owner}"`, () => ensureUserAbsent(api, owner)],
+  ]);
 });
 
 test('an admin creates an API key for a user and is shown it once', async ({ page, api }) => {

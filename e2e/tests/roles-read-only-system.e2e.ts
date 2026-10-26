@@ -84,12 +84,15 @@ async function discardEmailForm(page: Page): Promise<void> {
 test.describe('as a read-only administrator', () => {
   test.use({ authenticate: false });
 
-  test.beforeEach(async ({ api }) => {
+  // The account is created once for the file: no test here changes it, and each one costs
+  // middleware about a second to create and another to delete. A failed test restarts the
+  // worker, which runs afterAll and then beforeAll again, so a retry still starts clean.
+  test.beforeAll(async ({ api }) => {
     await ensureRoleAdminAbsent(api, account);
     await ensureRoleAdminPresent(api, account);
   });
 
-  test.afterEach(async ({ api }) => {
+  test.afterAll(async ({ api }) => {
     if (leavingTestData(`user "${account.username}"`)) {
       return;
     }

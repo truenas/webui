@@ -13,7 +13,6 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxLabelComponent } from 'app/modules/forms/ix-forms/components/ix-label/ix-label.component';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @Component({
@@ -100,9 +99,6 @@ describe('IxExplorerComponent', () => {
       `<ix-explorer
         [formControl]="formControl"
         [nodeProvider]="nodeProvider"
-        [label]="label"
-        [required]="required"
-        [tooltip]="tooltip"
         [rootNodes]="roots"
         [multiple]="multiple"
       >
@@ -113,9 +109,6 @@ describe('IxExplorerComponent', () => {
         hostProps: {
           formControl,
           nodeProvider: fakeNodeProvider,
-          label: undefined,
-          required: false,
-          tooltip: undefined,
           roots: [{
             hasChildren: true,
             name: mntPath,
@@ -176,47 +169,6 @@ describe('IxExplorerComponent', () => {
         { path: '/mnt/pool1', name: 'pool1', type: 'dataset' },
         { path: '/mnt/pool2', name: 'pool2', type: 'dataset' },
       ]);
-    });
-
-    it('renders a label and passes properties to it', () => {
-      setHostProps({
-        label: 'Select dataset',
-        required: true,
-        tooltip: 'Enter the location of the system.',
-      });
-      spectator.detectComponentChanges();
-
-      const label = spectator.query(IxLabelComponent)!;
-      expect(label).toExist();
-      expect(label.label()).toBe('Select dataset');
-      expect(label.required()).toBe(true);
-      expect(label.tooltip()).toBe('Enter the location of the system.');
-    });
-
-    // Until NAS-143893 the label carried a test-id override that leaked, through the element
-    // injector, into the tooltip nested inside it — so the tooltip's *title* resolved to the
-    // control's name rather than its own id (a bare `text` here, where the control is anonymous;
-    // `text-anonpath` on Service FTP, and so on for the 21 other explorers with a tooltip).
-    //
-    // Nothing became unaddressable: the control's own ids come from `[testId]` on
-    // `<tn-file-picker>`, which that override never touched — Service FTP's explorer still
-    // renders `input-anonpath`, `file-picker-anonpath` and `button-toggle-anonpath` — and the
-    // tooltip is still reached through its trigger, `icon-tooltip-<label>`. What the override
-    // added was a *second*, duplicate-looking name for the control on a tooltip heading.
-    //
-    // Dumping the ids rather than selecting by one: this is about which ids exist.
-    it('no longer overrides the nested tooltip test id with the control name', () => {
-      setHostProps({
-        label: 'Select dataset',
-        tooltip: 'Enter the location of the system.',
-      });
-      spectator.detectComponentChanges();
-
-      const ids = spectator.queryAll('ix-tooltip [data-test]')
-        .map((element) => element.getAttribute('data-test'));
-
-      expect(ids).toContain('text-tooltip-title');
-      expect(ids).not.toContain('text');
     });
   });
 

@@ -14,7 +14,7 @@ import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/ut
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -197,11 +197,8 @@ describe('VmWizardComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
 
-    // Installation media step still uses ix-explorer.
-    const mediaForm = await loader.getHarness(IxFormHarness);
-    await mediaForm.fillForm({
-      'Optional: Choose installation media image': '/mnt/iso/FreeNAS-11.3-U3.iso',
-    });
+    const isoExplorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="iso_path"]' }));
+    await isoExplorer.setValue('/mnt/iso/FreeNAS-11.3-U3.iso');
     await nextButton.click();
     await updateStepHarnesses();
 

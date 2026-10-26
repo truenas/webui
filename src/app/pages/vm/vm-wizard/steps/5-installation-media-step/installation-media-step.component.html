@@ -1,11 +1,14 @@
 <form [formGroup]="form">
   <tn-form-section>
-    <ix-explorer
-      formControlName="iso_path"
+    <tn-form-field
       [label]="'Optional: Choose installation media image' | translate"
-      [nodeProvider]="fileNodeProvider"
       [tooltip]="helptext.iso_path_tooltip | translate"
-    ></ix-explorer>
+    >
+      <ix-explorer
+        formControlName="iso_path"
+        [nodeProvider]="fileNodeProvider"
+      ></ix-explorer>
+    </tn-form-field>
 
     <div class="upload-button">
       <tn-button

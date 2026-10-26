@@ -30,6 +30,7 @@ describe('SigninComponent', () => {
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
   const isLoading$ = new BehaviorSubject<boolean>(false);
   const isLoggingIn$ = new BehaviorSubject<boolean>(false);
+  const isLoggingInWithQueryToken$ = new BehaviorSubject<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
   const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
 
@@ -51,6 +52,7 @@ describe('SigninComponent', () => {
         loginBanner$,
         isLoading$,
         isLoggingIn$,
+        isLoggingInWithQueryToken$,
         init: jest.fn(),
       }),
     ],
@@ -82,6 +84,7 @@ describe('SigninComponent', () => {
     isTokenWithinTimeline$.next(false);
     isLoading$.next(false);
     isLoggingIn$.next(false);
+    isLoggingInWithQueryToken$.next(false);
 
     spectator = createComponent();
   });
@@ -185,6 +188,31 @@ describe('SigninComponent', () => {
 
       expect(spectator.query(SigninFormComponent)).toExist();
       expect(spectator.query('.form-card')).toHaveClass('hidden');
+    });
+
+    it('shows "Logging in..." and no sign-in form while a token from the URL logs in', () => {
+      // A fresh browser has no stored token and no token timeline, so only this state covers it.
+      isTokenWithinTimeline$.next(false);
+      Object.defineProperty(spectator.inject(AuthService), 'hasAuthToken', { get: () => false });
+      isLoggingInWithQueryToken$.next(true);
+
+      spectator.detectChanges();
+
+      expect(spectator.query('.logging-in')).toHaveText('Logging in...');
+      expect(spectator.query(SigninFormComponent)).not.toExist();
+    });
+
+    it('shows the sign-in form once a token from the URL has been refused', () => {
+      isTokenWithinTimeline$.next(false);
+      Object.defineProperty(spectator.inject(AuthService), 'hasAuthToken', { get: () => false });
+      isLoggingInWithQueryToken$.next(true);
+      spectator.detectChanges();
+
+      isLoggingInWithQueryToken$.next(false);
+      spectator.detectChanges();
+
+      expect(spectator.query('.logging-in')).not.toExist();
+      expect(spectator.query(SigninFormComponent)).toExist();
     });
 
     it('checks login banner and shows full dialog if set', () => {

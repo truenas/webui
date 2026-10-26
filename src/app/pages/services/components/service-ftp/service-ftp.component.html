@@ -61,14 +61,17 @@
           </tn-form-field>
 
           @if (isAnonymousLoginAllowed$ | async) {
-            <ix-explorer
-              formControlName="anonpath"
+            <tn-form-field
               [label]="'Path' | translate"
               [tooltip]="helptext.anonpathTooltip | translate"
-              [nodeProvider]="treeNodeProvider"
             >
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            </ix-explorer>
+              <ix-explorer
+                formControlName="anonpath"
+                [nodeProvider]="treeNodeProvider"
+              >
+                <ix-explorer-create-dataset></ix-explorer-create-dataset>
+              </ix-explorer>
+            </tn-form-field>
           }
 
           <tn-form-field [tooltip]="helptext.onlylocalTooltip | translate">

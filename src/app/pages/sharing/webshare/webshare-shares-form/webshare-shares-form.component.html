@@ -6,15 +6,18 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section>
-    <ix-explorer
-      formControlName="path"
+    <tn-form-field
       [label]="helptext.webshare_path_label | translate"
       [tooltip]="helptext.webshare_path_tooltip | translate"
       [required]="true"
-      [nodeProvider]="treeNodeProvider"
     >
-      <ix-explorer-create-dataset></ix-explorer-create-dataset>
-    </ix-explorer>
+      <ix-explorer
+        formControlName="path"
+        [nodeProvider]="treeNodeProvider"
+      >
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      </ix-explorer>
+    </tn-form-field>
 
     <tn-form-field
       [label]="helptext.webshare_name_label | translate"

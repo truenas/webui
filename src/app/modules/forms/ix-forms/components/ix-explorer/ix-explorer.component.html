@@ -1,11 +1,3 @@
-@if (!hasFieldChrome && (label() || tooltip())) {
-  <ix-label
-    [label]="label()"
-    [tooltip]="tooltip()"
-    [required]="required()"
-  ></ix-label>
-}
-
 <tn-file-picker
   [formControl]="pickerControl"
   [multiSelect]="multiple()"
@@ -33,16 +25,4 @@
   >
     {{ loadingError }}
   </div>
-}
-
-@if (!hasFieldChrome) {
-  @let control = controlDirective.control;
-  @if (control) {
-    <ix-errors
-      tnTestIdType="text"
-      [tnTestId]="[controlDirective.name, 'errors']"
-      [control]="control"
-      [label]="label()"
-    ></ix-errors>
-  }
 }

@@ -20,10 +20,9 @@
  *
  * ## Setup
  *
- * Apps run on `e2e_apps`, a one-disk pool built, given to Apps and destroyed here, as
- * `apps-pool.e2e.ts` does. It is set up once for the file rather than per test: moving Apps onto a
- * pool starts Docker, which takes minutes, and no test here changes it. Teardown deletes the app
- * and the image after every test, and unsets Apps and exports the pool after the last.
+ * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture: built once
+ * per worker, and emptied of every app and image before each spec, so the install and delete tests
+ * still find the installed list empty. Teardown deletes the app and the image after every test.
  *
  * Not covered: the Custom App form that is not YAML, signing in to a registry, and deleting more
  * than one image at once.
@@ -31,13 +30,10 @@
 import {
   appInstallTimeoutMs,
   ensureAppAbsent,
-  ensureAppsPoolUnset,
   readAppState,
-  readDocker,
   readIsCustomApp,
   readServiceEnvironment,
   seedCustomApp,
-  setAppsPool,
 } from '../fixtures/apps';
 import {
   ensureImageAbsent,
@@ -45,8 +41,6 @@ import {
   findImageId,
   imagePullTimeoutMs,
 } from '../fixtures/container-images';
-import { ensurePoolPresent } from '../fixtures/pool';
-import { ensurePoolAbsent, requireUnusedDisks } from '../fixtures/storage';
 import { deleteInstalledApp } from '../flows/catalog-apps';
 import { deleteImage, goToContainerImages, pullImage } from '../flows/container-images';
 import { editCustomAppYaml, installCustomAppFromYaml } from '../flows/custom-apps';
@@ -55,9 +49,6 @@ import { appsLocators, installedAppLocators } from '../locators/apps';
 import { containerImagesLocators } from '../locators/container-images';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
-
-/** Built, given to Apps and destroyed here. Not a name any other spec looks for. */
-const pool = 'e2e_apps';
 
 const appName = 'e2e-yaml-app';
 const service = 'e2e';
@@ -88,31 +79,26 @@ const editedCompose = [
 ].join('\n');
 
 /**
- * Apps on a pool this spec did not make is somebody's. Unsetting it, which teardown does, would
- * stop their apps, so the spec does not run there. On the CI appliance Apps has no pool.
+ * Apps on a pool the suite did not make is somebody's. Moving Apps off it onto the shared pool would
+ * stop their apps, so `appsPool.ensure` leaves it and the spec does not run there. On the CI
+ * appliance Apps has no pool.
  */
 let appsOnSomebodyElsesPool = false;
 
-test.beforeAll(async ({ api }) => {
-  const { pool: appsPool } = await readDocker(api);
-  appsOnSomebodyElsesPool = appsPool !== null && appsPool !== pool;
+test.beforeAll(async ({ api, appsPool }) => {
+  appsOnSomebodyElsesPool = !(await appsPool.ensure());
   if (appsOnSomebodyElsesPool) {
     return;
   }
 
-  // In this order: the app and the image are on `e2e_apps/ix-apps`, and Docker keeps the pool busy.
+  // What a run of this spec left on the shared pool, if its cleanup failed.
   await ensureAppAbsent(api, appName);
   await ensureImageAbsent(api, repoTag);
-  await ensureAppsPoolUnset(api);
-  await ensurePoolAbsent(api, pool);
-  await requireUnusedDisks(api, 1);
-  await ensurePoolPresent(api, pool);
-  await setAppsPool(api, pool);
 });
 
 test.beforeEach(async ({ api }) => {
-  // Apps on another pool is a developer's own setup, and teardown would unset it.
-  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool this spec did not create.');
+  // Apps on another pool is a developer's own setup, which moving Apps onto `e2e_apps` would stop.
+  test.skip(appsOnSomebodyElsesPool, 'Apps already use a pool the suite did not create.');
 
   await ensureAppAbsent(api, appName);
   await ensureImageAbsent(api, repoTag);
@@ -130,16 +116,13 @@ test.afterEach(async ({ api }) => {
 });
 
 test.afterAll(async ({ api }) => {
-  if (appsOnSomebodyElsesPool || leavingTestData(`app "${appName}", pool "${pool}" and the Apps pool`)) {
+  if (appsOnSomebodyElsesPool || leavingTestData(`app "${appName}" and image "${repoTag}"`)) {
     return;
   }
 
-  // In this order: the export fails while Docker holds `e2e_apps/ix-apps`.
   await runCleanupSteps([
     [`delete app "${appName}"`, () => ensureAppAbsent(api, appName)],
     [`delete image "${repoTag}"`, () => ensureImageAbsent(api, repoTag)],
-    ['unset the Apps pool', () => ensureAppsPoolUnset(api)],
-    [`export pool "${pool}"`, () => ensurePoolAbsent(api, pool)],
   ]);
 });
 

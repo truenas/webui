@@ -49,22 +49,44 @@ async function cleanUp(api: E2eApiClient): Promise<void> {
   await runCleanupSteps([
     ['remove the administrator keys', () => ensureS3AccessKeysAbsent(api, administrator)],
     ['remove the plain user keys', () => ensureS3AccessKeysAbsent(api, plainUser)],
+  ]);
+}
+
+/** After `cleanUp`: a key outlives its account, so the keys go first. */
+async function removeUsers(api: E2eApiClient): Promise<void> {
+  await runCleanupSteps([
     ['delete the administrator', () => ensureUserAbsent(api, administrator)],
     ['delete the plain user', () => ensureUserAbsent(api, plainUser)],
   ]);
 }
 
-test.beforeEach(async ({ api }) => {
+// The users are created once for the file: they only own the keys here, and
+// each one costs middleware about a second to create and another to delete. A
+// failed test restarts the worker, which runs `afterAll` and then this again,
+// so a retry still starts from fresh users.
+test.beforeAll(async ({ api }) => {
   await cleanUp(api);
+  await removeUsers(api);
   await ensureUserPresent(api, administrator, { administrator: true });
   await ensureUserPresent(api, plainUser);
 });
 
+test.beforeEach(async ({ api }) => {
+  await cleanUp(api);
+});
+
 test.afterEach(async ({ api }) => {
-  if (leavingTestData(`the access keys and users "${administrator}" and "${plainUser}"`)) {
+  if (leavingTestData('the access keys')) {
     return;
   }
   await cleanUp(api);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`users "${administrator}" and "${plainUser}"`)) {
+    return;
+  }
+  await removeUsers(api);
 });
 
 test('an admin mints a key that may manage buckets for an account allowed to', async ({ page, api }) => {

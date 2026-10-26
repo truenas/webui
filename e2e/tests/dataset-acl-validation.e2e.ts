@@ -54,6 +54,13 @@ async function aclUserUid(api: E2eApiClient): Promise<number> {
   return uid;
 }
 
+// The user is created once for the file: it only stands in for ACL entries here, and each one
+// costs middleware about a second to create and another to delete. A failed test restarts the
+// worker, which runs afterAll and then beforeAll again, so a retry still starts clean.
+test.beforeAll(async ({ api }) => {
+  await ensureUserPresent(api, aclUser);
+});
+
 test.beforeEach(async ({ api, pool }) => {
   const noexec = `${pool}/${noexecLeaf}`;
 
@@ -65,22 +72,31 @@ test.beforeEach(async ({ api, pool }) => {
   await ensureSmbDatasetPresent(api, `${noexec}/${innerLeaf}`);
   // Not recursive, so `inner` keeps its own NFSv4 ACL.
   await setOwnership(api, datasetMountPath(noexec), { user: 'root', group: 'root', mode: '700' });
-  await ensureUserPresent(api, aclUser);
 });
 
 test.afterEach(async ({ api, pool }) => {
   const invalid = `${pool}/${invalidLeaf}`;
   const noexec = `${pool}/${noexecLeaf}`;
-  if (leavingTestData(`datasets "${invalid}" and "${noexec}" and user "${aclUser}"`)) {
+  if (leavingTestData(`datasets "${invalid}" and "${noexec}"`)) {
     return;
   }
 
-  // Datasets first, so no ACL is left naming an account that no longer exists.
+  // Datasets after each test and the user after the file, so no ACL is left
+  // naming an account that no longer exists.
   // Both trees hold an NFSv4 dataset under a POSIX pool root, and
   // `smb-share-acl.e2e.ts` skips its root-share story while any such child exists.
   await runCleanupSteps([
     [`remove dataset ${invalid}`, () => ensureDatasetAbsent(api, invalid)],
     [`remove dataset ${noexec}`, () => ensureDatasetAbsent(api, noexec)],
+  ]);
+});
+
+test.afterAll(async ({ api }) => {
+  if (leavingTestData(`user "${aclUser}"`)) {
+    return;
+  }
+
+  await runCleanupSteps([
     [`remove user ${aclUser}`, () => ensureUserAbsent(api, aclUser)],
   ]);
 });

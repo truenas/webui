@@ -1,6 +1,8 @@
+import { join } from 'node:path';
 import { defineConfig, devices } from '@playwright/test';
 import { describeTarget, loadTargetConfig } from './e2e/support/config';
 import type { E2eTestOptions, E2eWorkerFixtures } from './e2e/support/fixtures';
+import { timingsDirName, timingsDirVar } from './e2e/support/timings';
 
 /**
  * Load local configuration if present. Uses Node's built-in env-file support
@@ -70,6 +72,13 @@ if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
 }
 
 /**
+ * Where `support/timings.ts` and `support/timing-reporter.ts` record, set here
+ * because Jest compiles `timings.ts` too and could not parse the
+ * `import.meta.dirname` locating it there. Workers inherit it.
+ */
+process.env[timingsDirVar] ??= join(import.meta.dirname, 'test-results', timingsDirName);
+
+/**
  * Announce the resolved target before anything runs.
  *
  * This suite exports pools with `destroy: true` and deletes users, so the
@@ -96,6 +105,9 @@ if (!process.env[announcedVar]) {
 }
 
 const isCi = !!process.env.CI;
+
+/** The specs the `apps` project runs, and `authenticated` leaves to it. */
+const appsSpecs = '**/apps-*.e2e.ts';
 
 /**
  * Debugging flags are opt-in on `=1`, matching `TN_KEEP_TEST_DATA` in the specs.
@@ -140,6 +152,22 @@ const singleApplianceProjects = [
   setupProject,
   {
     /**
+     * The Apps specs, which share one Apps pool: the `appsPool` fixture builds `e2e_apps` once and
+     * releases it when the worker ends. A project of their own because only a project is sure to
+     * end its worker, with the pool, when its specs are done. In `authenticated` the pool and Docker
+     * would stay up through every spec after them.
+     *
+     * Before `authenticated`: shards split the run by test count in this order, and the apps specs
+     * are few and slow, so they go at the start of the first shard, where they always ran.
+     */
+    name: 'apps',
+    testDir: './e2e/tests',
+    testMatch: appsSpecs,
+    dependencies: ['setup'],
+    use: { ...devices['Desktop Chrome'] },
+  },
+  {
+    /**
      * Everything that starts from an authenticated session.
      *
      * The sign-in happens per test, in the `page` fixture (`support/fixtures.ts`),
@@ -150,7 +178,7 @@ const singleApplianceProjects = [
      */
     name: 'authenticated',
     testDir: './e2e/tests',
-    testIgnore: ['**/unauthenticated/**', '**/unpublished/**'],
+    testIgnore: ['**/unauthenticated/**', '**/unpublished/**', appsSpecs],
     dependencies: ['setup'],
     use: { ...devices['Desktop Chrome'] },
   },
@@ -319,6 +347,10 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
     // In CI, a warning annotation and a job summary row per flaky test, so a
     // green run that needed retries says so on its page. See the file.
     ['./e2e/support/flaky-reporter.ts'],
+    // Where each test's time went — hooks, fixtures, the body — for
+    // `yarn e2e:timings`, beside what `support/timings.ts` records of
+    // middleware. See the file.
+    ['./e2e/support/timing-reporter.ts'],
     ['html', { open: 'never' }],
     // Feeds the Jenkins JUnit plugin, which is what makes per-test flake history
     // — and therefore the R8.4 quarantine policy — measurable (R7.4).

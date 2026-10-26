@@ -20,8 +20,8 @@ import {
   ExplorerCreateDatasetComponent,
 } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
@@ -69,6 +69,9 @@ describe('ServiceS3Component', () => {
   );
   const getAllInputs = (name: string): Promise<TnInputHarness[]> => loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
+  );
+  const getManagedRootDataset = (): Promise<IxExplorerHarness> => loader.getHarness(
+    IxExplorerHarness.with({ selector: '[formControlName="managed_root_dataset"]' }),
   );
 
   const createComponent = createRoutingFactory({
@@ -119,8 +122,7 @@ describe('ServiceS3Component', () => {
     expect(await (await getInput('servers')).getValue()).toBe('2');
     expect(await (await getInput('region')).getValue()).toBe('us-east-1');
     expect(await (await getSelect('log_level')).getDisplayText()).toBe('Notice');
-    const form = await loader.getHarness(IxFormHarness);
-    expect(await form.getValues()).toMatchObject({ 'Managed Root Dataset': 'tank/s3' });
+    expect(await (await getManagedRootDataset()).getValue()).toBe('tank/s3');
 
     expect(await (await getSelect('principal_type')).getDisplayText()).toBe('User');
     const principal = await loader.getHarness(TnAutocompleteHarness);
@@ -132,8 +134,7 @@ describe('ServiceS3Component', () => {
     await (await getInput('servers')).setValue('4');
     await (await getInput('region')).setValue('eu-west-1');
     await (await getSelect('log_level')).selectOption('Info');
-    const form = await loader.getHarness(IxFormHarness);
-    await form.fillForm({ 'Managed Root Dataset': 'tank/buckets' });
+    await (await getManagedRootDataset()).setValue('tank/buckets');
 
     const listeners = await loader.getHarness(TnFormListHarness.with({ label: 'Listen Addresses' }));
     await listeners.add();

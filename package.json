@@ -34,6 +34,7 @@
     "e2e:report": "playwright show-report",
     "e2e:typecheck": "tsc --noEmit -p e2e/tsconfig.json",
     "e2e:coverage": "tsx scripts/e2e-coverage.ts",
+    "e2e:timings": "tsx scripts/e2e-timings.ts",
     "test:changed": "node node_modules/@truenas/common-typescript/scripts/test_changed.js",
     "test:pr": "yarn run check-env && echo 'Setting up temporary environment file...\\n' && yarn run ui remote -i 'headless.local' && jest --coverage",
     "test:watch": "jest --watch",

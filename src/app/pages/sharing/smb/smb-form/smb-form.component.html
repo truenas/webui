@@ -57,16 +57,19 @@
     }
 
     @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
-      <ix-explorer
-        formControlName="path"
-        [required]="true"
-        [tooltip]="helptextSharingSmb.pathTooltip | translate"
+      <tn-form-field
         [label]="helptextSharingSmb.pathLabel | translate"
-        [nodeProvider]="treeNodeProvider"
-        [rootNodes]="rootNodes()"
+        [tooltip]="helptextSharingSmb.pathTooltip | translate"
+        [required]="true"
       >
-        <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
-      </ix-explorer>
+        <ix-explorer
+          formControlName="path"
+          [nodeProvider]="treeNodeProvider"
+          [rootNodes]="rootNodes()"
+        >
+          <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
+        </ix-explorer>
+      </tn-form-field>
     }
 
     <tn-form-field testId="name" [label]="helptextSharingSmb.nameLabel | translate" [required]="true">

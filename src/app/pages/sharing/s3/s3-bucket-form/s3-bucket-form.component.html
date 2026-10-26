@@ -15,13 +15,16 @@
     </tn-form-field>
 
     @if (isNew()) {
-      <ix-explorer
-        formControlName="parent_dataset"
+      <tn-form-field
         [label]="'Parent Dataset' | translate"
         [tooltip]="helptext.parentDatasetTooltip | translate"
-        [nodeProvider]="treeNodeProvider"
         [required]="true"
-      ></ix-explorer>
+      >
+        <ix-explorer
+          formControlName="parent_dataset"
+          [nodeProvider]="treeNodeProvider"
+        ></ix-explorer>
+      </tn-form-field>
       @if (datasetHint(); as hint) {
         <p class="dataset-hint" tnTestId="dataset-hint" tnTestIdType="text">{{ hint }}</p>
       }

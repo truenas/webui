@@ -8,8 +8,8 @@
  * on the page and through `pool.dataset.get_quota`.
  *
  * Quotas live on a dataset of the spec's own, so deleting the dataset is the teardown for all of
- * them. The principals are removed separately, including the one the invalid-quota story deletes
- * mid-test, which a failed run can leave behind.
+ * them. The principals are removed separately: the target and bystander once the file is done, and
+ * the one the invalid-quota story deletes mid-test after every test, since a failed run can leave it.
  */
 import { ensureGroupAbsent, ensureGroupPresent, findGroup } from '../fixtures/groups';
 import {
@@ -92,26 +92,42 @@ for (const kind of ['user', 'group'] as const) {
   } = principals[kind];
 
   test.describe(`${kind} quotas, beyond add, edit and delete`, () => {
+    // The target and bystander are created once for the describe: they only stand in for quota
+    // subjects, and each one costs middleware about a second to create and another to delete. A
+    // failed test restarts the worker, which runs `afterAll` and then this again, so a retry starts
+    // clean. `gone` stays per test, because the story that uses it deletes it.
+    test.beforeAll(async ({ api }) => {
+      await ensurePresent(api, target);
+      await ensurePresent(api, bystander);
+    });
+
+    test.afterAll(async ({ api }) => {
+      if (leavingTestData(`the ${kind}s ${target}, ${bystander}`)) {
+        return;
+      }
+
+      await runCleanupSteps([
+        [`remove the ${kind} "${target}"`, () => ensureAbsent(api, target)],
+        [`remove the ${kind} "${bystander}"`, () => ensureAbsent(api, bystander)],
+      ]);
+    });
+
     test.beforeEach(async ({ api, pool }) => {
       const dataset = `${pool}/${datasetLeaf}`;
       await ensureDatasetAbsent(api, dataset);
       // A failed run of the invalid-quota story can leave it, since that story deletes it mid-test.
       await ensureAbsent(api, gone);
       await ensureDatasetPresent(api, dataset);
-      await ensurePresent(api, target);
-      await ensurePresent(api, bystander);
     });
 
     test.afterEach(async ({ api, pool }) => {
       const dataset = `${pool}/${datasetLeaf}`;
-      if (leavingTestData(`the dataset "${dataset}" and the ${kind}s ${target}, ${bystander}, ${gone}`)) {
+      if (leavingTestData(`the dataset "${dataset}" and the ${kind} ${gone}`)) {
         return;
       }
 
       await runCleanupSteps([
         [`remove the dataset "${dataset}"`, () => ensureDatasetAbsent(api, dataset)],
-        [`remove the ${kind} "${target}"`, () => ensureAbsent(api, target)],
-        [`remove the ${kind} "${bystander}"`, () => ensureAbsent(api, bystander)],
         [`remove the ${kind} "${gone}"`, () => ensureAbsent(api, gone)],
       ]);
     });

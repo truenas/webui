@@ -43,15 +43,18 @@
     }
   }
   @if (isNewZvol) {
-    <ix-explorer
-      formControlName="dataset"
+    <tn-form-field
       [label]="helptextSharingIscsi.datasetLabel | translate"
       [tooltip]="helptextSharingIscsi.datasetTooltip | translate"
       [required]="true"
-      [nodeProvider]="fileNodeProvider"
     >
-      <ix-explorer-create-dataset></ix-explorer-create-dataset>
-    </ix-explorer>
+      <ix-explorer
+        formControlName="dataset"
+        [nodeProvider]="fileNodeProvider"
+      >
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      </ix-explorer>
+    </tn-form-field>
 
     <tn-form-field
       [label]="helptextSharingIscsi.sizeLabel | translate"
@@ -66,12 +69,15 @@
     </tn-form-field>
   }
   @if (!isDevice) {
-    <ix-explorer
-      formControlName="path"
+    <tn-form-field
       [label]="helptextSharingIscsi.extent.pathLabel | translate"
       [required]="true"
-      [nodeProvider]="fileNodeProvider"
-    ></ix-explorer>
+    >
+      <ix-explorer
+        formControlName="path"
+        [nodeProvider]="fileNodeProvider"
+      ></ix-explorer>
+    </tn-form-field>
 
     <tn-form-field
       [label]="helptextSharingIscsi.extent.filesizeLabel | translate"

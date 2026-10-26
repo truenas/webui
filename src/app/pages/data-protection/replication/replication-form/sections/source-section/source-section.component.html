@@ -1,17 +1,20 @@
 <tn-form-section [heading]="'Source' | translate" [formGroup]="form">
-  <ix-explorer
-    formControlName="source_datasets"
+  <tn-form-field
     [label]="'Source' | translate"
-    [rootNodes]="emptyRootNode"
-    [required]="true"
-    [multiple]="true"
     [tooltip]="helptext.sourceDatasetsTooltip | translate"
-    [nodeProvider]="nodeProvider()"
+    [required]="true"
   >
-    @if (isLocal()) {
-      <ix-explorer-create-dataset></ix-explorer-create-dataset>
-    }
-  </ix-explorer>
+    <ix-explorer
+      formControlName="source_datasets"
+      [rootNodes]="emptyRootNode"
+      [multiple]="true"
+      [nodeProvider]="nodeProvider()"
+    >
+      @if (isLocal()) {
+        <ix-explorer-create-dataset></ix-explorer-create-dataset>
+      }
+    </ix-explorer>
+  </tn-form-field>
   @if (!form.value.replicate) {
     <tn-form-field [tooltip]="helptext.recursiveTooltip | translate">
       <tn-checkbox

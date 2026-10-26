@@ -8,7 +8,7 @@ import {
   EMPTY, forkJoin, Observable, of, from,
 } from 'rxjs';
 import {
-  catchError, filter, switchMap, take, tap,
+  catchError, filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { isSigninUrl } from 'app/helpers/url.helper';
@@ -36,6 +36,12 @@ interface SigninState {
    * page claim a login is in progress.
    */
   isLoggingIn: boolean;
+  /**
+   * True from the start while the URL carries a token, until that login fails. The token logs in,
+   * not the user, so the form is not rendered meanwhile: there is nothing in it to keep, unlike a
+   * submitted login's, and rendering it only to replace it delayed every token login.
+   */
+  isLoggingInWithQueryToken: boolean;
   wasAdminSet: boolean;
   loginBanner: string | null;
 }
@@ -43,6 +49,7 @@ interface SigninState {
 const initialState: SigninState = {
   isLoading: false,
   isLoggingIn: false,
+  isLoggingInWithQueryToken: false,
   wasAdminSet: true,
   loginBanner: null,
 };
@@ -71,6 +78,7 @@ export class SigninStore extends ComponentStore<SigninState> {
   wasAdminSet$ = this.select((state) => state.wasAdminSet);
   isLoading$ = this.select((state) => state.isLoading);
   isLoggingIn$ = this.select((state) => state.isLoggingIn);
+  isLoggingInWithQueryToken$ = this.select((state) => state.isLoggingInWithQueryToken);
 
   canLogin$ = this.wsStatus.isConnected$;
 
@@ -106,35 +114,44 @@ export class SigninStore extends ComponentStore<SigninState> {
   setLoggingInState = this.updater((state, isLoggingIn: boolean) => ({ ...state, isLoggingIn }));
 
   init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
-    tap(() => {
+    map(() => this.activatedRoute.snapshot.queryParamMap.get(tokenParam)),
+    tap((queryToken) => {
       // Set initial state with loading already true to avoid double emission
-      this.setState({ ...initialState, isLoading: true });
+      this.setState({ ...initialState, isLoading: true, isLoggingInWithQueryToken: Boolean(queryToken) });
     }),
-    switchMap(() => this.updateService.hardRefreshIfNeeded()),
-    switchMap(() => forkJoin([
-      this.checkIfAdminPasswordSet(),
-      this.checkForLoginBanner(),
-    ])),
-    tap(() => this.setLoadingState(false)),
-    switchMap(() => {
-      const queryToken = this.activatedRoute.snapshot.queryParamMap.get(tokenParam);
-      if (queryToken) {
-        return this.handleLoginWithQueryToken(queryToken);
-      }
+    switchMap((queryToken) => this.updateService.hardRefreshIfNeeded().pipe(
+      switchMap(() => forkJoin([
+        this.checkIfAdminPasswordSet(),
+        this.checkForLoginBanner(),
+      ])),
+      tap(() => this.setLoadingState(false)),
+      switchMap(() => {
+        if (queryToken) {
+          return this.handleLoginWithQueryToken(queryToken);
+        }
 
-      return this.handleLoginWithToken();
-    }),
+        return this.handleLoginWithToken();
+      }),
+    )),
     tap((result) => {
       if (result !== LoginResult.Success) {
         this.setLoadingState(false);
+        this.patchState({ isLoggingInWithQueryToken: false });
       }
     }),
     // Handle successful token login by performing the post-login tasks
     filter((result) => result === LoginResult.Success),
     switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
     switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
+    tap((hasNavigated) => {
+      // Still on this page, so the form has to come back: see `handleSuccessfulLogin`.
+      if (!hasNavigated) {
+        this.patchState({ isLoggingInWithQueryToken: false });
+      }
+    }),
     catchError((error: unknown) => {
       this.setLoadingState(false);
+      this.patchState({ isLoggingInWithQueryToken: false });
       this.errorHandler.showErrorModal(error);
       return EMPTY;
     }),

@@ -6,17 +6,21 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="'Path' | translate">
-    <ix-explorer
-      formControlName="path"
-      [required]="true"
+    <tn-form-field
+      [testId]="'path'"
       [label]="'Path' | translate"
       [tooltip]="helptext.pathTooltip | translate"
-      [nodeProvider]="treeNodeProvider"
+      [required]="true"
     >
-      @if (isNew) {
-        <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
-      }
-    </ix-explorer>
+      <ix-explorer
+        formControlName="path"
+        [nodeProvider]="treeNodeProvider"
+      >
+        @if (isNew) {
+          <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
+        }
+      </ix-explorer>
+    </tn-form-field>
   </tn-form-section>
 
   <tn-form-section [heading]="'General Options' | translate">
