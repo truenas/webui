@@ -7,7 +7,7 @@ import { TransportMode } from 'app/enums/transport-mode.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { TreeNodeProvider } from 'app/modules/forms/controls/ix-explorer/tree-node-provider.interface';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable()

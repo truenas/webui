@@ -16,11 +16,11 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+} from 'app/modules/forms/controls/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+import { IxExplorerComponent } from 'app/modules/forms/controls/ix-explorer/ix-explorer.component';
+import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
   IxFormComponent, SubmitResult, ixFormMinSubmitFeedbackMs,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';

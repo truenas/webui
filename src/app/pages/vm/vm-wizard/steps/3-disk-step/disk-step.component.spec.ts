@@ -10,7 +10,7 @@ import { GiB } from 'app/constants/bytes.constant';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';

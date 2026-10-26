@@ -25,7 +25,7 @@ import {
   VmRawFileDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   fillControlValues, getControlValues, indexFormControls, IxFormBasicValueType,

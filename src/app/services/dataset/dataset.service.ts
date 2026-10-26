@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { TreeNodeProvider } from 'app/modules/forms/controls/ix-explorer/tree-node-provider.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';

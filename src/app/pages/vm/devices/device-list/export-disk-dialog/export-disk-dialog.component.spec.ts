@@ -7,8 +7,8 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerComponent } from 'app/modules/forms/controls/ix-explorer/ix-explorer.component';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import { FilesystemService } from 'app/services/filesystem.service';
 import {
   ExportDiskDialogComponent,

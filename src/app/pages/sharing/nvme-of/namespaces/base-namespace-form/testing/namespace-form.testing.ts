@@ -5,8 +5,8 @@ import { escapeRegExp } from 'lodash-es';
 import { MockComponent } from 'ng-mocks';
 import {
   ExplorerCreateZvolComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+} from 'app/modules/forms/controls/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import {
   BaseNamespaceFormComponent,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';

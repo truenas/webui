@@ -13,11 +13,11 @@ import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
   ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
+} from 'app/modules/forms/controls/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import {
   ExplorerCreateZvolComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+} from 'app/modules/forms/controls/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
+import { IxExplorerComponent } from 'app/modules/forms/controls/ix-explorer/ix-explorer.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import {
   FormNamespaceType, NamespaceFormGroup, syncNewFileControls,

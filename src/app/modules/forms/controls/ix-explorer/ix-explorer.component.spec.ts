@@ -11,8 +11,8 @@ import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
-import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { ExplorerCreateAction } from 'app/modules/forms/controls/ix-explorer/explorer-create-action';
+import { IxExplorerComponent } from 'app/modules/forms/controls/ix-explorer/ix-explorer.component';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 @Component({

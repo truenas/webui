@@ -3,7 +3,7 @@ import { firstValueFrom } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   ExplorerCreateZvolComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
+} from 'app/modules/forms/controls/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';

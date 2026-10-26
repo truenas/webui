@@ -19,7 +19,7 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';

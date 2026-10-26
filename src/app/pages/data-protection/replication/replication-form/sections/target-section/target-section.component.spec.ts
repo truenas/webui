@@ -9,8 +9,8 @@ import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerComponent } from 'app/modules/forms/controls/ix-explorer/ix-explorer.component';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import {
   TargetSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/target-section/target-section.component';

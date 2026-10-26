@@ -6,11 +6,11 @@ import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { IxCodeEditorHarness } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.harness';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/controls/ix-permissions/ix-permissions.harness';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import {
   IxFormControlHarness, unreadableControl,

@@ -7,7 +7,7 @@ import { zvolPath } from 'app/helpers/storage.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
+import { ExplorerCreateAction } from 'app/modules/forms/controls/ix-explorer/explorer-create-action';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 

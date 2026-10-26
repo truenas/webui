@@ -6,7 +6,7 @@ import { TnFilePickerComponent } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { IxExplorerComponent } from 'app/modules/forms/controls/ix-explorer/ix-explorer.component';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 /**

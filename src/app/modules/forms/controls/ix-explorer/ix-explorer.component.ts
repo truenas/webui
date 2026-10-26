@@ -23,8 +23,8 @@ import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { zvolPath } from 'app/helpers/storage.helper';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { ExplorerCreateAction } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-action';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { ExplorerCreateAction } from 'app/modules/forms/controls/ix-explorer/explorer-create-action';
+import { TreeNodeProvider } from 'app/modules/forms/controls/ix-explorer/tree-node-provider.interface';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 

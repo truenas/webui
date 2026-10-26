@@ -12,7 +12,7 @@ import { zvolPath } from 'app/helpers/storage.helper';
 import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { TreeNodeProvider } from 'app/modules/forms/controls/ix-explorer/tree-node-provider.interface';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface ProviderOptions {

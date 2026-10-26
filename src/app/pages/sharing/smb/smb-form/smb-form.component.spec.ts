@@ -36,7 +36,7 @@ import {
   SmbShare,
 } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
+import { IxExplorerHarness } from 'app/modules/forms/controls/ix-explorer/ix-explorer.harness';
 import {
   ixManualValidateErrorKey, manualValidateErrorKey, manualValidateErrorMsgKey,
 } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
