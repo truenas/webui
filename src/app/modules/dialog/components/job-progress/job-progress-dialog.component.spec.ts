@@ -4,6 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialogHarness, TnIconButtonHarness, TnProgressBarComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -12,7 +13,6 @@ import {
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('JobProgressDialogComponent', () => {
@@ -233,7 +233,7 @@ describe('JobProgressDialogComponent', () => {
   });
 
   describe('realtime logs', () => {
-    it('subscribes to filesystem.file_tail_follow with JSON format when showRealtimeLogs is true and logs_path is provided', () => {
+    it('tails the job log when showRealtimeLogs is true and logs_path is provided', () => {
       const jobWithLogs = {
         ...testJob,
         logs_path: '/var/log/test.log',
@@ -241,27 +241,30 @@ describe('JobProgressDialogComponent', () => {
 
       spectator = createComponent({
         providers: [
-          // The log tail stays on the legacy client (gap 5).
-          mockProvider(ApiService, {
-            subscribe: jest.fn(() => of({
-              fields: {
-                data: 'Log line 1\nLog line 2\n',
-              },
-            })),
-          }),
           {
             provide: DIALOG_DATA,
             useValue: {
-              job$: of(jobWithLogs),
+              // Still running: the tail is dropped once the job finishes.
+              job$: new BehaviorSubject(jobWithLogs),
               showRealtimeLogs: true,
             } as JobProgressDialogConfig<unknown>,
           },
         ],
       });
 
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
-        `filesystem.file_tail_follow:${JSON.stringify({ path: '/var/log/test.log' })}`,
+      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith(
+        'filesystem.file_tail_follow',
+        { path: '/var/log/test.log' },
       );
+
+      spectator.inject(MockTypedApiService).emitEvent(
+        'filesystem.file_tail_follow',
+        { msg: 'added', fields: { data: 'Log line 1\nLog line 2\n' } },
+        { path: '/var/log/test.log' },
+      );
+      spectator.detectChanges();
+
+      expect(spectator.query('.logs')).toHaveText('Log line 1\nLog line 2');
     });
   });
 });

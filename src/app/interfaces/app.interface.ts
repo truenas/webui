@@ -261,7 +261,5 @@ export type AppRollbackParams = JobParams<WebUiApiDirectory, 'app.rollback'>;
 
 export interface AppContainerLog {
   data: string;
-  timestamp: string;
-  msg?: string;
-  collection?: string;
+  timestamp: string | null;
 }

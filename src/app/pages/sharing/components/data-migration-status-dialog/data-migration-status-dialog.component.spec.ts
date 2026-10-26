@@ -7,10 +7,8 @@ import { Subject, of } from 'rxjs';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { TierRewriteJobStatus } from 'app/enums/tier-rewrite-job-status.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { ZfsTierRewriteJobEntry, ZfsTierRewriteJobStats } from 'app/interfaces/zfs-tier.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DataMigrationStatusDialogComponent,
@@ -42,7 +40,7 @@ const baseStats: ZfsTierRewriteJobStats = {
 describe('DataMigrationStatusDialogComponent', () => {
   let spectator: Spectator<DataMigrationStatusDialogComponent>;
   let loader: HarnessLoader;
-  let updates$: Subject<ApiEvent<ZfsTierRewriteJobEntry>>;
+  let updates$: Subject<{ msg: 'added'; fields: ZfsTierRewriteJobEntry }>;
 
   const createComponent = createComponentFactory({
     component: DataMigrationStatusDialogComponent,
@@ -50,7 +48,6 @@ describe('DataMigrationStatusDialogComponent', () => {
       mockTypedApi([
         mockTypedCall('zfs.tier.rewrite_job_cancel', null),
       ]),
-      mockProvider(ApiService),
       mockProvider(DialogRef, { close: jest.fn() }),
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
@@ -65,7 +62,9 @@ describe('DataMigrationStatusDialogComponent', () => {
         { provide: DIALOG_DATA, useValue: { tierJob: job, targetTier } },
       ],
     });
-    jest.spyOn(spectator.inject(ApiService), 'subscribe').mockReturnValue(updates$);
+    spectator.inject(TypedApiService).subscribe = jest.fn(
+      () => updates$ as unknown as ReturnType<TypedApiService['subscribe']>,
+    ) as unknown as TypedApiService['subscribe'];
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
@@ -269,11 +268,9 @@ describe('DataMigrationStatusDialogComponent', () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
       updates$.next({
-        msg: 'changed',
-        collection: 'zfs.tier.rewrite_job_status',
-        id: 'job-1',
+        msg: 'added',
         fields: { ...baseJob, status: TierRewriteJobStatus.Complete, stats: { ...baseStats } },
-      } as ApiEvent<ZfsTierRewriteJobEntry>);
+      });
       spectator.detectChanges();
 
       expect(spectator.component.endTime()).toEqual(new Date(1100 * 1000));
@@ -283,11 +280,9 @@ describe('DataMigrationStatusDialogComponent', () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
       updates$.next({
-        msg: 'changed',
-        collection: 'zfs.tier.rewrite_job_status',
-        id: 'job-1',
+        msg: 'added',
         fields: { ...baseJob, status: TierRewriteJobStatus.Cancelled, stats: { ...baseStats } },
-      } as ApiEvent<ZfsTierRewriteJobEntry>);
+      });
       spectator.detectChanges();
 
       expect(spectator.query('.time-info')).toHaveText('Cancelled: ');
