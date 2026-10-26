@@ -14,7 +14,6 @@ import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import {
   withPreloading,
   provideRouter,
-  PreloadAllModules,
   Router,
   NavigationEnd,
   withComponentInputBinding,
@@ -60,6 +59,7 @@ import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { IdlePreloadingStrategy } from 'app/services/idle-preloading-strategy.service';
 import { ServiceWorkerService } from 'app/services/service-worker.service';
 import { rootReducers, rootEffects } from 'app/store';
 import { CustomRouterStateSerializer } from 'app/store/router/custom-router-serializer';
@@ -186,7 +186,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideRouter(
       rootRoutes,
-      withPreloading(PreloadAllModules),
+      withPreloading(IdlePreloadingStrategy),
       withComponentInputBinding(),
       withNavigationErrorHandler((error: NavigationError) => {
         handleChunkLoadError(error, inject<Window>(WINDOW));
