@@ -10,14 +10,24 @@ import { terminalLocators } from '../locators/terminal';
  */
 export const shellConnectTimeoutMs = 60_000;
 
-/** Waits for the shell to connect, which is when the font-size buttons render. */
+/**
+ * Waits for the shell to connect, which is when the font-size buttons render, and then to be fitted
+ * to the page. The fit is a `core.resize_shell` sent 300 ms after connecting, and a shell that is
+ * resized while a line is being typed can drop that line and print a fresh prompt.
+ */
 export async function waitForShell(page: Page): Promise<void> {
   await expect(page.locator(terminalLocators.increaseFontSize)).toBeVisible({ timeout: shellConnectTimeoutMs });
+  await expect(page.locator(terminalLocators.input)).toBeFocused({ timeout: shellConnectTimeoutMs });
 }
 
-/** Clicks the terminal to focus xterm's input, types `command` and presses Enter. */
+/**
+ * Clicks the terminal to focus xterm's input, types `command` and presses Enter once the shell has
+ * echoed all of it, so Enter cannot run a line the shell has only partly read.
+ */
 export async function runInTerminal(page: Page, command: string): Promise<void> {
-  await page.locator(terminalLocators.terminal).click();
+  const terminal = page.locator(terminalLocators.terminal);
+  await terminal.click();
   await page.keyboard.type(command);
+  await expect(terminal).toContainText(command);
   await page.keyboard.press('Enter');
 }
