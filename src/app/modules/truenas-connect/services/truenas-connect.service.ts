@@ -8,10 +8,10 @@ import {
 } from 'rxjs';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
+import { TruenasConnectConfig, toTruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -21,7 +21,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 })
 export class TruenasConnectService {
   private window = inject<Window>(WINDOW);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private overlay = inject(Overlay);
@@ -43,10 +43,12 @@ export class TruenasConnectService {
       // the webui is restarted due to the truenas connect state changing from enabled -> disabled
       // or vice-versa
       return merge(
-        this.api.call('tn_connect.config'),
+        this.api.call('tn_connect.config').pipe(map(toTruenasConnectConfig)),
         this.api.subscribe('tn_connect.config').pipe(
+          filter((event) => event.msg === 'changed'),
           map((event) => event.fields),
           filter(Boolean),
+          map(toTruenasConnectConfig),
         ),
       );
     }),
@@ -63,6 +65,7 @@ export class TruenasConnectService {
       enabled: false,
     }])
       .pipe(
+        map(toTruenasConnectConfig),
         this.errorHandler.withErrorHandler(),
       );
   }
@@ -72,6 +75,7 @@ export class TruenasConnectService {
       enabled: true,
     }])
       .pipe(
+        map(toTruenasConnectConfig),
         this.errorHandler.withErrorHandler(),
       );
   }

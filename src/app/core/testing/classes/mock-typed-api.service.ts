@@ -12,7 +12,9 @@ import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
 import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
 import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-as-api-call-error';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import {
+  UndeclaredCallDirectory, UndeclaredCallMethod, WebUiApiDirectory,
+} from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type D = WebUiApiDirectory;
 
@@ -70,6 +72,10 @@ export class MockTypedApiService implements OnDestroy {
   private injector = inject(Injector);
 
   readonly call = jest.fn((method: string, params?: unknown) => {
+    return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  readonly callUndeclared = jest.fn((method: string, params?: unknown) => {
     return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
@@ -131,6 +137,12 @@ export class MockTypedApiService implements OnDestroy {
 
   mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
     this.client.mock.call(method, response);
+  }
+
+  /** Scripts a method `callUndeclared` reaches; see `UndeclaredCallDirectory`. */
+  mockUndeclaredCall<M extends UndeclaredCallMethod>(method: M, response: UndeclaredCallDirectory[M]['response']): void {
+    // The fake only names generated methods; it answers an undeclared one all the same.
+    (this.client.mock.call as (method: string, response: unknown) => void)(method, response);
   }
 
   /**

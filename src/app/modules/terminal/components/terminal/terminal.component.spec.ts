@@ -7,8 +7,8 @@ import {
   defer, EMPTY, NEVER, Observable, of, Subject, throwError,
 } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -70,7 +70,7 @@ describe('TerminalComponent', () => {
       }),
     ],
     providers: [
-      mockApi(),
+      mockTypedApi(),
       provideMockStore({
         selectors: [{ selector: selectPreferences, value: defaultPreferences }],
       }),

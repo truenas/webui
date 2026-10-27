@@ -5,8 +5,8 @@ import { Observable, of, Subject } from 'rxjs';
 import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/mock-enclosure.enum';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import { WebSocketDebugEffects } from './websocket-debug.effects';
 import {

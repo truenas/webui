@@ -4,13 +4,13 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppStats } from 'app/interfaces/app.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 type State = Record<string, AppStats>;
 
 @Injectable()
 export class AppsStatsService extends ComponentStore<State> {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   constructor() {
@@ -24,7 +24,11 @@ export class AppsStatsService extends ComponentStore<State> {
   subscribeToUpdates(): void {
     this.api.subscribe('app.stats')
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((event) => this.onStatisticsReceived(event.fields));
+      .subscribe((event) => {
+        if (event.msg === 'added') {
+          this.onStatisticsReceived(event.fields);
+        }
+      });
   }
 
   private onStatisticsReceived(update: AppStats[]): void {

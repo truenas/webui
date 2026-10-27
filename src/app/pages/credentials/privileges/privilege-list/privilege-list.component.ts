@@ -75,7 +75,7 @@ export class PrivilegeListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.PrivilegeWrite];
 
-  protected dataProvider: ApiDataProvider<'privilege.query'>;
+  protected dataProvider: ApiDataProvider<'privilege.query', Privilege>;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ^ "Local" AND "Web Shell Access" = true');
   protected searchProperties: SearchProperty<Privilege>[] = [];
   protected readonly searchableElements = privilegesListElements;
@@ -156,7 +156,7 @@ export class PrivilegeListComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.api, 'privilege.query');
+    this.dataProvider = new ApiDataProvider<'privilege.query', Privilege>(this.api, 'privilege.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
 

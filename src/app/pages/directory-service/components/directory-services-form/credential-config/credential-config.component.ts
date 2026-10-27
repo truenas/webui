@@ -24,7 +24,6 @@ import {
   ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
@@ -46,8 +45,6 @@ import { DirectoryServiceValidationService } from 'app/pages/directory-service/c
 export class CredentialConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(TypedApiService);
-  /** `kerberos.keytab.kerberos_principal_choices` is missing from the generated directory (gap 14). */
-  private legacyApi = inject(ApiService);
   private validationService = inject(DirectoryServiceValidationService);
   private destroyRef = inject(DestroyRef);
 
@@ -87,7 +84,7 @@ export class CredentialConfigComponent implements OnInit {
     }),
   );
 
-  protected kerberosPrincipals$: Observable<Option[]> = this.legacyApi.call(
+  protected kerberosPrincipals$: Observable<Option[]> = this.api.callUndeclared(
     'kerberos.keytab.kerberos_principal_choices',
   ).pipe(
     map((choices) => choices.map((choice) => ({ label: choice, value: choice } as Option))),

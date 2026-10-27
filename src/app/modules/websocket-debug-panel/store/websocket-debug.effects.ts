@@ -9,11 +9,11 @@ import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/moc
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
 import { exportFilePrefix, storageKeys } from 'app/modules/websocket-debug-panel/constants';
 import {
   MockConfig, MockResponse,
 } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { safeGetItem, safeSetItem } from 'app/modules/websocket-debug-panel/utils/local-storage-utils';
 import * as WebSocketDebugActions from './websocket-debug.actions';
 import {

@@ -1,16 +1,16 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerComponent, TnBannerHarness, TnButtonComponent, TnButtonHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { QrCodeComponent, QrCodeDirective } from 'ng-qrcode';
 import { BehaviorSubject, EMPTY, NEVER, Subject, of, throwError } from 'rxjs';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { helptext2fa } from 'app/helptext/system/2fa';
-import { AuthSession } from 'app/interfaces/auth-session.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
@@ -19,7 +19,8 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { TwoFactorComponent } from 'app/pages/two-factor-auth/two-factor.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -32,7 +33,7 @@ ngMocks.globalKeep(TnBannerComponent);
 describe('TwoFactorComponent', () => {
   let spectator: Spectator<TwoFactorComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let api: TypedApiService;
 
   // The pending-verification flag has to survive a component instance — that is what
   // brings a user who reloaded mid-setup back to the confirmation step.
@@ -89,11 +90,16 @@ describe('TwoFactorComponent', () => {
           removeItem: (key: string) => storage.delete(key),
         },
       }),
-      mockApi([
-        mockCall('user.renew_2fa_secret'),
-        mockCall('user.unset_2fa_secret'),
-        mockCall('auth.sessions', [{ current: true, credentials: CredentialType.TwoFactor } as AuthSession]),
-        mockCall('system.info', { datetime: { $date: applianceNow } } as SystemInfo),
+      mockTypedApi([
+        mockTypedCall('user.renew_2fa_secret', null),
+        mockTypedCall('user.unset_2fa_secret', null),
+        mockTypedQuery('auth.sessions', [
+          { current: true, credentials: CredentialType.TwoFactor } as WebUiQueryEntity<'auth.sessions'>,
+        ]),
+        mockTypedCall(
+          'system.info',
+          { datetime: { $date: applianceNow } } as unknown as CallResponse<WebUiApiDirectory, 'system.info'>,
+        ),
       ]),
       mockProvider(AuthService, {
         user$,
@@ -111,7 +117,7 @@ describe('TwoFactorComponent', () => {
     jest.spyOn(Date, 'now').mockReturnValue(browserNow);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
   });
 
   afterEach(() => {
@@ -412,11 +418,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'system.info') {
           return throwError(() => new Error('down'));
         }
-        // auth.sessions has to stay list-shaped: loadTwoFactorConfigs calls .find() on it
-        // and the subscribe has no error handler, so undefined would surface as unhandled
-        // RxJS noise rather than a failure.
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const offline = createComponent();
       const offlineLoader = TestbedHarnessEnvironment.loader(offline.fixture);
@@ -499,8 +502,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'user.renew_2fa_secret') {
           return throwError(() => new Error('nope'));
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const failed = createComponent();
       const failedLoader = TestbedHarnessEnvironment.loader(failed.fixture);
@@ -525,8 +528,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'user.renew_2fa_secret') {
           return throwError(() => new Error('nope'));
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const dialog = createComponent({ props: { isSetupDialog: true } });
       const dialogLoader = TestbedHarnessEnvironment.loader(dialog.fixture);
@@ -593,8 +596,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'system.info') {
           return systemInfo$;
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const loading = createComponent();
 
@@ -663,8 +666,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'system.info') {
           return of({ datetime: { $date: applianceNow } } as SystemInfo);
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
       jest.mocked(spectator.inject(AuthService).refreshUser)
         .mockReturnValueOnce(throwError(() => new Error('offline')));
 
@@ -697,8 +700,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'system.info') {
           return EMPTY;
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const stalled = createComponent();
       const stalledLoader = TestbedHarnessEnvironment.loader(stalled.fixture);
@@ -716,6 +719,7 @@ describe('TwoFactorComponent', () => {
 
       const stalled = createComponent();
       const stalledLoader = TestbedHarnessEnvironment.loader(stalled.fixture);
+      await stalled.fixture.whenStable();
 
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
       const banner = await stalledLoader.getHarness(TnBannerHarness);
@@ -967,8 +971,8 @@ describe('TwoFactorComponent', () => {
         if (method === 'system.info') {
           return throwError(() => new Error('down'));
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const blind = createComponent();
       const blindLoader = TestbedHarnessEnvironment.loader(blind.fixture);
@@ -1001,8 +1005,8 @@ describe('TwoFactorComponent', () => {
             ? throwError(() => new Error('down'))
             : of({ datetime: { $date: applianceNow } } as SystemInfo);
         }
-        return method === 'auth.sessions' ? of([]) : of(undefined);
-      }) as ApiService['call']);
+        return of(undefined);
+      }) as TypedApiService['call']);
 
       const halfBlind = createComponent();
       const halfBlindLoader = TestbedHarnessEnvironment.loader(halfBlind.fixture);
@@ -1052,7 +1056,7 @@ describe('TwoFactorComponent', () => {
       spectator.component.renewSecretOrEnable2Fa();
       spectator.detectChanges();
 
-      jest.mocked(api.call).mockReturnValueOnce(NEVER as ReturnType<ApiService['call']>);
+      jest.mocked(api.call).mockReturnValueOnce(NEVER as ReturnType<TypedApiService['call']>);
       spectator.component.unset2FaSecret();
       expect(spectator.component.isFormLoading()).toBe(true);
 

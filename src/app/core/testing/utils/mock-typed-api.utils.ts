@@ -6,7 +6,7 @@ import { FakeApiErrorOverrides, JobUpdate } from '@truenas/api-client/testing';
 import {
   MockTypedApiService, TypedCallMethod, TypedCallResponseOrFactory, TypedRefusableMethod,
 } from 'app/core/testing/classes/mock-typed-api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { UndeclaredCallDirectory, UndeclaredCallMethod, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 type D = WebUiApiDirectory;
@@ -57,6 +57,13 @@ export function mockTypedCall<M extends TypedCallMethod>(
   response: TypedCallResponseOrFactory<M>,
 ): MockTypedApiResponse {
   return (api) => api.mockCall(method, response);
+}
+
+export function mockTypedUndeclaredCall<M extends UndeclaredCallMethod>(
+  method: M,
+  response: UndeclaredCallDirectory[M]['response'],
+): MockTypedApiResponse {
+  return (api) => api.mockUndeclaredCall(method, response);
 }
 
 /** Answers `method` with a JSON-RPC error, thrown by `call` as an `ApiCallError`. */

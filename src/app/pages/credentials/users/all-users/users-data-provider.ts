@@ -3,13 +3,12 @@ import {
   map, Observable, of, switchMap,
 } from 'rxjs';
 import { EmptyType } from 'app/enums/empty-type.enum';
-import { ApiCallResponseType } from 'app/interfaces/api/api-call-directory.interface';
-import { QueryFilters, QueryParams } from 'app/interfaces/query-api.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { toUser, User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
-export class UsersDataProvider extends ApiDataProvider<'user.query'> {
+export class UsersDataProvider extends ApiDataProvider<'user.query', User> {
   private additionalUsername: string;
 
   constructor(
@@ -31,7 +30,7 @@ export class UsersDataProvider extends ApiDataProvider<'user.query'> {
       this.countRows().pipe(
         switchMap((count: number) => {
           this.totalRows = count;
-          return this.api.call(this.method, this.prepareParams(this.params)) as Observable<ApiCallResponseType<'user.query'>[]>;
+          return this.api.call(this.method, this.prepareParams(this.params)) as Observable<User[]>;
         }),
         switchMap((users) => {
           if (!this.additionalUsername || users.some((user) => user.username === this.additionalUsername)) {
@@ -43,12 +42,12 @@ export class UsersDataProvider extends ApiDataProvider<'user.query'> {
           );
         }),
       ).subscribe({
-        next: (users: ApiCallResponseType<'user.query'>[]) => {
+        next: (users: User[]) => {
           this.rows = users;
           // this.expandedRow = users.find((user) => user.username === this.additionalUsername);
           this.additionalUsername = null;
           this.currentPage$.next(this.rows);
-          const isSearchApplied = !isEmpty((this.params as QueryFilters<ApiCallResponseType<'user.query'>>)[0]);
+          const isSearchApplied = !isEmpty(this.params[0]);
           if (!users.length) {
             this.emptyType$.next(isSearchApplied ? EmptyType.NoSearchResults : EmptyType.NoPageData);
           } else {

@@ -1,8 +1,15 @@
+import { JobMethod } from '@truenas/api-client';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Credentials } from 'app/interfaces/credential-type.interface';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+/**
+ * Jobs middleware starts by itself and the UI watches for in `core.get_jobs`. They cannot be
+ * called, so the generated job directory does not list them.
+ */
+type InternalJobMethod = 'failover.events.vrrp_master';
 
 export interface Job<R = unknown, A = unknown[]> {
   abortable: boolean;
@@ -21,7 +28,7 @@ export interface Job<R = unknown, A = unknown[]> {
   logs_excerpt: string;
   credentials: Credentials | null;
   logs_path: string;
-  method: ApiJobMethod;
+  method: JobMethod<WebUiApiDirectory> | InternalJobMethod;
   progress: JobProgress;
   result: R;
   state: JobState;

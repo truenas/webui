@@ -1,5 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { DuplicateCallTrackerService } from 'app/modules/websocket/duplicate-call-tracker.service';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 
 describe('DuplicateCallTrackerService', () => {
   let spectator: SpectatorService<DuplicateCallTrackerService>;

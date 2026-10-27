@@ -4,21 +4,19 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
-import { Job } from 'app/interfaces/job.interface';
 import { ExportButtonComponent } from 'app/modules/buttons/export-button/export-button.component';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 
 describe('ExportButtonComponent', () => {
-  const jobMethod: ApiJobMethod = 'audit.export';
+  const jobMethod = 'audit.export' as const;
   type EntryType = AuditEntry;
 
   let spectator: Spectator<ExportButtonComponent<EntryType, typeof jobMethod>>;
@@ -27,8 +25,8 @@ describe('ExportButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: ExportButtonComponent<EntryType, typeof jobMethod>,
     providers: [
-      mockApi([
-        mockJob(jobMethod, { result: '/path/data.csv', state: JobState.Success } as Job<string>),
+      mockTypedApi([
+        mockTypedJob(jobMethod, { result: '/path/data.csv', state: JobState.Success }),
       ]),
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
@@ -58,7 +56,7 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As CSV' }));
     await exportButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'CSV',
       'query-filters': [],
       'query-options': {},
@@ -87,7 +85,7 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As CSV' }));
     await exportButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'CSV',
       'query-filters': [['event', '~', '(?i)search query']],
       'query-options': { order_by: ['-service'] },
@@ -127,7 +125,7 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As JSON' }));
     await exportButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'JSON',
       'query-filters': [],
       'query-options': {},
@@ -143,7 +141,7 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As YAML' }));
     await exportButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'YAML',
       'query-filters': [],
       'query-options': {},
@@ -170,7 +168,7 @@ describe('ExportButtonComponent', () => {
     const exportButton = await loader.getHarness(TnButtonHarness.with({ label: 'Export As CSV' }));
     await exportButton.click();
 
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(jobMethod, [{
+    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(jobMethod, [{
       export_format: 'CSV',
       'query-filters': [],
       'query-options': {},

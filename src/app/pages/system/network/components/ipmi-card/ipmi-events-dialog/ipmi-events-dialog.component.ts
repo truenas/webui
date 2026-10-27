@@ -5,11 +5,11 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnEmptyComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { parse } from 'date-fns';
 import { JobState } from 'app/enums/job-state.enum';
-import { IpmiEvent } from 'app/interfaces/ipmi.interface';
+import { IpmiEvent, toIpmiEvents } from 'app/interfaces/ipmi.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class IpmiEventsDialog implements OnInit {
   protected dialogRef = inject<DialogRef<unknown, IpmiEventsDialog>>(DialogRef);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
@@ -70,9 +70,15 @@ export class IpmiEventsDialog implements OnInit {
 
   private loadEvents(): void {
     this.isLoading.set(true);
-    this.api.call('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (events) => {
-        this.events = this.sortEvents(events);
+    // Every generated directory declares `ipmi.sel.elist` as a job, so it is followed to its result. NAS-141809 had
+    // moved it to a plain call; see the system drift notes in docs/devs/typed-api-client.md.
+    this.api.job('ipmi.sel.elist').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: (job) => {
+        if (job.state !== JobState.Success) {
+          return;
+        }
+
+        this.events = this.sortEvents(toIpmiEvents(job.result));
       },
       complete: () => {
         this.isLoading.set(false);

@@ -4,17 +4,18 @@ import {
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { JobMethod, JobResult } from '@truenas/api-client';
 import { Observable, of } from 'rxjs';
 import { switchMap, take } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
-import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { AppState } from 'app/store';
 
-export interface UploadOptions<M extends ApiJobMethod = ApiJobMethod> {
+export interface UploadOptions<M extends JobMethod<WebUiApiDirectory> = JobMethod<WebUiApiDirectory>> {
   file: File;
   method: M;
   params?: unknown[];
@@ -108,7 +109,9 @@ export class UploadService {
     return { observable: observable$, cancel };
   }
 
-  uploadAsJob<M extends ApiJobMethod>(options: UploadOptions<M>): Observable<Job<ApiJobResponse<M>>> {
+  uploadAsJob<M extends JobMethod<WebUiApiDirectory>>(
+    options: UploadOptions<M>,
+  ): Observable<Job<JobResult<WebUiApiDirectory, M>>> {
     const { observable: observable$ } = this.upload(options);
     return observable$
       .pipe(
@@ -119,17 +122,17 @@ export class UploadService {
               throw new Error('Job ID not found in response');
             }
             return this.store$.select(selectJob(jobId))
-              .pipe(observeJob()) as Observable<Job<ApiJobResponse<M>>>;
+              .pipe(observeJob()) as Observable<Job<JobResult<WebUiApiDirectory, M>>>;
           }
 
-          const fakeJob: Job<ApiJobResponse<M>> = {
+          const fakeJob: Job<JobResult<WebUiApiDirectory, M>> = {
             progress: {
               percent: response.loaded && response.total ? response.loaded / response.total * 100 : 0,
               description: this.translate.instant('Uploading') as string,
             },
             method: options.method,
             state: JobState.Running,
-          } as Job<ApiJobResponse<M>>;
+          } as Job<JobResult<WebUiApiDirectory, M>>;
 
           return of(fakeJob);
         }),

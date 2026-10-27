@@ -1,4 +1,6 @@
-import { CallParams, CallResponse } from '@truenas/api-client';
+import {
+  CallParams, CallResponse, JobResult, v28_0_0,
+} from '@truenas/api-client';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -52,14 +54,15 @@ export function toIpmiUpdateArgs(update: IpmiUpdate): CallParams<D, 'ipmi.lan.up
   return update as CallParams<D, 'ipmi.lan.update'>[1];
 }
 
-export interface IpmiEvent {
-  id: number;
-  date: string;
-  time: string;
-  name: string;
-  type: string;
-  event_direction: string;
-  event: string;
+/** An entry of the IPMI system event log, as `ipmi.sel.elist` lists it. */
+export type IpmiEvent = v28_0_0.IpmiSelElistEntry;
+
+/**
+ * Reads `ipmi.sel.elist`'s result. It is a query job, so the result is typed for every query option; called
+ * without options it is the list of entries.
+ */
+export function toIpmiEvents(result: JobResult<D, 'ipmi.sel.elist'>): IpmiEvent[] {
+  return result as IpmiEvent[];
 }
 
 export interface IpmiChassis {

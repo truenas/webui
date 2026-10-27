@@ -9,7 +9,8 @@ import { Store, StoreModule } from '@ngrx/store';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,7 +21,7 @@ import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
@@ -84,7 +85,7 @@ const transientRunningJob = {
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
-  let api: ApiService;
+  let api: TypedApiService;
   let loader: HarnessLoader;
   let jobPanel: JobsPanelPageObject;
 
@@ -111,14 +112,8 @@ describe('JobsPanelComponent', () => {
           getDestroyRef: () => ({ onDestroy: jest.fn(() => () => {}) }),
         })),
       }),
-      mockApi([
-        mockCall('core.get_jobs', (query) => {
-          if (query[0]?.[0][2] === JobState.Success) {
-            return [successJob];
-          }
-          return [runningJob, waitingJob, failedJob, transientRunningJob];
-        }),
-        mockCall('core.job_abort'),
+      mockTypedApi([
+        mockTypedCall('core.job_abort', null),
       ]),
       mockProvider(DialogRef),
     ],
@@ -126,7 +121,13 @@ describe('JobsPanelComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    api = spectator.inject(ApiService);
+    api = spectator.inject(TypedApiService);
+    // The double answers a query with the same rows whatever its filters, and the store asks twice:
+    // once for the unfinished jobs, once for the recently finished ones.
+    spectator.inject(MockTypedApiService).query.mockImplementation((_, filters) => {
+      const [[, operator]] = filters as [string, string, JobState][];
+      return of(operator === '=' ? [successJob] : [runningJob, waitingJob, failedJob, transientRunningJob]);
+    });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     jobPanel = new JobsPanelPageObject(spectator);
   });
@@ -134,18 +135,20 @@ describe('JobsPanelComponent', () => {
   it('loads jobs when adminUiInitialized is dispatched', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
 
-    expect(api.call).toHaveBeenCalledWith(
+    expect(api.query).toHaveBeenCalledWith(
       'core.get_jobs',
-      [[['state', '!=', JobState.Success]]],
+      [['state', '!=', JobState.Success]],
     );
-    expect(api.call).toHaveBeenCalledWith(
+    expect(api.query).toHaveBeenCalledWith(
       'core.get_jobs',
-      [[['state', '=', JobState.Success]], { limit: 30, order_by: ['-id'] }],
+      [['state', '=', JobState.Success]],
+      { limit: 30, order_by: ['-id'] },
     );
   });
 
-  it('checks component header is present', () => {
+  it('checks component header is present', async () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
+    await spectator.fixture.whenStable();
 
     expect(jobPanel.title).toHaveExactText('Running Jobs');
     expect(jobPanel.runningBadgeCount).toHaveText('1');
@@ -154,8 +157,9 @@ describe('JobsPanelComponent', () => {
     expect(spectator.query('.job-badge.success .job-badge-count')).toHaveText('1');
   });
 
-  it('checks component body is present', () => {
+  it('checks component body is present', async () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
+    await spectator.fixture.whenStable();
 
     // Check ongoing jobs section (running + waiting)
     const ongoingJobItems = spectator.queryAll('.jobs-list ix-job-item');
@@ -170,12 +174,14 @@ describe('JobsPanelComponent', () => {
     expect(allJobItems).toHaveLength(4);
   });
 
-  it('aborts a job when abort button is pressed', () => {
+  it('aborts a job when abort button is pressed', async () => {
     jest.spyOn(console, 'warn').mockImplementation();
     spectator.inject(Store).dispatch(adminUiInitialized());
+    await spectator.fixture.whenStable();
 
     const abortButton = spectator.query('.job-button-abort')!;
     spectator.click(abortButton);
+    await spectator.fixture.whenStable();
 
     expect(api.call).toHaveBeenCalledWith('core.job_abort', [1]);
   });

@@ -12,7 +12,6 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailoverValidationService } from 'app/services/failover-validation.service';
@@ -50,9 +49,6 @@ describe('SigninStore', () => {
       mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
         isAuthenticated$: of(true),
-      }),
-      mockProvider(WebSocketHandlerService, {
-        responses$: of(),
       }),
       mockProvider(TokenLastUsedService, {
         isTokenWithinTimeline$,

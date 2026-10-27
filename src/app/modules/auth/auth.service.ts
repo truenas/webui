@@ -28,12 +28,12 @@ import { Role } from 'app/enums/role.enum';
 import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
-import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
+import { LoggedInUser, toLoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { asLoginExResponse } from 'app/modules/auth/typed-login-response';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -49,7 +49,7 @@ const logoutAckTimeoutMs = 10_000;
 })
 export class AuthService implements OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private client$ = inject(TYPED_API_CLIENT);
   private tokenLastUsedService = inject(TokenLastUsedService);
   private wsStatus = inject(WebSocketStatusService);
@@ -350,8 +350,9 @@ export class AuthService implements OnDestroy {
   private endLocalSession(): void {
     this.clearAuthToken();
     this.hasPasswordChangedSinceLastLogin$.next(false);
+    // No subscriptions to clear: the client drops every event subscription when the session ends
+    // and sends `core.subscribe` again for the ones still held once the next login lands.
     this.wsStatus.setLoginStatus(false);
-    this.api.clearSubscriptions();
     this.sessionInitialized = false;
     this.pendingAuthData = null;
     this.loggedInUser$.next(null); // Clear user data on logout
@@ -448,6 +449,7 @@ export class AuthService implements OnDestroy {
 
   private getLoggedInUserInformation(): Observable<LoggedInUser> {
     return this.api.call('auth.me').pipe(
+      map(toLoggedInUser),
       tap((loggedInUser) => {
         this.loggedInUser$.next(loggedInUser);
       }),

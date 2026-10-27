@@ -1,12 +1,20 @@
+import { CallMethod, CallParams } from '@truenas/api-client';
 import { isEqual } from 'lodash-es';
 import { Observable, of } from 'rxjs';
-import { QueryMethods, ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
-import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
+import { QueryParams } from 'app/interfaces/query-api.interface';
 import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
 import { ApiQueryParams } from 'app/modules/tn-table/classes/api-data-provider/query-params';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export class QueryFiltersAndOptionsApiDataProvider<T extends QueryMethods> extends ApiDataProvider<T> {
-  lastParams: ApiCallParams<T>;
+/**
+ * For methods that take filters and options as one `{ 'query-filters', 'query-options' }` object
+ * rather than as two positional params. None of them is a query method, so `Row` has to be named.
+ */
+export class QueryFiltersAndOptionsApiDataProvider<
+  M extends CallMethod<WebUiApiDirectory>,
+  Row,
+> extends ApiDataProvider<M, Row> {
+  lastParams: QueryParams<Row>;
 
   get isLastOffset(): boolean {
     return Boolean((this.totalRows / Number(this.pagination.pageNumber)) < Number(this.pagination.pageSize));
@@ -23,26 +31,25 @@ export class QueryFiltersAndOptionsApiDataProvider<T extends QueryMethods> exten
 
     this.lastParams = this.params;
 
-    this.params = this.params as Exclude<ApiCallParams<T>, void>;
-    const params: ApiQueryParams<T>[] = [{
-      'query-filters': (this.params[0] || []) as QueryFilters<T>,
-      'query-options': { count: true } as QueryOptions<T>,
+    const params: ApiQueryParams<Row>[] = [{
+      'query-filters': this.params[0] || [],
+      'query-options': { count: true },
     }];
 
-    return this.api.call(this.method, params as ApiCallParams<T>) as unknown as Observable<number>;
+    return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
-  protected override prepareParams(params: ApiCallParams<T>): ApiCallParams<T> {
-    const [queryFilters = []] = params as [QueryFilters<ApiCallParams<T>>];
+  protected override prepareParams(params: QueryParams<Row>): CallParams<WebUiApiDirectory, M> {
+    const [queryFilters = []] = params;
 
-    const apiCallParams: ApiCallParams<T> = [{
-      'query-filters': queryFilters as QueryFilters<T>,
+    const apiCallParams: ApiQueryParams<Row>[] = [{
+      'query-filters': queryFilters,
       'query-options': {
         ...this.paginationStrategy.getParams(this.pagination, this.totalRows),
         ...this.sortingStrategy.getParams(this.sorting),
-      } as QueryOptions<T>,
-    }] as unknown as ApiCallParams<T>;
+      },
+    }];
 
-    return apiCallParams;
+    return apiCallParams as CallParams<WebUiApiDirectory, M>;
   }
 }

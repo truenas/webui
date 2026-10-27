@@ -12,7 +12,6 @@ import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextGlobal } from 'app/helptext/global-helptext';
-import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobSlice, selectJob } from 'app/modules/jobs/store/job.selectors';
@@ -161,7 +160,7 @@ export class TaskStateCellComponent {
     const jobUpdates$ = this.store$.select(selectJob(jobId)).pipe(
       filter((job) => !!job),
       observeJob(),
-    ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>;
+    ) as Observable<Job>;
 
     this.dialogService.jobDialog(
       jobUpdates$,

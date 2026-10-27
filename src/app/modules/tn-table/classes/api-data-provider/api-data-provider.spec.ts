@@ -1,7 +1,6 @@
 import { of } from 'rxjs';
-import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
+import { ApiDataProvider, ApiDataProviderClient } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('ApiDataProvider', () => {
   let dataProvider: ApiDataProvider<'pool.query'>;
@@ -9,7 +8,7 @@ describe('ApiDataProvider', () => {
 
   beforeEach(() => {
     api = { call: jest.fn(() => of([])) };
-    dataProvider = new ApiDataProvider(api as unknown as ApiService, 'pool.query');
+    dataProvider = new ApiDataProvider(api as ApiDataProviderClient, 'pool.query');
   });
 
   it('resets pagination to page 1 when sorting changes', () => {

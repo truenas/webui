@@ -14,7 +14,6 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { containerStatusLabels } from 'app/enums/container.enum';
 import { Container, ContainerMetrics, toContainer } from 'app/interfaces/container.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -110,12 +109,6 @@ const initialState: ContainersState = {
 @Injectable()
 export class ContainersStore extends ComponentStore<ContainersState> {
   private api = inject(TypedApiService);
-  /**
-   * For `container.metrics` alone: an event source middleware pushes on a timer, which must not
-   * move while the typed client never releases a subscription (gap 17 in
-   * docs/devs/typed-api-client.md) — it would keep streaming after the page is left.
-   */
-  private legacyApi = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
@@ -367,8 +360,10 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           if (!shouldSubscribe) {
             return EMPTY;
           }
-          return this.legacyApi.subscribe('container.metrics').pipe(
-            map((event) => event.fields ?? {}),
+          return this.api.subscribe('container.metrics').pipe(
+            // Generated as a dictionary of `unknown`; the UI's `ContainerStats` names what it reads.
+            map((event) => (event.msg === 'added' ? event.fields as unknown as ContainerMetrics : null)),
+            filter((metrics) => metrics !== null),
           );
         }),
         tap((metrics) => this.patchState({ metrics })),

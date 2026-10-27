@@ -2,6 +2,9 @@ import { ChangeDetectionStrategy, Component, DestroyRef, input, inject, signal }
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  ArgsOf, CallMethod, JobMethod, JobParams,
+} from '@truenas/api-client';
 import { TnButtonComponent, TnProgressBarComponent } from '@truenas/ui-components';
 import {
   catchError, EMPTY, finalize, switchMap,
@@ -9,14 +12,13 @@ import {
 import { ControllerType } from 'app/enums/controller-type.enum';
 import { ExportFormat } from 'app/enums/export-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiCallDirectory } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiJobMethod, ApiJobParams } from 'app/interfaces/api/api-job-directory.interface';
 import { PropertyPath } from 'app/interfaces/property-path.type';
 import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -33,8 +35,8 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
     TranslateModule,
   ],
 })
-export class ExportButtonComponent<T, M extends ApiJobMethod> {
-  private api = inject(ApiService);
+export class ExportButtonComponent<T, M extends JobMethod<WebUiApiDirectory>> {
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   private store$ = inject<Store<AppState>>(Store);
@@ -52,7 +54,8 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   readonly addReportNameArgument = input(false);
   // TODO: Does not belong to generic export button component.
   readonly controllerType = input<ControllerType>();
-  readonly downloadMethod = input<keyof ApiCallDirectory>();
+  // Only named to `core.download`, which takes call and job methods alike (`audit.download_report` is a job).
+  readonly downloadMethod = input<CallMethod<WebUiApiDirectory> | JobMethod<WebUiApiDirectory>>();
   readonly exportFormat = input<ExportFormat>(ExportFormat.Csv);
   readonly customExportParams = input<Record<string, unknown>>();
 
@@ -62,7 +65,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
 
   onExport(): void {
     this.isLoading.set(true);
-    this.api.job(this.jobMethod(), this.getExportParams(
+    this.api.job(this.jobMethod(), ...this.getExportParams(
       this.getQueryFilters(this.searchQuery()),
       this.getQueryOptions(this.sorting()),
     )).pipe(
@@ -106,8 +109,9 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
   private getExportParams(
     queryFilters: QueryFilters<T>,
     queryOptions: QueryOptions<T>,
-  ): ApiJobParams<M> {
-    return [{
+  ): ArgsOf<JobParams<WebUiApiDirectory, M>> {
+    // `M` is only known at the call site, so the export params cannot be checked against its model here.
+    return [[{
       'query-filters': queryFilters,
       'query-options': queryOptions,
       export_format: this.exportFormat(),
@@ -115,7 +119,7 @@ export class ExportButtonComponent<T, M extends ApiJobMethod> {
         remote_controller: this.controllerType() === ControllerType.Standby,
       }),
       ...this.customExportParams(),
-    }] as ApiJobParams<M>;
+    }]] as ArgsOf<JobParams<WebUiApiDirectory, M>>;
   }
 
   private getQueryFilters(searchQuery?: SearchQuery<T>): QueryFilters<T> {

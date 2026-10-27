@@ -6,10 +6,11 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnCheckboxComponent } from '@truenas/ui-components';
 import { format } from 'date-fns';
+import { map } from 'rxjs';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
-import { AlertCategory } from 'app/interfaces/alert.interface';
+import { AlertCategory, toAlertCategories } from 'app/interfaces/alert.interface';
 import { smartAlertRegistry } from 'app/modules/alerts/services/alert-enhancement.registry';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 interface AlertClassInfo {
@@ -32,7 +33,7 @@ interface AlertClassInfo {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertClassesTabComponent {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private destroyRef = inject(DestroyRef);
 
   protected autoCheck = signal(true);
@@ -58,6 +59,7 @@ export class AlertClassesTabComponent {
     this.error.set(null);
 
     this.api.call('alert.list_categories').pipe(
+      map(toAlertCategories),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (categories: AlertCategory[]) => {

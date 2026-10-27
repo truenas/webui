@@ -8,7 +8,6 @@ import { MockEnclosureScenario } from 'app/core/testing/mock-enclosure/enums/moc
 import { MockEnclosureConfig } from 'app/core/testing/mock-enclosure/interfaces/mock-enclosure.interface';
 import { EnclosureModel } from 'app/enums/enclosure-model.enum';
 import { assertUnreachable } from 'app/helpers/assert-unreachable.utils';
-import { ApiCallResponse } from 'app/interfaces/api/api-call-directory.interface';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 
@@ -24,7 +23,7 @@ export class MockEnclosureGenerator {
     this.handleMockingScenario(this.config.scenario);
   }
 
-  webuiDashboardEnclosureResponse(): ApiCallResponse<'webui.enclosure.dashboard'> {
+  webuiDashboardEnclosureResponse(): DashboardEnclosure[] {
     return this.enclosures;
   }
 

@@ -6,7 +6,6 @@ import { Job } from 'app/interfaces/job.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReportingRealtimeUpdate } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 
 export interface ApiEventDirectory {
   'app.stats': { response: AppStats[] };
@@ -15,7 +14,6 @@ export interface ApiEventDirectory {
   'failover.status': { response: { status: FailoverStatus } };
   'pool.query': { response: Pool };
   'reporting.realtime': { response: ReportingRealtimeUpdate };
-  'tn_connect.config': { response: TruenasConnectConfig };
 
   'container.metrics': { response: ContainerMetrics };
 

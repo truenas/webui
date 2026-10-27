@@ -17,13 +17,16 @@ import {
   jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
+
+// Middleware's `core.get_jobs` frames, which the generated event union does not fully describe (it has no `removed`).
+const jobEvent = (event: object): ReturnType<TypedApiService['subscribe']> => of(event) as ReturnType<TypedApiService['subscribe']>;
 
 describe('JobEffects', () => {
   let effects: JobEffects;
   let actions$: Observable<unknown>;
-  let apiService: ApiService;
+  let apiService: TypedApiService;
   let translateService: TranslateService;
   let testScheduler: TestScheduler;
 
@@ -50,8 +53,9 @@ describe('JobEffects', () => {
       providers: [
         JobEffects,
         provideMockActions(() => actions$),
-        MockProvider(ApiService, {
+        MockProvider(TypedApiService, {
           call: jest.fn(),
+          query: jest.fn(),
           subscribe: jest.fn(),
         }),
         {
@@ -64,7 +68,7 @@ describe('JobEffects', () => {
     });
 
     effects = TestBed.inject(JobEffects);
-    apiService = TestBed.inject(ApiService);
+    apiService = TestBed.inject(TypedApiService);
     translateService = TestBed.inject(TranslateService);
 
     testScheduler = new TestScheduler((actual, expected) => {
@@ -77,7 +81,7 @@ describe('JobEffects', () => {
       const notCompletedJobs = [mockRunningJob];
       const completedJobs = [mockSuccessJob];
 
-      jest.spyOn(apiService, 'call')
+      jest.spyOn(apiService, 'query')
         .mockReturnValueOnce(of(notCompletedJobs))
         .mockReturnValueOnce(of(completedJobs));
 
@@ -92,13 +96,13 @@ describe('JobEffects', () => {
         expectObservable(effects.loadJobs$).toBe(expected, expectedValues);
       });
 
-      expect(apiService.call).toHaveBeenCalledWith('core.get_jobs', [[['state', '!=', JobState.Success]]]);
-      expect(apiService.call).toHaveBeenCalledWith('core.get_jobs', [[['state', '=', JobState.Success]], { order_by: ['-id'], limit: 30 }]);
+      expect(apiService.query).toHaveBeenCalledWith('core.get_jobs', [['state', '!=', JobState.Success]]);
+      expect(apiService.query).toHaveBeenCalledWith('core.get_jobs', [['state', '=', JobState.Success]], { order_by: ['-id'], limit: 30 });
     });
 
     it('dispatches jobsNotLoaded on error', () => {
       const error = new Error('Network error');
-      jest.spyOn(apiService, 'call')
+      jest.spyOn(apiService, 'query')
         .mockReturnValueOnce(throwError(() => error))
         .mockReturnValueOnce(of([]));
 
@@ -121,7 +125,7 @@ describe('JobEffects', () => {
 
   describe('subscribeToUpdates$', () => {
     it('dispatches jobAdded when job is added', () => {
-      jest.spyOn(apiService, 'subscribe').mockReturnValue(of({
+      jest.spyOn(apiService, 'subscribe').mockReturnValue(jobEvent({
         msg: CollectionChangeType.Added,
         fields: mockRunningJob,
         id: 1,
@@ -141,7 +145,7 @@ describe('JobEffects', () => {
     });
 
     it('dispatches jobChanged when job is changed', () => {
-      jest.spyOn(apiService, 'subscribe').mockReturnValue(of({
+      jest.spyOn(apiService, 'subscribe').mockReturnValue(jobEvent({
         msg: CollectionChangeType.Changed,
         fields: mockSuccessJob,
         id: 2,
@@ -161,7 +165,7 @@ describe('JobEffects', () => {
     });
 
     it('filters out removed events', () => {
-      jest.spyOn(apiService, 'subscribe').mockReturnValue(of({
+      jest.spyOn(apiService, 'subscribe').mockReturnValue(jobEvent({
         msg: CollectionChangeType.Removed,
         fields: mockRunningJob,
         id: 1,
@@ -179,7 +183,7 @@ describe('JobEffects', () => {
 
   describe('subscribeToRemoval$', () => {
     it('dispatches jobRemoved when job is removed', () => {
-      jest.spyOn(apiService, 'subscribe').mockReturnValue(of({
+      jest.spyOn(apiService, 'subscribe').mockReturnValue(jobEvent({
         msg: CollectionChangeType.Removed,
         fields: undefined,
         id: 1,
@@ -199,7 +203,7 @@ describe('JobEffects', () => {
     });
 
     it('filters out non-removed events', () => {
-      jest.spyOn(apiService, 'subscribe').mockReturnValue(of({
+      jest.spyOn(apiService, 'subscribe').mockReturnValue(jobEvent({
         msg: CollectionChangeType.Added,
         fields: mockRunningJob,
         id: 1,

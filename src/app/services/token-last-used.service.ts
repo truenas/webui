@@ -7,13 +7,13 @@ import {
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TokenLastUsedService {
-  private wsHandler = inject(WebSocketHandlerService);
+  private client$ = inject(TYPED_API_CLIENT);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
 
@@ -70,7 +70,10 @@ export class TokenLastUsedService {
       // stamp froze at sign-in on exactly the pages that are busiest, and the sign-in page then
       // read the session as expired however long the user had been working in it. Auditing stamps
       // at most once per interval whether the traffic is a trickle or a stream.
-      switchMap(() => this.wsHandler.responses$.pipe(auditTime(this.stampIntervalMs))),
+      switchMap(() => this.client$.pipe(
+        switchMap((client) => client.connection.messages()),
+        auditTime(this.stampIntervalMs),
+      )),
       // Traffic keeps a stamp fresh but never starts one. The socket keeps answering after the
       // token is cleared — a failover's sign-in page refusing the old token, for one — and a
       // stamp then made the sign-in page read a session that no longer exists as being restored:

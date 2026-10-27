@@ -36,11 +36,14 @@ import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-a
 import {
   TYPED_API_CLIENT,
   TypedQueryFilter,
+  UndeclaredCallDirectory,
+  UndeclaredCallMethod,
   WebUiApiClient,
   WebUiApiDirectory,
   WebUiQueryEntity,
   WebUiQueryMethod,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -69,9 +72,12 @@ type ClientApi = WebUiApiClient['api'];
  * which is what a page loaded before sign-in, or one caught mid-reconnect, is
  * waiting for.
  *
- * ## What is deliberately not here yet
+ * ## Duplicate calls
  *
- * - Calls are not intercepted by the WebSocket debug panel or its mocks.
+ * Every request verb reports itself to `DuplicateCallTrackerService` as it is
+ * called, before it waits for the session, so a repeat is warned about with the
+ * stack of the code that made it. Tracking at the connection instead would see
+ * only the client's internals on the stack.
  *
  * ## Errors
  *
@@ -87,6 +93,7 @@ export class TypedApiService {
   private client$ = inject(TYPED_API_CLIENT);
   private wsStatus = inject(WebSocketStatusService);
   private destroyRef = inject(DestroyRef);
+  private duplicates = inject(DuplicateCallTrackerService);
 
   /**
    * Emits the client once its session is authenticated. Every request waits on
@@ -117,8 +124,27 @@ export class TypedApiService {
    * Errors are thrown as `ApiCallError`; see "Errors" above.
    */
   call<M extends CallMethod<D>>(method: M, ...params: ArgsOf<CallParams<D, M>>): Observable<CallResponse<D, M>> {
+    this.duplicates.trackCall(method, params[0]);
     return this.ready$.pipe(
       switchMap((client) => client.api.call(method, ...params)),
+      this.handleRefusal(),
+    );
+  }
+
+  /**
+   * `call` for the few methods middleware serves but leaves out of the generated directory
+   * (gap 14 in docs/devs/typed-api-client.md). They are typed by `UndeclaredCallDirectory`,
+   * written by hand, so nothing checks them against middleware; prefer `call` for anything else.
+   */
+  callUndeclared<M extends UndeclaredCallMethod>(
+    method: M,
+    ...params: ArgsOf<UndeclaredCallDirectory[M]['params']>
+  ): Observable<UndeclaredCallDirectory[M]['response']> {
+    // The client's `call` only names generated methods; on the wire an undeclared one is the same frame.
+    type LooseCall = (method: string, ...params: unknown[]) => Observable<UndeclaredCallDirectory[M]['response']>;
+    this.duplicates.trackCall(method, params[0]);
+    return this.ready$.pipe(
+      switchMap((client) => (client.api.call as LooseCall).call(client.api, method, ...params)),
       this.handleRefusal(),
     );
   }
@@ -134,6 +160,7 @@ export class TypedApiService {
     method: M,
     ...params: ArgsOf<CallParams<D, M>>
   ): Observable<CallResponse<D, M>> {
+    this.duplicates.trackCall(method, params[0]);
     return this.client$.pipe(
       take(1),
       switchMap((client) => client.api.call(method, ...params)),
@@ -156,26 +183,35 @@ export class TypedApiService {
    */
   readonly query = ((
     ...args: Parameters<ClientApi['query']>
-  ) => this.ready$.pipe(
-    switchMap((client) => client.api.query(...args)),
-    this.handleRefusal(),
-  )) as ClientApi['query'];
+  ) => {
+    this.trackQuery(args);
+    return this.ready$.pipe(
+      switchMap((client) => client.api.query(...args)),
+      this.handleRefusal(),
+    );
+  }) as ClientApi['query'];
 
   /** Query the single matching entry. Middleware errors unless exactly one matches. */
   readonly queryOne = ((
     ...args: Parameters<ClientApi['queryOne']>
-  ) => this.ready$.pipe(
-    switchMap((client) => client.api.queryOne(...args)),
-    this.handleRefusal(),
-  )) as ClientApi['queryOne'];
+  ) => {
+    this.trackQuery(args);
+    return this.ready$.pipe(
+      switchMap((client) => client.api.queryOne(...args)),
+      this.handleRefusal(),
+    );
+  }) as ClientApi['queryOne'];
 
   /** Count the matching entries. */
   readonly queryCount = ((
     ...args: Parameters<ClientApi['queryCount']>
-  ) => this.ready$.pipe(
-    switchMap((client) => client.api.queryCount(...args)),
-    this.handleRefusal(),
-  )) as ClientApi['queryCount'];
+  ) => {
+    this.trackQuery(args);
+    return this.ready$.pipe(
+      switchMap((client) => client.api.queryCount(...args)),
+      this.handleRefusal(),
+    );
+  }) as ClientApi['queryCount'];
 
   /**
    * Start a job and follow it to completion.
@@ -189,6 +225,7 @@ export class TypedApiService {
     method: M,
     ...params: ArgsOf<JobParams<D, M>>
   ): Observable<Job<JobResult<D, M>>> {
+    this.duplicates.trackCall(method, params[0]);
     return this.ready$.pipe(
       switchMap((client) => client.api.job(method, ...params)),
       this.handleRefusal(),
@@ -207,6 +244,7 @@ export class TypedApiService {
    * A method refused before it starts a job throws `ApiCallError`.
    */
   startJob<M extends JobMethod<D>>(method: M, ...params: ArgsOf<JobParams<D, M>>): Observable<number> {
+    this.duplicates.trackCall(method, params[0]);
     return this.ready$.pipe(
       switchMap((client) => client.api.callAndGetJobId(method, ...params)),
       this.handleRefusal(),
@@ -264,6 +302,11 @@ export class TypedApiService {
     ) => Observable<LooseRow[]>;
     const changes$ = this.subscribe(method) as unknown as Observable<{ msg: string; id?: unknown; fields?: LooseRow }>;
     return followCollection(looseQuery(method, filters, options), changes$) as Observable<WebUiQueryEntity<M>[]>;
+  }
+
+  /** The query verbs' arguments are the method followed by its filters and options. */
+  private trackQuery([method, ...params]: readonly unknown[]): void {
+    this.duplicates.trackCall(String(method), params);
   }
 
   /**

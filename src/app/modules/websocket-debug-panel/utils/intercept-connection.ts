@@ -27,8 +27,9 @@ type Messages = ReturnType<Connection['messages']>;
  *
  * One thing it cannot reach: the client's `api.job()` tracks job progress on a
  * `messages()` stream it took when it was built, before this ran. A mocked job's
- * synthetic `core.get_jobs` events reach the legacy jobs store but not a typed
- * `job()` (gap 7 in docs/devs/typed-api-client.md).
+ * synthetic `core.get_jobs` events reach the jobs store, whose `subscribe` takes
+ * a fresh `messages()` stream, but not a typed `job()` (gap 7 in
+ * docs/devs/typed-api-client.md).
  */
 export function interceptConnection(
   connection: Connection,

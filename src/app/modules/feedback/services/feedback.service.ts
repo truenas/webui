@@ -28,9 +28,12 @@ import {
   CreateNewTicket,
   NewTicketResponse,
   SimilarIssue,
+  toNewTicketArgs,
+  toNewTicketResponse,
+  toSimilarIssues,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
@@ -57,7 +60,7 @@ function getLegacyProductType(facts: EntitlementFacts): FeedbackProductType {
 })
 export class FeedbackService {
   private httpClient = inject(HttpClient);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private store$ = inject<Store<AppState>>(Store);
   private systemGeneralService = inject(SystemGeneralService);
   private fileUpload = inject(UploadService);
@@ -182,7 +185,7 @@ export class FeedbackService {
   }
 
   getSimilarIssues(query: string): Observable<SimilarIssue[]> {
-    return this.api.call('support.similar_issues', [query]);
+    return this.api.call('support.similar_issues', [query]).pipe(map(toSimilarIssues));
   }
 
   addDebugInfoToMessage(message: string): Observable<string> {
@@ -296,9 +299,9 @@ export class FeedbackService {
   }
 
   private addTicket(ticket: CreateNewTicket): Observable<NewTicketResponse> {
-    return this.api.job('support.new_ticket', [ticket]).pipe(
+    return this.api.job('support.new_ticket', [toNewTicketArgs(ticket)]).pipe(
       filter((job) => job.state === JobState.Success),
-      map((job) => job.result),
+      map((job) => toNewTicketResponse(job.result)),
     );
   }
 
