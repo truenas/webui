@@ -25,172 +25,36 @@
  * when that has happened and you have forgotten.
  */
 export const migratedApiPaths = [
-  // Phase 0's whole-feature pilot was Backup Credentials; NAS-144003 moved the rest of credentials —
-  // certificates and ACME, groups, KMIP, privileges, S3 access keys, users and their API keys.
-  'src/app/pages/credentials',
-  // The two shared services the Backup Credentials page runs on. Both are consumed from
-  // elsewhere as well (`ix-ssh-credentials-select`, the cloud sync forms), so they are pinned
-  // as files rather than waiting for `src/app/services` as a whole.
-  'src/app/services/cloud-credential.service.ts',
-  'src/app/services/cloud-credential.service.spec.ts',
-  'src/app/services/keychain-credential.service.ts',
-  'src/app/services/keychain-credential.service.spec.ts',
-  // NAS-143993: the core domain services. `src/app/services` itself cannot be pinned yet:
-  // `network.service.ts` keeps `ApiService` for the two calls the typed client cannot make
-  // (gap 14 and gap 5 in docs/devs/typed-api-client.md), so the rest are pinned file by file.
-  'src/app/services/dataset',
-  'src/app/services/global-store',
-  'src/app/services/gpu',
-  'src/app/services/disk-temperature.service.ts',
-  'src/app/services/disk-temperature.service.spec.ts',
-  'src/app/services/download.service.ts',
-  'src/app/services/download.service.spec.ts',
-  'src/app/services/failover-validation.service.ts',
-  'src/app/services/failover-validation.service.spec.ts',
-  'src/app/services/fibre-channel.service.ts',
-  'src/app/services/fibre-channel.service.spec.ts',
-  'src/app/services/filesystem.service.ts',
-  'src/app/services/filesystem.service.spec.ts',
-  'src/app/services/filesystem-zvols.service.spec.ts',
-  'src/app/services/iscsi.service.ts',
-  'src/app/services/license.service.ts',
-  'src/app/services/license.service.spec.ts',
-  'src/app/services/reboot.service.ts',
-  'src/app/services/reboot.service.spec.ts',
-  'src/app/services/redirect.service.ts',
-  'src/app/services/replication.service.ts',
-  'src/app/services/replication.service.spec.ts',
-  'src/app/services/snapshot-task.service.ts',
-  'src/app/services/storage.service.ts',
-  'src/app/services/storage.service.spec.ts',
-  'src/app/services/system-general.service.ts',
-  'src/app/services/system-general.service.spec.ts',
-  'src/app/services/user-directory.service.ts',
-  'src/app/services/user-directory.service.spec.ts',
-  'src/app/services/user.service.ts',
-  'src/app/services/user.service.spec.ts',
-  'src/app/services/vm.service.ts',
-  'src/app/services/vm.service.spec.ts',
-  // NAS-143994: the root NgRx effects — system info and config, entitlements, HA, reboot info,
-  // services, EULA, network check-in and preferences.
+  // Every page. Moved area by area: credentials (Phase 0's pilot, then NAS-144003), sign-in, audit,
+  // reports and the dashboard (NAS-143996), directory services and the service forms (NAS-143997),
+  // VMs and containers (NAS-143998), apps (NAS-143999), data protection (NAS-144000), datasets
+  // (NAS-144001), storage (NAS-144002), sharing (NAS-144004), system (NAS-144005) and two-factor
+  // authentication. The timer event sources (`reporting.realtime`, `app.stats`, `container.metrics`)
+  // followed once the client released subscriptions (gap 17), and the three methods missing from the
+  // dump go through `callUndeclared` (gap 14). The IPMI events dialog reads `ipmi.sel.elist` as the
+  // job every generated directory declares (see the system drift notes in docs/devs/typed-api-client.md).
+  'src/app/pages',
+  // The domain services (NAS-143993, then `NetworkService`) and the root NgRx effects (NAS-143994).
+  'src/app/services',
   'src/app/store',
-  // NAS-143995: the shared modules — alerts, dialogs, the top bar, form controls and TrueCommand.
-  // NAS-144006 finished `modules/dialog` and `modules/layout` by moving their log tails.
-  'src/app/modules/alerts',
-  'src/app/modules/dialog',
-  'src/app/modules/forms',
-  'src/app/modules/layout',
-  'src/app/modules/truecommand',
-  // NAS-144008: the debug panel's connection interceptor, which names the typed client's connection.
-  'src/app/modules/websocket-debug-panel/utils',
-  // Its only legacy dependant was a spec mocking `core.job_download_logs` for the logs dialog.
-  'src/app/pages/jobs',
   // Nothing here imports a client; `pool-scan-event.helper.ts` names a generated event type.
   'src/app/helpers',
-  // NAS-143996: sign-in, audit, reports and the dashboard. `pages/dashboard` is pinned below its
-  // root: `WidgetResourcesService` keeps `ApiService` for `reporting.realtime` and `app.stats`,
-  // event sources the typed client cannot subscribe to yet (gap 5).
-  'src/app/pages/signin',
-  'src/app/pages/audit',
-  'src/app/pages/reports-dashboard',
-  'src/app/pages/dashboard/components',
-  'src/app/pages/dashboard/widgets',
-  'src/app/pages/dashboard/services/dashboard.store.ts',
-  'src/app/pages/dashboard/services/dashboard.store.spec.ts',
-  // NAS-143997: directory services, the service config forms and the shutdown / restart / failover /
-  // config reset pages. `pages/directory-service` and `pages/services` are pinned below their roots:
-  // `kerberos.keytab.kerberos_principal_choices` (the credential step of the directory services
-  // form) and `nfs.add_principal` (the NFS service's Add SPN dialog) are missing from the
-  // generated directory (gap 14), so those two keep `ApiService`.
-  'src/app/pages/directory-service/directory-services.component.ts',
-  'src/app/pages/directory-service/directory-services.component.spec.ts',
-  'src/app/pages/directory-service/components/directory-services-form/directory-services-form.component.ts',
-  'src/app/pages/directory-service/components/directory-services-form/directory-services-form.component.spec.ts',
-  'src/app/pages/directory-service/components/kerberos-keytabs',
-  'src/app/pages/directory-service/components/kerberos-realms',
-  'src/app/pages/directory-service/components/kerberos-realms-form',
-  'src/app/pages/directory-service/components/leave-domain-dialog',
-  'src/app/pages/services/services.component.ts',
-  'src/app/pages/services/services.component.spec.ts',
-  'src/app/pages/services/components/service-ftp',
-  'src/app/pages/services/components/service-nfs/service-nfs.component.ts',
-  'src/app/pages/services/components/service-nfs/service-nfs.component.spec.ts',
-  'src/app/pages/services/components/service-s3',
-  'src/app/pages/services/components/service-smb',
-  'src/app/pages/services/components/service-snmp',
-  'src/app/pages/services/components/service-ssh',
-  'src/app/pages/services/components/service-status-cell',
-  'src/app/pages/services/components/service-ups',
-  'src/app/pages/services/components/service-webshare',
-  'src/app/pages/system-tasks',
-  // NAS-143998: virtual machines and containers. `pages/containers` is pinned below its root:
-  // `ContainersStore` keeps `ApiService` for `container.metrics`, an event source middleware pushes
-  // on a timer, which has not moved since the typed client began releasing subscriptions (gap 17).
-  'src/app/pages/vm',
-  'src/app/pages/containers/components',
-  'src/app/pages/containers/utils',
-  'src/app/pages/containers/stores/container-config.store.ts',
-  'src/app/pages/containers/stores/container-config.store.spec.ts',
-  'src/app/pages/containers/stores/container-devices.store.ts',
-  'src/app/pages/containers/stores/container-devices.store.spec.ts',
-  // NAS-144000: data protection — cloud backup, cloud sync, periodic snapshot, rsync, replication
-  // and VMware snapshot tasks, their cards, lists, forms and wizards.
-  'src/app/pages/data-protection',
-  // NAS-144001: datasets — the tree and details cards, the dataset and zvol forms, quotas, encryption,
-  // permissions and ACL editing, and snapshots.
-  'src/app/pages/datasets',
-  // NAS-144002: storage — the pools dashboard and its cards, import, the pool creation wizard and Add VDEVs,
-  // disks, VDEVs and hardware disk encryption. It absorbs the SED password entry pinned above.
-  'src/app/pages/storage',
-  // NAS-143999: apps. `pages/apps` is pinned below its root: `AppsStatsService` (`app.stats`) and the
-  // resources card (`reporting.realtime`) keep `ApiService` for event sources middleware pushes on a
-  // timer, not moved yet (gap 17). NAS-144006 finished `installed-apps` by moving the container logs.
-  'src/app/pages/apps/services',
-  'src/app/pages/apps/components/app-detail-view/app-detail-view.component.ts',
-  'src/app/pages/apps/components/app-detail-view/app-detail-view.component.spec.ts',
-  'src/app/pages/apps/components/app-wizard',
-  'src/app/pages/apps/components/available-apps',
-  'src/app/pages/apps/components/catalog-settings',
-  'src/app/pages/apps/components/custom-app-form',
-  'src/app/pages/apps/components/docker-images',
-  'src/app/pages/apps/components/docker-registries',
-  'src/app/pages/apps/components/install-app-button',
-  'src/app/pages/apps/components/installed-apps',
-  'src/app/pages/apps/components/select-pool-dialog',
-  'src/app/pages/apps/store/apps-store.service.ts',
-  'src/app/pages/apps/store/apps-store.service.spec.ts',
-  'src/app/pages/apps/store/docker.store.ts',
-  'src/app/pages/apps/store/docker.store.spec.ts',
-  // NAS-144004: sharing — the shares dashboard and its cards, SMB, NFS, S3, WebShare, iSCSI (absorbing the wizard
-  // steps pinned with the services above), Fibre Channel and NVMe-oF. NAS-144006 finished it by moving
-  // `SharingTierService`'s rewrite job subscriptions.
-  'src/app/pages/sharing',
-  // NAS-144005: system — advanced settings, general settings and support, alert services and alert settings, boot
-  // environments, enclosures and JBOFs, network and updates. `pages/system` is pinned below its root: the IPMI
-  // events dialog keeps `ApiService` for `ipmi.sel.elist`, which every generated directory declares as a job while
-  // the dialog reads it as a call since NAS-141809 (see the system drift notes in docs/devs/typed-api-client.md).
-  'src/app/pages/system/system.routes.ts',
-  'src/app/pages/system/advanced',
-  'src/app/pages/system/alert-config-form',
-  'src/app/pages/system/alert-service',
-  'src/app/pages/system/alert-settings',
-  'src/app/pages/system/bootenv',
-  'src/app/pages/system/enclosure',
-  'src/app/pages/system/general-settings',
-  'src/app/pages/system/update',
-  'src/app/pages/system/network/network.component.ts',
-  'src/app/pages/system/network/stores',
-  'src/app/pages/system/network/tests',
-  'src/app/pages/system/network/components/default-gateway-dialog',
-  'src/app/pages/system/network/components/interface-form',
-  'src/app/pages/system/network/components/interfaces-card',
-  'src/app/pages/system/network/components/network-configuration',
-  'src/app/pages/system/network/components/network-configuration-card',
-  'src/app/pages/system/network/components/static-route-delete-dialog',
-  'src/app/pages/system/network/components/static-route-form',
-  'src/app/pages/system/network/components/static-routes-card',
-  'src/app/pages/system/network/components/ipmi-card/ipmi-card.component.ts',
-  'src/app/pages/system/network/components/ipmi-card/ipmi-form',
+  // The shared modules. Alerts, dialogs, the top bar, form controls and TrueCommand (NAS-143995), the
+  // debug panel (NAS-144008), then the export button, feedback, the shell, TrueNAS Connect, the session
+  // (`AuthService`), the jobs store and the table data providers.
+  'src/app/modules/alerts',
+  'src/app/modules/auth',
+  'src/app/modules/buttons',
+  'src/app/modules/dialog',
+  'src/app/modules/feedback',
+  'src/app/modules/forms',
+  'src/app/modules/jobs',
+  'src/app/modules/layout',
+  'src/app/modules/terminal',
+  'src/app/modules/tn-table',
+  'src/app/modules/truecommand',
+  'src/app/modules/truenas-connect',
+  'src/app/modules/websocket-debug-panel',
 ];
 
 /**

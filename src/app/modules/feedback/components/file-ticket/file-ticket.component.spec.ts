@@ -11,7 +11,7 @@ import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { OauthButtonType } from 'app/modules/buttons/oauth-button/interfaces/oauth-button.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { FileTicketComponent } from 'app/modules/feedback/components/file-ticket/file-ticket.component';
@@ -50,8 +50,8 @@ describe('FileTicketComponent', () => {
       mockProvider(ImageValidatorService, {
         getImagesValidator: () => () => of(null as ValidationErrors | null),
       }),
-      mockApi([
-        mockCall('support.attach_ticket_max_size', 5),
+      mockTypedApi([
+        mockTypedCall('support.attach_ticket_max_size', 5),
       ]),
     ],
   });

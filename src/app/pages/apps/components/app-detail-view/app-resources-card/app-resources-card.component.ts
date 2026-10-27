@@ -5,10 +5,9 @@ import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { map, throttleTime } from 'rxjs';
+import { filter, map, throttleTime } from 'rxjs';
 import { MemoryUpdate } from 'app/interfaces/reporting.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -26,12 +25,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
 })
 export class AppResourcesCardComponent implements OnInit {
   private api = inject(TypedApiService);
-  /**
-   * For `reporting.realtime` alone: an event source middleware pushes on a timer, which must not
-   * move while the typed client never releases a subscription (gap 17 in
-   * docs/devs/typed-api-client.md) — it would keep streaming after the page is left.
-   */
-  private legacyApi = inject(ApiService);
   private dockerStore = inject(DockerStore);
   private destroyRef = inject(DestroyRef);
 
@@ -47,8 +40,9 @@ export class AppResourcesCardComponent implements OnInit {
   }
 
   private getResourcesUsageUpdates(): void {
-    this.legacyApi.subscribe('reporting.realtime').pipe(
-      map((event) => event.fields),
+    this.api.subscribe('reporting.realtime').pipe(
+      map((event) => (event.msg === 'added' ? event.fields : null)),
+      filter((update) => update !== null),
       throttleTime(2000),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((update) => {

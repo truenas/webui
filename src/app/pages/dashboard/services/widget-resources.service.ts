@@ -19,12 +19,11 @@ import { NetworkInterface } from 'app/interfaces/network-interface.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import {
-  AllCpusUpdate, MemoryUpdate, AllNetworkInterfacesUpdate, ReportingData,
+  AllCpusUpdate, MemoryUpdate, AllNetworkInterfacesUpdate, ReportingData, ReportingRealtimeUpdate,
 } from 'app/interfaces/reporting.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DashboardSystemInfo } from 'app/interfaces/system-info.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
@@ -71,15 +70,15 @@ export interface PoolUsage {
 })
 export class WidgetResourcesService {
   private api = inject(TypedApiService);
-  /**
-   * For the two event sources the typed client cannot subscribe to: `reporting.realtime` and
-   * `app.stats` take subscription params, so they are not typed event names (gap 5 in
-   * docs/devs/typed-api-client.md).
-   */
-  private legacyApi = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
-  readonly realtimeUpdates$ = this.legacyApi.subscribe('reporting.realtime');
+  /** Kept in the `{ fields }` envelope the CPU widgets read. */
+  readonly realtimeUpdates$: Observable<{ fields: ReportingRealtimeUpdate }> = this.api.subscribe('reporting.realtime')
+    .pipe(
+      map((event) => (event.msg === 'added' ? { fields: event.fields } : null)),
+      filter((update) => update !== null),
+      asUiInterface<{ fields: ReportingRealtimeUpdate }>(),
+    );
 
   readonly refreshInterval$ = timer(0, 5000).pipe(startWith(0));
   private readonly triggerRefreshDashboardSystemInfo$ = new Subject<void>();
@@ -194,9 +193,9 @@ export class WidgetResourcesService {
   }
 
   getAppStats(appName: string): Observable<LoadingState<AppStats>> {
-    return this.legacyApi.subscribe('app.stats').pipe(
+    return this.api.subscribe('app.stats').pipe(
       filter(() => Boolean(appName)),
-      map((event) => event.fields.find((stats) => stats.app_name === appName)),
+      map((event) => (event.msg === 'added' ? event.fields.find((stats) => stats.app_name === appName) : undefined)),
       filter((stats) => !!stats),
       throttleTime(500),
       toLoadingState(),

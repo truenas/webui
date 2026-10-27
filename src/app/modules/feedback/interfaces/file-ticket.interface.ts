@@ -1,6 +1,8 @@
+import { CallResponse, JobParams, JobResult } from '@truenas/api-client';
 import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
 } from 'app/enums/file-ticket.enum';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 interface EnterpriseFields {
   name?: string;
@@ -18,6 +20,14 @@ export interface CreateNewTicket extends EnterpriseFields {
   title: string;
   type?: TicketType;
   token?: string;
+}
+
+/**
+ * Hands a ticket over to `support.new_ticket`. Middleware declares one model per ticket kind — a community ticket
+ * with its OAuth `token` and `type`, an enterprise one with the contact fields — where the UI builds one loose object.
+ */
+export function toNewTicketArgs(ticket: CreateNewTicket): JobParams<WebUiApiDirectory, 'support.new_ticket'>[0] {
+  return ticket as JobParams<WebUiApiDirectory, 'support.new_ticket'>[0];
 }
 
 export interface SupportConfig {
@@ -42,6 +52,16 @@ export interface NewTicketResponse {
   debug_attach_error: string | null;
 }
 
+/**
+ * Reads `support.new_ticket`'s result. Middleware declares `ticket` and `url` nullable, but a job that succeeded has
+ * created the ticket, and the attachments and the success dialog need both.
+ */
+export function toNewTicketResponse(
+  response: JobResult<WebUiApiDirectory, 'support.new_ticket'>,
+): NewTicketResponse {
+  return response as NewTicketResponse;
+}
+
 export type OauthJiraMessage = MessageEvent<{
   error?: string;
   result?: string;
@@ -54,10 +74,6 @@ export type AttachTicketParams = [
   ticket: number,
 ];
 
-export type SimilarIssuesParams = [
-  query: string,
-];
-
 export interface SimilarIssue {
   id: number;
   url: string;
@@ -66,4 +82,12 @@ export interface SimilarIssue {
   keyHtml: string;
   summary: string;
   summaryText: string;
+}
+
+/**
+ * Reads `support.similar_issues`. Middleware declares only optional `url` and `summary` and leaves the rest open,
+ * while the UI reads the Jira search fields it returns.
+ */
+export function toSimilarIssues(issues: CallResponse<WebUiApiDirectory, 'support.similar_issues'>): SimilarIssue[] {
+  return issues as unknown as SimilarIssue[];
 }

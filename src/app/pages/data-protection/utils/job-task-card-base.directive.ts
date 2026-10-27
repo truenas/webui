@@ -4,16 +4,17 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
+import { JobMethod } from '@truenas/api-client';
 import { type TnSortEvent } from '@truenas/ui-components';
 import { Observable, tap } from 'rxjs';
 import { JobState } from 'app/enums/job-state.enum';
 import { Role } from 'app/enums/role.enum';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { JobSlice, selectJobsByMethod } from 'app/modules/jobs/store/job.selectors';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TaskCardJobRepainter, type TaskWithJob } from 'app/pages/data-protection/utils/task-card-job-repainter';
 
 /** The task a run job belongs to. Every task run method takes the task id as its first argument. */
@@ -82,7 +83,7 @@ export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {
   /** data-test id for the Add button, e.g. `cloudsync-task-add`. */
   protected abstract readonly addTestId: string;
   /** Job method a run of this task type creates, e.g. `rsynctask.run`. */
-  protected abstract readonly runMethod: ApiJobMethod;
+  protected abstract readonly runMethod: JobMethod<WebUiApiDirectory>;
 
   /** Query the backing tasks. Re-subscribed on every {@link reload}. */
   protected abstract queryTasks(): Observable<T[]>;

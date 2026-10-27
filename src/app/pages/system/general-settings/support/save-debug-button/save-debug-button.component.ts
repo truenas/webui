@@ -9,7 +9,6 @@ import { filter, switchMap, take } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -74,7 +73,7 @@ export class SaveDebugButtonComponent {
             const job$ = this.store$.pipe(
               select(selectJob(jobId)),
               observeJob(),
-            ) as Observable<Job<ApiJobMethod>>;
+            ) as Observable<Job>;
             return this.dialogService.jobDialog(job$, { title: this.translate.instant('Saving Debug') })
               .afterClosed()
               .pipe(switchMap(() => this.download.downloadUrl(url, fileName, mimeType)));

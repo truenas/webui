@@ -1,9 +1,7 @@
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { AlertCategory } from 'app/interfaces/alert.interface';
 import { ApiKey } from 'app/interfaces/api-key.interface';
 import { ApiEventMethod } from 'app/interfaces/api-message.interface';
 import { AuditEntry, AuditQueryParams } from 'app/interfaces/audit/audit.interface';
-import { AuthSession } from 'app/interfaces/auth-session.interface';
 import {
   AuthTokenParams, LoginExOtpTokenQuery, LoginExQuery, LoginExResponse,
 } from 'app/interfaces/auth.interface';
@@ -29,7 +27,6 @@ import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import {
   FailoverConfig,
 } from 'app/interfaces/failover.interface';
-import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { Job } from 'app/interfaces/job.interface';
 import {
   KeychainCredential,
@@ -54,7 +51,6 @@ import {
   ReplicationTask,
 } from 'app/interfaces/replication-task.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
-import { ResizeShellRequest } from 'app/interfaces/shell.interface';
 import {
   RemoteSshScanParams,
   SshConnectionSetup,
@@ -63,14 +59,9 @@ import { SystemInfo } from 'app/interfaces/system-info.interface';
 import {
   UpdateStatus,
 } from 'app/interfaces/system-update.interface';
-import { TruenasConnectConfig, TruenasConnectUpdate } from 'app/interfaces/truenas-connect-config.interface';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { User } from 'app/interfaces/user.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
-import {
-  SimilarIssue,
-  SimilarIssuesParams,
-} from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 /**
  * API definitions for `call` methods.
@@ -79,7 +70,6 @@ import {
  */
 export interface ApiCallDirectory {
   // Alert
-  'alert.list_categories': { params: void; response: AlertCategory[] };
 
   // API Key
   'api_key.query': { params: QueryParams<ApiKey>; response: ApiKey[] };
@@ -94,7 +84,6 @@ export interface ApiCallDirectory {
   'auth.login_ex_continue': { params: [LoginExOtpTokenQuery]; response: LoginExResponse };
   'auth.logout': { params: void; response: void };
   'auth.me': { params: void; response: LoggedInUser };
-  'auth.sessions': { params: QueryParams<AuthSession>; response: AuthSession[] };
   'auth.twofactor.config': { params: void; response: GlobalTwoFactorConfig };
 
   // Boot Environment
@@ -118,7 +107,6 @@ export interface ApiCallDirectory {
   'core.download': { params: CoreDownloadQuery; response: CoreDownloadResponse };
   'core.get_jobs': { params: QueryParams<Job>; response: Job[] };
   'core.job_abort': { params: [jobId: number]; response: void };
-  'core.resize_shell': { params: ResizeShellRequest; response: void };
   'core.subscribe': { params: [name: ApiEventMethod]; response: void };
   'core.unsubscribe': { params: [id: string]; response: void };
   'core.set_options': { params: CoreOptions; response: CoreOptions };
@@ -148,7 +136,6 @@ export interface ApiCallDirectory {
   'interface.vlan_parent_interface_choices': { params: void; response: Choices };
 
   // IPMI
-  'ipmi.sel.elist': { params: void; response: IpmiEvent[] };
 
   // Kerberos
   'kerberos.keytab.kerberos_principal_choices': { params: void; response: string[] };
@@ -184,21 +171,13 @@ export interface ApiCallDirectory {
   'rsynctask.query': { params: QueryParams<RsyncTask>; response: RsyncTask[] };
 
   // Support
-  'support.similar_issues': { params: SimilarIssuesParams; response: SimilarIssue[] };
-  'support.attach_ticket_max_size': { params: void; response: number };
 
   // System
   'system.advanced.config': { params: void; response: AdvancedConfig };
   'system.advanced.nvidia_present': { params: void; response: boolean };
   'system.boot_id': { params: void; response: string };
-  'system.host_id': { params: void; response: string };
-  'system.info': { params: void; response: SystemInfo };
 
   // Truenas Connect
-  'tn_connect.config': { params: void; response: TruenasConnectConfig };
-  'tn_connect.update': { params: [Partial<TruenasConnectUpdate>]; response: TruenasConnectConfig };
-  'tn_connect.generate_claim_token': { params: void; response: string };
-  'tn_connect.get_registration_uri': { params: void; response: string };
 
   // TrueNAS
   'truenas.get_eula': { params: void; response: string };
@@ -208,8 +187,6 @@ export interface ApiCallDirectory {
 
   // User
   'user.query': { params: QueryParams<User>; response: User[] };
-  'user.renew_2fa_secret': { params: [string, { interval: number; otp_digits: number }]; response: User };
-  'user.unset_2fa_secret': { params: [string]; response: User };
 
 
   // TODO: Incorrect response definition here or for system.info.

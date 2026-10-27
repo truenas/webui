@@ -1,17 +1,18 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
-import { Observable, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { oneMinuteMillis } from 'app/constants/time.constant';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
 import { WINDOW } from 'app/helpers/window.helper';
-import { IncomingMessage } from 'app/interfaces/api-message.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
+import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 
 describe('TokenLastUsedService', () => {
   let spectator: SpectatorService<TokenLastUsedService>;
+  // Per test, so a service an earlier test built never hears the frames a later one sends.
+  let responses$: Subject<unknown>;
   const mockLocalStorage = {
     getItem: jest.fn(),
     setItem: jest.fn(),
@@ -27,6 +28,10 @@ describe('TokenLastUsedService', () => {
         user$: new Subject(),
       }),
       {
+        provide: TYPED_API_CLIENT,
+        useFactory: () => of({ connection: { messages: () => responses$ } }),
+      },
+      {
         provide: WINDOW,
         useValue: {
           localStorage: mockLocalStorage,
@@ -41,6 +46,7 @@ describe('TokenLastUsedService', () => {
     fakeDate(new Date('2026-01-20T00:00:00Z'));
     // The storage mock is shared, and the service reads the stored lifetime as it is built.
     mockLocalStorage.getItem.mockReset();
+    responses$ = new Subject();
     spectator = createService();
   });
 
@@ -145,10 +151,6 @@ describe('TokenLastUsedService', () => {
 
   describe('setupTokenLastUsedValue', () => {
     it('keeps stamping on a socket that never falls quiet', () => {
-      const responses$ = new Subject<IncomingMessage>();
-      // `mockApi()` hands out a plain object for the handler, so give it the stream directly.
-      (spectator.inject(WebSocketHandlerService) as { responses$: Observable<IncomingMessage> })
-        .responses$ = responses$;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
 
       spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
@@ -170,9 +172,6 @@ describe('TokenLastUsedService', () => {
 
     it('stops stamping on traffic once the token is cleared, and starts again on the next sign-in', () => {
       const user$ = new Subject<LoggedInUser>();
-      const responses$ = new Subject<IncomingMessage>();
-      (spectator.inject(WebSocketHandlerService) as { responses$: Observable<IncomingMessage> })
-        .responses$ = responses$;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
       jest.useRealTimers();
       jest.useFakeTimers();
@@ -196,11 +195,6 @@ describe('TokenLastUsedService', () => {
     it('should update tokenLastUsed in localStorage on user and WebSocket activity', () => {
       const user$ = spectator.inject(AuthService).user$ as Subject<LoggedInUser>;
       const updateTokenLastUsedSpy = jest.spyOn(spectator.service, 'updateTokenLastUsed');
-      const responses$ = new Subject<IncomingMessage>();
-
-      // `responses$` is a field on the borrowed connection's stream, not a
-      // getter, so the seam is the provided double rather than the prototype.
-      Object.defineProperty(spectator.inject(WebSocketHandlerService), 'responses$', { value: responses$ });
 
       spectator.service.setupTokenLastUsedValue(of({} as LoggedInUser));
 

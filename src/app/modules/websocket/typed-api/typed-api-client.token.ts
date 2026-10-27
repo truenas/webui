@@ -14,11 +14,28 @@ import {
   from, Observable, shareReplay, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
+import { AddNfsPrincipal } from 'app/interfaces/nfs-config.interface';
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/intercept-connection';
+
+/**
+ * Calls middleware serves but leaves out of `--dump-api`, most likely because it marks them
+ * private (gap 14 in docs/devs/typed-api-client.md). Declared here by hand, and reached only
+ * through `TypedApiService.callUndeclared`, so the generated directory stays exactly what the
+ * client is typed against. Remove an entry once the generated directory has it.
+ */
+export interface UndeclaredCallDirectory {
+  'interface.lag_supported_protocols': { params: []; response: string[] };
+  'kerberos.keytab.kerberos_principal_choices': { params: []; response: string[] };
+  'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
+}
+
+/** A method of {@link UndeclaredCallDirectory}. */
+export type UndeclaredCallMethod = keyof UndeclaredCallDirectory;
 
 /**
  * The API surface the UI is written against.
@@ -73,7 +90,11 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
     factory: () => {
       const window = inject<Window>(WINDOW);
       const debugPanel = environment.debugPanel?.enabled
-        ? { debug: inject(WebSocketDebugService), mocks: inject(MockResponseService) }
+        ? {
+            debug: inject(WebSocketDebugService),
+            mocks: inject(MockResponseService),
+            duplicates: inject(DuplicateCallTrackerService),
+          }
         : null;
 
       // The appliance serves the page in production, so the page's scheme is
@@ -94,7 +115,7 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
         // After the gate, so a mocked call is answered without taking a place in it.
         tap((client) => {
           if (debugPanel) {
-            interceptConnection(client.connection, debugPanel.debug, debugPanel.mocks);
+            interceptConnection(client.connection, debugPanel.debug, debugPanel.mocks, debugPanel.duplicates);
           }
         }),
         shareReplay({ bufferSize: 1, refCount: false }),

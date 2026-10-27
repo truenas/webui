@@ -5,6 +5,7 @@ import {
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerComponent, TnButtonComponent, TnCardComponent, TnDialog, TnFormFieldComponent, TnInputComponent,
   TnProgressBarComponent,
@@ -22,16 +23,18 @@ import {
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { verifyTotp } from 'app/helpers/totp.helper';
 import { helptext2fa } from 'app/helptext/system/2fa';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
+import { toAuthSession } from 'app/interfaces/auth-session.interface';
 import { CredentialType } from 'app/interfaces/credential-type.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
-import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PendingTwoFactorKind, PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -58,6 +61,14 @@ const loadTimeoutMs = 30_000;
  * is Cancel Setup.
  */
 const defaultToleranceWindow = 1;
+
+/**
+ * The appliance's clock, in milliseconds. Middleware sends `system.info`'s `datetime` as an `ApiTimestamp`
+ * envelope but types it as a string (gap 15 in docs/devs/typed-api-client.md).
+ */
+function readApplianceTime(systemInfo: CallResponse<WebUiApiDirectory, 'system.info'>): number {
+  return (systemInfo.datetime as unknown as ApiTimestamp).$date;
+}
 
 @Component({
   selector: 'ix-two-factor',
@@ -96,7 +107,7 @@ export class TwoFactorComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   protected tnDialog = inject(TnDialog);
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private pendingTwoFactor = inject(PendingTwoFactorService);
@@ -299,7 +310,7 @@ export class TwoFactorComponent implements OnInit {
       // The clock read alone is genuinely optional: without it the check falls back to
       // the browser clock, which is where it stood before.
       this.api.call('system.info')
-        .pipe(catchError(() => of(null)), defaultIfEmpty(null as SystemInfo | null)),
+        .pipe(map(readApplianceTime), catchError(() => of(null)), defaultIfEmpty(null as number | null)),
     ])
       .pipe(
         take(1),
@@ -312,7 +323,7 @@ export class TwoFactorComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
-        next: ([user, globalConfig, systemInfo]) => {
+        next: ([user, globalConfig, applianceTime]) => {
           if (!user || !globalConfig) {
             // Say the settings could not be read, rather than showing defaults that read
             // as "2FA is off here" and inviting the user to act on them.
@@ -325,7 +336,7 @@ export class TwoFactorComponent implements OnInit {
           this.globalTwoFactorEnabled.set(globalConfig.enabled);
           this.globalConfigKnown.set(true);
           this.toleranceWindow.set(globalConfig.window);
-          this.clockOffset.set(systemInfo ? systemInfo.datetime.$date - Date.now() : null);
+          this.clockOffset.set(applianceTime === null ? null : applianceTime - Date.now());
 
           // The user here is a snapshot taken when this load was subscribed, before the
           // round trips above resolved. A renew that started in the meantime has already
@@ -358,8 +369,8 @@ export class TwoFactorComponent implements OnInit {
         },
       });
 
-    this.api.call('auth.sessions').pipe(
-      map((sessionsList) => sessionsList.find((session) => {
+    this.api.query('auth.sessions').pipe(
+      map((sessionsList) => sessionsList.map(toAuthSession).find((session) => {
         return session.current && session.credentials === CredentialType.TwoFactor;
       })),
     ).subscribe((session) => this.currentSessionIs2fa.set(!!session));
@@ -587,7 +598,7 @@ export class TwoFactorComponent implements OnInit {
     return this.api.call('system.info').pipe(
       take(1),
       timeout(loadTimeoutMs),
-      tap((systemInfo) => this.clockOffset.set(systemInfo.datetime.$date - Date.now())),
+      tap((systemInfo) => this.clockOffset.set(readApplianceTime(systemInfo) - Date.now())),
       defaultIfEmpty(null),
       catchError(() => of(null)),
     );

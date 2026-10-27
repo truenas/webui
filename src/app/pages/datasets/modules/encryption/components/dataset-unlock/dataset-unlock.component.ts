@@ -237,7 +237,7 @@ export class DatasetUnlockComponent implements OnInit {
           file: values.file,
           method: 'pool.dataset.unlock',
           params: [this.pk, payload],
-        })
+        }).pipe(map(toDatasetUnlockJob))
       : this.api.job('pool.dataset.unlock', [this.pk, payload]).pipe(map(toDatasetUnlockJob));
 
     this.dialogService.jobDialog(job$, {
@@ -288,7 +288,7 @@ export class DatasetUnlockComponent implements OnInit {
           file: values.file,
           method: 'pool.dataset.encryption_summary',
           params: [this.pk, payload],
-        })
+        }).pipe(map(toDatasetEncryptionSummaryJob))
       : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]).pipe(map(toDatasetEncryptionSummaryJob));
 
     return {

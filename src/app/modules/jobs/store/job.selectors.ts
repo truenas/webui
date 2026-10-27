@@ -1,8 +1,9 @@
 import { createFeatureSelector, createSelector, MemoizedSelector } from '@ngrx/store';
+import { JobMethod } from '@truenas/api-client';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { adapter, JobsState } from 'app/modules/jobs/store/job.reducer';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export const jobStateKey = 'jobs';
 export const selectJobState = createFeatureSelector<JobsState>(jobStateKey);
@@ -38,7 +39,9 @@ export const selectJob = (id: number): MemoizedSelector<object, Job | undefined>
  * Every job for a given method, e.g. every `rsynctask.run`. Lets a task card notice a run
  * it did not start itself — a cron-scheduled one, or one triggered from another tab.
  */
-export const selectJobsByMethod = (method: ApiJobMethod): MemoizedSelector<object, Job[]> => createSelector(
+export const selectJobsByMethod = (
+  method: JobMethod<WebUiApiDirectory>,
+): MemoizedSelector<object, Job[]> => createSelector(
   selectJobs,
   (jobs) => jobs.filter((job) => job.method === method),
 );

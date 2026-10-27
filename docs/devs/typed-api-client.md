@@ -316,8 +316,15 @@ Once most call sites are typed, move what still depends on the legacy socket:
   `client.connection` instead of opening a socket, which retired the second
   session along with `WebSocketConnection`, `PingService`, the reconnect timer
   and the token-borrowing bridge NAS-143988 had put in as a stopgap.
-- **Jobs store.** `job.effects.ts` subscribes to `core.get_jobs` on the typed
-  client.
+- **Jobs store.** Done. `job.effects.ts` loads with `query('core.get_jobs')`
+  and subscribes to `core.get_jobs` on the typed client. The generated event
+  declares only `added` and `changed`; middleware also sends `removed` when it
+  drops a finished job, so the effects read the wire shape (`JobEvent`).
+- **Session teardown.** Done. `AuthService` runs on `TypedApiService`, and
+  `clearSubscriptions()` went with it: the client drops every event
+  subscription when the session ends and subscribes again on the next login.
+  `TokenLastUsedService` stamps on `client.connection.messages()` rather than
+  the handler's `responses$`.
 - **Connection UX.** Done (NAS-143990). `ConnectionService` is a thin layer
   over `client.connection`: `opened$` feeds `isClosed$` and
   `WebSocketStatusService`, `closes$.refused` feeds `isAccessRestricted$`,
@@ -328,13 +335,22 @@ Once most call sites are typed, move what still depends on the legacy socket:
   pages, the GUI form and the forced password change read it instead of the
   handler, which is now only the legacy call queue.
 - **Debug panel and mocks.** Done (NAS-144008), on the connection seam rather
-  than a client hook — see gap 7 for the one path it cannot reach.
+  than a client hook — see gap 7 for the one path it cannot reach. The
+  duplicate-call warning moved there too: `DuplicateCallTrackerService` lives in
+  the debug panel and `interceptConnection` feeds it every request frame, so it
+  sees both clients' calls rather than only `ApiService`'s.
 
 ### Phase 3 — remove the legacy client
 
-Delete `ApiService`, `WebSocketHandlerService`, `SubscriptionManagerService`,
-`DuplicateCallTrackerService`, the hand-written directories and `mockApi`.
-Rename `TypedApiService` back to `ApiService` if that reads better.
+Nothing outside the legacy layer itself calls `ApiService` any more, and the
+hand-written directories are read only by it. Delete `ApiService`,
+`WebSocketHandlerService`, `SubscriptionManagerService`, the hand-written
+directories, `mockApi` / `MockApiService` / `EmptyApiService` and their
+registrations in `main.ts` and `setup-jest.ts`, along with the migration
+guardrails (`check-api-migration`, `scripts/api-migration-areas.mjs`,
+`migratedApiOverrides` in `eslint.config.mjs`). `DuplicateCallTrackerService` stays: it is
+the debug panel's now. Rename `TypedApiService` back to `ApiService` in a
+change of its own.
 
 ## Known gaps and library follow-ups
 
@@ -394,8 +410,8 @@ above. Each is a change for `truenas/api-client-ts`.
    a source, so narrowing on it is what types `fields`. That holds on the wire
    for the log tails, but not everywhere: `zfs.tier.rewrite_job_status` sends
    `changed`, and `zfs.tier.rewrite_job_query` sends all three kinds (gap 16).
-   Still on `ApiService` and now unblocked: `NetworkService`'s and the dashboard's
-   `reporting.realtime` and `app.stats` (see gap 17).
+   The timer-driven sources (`reporting.realtime`, `app.stats`, `container.metrics`)
+   moved once gap 17 was closed; see there.
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -418,7 +434,8 @@ above. Each is a change for `truenas/api-client-ts`.
    after the gate, so a mocked call takes no place in flight. One path stays out
    of reach: `TrueNasApi` builds its `jobEvents` stream from `messages()` in a
    field initializer, before anything can wrap it, so a mocked job's synthetic
-   `core.get_jobs` events reach the legacy jobs store but not a typed `job()`.
+   `core.get_jobs` events reach the jobs store (its `subscribe` takes a fresh
+   `messages()` stream) but not a typed `job()`.
    Library ask: read `messages()` lazily there (`defer`), or take a message
    interceptor in `createTrueNasClient`. Frames the client writes straight to
    the socket (the keepalive `core.ping`) are not seen either.
@@ -466,15 +483,16 @@ above. Each is a change for `truenas/api-client-ts`.
     (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
     from an older version's namespace.
 
-14. **Methods missing from the dump.** `interface.lag_supported_protocols` is
-    in no generated directory, most likely because middleware marks it
-    private. `NetworkService` therefore keeps `ApiService` for it, next to
-    `reporting.realtime` (gap 17), and `src/app/services` cannot be pinned as a
-    whole until both have a typed route. `kerberos.keytab.kerberos_principal_choices`
-    and `nfs.add_principal` are missing the same way, so the directory services
-    form's credential step and the NFS service's Add SPN dialog keep `ApiService`
-    too, and `pages/directory-service` and `pages/services` are pinned below their
-    roots.
+14. **Methods missing from the dump.** `interface.lag_supported_protocols`,
+    `kerberos.keytab.kerberos_principal_choices` and `nfs.add_principal` are in no
+    generated directory, most likely because middleware marks them private.
+    `UndeclaredCallDirectory` in `typed-api-client.token.ts` declares them by hand,
+    and `NetworkService`, the directory services form's credential step and the
+    NFS Add SPN dialog reach them through `TypedApiService.callUndeclared`
+    (`mockTypedUndeclaredCall` in specs). A separate verb rather than a widened
+    `WebUiApiDirectory`, which would stop the client and its fake from being the
+    directory's own type. Nothing checks those three entries against middleware;
+    drop each one once the generated directory carries it.
 
 15. **Dates are typed as strings.** Middleware sends a `datetime` as an
     `{ $date: <ms> }` envelope and a `date` as `{ $type: 'date', $value }`, and
@@ -510,9 +528,16 @@ above. Each is a change for `truenas/api-client-ts`.
     subscription name, but now resets it when the last subscriber leaves and
     sends `core.unsubscribe`, as the legacy `subscribe` does. That was what kept
     the event sources middleware pushes on a timer (`reporting.realtime`,
-    `app.stats`, `container.metrics`) on `ApiService`, so they can move now:
-    `ContainersStore`, `AppsStatsService`, the app details' resources card,
-    `NetworkService` and `WidgetResourcesService`.
+    `app.stats`, `container.metrics`) on `ApiService`. They have moved:
+    `ContainersStore` (`container.metrics`), `AppsStatsService` (`app.stats`), the
+    app details' resources card and `NetworkService` (`reporting.realtime`) and
+    `WidgetResourcesService` (`reporting.realtime`, `app.stats`), each subscribed by bare name as before and narrowed on `added`. The
+    generated payloads match what the readers take; two are looser than the UI's
+    interfaces and are cast at the site: `container.metrics` is a dictionary of
+    `unknown` (read as `ContainerMetrics`), and `reporting.realtime` types its
+    CPUs as an open record and its pools as `Record<string, number>` maps (read as
+    `ReportingRealtimeUpdate`, whose `AllCpusUpdate` also lists aggregate fields —
+    `user`, `nice`, … — that the model does not declare and nothing reads).
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well
@@ -726,9 +751,9 @@ above. Each is a change for `truenas/api-client-ts`.
       reverse: it takes its filters inside one object, next to `ipmi-options`, so it stays a `call` and
       `toIpmiChannels` reads its rows. The codemod gets all three wrong; script them by hand.
     - `cronjob.run` is a job in every generated directory, which the legacy client called and got a job id back.
-      It is started with `startJob`, which sends the same frame. `ipmi.sel.elist` is a job there too, but
-      NAS-141809 moved the IPMI events dialog from `job` to `call` to make events show at all, so the dialog keeps
-      `ApiService` and the request is unchanged until a box settles which is right.
+      It is started with `startJob`, which sends the same frame. `ipmi.sel.elist` is a job there too, and the
+      IPMI events dialog now follows it with `job`, as it did before NAS-141809 moved it to `call` (the same fix
+      also changed the dialog's height, which may have been what made events show). Not yet checked on a box.
     - `interface.network_config_to_be_removed` is declared as a list of setting names, while the default gateway
       dialog has always read their values off an object. `toNetworkConfigToBeRemoved` keeps the request and the
       reading as they were; worth a box check.

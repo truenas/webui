@@ -36,6 +36,8 @@ import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-a
 import {
   TYPED_API_CLIENT,
   TypedQueryFilter,
+  UndeclaredCallDirectory,
+  UndeclaredCallMethod,
   WebUiApiClient,
   WebUiApiDirectory,
   WebUiQueryEntity,
@@ -119,6 +121,23 @@ export class TypedApiService {
   call<M extends CallMethod<D>>(method: M, ...params: ArgsOf<CallParams<D, M>>): Observable<CallResponse<D, M>> {
     return this.ready$.pipe(
       switchMap((client) => client.api.call(method, ...params)),
+      this.handleRefusal(),
+    );
+  }
+
+  /**
+   * `call` for the few methods middleware serves but leaves out of the generated directory
+   * (gap 14 in docs/devs/typed-api-client.md). They are typed by `UndeclaredCallDirectory`,
+   * written by hand, so nothing checks them against middleware; prefer `call` for anything else.
+   */
+  callUndeclared<M extends UndeclaredCallMethod>(
+    method: M,
+    ...params: ArgsOf<UndeclaredCallDirectory[M]['params']>
+  ): Observable<UndeclaredCallDirectory[M]['response']> {
+    // The client's `call` only names generated methods; on the wire an undeclared one is the same frame.
+    type LooseCall = (method: string, ...params: unknown[]) => Observable<UndeclaredCallDirectory[M]['response']>;
+    return this.ready$.pipe(
+      switchMap((client) => (client.api.call as LooseCall).call(client.api, method, ...params)),
       this.handleRefusal(),
     );
   }

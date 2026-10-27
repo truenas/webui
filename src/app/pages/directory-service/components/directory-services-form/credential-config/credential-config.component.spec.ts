@@ -3,11 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockTypedApi, mockTypedCall, mockTypedUndeclaredCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CredentialConfigComponent } from 'app/pages/directory-service/components/directory-services-form/credential-config/credential-config.component';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
@@ -25,9 +24,7 @@ describe('CredentialConfigComponent', () => {
     providers: [
       mockTypedApi([
         mockTypedCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
-      ]),
-      mockApi([
-        mockCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
+        mockTypedUndeclaredCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
       ]),
       DirectoryServiceValidationService,
     ],
@@ -60,8 +57,8 @@ describe('CredentialConfigComponent', () => {
   });
 
   it('should fetch kerberos principals on init', () => {
-    const api = spectator.inject(ApiService);
-    expect(api.call).toHaveBeenCalledWith('kerberos.keytab.kerberos_principal_choices');
+    const api = spectator.inject(TypedApiService);
+    expect(api.callUndeclared).toHaveBeenCalledWith('kerberos.keytab.kerberos_principal_choices');
   });
 
   describe('form validation', () => {

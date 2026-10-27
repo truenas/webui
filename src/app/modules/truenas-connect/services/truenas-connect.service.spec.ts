@@ -3,8 +3,9 @@ import {
   mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { of } from 'rxjs';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockTypedApi, mockTypedCall, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
   TruenasConnectStatus,
@@ -13,7 +14,8 @@ import {
 import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -42,20 +44,21 @@ describe('TruenasConnectService', () => {
       iss: '',
     },
     certificate: 0,
+    tier: null,
   };
   const url
     = 'https://tnc.ixsystems.net/en/#/auth/login?redirectUrl=%2Fsystem%2Fregister%3Fversion%3D25.10.0-MASTER-20250409-224807%26model%3DUNKNOWN%26system_id%3D249cdb8d-5bfc-49f0-981b-f2184eb7992e%26token%3Deb48fa51-6e6e-4f4f-ab30-976bb209bfa6';
   const createService = createServiceFactory({
     service: TruenasConnectService,
     providers: [
-      mockApi([
-        mockCall('tn_connect.config', config),
-        mockCall('tn_connect.update', {
+      mockTypedApi([
+        mockTypedCall('tn_connect.config', config as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
+        mockTypedCall('tn_connect.update', {
           ...config,
           status: TruenasConnectStatus.Disabled,
-        }),
-        mockCall('tn_connect.generate_claim_token'),
-        mockCall('tn_connect.get_registration_uri', url),
+        } as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.update'>),
+        mockTypedCall('tn_connect.generate_claim_token', 'claim-token'),
+        mockTypedCall('tn_connect.get_registration_uri', url),
       ]),
       mockWindow({
         open: jest.fn(),
@@ -76,7 +79,7 @@ describe('TruenasConnectService', () => {
   it('should disable a tnc service', () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
     spectator.service.disableService().subscribe();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
       [{
         enabled: false,
@@ -88,7 +91,7 @@ describe('TruenasConnectService', () => {
   it('should enable a tnc service', () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
     spectator.service.enableService().subscribe();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'tn_connect.update',
       [{
         enabled: true,
@@ -100,13 +103,13 @@ describe('TruenasConnectService', () => {
   it('should generate claim_token', () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
     spectator.service.generateToken().subscribe();
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'tn_connect.generate_claim_token',
     );
     expect(errorHandler.withErrorHandler).toHaveBeenCalled();
   });
 
-  it('should connect to TNC and open new window', () => {
+  it('should connect to TNC and open new window', async () => {
     const windowMock = spectator.inject(WINDOW) as unknown as jest.Mocked<Window>;
     const errorHandler = spectator.inject(ErrorHandlerService);
 
@@ -119,8 +122,9 @@ describe('TruenasConnectService', () => {
     windowMock.open = jest.fn().mockReturnValue(mockTncWindow);
 
     spectator.service.connect().subscribe();
+    await settleTypedApi();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
       'tn_connect.get_registration_uri',
     );
     expect(windowMock.open).toHaveBeenCalledWith(
@@ -192,9 +196,11 @@ describe('TruenasConnectService', () => {
     expect(mockTncWindow.focus).toHaveBeenCalled();
   });
 
-  it('should test getConfig method', () => {
+  it('should test getConfig method', async () => {
+    await settleTypedApi();
+
     expect(spectator.service.config()).toEqual(config);
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('tn_connect.config');
-    expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('tn_connect.config');
+    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('tn_connect.config');
+    expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('tn_connect.config');
   });
 });

@@ -32,7 +32,6 @@ import { isFailedJobError } from 'app/helpers/api.helper';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextSystemUpdate as helptext } from 'app/helptext/system/update';
-import { ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -178,7 +177,7 @@ export class ManualUpdateFormComponent implements OnInit {
     const job$ = this.store$.pipe(
       select(selectJob(jobId)),
       observeJob(),
-    ) as Observable<Job<ApiJobMethod>>;
+    ) as Observable<Job>;
 
     this.dialogService.jobDialog(
       job$,

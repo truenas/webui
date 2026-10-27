@@ -12,7 +12,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { PoolScrubTaskParams } from 'app/interfaces/pool-scrub.interface';
 import { CreatePool, Pool } from 'app/interfaces/pool.interface';
 import { UpdateParams } from 'app/interfaces/system-update.interface';
-import { AttachTicketParams, CreateNewTicket, NewTicketResponse } from 'app/modules/feedback/interfaces/file-ticket.interface';
+import { AttachTicketParams } from 'app/modules/feedback/interfaces/file-ticket.interface';
 
 export interface ApiJobDirectory {
   // Audit
@@ -39,7 +39,6 @@ export interface ApiJobDirectory {
   'filesystem.setacl': { params: [SetAcl]; response: void };
 
   // IPMI
-  'ipmi.sel.clear': { params: void; response: void };
 
   // Pool
   'pool.create': { params: [CreatePool]; response: Pool };
@@ -58,7 +57,6 @@ export interface ApiJobDirectory {
 
   // Support
   'support.attach_ticket': { params: AttachTicketParams; response: Job };
-  'support.new_ticket': { params: [CreateNewTicket]; response: NewTicketResponse };
 
   // SystemDataset
 

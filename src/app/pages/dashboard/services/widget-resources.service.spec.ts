@@ -5,12 +5,12 @@ import {
 } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
-import { CallResponse } from '@truenas/api-client';
+import { CallResponse, EventUnion } from '@truenas/api-client';
 import { firstValueFrom } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { AppStats } from 'app/interfaces/app.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -39,6 +39,8 @@ const interfaceEth0 = {
   aggregations: { min: { received: 0 }, mean: { received: 5 }, max: { received: 10 } },
 } as CallResponse<WebUiApiDirectory, 'reporting.netdata_get_data'>[number];
 
+type RealtimeUpdate = Extract<EventUnion<WebUiApiDirectory, 'reporting.realtime'>, { msg: 'added' }>['fields'];
+
 describe('WidgetResourcesService', () => {
   let spectator: SpectatorService<WidgetResourcesService>;
   const createService = createServiceFactory({
@@ -58,8 +60,6 @@ describe('WidgetResourcesService', () => {
         } as CallResponse<WebUiApiDirectory, 'update.status'>),
         mockTypedCall('reporting.netdata_get_data', [interfaceEth0]),
       ]),
-      // `reporting.realtime` is still subscribed through the legacy client.
-      mockProvider(ApiService),
       mockProvider(Store, {
         dispatch: jest.fn(),
       }),
@@ -115,6 +115,32 @@ describe('WidgetResourcesService', () => {
       expect(
         await firstValueFrom(spectator.service.networkInterfaceLastHourStats('eth0')),
       ).toEqual([interfaceEth0]);
+    });
+  });
+
+  describe('realtimeUpdates$', () => {
+    it('emits reporting.realtime updates in the { fields } envelope', async () => {
+      const update = { cpu: { cpu: { usage: 42, temp: 50 } } } as unknown as RealtimeUpdate;
+      const received = firstValueFrom(spectator.service.realtimeUpdates$);
+
+      spectator.inject(MockTypedApiService).emitEvent('reporting.realtime', { msg: 'added', fields: update });
+
+      expect(await received).toEqual({ fields: update });
+      expect(spectator.inject(MockTypedApiService).subscribe).toHaveBeenCalledWith('reporting.realtime');
+    });
+  });
+
+  describe('getAppStats', () => {
+    it('emits the stats of the requested app from app.stats', () => {
+      const app1Stats = { app_name: 'app_1', cpu_usage: 10 } as AppStats;
+      const app2Stats = { app_name: 'app_2', cpu_usage: 20 } as AppStats;
+      const emissions: unknown[] = [];
+      spectator.service.getAppStats('app_2').subscribe((state) => emissions.push(state));
+
+      spectator.inject(MockTypedApiService).emitEvent('app.stats', { msg: 'added', fields: [app1Stats, app2Stats] });
+
+      expect(spectator.inject(MockTypedApiService).subscribe).toHaveBeenCalledWith('app.stats');
+      expect(emissions.at(-1)).toEqual({ isLoading: false, value: app2Stats });
     });
   });
 });

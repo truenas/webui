@@ -7,6 +7,7 @@ import { firstValueFrom, take, toArray } from 'rxjs';
 import { MockGenerationError } from 'app/modules/websocket/errors';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 import { selectEnabledMockConfigs } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
@@ -17,6 +18,7 @@ describe('interceptConnection', () => {
   let store$: MockStore;
   let debug: WebSocketDebugService;
   let mocks: MockResponseService;
+  let duplicates: DuplicateCallTrackerService;
   let debugPanelWasEnabled: boolean;
 
   const eulaMock = {
@@ -36,6 +38,7 @@ describe('interceptConnection', () => {
       providers: [
         MockResponseService,
         mockProvider(WebSocketDebugService),
+        mockProvider(DuplicateCallTrackerService),
         provideMockStore({
           selectors: [{ selector: selectEnabledMockConfigs, value: [eulaMock] }],
         }),
@@ -44,9 +47,10 @@ describe('interceptConnection', () => {
     store$ = TestBed.inject(MockStore);
     debug = TestBed.inject(WebSocketDebugService);
     mocks = TestBed.inject(MockResponseService);
+    duplicates = TestBed.inject(DuplicateCallTrackerService);
 
     client = createFakeClient({ version: 'v28.0.0', opened: true });
-    interceptConnection(client.connection, debug, mocks);
+    interceptConnection(client.connection, debug, mocks, duplicates);
   });
 
   afterEach(() => {
@@ -114,6 +118,16 @@ describe('interceptConnection', () => {
         }),
       }),
     ]));
+  });
+
+  it('checks every request it sees for a repeat, mocked or not', async () => {
+    client.mock.call('system.host_id', 'host-1');
+
+    await firstValueFrom(client.api.call('system.host_id'));
+    await firstValueFrom(client.api.call('truenas.get_eula'));
+
+    expect(duplicates.trackCall).toHaveBeenCalledWith('system.host_id', []);
+    expect(duplicates.trackCall).toHaveBeenCalledWith('truenas.get_eula', []);
   });
 
   it('fails the send with MockGenerationError when a mock cannot be generated', () => {

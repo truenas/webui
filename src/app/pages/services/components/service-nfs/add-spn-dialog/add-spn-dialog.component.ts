@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncRestoreDialog } from 'app/pages/data-protection/cloudsync/cloudsync-restore-dialog/cloudsync-restore-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -34,7 +34,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class AddSpnDialog {
   protected readonly InputType = InputType;
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
@@ -57,7 +57,7 @@ export class AddSpnDialog {
       password: value.password,
     };
 
-    this.api.call('nfs.add_principal', [payload])
+    this.api.callUndeclared('nfs.add_principal', [payload])
       .pipe(
         this.errorHandler.withErrorHandler(),
         this.loader.withLoader(),

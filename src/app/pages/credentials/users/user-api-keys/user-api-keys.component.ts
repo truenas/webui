@@ -89,7 +89,7 @@ export class UserApiKeysComponent implements OnInit {
   protected readonly searchableElements = userApiKeysElements;
   protected readonly advancedSearchPlaceholder = this.translate.instant('Name ~ "admin"');
 
-  dataProvider: ApiDataProvider<'api_key.query'>;
+  dataProvider: ApiDataProvider<'api_key.query', ApiKey>;
 
   protected readonly displayedColumns = ['name', 'username', 'local', 'revoked', 'created_at', 'expires_at', 'actions'];
   protected readonly trackById = (_index: number, row: ApiKey): number => row.id;
@@ -132,7 +132,7 @@ export class UserApiKeysComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    this.dataProvider = new ApiDataProvider(this.api, 'api_key.query');
+    this.dataProvider = new ApiDataProvider<'api_key.query', ApiKey>(this.api, 'api_key.query');
     this.dataProvider.paginationStrategy = new PaginationServerSide();
     this.dataProvider.sortingStrategy = new SortingServerSide();
     this.setDefaultSort();

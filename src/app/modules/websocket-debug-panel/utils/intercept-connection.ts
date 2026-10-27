@@ -5,6 +5,7 @@ import { IncomingMessage, RequestMessage } from 'app/interfaces/api-message.inte
 import { MockGenerationError } from 'app/modules/websocket/errors';
 import type { WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { MockConfig } from 'app/modules/websocket-debug-panel/interfaces/mock-config.interface';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
 
@@ -14,8 +15,9 @@ type Messages = ReturnType<Connection['messages']>;
 
 /**
  * Puts the WebSocket debug panel between the tab and its one connection: every
- * frame written is logged and checked against the enabled mock configs, every
- * frame read is logged, and mocked answers are read as if the appliance sent them.
+ * frame written is logged, checked against the enabled mock configs and for a repeat
+ * of the same request, every frame read is logged, and mocked answers are read as if
+ * the appliance sent them.
  *
  * Done on the connection's own `send` and `messages()` because that is where both
  * clients meet: `ApiService`'s queue, `TypedApiService`, and the client's own
@@ -27,13 +29,15 @@ type Messages = ReturnType<Connection['messages']>;
  *
  * One thing it cannot reach: the client's `api.job()` tracks job progress on a
  * `messages()` stream it took when it was built, before this ran. A mocked job's
- * synthetic `core.get_jobs` events reach the legacy jobs store but not a typed
- * `job()` (gap 7 in docs/devs/typed-api-client.md).
+ * synthetic `core.get_jobs` events reach the jobs store, whose `subscribe` takes
+ * a fresh `messages()` stream, but not a typed `job()` (gap 7 in
+ * docs/devs/typed-api-client.md).
  */
 export function interceptConnection(
   connection: Connection,
   debug: WebSocketDebugService,
   mocks: MockResponseService,
+  duplicates: DuplicateCallTrackerService,
 ): void {
   const send = connection.send.bind(connection);
 
@@ -58,6 +62,9 @@ export function interceptConnection(
       debug.logOutgoingMessage(request, Boolean(mock));
     } catch (error) {
       console.error('Error logging outgoing message:', error);
+    }
+    if (request.method) {
+      duplicates.trackCall(request.method, request.params);
     }
 
     if (!mock) {

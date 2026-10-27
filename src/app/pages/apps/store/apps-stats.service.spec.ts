@@ -1,12 +1,10 @@
 import {
   createServiceFactory,
-  mockProvider,
   SpectatorService,
 } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
+import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppStats } from 'app/interfaces/app.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 
 describe('AppsStatsService', () => {
@@ -43,14 +41,7 @@ describe('AppsStatsService', () => {
   const createService = createServiceFactory({
     service: AppsStatsService,
     providers: [
-      mockProvider(ApiService, {
-        subscribe: jest.fn(() => of({
-          fields: [
-            plexStats,
-            minioStats,
-          ],
-        } as ApiEvent<AppStats[]>)),
-      }),
+      mockTypedApi(),
     ],
   });
 
@@ -61,19 +52,20 @@ describe('AppsStatsService', () => {
   describe('subscribeToUpdates()', () => {
     it('subscribes to app stats updates when subscribeToUpdates() is called', () => {
       spectator.service.subscribeToUpdates();
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('app.stats');
+      expect(spectator.inject(MockTypedApiService).subscribe).toHaveBeenCalledWith('app.stats');
     });
   });
 
   describe('getStatsForApp()', () => {
     it('returns an observable with stats for an app', () => {
       spectator.service.subscribeToUpdates();
+      spectator.inject(MockTypedApiService).emitEvent('app.stats', { msg: 'added', fields: [plexStats, minioStats] });
       const plexStats$ = spectator.service.getStatsForApp('plex');
 
       let plexStatsUpdate: AppStats | undefined = undefined;
       plexStats$.subscribe((stats) => plexStatsUpdate = stats);
 
-      expect(plexStatsUpdate).toBe(plexStats);
+      expect(plexStatsUpdate).toEqual(plexStats);
     });
   });
 });

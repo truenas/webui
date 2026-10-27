@@ -20,7 +20,6 @@ import {
 } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
-import { ApiJobMethod, ApiJobResponse } from 'app/interfaces/api/api-job-directory.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { JobItemComponent } from 'app/modules/jobs/components/job-item/job-item.component';
@@ -115,7 +114,7 @@ export class JobsPanelComponent {
     const job$ = (
       this.store$.select(
         selectJob(job.id),
-      ) as Observable<Job<ApiJobResponse<ApiJobMethod>>>
+      ) as Observable<Job>
     ).pipe(
       observeJob(),
     );

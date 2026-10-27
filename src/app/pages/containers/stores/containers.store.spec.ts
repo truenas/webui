@@ -4,10 +4,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { of, Subject } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ContainerStatus } from 'app/enums/container.enum';
-import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
@@ -17,7 +15,7 @@ describe('ContainersStore', () => {
 
   // The wire shape, which a status-only change does not fit the generated event type for.
   const event$ = new Subject<{ msg: CollectionChangeType; id: number | string; fields?: Partial<Container> }>();
-  const metricsEvent$ = new Subject<ApiEvent<ContainerMetrics>>();
+  const metricsEvent$ = new Subject<{ msg: 'added'; fields: ContainerMetrics }>();
   const containers = [
     fakeContainer({ id: 1, name: 'container1' }),
     fakeContainer({ id: 2, name: 'container2' }),
@@ -35,11 +33,7 @@ describe('ContainersStore', () => {
       // fed in as they arrive.
       mockProvider(TypedApiService, {
         query: jest.fn(() => of(containers)),
-        subscribe: jest.fn(() => event$),
-      }),
-      // `container.metrics` stays on the legacy client (gap 17 in docs/devs/typed-api-client.md).
-      mockProvider(ApiService, {
-        subscribe: jest.fn(() => metricsEvent$),
+        subscribe: jest.fn((event: string) => (event === 'container.metrics' ? metricsEvent$ : event$)),
       }),
       mockProvider(Router, {
         events: routerEvents$,
@@ -290,13 +284,9 @@ describe('ContainersStore', () => {
         },
       } as unknown as ContainerMetrics;
 
-      metricsEvent$.next({
-        collection: 'container.metrics',
-        id: 'metrics',
-        msg: CollectionChangeType.Changed,
-        fields: mockInstanceMetrics,
-      });
+      metricsEvent$.next({ msg: 'added', fields: mockInstanceMetrics });
 
+      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('container.metrics');
       expect(spectator.service.metrics()).toEqual(mockInstanceMetrics);
     });
   });

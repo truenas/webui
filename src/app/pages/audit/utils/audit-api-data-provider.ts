@@ -1,13 +1,14 @@
+import { CallParams } from '@truenas/api-client';
 import { Observable, of } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
 import { ControllerType } from 'app/enums/controller-type.enum';
-import { ApiCallParams } from 'app/interfaces/api/api-call-directory.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
-export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<'audit.query'> {
+export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<'audit.query', AuditEntry> {
   isHaLicensed: boolean;
   selectedControllerType: ControllerType;
   service: AuditService = AuditService.Middleware;
@@ -22,12 +23,11 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
    * Typed entry point for filters. `this.queryFilters` is the source of truth used
    * by `prepareParams`/`countRows` to build the actual request. `this.params` is
    * kept in sync so the inherited `load()`'s `isEmpty(params[0])` check still
-   * distinguishes "no records" from "no search results"; the cast is local to
-   * this single line because the base treats `params[0]` as filters by convention.
+   * distinguishes "no records" from "no search results".
    */
   setQueryFilters(filters: QueryFilters<AuditEntry>): void {
     this.queryFilters = filters;
-    super.setParams([filters] as unknown as ApiCallParams<'audit.query'>);
+    super.setParams([filters]);
   }
 
   /**
@@ -56,7 +56,7 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
 
     this.lastParams = this.params;
 
-    const params: ApiCallParams<'audit.query'> = [{
+    const params: CallParams<WebUiApiDirectory, 'audit.query'> = [{
       'query-filters': this.queryFilters,
       'query-options': { count: true },
       services: [this.service],
@@ -68,7 +68,7 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
     return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
-  protected override prepareParams(): ApiCallParams<'audit.query'> {
+  protected override prepareParams(): CallParams<WebUiApiDirectory, 'audit.query'> {
     return [{
       'query-filters': this.queryFilters,
       'query-options': {
