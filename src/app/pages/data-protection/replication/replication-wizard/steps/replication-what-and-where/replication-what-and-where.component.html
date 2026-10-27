@@ -37,16 +37,15 @@
           [tooltip]="helptext.sourceDatasetsTooltip | translate"
           [required]="true"
         >
-          <ix-explorer
+          @let sourceDatasetsSource = sourceNodeProvider | filePickerSource : sourceDatasetsRootNodes;
+          <tn-file-picker
             formControlName="source_datasets"
-            [multiple]="true"
-            [rootNodes]="sourceDatasetsRootNodes"
-            [nodeProvider]="sourceNodeProvider"
-          >
-            @if (isSourceLocal) {
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            }
-          </ix-explorer>
+            [source]="sourceDatasetsSource"
+            [createActions]="isSourceLocal ? [sourceDatasetsSource | createDatasetAction] : []"
+            [multiSelect]="true"
+            [openOnClick]="true"
+            [allowFreeText]="true"
+          ></tn-file-picker>
         </tn-form-field>
       }
 
@@ -146,15 +145,14 @@
           [tooltip]="helptext.targetDatasetTooltip | translate"
           [required]="true"
         >
-          <ix-explorer
+          @let targetDatasetSource = targetNodeProvider | filePickerSource : targetDatasetsRootNodes;
+          <tn-file-picker
             formControlName="target_dataset"
-            [rootNodes]="targetDatasetsRootNodes"
-            [nodeProvider]="targetNodeProvider"
-          >
-            @if (isTargetLocal) {
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            }
-          </ix-explorer>
+            [source]="targetDatasetSource"
+            [createActions]="isTargetLocal ? [targetDatasetSource | createDatasetAction] : []"
+            [openOnClick]="true"
+            [allowFreeText]="true"
+          ></tn-file-picker>
         </tn-form-field>
       }
       @if (form.controls.encryption.enabled) {

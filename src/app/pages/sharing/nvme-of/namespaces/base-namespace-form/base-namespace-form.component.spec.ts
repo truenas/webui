@@ -15,7 +15,7 @@ import {
   createNamespaceForm, NamespaceFormGroup,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-form.utils';
 import {
-  getNamespacePathExplorer, getNamespaceTypeToggle, mockExplorerCreateZvol, selectNamespaceType,
+  getNamespacePathPicker, getNamespaceTypeToggle, mockCreateZvolAction, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -32,7 +32,7 @@ describe('BaseNamespaceFormComponent', () => {
   // over as an input, so the spec host mirrors that rather than wrapping anything in a <form>.
   const createHost = createHostFactory({
     component: BaseNamespaceFormComponent,
-    overrideComponents: [mockExplorerCreateZvol()],
+    overrideComponents: [mockCreateZvolAction()],
     providers: [
       mockProvider(AuthService, {
         hasRole: jest.fn(() => of(true)),
@@ -55,7 +55,7 @@ describe('BaseNamespaceFormComponent', () => {
 
     it('writes a zvol path into the host form group', async () => {
       await selectNamespaceType(loader, 'Zvol');
-      await (await getNamespacePathExplorer(loader)).setValue('/dev/zvol/tank/test-zvol');
+      await (await getNamespacePathPicker(loader)).setValue('/dev/zvol/tank/test-zvol');
 
       expect(form.getRawValue()).toMatchObject({
         device_path: '/dev/zvol/tank/test-zvol',
@@ -68,7 +68,7 @@ describe('BaseNamespaceFormComponent', () => {
         .toHaveLength(0);
 
       await selectNamespaceType(loader, 'New File');
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank');
       await (await getTnInput('filename')).setValue('new-file.img');
 
       expect(form.getRawValue()).toMatchObject({
@@ -85,7 +85,7 @@ describe('BaseNamespaceFormComponent', () => {
       expect(form.status).toBe('INVALID');
 
       await selectNamespaceType(loader, 'Existing File');
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/test-file');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank/test-file');
 
       expect(form.status).toBe('VALID');
       expect(form.controls.filename.disabled).toBe(true);
@@ -94,7 +94,7 @@ describe('BaseNamespaceFormComponent', () => {
 
     it('still requires filename and file size while New File is selected', async () => {
       await selectNamespaceType(loader, 'New File');
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank');
       expect(form.status).toBe('INVALID');
 
       await (await getTnInput('filename')).setValue('new-file.img');
@@ -127,7 +127,7 @@ describe('BaseNamespaceFormComponent', () => {
 
     it('clears a previously chosen path when the device type changes', async () => {
       await selectNamespaceType(loader, 'Existing File');
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/test-file');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank/test-file');
       expect(form.getRawValue().device_path).toBe('/mnt/tank/test-file');
 
       await selectNamespaceType(loader, 'Zvol');
@@ -147,7 +147,7 @@ describe('BaseNamespaceFormComponent', () => {
       const checkedToggle = await getNamespaceTypeToggle(loader, 'Zvol');
       expect(await checkedToggle.isChecked()).toBe(true);
 
-      expect(await (await getNamespacePathExplorer(loader)).getValue()).toBe('zvol/tank/test-zvol');
+      expect(await (await getNamespacePathPicker(loader)).getValue()).toBe('zvol/tank/test-zvol');
     });
 
     // The prefill must not seed New File's fields: switching branches would otherwise show the old

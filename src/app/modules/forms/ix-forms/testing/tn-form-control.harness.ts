@@ -3,14 +3,18 @@ import {
   FormFieldHarnessFilters,
   TnAutocompleteHarness,
   TnCheckboxGroupHarness,
-  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness,
+  TnFormFieldHarness,
+  TnInputHarness,
+  TnRadioHarness,
+  TnSelectHarness,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { IxCodeEditorHarness } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.harness';
 import {
   IxIpInputWithNetmaskHarness,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.harness';
 import { IxPermissionsHarness } from 'app/modules/forms/controls/ix-permissions/ix-permissions.harness';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixControlLabelTag } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
 import {
   IxFormControlHarness, unreadableControl,
@@ -70,11 +74,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   private permissions = this.locatorForOptional(IxPermissionsHarness);
   private codeEditor = this.locatorForOptional(IxCodeEditorHarness);
   /**
-   * `ix-explorer` renders a `tn-file-picker` whose inner `<input>` the tn-input locator does not
-   * match, and its value can be a list — driven through its own harness, which reads and writes
-   * comma-separated paths.
+   * A `tn-file-picker`'s inner `<input>` is not matched by the tn-input locator, and its value can
+   * be a list — driven through its own harness, adapted by {@link filePickerDelegate}.
    */
-  private explorer = this.locatorForOptional(IxExplorerHarness);
+  private filePicker = this.locatorForOptional(TnFilePickerHarness);
   /**
    * Any *other* projected ix-* control. `RegisteredControlDirective` — the host directive every
    * ix-* control carries — stamps `ix-label` on its own element once the control registers, so
@@ -164,7 +167,24 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
     return (await this.ipInputWithNetmask())
       ?? (await this.permissions())
       ?? (await this.codeEditor())
-      ?? (await this.explorer());
+      ?? (await this.filePickerDelegate());
+  }
+
+  /**
+   * The picker shows a list as "a, b"; specs and callers read and write the comma-separated
+   * "a,b" the legacy explorer harness reported. The field, not the picker, owns the label.
+   */
+  private async filePickerDelegate(): Promise<IxFormControlHarness | null> {
+    const picker = await this.filePicker();
+    if (!picker) {
+      return null;
+    }
+    return {
+      getLabelText: () => Promise.resolve(''),
+      getValue: async () => (await picker.getValue()).replace(/,\s+/g, ','),
+      setValue: (value: unknown) => picker.setValue(value == null ? '' : String(value)),
+      isDisabled: () => picker.isDisabled(),
+    };
   }
 
 

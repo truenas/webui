@@ -17,7 +17,7 @@ import {
   TnInputComponent,
   TnSelectComponent,
   TnTestIdDirective,
-  TnTooltipDirective,
+  TnTooltipDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
 import { distinctUntilChanged, filter, map, take } from 'rxjs/operators';
@@ -34,11 +34,9 @@ import {
 } from 'app/interfaces/dynamic-form-schema.interface';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 
@@ -48,6 +46,9 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
   templateUrl: './ix-dynamic-form-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     TnFormListComponent,
     TnFormListItemComponent,
     ReactiveFormsModule,
@@ -62,12 +63,10 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
     TnSelectComponent,
     TnCheckboxComponent,
     TnAutocompleteComponent,
-    IxExplorerComponent,
     IxIpInputWithNetmaskComponent,
     TranslateModule,
     CastPipe,
     AsyncPipe,
-    ExplorerCreateDatasetComponent,
   ],
 })
 export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {

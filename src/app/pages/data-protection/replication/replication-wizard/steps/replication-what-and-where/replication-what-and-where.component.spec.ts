@@ -3,8 +3,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnButtonHarness,
+  TnCheckboxHarness,
+  TnDialog,
+  TnInputHarness,
+  TnRadioHarness,
+  TnSelectHarness,
   TnStepperComponent,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -20,7 +26,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -98,8 +103,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getExplorer = (name: string): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: `[formControlName="${name}"]` }),
+  const getExplorer = (name: string): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: `[formControlName="${name}"]` }),
   );
   const setRadio = async (label: string): Promise<void> => {
     await (await loader.getHarness(TnRadioHarness.with({ label }))).check();

@@ -167,7 +167,7 @@ export const usersLocators = {
     homeValue: '[data-test="text-home-directory"]',
     /** `<tn-checkbox formControlName="home_create" [testId]="'home-create'">`. */
     homeCreate: '[data-test="checkbox-home-create"]',
-    /** `ix-explorer formControlName="home"`: its `tn-file-picker`'s typable input takes the control name. */
+    /** `tn-file-picker formControlName="home"`: its typable input takes the control name. */
     home: '[data-test="input-home"]',
     /**
      * Shown under the path once it is not `/var/empty`. While editing, the form

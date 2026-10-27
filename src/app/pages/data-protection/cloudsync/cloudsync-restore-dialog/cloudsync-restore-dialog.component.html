@@ -25,10 +25,12 @@
     [tooltip]="helptext.pathTooltip | translate"
     [required]="true"
   >
-    <ix-explorer
+    <tn-file-picker
       formControlName="path"
-      [nodeProvider]="treeNodeProvider"
-    ></ix-explorer>
+      [source]="treeNodeProvider | filePickerSource"
+      [openOnClick]="true"
+      [allowFreeText]="true"
+    ></tn-file-picker>
   </tn-form-field>
 
   </form>

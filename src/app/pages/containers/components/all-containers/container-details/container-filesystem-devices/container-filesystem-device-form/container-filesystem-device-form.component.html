@@ -14,12 +14,14 @@
       [tooltip]="'Select the host directory to mount inside the container' | translate"
       [required]="true"
     >
-      <ix-explorer
+      @let sourceSource = fileProvider | filePickerSource;
+      <tn-file-picker
         formControlName="source"
-        [nodeProvider]="fileProvider"
-      >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        [source]="sourceSource"
+        [createActions]="[sourceSource | createDatasetAction]"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
 
     <tn-form-field

@@ -166,7 +166,7 @@ export async function openEditContainerForm(page: Page, name: string): Promise<v
 
 /**
  * Types a path into the filesystem device form's Source and leaves the field,
- * which is when `ix-explorer` hands the typed value to the form and its
+ * which is when the `tn-file-picker` hands the typed value to the form and its
  * validators run.
  */
 export async function fillFilesystemDeviceSource(page: Page, path: string): Promise<void> {

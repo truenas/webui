@@ -4,7 +4,6 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { FileSystemItem } from '@truenas/ui-components';
 import { MiB } from 'app/constants/bytes.constant';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
 
@@ -14,7 +13,7 @@ describe('FileValidatorService', () => {
   let spectator: SpectatorService<FileValidatorService>;
   let maxSizeValidatorFn: ValidatorFn;
   let fileIsSelectedValidatorFn: ValidatorFn;
-  let mockExplorer: Partial<IxExplorerComponent>;
+  const selectedItem = signal<FileSystemItem | null>(null);
 
   const createService = createServiceFactory({
     service: FileValidatorService,
@@ -23,14 +22,10 @@ describe('FileValidatorService', () => {
   beforeEach(() => {
     spectator = createService();
 
-    mockExplorer = {
-      lastSelectedItem: signal<FileSystemItem | null>(null),
-    };
+    selectedItem.set(null);
 
     maxSizeValidatorFn = spectator.service.maxSize(maxSizeInBytes);
-    fileIsSelectedValidatorFn = spectator.service.fileIsSelectedInExplorer(
-      () => mockExplorer as IxExplorerComponent,
-    );
+    fileIsSelectedValidatorFn = spectator.service.fileIsSelected(selectedItem);
   });
 
   it('should return null if value is null', () => {
@@ -61,7 +56,7 @@ describe('FileValidatorService', () => {
     });
   });
 
-  describe('fileIsSelectedInExplorer', () => {
+  describe('fileIsSelected', () => {
     it('should return null when the form is empty', () => {
       const control = new FormControl('');
       expect(fileIsSelectedValidatorFn(control)).toBeNull();
@@ -73,7 +68,7 @@ describe('FileValidatorService', () => {
     });
 
     it('should return null when control value does not match last selected path', () => {
-      mockExplorer.lastSelectedItem.set({
+      selectedItem.set({
         path: '/mnt/dozer/dataset',
         name: 'dataset',
         type: 'folder',
@@ -84,7 +79,7 @@ describe('FileValidatorService', () => {
     });
 
     it('should return null when selected node is a file', () => {
-      mockExplorer.lastSelectedItem.set({
+      selectedItem.set({
         path: '/mnt/dozer/myfile.dat',
         name: 'myfile.dat',
         type: 'file',
@@ -95,7 +90,7 @@ describe('FileValidatorService', () => {
     });
 
     it('should return an error when selected node is a directory', () => {
-      mockExplorer.lastSelectedItem.set({
+      selectedItem.set({
         path: '/mnt/dozer/dataset',
         name: 'dataset',
         type: 'folder',
@@ -106,7 +101,7 @@ describe('FileValidatorService', () => {
     });
 
     it('should return an error when selected node is a dataset', () => {
-      mockExplorer.lastSelectedItem.set({
+      selectedItem.set({
         path: '/mnt/dozer',
         name: 'dozer',
         type: 'dataset',

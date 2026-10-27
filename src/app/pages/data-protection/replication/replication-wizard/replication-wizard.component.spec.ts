@@ -4,7 +4,12 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnButtonHarness,
+  TnCheckboxHarness,
+  TnInputHarness,
+  TnRadioHarness,
+  TnSelectHarness,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,7 +23,6 @@ import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
@@ -149,8 +153,8 @@ describe('ReplicationWizardComponent', () => {
     await setTnCheckbox('recursive', false);
     await setTnCheckbox('custom_snapshots', true);
     await setTnInput('name_regex', '.*');
-    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['pool1/', 'pool2/']);
-    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
+    await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['pool1/', 'pool2/']);
+    await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
 
     await goToNextStep();
 
@@ -224,8 +228,8 @@ describe('ReplicationWizardComponent', () => {
     await setTnCheckbox('recursive', false);
     await setTnCheckbox('custom_snapshots', true);
     await setTnInput('name_regex', '.*');
-    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['pool1/']);
-    await (await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
+    await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['pool1/']);
+    await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
 
     await goToNextStep();
 

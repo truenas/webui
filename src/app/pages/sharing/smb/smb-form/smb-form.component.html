@@ -62,13 +62,14 @@
         [tooltip]="helptextSharingSmb.pathTooltip | translate"
         [required]="true"
       >
-        <ix-explorer
+        @let pathSource = treeNodeProvider | filePickerSource : rootNodes();
+        <tn-file-picker
           formControlName="path"
-          [nodeProvider]="treeNodeProvider"
-          [rootNodes]="rootNodes()"
-        >
-          <ix-explorer-create-dataset [datasetProperties]="createDatasetProps"></ix-explorer-create-dataset>
-        </ix-explorer>
+          [source]="pathSource"
+          [createActions]="[pathSource | createDatasetAction : createDatasetProps]"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     }
 

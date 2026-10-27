@@ -152,7 +152,7 @@ export const rsyncTaskLocators = {
 
   form: {
     /**
-     * `ix-explorer` renders a `tn-file-picker`, whose inner `<input>` takes the
+     * A `tn-file-picker`, whose inner `<input>` takes the
      * control name. Typable, so the path goes in directly rather than being
      * navigated as a tree.
      */

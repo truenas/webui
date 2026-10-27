@@ -5,7 +5,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnBannerHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness, TnSpriteLoaderService,
+  TnBannerHarness,
+  TnCheckboxHarness,
+  TnChipInputHarness,
+  TnInputHarness,
+  TnSelectHarness,
+  TnSpriteLoaderService,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -18,7 +24,6 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -134,8 +139,8 @@ describe('CloudBackupFormComponent', () => {
   );
   // The explorers render inside a `tn-form-field` that owns their label, so they are located by
   // control name rather than through `IxFormHarness`'s label index.
-  const getExplorer = (name: string): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: `[formControlName="${name}"]` }),
+  const getExplorer = (name: string): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
   describe('adds a new cloud backup', () => {

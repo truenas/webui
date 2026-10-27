@@ -9,7 +9,7 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnTooltipDirective,
+  TnTooltipDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
@@ -17,8 +17,8 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingWebshare } from 'app/helptext/sharing/webshare/webshare';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -42,14 +42,15 @@ export interface WebShareFormData {
   templateUrl: './webshare-shares-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     TnBannerComponent,
     TnTooltipDirective,
     TranslateModule,

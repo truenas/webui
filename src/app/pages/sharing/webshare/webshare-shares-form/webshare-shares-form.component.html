@@ -11,12 +11,14 @@
       [tooltip]="helptext.webshare_path_tooltip | translate"
       [required]="true"
     >
-      <ix-explorer
+      @let pathSource = treeNodeProvider | filePickerSource;
+      <tn-file-picker
         formControlName="path"
-        [nodeProvider]="treeNodeProvider"
-      >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        [source]="pathSource"
+        [createActions]="[pathSource | createDatasetAction]"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
 
     <tn-form-field

@@ -33,12 +33,13 @@
         [tooltip]="helptext.tooltips.excludedPaths | translate"
         [required]="true"
       >
-        <ix-explorer
+        <tn-file-picker
           formControlName="excludedPaths"
-          [nodeProvider]="snapshotNodeProvider"
-          [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
-          [multiple]="true"
-        ></ix-explorer>
+          [source]="snapshotNodeProvider | filePickerSource : data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
+          [multiSelect]="true"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     }
 
@@ -63,11 +64,12 @@
         [tooltip]="helptext.tooltips.subFolder | translate"
         [required]="true"
       >
-        <ix-explorer
+        <tn-file-picker
           formControlName="subFolder"
-          [nodeProvider]="snapshotNodeProvider"
-          [rootNodes]="data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
-        ></ix-explorer>
+          [source]="snapshotNodeProvider | filePickerSource : data?.backup.absolute_paths ? [rootDatasetNode] : [slashRootNode]"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     }
 
@@ -76,12 +78,13 @@
         [label]="'Included Paths' | translate"
         [tooltip]="helptext.tooltips.includedPaths | translate"
       >
-        <ix-explorer
+        <tn-file-picker
           formControlName="includedPaths"
-          [rootNodes]="includedPathsRootNodes()"
-          [nodeProvider]="snapshotNodeProvider"
-          [multiple]="true"
-        ></ix-explorer>
+          [source]="snapshotNodeProvider | filePickerSource : includedPathsRootNodes()"
+          [multiSelect]="true"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     }
   </tn-form-section>
@@ -92,12 +95,14 @@
       [tooltip]="helptext.tooltips.target | translate"
       [required]="true"
     >
-      <ix-explorer
+      @let targetSource = fileNodeProvider | filePickerSource;
+      <tn-file-picker
         formControlName="target"
-        [nodeProvider]="fileNodeProvider"
-      >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        [source]="targetSource"
+        [createActions]="[targetSource | createDatasetAction]"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
   </tn-form-section>
 </ix-form>

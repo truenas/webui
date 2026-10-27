@@ -35,10 +35,12 @@
         [tooltip]="'Path to the disk image file to import. Supported formats: qcow2, qed, raw, vdi, vhdx, vmdk' | translate"
         [required]="true"
       >
-        <ix-explorer
+        <tn-file-picker
           formControlName="image_source"
-          [nodeProvider]="treeNodeProvider"
-        ></ix-explorer>
+          [source]="treeNodeProvider | filePickerSource"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     }
 

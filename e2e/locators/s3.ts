@@ -29,7 +29,7 @@
  * an `option-<control>-add-new` create row. (Until webui#13982 these were an
  * `ix-user-picker` emitting `input-<control>` through the legacy path.)
  *
- * `ix-explorer` (parent dataset) renders a `tn-file-picker`, whose typable
+ * The parent dataset is a `tn-file-picker`, whose typable
  * inner `<input>` takes the control name — the same shape as the SMB path.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
@@ -309,7 +309,7 @@ export const s3ServiceLocators = {
     logLevel: '[data-test="select-log-level"]',
     /** By label: "Error", "Warning", "Notice", "Info" or "Debug" (`s3LogLevelLabels`). */
     logLevelOption: (label: string) => `[data-test="option-log-level-${kebabTestSegment(label)}"]`,
-    /** `ix-explorer` over dataset names, typable like the bucket form's parent dataset. */
+    /** A `tn-file-picker` over dataset names, typable like the bucket form's parent dataset. */
     managedRootDataset: '[data-test="input-managed-root-dataset"]',
     save: '[data-test="button-save"]',
   },

@@ -8,7 +8,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent,
-  TnFormSectionComponent, TnInputComponent, TnSelectComponent, type TnSelectOption,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, type TnSelectOption, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest, map, shareReplay, startWith,
@@ -37,10 +37,8 @@ import {
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -90,6 +88,9 @@ type S3DefaultAudit = NonNullable<S3ConfigUpdate['default_audit']>;
   templateUrl: './service-s3.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     PremiumFeatureDirective,
     ReactiveFormsModule,
     IxFormComponent,
@@ -101,8 +102,6 @@ type S3DefaultAudit = NonNullable<S3ConfigUpdate['default_audit']>;
     TnFormListComponent,
     TnFormListItemComponent,
     WithManageCertificatesLinkComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     S3GrantsListComponent,
     TranslateModule,
   ],

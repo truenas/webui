@@ -5,19 +5,15 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent,
-  TnFormFieldComponent, TnFormFieldErrorMessages, TnFormSectionComponent, TnInputComponent,
+  TnFormFieldComponent, TnFormFieldErrorMessages, TnFormSectionComponent, TnInputComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { datasetsRootNode, zvolsRootNode } from 'app/constants/basic-root-nodes.constant';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
 import { NvmeOfNamespace } from 'app/interfaces/nvme-of.interface';
 import { Option } from 'app/interfaces/option.interface';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import {
-  ExplorerCreateZvolComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-zvol/explorer-create-zvol.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { CreateZvolActionPipe } from 'app/modules/forms/file-picker/create-zvol-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { translateOptions } from 'app/modules/translate/translate.helper';
 import {
   FormNamespaceType, NamespaceFormGroup, syncNewFileControls,
@@ -67,7 +63,10 @@ const typeOptions: Option[] = [
   styleUrl: './base-namespace-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxExplorerComponent,
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
+    CreateZvolActionPipe,
     ReactiveFormsModule,
     TranslateModule,
     TnFormSectionComponent,
@@ -75,8 +74,6 @@ const typeOptions: Option[] = [
     TnInputComponent,
     TnButtonToggleGroupComponent,
     TnButtonToggleComponent,
-    ExplorerCreateDatasetComponent,
-    ExplorerCreateZvolComponent,
   ],
 })
 export class BaseNamespaceFormComponent implements OnInit {

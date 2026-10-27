@@ -20,10 +20,12 @@
         [tooltip]="helptext.parentDatasetTooltip | translate"
         [required]="true"
       >
-        <ix-explorer
+        <tn-file-picker
           formControlName="parent_dataset"
-          [nodeProvider]="treeNodeProvider"
-        ></ix-explorer>
+          [source]="treeNodeProvider | filePickerSource"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
       @if (datasetHint(); as hint) {
         <p class="dataset-hint" tnTestId="dataset-hint" tnTestIdType="text">{{ hint }}</p>

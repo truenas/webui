@@ -6,7 +6,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnFormFieldHarness, TnInputHarness,
+  TnCheckboxHarness,
+  TnChipInputHarness,
+  TnFormFieldHarness,
+  TnInputHarness,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { BehaviorSubject, map, throwError } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
@@ -19,7 +23,6 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { IxGroupComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -31,7 +34,7 @@ import { ApiCallError } from 'app/services/errors/error.classes';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { StorageService } from 'app/services/storage.service';
 
-const homeExplorer = IxExplorerHarness.with({ selector: '[formControlName="home"]' });
+const homeExplorer = TnFilePickerHarness.with({ selector: '[formControlName="home"]' });
 
 describe('AdditionalDetailsSectionComponent', () => {
   let spectator: Spectator<AdditionalDetailsSectionComponent>;

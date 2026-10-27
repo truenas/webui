@@ -48,12 +48,14 @@
       [tooltip]="helptextSharingIscsi.datasetTooltip | translate"
       [required]="true"
     >
-      <ix-explorer
+      @let datasetSource = fileNodeProvider | filePickerSource;
+      <tn-file-picker
         formControlName="dataset"
-        [nodeProvider]="fileNodeProvider"
-      >
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      </ix-explorer>
+        [source]="datasetSource"
+        [createActions]="[datasetSource | createDatasetAction]"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
 
     <tn-form-field
@@ -73,10 +75,12 @@
       [label]="helptextSharingIscsi.extent.pathLabel | translate"
       [required]="true"
     >
-      <ix-explorer
+      <tn-file-picker
         formControlName="path"
-        [nodeProvider]="fileNodeProvider"
-      ></ix-explorer>
+        [source]="fileNodeProvider | filePickerSource"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
 
     <tn-form-field

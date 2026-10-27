@@ -7,7 +7,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFileInputComponent, TnFormFieldComponent,
-  TnFormSectionComponent,
+  TnFormSectionComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   defer, EMPTY, filter, finalize, map, Observable, of, take, takeUntil, tap,
@@ -16,11 +16,9 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   IxFormComponent, SubmitResult, ixFormMinSubmitFeedbackMs,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -44,10 +42,12 @@ import { UploadService } from 'app/services/upload.service';
     { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
   ],
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     TnDialogShellComponent,
     ReactiveFormsModule,
     IxFormComponent,
-    IxExplorerComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnFileInputComponent,
@@ -55,7 +55,6 @@ import { UploadService } from 'app/services/upload.service';
     TnButtonComponent,
     RequiresRolesDirective,
     TranslateModule,
-    ExplorerCreateDatasetComponent,
   ],
 })
 export class UploadIsoDialogComponent {

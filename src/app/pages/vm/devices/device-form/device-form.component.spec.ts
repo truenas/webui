@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
-import { TnButtonHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnFormFieldHarness, TnRadioHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { NEVER, Observable, Subject, of, throwError } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
@@ -25,7 +25,6 @@ import {
   VmRawFileDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import {
   fillControlValues, getControlValues, indexFormControls, IxFormBasicValueType,
@@ -73,14 +72,14 @@ describe('DeviceFormComponent', () => {
 
   /**
    * The path explorers (`CD-ROM Path`, `Raw File`) sit in a `tn-form-field` that owns their label,
-   * and `indexFormControls` cannot reach an `ix-explorer` through a field. Both bind the `path`
-   * control, and only one is on screen at a time, so they are driven through `IxExplorerHarness`
+   * and `indexFormControls` cannot reach a `tn-file-picker` through a field. Both bind the `path`
+   * control, and only one is on screen at a time, so they are driven through `TnFilePickerHarness`
    * and keyed by their field's label here.
    */
   const explorerFieldLabels = ['CD-ROM Path', 'Raw File'];
 
-  async function getPathExplorer(): Promise<IxExplorerHarness | null> {
-    return loader.getHarnessOrNull(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
+  async function getPathExplorer(): Promise<TnFilePickerHarness | null> {
+    return loader.getHarnessOrNull(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
   }
 
   /**

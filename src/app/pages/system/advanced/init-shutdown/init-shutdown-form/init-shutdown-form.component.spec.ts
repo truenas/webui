@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TreeModule } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -11,7 +11,6 @@ import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-a
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { InitShutdownFormComponent } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -94,7 +93,7 @@ describe('InitShutdownFormComponent', () => {
       await (await getSelect('type')).selectOption('Script');
       await (await getSelect('when')).selectOption('Shutdown');
 
-      const explorer = await loader.getHarness(IxExplorerHarness);
+      const explorer = await loader.getHarness(TnFilePickerHarness);
       await explorer.setValue('/mnt/new.sh');
 
       // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
@@ -141,7 +140,7 @@ describe('InitShutdownFormComponent', () => {
       expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
       expect(await (await getInput('timeout')).getValue()).toBe('45');
 
-      const explorer = await loader.getHarness(IxExplorerHarness);
+      const explorer = await loader.getHarness(TnFilePickerHarness);
       expect(await explorer.getValue()).toBe('/mnt/existing.sh');
     });
 

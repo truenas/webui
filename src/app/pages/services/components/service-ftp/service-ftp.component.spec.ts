@@ -7,7 +7,6 @@ import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -17,9 +16,6 @@ import { IxPermissionsComponent } from 'app/modules/forms/controls/ix-permission
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -103,7 +99,6 @@ describe('ServiceFtpComponent', () => {
       ReactiveFormsModule,
       IxPermissionsComponent,
       WithManageCertificatesLinkComponent,
-      MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
       mockTypedApi([

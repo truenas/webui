@@ -9,7 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent, TnStepperNextDirective,
-  TnTestIdDirective,
+  TnTestIdDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
 import {
@@ -32,10 +32,10 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import {
   forbiddenAsyncValues,
@@ -60,6 +60,9 @@ import { ReplicationService } from 'app/services/replication.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [ReplicationService, KeychainCredentialService],
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     TnFormSectionComponent,
     AsyncPipe,
     ReactiveFormsModule,
@@ -70,8 +73,6 @@ import { ReplicationService } from 'app/services/replication.service';
     TnRadioGroupComponent,
     TnInputComponent,
     SshCredentialsSelectComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     FormActionsComponent,
     TnButtonComponent,
     TnStepperNextDirective,

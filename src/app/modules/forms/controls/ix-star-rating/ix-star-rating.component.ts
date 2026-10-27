@@ -6,7 +6,7 @@ import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives
 
 /**
  * Bare star-rating control: label, required indicator, tooltip and error text all come from the
- * wrapping `<tn-form-field>`, the same way `ix-explorer` composes into one.
+ * wrapping `<tn-form-field>`, the same way `ix-code-editor` composes into one.
  */
 @Component({
   selector: 'ix-star-rating',

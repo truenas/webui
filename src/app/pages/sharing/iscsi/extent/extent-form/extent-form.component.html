@@ -110,14 +110,14 @@
             [tooltip]="helptext.extent.pathTooltip | translate"
             [required]="true"
           >
-            <ix-explorer
+            @let pathSource = treeNodeProvider | filePickerSource;
+            <tn-file-picker
               formControlName="path"
-              [nodeProvider]="treeNodeProvider"
-            >
-              @if (isNew) {
-                <ix-explorer-create-dataset></ix-explorer-create-dataset>
-              }
-            </ix-explorer>
+              [source]="pathSource"
+              [createActions]="isNew ? [pathSource | createDatasetAction] : []"
+              [openOnClick]="true"
+              [allowFreeText]="true"
+            ></tn-file-picker>
           </tn-form-field>
 
           <tn-form-field

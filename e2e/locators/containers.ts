@@ -267,7 +267,7 @@ export const containersLocators = {
    */
   filesystemDeviceForm: {
     /**
-     * "Host Directory Source". `ix-explorer` renders a `tn-file-picker`, whose inner
+     * "Host Directory Source". A `tn-file-picker`, whose inner
      * `<input>` takes the control name. Typable, so the path goes in directly.
      */
     source: '[data-test="input-source"]',

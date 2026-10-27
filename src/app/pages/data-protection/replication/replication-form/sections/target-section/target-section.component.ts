@@ -5,6 +5,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { Observable, combineLatest, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,9 +19,9 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { Option } from 'app/interfaces/option.interface';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import { ReplicationService } from 'app/services/replication.service';
 
 @Component({
@@ -29,6 +30,9 @@ import { ReplicationService } from 'app/services/replication.service';
   templateUrl: './target-section.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormSectionComponent,
@@ -36,9 +40,6 @@ import { ReplicationService } from 'app/services/replication.service';
     TnSelectComponent,
     TnCheckboxComponent,
     TnInputComponent,
-    // ix-explorer has no tn-* equivalent yet.
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     TranslateModule,
   ],
 })

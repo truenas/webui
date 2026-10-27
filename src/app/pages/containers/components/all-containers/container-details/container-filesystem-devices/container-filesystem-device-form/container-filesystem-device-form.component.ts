@@ -6,7 +6,7 @@ import {
 } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { ContainerDeviceType } from 'app/enums/container.enum';
@@ -15,8 +15,8 @@ import {
   Container,
   ContainerFilesystemDevice,
 } from 'app/interfaces/container.interface';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import {
   IxFormHostForm,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -36,8 +36,9 @@ import { FilesystemService } from 'app/services/filesystem.service';
   templateUrl: './container-filesystem-device-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     IxFormComponent,
     TnInputComponent,
     ReactiveFormsModule,

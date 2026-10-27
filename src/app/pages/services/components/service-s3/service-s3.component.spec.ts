@@ -4,10 +4,16 @@ import { computed, signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnAutocompleteHarness, TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnAutocompleteHarness,
+  TnCheckboxHarness,
+  TnDialog,
+  TnFormListHarness,
+  TnInputHarness,
+  TnSelectHarness,
+  TnFilePickerHarness,
+  TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -16,11 +22,6 @@ import {
 } from 'app/enums/s3.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -70,8 +71,8 @@ describe('ServiceS3Component', () => {
   const getAllInputs = (name: string): Promise<TnInputHarness[]> => loader.getAllHarnesses(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getManagedRootDataset = (): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: '[formControlName="managed_root_dataset"]' }),
+  const getManagedRootDataset = (): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: '[formControlName="managed_root_dataset"]' }),
   );
 
   const createComponent = createRoutingFactory({
@@ -213,10 +214,11 @@ describe('ServiceS3Component', () => {
     });
   });
 
-  it('offers to create the managed root dataset from a dataset-name explorer', () => {
-    expect(spectator.query(ExplorerCreateDatasetComponent)).toBeTruthy();
-    // The empty root keeps the explorer in dataset-name space, so the path a created dataset comes
-    // back with is stripped of /mnt before it lands in the control (see IxExplorerComponent).
-    expect(spectator.query(IxExplorerComponent)!.rootNodes()).toEqual([emptyRootNode]);
+  it('offers to create the managed root dataset from a dataset-name picker', () => {
+    const picker = spectator.query(TnFilePickerComponent)!;
+    expect(picker.createActions().map((action) => action.id)).toEqual(['create-dataset']);
+    // The empty root keeps the picker in dataset-name space, so the path a created dataset comes
+    // back with is stripped of /mnt before it lands in the control (see TreeNodeSource).
+    expect(picker.source()).toMatchObject({ valueRoot: '/', usesRelativePaths: true });
   });
 });

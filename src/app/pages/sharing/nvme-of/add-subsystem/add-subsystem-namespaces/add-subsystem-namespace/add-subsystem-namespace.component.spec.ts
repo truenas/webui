@@ -9,7 +9,7 @@ import {
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
 import { NamespaceChanges } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/namespace-changes.interface';
 import {
-  getNamespacePathExplorer, mockExplorerCreateZvol, selectNamespaceType,
+  getNamespacePathPicker, mockCreateZvolAction, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -19,7 +19,7 @@ describe('AddSubsystemNamespaceComponent', () => {
 
   const createComponent = createComponentFactory({
     component: AddSubsystemNamespaceComponent,
-    overrideComponents: [mockExplorerCreateZvol()],
+    overrideComponents: [mockCreateZvolAction()],
     providers: [
       mockAuth(),
       mockProvider(FilesystemService),
@@ -39,7 +39,7 @@ describe('AddSubsystemNamespaceComponent', () => {
     await selectNamespaceType(loader, 'Existing File');
     // Controls are addressed one by one rather than through IxFormHarness: this component renders
     // no <form> element for the harness to anchor on — the panel host owns submission.
-    await (await getNamespacePathExplorer(loader)).setValue('/mnt/dozer/file');
+    await (await getNamespacePathPicker(loader)).setValue('/mnt/dozer/file');
 
     spectator.component.submit();
 

@@ -1,12 +1,11 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerType } from 'app/enums/container.enum';
 import { Container, ContainerFilesystemDevice } from 'app/interfaces/container.interface';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -39,8 +38,8 @@ describe('ContainerFilesystemDeviceFormComponent', () => {
     ],
   });
 
-  const getSourceExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: '[formControlName="source"]' }),
+  const getSourceExplorer = (): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: '[formControlName="source"]' }),
   );
 
   const setSource = async (value: string): Promise<void> => {

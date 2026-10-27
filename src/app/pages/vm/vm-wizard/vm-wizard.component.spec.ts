@@ -4,7 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness,
+  TnCheckboxHarness,
+  TnInputHarness,
+  TnSelectHarness,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NEVER, of } from 'rxjs';
@@ -14,7 +18,6 @@ import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/ut
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -197,7 +200,7 @@ describe('VmWizardComponent', () => {
     await nextButton.click();
     await updateStepHarnesses();
 
-    const isoExplorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="iso_path"]' }));
+    const isoExplorer = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="iso_path"]' }));
     await isoExplorer.setValue('/mnt/iso/FreeNAS-11.3-U3.iso');
     await nextButton.click();
     await updateStepHarnesses();

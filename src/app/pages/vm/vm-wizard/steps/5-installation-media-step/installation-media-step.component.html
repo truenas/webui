@@ -4,10 +4,12 @@
       [label]="'Optional: Choose installation media image' | translate"
       [tooltip]="helptext.iso_path_tooltip | translate"
     >
-      <ix-explorer
+      <tn-file-picker
         formControlName="iso_path"
-        [nodeProvider]="fileNodeProvider"
-      ></ix-explorer>
+        [source]="fileNodeProvider | filePickerSource"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
 
     <div class="upload-button">

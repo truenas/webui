@@ -46,27 +46,28 @@
         [tooltip]="helptext.sourcePathTooltip | translate"
         [required]="true"
       >
-        <ix-explorer
+        @let pathSource = fileNodeProvider | filePickerSource : slashRootNode;
+        <tn-file-picker
           formControlName="path"
-          [multiple]="false"
-          [rootNodes]="slashRootNode"
-          [nodeProvider]="fileNodeProvider"
-        >
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        </ix-explorer>
+          [source]="pathSource"
+          [createActions]="[pathSource | createDatasetAction]"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
 
       <tn-form-field
         [label]="helptext.cachePath | translate"
         [tooltip]="helptext.cachePathTooltip | translate"
       >
-        <ix-explorer
+        @let cachePathSource = directoriesNodeProvider | filePickerSource;
+        <tn-file-picker
           formControlName="cache_path"
-          [multiple]="false"
-          [nodeProvider]="directoriesNodeProvider"
-        >
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        </ix-explorer>
+          [source]="cachePathSource"
+          [createActions]="[cachePathSource | createDatasetAction]"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     </tn-form-section>
 
@@ -122,11 +123,12 @@
             [tooltip]="helptext.folderTooltip | translate"
             [required]="true"
           >
-            <ix-explorer
+            <tn-file-picker
               formControlName="folder"
-              [rootNodes]="slashRootNode"
-              [nodeProvider]="bucketNodeProvider"
-            ></ix-explorer>
+              [source]="bucketNodeProvider | filePickerSource : slashRootNode"
+              [openOnClick]="true"
+              [allowFreeText]="true"
+            ></tn-file-picker>
           </tn-form-field>
         }
       }

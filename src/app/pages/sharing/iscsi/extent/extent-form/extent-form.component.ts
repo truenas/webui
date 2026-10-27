@@ -13,7 +13,7 @@ import {
   TnFormSectionComponent,
   TnIconComponent,
   TnInputComponent,
-  TnSelectComponent,
+  TnSelectComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { sortBy, startsWith } from 'lodash-es';
 import {
@@ -27,10 +27,8 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { IscsiExtent, IscsiExtentUpdate, toIscsiExtentCreateArgs } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -47,6 +45,9 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./extent-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -54,11 +55,9 @@ import { IscsiService } from 'app/services/iscsi.service';
     TnInputComponent,
     TnCheckboxComponent,
     TnSelectComponent,
-    IxExplorerComponent,
     TnIconComponent,
     TranslateModule,
     TranslateOptionsPipe,
-    ExplorerCreateDatasetComponent,
     AsyncPipe,
   ],
 })

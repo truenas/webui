@@ -44,6 +44,7 @@ import { provideTnCalendarIntl } from 'app/core/providers/tn-calendar-intl.provi
 import { provideTnChipInputLabels } from 'app/core/providers/tn-chip-input-labels.provider';
 import { provideTnDialogLabels } from 'app/core/providers/tn-dialog-labels.provider';
 import { provideTnFallbackLabels } from 'app/core/providers/tn-fallback-labels.provider';
+import { provideTnFilePickerLabels } from 'app/core/providers/tn-file-picker-labels.provider';
 import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
@@ -150,6 +151,7 @@ bootstrapApplication(AppComponent, {
     provideTnChipInputLabels(),
     provideTnDialogLabels(),
     provideTnTableLabels(),
+    provideTnFilePickerLabels(),
     provideTnFallbackLabels(),
     provideAppInitializer(() => {
       const swService = inject(ServiceWorkerService);

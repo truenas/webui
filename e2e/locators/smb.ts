@@ -83,7 +83,7 @@ export const smbLocators = {
     purposeOption: (label: string): string => `[data-test="option-purpose-${kebabTestSegment(label)}"]`,
 
     /**
-     * `ix-explorer` renders a `tn-file-picker`, whose inner `<input>` takes the
+     * A `tn-file-picker`, whose inner `<input>` takes the
      * control name. Typable — `allowManualInput` defaults to true — so the path
      * goes in directly rather than being navigated as a tree.
      *

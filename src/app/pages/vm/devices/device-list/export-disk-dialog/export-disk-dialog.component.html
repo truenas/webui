@@ -20,10 +20,12 @@
         [tooltip]="'Select the directory where the disk image will be exported' | translate"
         [required]="true"
       >
-        <ix-explorer
+        <tn-file-picker
           formControlName="destinationDir"
-          [nodeProvider]="treeNodeProvider"
-        ></ix-explorer>
+          [source]="treeNodeProvider | filePickerSource"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
 
       <tn-form-field

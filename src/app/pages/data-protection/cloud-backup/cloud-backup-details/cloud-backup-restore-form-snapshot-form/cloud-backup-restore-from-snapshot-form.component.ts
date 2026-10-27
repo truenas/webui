@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { defaultIfEmpty, map } from 'rxjs';
 import { datasetsRootNode, slashRootNode } from 'app/constants/basic-root-nodes.constant';
@@ -23,9 +23,9 @@ import {
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -38,14 +38,15 @@ import { FilesystemService } from 'app/services/filesystem.service';
   templateUrl: './cloud-backup-restore-from-snapshot-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnRadioComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     TranslateModule,
     FormatDateTimePipe,
   ],

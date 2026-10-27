@@ -185,14 +185,14 @@
             [tooltip]="explorerSchema.tooltip ? (explorerSchema.tooltip | translate) : ''"
             [required]="explorerSchema.required || false"
           >
-            <ix-explorer
+            @let explorerSource = explorerSchema.nodeProvider | filePickerSource;
+            <tn-file-picker
               [formControlName]="explorerSchema.controlName"
-              [nodeProvider]="explorerSchema.nodeProvider"
-            >
-              @if (!isEditMode()) {
-                <ix-explorer-create-dataset></ix-explorer-create-dataset>
-              }
-            </ix-explorer>
+              [source]="explorerSource"
+              [createActions]="!isEditMode() ? [explorerSource | createDatasetAction] : []"
+              [openOnClick]="true"
+              [allowFreeText]="true"
+            ></tn-file-picker>
           </tn-form-field>
         }
 
