@@ -7,9 +7,9 @@
       <tn-button
         [testId]="'manage-tnc-subscription'"
         [color]="tncSummary.urgency === Urgency.Active ? 'default' : 'primary'"
-        [label]="(tncSummary.urgency === Urgency.Active ? 'Manage Membership' : 'Renew Membership') | translate"
-        [ariaLabel]="'Manage your TrueNAS Connect membership (opens in new window)' | translate"
-        (onClick)="openMembership()"
+        [label]="(tncSummary.urgency === Urgency.Active ? 'Manage Subscription' : 'Renew Subscription') | translate"
+        [ariaLabel]="'Manage your TrueNAS Connect subscription (opens in new window)' | translate"
+        (onClick)="openSubscription()"
       ></tn-button>
     </ng-template>
 
@@ -20,17 +20,17 @@
           class="tnc-banner"
           [type]="bannerType()"
           [heading]="(tierLabel()
-            ? 'Provided by your TrueNAS Connect {tier} membership'
-            : 'Provided by your TrueNAS Connect membership') | translate: { tier: tierLabel() }"
-          [message]="'These features stay available while your membership is active. If it lapses, they are disabled.' | translate"
+            ? 'Provided by your TrueNAS Connect {tier} subscription'
+            : 'Provided by your TrueNAS Connect subscription') | translate: { tier: tierLabel() }"
+          [message]="'These features stay available while your subscription is active. If it lapses, they are disabled.' | translate"
         ></tn-banner>
       }
       @case (Urgency.Expired) {
         <tn-banner
           class="tnc-banner"
           [type]="bannerType()"
-          [heading]="'Your TrueNAS Connect membership has expired' | translate"
-          [message]="'The features below were provided by your membership and can be disabled at any time. Renew to keep using them.' | translate"
+          [heading]="'Your TrueNAS Connect subscription has expired' | translate"
+          [message]="'The features below were provided by your subscription and can be disabled at any time. Renew to keep using them.' | translate"
         ></tn-banner>
       }
       @default {
@@ -40,7 +40,7 @@
           [heading]="(soonest?.daysLeft === 0
             ? 'TrueNAS Connect features expire today'
             : 'TrueNAS Connect features expire in {n, plural, one {# day} other {# days}}') | translate: { n: soonest?.daysLeft }"
-          [message]="'Features marked below will be disabled after {date} unless you renew your membership.' | translate: { date: soonestDate() }"
+          [message]="'Features marked below will be disabled after {date} unless you renew your subscription.' | translate: { date: soonestDate() }"
         ></tn-banner>
       }
     }

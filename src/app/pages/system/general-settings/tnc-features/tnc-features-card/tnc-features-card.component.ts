@@ -96,7 +96,7 @@ export class TncFeaturesCardComponent {
 
   protected readonly soonestDate = computed(() => this.formatDate(this.summary()?.soonest?.expiresAt ?? null));
 
-  protected openMembership(): void {
+  protected openSubscription(): void {
     this.window.open(truenasConnectLink, '_blank', 'noopener,noreferrer');
   }
 

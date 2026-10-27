@@ -69,18 +69,18 @@ describe('TncFeaturesCardComponent', () => {
     store$ = spectator.inject(MockStore);
   });
 
-  it('names the membership that provides the features while it is active', async () => {
+  it('names the subscription that provides the features while it is active', async () => {
     const banner = await loader.getHarness(TnBannerHarness);
-    expect(await banner.getText()).toContain('Provided by your TrueNAS Connect Plus membership');
+    expect(await banner.getText()).toContain('Provided by your TrueNAS Connect Plus subscription');
     expect(spectator.query('tn-banner .tn-banner--info')).toExist();
 
     expect(spectator.query('.tnc-feature')).toHaveText('Webshare');
     expect(spectator.query('.tnc-feature')).toHaveText('Until 2027-06-01');
-    expect(await (await loader.getHarness(TnButtonHarness)).getLabel()).toBe('Manage Membership');
+    expect(await (await loader.getHarness(TnButtonHarness)).getLabel()).toBe('Manage Subscription');
   });
 
-  it('opens TrueNAS Connect to manage the membership', async () => {
-    await (await loader.getHarness(TnButtonHarness.with({ label: 'Manage Membership' }))).click();
+  it('opens TrueNAS Connect to manage the subscription', async () => {
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Manage Subscription' }))).click();
 
     expect(spectator.inject<Window>(WINDOW).open).toHaveBeenCalledWith(
       'https://connect.truenas.com/',
@@ -105,14 +105,14 @@ describe('TncFeaturesCardComponent', () => {
     expect(await banner.getText()).toContain('will be disabled after 2026-10-24');
     expect(spectator.query('tn-banner .tn-banner--error')).toExist();
     expect(spectator.query('.tnc-feature')).toHaveClass('critical');
-    expect(await (await loader.getHarness(TnButtonHarness)).getLabel()).toBe('Renew Membership');
+    expect(await (await loader.getHarness(TnButtonHarness)).getLabel()).toBe('Renew Subscription');
   });
 
-  it('says the membership has expired once it has', async () => {
+  it('says the subscription has expired once it has', async () => {
     setLicense(communityLicense('2026-10-01'));
 
     const banner = await loader.getHarness(TnBannerHarness);
-    expect(await banner.getText()).toContain('Your TrueNAS Connect membership has expired');
+    expect(await banner.getText()).toContain('Your TrueNAS Connect subscription has expired');
     expect(spectator.query('.tnc-feature')).toHaveText('Expired 2026-10-01');
   });
 
