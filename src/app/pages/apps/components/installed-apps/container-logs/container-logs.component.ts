@@ -10,12 +10,12 @@ import {
   TnSliderThumbDirective, TnSpinnerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
-  combineLatest, filter, map, Subscription, switchMap, tap,
+  combineLatest, filter, Subscription, switchMap, tap,
 } from 'rxjs';
 import { AppContainerLog } from 'app/interfaces/app.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -41,7 +41,7 @@ import { ShellService } from 'app/services/shell.service';
   ],
 })
 export class ContainerLogsComponent implements OnInit {
-  private api = inject(ApiService);
+  private api = inject(TypedApiService);
   protected aroute = inject(ActivatedRoute);
   protected loader = inject(LoaderService);
   protected download = inject(DownloadService);
@@ -101,20 +101,19 @@ export class ContainerLogsComponent implements OnInit {
         this.isLoading.set(true);
       }),
       switchMap((details: LogsDetailsDialog['form']['value']) => {
-        return this.api.subscribe(`app.container_log_follow: ${JSON.stringify({
+        return this.api.subscribe('app.container_log_follow', {
           app_name: this.appName,
           container_id: this.containerId,
           tail_lines: details.tail_lines || this.defaultTailLines,
-        })}`);
+        });
       }),
-      map((apiEvent) => apiEvent.fields),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (log: AppContainerLog) => {
+      next: (event) => {
         this.isLoading.set(false);
 
-        if (log && log.msg !== 'nosub') {
-          this.logs.set([...this.logs(), log]);
+        if (event.msg === 'added') {
+          this.logs.set([...this.logs(), event.fields]);
           this.scrollToBottom();
         }
       },

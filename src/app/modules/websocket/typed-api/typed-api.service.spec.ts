@@ -257,5 +257,40 @@ describe('TypedApiService', () => {
 
       expect(await received).toEqual({ msg: 'removed', id: 1 });
     });
+
+    it('subscribes to an event source by its name and arguments', async () => {
+      const params = { path: '/var/log/messages', tail_lines: 10 };
+      const received = firstValueFrom(spectator.service.subscribe('filesystem.file_tail_follow', params));
+      await bringSessionUp();
+
+      const subscribed = client.connection.sent
+        .filter((frame) => frame.method === 'core.subscribe')
+        .map((frame) => frame.params);
+      expect(subscribed).toContainEqual([`filesystem.file_tail_follow:${JSON.stringify(params)}`]);
+
+      client.mock.emit('filesystem.file_tail_follow', { msg: 'added', fields: { data: 'line' } }, params);
+
+      expect(await received).toEqual({ msg: 'added', fields: { data: 'line' } });
+    });
+
+    it('throws an ApiCallError when middleware rejects an event source\'s arguments', async () => {
+      const params = { path: '/missing' };
+      const result = firstValueFrom(spectator.service.subscribe('filesystem.file_tail_follow', params));
+      await bringSessionUp();
+
+      client.connection.receive({
+        jsonrpc: '2.0',
+        method: 'notify_unsubscribed',
+        params: {
+          collection: `filesystem.file_tail_follow:${JSON.stringify(params)}`,
+          error: {
+            error: 22, errname: 'EINVAL', reason: '[EINVAL] path: Field required', extra: [],
+          },
+        },
+      } as unknown as Parameters<typeof client.connection.receive>[0]);
+
+      await expect(result).rejects.toBeInstanceOf(ApiCallError);
+      await expect(result).rejects.toMatchObject({ error: { data: { errname: 'EINVAL' } } });
+    });
   });
 });

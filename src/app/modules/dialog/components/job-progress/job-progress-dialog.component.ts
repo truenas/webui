@@ -5,13 +5,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnIconButtonComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
-  Observable, Subscription, map,
+  Observable, Subscription,
 } from 'rxjs';
 import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job, JobProgress } from 'app/interfaces/job.interface';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -60,11 +59,6 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private dialogRef = inject<DialogRef<void, JobProgressDialog<T>>>(DialogRef);
   data = inject<JobProgressDialogConfig<T>>(DIALOG_DATA);
   private api = inject(TypedApiService);
-  /**
-   * Only for tailing the job's log: `filesystem.file_tail_follow` is an event source, which takes
-   * subscription params (gap 5 in docs/devs/typed-api-client.md).
-   */
-  private legacyApi = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   readonly destroyRef = inject(DestroyRef);
@@ -209,11 +203,11 @@ export class JobProgressDialog<T> implements OnInit, AfterViewChecked {
   private getRealtimeLogs(): Subscription {
     this.realtimeLogsSubscribed = true;
     this.cdr.markForCheck();
-    return this.legacyApi.subscribe(`filesystem.file_tail_follow:${JSON.stringify({ path: this.job.logs_path })}`)
-      .pipe(map((apiEvent) => apiEvent.fields), takeUntilDestroyed(this.destroyRef))
-      .subscribe((logs) => {
-        if (logs?.data && typeof logs.data === 'string') {
-          this.realtimeLogs += logs.data;
+    return this.api.subscribe('filesystem.file_tail_follow', { path: this.job.logs_path })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event) => {
+        if (event.msg === 'added' && event.fields.data) {
+          this.realtimeLogs += event.fields.data;
         }
         this.cdr.markForCheck();
       });

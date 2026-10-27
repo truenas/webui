@@ -75,16 +75,11 @@ export const migratedApiPaths = [
   // services, EULA, network check-in and preferences.
   'src/app/store',
   // NAS-143995: the shared modules — alerts, dialogs, the top bar, form controls and TrueCommand.
-  // `modules/dialog` and `modules/layout` are pinned below their roots: the job progress dialog
-  // and the console footer tail logs through `filesystem.file_tail_follow`, an event source the
-  // typed client cannot subscribe to yet (gap 5).
+  // NAS-144006 finished `modules/dialog` and `modules/layout` by moving their log tails.
   'src/app/modules/alerts',
-  'src/app/modules/dialog/components/error-dialog',
-  'src/app/modules/dialog/components/multi-error-dialog',
-  'src/app/modules/dialog/components/show-logs-dialog',
-  'src/app/modules/dialog/components/start-service-dialog',
+  'src/app/modules/dialog',
   'src/app/modules/forms',
-  'src/app/modules/layout/topbar',
+  'src/app/modules/layout',
   'src/app/modules/truecommand',
   // NAS-144008: the debug panel's connection interceptor, which names the typed client's connection.
   'src/app/modules/websocket-debug-panel/utils',
@@ -130,7 +125,7 @@ export const migratedApiPaths = [
   'src/app/pages/system-tasks',
   // NAS-143998: virtual machines and containers. `pages/containers` is pinned below its root:
   // `ContainersStore` keeps `ApiService` for `container.metrics`, an event source middleware pushes
-  // on a timer, which must not move while the typed client never releases a subscription (gap 17).
+  // on a timer, which has not moved since the typed client began releasing subscriptions (gap 17).
   'src/app/pages/vm',
   'src/app/pages/containers/components',
   'src/app/pages/containers/utils',
@@ -149,8 +144,7 @@ export const migratedApiPaths = [
   'src/app/pages/storage',
   // NAS-143999: apps. `pages/apps` is pinned below its root: `AppsStatsService` (`app.stats`) and the
   // resources card (`reporting.realtime`) keep `ApiService` for event sources middleware pushes on a
-  // timer (gap 17), and the container logs tail `app.container_log_follow`, a parameterised
-  // subscription the typed client cannot make yet (gap 5).
+  // timer, not moved yet (gap 17). NAS-144006 finished `installed-apps` by moving the container logs.
   'src/app/pages/apps/services',
   'src/app/pages/apps/components/app-detail-view/app-detail-view.component.ts',
   'src/app/pages/apps/components/app-detail-view/app-detail-view.component.spec.ts',
@@ -161,37 +155,16 @@ export const migratedApiPaths = [
   'src/app/pages/apps/components/docker-images',
   'src/app/pages/apps/components/docker-registries',
   'src/app/pages/apps/components/install-app-button',
-  'src/app/pages/apps/components/installed-apps/installed-apps.component.ts',
-  'src/app/pages/apps/components/installed-apps/installed-apps.component.spec.ts',
-  'src/app/pages/apps/components/installed-apps/app-bulk-update',
-  'src/app/pages/apps/components/installed-apps/app-info-card',
-  'src/app/pages/apps/components/installed-apps/app-rollback-modal',
-  'src/app/pages/apps/components/installed-apps/app-settings-button',
-  'src/app/pages/apps/components/installed-apps/installed-apps-list',
+  'src/app/pages/apps/components/installed-apps',
   'src/app/pages/apps/components/select-pool-dialog',
   'src/app/pages/apps/store/apps-store.service.ts',
   'src/app/pages/apps/store/apps-store.service.spec.ts',
   'src/app/pages/apps/store/docker.store.ts',
   'src/app/pages/apps/store/docker.store.spec.ts',
   // NAS-144004: sharing — the shares dashboard and its cards, SMB, NFS, S3, WebShare, iSCSI (absorbing the wizard
-  // steps pinned with the services above), Fibre Channel and NVMe-oF. `pages/sharing` is pinned below its root:
-  // `SharingTierService` keeps `ApiService` for `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status`,
-  // event sources that take subscription params (gap 5), and the data migration dialog's spec builds the real
-  // service.
-  'src/app/pages/sharing/sharing.routes.ts',
-  'src/app/pages/sharing/iscsi',
-  'src/app/pages/sharing/nfs',
-  'src/app/pages/sharing/nvme-of',
-  'src/app/pages/sharing/s3',
-  'src/app/pages/sharing/smb',
-  'src/app/pages/sharing/utils',
-  'src/app/pages/sharing/webshare',
-  'src/app/pages/sharing/components/change-tier-dialog',
-  'src/app/pages/sharing/components/shares-dashboard',
-  'src/app/pages/sharing/components/testing',
-  'src/app/pages/sharing/components/tier-status',
-  'src/app/pages/sharing/components/tier-status.utils.ts',
-  'src/app/pages/sharing/components/data-migration-status-dialog/data-migration-status-dialog.component.ts',
+  // steps pinned with the services above), Fibre Channel and NVMe-oF. NAS-144006 finished it by moving
+  // `SharingTierService`'s rewrite job subscriptions.
+  'src/app/pages/sharing',
   // NAS-144005: system — advanced settings, general settings and support, alert services and alert settings, boot
   // environments, enclosures and JBOFs, network and updates. `pages/system` is pinned below its root: the IPMI
   // events dialog keeps `ApiService` for `ipmi.sel.elist`, which every generated directory declares as a job while

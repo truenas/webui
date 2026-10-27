@@ -13,7 +13,6 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
@@ -40,14 +39,20 @@ interface ChangeTierActionOptions {
   requiredRoles?: Role[];
 }
 
+/**
+ * The rewrite job carried by a `zfs.tier.rewrite_job_status` update. The generated event model wraps
+ * the entry in `fields` twice and declares only `added`, while middleware sends it under `fields` once
+ * and as `changed` (gap 16 in docs/devs/typed-api-client.md), so the wire shape is read here.
+ */
+function tierJobFromEvent(event: object): ZfsTierRewriteJobEntry | null {
+  return (event as { fields?: ZfsTierRewriteJobEntry }).fields ?? null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class SharingTierService {
   private api = inject(TypedApiService);
-  // The rewrite job topics take subscription params, which the typed client cannot subscribe to yet
-  // (gap 5 in docs/devs/typed-api-client.md).
-  private legacyApi = inject(ApiService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
@@ -101,14 +106,9 @@ export class SharingTierService {
     this.metadataReservePctSignal.set(0);
   }
 
-  subscribeTierJobUpdates(): Observable<ZfsTierRewriteJobEntry> {
-    return this.legacyApi.subscribe('zfs.tier.rewrite_job_query').pipe(
-      map((event) => event.fields),
-    );
-  }
-
-  tierJobRefreshes$(): Observable<ZfsTierRewriteJobEntry> {
-    return this.subscribeTierJobUpdates().pipe(auditTime(500));
+  /** Every rewrite job change, removals included: a job that goes away changes the rows that showed it. */
+  tierJobRefreshes$(): Observable<unknown> {
+    return this.api.subscribe('zfs.tier.rewrite_job_query').pipe(auditTime(500));
   }
 
   /**
@@ -117,13 +117,12 @@ export class SharingTierService {
    * emitting until it reaches a terminal status, so consumers can track a
    * migration they were handed a stale snapshot of.
    *
-   * Topic format is contract'd with middleware: `zfs.tier.rewrite_job_status:<json-args>`,
-   * where <json-args> is the JSON-stringified call args. tier_job_id is server-generated
-   * and safe to embed without further escaping.
+   * Errors when middleware rejects the id and completes when middleware ends the topic.
    */
   subscribeTierJobStatus(tierJobId: string): Observable<ZfsTierRewriteJobEntry> {
-    return this.legacyApi.subscribe(`zfs.tier.rewrite_job_status:${JSON.stringify({ tier_job_id: tierJobId })}`).pipe(
-      map((event) => event.fields),
+    return this.api.subscribe('zfs.tier.rewrite_job_status', { tier_job_id: tierJobId }).pipe(
+      map(tierJobFromEvent),
+      filter((job) => job !== null),
     );
   }
 

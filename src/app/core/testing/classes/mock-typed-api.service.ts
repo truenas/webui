@@ -1,7 +1,8 @@
 import { inject, Injectable, Injector, OnDestroy } from '@angular/core';
 import { pendingUntilEvent } from '@angular/core/rxjs-interop';
 import {
-  CallMethod, CallParams, CallResponse, EventName, EventUnion, JobMethod, JobResult, QueryEntity, QueryMethod,
+  CallMethod, CallParams, CallResponse, EventName, EventSourceName, EventUnion, JobMethod, JobResult, QueryEntity,
+  QueryMethod, SubscriptionArgs,
 } from '@truenas/api-client';
 import {
   createFakeClient, fakeApiError, FakeApiErrorOverrides, FakeTrueNasClient, JobUpdate, withSpies,
@@ -39,7 +40,7 @@ interface LooseApi {
   queryCount(method: string, filters?: unknown): Observable<number>;
   job(method: string, params?: unknown): Observable<unknown>;
   callAndGetJobId(method: string, params?: unknown): Observable<number>;
-  events(event: string): Observable<unknown>;
+  events(event: string, params?: unknown): Observable<unknown>;
 }
 
 /**
@@ -102,7 +103,9 @@ export class MockTypedApiService implements OnDestroy {
     return this.api.callAndGetJobId(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
-  readonly subscribe = jest.fn((event: string) => this.api.events(event));
+  readonly subscribe = jest.fn((event: string, params?: unknown) => {
+    return this.api.events(event, params).pipe(rethrowAsApiCallError());
+  });
 
   /**
    * Same folding as `TypedApiService.queryAndSubscribe`: script the rows with `mockQuery`, the
@@ -158,8 +161,15 @@ export class MockTypedApiService implements OnDestroy {
     this.client.mock.job(method, updates);
   }
 
-  emitEvent<E extends EventName<D>>(event: E, change: EventUnion<D, E>): void {
-    this.client.mock.emit(event, change);
+  /** Pushes a change to the subscribers of `event`, or of an event source with these same arguments. */
+  emitEvent<E extends EventName<D>>(event: E, change: EventUnion<D, E>): void;
+  // Not unifiable: the two overloads constrain `E` differently, as the client's own `events` does.
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
+  emitEvent<E extends EventSourceName<D>>(event: E, change: EventUnion<D, E>, ...params: SubscriptionArgs<D, E>): void;
+  emitEvent(event: string, change: object, params?: unknown): void {
+    // Erased for the same reason as `LooseApi`: the client's overloads cannot be picked through `event`.
+    type LooseEmit = (event: string, change: object, params?: unknown) => void;
+    (this.client.mock.emit as LooseEmit)(event, change, params);
   }
 
   ngOnDestroy(): void {

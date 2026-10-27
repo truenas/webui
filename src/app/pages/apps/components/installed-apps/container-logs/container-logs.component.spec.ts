@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 
@@ -29,9 +29,11 @@ describe('ContainerLogsComponent', () => {
     it('subscribes to logs updates', () => {
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
 
-      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
-        'app.container_log_follow: {"app_name":"ix-test-app","container_id":"ix-test-container","tail_lines":650}',
-      );
+      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('app.container_log_follow', {
+        app_name: 'ix-test-app',
+        container_id: 'ix-test-container',
+        tail_lines: 650,
+      });
     });
 
     it('shows meta data', () => {
@@ -69,7 +71,7 @@ describe('ContainerLogsComponent', () => {
   });
 
   describe('auto-scroll behavior', () => {
-    let logSubject$: Subject<{ fields: { timestamp: string; data: string } }>;
+    let logSubject$: Subject<{ msg: 'added'; fields: { timestamp: string; data: string } }>;
 
     const createComponent = createComponentFactory({
       component: ContainerLogsComponent,
@@ -83,7 +85,7 @@ describe('ContainerLogsComponent', () => {
             closed: of({ tail_lines: 500 } as LogsDetailsDialog['form']['value']),
           }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
-        mockProvider(ApiService, {
+        mockProvider(TypedApiService, {
           subscribe: jest.fn(() => {
             logSubject$ = new Subject();
             return logSubject$.asObservable();
@@ -113,7 +115,7 @@ describe('ContainerLogsComponent', () => {
       jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
       logContainer.scrollTop = 0;
 
-      logSubject$.next({ fields: { timestamp: '[12:35]', data: 'New log entry' } });
+      logSubject$.next({ msg: 'added', fields: { timestamp: '[12:35]', data: 'New log entry' } });
       spectator.detectChanges();
 
       expect(logContainer.scrollTop).toBe(1000);
@@ -127,7 +129,7 @@ describe('ContainerLogsComponent', () => {
       jest.spyOn(logContainer, 'scrollHeight', 'get').mockReturnValue(1000);
       logContainer.scrollTop = 0;
 
-      logSubject$.next({ fields: { timestamp: '[12:35]', data: 'New log entry' } });
+      logSubject$.next({ msg: 'added', fields: { timestamp: '[12:35]', data: 'New log entry' } });
       spectator.detectChanges();
 
       expect(logContainer.scrollTop).toBe(0);
@@ -140,21 +142,21 @@ describe('ContainerLogsComponent', () => {
 
       // Initially enabled - should scroll
       logContainer.scrollTop = 0;
-      logSubject$.next({ fields: { timestamp: '[12:35]', data: 'Log 1' } });
+      logSubject$.next({ msg: 'added', fields: { timestamp: '[12:35]', data: 'Log 1' } });
       spectator.detectChanges();
       expect(logContainer.scrollTop).toBe(1000);
 
       // Disable auto-scroll
       await checkbox.uncheck();
       logContainer.scrollTop = 0;
-      logSubject$.next({ fields: { timestamp: '[12:36]', data: 'Log 2' } });
+      logSubject$.next({ msg: 'added', fields: { timestamp: '[12:36]', data: 'Log 2' } });
       spectator.detectChanges();
       expect(logContainer.scrollTop).toBe(0);
 
       // Re-enable auto-scroll
       await checkbox.check();
       logContainer.scrollTop = 0;
-      logSubject$.next({ fields: { timestamp: '[12:37]', data: 'Log 3' } });
+      logSubject$.next({ msg: 'added', fields: { timestamp: '[12:37]', data: 'Log 3' } });
       spectator.detectChanges();
       expect(logContainer.scrollTop).toBe(1000);
     });
@@ -189,8 +191,9 @@ describe('ContainerLogsComponent', () => {
                 } as LogsDetailsDialog['form']['value']),
           }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
-        mockProvider(ApiService, {
+        mockProvider(TypedApiService, {
           subscribe: jest.fn(() => of({
+            msg: 'added',
             fields: {
               timestamp: '[12:34]',
               data: 'Some logs.',

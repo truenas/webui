@@ -53,7 +53,6 @@ export function mockSharingTierService(opts: MockOpts = {}): ReturnType<typeof m
   return mockProvider(SharingTierService, {
     tierEnabled: signal(enabled).asReadonly(),
     getTierConfig: () => of({ enabled }),
-    subscribeTierJobUpdates: () => jobUpdates$,
     subscribeTierJobStatus: jest.fn(() => jobStatus$),
     tierJobRefreshes$: () => jobUpdates$,
     openChangeTierDialog: jest.fn(() => of(true)),

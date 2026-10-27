@@ -6,10 +6,13 @@ import {
   CallParams,
   CallResponse,
   EventName,
+  EventSourceName,
   EventUnion,
   JobMethod,
   JobParams,
   JobResult,
+  SubscribableEvent,
+  SubscriptionArgs,
 } from '@truenas/api-client';
 import {
   catchError,
@@ -211,18 +214,32 @@ export class TypedApiService {
   }
 
   /**
-   * Subscribe to a collection's change events.
+   * Subscribe to a collection's change events, or to an event source with its arguments.
+   *
+   * ```typescript
+   * this.typedApi.subscribe('pool.query');
+   * this.typedApi.subscribe('filesystem.file_tail_follow', { path: '/var/log/messages' });
+   * ```
    *
    * Held until the typed session is authenticated like every other verb:
    * middleware refuses `core.subscribe` on an unauthenticated session, and the
    * refusal is silent and one-shot rather than retried.
    *
    * The emitted union is discriminated on `msg`; narrow on it before reading
-   * `fields`, since a removal carries only an `id`.
+   * `fields`, since a removal carries only an `id`. An event source completes
+   * when middleware ends it and throws `ApiCallError` when middleware rejects its arguments.
    */
-  subscribe<E extends EventName<D>>(event: E): Observable<EventUnion<D, E>> {
+  subscribe<E extends EventName<D>>(event: E): Observable<EventUnion<D, E>>;
+  // Not unifiable: the two overloads constrain `E` differently, as the client's own `events` does.
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
+  subscribe<E extends EventSourceName<D>>(event: E, ...params: SubscriptionArgs<D, E>): Observable<EventUnion<D, E>>;
+  subscribe(event: SubscribableEvent<D>, params?: unknown): Observable<unknown> {
+    // The client's two overloads cannot be picked through the erased `event`; it builds the
+    // subscription name from `params` itself, a bare name when they are absent.
+    type LooseEvents = (event: string, params?: unknown) => Observable<unknown>;
     return this.ready$.pipe(
-      switchMap((client) => client.api.events(event)),
+      switchMap((client) => (client.api.events as LooseEvents).call(client.api, event, params)),
+      this.handleRefusal(),
     );
   }
 
@@ -231,9 +248,8 @@ export class TypedApiService {
    * of `ApiService.callAndSubscribe`.
    *
    * There is no `select`: the change events carry whole rows, so a projection would be undone
-   * by the first one. Like `subscribe`, the event subscription outlives its consumers — the
-   * client shares one stream per event and never sends `core.unsubscribe` (gap 17 in
-   * docs/devs/typed-api-client.md).
+   * by the first one. The client shares one event stream per collection and releases it with
+   * `core.unsubscribe` when the last consumer goes.
    */
   queryAndSubscribe<M extends WebUiQueryMethod & EventName<D>>(
     method: M,
