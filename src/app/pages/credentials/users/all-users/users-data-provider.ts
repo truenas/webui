@@ -6,7 +6,7 @@ import { EmptyType } from 'app/enums/empty-type.enum';
 import { QueryParams } from 'app/interfaces/query-api.interface';
 import { toUser, User } from 'app/interfaces/user.interface';
 import { ApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/api-data-provider';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export class UsersDataProvider extends ApiDataProvider<'user.query', User> {
   private additionalUsername: string;
@@ -14,7 +14,7 @@ export class UsersDataProvider extends ApiDataProvider<'user.query', User> {
   constructor(
     // Kept at its own type for the second, typed `user.query` read in `load`; the paged read goes through the
     // provider's loose client, as the base class does.
-    private typedApi: TypedApiService,
+    private typedApi: ApiService,
     params: QueryParams<User>,
   ) {
     super(typedApi, 'user.query', params);

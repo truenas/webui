@@ -24,7 +24,7 @@ import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/int
 /**
  * Calls middleware serves but leaves out of `--dump-api`, most likely because it marks them
  * private (gap 14 in docs/devs/typed-api-client.md). Declared here by hand, and reached only
- * through `TypedApiService.callUndeclared`, so the generated directory stays exactly what the
+ * through `ApiService.callUndeclared`, so the generated directory stays exactly what the
  * client is typed against. Remove an entry once the generated directory has it.
  */
 export interface UndeclaredCallDirectory {
@@ -65,7 +65,7 @@ export type TypedQueryFilter<E>
     | ['OR', TypedQueryFilter<E>[][]];
 
 /**
- * The `@truenas/api-client` instance behind {@link TypedApiService}.
+ * The `@truenas/api-client` instance behind {@link ApiService}.
  *
  * It owns the tab's only WebSocket, and its session is the app's session.
  *

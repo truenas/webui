@@ -16,7 +16,7 @@ import { DetailsDisk, toDiskDetails } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   getNonUniqueSerialDisksWarning,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/get-non-unique-serial-disks';
@@ -54,7 +54,7 @@ import { hasNonUniqueSerial } from 'app/pages/storage/modules/pool-manager/utils
 export class UnusedDiskSelectComponent implements ControlValueAccessor, OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   /**

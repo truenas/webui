@@ -5,7 +5,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   getGlobalTwoFactorFormConfig,
   GlobalTwoFactorFormValues,
@@ -14,7 +14,7 @@ import {
 describe('getGlobalTwoFactorFormConfig', () => {
   const allValues = { enabled: true, window: 5, ssh: true } as GlobalTwoFactorFormValues;
 
-  const api = { call: jest.fn(() => of(undefined)) } as unknown as TypedApiService;
+  const api = { call: jest.fn(() => of(undefined)) } as unknown as ApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
   const dialogService = { confirm: jest.fn(() => of(true)) } as unknown as DialogService;
   const authService = { globalTwoFactorConfigUpdated: jest.fn() } as unknown as AuthService;

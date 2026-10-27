@@ -16,7 +16,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -35,7 +35,7 @@ import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/d
   ],
 })
 export class DatasetCapacitySettingsComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);

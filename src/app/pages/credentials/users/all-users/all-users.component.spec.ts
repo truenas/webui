@@ -3,9 +3,9 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
@@ -56,7 +56,7 @@ const mockLoggedInUser = {
 
 describe('AllUsersComponent', () => {
   let spectator: Spectator<AllUsersComponent>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
   let location: Location;
 
   const createComponent = createComponentFactory({
@@ -71,8 +71,8 @@ describe('AllUsersComponent', () => {
       UserDetailsComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('user.query', mockUsers as unknown as WebUiQueryEntity<'user.query'>[]),
+      mockApi([
+        mockQuery('user.query', mockUsers as unknown as WebUiQueryEntity<'user.query'>[]),
       ]),
       mockProvider(FormSidePanelService),
       mockAuth(),
@@ -96,7 +96,7 @@ describe('AllUsersComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
     location = spectator.inject(Location);
     jest.spyOn(location, 'replaceState');
   });

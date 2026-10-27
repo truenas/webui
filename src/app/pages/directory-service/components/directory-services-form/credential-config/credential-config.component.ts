@@ -24,7 +24,7 @@ import {
   ldapSupportedCredentialTypes,
 } from 'app/interfaces/directoryservice-credentials.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
 @Component({
@@ -44,7 +44,7 @@ import { DirectoryServiceValidationService } from 'app/pages/directory-service/c
 })
 export class CredentialConfigComponent implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private validationService = inject(DirectoryServiceValidationService);
   private destroyRef = inject(DestroyRef);
 

@@ -6,9 +6,9 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnSelectHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
@@ -26,8 +26,8 @@ import {
 import {
   TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SnapshotTaskFormComponent,
 } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
@@ -90,13 +90,13 @@ describe('SnapshotTaskListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery(
+      mockApi([
+        mockQuery(
           'pool.snapshottask.query',
           snapshotTasksList as unknown as WebUiQueryEntity<'pool.snapshottask.query'>[],
         ),
-        mockTypedCall('pool.snapshottask.delete', true),
-        mockTypedCall('pool.snapshottask.delete_will_change_retention_for', {}),
+        mockCall('pool.snapshottask.delete', true),
+        mockCall('pool.snapshottask.delete_will_change_retention_for', {}),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -181,7 +181,7 @@ describe('SnapshotTaskListComponent', () => {
       },
     );
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 
   it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
@@ -201,16 +201,16 @@ describe('SnapshotTaskListComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
   });
 
   it('reloads the data provider when an event is received from pool.snapshottask.query', () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     expect(api.subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
 
     jest.spyOn(spectator.component.dataProvider, 'load');
 
-    spectator.inject(MockTypedApiService).emitEvent('pool.snapshottask.query', {
+    spectator.inject(MockApiService).emitEvent('pool.snapshottask.query', {
       msg: 'changed',
       id: snapshotTasksList[0].id,
       fields: { state: { state: TaskState.Finished } } as WebUiQueryEntity<'pool.snapshottask.query'>,

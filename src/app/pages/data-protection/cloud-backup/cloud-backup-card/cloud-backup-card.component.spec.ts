@@ -6,9 +6,9 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { delay, of, throwError } from 'rxjs';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
@@ -20,8 +20,8 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CloudBackupCardComponent,
 } from 'app/pages/data-protection/cloud-backup/cloud-backup-card/cloud-backup-card.component';
@@ -77,10 +77,10 @@ describe('CloudBackupCardComponent', () => {
     imports: [],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('cloud_backup.query', cloudBackups as unknown as WebUiQueryEntity<'cloud_backup.query'>[]),
-        mockTypedCall('cloud_backup.delete', null),
-        mockTypedCall('cloud_backup.update', null),
+      mockApi([
+        mockQuery('cloud_backup.query', cloudBackups as unknown as WebUiQueryEntity<'cloud_backup.query'>[]),
+        mockCall('cloud_backup.delete', null),
+        mockCall('cloud_backup.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -203,11 +203,11 @@ describe('CloudBackupCardComponent', () => {
       hideCheckbox: true,
     });
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.sync', [1]);
   });
 
   it('shows success message when job completes successfully', async () => {
-    jest.spyOn(spectator.inject(TypedApiService), 'job').mockReturnValue(of({
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
       id: 1,
       state: JobState.Success,
     } as Job<void>));
@@ -227,7 +227,7 @@ describe('CloudBackupCardComponent', () => {
   });
 
   it('shows success message when job finishes successfully', async () => {
-    jest.spyOn(spectator.inject(TypedApiService), 'job').mockReturnValue(of({
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(of({
       id: 1,
       state: JobState.Success,
     } as Job<void>));
@@ -257,7 +257,7 @@ describe('CloudBackupCardComponent', () => {
       successMessage: 'Cloud Backup Task «test one» deleted.',
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloud_backup.delete', [1]);
   });
 
   it('updates Cloud Backup Enabled status once toggle is updated', async () => {
@@ -267,7 +267,7 @@ describe('CloudBackupCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'cloud_backup.update',
       [1, { enabled: true }],
     );
@@ -275,7 +275,7 @@ describe('CloudBackupCardComponent', () => {
 
   it('sends only one update request when multiple toggles are updated', async () => {
     jest.spyOn(spectator.component.dataProvider, 'load').mockImplementation();
-    jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementationOnce((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
       if (method === 'cloud_backup.update') {
         return of(null).pipe(delay(10));
       }
@@ -291,12 +291,12 @@ describe('CloudBackupCardComponent', () => {
     await checked;
     jest.useRealTimers();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'cloud_backup.update',
       [1, { enabled: true }],
     );
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'cloud_backup.update',
       [2, { enabled: true }],
     );
@@ -304,7 +304,7 @@ describe('CloudBackupCardComponent', () => {
   });
 
   it('shows cloud backup update error', async () => {
-    jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementationOnce((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce((method) => {
       if (method === 'cloud_backup.update') {
         return throwError(() => new ApiCallError({
           data: {

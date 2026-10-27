@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnRadioHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { PosixAclTag, PosixPermission } from 'app/enums/posix-acl.enum';
 import { AclTemplateByPath } from 'app/interfaces/acl.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectPresetModalConfig,
 } from 'app/pages/datasets/modules/permissions/interfaces/select-preset-modal-config.interface';
@@ -54,8 +54,8 @@ describe('SelectPresetModalComponent', () => {
       }),
       mockProvider(DialogRef),
       mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('filesystem.acltemplate.by_path', presets),
+      mockApi([
+        mockCall('filesystem.acltemplate.by_path', presets),
       ]),
       {
         provide: DIALOG_DATA,
@@ -80,7 +80,7 @@ describe('SelectPresetModalComponent', () => {
   });
 
   it('loads acl presets for given path and shows them in the select', async () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     const presetSelect = await loader.getHarness(TnSelectHarness);
 
     expect(api.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{

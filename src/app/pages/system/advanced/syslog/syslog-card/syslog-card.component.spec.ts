@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
@@ -32,12 +32,12 @@ describe('SyslogCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('system.advanced.syslog_certificate_choices', {
+      mockApi([
+        mockCall('system.advanced.syslog_certificate_choices', {
           1: 'Certificate 1',
           2: 'Certificate 2',
         }),
-        mockTypedCall('system.advanced.update', null),
+        mockCall('system.advanced.update', null),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.cancel()),

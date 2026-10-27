@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interface';
@@ -28,19 +28,19 @@ describe('StorageCardComponent', () => {
     component: StorageCardComponent,
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('systemdataset.config', {
+      mockApi([
+        mockCall('systemdataset.config', {
           pool: 'tank',
         } as SystemDatasetConfig),
-        mockTypedCall('pool.resilver.config', {
+        mockCall('pool.resilver.config', {
           enabled: true,
           begin: '15:00',
           end: '17:00',
           weekday: [2, 3],
         } as ResilverConfig),
-        mockTypedCall('systemdataset.pool_choices', { tank: 'tank' }),
-        mockTypedJob('systemdataset.update', { state: JobState.Success }),
-        mockTypedCall('pool.resilver.update', null),
+        mockCall('systemdataset.pool_choices', { tank: 'tank' }),
+        mockJob('systemdataset.update', { state: JobState.Success }),
+        mockCall('pool.resilver.update', null),
       ]),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),

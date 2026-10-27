@@ -7,11 +7,11 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
 
   filesystemStat(path: string): Observable<FileSystemStat> {
     return this.api.call('filesystem.stat', [path]);

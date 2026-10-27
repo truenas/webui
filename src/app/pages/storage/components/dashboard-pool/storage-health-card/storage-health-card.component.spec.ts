@@ -23,7 +23,7 @@ import { LocaleService } from 'app/modules/language/locale.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ScrubFormComponent,
 } from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
@@ -88,7 +88,7 @@ describe('StorageHealthCardComponent', () => {
     },
   } as ScrubTask;
 
-  let api: TypedApiService;
+  let api: ApiService;
   const websocketSubscription$ = new Subject<PoolScanEvent>();
 
   const createComponent = createComponentFactory({
@@ -117,7 +117,7 @@ describe('StorageHealthCardComponent', () => {
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
       }),
-      mockProvider(TypedApiService, {
+      mockProvider(ApiService, {
         subscribe: jest.fn(() => websocketSubscription$),
         startJob: jest.fn(() => of(undefined)),
       }),
@@ -134,7 +134,7 @@ describe('StorageHealthCardComponent', () => {
       props: { pool },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   describe('health indication', () => {

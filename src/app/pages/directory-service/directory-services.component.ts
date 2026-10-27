@@ -34,7 +34,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DirectoryServicesFormComponent } from 'app/pages/directory-service/components/directory-services-form/directory-services-form.component';
 import { KerberosKeytabsListComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.component';
 import { KerberosRealmsListComponent } from 'app/pages/directory-service/components/kerberos-realms/kerberos-realms-list.component';
@@ -72,7 +72,7 @@ interface DataCard {
   ],
 })
 export class DirectoryServicesComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private dialog = inject(DialogService);
   private tnDialog = inject(TnDialog);

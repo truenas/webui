@@ -7,10 +7,10 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { WebSharePasskey } from 'app/enums/webshare-passkey.enum';
@@ -19,8 +19,8 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceWebshareComponent } from './service-webshare.component';
@@ -61,9 +61,9 @@ describe('ServiceWebshareComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('webshare.config', mockWebShareConfig),
-        mockTypedCall('webshare.update', mockWebShareConfig),
+      mockApi([
+        mockCall('webshare.config', mockWebShareConfig),
+        mockCall('webshare.update', mockWebShareConfig),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(ErrorHandlerService),
@@ -95,7 +95,7 @@ describe('ServiceWebshareComponent', () => {
   });
 
   it('loads current webshare config and populates form on init', async () => {
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webshare.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.config');
 
     expect(await (await getCheckbox('search')).isChecked()).toBe(true);
     expect(await (await getSelect('passkey')).getDisplayText()).toBe('Enabled');
@@ -109,7 +109,7 @@ describe('ServiceWebshareComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required, ...mcpDefaults }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Required, ...mcpDefaults }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
     expect(closeSpy).toHaveBeenCalledWith(true);
   });
@@ -121,7 +121,7 @@ describe('ServiceWebshareComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled, ...mcpDefaults }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('webshare.update', [{ search: false, passkey: WebSharePasskey.Enabled, ...mcpDefaults }]);
     expect(closeSpy).toHaveBeenCalledWith(true);
   });
 
@@ -130,7 +130,7 @@ describe('ServiceWebshareComponent', () => {
   it('reports isBusy() but not isSubmitting() while the config loads, and both while saving', () => {
     const config$ = new Subject<WebShareConfig>();
     const update$ = new Subject<WebShareConfig>();
-    jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
       return method === 'webshare.config' ? config$ : update$;
     });
 
@@ -160,7 +160,7 @@ describe('ServiceWebshareComponent', () => {
 
   it('handles error when loading config fails', async () => {
     const errorHandler = spectator.inject(ErrorHandlerService);
-    spectator.inject(MockTypedApiService).mockCallError('webshare.config');
+    spectator.inject(MockApiService).mockCallError('webshare.config');
 
     const failed = createSecondFixture();
     await failed.whenStable();
@@ -174,7 +174,7 @@ describe('ServiceWebshareComponent', () => {
 
   it('handles error when saving config fails', async () => {
     // The component from `beforeEach` already loaded its config; only the save needs to fail.
-    spectator.inject(MockTypedApiService).mockCallError('webshare.update');
+    spectator.inject(MockApiService).mockCallError('webshare.update');
 
     const closeSpy = jest.spyOn(spectator.component.closed, 'emit');
     spectator.component.submit();
@@ -193,11 +193,11 @@ describe('ServiceWebshareComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true, passkey: WebSharePasskey.Enabled, ...mcpDefaults }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [{ search: true, passkey: WebSharePasskey.Enabled, ...mcpDefaults }]);
   });
 
   it('initializes form with default values when config has search disabled', async () => {
-    jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
       if (method === 'webshare.config') {
         return of({ ...mockWebShareConfig, search: false, passkey: WebSharePasskey.Disabled });
       }
@@ -222,7 +222,7 @@ describe('ServiceWebshareComponent', () => {
 
   describe('MCP', () => {
     const mockConfig = (config: Partial<WebShareConfig>): void => {
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
         return of(method === 'webshare.config' ? { ...mockWebShareConfig, ...config } : mockWebShareConfig);
       });
     };
@@ -259,7 +259,7 @@ describe('ServiceWebshareComponent', () => {
       fixture.componentInstance.submit();
       await fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
         mcp_enabled: true,
         mcp_allowed_groups: ['truenas_webshare'],
       })]);
@@ -273,7 +273,7 @@ describe('ServiceWebshareComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
         mcp_enabled: true,
         mcp_allowed_groups: ['truenas_webshare', 'ad_staff'],
         mcp_allow_write: true,
@@ -301,7 +301,7 @@ describe('ServiceWebshareComponent', () => {
       fixture.componentInstance.submit();
       await fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webshare.update', [expect.objectContaining({
         mcp_enabled: false,
         mcp_allowed_groups: ['ad_staff'],
         mcp_allow_write: true,
@@ -323,9 +323,9 @@ describe('ServiceWebshareComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         mockAuth(),
-        mockTypedApi([
-          mockTypedCall('webshare.config', mockWebShareConfig),
-          mockTypedCall('webshare.update', mockWebShareConfig),
+        mockApi([
+          mockCall('webshare.config', mockWebShareConfig),
+          mockCall('webshare.update', mockWebShareConfig),
         ]),
         ...ixFormTestingProviders(),
         mockProvider(ErrorHandlerService),
@@ -357,7 +357,7 @@ describe('ServiceWebshareComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'webshare.update',
       [expect.objectContaining({ search: false })],
     );
@@ -368,7 +368,7 @@ describe('ServiceWebshareComponent', () => {
     // resolves AFTER the guard effect has already locked the control off.
     tnConnectConfig.set({ status: TruenasConnectStatus.Disabled } as TruenasConnectConfig);
     const config$ = new Subject<WebShareConfig>();
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     jest.spyOn(api, 'call').mockImplementation((method) => {
       if (method === 'webshare.config') {
         return config$;
@@ -411,9 +411,9 @@ describe('ServiceWebshareComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         mockAuth(),
-        mockTypedApi([
-          mockTypedCall('webshare.config', mockWebShareConfig),
-          mockTypedCall('webshare.update', mockWebShareConfig),
+        mockApi([
+          mockCall('webshare.config', mockWebShareConfig),
+          mockCall('webshare.update', mockWebShareConfig),
         ]),
         ...ixFormTestingProviders(),
         mockProvider(ErrorHandlerService),
@@ -445,7 +445,7 @@ describe('ServiceWebshareComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'webshare.update',
         [expect.objectContaining({ search: true })],
       );

@@ -13,7 +13,7 @@ import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/d
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { StorageService } from 'app/services/storage.service';
@@ -64,7 +64,7 @@ describe('PoolsDashboardStore', () => {
     service: PoolsDashboardStore,
     providers: [
       StorageService,
-      mockProvider(TypedApiService, {
+      mockProvider(ApiService, {
         subscribe: jest.fn(() => websocketSubscription$),
         // An instance property, so `mockProvider` cannot stub it on its own.
         query: jest.fn(),
@@ -92,7 +92,7 @@ describe('PoolsDashboardStore', () => {
 
   /** Answers what `loadDashboard` reads, each on the next frame. */
   function stubApi(cold: RunHelpers['cold'], answers: ApiAnswers): void {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     const answer = (byMethod: Record<string, unknown>) => (method: string) => {
       if (!(method in byMethod)) {
         throw new Error(`Unexpected method: ${method}`);

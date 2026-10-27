@@ -8,16 +8,16 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateDigestAlgorithm } from 'app/enums/certificate-digest-algorithm.enum';
 import { CertificateKeyType } from 'app/enums/certificate-key-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CsrConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
@@ -66,17 +66,17 @@ describe('CsrAddComponent', () => {
       MockComponent(SummaryComponent),
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('webui.crypto.csr_profiles', {
+      mockApi([
+        mockCall('webui.crypto.csr_profiles', {
           'HTTPS RSA Certificate': profile,
         } as unknown as CallResponse<WebUiApiDirectory, 'webui.crypto.csr_profiles'>),
-        mockTypedCall('certificate.ec_curve_choices', {
+        mockCall('certificate.ec_curve_choices', {
           BrainpoolP512R1: 'BrainpoolP512R1',
         }),
-        mockTypedCall('certificate.extended_key_usage_choices', {
+        mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: 'CLIENT_AUTH',
         }),
-        mockTypedJob('certificate.create', { state: JobState.Success }),
+        mockJob('certificate.create', { state: JobState.Success }),
       ]),
       mockProvider(SystemGeneralService, {
         getCertificateCountryChoices: () => of({
@@ -159,7 +159,7 @@ describe('CsrAddComponent', () => {
 
     await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('certificate.create', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [
       {
         name: 'new',
         create_type: CertificateCreateType.CreateCsr,
@@ -210,7 +210,7 @@ describe('CsrAddComponent', () => {
 
     await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('certificate.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.create', [{
       name: 'import',
       create_type: CertificateCreateType.ImportCsr,
       CSR: '-----BEGIN CERTIFICATE REQUEST-----',

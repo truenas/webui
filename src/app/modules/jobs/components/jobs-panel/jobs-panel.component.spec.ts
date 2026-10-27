@@ -9,8 +9,8 @@ import { Store, StoreModule } from '@ngrx/store';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -21,7 +21,7 @@ import { JobEffects } from 'app/modules/jobs/store/job.effects';
 import { jobReducer, adapter, jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { jobStateKey } from 'app/modules/jobs/store/job.selectors';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 const runningJob = {
@@ -85,7 +85,7 @@ const transientRunningJob = {
 
 describe('JobsPanelComponent', () => {
   let spectator: Spectator<JobsPanelComponent>;
-  let api: TypedApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
   let jobPanel: JobsPanelPageObject;
 
@@ -112,8 +112,8 @@ describe('JobsPanelComponent', () => {
           getDestroyRef: () => ({ onDestroy: jest.fn(() => () => {}) }),
         })),
       }),
-      mockTypedApi([
-        mockTypedCall('core.job_abort', null),
+      mockApi([
+        mockCall('core.job_abort', null),
       ]),
       mockProvider(DialogRef),
     ],
@@ -121,10 +121,10 @@ describe('JobsPanelComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     // The double answers a query with the same rows whatever its filters, and the store asks twice:
     // once for the unfinished jobs, once for the recently finished ones.
-    spectator.inject(MockTypedApiService).query.mockImplementation((_, filters) => {
+    spectator.inject(MockApiService).query.mockImplementation((_, filters) => {
       const [[, operator]] = filters as [string, string, JobState][];
       return of(operator === '=' ? [successJob] : [runningJob, waitingJob, failedJob, transientRunningJob]);
     });

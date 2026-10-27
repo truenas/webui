@@ -9,8 +9,8 @@ import {
   TnBannerHarness, TnButtonHarness, TnSlideToggleHarness, TnTableHarness, TnTooltipHarness, type TnMenuItem,
 } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -28,8 +28,8 @@ import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   ServiceActionsMenuService,
@@ -92,13 +92,13 @@ describe('WebShareCardComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(FormErrorHandlerService),
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
-        mockTypedCall('sharing.webshare.delete', null),
-        mockTypedCall('tn_connect.config', mockTnConnectConfig as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
-        mockTypedQuery('user.query', [{ id: 1, username: 'testuser', webshare: true } as WebUiQueryEntity<'user.query'>]),
+      mockApi([
+        mockQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
+        mockCall('sharing.webshare.delete', null),
+        mockCall('tn_connect.config', mockTnConnectConfig as unknown as CallResponse<WebUiApiDirectory, 'tn_connect.config'>),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
+        mockQuery('user.query', [{ id: 1, username: 'testuser', webshare: true } as WebUiQueryEntity<'user.query'>]),
       ]),
       provideMockStore({
         initialState: {
@@ -234,7 +234,7 @@ describe('WebShareCardComponent', () => {
       call: expect.any(Function),
       successMessage: 'WebShare deleted',
     });
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.webshare.delete', [1]);
   });
 
   it('does not delete when confirmation is cancelled', () => {
@@ -244,7 +244,7 @@ describe('WebShareCardComponent', () => {
     deleteButtons[0].dispatchEvent(new Event('click'));
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.webshare.delete', expect.anything());
   });
 
   it('does not show the TrueNAS Connect banner when TrueNAS Connect is configured', async () => {
@@ -303,11 +303,11 @@ describe('WebShareCardComponent - TrueNAS Connect not configured', () => {
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', []),
-        mockTypedQuery('user.query', []),
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockQuery('sharing.webshare.query', []),
+        mockQuery('user.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -408,11 +408,11 @@ describe('WebShareCardComponent - No WebShare users configured', () => {
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', []),
-        mockTypedQuery('user.query', []),
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockQuery('sharing.webshare.query', []),
+        mockQuery('user.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -497,11 +497,11 @@ describe('WebShareCardComponent - WebShare service not running', () => {
       }),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', []),
-        mockTypedQuery('user.query', [{ id: 1, username: 'testuser', webshare: true } as WebUiQueryEntity<'user.query'>]),
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockQuery('sharing.webshare.query', []),
+        mockQuery('user.query', [{ id: 1, username: 'testuser', webshare: true } as WebUiQueryEntity<'user.query'>]),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {
@@ -608,11 +608,11 @@ describe('WebShareCardComponent - TrueNAS Connect not configured but service run
       mockAuth(),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', []),
-        mockTypedQuery('user.query', []),
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockQuery('sharing.webshare.query', []),
+        mockQuery('user.query', []),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       provideMockStore({
         initialState: {

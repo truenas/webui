@@ -19,7 +19,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebShareTableRow } from 'app/pages/sharing/webshare/webshare-table-row.interface';
 import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
@@ -36,7 +36,7 @@ export interface WebShareHostnameChoice {
 })
 export class WebShareService {
   private window = inject(WINDOW);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);
   private licenseService = inject(LicenseService);

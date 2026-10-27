@@ -8,12 +8,12 @@ import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { isRootShare } from 'app/pages/sharing/utils/smb.utils';
 
 @Injectable({ providedIn: 'root' })
 export class DatasetService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
 

@@ -19,7 +19,7 @@ import { Option } from 'app/interfaces/option.interface';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { localizationCardElements } from 'app/pages/system/general-settings/localization/localization-card/localization-card.elements';
 import { getLocalizationFormConfig } from 'app/pages/system/general-settings/localization/localization-form/localization.form-config';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -49,7 +49,7 @@ export class LocalizationCardComponent {
   private store$ = inject<Store<AppState>>(Store);
   private formPanel = inject(FormSidePanelService);
   private sysGeneralService = inject(SystemGeneralService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
 
   protected readonly searchableElements = localizationCardElements;

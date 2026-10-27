@@ -13,7 +13,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { PaginationServerSide } from 'app/modules/tn-table/classes/api-data-provider/pagination-server-side.class';
 import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provider/sorting-server-side.class';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AllUsersHeaderComponent } from 'app/pages/credentials/users/all-users/all-users-header/all-users-header.component';
 import { allUsersElements } from 'app/pages/credentials/users/all-users/all-users.elements';
 import { UserDetailHeaderComponent } from 'app/pages/credentials/users/all-users/user-details/user-detail-header/user-detail-header.component';
@@ -44,7 +44,7 @@ import { AppState } from 'app/store';
   ],
 })
 export class AllUsersComponent implements OnInit, OnDestroy {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private activatedRoute = inject(ActivatedRoute);
   private location = inject(Location);
   private cdr = inject(ChangeDetectorRef);

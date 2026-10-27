@@ -26,7 +26,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { initiatorFormElements } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -62,7 +62,7 @@ interface InitiatorSnapshot {
   ],
 })
 export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);

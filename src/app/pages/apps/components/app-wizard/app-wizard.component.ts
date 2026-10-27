@@ -55,7 +55,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { ReadOnlyComponent } from 'app/modules/page-header/readonly-badge/readonly-badge.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { AppMetadataCardComponent } from 'app/pages/apps/components/installed-apps/app-metadata-card/app-metadata-card.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -98,7 +98,7 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);
   private dockerStore = inject(DockerStore);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private authService = inject(AuthService);
   private tnDialog = inject(TnDialog);
   private unsavedChangesService = inject(UnsavedChangesService);

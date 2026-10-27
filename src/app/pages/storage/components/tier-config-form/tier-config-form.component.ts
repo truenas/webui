@@ -13,7 +13,7 @@ import {
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-tier-config-form',
@@ -32,7 +32,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 })
 export class TierConfigFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 

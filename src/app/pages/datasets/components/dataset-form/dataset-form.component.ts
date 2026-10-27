@@ -27,7 +27,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   EncryptionSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/encryption-section/encryption-section.component';
@@ -72,7 +72,7 @@ interface DatasetFormSection {
   ],
 })
 export class DatasetFormComponent extends IxFormHostForm<Dataset | null> implements OnInit, AfterViewInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialog = inject(DialogService);
   private datasetFormService = inject(DatasetFormService);
   private router = inject(Router);

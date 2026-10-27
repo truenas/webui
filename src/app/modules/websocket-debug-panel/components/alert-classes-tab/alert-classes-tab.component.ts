@@ -10,7 +10,7 @@ import { map } from 'rxjs';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertCategory, toAlertCategories } from 'app/interfaces/alert.interface';
 import { smartAlertRegistry } from 'app/modules/alerts/services/alert-enhancement.registry';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 interface AlertClassInfo {
@@ -33,7 +33,7 @@ interface AlertClassInfo {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AlertClassesTabComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   protected autoCheck = signal(true);

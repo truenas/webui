@@ -13,7 +13,7 @@ import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { toDisk } from 'app/interfaces/disk.interface';
 import { TopologyDisk } from 'app/interfaces/storage.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import {
   ManageDiskSedDialog,
@@ -35,7 +35,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
 })
 export class HardwareDiskEncryptionComponent {
   private tnDialog = inject(TnDialog);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
 

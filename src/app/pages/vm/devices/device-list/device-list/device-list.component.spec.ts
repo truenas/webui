@@ -7,9 +7,9 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { VmDeviceType, VmDiskMode, VmState } from 'app/enums/vm.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -18,8 +18,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
   DeviceDeleteModalComponent,
@@ -65,10 +65,10 @@ describe('DeviceListComponent', () => {
       pk: 76,
     },
     providers: [
-      mockTypedApi([
-        mockTypedQuery('vm.device.query', devices),
-        mockTypedQuery('vm.query', [{ id: 76, name: 'Test VM', status: { state: VmState.Stopped } } as WebUiQueryEntity<'vm.query'>]),
-        mockTypedJob('vm.device.convert', { state: JobState.Success, result: true }),
+      mockApi([
+        mockQuery('vm.device.query', devices),
+        mockQuery('vm.query', [{ id: 76, name: 'Test VM', status: { state: VmState.Stopped } } as WebUiQueryEntity<'vm.query'>]),
+        mockJob('vm.device.convert', { state: JobState.Success, result: true }),
       ]),
       mockAuth(),
       mockProvider(FormSidePanelService, {
@@ -113,7 +113,7 @@ describe('DeviceListComponent', () => {
    * covers the subscription that reads it, and keeps these cases off the component's internals.
    */
   function emitVmState(state: VmState): void {
-    spectator.inject(MockTypedApiService).emitEvent('vm.query', {
+    spectator.inject(MockApiService).emitEvent('vm.query', {
       msg: 'changed',
       id: 76,
       fields: { id: 76, name: 'Test VM', status: { state } } as WebUiQueryEntity<'vm.query'>,
@@ -122,7 +122,7 @@ describe('DeviceListComponent', () => {
   }
 
   it('loads devices using virtual machine id from url', () => {
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('vm.device.query', [['vm', '=', 76]]);
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('vm.device.query', [['vm', '=', 76]]);
   });
 
   it('shows devices in a table', async () => {

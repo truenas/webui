@@ -11,7 +11,7 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -20,7 +20,7 @@ import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selec
 @Injectable()
 export class EulaEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);

@@ -19,7 +19,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   KeyCreatedDialog,
 } from 'app/pages/credentials/users/user-api-keys/components/key-created-dialog/key-created-dialog.component';
@@ -45,7 +45,7 @@ import { DirectoryQueryOptions } from 'app/services/user-directory.service';
 export class ApiKeyFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);

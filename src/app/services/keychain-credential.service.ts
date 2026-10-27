@@ -7,13 +7,13 @@ import {
   KeychainCredentialUsedBy, KeychainSshCredentials, KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class KeychainCredentialService {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
   refetchSshKeys = new Subject<void>();
   refetchSshConnections = new Subject<void>();
 

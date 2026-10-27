@@ -9,8 +9,8 @@ import {
   TnButtonHarness, TnDialog, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
@@ -42,15 +42,15 @@ describe('AppSettingsButtonComponent', () => {
     component: AppSettingsButtonComponent,
     providers: [
       mockAuth(),
-      // TypedApiService calls issued by the AppsSettings form rendered inside the side panel.
-      mockTypedApi([
-        mockTypedCall('catalog.trains', ['stable']),
-        mockTypedCall('catalog.config', { preferred_trains: [] } as CatalogConfig),
-        mockTypedCall('docker.status', null),
-        mockTypedCall('docker.config', { address_pools: [], enable_image_updates: false } as DockerConfig),
-        mockTypedCall('system.advanced.nvidia_present', false),
-        mockTypedCall('system.advanced.config', { nvidia: false } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
-        mockTypedJob('docker.update', { state: JobState.Success }),
+      // ApiService calls issued by the AppsSettings form rendered inside the side panel.
+      mockApi([
+        mockCall('catalog.trains', ['stable']),
+        mockCall('catalog.config', { preferred_trains: [] } as CatalogConfig),
+        mockCall('docker.status', null),
+        mockCall('docker.config', { address_pools: [], enable_image_updates: false } as DockerConfig),
+        mockCall('system.advanced.nvidia_present', false),
+        mockCall('system.advanced.config', { nvidia: false } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
+        mockJob('docker.update', { state: JobState.Success }),
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({

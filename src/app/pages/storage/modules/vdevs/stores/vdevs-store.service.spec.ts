@@ -8,7 +8,7 @@ import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.inter
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VDevsState, VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 
 describe('VDevsStore', () => {
@@ -17,7 +17,7 @@ describe('VDevsStore', () => {
   const createService = createServiceFactory({
     service: VDevsStore,
     providers: [
-      mockProvider(TypedApiService, {
+      mockProvider(ApiService, {
         // An instance property, so `mockProvider` cannot stub it on its own.
         query: jest.fn(),
       }),
@@ -31,7 +31,7 @@ describe('VDevsStore', () => {
 
   it('loads pool topology, disks and sets loading indicators when loadNodes is called', () => {
     testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(TypedApiService);
+      const mockedApi = spectator.inject(ApiService);
       (mockedApi.query as unknown as jest.Mock).mockImplementation((method: string) => {
         if (method === 'pool.query') {
           return cold('-b|', {

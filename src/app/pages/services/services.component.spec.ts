@@ -11,8 +11,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NavigateAndHighlightService } from 'app/directives/navigate-and-interact/navigate-and-highlight.service';
 import { JobState } from 'app/enums/job-state.enum';
 import { serviceNames } from 'app/enums/service-name.enum';
@@ -25,8 +25,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ServicesComponent } from 'app/pages/services/services.component';
 import {
@@ -54,7 +54,7 @@ const fakeDataSource: Service[] = [...serviceNames.entries()]
 describe('ServicesComponent', () => {
   let spectator: Spectator<ServicesComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
@@ -66,11 +66,11 @@ describe('ServicesComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('service.update', 1),
-        mockTypedJob('service.control', { state: JobState.Success }),
+      mockApi([
+        mockCall('service.update', 1),
+        mockJob('service.control', { state: JobState.Success }),
         // Loaded when the FTP config form is opened in the side panel.
-        mockTypedCall('ftp.config', {} as FtpConfig),
+        mockCall('ftp.config', {} as FtpConfig),
       ]),
       mockProvider(DialogService),
       mockProvider(FormSidePanelService, {
@@ -99,7 +99,7 @@ describe('ServicesComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(TnTableHarness);
   });
 

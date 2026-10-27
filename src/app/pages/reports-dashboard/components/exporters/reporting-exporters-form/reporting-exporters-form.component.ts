@@ -42,7 +42,7 @@ import {
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-reporting-exporters-form',
@@ -62,7 +62,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 })
 export class ReportingExportersFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   /**

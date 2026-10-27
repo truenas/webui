@@ -5,8 +5,8 @@ import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
@@ -81,9 +81,9 @@ describe('DatasetCapacityManagementCardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
+      mockApi([
         // Not a `.query` method, but it has an entity, so the fake answers it as one.
-        mockTypedQuery('pool.dataset.get_quota', [
+        mockQuery('pool.dataset.get_quota', [
           { id: 1, quota: 200 },
           { id: 2, quota: 200 },
         ] as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
@@ -246,9 +246,9 @@ describe('DatasetCapacityManagementCardComponent', () => {
       ],
       providers: [
         mockAuth(),
-        mockTypedApi([
-          mockTypedQuery('pool.dataset.get_quota', []),
-          mockTypedCall('zpool.query', [{
+        mockApi([
+          mockQuery('pool.dataset.get_quota', []),
+          mockCall('zpool.query', [{
             name: 'dozer',
             properties: {
               class_special_available: { value: 1024 * 1024 * 1024 * 5 },

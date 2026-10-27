@@ -25,7 +25,7 @@ import {
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ViewType,
 } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
@@ -55,7 +55,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class NewMappingFormComponent implements OnChanges, OnInit {
   private destroyRef = inject(DestroyRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private formBuilder = inject(NonNullableFormBuilder);

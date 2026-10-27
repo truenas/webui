@@ -43,7 +43,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ActiveDirectoryConfigComponent } from './active-directory-config/active-directory-config.component';
 import { CredentialConfigComponent } from './credential-config/credential-config.component';
@@ -76,7 +76,7 @@ import { DirectoryServiceValidationService } from './services/directory-service-
 export class DirectoryServicesFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);

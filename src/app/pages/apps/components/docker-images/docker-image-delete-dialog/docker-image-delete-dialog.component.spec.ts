@@ -7,15 +7,15 @@ import { JobResult } from '@truenas/api-client';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DockerImageDeleteDialog } from 'app/pages/apps/components/docker-images/docker-image-delete-dialog/docker-image-delete-dialog.component';
 import { fakeDockerImagesDataSource } from 'app/pages/apps/components/docker-images/test/fake-docker-images';
 
@@ -59,7 +59,7 @@ describe('DockerImageDeleteDialogComponent', () => {
       mockProvider(DialogService, {
         confirm: () => of(true),
       }),
-      mockTypedApi(),
+      mockApi(),
     ],
   });
 
@@ -76,7 +76,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: false }],
       ],
     ];
-    spectator.inject(MockTypedApiService).mockJob('core.bulk', { state: JobState.Success, result: mockSuccessBulkResponse });
+    spectator.inject(MockApiService).mockJob('core.bulk', { state: JobState.Success, result: mockSuccessBulkResponse });
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 docker images will be deleted. Are you sure you want to proceed?');
 
@@ -86,7 +86,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('2 docker images have been deleted.');
 
     const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
@@ -101,7 +101,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: true }],
       ],
     ];
-    spectator.inject(MockTypedApiService).mockJob('core.bulk', { state: JobState.Success, result: mockSuccessBulkResponse });
+    spectator.inject(MockApiService).mockJob('core.bulk', { state: JobState.Success, result: mockSuccessBulkResponse });
 
     const forceCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
     await forceCheckbox.check();
@@ -111,7 +111,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
   });
 
   it('checks deleting failures of docker images when form is submitted', async () => {
@@ -122,7 +122,7 @@ describe('DockerImageDeleteDialogComponent', () => {
         ['sha256:test2', { force: false }],
       ],
     ];
-    spectator.inject(MockTypedApiService).mockJob('core.bulk', { state: JobState.Success, result: mockFailedBulkResponse });
+    spectator.inject(MockApiService).mockJob('core.bulk', { state: JobState.Success, result: mockFailedBulkResponse });
 
     const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
@@ -130,7 +130,7 @@ describe('DockerImageDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 docker images could not be deleted.');
 
     const rows = spectator.queryAll(BulkListItemComponent).map((row, index) => ({
@@ -149,6 +149,6 @@ describe('DockerImageDeleteDialogComponent', () => {
   it('does not delete images when the form is submitted natively while invalid', () => {
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalledWith('core.bulk', expect.anything());
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('core.bulk', expect.anything());
   });
 });

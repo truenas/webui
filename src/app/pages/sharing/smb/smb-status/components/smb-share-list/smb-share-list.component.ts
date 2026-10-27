@@ -19,7 +19,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-smb-share-list',
@@ -43,7 +43,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
   ],
 })
 export class SmbShareListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);

@@ -33,7 +33,7 @@ import {
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableToggleCellComponent } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 import { TierStatusComponent } from 'app/pages/sharing/components/tier-status/tier-status.component';
 import { NfsFormComponent } from 'app/pages/sharing/nfs/nfs-form/nfs-form.component';
@@ -73,7 +73,7 @@ import { poolStore } from 'app/services/global-store/stores.constant';
   ],
 })
 export class NfsListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);

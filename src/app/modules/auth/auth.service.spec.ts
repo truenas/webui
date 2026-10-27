@@ -13,9 +13,9 @@ import {
   BehaviorSubject, firstValueFrom,
   of, Subject, throwError,
 } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AccountAttribute } from 'app/enums/account-attribute.enum';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { Role } from 'app/enums/role.enum';
@@ -27,8 +27,8 @@ import { Preferences } from 'app/interfaces/preferences.interface';
 import { GlobalTwoFactorConfig, UserTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -107,11 +107,11 @@ describe('AuthService', () => {
       // mockAuth's WINDOW stub has non-persisting localStorage jest.fn()s, so drive the
       // pending marker through its service rather than through storage.
       mockProvider(PendingTwoFactorService),
-      mockTypedApi([
-        mockTypedCall('auth.me', authMeUser as unknown as CallResponse<WebUiApiDirectory, 'auth.me'>),
-        mockTypedCall('auth.logout', null),
-        mockTypedCall('auth.generate_token', 'RENEWED_TOKEN'),
-        mockTypedCall('auth.twofactor.config', {
+      mockApi([
+        mockCall('auth.me', authMeUser as unknown as CallResponse<WebUiApiDirectory, 'auth.me'>),
+        mockCall('auth.logout', null),
+        mockCall('auth.generate_token', 'RENEWED_TOKEN'),
+        mockCall('auth.twofactor.config', {
           enabled: true,
           id: 1,
           services: { ssh: true },
@@ -192,8 +192,8 @@ describe('AuthService', () => {
 
       expect(loginMechanisms()).toEqual(['PASSWORD_PLAIN']);
       expect(loginCredentials()).toEqual(['dummy']);
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('auth.login_ex', expect.anything());
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('auth.me');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.login_ex', expect.anything());
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
     });
 
     it('signs in on the typed client with a stored token', async () => {
@@ -271,7 +271,7 @@ describe('AuthService', () => {
       expect(client.connection.sent).toContainEqual(expect.objectContaining({ method: 'auth.logout' }));
       expect(client.authenticator.authenticated$.value).toBe(false);
       // One socket, one session: there is no second `auth.logout` to send.
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('auth.logout');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.logout');
       expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
       expect(await firstValueFrom(spectator.service.user$)).toBeNull();
     });
@@ -321,7 +321,7 @@ describe('AuthService', () => {
   });
 
   async function setUserRoles(roles: Role[]): Promise<void> {
-    const mockedApi = spectator.inject(MockTypedApiService);
+    const mockedApi = spectator.inject(MockApiService);
     mockedApi.mockCall('auth.me', {
       ...authMeUser,
       privilege: {
@@ -354,7 +354,7 @@ describe('AuthService', () => {
 
   describe('hasWebShellAccess$', () => {
     async function setWebShell(webShell: boolean): Promise<void> {
-      const mockedApi = spectator.inject(MockTypedApiService);
+      const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('auth.me', {
         ...authMeUser,
         privilege: { ...authMeUser.privilege, web_shell: webShell },
@@ -430,12 +430,12 @@ describe('AuthService', () => {
         services: { ssh: true },
         window: 30,
       });
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.twofactor.config');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.twofactor.config');
     });
 
     it('returns cached config on subsequent calls', async () => {
       await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       jest.clearAllMocks();
 
       const result = await firstValueFrom(spectator.service.getGlobalTwoFactorConfig());
@@ -467,7 +467,7 @@ describe('AuthService', () => {
         services: { ssh: true },
         window: 30,
       });
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.twofactor.config');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.twofactor.config');
     });
   });
 
@@ -477,7 +477,7 @@ describe('AuthService', () => {
     });
 
     it('returns false when global two-factor is disabled', async () => {
-      spectator.inject(MockTypedApiService).mockCall('auth.twofactor.config', {
+      spectator.inject(MockApiService).mockCall('auth.twofactor.config', {
         enabled: false,
       } as GlobalTwoFactorConfig);
 
@@ -494,7 +494,7 @@ describe('AuthService', () => {
         } as UserTwoFactorConfig,
       };
 
-      spectator.inject(MockTypedApiService).mockCall('auth.me', userWithoutSecret);
+      spectator.inject(MockApiService).mockCall('auth.me', userWithoutSecret);
       await firstValueFrom(spectator.service.refreshUser());
 
       const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
@@ -510,7 +510,7 @@ describe('AuthService', () => {
         } as UserTwoFactorConfig,
       };
 
-      spectator.inject(MockTypedApiService).mockCall('auth.me', userWithSecret);
+      spectator.inject(MockApiService).mockCall('auth.me', userWithSecret);
       await firstValueFrom(spectator.service.refreshUser());
 
       const result = await firstValueFrom(spectator.service.isTwoFactorSetupRequired());
@@ -529,7 +529,7 @@ describe('AuthService', () => {
         } as UserTwoFactorConfig,
       };
 
-      spectator.inject(MockTypedApiService).mockCall('auth.me', userWithSecret);
+      spectator.inject(MockApiService).mockCall('auth.me', userWithSecret);
       await firstValueFrom(spectator.service.refreshUser());
       jest.mocked(spectator.inject(PendingTwoFactorService).get).mockReturnValue('renewal');
 
@@ -746,7 +746,7 @@ describe('AuthService', () => {
 
   describe('token renewal', () => {
     function generateTokenCalls(): unknown[][] {
-      const call = spectator.inject(TypedApiService).call as jest.Mock;
+      const call = spectator.inject(ApiService).call as jest.Mock;
       return call.mock.calls.filter(([method]) => method === 'auth.generate_token');
     }
 
@@ -764,7 +764,7 @@ describe('AuthService', () => {
         setTimeout(resolve);
       });
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'auth.generate_token',
         [1200, {}, true, true],
       );
@@ -804,7 +804,7 @@ describe('AuthService', () => {
 
     it('drops a renewal that comes back after the user has signed out', async () => {
       const renewal$ = new Subject<string>();
-      (spectator.inject(TypedApiService).call as jest.Mock).mockReturnValueOnce(renewal$);
+      (spectator.inject(ApiService).call as jest.Mock).mockReturnValueOnce(renewal$);
       spectator.service.setQueryToken('DUMMY_TOKEN');
       (mockWsStatus.isAuthenticated$ as BehaviorSubject<boolean>).next(true);
 

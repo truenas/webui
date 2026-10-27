@@ -8,7 +8,7 @@ import {
 import { CallResponse } from '@truenas/api-client';
 import { TnDialog, TnIconButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -46,8 +46,8 @@ describe('TruecommandButtonComponent', () => {
         TruecommandStatusModalComponent,
       ],
       providers: [
-        mockTypedApi([
-          mockTypedCall('truecommand.config', getFakeConfig(config)),
+        mockApi([
+          mockCall('truecommand.config', getFakeConfig(config)),
         ]),
         mockProvider(DialogService, {
           generalDialog: jest.fn(() => of()),

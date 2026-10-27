@@ -1,11 +1,11 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
-  mockTypedApi, mockTypedCall, settleTypedApi,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockCall, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -20,8 +20,8 @@ describe('ContainerConfigStore', () => {
   const createService = createServiceFactory({
     service: ContainerConfigStore,
     providers: [
-      mockTypedApi([
-        mockTypedCall('lxc.config', config),
+      mockApi([
+        mockCall('lxc.config', config),
       ]),
     ],
   });
@@ -39,9 +39,9 @@ describe('ContainerConfigStore', () => {
 
   it('should load config when initialize is called', async () => {
     spectator.service.initialize();
-    await settleTypedApi();
+    await settleApi();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('lxc.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
     expect(spectator.service.state()).toEqual({
       isLoading: false,
       config,
@@ -51,15 +51,15 @@ describe('ContainerConfigStore', () => {
   it('should not make duplicate API calls when initialize is called while loading', async () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.initialize();
-    await settleTypedApi();
+    await settleApi();
 
-    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('lxc.config');
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('lxc.config');
   });
 
   describe('selectors', () => {
     beforeEach(async () => {
       spectator.service.initialize();
-      await settleTypedApi();
+      await settleApi();
     });
 
     it('isLoading - returns isLoading part of the state', () => {
@@ -73,13 +73,13 @@ describe('ContainerConfigStore', () => {
 
   describe('error handling', () => {
     beforeEach(() => {
-      spectator.inject(MockTypedApiService).mockCallError('lxc.config');
+      spectator.inject(MockApiService).mockCallError('lxc.config');
       jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal').mockImplementation();
     });
 
     it('sets isLoading to false on API error', async () => {
       spectator.service.initialize();
-      await settleTypedApi();
+      await settleApi();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.config()).toBeNull();
@@ -87,11 +87,11 @@ describe('ContainerConfigStore', () => {
 
     it('shows error modal when API call fails', async () => {
       const error = new Error('API error');
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(throwError(() => error));
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => error));
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       spectator.service.initialize();
-      await settleTypedApi();
+      await settleApi();
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
@@ -100,7 +100,7 @@ describe('ContainerConfigStore', () => {
   describe('loading state', () => {
     it('sets isLoading to true while fetching config', () => {
       const delayedResponse$ = new Subject<ContainerGlobalConfig>();
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(delayedResponse$);
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
 
       spectator.service.initialize();
 

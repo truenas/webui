@@ -8,7 +8,7 @@ import {
 } from 'rxjs/operators';
 import { toLoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { AppState } from 'app/store/index';
 import {
@@ -29,7 +29,7 @@ import {
 @Injectable()
 export class PreferencesEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);
 

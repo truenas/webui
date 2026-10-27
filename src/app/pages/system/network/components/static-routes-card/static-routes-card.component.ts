@@ -27,7 +27,7 @@ import {
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StaticRouteDeleteDialog,
 } from 'app/pages/system/network/components/static-route-delete-dialog/static-route-delete-dialog.component';
@@ -59,7 +59,7 @@ import { staticRoutesCardElements } from 'app/pages/system/network/components/st
 })
 export class StaticRoutesCardComponent implements OnInit {
   private tnDialog = inject(TnDialog);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private emptyService = inject(EmptyService);

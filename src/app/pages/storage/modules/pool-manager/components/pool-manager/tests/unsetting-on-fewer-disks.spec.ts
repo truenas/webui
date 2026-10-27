@@ -3,8 +3,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnCheckboxHarness, TnRadioHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -30,9 +30,9 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
     ],
     providers: [
       ...commonProviders,
-      mockTypedApi([
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('pool.validate_name', true),
+        mockCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -106,7 +106,7 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockTypedQuery('enclosure2.query', [
+        mockQuery('enclosure2.query', [
           {
             id: 'id1',
             name: 'enclosure1',
@@ -118,8 +118,8 @@ describe('PoolManagerComponent – unsetting on fewer disks', () => {
             label: 'Second Enclosure',
           },
         ] as unknown as WebUiQueryEntity<'enclosure2.query'>[]),
-        mockTypedQuery('pool.query', []),
-        mockTypedCall('pool.validate_name', true),
+        mockQuery('pool.query', []),
+        mockCall('pool.validate_name', true),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

@@ -7,10 +7,10 @@ import { helptextSystemTunable as helptext } from 'app/helptext/system/tunable';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Tunable, TunableCreateArgs } from 'app/interfaces/tunable.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export function getTunableFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   editingTunable: Tunable | undefined,
 ): FormDefinition<Tunable> {

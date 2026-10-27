@@ -4,14 +4,14 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DeleteUserDialog } from 'app/pages/credentials/users/all-users/user-details/delete-user-dialog/delete-user-dialog.component';
 
 describe('DeleteUserDialogComponent', () => {
@@ -25,9 +25,9 @@ describe('DeleteUserDialogComponent', () => {
     detectChanges: false,
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('user.delete', null),
-        mockTypedQuery('group.query', [
+      mockApi([
+        mockCall('user.delete', null),
+        mockQuery('group.query', [
           {
             users: [1, 2, 3],
           },
@@ -65,13 +65,13 @@ describe('DeleteUserDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: false }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('User deleted');
   });
 
   it('shows Delete primary group checkbox if this is the last user in the group', async () => {
-    const websocketMock = spectator.inject(MockTypedApiService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.mockQuery('group.query', [
       {
         users: [1],
@@ -81,7 +81,7 @@ describe('DeleteUserDialogComponent', () => {
     await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('group.query', [['id', '=', 23]]);
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('group.query', [['id', '=', 23]]);
 
     // tn-checkbox renders its label as markdown, so the backticks around the group
     // name become a <code> element and are stripped from the harness label text.
@@ -91,6 +91,6 @@ describe('DeleteUserDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.delete', [2, { delete_group: true }]);
   });
 });

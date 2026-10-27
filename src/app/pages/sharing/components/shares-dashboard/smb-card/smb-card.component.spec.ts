@@ -10,8 +10,8 @@ import {
   TnMenuHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { Service } from 'app/interfaces/service.interface';
@@ -25,8 +25,8 @@ import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ServiceActionsMenuService,
 } from 'app/pages/sharing/components/shares-dashboard/service-extra-actions/service-actions-menu.service';
@@ -103,12 +103,12 @@ describe('SmbCardComponent', () => {
     imports: commonImports,
     providers: [
       ...commonProviders,
-      mockTypedApi([
-        mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
-        mockTypedQuery('sharing.smb.query', smbShares),
-        mockTypedCall('sharing.smb.delete', null),
-        mockTypedCall('sharing.smb.update', { id: 3 } as WebUiQueryEntity<'sharing.smb.query'>),
-        mockTypedCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+      mockApi([
+        mockQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+        mockQuery('sharing.smb.query', smbShares),
+        mockCall('sharing.smb.delete', null),
+        mockCall('sharing.smb.update', { id: 3 } as WebUiQueryEntity<'sharing.smb.query'>),
+        mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
       ]),
       mockSharingTierService({ enabled: false }),
     ],
@@ -183,7 +183,7 @@ describe('SmbCardComponent', () => {
 
       await toggle.uncheck();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'sharing.smb.update',
         [3, { enabled: false }],
       );
@@ -194,7 +194,7 @@ describe('SmbCardComponent', () => {
       const menu = await openRowMenu();
       await menu.clickItem({ label: 'Edit Share ACL' });
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'sharing.smb.getacl',
         [{ share_name: 'homes' }],
       );
@@ -230,15 +230,15 @@ describe('SmbCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
-        mockTypedApi([
-          mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
-          mockTypedQuery('sharing.smb.query', [{
+        mockApi([
+          mockQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+          mockQuery('sharing.smb.query', [{
             ...smbShares[0],
             path: '/mnt/exported/data',
           }] as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
-          mockTypedCall('sharing.smb.delete', null),
-          mockTypedCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
-          mockTypedCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+          mockCall('sharing.smb.delete', null),
+          mockCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
+          mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         ]),
       ],
     });
@@ -271,15 +271,15 @@ describe('SmbCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
-        mockTypedApi([
-          mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
-          mockTypedQuery('sharing.smb.query', [{
+        mockApi([
+          mockQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+          mockQuery('sharing.smb.query', [{
             ...smbShares[0],
             locked: true,
           }] as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
-          mockTypedCall('sharing.smb.delete', null),
-          mockTypedCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
-          mockTypedCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+          mockCall('sharing.smb.delete', null),
+          mockCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
+          mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         ]),
       ],
     });
@@ -312,15 +312,15 @@ describe('SmbCardComponent', () => {
       imports: commonImports,
       providers: [
         ...commonProviders,
-        mockTypedApi([
-          mockTypedQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
-          mockTypedQuery('sharing.smb.query', [{
+        mockApi([
+          mockQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+          mockQuery('sharing.smb.query', [{
             ...smbShares[0],
             comment: '',
           }] as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
-          mockTypedCall('sharing.smb.delete', null),
-          mockTypedCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
-          mockTypedCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
+          mockCall('sharing.smb.delete', null),
+          mockCall('sharing.smb.update', { id: 1 } as WebUiQueryEntity<'sharing.smb.query'>),
+          mockCall('sharing.smb.getacl', { share_name: 'test' } as SmbSharesec),
         ]),
       ],
     });

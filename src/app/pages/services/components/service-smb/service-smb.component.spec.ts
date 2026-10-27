@@ -11,9 +11,9 @@ import {
   TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { SmbEncryption } from 'app/enums/smb-encryption.enum';
@@ -23,8 +23,8 @@ import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -59,7 +59,7 @@ const smbConfig = {
 describe('ServiceSmbComponent', () => {
   let spectator: Spectator<ServiceSmbComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let store$: MockStore;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
@@ -86,20 +86,20 @@ describe('ServiceSmbComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('smb.config', smbConfig),
-        mockTypedQuery('sharing.smb.query', []),
-        mockTypedCall('smb.unixcharset_choices', {
+      mockApi([
+        mockCall('smb.config', smbConfig),
+        mockQuery('sharing.smb.query', []),
+        mockCall('smb.unixcharset_choices', {
           'UTF-8': 'UTF-8',
           UTF_16: 'UTF_16',
         }),
-        mockTypedCall('smb.bindip_choices', {
+        mockCall('smb.bindip_choices', {
           '1.1.1.1': '1.1.1.1',
           '2.2.2.2': '2.2.2.2',
         }),
-        mockTypedCall('smb.update', smbConfig),
-        mockTypedCall('failover.licensed', false),
-        mockTypedQuery(
+        mockCall('smb.update', smbConfig),
+        mockCall('failover.licensed', false),
+        mockQuery(
           'user.query',
           [
             { id: 41, username: 'dummy-user' },
@@ -133,7 +133,7 @@ describe('ServiceSmbComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
   });
 
@@ -142,7 +142,7 @@ describe('ServiceSmbComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    spectator.inject(MockTypedApiService).mockCallError('smb.config');
+    spectator.inject(MockApiService).mockCallError('smb.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising would re-register the valueChanges subscriptions and async validators and
@@ -162,7 +162,7 @@ describe('ServiceSmbComponent', () => {
     // The choices reach the template through a `toSignal`, which latches an error and re-throws it
     // on every read — so a failure that isn't caught takes down the whole form render rather than
     // emptying one select. The addresses the config binds to still come from `smb.config`.
-    spectator.inject(MockTypedApiService).mockCallError('smb.bindip_choices');
+    spectator.inject(MockApiService).mockCallError('smb.bindip_choices');
 
     const loaded = TestBed.createComponent(ServiceSmbComponent);
     loaded.detectChanges();
@@ -176,7 +176,7 @@ describe('ServiceSmbComponent', () => {
     // `loadFormConfig` replays the same patch on every `retryLoad`, and this form's `bindip` rows
     // are PUSHED rather than patched — without the clear at the top of the patch the replay comes
     // back with each address twice.
-    spectator.inject(MockTypedApiService).mockCall('smb.config', { ...smbConfig, bindip: ['1.1.1.1', '2.2.2.2'] });
+    spectator.inject(MockApiService).mockCall('smb.config', { ...smbConfig, bindip: ['1.1.1.1', '2.2.2.2'] });
 
     const reloaded = TestBed.createComponent(ServiceSmbComponent);
     reloaded.detectChanges();
@@ -261,9 +261,9 @@ describe('ServiceSmbComponent', () => {
       stateful_failover: false,
     } as SmbConfigEntry;
 
-    const mockApi = spectator.inject(MockTypedApiService);
-    mockApi.mockCall('smb.config', smbConfigMock);
-    mockApi.mockQuery('sharing.smb.query', []);
+    const apiMock = spectator.inject(MockApiService);
+    apiMock.mockCall('smb.config', smbConfigMock);
+    apiMock.mockQuery('sharing.smb.query', []);
 
     spectator.component.ngOnInit();
     spectator.detectChanges();
@@ -455,8 +455,8 @@ describe('ServiceSmbComponent', () => {
       store$.overrideSelector(selectIsHaLicensed, true);
       store$.refreshState();
 
-      const mockApi = spectator.inject(MockTypedApiService);
-      mockApi.mockCall('smb.config', {
+      const apiMock = spectator.inject(MockApiService);
+      apiMock.mockCall('smb.config', {
         netbiosname: 'truenas',
         workgroup: 'WORKGROUP',
         description: '',
@@ -466,7 +466,7 @@ describe('ServiceSmbComponent', () => {
         search_protocols: [],
         stateful_failover: false,
       } as SmbConfigEntry);
-      mockApi.mockQuery(
+      apiMock.mockQuery(
         'sharing.smb.query',
         [{ purpose: SmbSharePurpose.MultiProtocolShare }] as WebUiQueryEntity<'sharing.smb.query'>[],
       );
@@ -485,8 +485,8 @@ describe('ServiceSmbComponent', () => {
       store$.overrideSelector(selectIsHaLicensed, true);
       store$.refreshState();
 
-      const mockApi = spectator.inject(MockTypedApiService);
-      mockApi.mockCall('smb.config', {
+      const apiMock = spectator.inject(MockApiService);
+      apiMock.mockCall('smb.config', {
         netbiosname: 'truenas',
         workgroup: 'WORKGROUP',
         description: '',
@@ -496,7 +496,7 @@ describe('ServiceSmbComponent', () => {
         search_protocols: [],
         stateful_failover: false,
       } as SmbConfigEntry);
-      mockApi.mockQuery('sharing.smb.query', []);
+      apiMock.mockQuery('sharing.smb.query', []);
 
       spectator.component.ngOnInit();
       spectator.detectChanges();

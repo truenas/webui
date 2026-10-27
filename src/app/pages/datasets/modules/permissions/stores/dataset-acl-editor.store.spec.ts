@@ -3,7 +3,7 @@ import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { Observable, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
@@ -11,8 +11,8 @@ import { NfsAcl, SetAcl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FailedJobError } from 'app/services/errors/error.classes';
 import { StorageService } from 'app/services/storage.service';
@@ -21,7 +21,7 @@ import { DatasetAclEditorStore } from './dataset-acl-editor.store';
 describe('DatasetAclEditorStore', () => {
   let spectator: SpectatorService<DatasetAclEditorStore>;
   let store: DatasetAclEditorStore;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const mockAcl: NfsAcl = {
     acltype: AclType.Nfs4,
@@ -46,10 +46,10 @@ describe('DatasetAclEditorStore', () => {
   const createService = createServiceFactory({
     service: DatasetAclEditorStore,
     providers: [
-      mockTypedApi([
-        mockTypedCall('filesystem.getacl', mockAcl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
-        mockTypedCall('filesystem.stat', mockStat as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
-        mockTypedJob('filesystem.setacl', { state: JobState.Success }),
+      mockApi([
+        mockCall('filesystem.getacl', mockAcl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
+        mockCall('filesystem.stat', mockStat as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockJob('filesystem.setacl', { state: JobState.Success }),
       ]),
       {
         provide: DialogService,
@@ -79,7 +79,7 @@ describe('DatasetAclEditorStore', () => {
   beforeEach(() => {
     spectator = createService();
     store = spectator.service;
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     // Saving navigates away; the testing router has no routes to match.
     jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
   });

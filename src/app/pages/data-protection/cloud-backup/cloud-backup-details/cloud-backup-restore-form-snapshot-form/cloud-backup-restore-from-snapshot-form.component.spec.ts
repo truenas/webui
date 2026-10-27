@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness, TnRadioHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { firstValueFrom, of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ExplorerNodeType } from 'app/enums/explorer-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import {
@@ -17,8 +17,8 @@ import {
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -43,9 +43,9 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
           afterClosed: () => of(null),
         })),
       }),
-      mockTypedApi([
-        mockTypedJob('cloud_backup.restore', { state: JobState.Success }),
-        mockTypedCall('cloud_backup.list_snapshot_directory', [
+      mockApi([
+        mockJob('cloud_backup.restore', { state: JobState.Success }),
+        mockCall('cloud_backup.list_snapshot_directory', [
           { name: 'sub', path: '/sub', type: CloudBackupSnapshotDirectoryFileType.Dir },
           { name: 'file.txt', path: '/file.txt', type: CloudBackupSnapshotDirectoryFileType.File },
         ] as CallResponse<WebUiApiDirectory, 'cloud_backup.list_snapshot_directory'>),
@@ -73,7 +73,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -92,7 +92,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -116,7 +116,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -140,7 +140,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -164,7 +164,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer/a',
@@ -189,7 +189,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',
@@ -290,7 +290,7 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('cloud_backup.restore', [
         1,
         1,
         '/mnt/dozer',

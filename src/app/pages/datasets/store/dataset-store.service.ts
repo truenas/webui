@@ -5,7 +5,7 @@ import {
   catchError, map, switchMap, tap,
 } from 'rxjs/operators';
 import { DatasetDetails, toDatasetDetails } from 'app/interfaces/dataset.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 
 export interface DatasetTreeState {
@@ -26,7 +26,7 @@ const initialState: DatasetTreeState = {
   providedIn: 'root',
 })
 export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);

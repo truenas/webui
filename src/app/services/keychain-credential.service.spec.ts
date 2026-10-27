@@ -1,14 +1,14 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { SshConnectionsSetupMethod } from 'app/enums/ssh-connections-setup-method.enum';
 import {
   KeychainCredentialUsedBy, KeychainSshCredentials, KeychainSshKeyPair,
 } from 'app/interfaces/keychain-credential.interface';
 import { SshConnectionSetup } from 'app/interfaces/ssh-connection-setup.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
 
 describe('KeychainCredentialService', () => {
@@ -44,9 +44,9 @@ describe('KeychainCredentialService', () => {
   const createService = createServiceFactory({
     service: KeychainCredentialService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('keychaincredential.used_by', usedBy),
-        mockTypedCall('keychaincredential.setup_ssh_connection', newConnection),
+      mockApi([
+        mockCall('keychaincredential.used_by', usedBy),
+        mockCall('keychaincredential.setup_ssh_connection', newConnection),
       ]),
     ],
   });
@@ -58,10 +58,10 @@ describe('KeychainCredentialService', () => {
 
   describe('getSshKeys', () => {
     it('queries key pairs', async () => {
-      spectator.inject(MockTypedApiService).mockQuery('keychaincredential.query', sshKeys);
+      spectator.inject(MockApiService).mockQuery('keychaincredential.query', sshKeys);
 
       expect(await firstValueFrom(service.getSshKeys())).toEqual(sshKeys);
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
         ['type', '=', KeychainCredentialType.SshKeyPair],
       ]);
     });
@@ -69,10 +69,10 @@ describe('KeychainCredentialService', () => {
 
   describe('getSshConnections', () => {
     it('queries SSH connections', async () => {
-      spectator.inject(MockTypedApiService).mockQuery('keychaincredential.query', sshConnections);
+      spectator.inject(MockApiService).mockQuery('keychaincredential.query', sshConnections);
 
       expect(await firstValueFrom(service.getSshConnections())).toEqual(sshConnections);
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('keychaincredential.query', [
         ['type', '=', KeychainCredentialType.SshCredentials],
       ]);
     });
@@ -81,7 +81,7 @@ describe('KeychainCredentialService', () => {
   describe('getUsedBy', () => {
     it('asks what depends on the credential', async () => {
       expect(await firstValueFrom(service.getUsedBy(2))).toEqual(usedBy);
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [2]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.used_by', [2]);
     });
   });
 
@@ -94,7 +94,7 @@ describe('KeychainCredentialService', () => {
       };
 
       expect(await firstValueFrom(service.addSshConnection(setupWithNewKey))).toEqual(newConnection);
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'keychaincredential.setup_ssh_connection',
         [setupWithNewKey],
       );
@@ -105,7 +105,7 @@ describe('KeychainCredentialService', () => {
       const refetchSpy = jest.spyOn(service.refetchSshKeys, 'next');
 
       expect(await firstValueFrom(service.addSshConnection(connectionSetup))).toEqual(newConnection);
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'keychaincredential.setup_ssh_connection',
         [connectionSetup],
       );

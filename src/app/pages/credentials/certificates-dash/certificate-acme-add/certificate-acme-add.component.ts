@@ -25,7 +25,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-certificate-acme-add',
@@ -50,7 +50,7 @@ export class CertificateAcmeAddComponent extends IxFormHostForm implements OnIni
   private formBuilder = inject(FormBuilder);
   private validatorsService = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
 
   protected readonly requiredRoles = [Role.CertificateWrite];

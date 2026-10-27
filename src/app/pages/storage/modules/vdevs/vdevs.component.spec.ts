@@ -3,8 +3,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
@@ -194,9 +194,9 @@ describe('VDevsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('system.advanced.sed_global_password_is_set', false),
-        mockTypedQuery('disk.query', [{ passwd: '' } as WebUiQueryEntity<'disk.query'>]),
+      mockApi([
+        mockCall('system.advanced.sed_global_password_is_set', false),
+        mockQuery('disk.query', [{ passwd: '' } as WebUiQueryEntity<'disk.query'>]),
       ]),
       mockProvider(RoutePartsService),
       mockProvider(ActivatedRoute, {

@@ -13,7 +13,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -33,18 +33,18 @@ describe('DiskStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedCall('pool.filesystem_choices', [
+      mockApi([
+        mockCall('pool.filesystem_choices', [
           'poolio',
           'poolio/files',
         ]),
-        mockTypedCall('vm.device.disk_choices', {
+        mockCall('vm.device.disk_choices', {
           '/dev/zvol/poolio/test-327brn': 'poolio/test-327brn',
         }),
-        mockTypedQuery('vm.device.query', [
+        mockQuery('vm.device.query', [
           { vm: 1, attributes: { dtype: VmDeviceType.Disk, path: '/dev/zvol/poolio/test-327brn' } },
         ] as WebUiQueryEntity<'vm.device.query'>[]),
-        mockTypedQuery('vm.query', [
+        mockQuery('vm.query', [
           { id: 1, name: 'existing-vm' },
         ] as WebUiQueryEntity<'vm.query'>[]),
       ]),

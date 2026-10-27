@@ -21,7 +21,7 @@ import {
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -47,7 +47,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class SyslogFormComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);

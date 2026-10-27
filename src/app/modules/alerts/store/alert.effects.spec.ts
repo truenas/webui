@@ -22,7 +22,7 @@ import {
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts } from 'app/modules/alerts/store/alert.selectors';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -30,7 +30,7 @@ import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
 describe('AlertEffects', () => {
   let effects: AlertEffects;
   let actions$: Observable<unknown>;
-  let apiService: TypedApiService;
+  let apiService: ApiService;
   let translateService: TranslateService;
   let errorHandlerService: ErrorHandlerService;
   let store$: MockStore;
@@ -67,7 +67,7 @@ describe('AlertEffects', () => {
             { selector: selectDismissedAlerts, value: [] },
           ],
         }),
-        MockProvider(TypedApiService, {
+        MockProvider(ApiService, {
           call: jest.fn(),
           subscribe: jest.fn(),
         }),
@@ -88,7 +88,7 @@ describe('AlertEffects', () => {
     });
 
     effects = TestBed.inject(AlertEffects);
-    apiService = TestBed.inject(TypedApiService);
+    apiService = TestBed.inject(ApiService);
     translateService = TestBed.inject(TranslateService);
     errorHandlerService = TestBed.inject(ErrorHandlerService);
     store$ = TestBed.inject(MockStore);

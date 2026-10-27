@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PasswordComplexityRuleset } from 'app/enums/password-complexity-ruleset.enum';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -41,8 +41,8 @@ describe('SystemSecurityCardComponent', () => {
         ],
       }),
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('system.security.config', fakeSystemSecurityConfig as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
+      mockApi([
+        mockCall('system.security.config', fakeSystemSecurityConfig as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.cancel()),

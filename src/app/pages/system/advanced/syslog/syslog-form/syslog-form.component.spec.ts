@@ -5,21 +5,21 @@ import { FormBuilder } from '@ngneat/reactive-forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { SyslogLevel, SyslogTransport } from 'app/enums/syslog.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { selectAdvancedConfig } from 'app/store/system-config/system-config.selectors';
 
 describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   // Helper to check FormArray length since toHaveLength doesn't work with @ngneat/reactive-forms FormArray
   const expectArrayLength = (array: { length: number }, expectedLength: number): void => {
@@ -41,13 +41,13 @@ describe('SyslogFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('system.advanced.syslog_certificate_choices', {
+      mockApi([
+        mockCall('system.advanced.syslog_certificate_choices', {
           1: 'Certificate 1',
           2: 'Certificate 2',
         }),
-        mockTypedCall('system.advanced.update', null),
-        mockTypedJob('systemdataset.update', { state: JobState.Success }),
+        mockCall('system.advanced.update', null),
+        mockJob('systemdataset.update', { state: JobState.Success }),
       ]),
       mockProvider(DialogService),
       provideMockStore({
@@ -75,7 +75,7 @@ describe('SyslogFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings for syslog form and shows them', async () => {

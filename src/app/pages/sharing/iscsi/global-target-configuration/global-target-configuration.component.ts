@@ -20,7 +20,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LicensedFeatureComponent } from 'app/modules/forms/licensed-feature/licensed-feature.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -42,7 +42,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
   ],
 })
 export class GlobalTargetConfigurationComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);

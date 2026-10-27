@@ -11,8 +11,8 @@ import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TreeNodeSource } from 'app/modules/forms/file-picker/tree-node-source';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 /** What a host presets on the datasets the picker creates. The name comes from the inline row. */
@@ -37,7 +37,7 @@ export const genericCreateDatasetProps: ExplorerDatasetProperties = {
   name: 'createDatasetAction',
 })
 export class CreateDatasetActionPipe implements PipeTransform {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private errorParser = inject(ErrorParserService);

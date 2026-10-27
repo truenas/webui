@@ -7,8 +7,8 @@ import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { BehaviorSubject, Subject, of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
@@ -53,8 +53,8 @@ describe('DatasetsManagementComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('systemdataset.config', { pool: 'Second Dataset' } as CallResponse<WebUiApiDirectory, 'systemdataset.config'>),
+      mockApi([
+        mockCall('systemdataset.config', { pool: 'Second Dataset' } as CallResponse<WebUiApiDirectory, 'systemdataset.config'>),
       ]),
       mockProvider(DatasetTreeStore, {
         datasets$,

@@ -30,7 +30,7 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
 @Component({
@@ -54,7 +54,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 export class CloudBackupRestoreFromSnapshotFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private fb = inject(NonNullableFormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);

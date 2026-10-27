@@ -14,8 +14,8 @@ import {
   TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3AuditOverflow, S3LogLevel, S3PrincipalType,
@@ -23,8 +23,8 @@ import {
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceS3Component } from 'app/pages/services/components/service-s3/service-s3.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -40,7 +40,7 @@ describe('ServiceS3Component', () => {
 
   let spectator: Spectator<ServiceS3Component>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const config = {
     id: 1,
@@ -84,13 +84,13 @@ describe('ServiceS3Component', () => {
         entitled: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
         entitledStrictly: (feature: EntitlementFeature) => computed(() => !deniedFeatures().includes(feature)),
       }),
-      mockTypedApi([
-        mockTypedCall('s3.config', config),
-        mockTypedCall('s3.update', config),
-        mockTypedCall('s3.bindip_choices', { '0.0.0.0': '0.0.0.0', '192.168.1.10': '192.168.1.10' }),
-        mockTypedCall('sharing.s3.audit_choices', { GetObject: 'GetObject' }),
-        mockTypedQuery('user.query', [{ username: 'alice', uid: 1000 }] as WebUiQueryEntity<'user.query'>[]),
-        mockTypedQuery('group.query', []),
+      mockApi([
+        mockCall('s3.config', config),
+        mockCall('s3.update', config),
+        mockCall('s3.bindip_choices', { '0.0.0.0': '0.0.0.0', '192.168.1.10': '192.168.1.10' }),
+        mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject' }),
+        mockQuery('user.query', [{ username: 'alice', uid: 1000 }] as WebUiQueryEntity<'user.query'>[]),
+        mockQuery('group.query', []),
       ]),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([{ id: 5, name: 's3-cert' }] as Certificate[]),
@@ -109,7 +109,7 @@ describe('ServiceS3Component', () => {
     deniedFeatures.set([]);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     await spectator.fixture.whenStable();
   });
 
@@ -204,7 +204,7 @@ describe('ServiceS3Component', () => {
 
       // Read off the actual call: middleware rejects audit settings it is not entitled to, and the
       // controls the user saw were inert, so nothing on screen was theirs to send.
-      const updateCall = jest.mocked(spectator.inject(TypedApiService).call).mock.calls
+      const updateCall = jest.mocked(spectator.inject(ApiService).call).mock.calls
         .find(([method]) => method === 's3.update');
       const payload = (updateCall?.[1] as [Record<string, unknown>])[0];
 

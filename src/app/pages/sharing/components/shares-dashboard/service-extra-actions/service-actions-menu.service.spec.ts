@@ -1,7 +1,7 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { mockTypedApi, mockTypedJob, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockJob, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
@@ -10,7 +10,7 @@ import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ServiceSmbComponent } from 'app/pages/services/components/service-smb/service-smb.component';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
@@ -52,8 +52,8 @@ describe('ServiceActionsMenuService', () => {
     service: ServiceActionsMenuService,
     providers: [
       { provide: TranslateService, useClass: MockTranslateService },
-      mockTypedApi([
-        mockTypedJob('service.control', { state: JobState.Success }),
+      mockApi([
+        mockJob('service.control', { state: JobState.Success }),
       ]),
       mockProvider(SnackbarService),
       mockProvider(Router),
@@ -175,7 +175,7 @@ describe('ServiceActionsMenuService', () => {
         service({ service: ServiceName.Cifs, state: ServiceStatus.Running }),
       );
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
         [ServiceOperation.Stop, ServiceName.Cifs, { silent: false }],
       );
@@ -186,7 +186,7 @@ describe('ServiceActionsMenuService', () => {
         service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
       );
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
         [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
       );
@@ -201,11 +201,11 @@ describe('ServiceActionsMenuService', () => {
       );
       items.find((item) => item.id === 'service-state-toggle')?.action?.();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
         [ServiceOperation.Stop, ServiceName.Cifs, { silent: false }],
       );
-      await settleTypedApi();
+      await settleApi();
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
@@ -216,7 +216,7 @@ describe('ServiceActionsMenuService', () => {
       );
       items.find((item) => item.id === 'service-state-toggle')?.action?.();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
         [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
       );

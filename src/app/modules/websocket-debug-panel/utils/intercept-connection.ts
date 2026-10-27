@@ -18,7 +18,7 @@ type Messages = ReturnType<Connection['messages']>;
  * frame read is logged, and mocked answers are read as if the appliance sent them.
  *
  * Done on the connection's own `send` and `messages()` because that is where all
- * traffic meets: `TypedApiService` and the client's own verbs and authenticator
+ * traffic meets: `ApiService` and the client's own verbs and authenticator
  * all write through `send` and listen on `messages()`. Interception kept in any
  * one of them would see only that one's traffic.
  *

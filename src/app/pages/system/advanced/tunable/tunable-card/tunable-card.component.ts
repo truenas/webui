@@ -34,7 +34,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { tunableCardElements } from 'app/pages/system/advanced/tunable/tunable-card/tunable-card.elements';
 import { getTunableFormConfig } from 'app/pages/system/advanced/tunable/tunable-form/tunable.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -69,7 +69,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
 export class TunableCardComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialog = inject(DialogService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private formPanel = inject(FormSidePanelService);

@@ -1,17 +1,17 @@
 import { createServiceFactory, SpectatorService, SpyObject } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { lastValueFrom, of } from 'rxjs';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VmDeviceType } from 'app/enums/vm.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 
 describe('VmGpuService', () => {
   let spectator: SpectatorService<VmGpuService>;
-  let api: SpyObject<TypedApiService>;
+  let api: SpyObject<ApiService>;
 
   const radeon = {
     addr: {
@@ -61,9 +61,9 @@ describe('VmGpuService', () => {
           arc,
         ] as Device[]),
       }),
-      mockTypedApi([
-        mockTypedCall('vm.device.create', null),
-        mockTypedCall('vm.device.delete', null),
+      mockApi([
+        mockCall('vm.device.create', null),
+        mockCall('vm.device.delete', null),
       ]),
     ],
   });
@@ -84,7 +84,7 @@ describe('VmGpuService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   describe('updateVmGpus', () => {

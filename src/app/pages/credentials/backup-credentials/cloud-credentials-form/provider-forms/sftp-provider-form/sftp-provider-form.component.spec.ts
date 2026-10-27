@@ -4,10 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { lastValueFrom } from 'rxjs';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SftpProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/sftp-provider-form/sftp-provider-form.component';
@@ -21,16 +21,16 @@ describe('SftpProviderFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', [
+      mockApi([
+        mockQuery('keychaincredential.query', [
           { id: 1, name: 'Key 1' },
           { id: 2, name: 'Key 2' },
         ] as KeychainSshKeyPair[]),
-        mockTypedCall('keychaincredential.generate_ssh_key_pair', {
+        mockCall('keychaincredential.generate_ssh_key_pair', {
           public_key: 'public key',
           private_key: 'private key',
         }),
-        mockTypedCall('keychaincredential.create', {
+        mockCall('keychaincredential.create', {
           id: 7,
         } as KeychainSshKeyPair),
       ]),
@@ -93,7 +93,7 @@ describe('SftpProviderFormComponent', () => {
 
     await lastValueFrom(spectator.component.beforeSubmit());
 
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     expect(api.call).toHaveBeenCalledWith('keychaincredential.generate_ssh_key_pair');
     expect(api.call).toHaveBeenCalledWith('keychaincredential.create', [{
       attributes: {

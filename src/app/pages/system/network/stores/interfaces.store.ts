@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { NetworkInterface, toNetworkInterface } from 'app/interfaces/network-interface.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface InterfacesState {
@@ -17,7 +17,7 @@ const initialState: InterfacesState = {
 
 @Injectable()
 export class InterfacesStore extends ComponentStore<InterfacesState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   constructor() {

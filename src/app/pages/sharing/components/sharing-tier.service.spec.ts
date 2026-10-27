@@ -5,8 +5,8 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
 import { firstValueFrom, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import {
@@ -22,7 +22,7 @@ describe('SharingTierService', () => {
   const createService = createServiceFactory({
     service: SharingTierService,
     providers: [
-      mockTypedApi([]),
+      mockApi([]),
       mockProvider(TnDialog, { open: matDialogOpen }),
       mockProvider(ErrorHandlerService),
       mockProvider(TranslateService, {
@@ -168,7 +168,7 @@ describe('SharingTierService', () => {
     });
 
     it('hides the action for a row the dialog could not act on', async () => {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       api.mockCall('zfs.tier.config', { enabled: true } as ZfsTierConfig);
       await firstValueFrom(spectator.service.getTierConfig());
       const action = spectator.service.createChangeDatasetTierAction({ destroyRef, reload: jest.fn() });
@@ -183,7 +183,7 @@ describe('SharingTierService', () => {
 
   describe('refresh', () => {
     it('fetches the tier config again, keeping the old value until the new one arrives', async () => {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       api.mockCall('zfs.tier.config', { enabled: true } as ZfsTierConfig);
       await firstValueFrom(spectator.service.getTierConfig());
 
@@ -204,7 +204,7 @@ describe('SharingTierService', () => {
 
     // As middleware sends it: under `fields` once and as `changed`, where the generated model nests it twice.
     function emitTierJob(event: 'zfs.tier.rewrite_job_query' | 'zfs.tier.rewrite_job_status', params?: object): void {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       const emit = api.emitEvent.bind(api) as (event: string, change: object, params?: object) => void;
       emit(event, { msg: 'changed', fields: job }, params);
     }
@@ -216,7 +216,7 @@ describe('SharingTierService', () => {
         emitTierJob('zfs.tier.rewrite_job_status', { tier_job_id: 'job-1' });
 
         expect(await status).toEqual(job);
-        expect(spectator.inject(MockTypedApiService).subscribe)
+        expect(spectator.inject(MockApiService).subscribe)
           .toHaveBeenCalledWith('zfs.tier.rewrite_job_status', { tier_job_id: 'job-1' });
       });
     });
@@ -240,7 +240,7 @@ describe('SharingTierService', () => {
         const reload = jest.fn();
         spectator.service.wireTierJobRefresh({ destroyRef, reload });
 
-        spectator.inject(MockTypedApiService).emitEvent('zfs.tier.rewrite_job_query', { msg: 'removed', id: 'job-1' });
+        spectator.inject(MockApiService).emitEvent('zfs.tier.rewrite_job_query', { msg: 'removed', id: 'job-1' });
         jest.advanceTimersByTime(600);
 
         expect(reload).toHaveBeenCalledTimes(1);

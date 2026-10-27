@@ -8,10 +8,10 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -23,8 +23,8 @@ import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   FcMpioInfoBannerComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
@@ -38,7 +38,7 @@ const groupsListPredicate = TnFormListHarness.with({ selector: '[formArrayName="
 describe('TargetFormComponent', () => {
   let spectator: Spectator<TargetFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const existingTarget = {
     id: 123,
@@ -158,8 +158,8 @@ describe('TargetFormComponent', () => {
         validatePhysicalPortUniqueness: jest.fn(permissiveFcPortValidation),
       }),
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedQuery('iscsi.portal.query', [{
+      mockApi([
+        mockQuery('iscsi.portal.query', [{
           comment: 'comment_1',
           id: 1,
           tag: 11,
@@ -170,7 +170,7 @@ describe('TargetFormComponent', () => {
           tag: 22,
           listen: [{ ip: '2.2.2.2' }],
         }] as IscsiPortal[]),
-        mockTypedQuery('iscsi.initiator.query', [{
+        mockQuery('iscsi.initiator.query', [{
           id: 3,
           comment: 'comment_3',
           initiators: ['initiator_1'],
@@ -179,7 +179,7 @@ describe('TargetFormComponent', () => {
           comment: 'comment_4',
           initiators: ['initiator_2'],
         }] as IscsiInitiatorGroup[]),
-        mockTypedQuery('iscsi.auth.query', [{
+        mockQuery('iscsi.auth.query', [{
           id: 5,
           tag: 55,
           peersecret: 'peersecret_1',
@@ -194,12 +194,12 @@ describe('TargetFormComponent', () => {
           secret: 'secret_2',
           user: 'user_2',
         }] as IscsiAuthAccess[]),
-        mockTypedCall('tn_connect.config', null),
-        mockTypedQuery('fc.fc_host.query', []),
-        mockTypedCall('fcport.port_choices', {}),
-        mockTypedCall('iscsi.target.create', null),
-        mockTypedCall('iscsi.target.update', { id: 123 } as WebUiQueryEntity<'iscsi.target.query'>),
-        mockTypedCall('iscsi.target.validate_name', null),
+        mockCall('tn_connect.config', null),
+        mockQuery('fc.fc_host.query', []),
+        mockCall('fcport.port_choices', {}),
+        mockCall('iscsi.target.create', null),
+        mockCall('iscsi.target.update', { id: 123 } as WebUiQueryEntity<'iscsi.target.query'>),
+        mockCall('iscsi.target.validate_name', null),
       ]),
       mockAuth(),
       provideTnFormFieldErrors(),
@@ -211,7 +211,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('add new target when form is submitted', async () => {
@@ -285,7 +285,7 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     // Reads the group back, rather than only the form model it writes to: binding the control to
@@ -342,7 +342,7 @@ describe('TargetFormComponent', () => {
       spectator.component.auths$.subscribe((options) => auth = options);
       await spectator.fixture.whenStable();
 
-      const typedApi = spectator.inject(TypedApiService);
+      const typedApi = spectator.inject(ApiService);
       expect(typedApi.query).toHaveBeenNthCalledWith(1, 'iscsi.portal.query');
       expect(typedApi.query).toHaveBeenNthCalledWith(2, 'iscsi.initiator.query');
       expect(typedApi.query).toHaveBeenNthCalledWith(3, 'iscsi.auth.query');
@@ -397,7 +397,7 @@ describe('TargetFormComponent', () => {
   describe('validation error handling', () => {
     beforeEach(() => {
       spectator = createComponent();
-      spectator.inject(MockTypedApiService).mockCall('iscsi.target.validate_name', 'Target with this name already exists');
+      spectator.inject(MockApiService).mockCall('iscsi.target.validate_name', 'Target with this name already exists');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
     });
@@ -461,7 +461,7 @@ describe('TargetFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends empty groups array when submitting with FC mode', async () => {
@@ -522,7 +522,7 @@ describe('TargetFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(console, 'warn').mockImplementation();
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('preserves groups when switching from iSCSI to FC and back to iSCSI', async () => {

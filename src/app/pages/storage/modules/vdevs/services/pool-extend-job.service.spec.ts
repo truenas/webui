@@ -1,10 +1,10 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PoolExtendJobService } from './pool-extend-job.service';
 
 describe('PoolExtendJobService', () => {
@@ -13,12 +13,12 @@ describe('PoolExtendJobService', () => {
   const createService = createServiceFactory({
     service: PoolExtendJobService,
     providers: [
-      mockTypedApi(),
+      mockApi(),
     ],
   });
 
   function mockJobs(jobs: Partial<WebUiQueryEntity<'core.get_jobs'>>[]): void {
-    spectator.inject(MockTypedApiService).mockQuery('core.get_jobs', jobs as WebUiQueryEntity<'core.get_jobs'>[]);
+    spectator.inject(MockApiService).mockQuery('core.get_jobs', jobs as WebUiQueryEntity<'core.get_jobs'>[]);
   }
 
   beforeEach(() => {
@@ -51,7 +51,7 @@ describe('PoolExtendJobService', () => {
     });
 
     it('returns false when API call fails (fail-open)', async () => {
-      spectator.inject(MockTypedApiService).query.mockReturnValue(throwError(() => new Error('API error')));
+      spectator.inject(MockApiService).query.mockReturnValue(throwError(() => new Error('API error')));
 
       expect(await firstValueFrom(spectator.service.checkForExistingExtendJob(222))).toBe(false);
     });
@@ -61,7 +61,7 @@ describe('PoolExtendJobService', () => {
 
       await firstValueFrom(spectator.service.checkForExistingExtendJob(333));
 
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('core.get_jobs', [
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('core.get_jobs', [
         ['method', '=', 'pool.attach'],
         ['state', 'in', [JobState.Running, JobState.Waiting]],
       ]);

@@ -9,7 +9,7 @@ import { Role } from 'app/enums/role.enum';
 import {
   toUser, toUserCreateArgs, User, UserUpdate,
 } from 'app/interfaces/user.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 
 export enum UserStigPasswordOption {
@@ -62,7 +62,7 @@ const initialState: UserFormState = {
 
 @Injectable()
 export class UserFormStore extends ComponentStore<UserFormState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
 
   readonly isStigMode = computed(() => this.state().isStigMode);

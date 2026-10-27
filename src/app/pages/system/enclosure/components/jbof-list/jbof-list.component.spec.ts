@@ -7,8 +7,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Jbof } from 'app/interfaces/jbof.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -16,8 +16,8 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { JbofListComponent } from 'app/pages/system/enclosure/components/jbof-list/jbof-list.component';
 
 const fakeJbofDataSource: Jbof[] = [
@@ -52,10 +52,10 @@ function createFactory(licensedCount: number): ReturnType<typeof createComponent
       BasicSearchComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('jbof.query', fakeJbofDataSource as unknown as WebUiQueryEntity<'jbof.query'>[]),
-        mockTypedCall('jbof.delete', true),
-        mockTypedCall('jbof.licensed', licensedCount),
+      mockApi([
+        mockQuery('jbof.query', fakeJbofDataSource as unknown as WebUiQueryEntity<'jbof.query'>[]),
+        mockCall('jbof.delete', true),
+        mockCall('jbof.licensed', licensedCount),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -154,7 +154,7 @@ describe('JbofListComponent', () => {
       buttonColor: 'warn',
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('jbof.delete', [2, false]);
   });
 });
 

@@ -5,7 +5,7 @@ import {
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DiskTemperatures } from 'app/interfaces/disk.interface';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface Temperature {
   keys: string[];
@@ -18,7 +18,7 @@ export interface Temperature {
   providedIn: 'root',
 })
 export class DiskTemperatureService {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
 
   // The typed client only forwards added / changed / removed, so every event is a change.
   private disksChanged$ = this.api.subscribe('disk.query');

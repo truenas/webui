@@ -13,7 +13,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { ResilverConfig, toResilverConfig } from 'app/interfaces/resilver-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getResilverSummary } from 'app/pages/system/advanced/storage/storage-card/resilver-summary.util';
 import { storageCardElements } from 'app/pages/system/advanced/storage/storage-card/storage-card.elements';
 import {
@@ -42,7 +42,7 @@ export class StorageCardComponent implements OnInit {
   private firstTimeWarning = inject(FirstTimeWarningService);
   private errorHandler = inject(ErrorHandlerService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 

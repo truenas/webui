@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -22,8 +22,8 @@ import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import {
   TransferModeExplanationComponent,
@@ -152,8 +152,8 @@ describe('CloudSyncFormComponent', () => {
         })),
         confirm: jest.fn(() => of(true)),
       }),
-      mockTypedApi([
-        mockTypedQuery('cloudsync.credentials.query', [
+      mockApi([
+        mockQuery('cloudsync.credentials.query', [
           {
             id: 1,
             name: 'test1',
@@ -172,7 +172,7 @@ describe('CloudSyncFormComponent', () => {
             },
           },
         ] as CloudSyncCredentialEntry[]),
-        mockTypedCall('cloudsync.providers', [{
+        mockCall('cloudsync.providers', [{
           name: CloudSyncProviderName.Http,
           title: 'Http',
           buckets: false,
@@ -190,8 +190,8 @@ describe('CloudSyncFormComponent', () => {
           credentials_schema: [],
           credentials_oauth: null,
         }] as CloudSyncProvider[]),
-        mockTypedCall('cloudsync.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.create'>),
-        mockTypedCall('cloudsync.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.update'>),
+        mockCall('cloudsync.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.create'>),
+        mockCall('cloudsync.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.update'>),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(FilesystemService),
@@ -225,7 +225,7 @@ describe('CloudSyncFormComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [{
         attributes: { folder: '/' },
         bwlimit: [],
         create_empty_src_dirs: false,
@@ -313,7 +313,7 @@ describe('CloudSyncFormComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.update', [1, {
         attributes: { folder: mntPath },
         bwlimit: [
           { bandwidth: null, time: '9:00' },
@@ -411,7 +411,7 @@ describe('CloudSyncFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });

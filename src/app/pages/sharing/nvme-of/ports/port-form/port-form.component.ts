@@ -23,7 +23,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
 
 @Component({
@@ -43,7 +43,7 @@ import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.servic
   ],
 })
 export class PortFormComponent extends IxFormHostForm<NvmeOfPort | null> implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private nvmeOfService = inject(NvmeOfService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);

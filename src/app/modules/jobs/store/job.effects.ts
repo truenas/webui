@@ -13,7 +13,7 @@ import { Job } from 'app/interfaces/job.interface';
 import {
   abortJobPressed, jobAdded, jobChanged, jobRemoved, jobsLoaded, jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { jobAborted } from './job.actions';
 
@@ -28,7 +28,7 @@ type JobEvent
 @Injectable()
 export class JobEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
 
   loadJobs$ = createEffect(() => this.actions$.pipe(

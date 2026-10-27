@@ -38,7 +38,7 @@ import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provide
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { privilegesListElements } from 'app/pages/credentials/privileges/privilege-list/privilege-list.elements';
 
@@ -66,7 +66,7 @@ import { privilegesListElements } from 'app/pages/credentials/privileges/privile
   ],
 })
 export class PrivilegeListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   protected emptyService = inject(EmptyService);

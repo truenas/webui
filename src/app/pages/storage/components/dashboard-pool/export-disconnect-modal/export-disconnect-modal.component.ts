@@ -30,7 +30,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   ServicesToBeRestartedDialogComponent,
@@ -73,7 +73,7 @@ export class ExportDisconnectModalComponent implements OnInit {
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private loader = inject(LoaderService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private datasetStore = inject(DatasetTreeStore);
   private cdr = inject(ChangeDetectorRef);
   private snackbar = inject(SnackbarService);

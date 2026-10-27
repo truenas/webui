@@ -24,7 +24,7 @@ import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provi
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { dataProviderRows, mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   buildPortsTableRow,
   FibreChannelPortRow,
@@ -58,7 +58,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class FibreChannelPortsComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   private tnDialog = inject(TnDialog);

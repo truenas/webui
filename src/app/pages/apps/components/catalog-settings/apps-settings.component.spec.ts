@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxGroupHarness, TnCheckboxHarness, TnFormListHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
@@ -21,8 +21,8 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppsSettingsComponent } from 'app/pages/apps/components/catalog-settings/apps-settings.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -32,22 +32,22 @@ function getNvidiaProviders(
 ): unknown[] {
   return [
     ...ixFormTestingProviders(),
-    mockTypedApi([
-      mockTypedCall('catalog.update', null),
-      mockTypedCall('catalog.trains', ['stable', 'community', 'test']),
-      mockTypedCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
-      mockTypedCall('docker.status', null),
-      mockTypedCall('docker.config', {
+    mockApi([
+      mockCall('catalog.update', null),
+      mockCall('catalog.trains', ['stable', 'community', 'test']),
+      mockCall('catalog.config', { preferred_trains: ['test'] } as CatalogConfig),
+      mockCall('docker.status', null),
+      mockCall('docker.config', {
         enable_image_updates: false,
         address_pools: [],
         pool: 'test-pool',
       } as DockerConfig),
-      mockTypedCall('system.advanced.nvidia_present', nvidiaPresent),
-      mockTypedCall('system.advanced.config', {
+      mockCall('system.advanced.nvidia_present', nvidiaPresent),
+      mockCall('system.advanced.config', {
         nvidia: false, ...advancedConfig,
       } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
-      mockTypedCall('system.advanced.update', null),
-      mockTypedJob('docker.update', { state: JobState.Success }),
+      mockCall('system.advanced.update', null),
+      mockJob('docker.update', { state: JobState.Success }),
     ]),
     mockProvider(DialogService),
     mockProvider(FormErrorHandlerService),
@@ -82,19 +82,19 @@ describe('AppsSettingsComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('catalog.update', null),
-        mockTypedCall('catalog.trains', ['stable', 'community', 'test']),
-        mockTypedCall('catalog.config', {
+      mockApi([
+        mockCall('catalog.update', null),
+        mockCall('catalog.trains', ['stable', 'community', 'test']),
+        mockCall('catalog.config', {
           label: 'TrueNAS',
           preferred_trains: ['test'],
         } as CatalogConfig),
-        mockTypedCall('docker.status', null),
-        mockTypedCall('docker.config', dockerConfig),
-        mockTypedCall('system.advanced.nvidia_present', true),
-        mockTypedCall('system.advanced.config', { nvidia: false } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
-        mockTypedCall('system.advanced.update', null),
-        mockTypedJob('docker.update', { state: JobState.Success }),
+        mockCall('docker.status', null),
+        mockCall('docker.config', dockerConfig),
+        mockCall('system.advanced.nvidia_present', true),
+        mockCall('system.advanced.config', { nvidia: false } as CallResponse<WebUiApiDirectory, 'system.advanced.config'>),
+        mockCall('system.advanced.update', null),
+        mockJob('docker.update', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -117,7 +117,7 @@ describe('AppsSettingsComponent', () => {
   });
 
   it('loads list of available trains and shows them', async () => {
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('catalog.trains');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.trains');
 
     const trains = await loader.getHarness(TnCheckboxGroupHarness);
     expect(await trains.getOptionLabels()).toEqual(['stable', 'community', 'test']);
@@ -137,7 +137,7 @@ describe('AppsSettingsComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('catalog.update', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('catalog.update', [
       { preferred_trains: ['stable', 'community'] },
     ]);
   });
@@ -205,7 +205,7 @@ describe('AppsSettingsComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('docker.update', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('docker.update', [{
       enable_image_updates: true,
       address_pools: [
         { base: '172.17.0.0/12', size: 12 },
@@ -218,7 +218,7 @@ describe('AppsSettingsComponent', () => {
       ],
     }]);
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: false }]);
   });
 
   it('submits nvidia as true when user enables the nvidia checkbox', async () => {
@@ -230,7 +230,7 @@ describe('AppsSettingsComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.advanced.update', [{ nvidia: true }]);
   });
 });
 

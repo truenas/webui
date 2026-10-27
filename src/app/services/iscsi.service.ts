@@ -13,14 +13,14 @@ import {
   IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class IscsiService {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
   protected auth = inject(AuthService);
   private store$ = inject<Store<AppState>>(Store);
 

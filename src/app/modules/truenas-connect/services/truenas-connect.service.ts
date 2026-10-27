@@ -11,7 +11,7 @@ import { WINDOW } from 'app/helpers/window.helper';
 import { TruenasConnectConfig, toTruenasConnectConfig } from 'app/interfaces/truenas-connect-config.interface';
 import { topbarDialogPositionStrategy } from 'app/modules/layout/topbar/topbar-dialog-position.constant';
 import { TruenasConnectStatusModalComponent } from 'app/modules/truenas-connect/components/truenas-connect-status-modal/truenas-connect-status-modal.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -21,7 +21,7 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 })
 export class TruenasConnectService {
   private window = inject<Window>(WINDOW);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private tnDialog = inject(TnDialog);
   private overlay = inject(Overlay);

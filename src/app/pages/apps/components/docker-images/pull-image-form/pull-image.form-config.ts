@@ -6,7 +6,7 @@ import { helptextApps } from 'app/helptext/apps/apps';
 import { PullContainerImageParams } from 'app/interfaces/container-image.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface PullImageFormValues {
   image: string;
@@ -16,7 +16,7 @@ export interface PullImageFormValues {
 }
 
 export function getPullImageFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   dialogService: DialogService,
 ): FormDefinition<PullImageFormValues> {

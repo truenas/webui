@@ -16,7 +16,7 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { toDataset } from 'app/interfaces/dataset.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getTierLabelKey } from 'app/pages/sharing/components/tier-status.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -43,7 +43,7 @@ export interface ChangeTierDialogData {
   ],
 })
 export class ChangeTierDialogComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private fb = inject(FormBuilder);

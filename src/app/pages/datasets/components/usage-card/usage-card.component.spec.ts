@@ -2,8 +2,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentType } from 'app/enums/iscsi.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
@@ -34,8 +34,8 @@ describe('UsageCardComponent', () => {
   const createComponent = createComponentFactory({
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('tn_connect.config', {
+      mockApi([
+        mockCall('tn_connect.config', {
           id: 1,
           enabled: true,
           status: TruenasConnectStatus.Configured,

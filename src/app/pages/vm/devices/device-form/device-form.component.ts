@@ -58,7 +58,7 @@ import {
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FileValidatorService } from 'app/modules/forms/ix-forms/validators/file-validator/file-validator.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
 } from 'app/pages/vm/utils/build-annotated-zvol-options.utils';
@@ -106,7 +106,7 @@ export interface DeviceFormData {
 })
 export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
   private validators = inject(IxValidatorsService);

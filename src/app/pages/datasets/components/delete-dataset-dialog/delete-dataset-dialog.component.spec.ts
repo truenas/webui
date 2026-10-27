@@ -6,22 +6,22 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 import { DeleteDatasetDialog } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
   let spectator: Spectator<DeleteDatasetDialog>;
-  let api: TypedApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: DeleteDatasetDialog,
@@ -38,9 +38,9 @@ describe('DeleteDatasetDialogComponent', () => {
         } as VolumesListDataset,
       },
       mockProvider(DialogRef),
-      mockTypedApi([
-        mockTypedCall('pool.dataset.delete', null),
-        mockTypedCall('pool.dataset.attachments', [
+      mockApi([
+        mockCall('pool.dataset.delete', null),
+        mockCall('pool.dataset.attachments', [
           {
             type: 'SMB Share',
             attachments: ['root'],
@@ -52,7 +52,7 @@ describe('DeleteDatasetDialogComponent', () => {
             ],
           },
         ] as DatasetAttachment[]),
-        mockTypedCall('pool.dataset.processes', [
+        mockCall('pool.dataset.processes', [
           { name: 'zsh' } as Process,
           { name: 'ganesha.nfsd' },
           { pid: '1234', cmdline: 'rm -rf /' },
@@ -67,7 +67,7 @@ describe('DeleteDatasetDialogComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     await spectator.fixture.whenStable();
     spectator.detectChanges();
@@ -141,7 +141,7 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
-    const websocketMock = spectator.inject(MockTypedApiService);
+    const websocketMock = spectator.inject(MockApiService);
     jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => new ApiCallError({
       data: {
         reason: 'Device busy',

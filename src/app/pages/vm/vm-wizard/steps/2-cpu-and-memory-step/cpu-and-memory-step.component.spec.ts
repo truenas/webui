@@ -6,7 +6,7 @@ import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { VmCpuMode } from 'app/enums/vm.enum';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import {
@@ -23,9 +23,9 @@ describe('CpuAndMemoryStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedCall('vm.maximum_supported_vcpus', 27),
-        mockTypedCall('vm.cpu_model_choices', {
+      mockApi([
+        mockCall('vm.maximum_supported_vcpus', 27),
+        mockCall('vm.cpu_model_choices', {
           486: '486',
           EPYC: 'EPYC',
         }),

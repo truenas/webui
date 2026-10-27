@@ -41,7 +41,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import {
   getGlobalTwoFactorFormConfig,
@@ -131,7 +131,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private store$ = inject(Store);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);

@@ -39,7 +39,7 @@ import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/ut
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosKeytabsFormComponent } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-form/kerberos-keytabs-form.component';
 import { kerberosKeytabsListElements } from 'app/pages/directory-service/components/kerberos-keytabs/kerberos-keytabs-list/kerberos-keytabs-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -75,7 +75,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class KerberosKeytabsListComponent implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   protected dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);

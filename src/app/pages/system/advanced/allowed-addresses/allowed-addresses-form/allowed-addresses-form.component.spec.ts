@@ -8,15 +8,15 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { TnFormListHarness, TnInputHarness } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WarningComponent } from 'app/modules/warning/warning.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -24,7 +24,7 @@ describe('AllowedAddressesComponent', () => {
   let spectator: Spectator<AllowedAddressesFormComponent>;
   let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: AllowedAddressesFormComponent,
     imports: [
@@ -32,10 +32,10 @@ describe('AllowedAddressesComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('system.general.update', null),
-        mockTypedCall('system.general.ui_restart', null),
-        mockTypedCall('system.general.config', {
+      mockApi([
+        mockCall('system.general.update', null),
+        mockCall('system.general.ui_restart', null),
+        mockCall('system.general.config', {
           ui_allowlist: ['1.1.1.1/32'],
         } as SystemGeneralConfig as unknown as CallResponse<WebUiApiDirectory, 'system.general.config'>),
       ]),
@@ -58,7 +58,7 @@ describe('AllowedAddressesComponent', () => {
     spectator = createComponent();
     closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     await spectator.fixture.whenStable();
     spectator.detectComponentChanges();
   });
@@ -118,7 +118,7 @@ describe('AllowedAddressesComponent', () => {
     });
 
     it('shows a warning when user changes form from no addresses to some addresses', async () => {
-      const mockedApi = spectator.inject(MockTypedApiService);
+      const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('system.general.config', {
         ui_allowlist: [],
       } as SystemGeneralConfig);

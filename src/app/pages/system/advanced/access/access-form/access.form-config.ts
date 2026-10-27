@@ -6,7 +6,7 @@ import {
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated, generalConfigUpdated, loginBannerUpdated } from 'app/store/system-config/system-config.actions';
 import {
@@ -20,7 +20,7 @@ export interface AccessFormValues {
 }
 
 export function getAccessFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
   hasDirectoryServices: () => boolean,

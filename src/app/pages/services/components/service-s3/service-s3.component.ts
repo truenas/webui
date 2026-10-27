@@ -44,7 +44,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { portRangeValidator, rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { serviceConfigSavedMessage } from 'app/pages/services/components/service-config-forms.constants';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
@@ -107,7 +107,7 @@ type S3DefaultAudit = NonNullable<S3ConfigUpdate['default_audit']>;
   ],
 })
 export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormValue> implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private entitlements = inject(EntitlementsService);

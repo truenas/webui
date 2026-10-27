@@ -17,8 +17,8 @@ import { QueryFilters, QueryOptions } from 'app/interfaces/query-api.interface';
 import { AdvancedSearchQuery, SearchQuery } from 'app/modules/forms/search-input/types/search-query.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -36,7 +36,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class ExportButtonComponent<T, M extends JobMethod<WebUiApiDirectory>> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);
   private store$ = inject<Store<AppState>>(Store);

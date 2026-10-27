@@ -236,7 +236,7 @@ describe('IxFormHostForm', () => {
   describe('retryLoad', () => {
     it('re-subscribes to the last load, so a transient failure can recover', () => {
       let attempt = 0;
-      // Cold, like `TypedApiService.call`: each subscription is a fresh request. The first fails, the
+      // Cold, like `ApiService.call`: each subscription is a fresh request. The first fails, the
       // retry succeeds.
       const config$ = defer(() => {
         attempt += 1;

@@ -26,7 +26,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SshKeypairFormComponent extends IxFormHostForm {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);

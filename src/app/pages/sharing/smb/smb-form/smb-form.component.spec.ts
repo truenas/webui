@@ -25,10 +25,10 @@ import {
   provideTnFormFieldDismissibleErrors,
   provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -51,8 +51,8 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -96,7 +96,7 @@ describe('SmbFormComponent', () => {
 
   let spectator: Spectator<SmbFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -154,20 +154,20 @@ describe('SmbFormComponent', () => {
     providers: [
       mockAuth(),
       mockEntitlements(),
-      mockTypedApi([
-        mockTypedQuery('group.query', [{ id: 1, group: 'test', builtin: false }] as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('user.query', []),
-        mockTypedCall('sharing.smb.create', { ...existingShareEntry }),
-        mockTypedCall('sharing.smb.update', { ...existingShareEntry }),
-        mockTypedCall('sharing.smb.share_precheck', null),
-        mockTypedQuery('sharing.smb.query', [
+      mockApi([
+        mockQuery('group.query', [{ id: 1, group: 'test', builtin: false }] as WebUiQueryEntity<'group.query'>[]),
+        mockQuery('user.query', []),
+        mockCall('sharing.smb.create', { ...existingShareEntry }),
+        mockCall('sharing.smb.update', { ...existingShareEntry }),
+        mockCall('sharing.smb.share_precheck', null),
+        mockQuery('sharing.smb.query', [
           { ...existingShareEntry },
         ]),
-        mockTypedCall('filesystem.stat', {
+        mockCall('filesystem.stat', {
           acl: true,
         } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
-        mockTypedCall('smb.config', { aapl_extensions: true } as SmbConfigResponse),
-        mockTypedJob('service.control', { state: JobState.Success }),
+        mockCall('smb.config', { aapl_extensions: true } as SmbConfigResponse),
+        mockJob('service.control', { state: JobState.Success }),
       ]),
       mockProvider(Router),
       mockProvider(LoaderService),
@@ -224,7 +224,7 @@ describe('SmbFormComponent', () => {
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     mockStore$ = spectator.inject(MockStore);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
 
     // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`;
     // only invoke it when it currently offers to reveal the advanced section.
@@ -969,12 +969,12 @@ describe('SmbFormComponent', () => {
   describe('smb validation', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(TypedApiService);
-      spectator.inject(MockTypedApiService).mockCallError('sharing.smb.share_precheck', {
+      api = spectator.inject(ApiService);
+      spectator.inject(MockApiService).mockCallError('sharing.smb.share_precheck', {
         reason: '[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists. [EINVAL] sharing.smb.share_precheck: TrueNAS server must be joined to a directory service or have at least one local SMB user before creating an SMB share.',
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       mockStore$ = spectator.inject(MockStore);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
@@ -999,8 +999,8 @@ describe('SmbFormComponent', () => {
   describe('handle error', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(TypedApiService);
-      spectator.inject(MockTypedApiService).mockCallError('sharing.smb.create', {
+      api = spectator.inject(ApiService);
+      spectator.inject(MockApiService).mockCallError('sharing.smb.create', {
         reason: '[EINVAL] sharingsmb_create.afp: Apple SMB2/3 protocol extension support is required by this parameter.',
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -1319,7 +1319,7 @@ describe('SmbFormComponent', () => {
     it('should show error when non-existent group is entered in watch list', async () => {
       // An EMPTY result is what the directory reads as "no such group"; a lookup
       // that ERRORS is a transport failure and leaves the name unflagged.
-      spectator.inject(MockTypedApiService).mockQuery('group.query', []);
+      spectator.inject(MockApiService).mockQuery('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
@@ -1355,7 +1355,7 @@ describe('SmbFormComponent', () => {
     it('should show error when non-existent group is entered in ignore list', async () => {
       // An EMPTY result is what the directory reads as "no such group"; a lookup
       // that ERRORS is a transport failure and leaves the name unflagged.
-      spectator.inject(MockTypedApiService).mockQuery('group.query', []);
+      spectator.inject(MockApiService).mockQuery('group.query', []);
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
@@ -1436,7 +1436,7 @@ describe('SmbFormComponent', () => {
         isGroupCachedAsNonExistent: jest.Mock;
       };
       const delayedObservable$ = new Subject<Group[]>();
-      jest.spyOn(spectator.inject(TypedApiService), 'call')
+      jest.spyOn(spectator.inject(ApiService), 'call')
         .mockReturnValue(delayedObservable$.asObservable() as Observable<never>);
       userService.isGroupInAutocompleteCache = jest.fn(() => false);
       userService.isGroupCachedAsNonExistent = jest.fn(() => false);
@@ -1665,11 +1665,11 @@ describe('SmbFormComponent', () => {
   describe('Submit button behavior with Apple SMB2/3 extensions', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       mockStore$ = spectator.inject(MockStore);
 
-      spectator.inject(MockTypedApiService).mockCall('smb.config', { aapl_extensions: false } as SmbConfigResponse);
+      spectator.inject(MockApiService).mockCall('smb.config', { aapl_extensions: false } as SmbConfigResponse);
     });
 
     it('should disable submit button when extensions warning is shown', async () => {

@@ -6,8 +6,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { SystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
@@ -16,9 +16,9 @@ import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GuiFormComponent } from 'app/pages/system/general-settings/gui/gui-form/gui-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -27,7 +27,7 @@ import { selectGeneralConfig } from 'app/store/system-config/system-config.selec
 describe('GuiFormComponent', () => {
   let spectator: Spectator<GuiFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -60,10 +60,10 @@ describe('GuiFormComponent', () => {
     ],
     providers: [
       DialogService,
-      mockTypedApi([
-        mockTypedCall('system.general.update', mockSystemGeneralConfig as unknown as CallResponse<WebUiApiDirectory, 'system.general.update'>),
-        mockTypedCall('system.general.ui_restart', null),
-        mockTypedCall('system.security.config', {
+      mockApi([
+        mockCall('system.general.update', mockSystemGeneralConfig as unknown as CallResponse<WebUiApiDirectory, 'system.general.update'>),
+        mockCall('system.general.ui_restart', null),
+        mockCall('system.security.config', {
           enable_gpos_stig: false,
         } as SystemSecurityConfig as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
       ]),
@@ -115,7 +115,7 @@ describe('GuiFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current values when form is being edited', async () => {
@@ -205,7 +205,7 @@ describe('GuiFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(TypedApiService, {
+          mockProvider(ApiService, {
             call: jest.fn((method: string) => {
               if (method === 'system.security.config') {
                 return of({ enable_gpos_stig: true });
@@ -216,7 +216,7 @@ describe('GuiFormComponent', () => {
         ],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('disables usage_collection control when GPOS STIG is enabled', () => {

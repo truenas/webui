@@ -11,7 +11,7 @@ import {
   TnButtonHarness, TnButtonToggleGroupHarness, TnButtonToggleHarness, TnDialogHarness,
 } from '@truenas/ui-components';
 import { BehaviorSubject } from 'rxjs';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
@@ -65,8 +65,8 @@ describe('FeedbackDialogComponent', () => {
       mockProvider(SystemGeneralService),
       mockProvider(DialogRef),
       mockProvider(Router),
-      mockTypedApi([
-        mockTypedCall('support.attach_ticket_max_size', 5),
+      mockApi([
+        mockCall('support.attach_ticket_max_size', 5),
       ]),
       {
         provide: DIALOG_DATA,

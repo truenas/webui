@@ -2,15 +2,15 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnMenuHarness, TnButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { NtpServer } from 'app/interfaces/ntp-server.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { NtpServersCardComponent } from 'app/pages/system/advanced/ntp-servers/ntp-servers-card/ntp-servers-card.component';
 
 const fakeDataSource: NtpServer[] = [
@@ -46,7 +46,7 @@ const fakeDataSource: NtpServer[] = [
 describe('NtpServersCardComponent', () => {
   let spectator: Spectator<NtpServersCardComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let formPanel: FormSidePanelService;
   let table: TnTableHarness;
 
@@ -54,9 +54,9 @@ describe('NtpServersCardComponent', () => {
     component: NtpServersCardComponent,
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('system.ntpserver.query', fakeDataSource),
-        mockTypedCall('system.ntpserver.delete', true),
+      mockApi([
+        mockQuery('system.ntpserver.query', fakeDataSource),
+        mockCall('system.ntpserver.delete', true),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -74,7 +74,7 @@ describe('NtpServersCardComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     formPanel = spectator.inject(FormSidePanelService);
     table = await loader.getHarness(TnTableHarness);
   });

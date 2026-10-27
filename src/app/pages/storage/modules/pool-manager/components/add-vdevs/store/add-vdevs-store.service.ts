@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Pool, PoolTopology, toPool } from 'app/interfaces/pool.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,7 +26,7 @@ const initialState: AddVdevsState = {
 @Injectable()
 export class AddVdevsStore extends ComponentStore<AddVdevsState> {
   private diskStore = inject(DiskStore);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading$ = this.select((state) => state.isLoading);

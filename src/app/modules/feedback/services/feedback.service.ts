@@ -33,7 +33,7 @@ import {
   toSimilarIssues,
 } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { AppState } from 'app/store';
@@ -60,7 +60,7 @@ function getLegacyProductType(facts: EntitlementFacts): FeedbackProductType {
 })
 export class FeedbackService {
   private httpClient = inject(HttpClient);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private systemGeneralService = inject(SystemGeneralService);
   private fileUpload = inject(UploadService);

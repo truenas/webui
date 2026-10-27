@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { rebootInfoLoaded, refreshRebootInfo } from 'app/store/reboot-info/reboot-info.actions';
@@ -13,7 +13,7 @@ import { rebootInfoLoaded, refreshRebootInfo } from 'app/store/reboot-info/reboo
 @Injectable()
 export class RebootInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject(Store);
 
   // Latest wins here and below: the licensed status is seeded at sign-in and can be corrected once

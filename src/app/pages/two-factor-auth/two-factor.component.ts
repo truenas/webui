@@ -33,8 +33,8 @@ import { PendingTwoFactorKind, PendingTwoFactorService } from 'app/modules/auth/
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { QrViewerComponent } from 'app/pages/two-factor-auth/qr-viewer/qr-viewer.component';
 import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -107,7 +107,7 @@ export class TwoFactorComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   protected tnDialog = inject(TnDialog);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private pendingTwoFactor = inject(PendingTwoFactorService);

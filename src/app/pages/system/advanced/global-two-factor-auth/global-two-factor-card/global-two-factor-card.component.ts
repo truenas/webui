@@ -21,7 +21,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { globalTwoFactorCardElements } from 'app/pages/system/advanced/global-two-factor-auth/global-two-factor-card/global-two-factor-card.elements';
 import {
   getGlobalTwoFactorFormConfig,
@@ -46,7 +46,7 @@ import { FirstTimeWarningService } from 'app/services/first-time-warning.service
   ],
 })
 export class GlobalTwoFactorAuthCardComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);

@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { DetailsDisk, toDiskDetails } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ManageUnusedDiskDialog } from 'app/pages/storage/components/unused-resources/unused-disk-card/manage-unused-disk-dialog/manage-unused-disk-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.component';
@@ -20,7 +20,7 @@ import { UnusedDiskCardComponent } from './unused-disk-card/unused-disk-card.com
   imports: [UnusedDiskCardComponent, TranslateModule],
 })
 export class UnusedResourcesComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private tnDialog = inject(TnDialog);

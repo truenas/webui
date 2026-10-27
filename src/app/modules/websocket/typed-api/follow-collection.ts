@@ -14,7 +14,7 @@ interface CollectionChange<T> {
 
 /**
  * Emits `rows$`'s rows, then the rows again after each change `changes$` reports, folded in
- * by `id`. Shared by `TypedApiService.queryAndSubscribe` and its spec double, so the double
+ * by `id`. Shared by `ApiService.queryAndSubscribe` and its spec double, so the double
  * runs the same folding.
  *
  * Changes accumulate: each one applies to the rows as the previous ones left them. A `changed`

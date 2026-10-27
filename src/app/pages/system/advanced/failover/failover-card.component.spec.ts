@@ -4,9 +4,9 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -30,11 +30,11 @@ describe('FailoverCardComponent', () => {
   const createComponent = createComponentFactory({
     component: FailoverCardComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('failover.config', fakeConfig),
-        mockTypedCall('failover.update', null),
-        mockTypedCall('failover.sync_to_peer', null),
-        mockTypedCall('failover.sync_from_peer', null),
+      mockApi([
+        mockCall('failover.config', fakeConfig),
+        mockCall('failover.update', null),
+        mockCall('failover.sync_to_peer', null),
+        mockCall('failover.sync_from_peer', null),
       ]),
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
@@ -72,7 +72,7 @@ describe('FailoverCardComponent', () => {
   });
 
   it('displays the default controller but not the timeout when failover is disabled', async () => {
-    spectator.inject(MockTypedApiService).mockCall('failover.config', { ...fakeConfig, disabled: true });
+    spectator.inject(MockApiService).mockCall('failover.config', { ...fakeConfig, disabled: true });
     spectator = createComponent();
     await spectator.fixture.whenStable();
     spectator.detectChanges();

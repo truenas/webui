@@ -5,8 +5,8 @@ import {
   TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KeychainCredentialUsedBy, KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -14,7 +14,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SshKeypairCardComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-card/ssh-keypair-card.component';
 import { SshKeypairFormComponent } from 'app/pages/credentials/backup-credentials/ssh-keypair-form/ssh-keypair-form.component';
 import { DownloadService } from 'app/services/download.service';
@@ -58,9 +58,9 @@ describe('SshKeypairCardComponent', () => {
       TablePagerShowMoreComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', credentials),
-        mockTypedCall('keychaincredential.delete', null),
+      mockApi([
+        mockQuery('keychaincredential.query', credentials),
+        mockCall('keychaincredential.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -126,7 +126,7 @@ describe('SshKeypairCardComponent', () => {
         message: 'Are you sure you want to delete the <b>test1234</b>?',
       }),
     );
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: false }]);
   });
 
   it('automatically cascades delete when keypair is used by other credentials', async () => {
@@ -154,7 +154,7 @@ describe('SshKeypairCardComponent', () => {
         message: 'The SSH Keypair <b>test1234</b> is being used by the following:<br><br>• test-connection-1<br>• test-connection-2<br><br>Deleting it will also delete all associated SSH connections.',
       }),
     );
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [10, { cascade: true }]);
     expect(refetchSpy).toHaveBeenCalled();
   });
 

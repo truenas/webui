@@ -18,7 +18,7 @@ import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/for
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { snapshotPageEntered } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -43,7 +43,7 @@ import { AppState } from 'app/store';
   ],
 })
 export class SnapshotRollbackDialog implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   private fb = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);

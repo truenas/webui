@@ -4,8 +4,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   BehaviorSubject, firstValueFrom, of, ReplaySubject, throwError,
 } from 'rxjs';
+import { mockApi, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -13,7 +13,7 @@ import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { StartServiceDialogResult } from 'app/modules/dialog/components/start-service-dialog/start-service-dialog.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   checkIfServiceIsEnabled, serviceChanged, serviceEnabled, servicesLoaded, serviceStarted,
@@ -31,7 +31,7 @@ const cifsService = {
 
 describe('ServicesEffects', () => {
   let spectator: SpectatorService<ServicesEffects>;
-  let api: TypedApiService;
+  let api: ApiService;
   let store$: MockStore<ServicesState>;
 
   const closed$ = new BehaviorSubject<StartServiceDialogResult>({
@@ -43,8 +43,8 @@ describe('ServicesEffects', () => {
     service: ServicesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockTypedApi([
-        mockTypedQuery('service.query', [cifsService]),
+      mockApi([
+        mockQuery('service.query', [cifsService]),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -65,7 +65,7 @@ describe('ServicesEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
   });
 

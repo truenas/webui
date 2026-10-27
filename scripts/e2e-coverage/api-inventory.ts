@@ -24,9 +24,9 @@ export interface ApiInventory {
 /** Not features: the plumbing `e2e/support/coverage.ts` also ignores. */
 export const ignoredMethods = new Set(['core.ping', 'core.subscribe', 'core.unsubscribe', 'core.set_options']);
 
-/** `ApiService` and `TypedApiService` share these names; the first argument is the method. */
+/** `ApiService`'s request verbs; the first argument is the method. */
 const callNames = new Set([
-  'call', 'callUnauthenticated', 'job', 'startJob', 'callAndSubscribe', 'queryAndSubscribe', 'query',
+  'call', 'callUnauthenticated', 'job', 'startJob', 'queryAndSubscribe', 'query',
 ]);
 
 const methodName = /^[a-z][a-z0-9_]*(?:\.[a-z0-9_]+)+$/;
@@ -55,7 +55,7 @@ function isLiteralUnionNode(type: ts.TypeNode): boolean {
  * Whether the source spells the name out: a literal, a conditional whose branches all are, a
  * `const` with no annotation whose initializer is, or a parameter whose annotation is itself a
  * literal union. Without this the checker also resolves the API layer's own plumbing —
- * `ApiService.subscribe(method)`, `TypedApiService.query(...args)` and the table data providers'
+ * `ApiService.subscribe(method)`, `ApiService.query(...args)` and the table data providers'
  * `this.method` are typed with method-union aliases, and would bring in 80-odd names that no
  * feature calls. It is checked all the way down, so `const method = this.method` does not let
  * them back in.

@@ -3,8 +3,8 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { S3PrincipalType } from 'app/enums/s3.enum';
 import { Option } from 'app/interfaces/option.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 /** Rows fetched per page. Bound to the picker's `[pageSize]` so it can detect exhaustion. */
 export const s3PrincipalPageSize = 50;
@@ -18,7 +18,7 @@ export const s3PrincipalPageSize = 50;
  * pinned through the picker's `[options]` instead of being spliced into page 0.
  */
 export function s3PrincipalOptions(
-  api: TypedApiService,
+  api: ApiService,
   kind: S3PrincipalType.User | S3PrincipalType.Group,
 ): TnOptionsFetchFn<Option> {
   return (search: string, page: number): Observable<Option[]> => {

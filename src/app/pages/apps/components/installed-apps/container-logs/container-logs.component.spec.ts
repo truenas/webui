@@ -10,7 +10,7 @@ import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerLogsComponent } from 'app/pages/apps/components/installed-apps/container-logs/container-logs.component';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 
@@ -29,7 +29,7 @@ describe('ContainerLogsComponent', () => {
     it('subscribes to logs updates', () => {
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(LogsDetailsDialog, { width: '400px' });
 
-      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('app.container_log_follow', {
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('app.container_log_follow', {
         app_name: 'ix-test-app',
         container_id: 'ix-test-container',
         tail_lines: 650,
@@ -85,7 +85,7 @@ describe('ContainerLogsComponent', () => {
             closed: of({ tail_lines: 500 } as LogsDetailsDialog['form']['value']),
           }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
-        mockProvider(TypedApiService, {
+        mockProvider(ApiService, {
           subscribe: jest.fn(() => {
             logSubject$ = new Subject();
             return logSubject$.asObservable();
@@ -191,7 +191,7 @@ describe('ContainerLogsComponent', () => {
                 } as LogsDetailsDialog['form']['value']),
           }) as unknown as DialogRef<unknown, LogsDetailsDialog>),
         }),
-        mockProvider(TypedApiService, {
+        mockProvider(ApiService, {
           subscribe: jest.fn(() => of({
             msg: 'added',
             fields: {

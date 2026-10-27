@@ -5,8 +5,8 @@ import { ControllerType } from 'app/enums/controller-type.enum';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
 import { QueryFilters } from 'app/interfaces/query-api.interface';
 import { QueryFiltersAndOptionsApiDataProvider } from 'app/modules/tn-table/classes/api-data-provider/query-filters-and-options-data-provider';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<'audit.query', AuditEntry> {
   isHaLicensed: boolean;
@@ -15,7 +15,7 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
 
   private queryFilters: QueryFilters<AuditEntry> = [];
 
-  constructor(api: TypedApiService) {
+  constructor(api: ApiService) {
     super(api, 'audit.query');
   }
 

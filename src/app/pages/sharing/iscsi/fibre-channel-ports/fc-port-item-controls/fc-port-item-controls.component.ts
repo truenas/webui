@@ -11,7 +11,7 @@ import { map } from 'rxjs';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { Option } from 'app/interfaces/option.interface';
 import { optionTestIdByKebabLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-channel-ports/helpers/port-mode-control.helper';
 
 @Component({
@@ -27,7 +27,7 @@ import { configurePortControlsForMode } from 'app/pages/sharing/iscsi/fibre-chan
   ],
 })
 export class FcPortItemControlsComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(FormBuilder);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);

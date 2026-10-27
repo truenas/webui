@@ -45,7 +45,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -80,7 +80,7 @@ type FormValue = CloudBackupFormComponent['form']['value'];
 export class CloudBackupFormComponent implements OnInit {
   private translate = inject(TranslateService);
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private cloudCredentialService = inject(CloudCredentialService);

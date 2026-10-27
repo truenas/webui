@@ -8,14 +8,14 @@ import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import {
   NvmeOfHost, NvmeOfPort, NvmeOfSubsystem, toNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NvmeOfService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   private maxConcurrentRequests = 15;
 

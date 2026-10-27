@@ -5,12 +5,12 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnSlideToggleHarness,
 } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LicenseType } from 'app/enums/license-type.enum';
 import { ContractType } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   LicenseFingerprintDialog,
 } from 'app/pages/system/general-settings/support/license-fingerprint-dialog/license-fingerprint-dialog.component';
@@ -73,7 +73,7 @@ describe('SysInfoComponent', () => {
       mockAuth(),
       mockProvider(TnDialog, { open: jest.fn() }),
       mockProvider(SnackbarService),
-      mockTypedApi([mockTypedCall('truenas.license.fingerprint', fingerprintBase64)]),
+      mockApi([mockCall('truenas.license.fingerprint', fingerprintBase64)]),
     ],
   });
 
@@ -262,7 +262,7 @@ describe('SysInfoComponent', () => {
         LicenseFingerprintDialog,
         expect.any(Object),
       );
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('truenas.license.fingerprint');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('truenas.license.fingerprint');
     });
 
     it('copies the raw base64 string when the copy icon is clicked, fetching if needed', async () => {
@@ -277,7 +277,7 @@ describe('SysInfoComponent', () => {
       const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
       await copyButton.click();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.license.fingerprint');
       expect(writeText).toHaveBeenCalledWith(fingerprintBase64);
       expect(spectator.inject(TnDialog).open).not.toHaveBeenCalled();
     });
@@ -295,7 +295,7 @@ describe('SysInfoComponent', () => {
       await copyButton.click();
       await copyButton.click();
 
-      const fingerprintCalls = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const fingerprintCalls = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .filter((args) => args[0] === 'truenas.license.fingerprint');
       expect(fingerprintCalls).toHaveLength(1);
       expect(writeText).toHaveBeenCalledTimes(2);

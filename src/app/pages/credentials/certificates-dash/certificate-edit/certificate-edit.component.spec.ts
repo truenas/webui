@@ -8,8 +8,8 @@ import {
   TnCheckboxComponent, TnCheckboxHarness, TnDialog, TnFormFieldComponent, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,7 +17,7 @@ import { IxFormComponent } from 'app/modules/forms/ix-forms/components/ix-form/i
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -70,8 +70,8 @@ describe('CertificateEditComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedJob('certificate.update', { state: JobState.Success }),
+      mockApi([
+        mockJob('certificate.update', { state: JobState.Success }),
       ]),
       mockProvider(TnDialog),
       mockProvider(FormSidePanelService),
@@ -124,7 +124,7 @@ describe('CertificateEditComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('certificate.update', [1,
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('certificate.update', [1,
         { name: 'New Name', add_to_trusted_store: true },
       ]);
       expect(closeSpy).toHaveBeenCalledWith(true);

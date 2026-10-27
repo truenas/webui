@@ -31,8 +31,8 @@ The application uses NgRx for state management. Each feature follows this patter
 Key state slices: systemConfig, preferences, services, jobs, alerts, networkInterfaces
 
 ### Service Architecture
-- **ApiService** (`services/websocket/api.service.ts`): Central WebSocket API communication
-- **WebSocketHandlerService**: Low-level WebSocket connection management
+- **ApiService** (`modules/websocket/api.service.ts`): Central WebSocket API communication, typed by `@truenas/api-client` (see `docs/devs/typed-api-client.md`)
+- **ConnectionService** (`modules/websocket/connection.service.ts`): WebSocket connection state
 - **AuthService**: Authentication and authorization
 - **ErrorHandlerService**: Centralized error handling
 - Domain services follow pattern: `services/[domain].service.ts`

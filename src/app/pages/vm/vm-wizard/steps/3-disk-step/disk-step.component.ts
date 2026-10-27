@@ -31,8 +31,8 @@ import { toVmDevice, VmDiskDevice } from 'app/interfaces/vm-device.interface';
 import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AnnotatedZvolOption, buildAnnotatedZvolOptions,
 } from 'app/pages/vm/utils/build-annotated-zvol-options.utils';
@@ -71,7 +71,7 @@ const validImageExtensions = ['.qcow2', '.qed', '.raw', '.vdi', '.vhdx', '.vmdk'
 export class DiskStepComponent implements OnInit, SummaryProvider {
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private freeSpaceValidator = inject(FreeSpaceValidatorService);
   private imageVirtualSizeValidator = inject(ImageVirtualSizeValidatorService);
   private filesystemService = inject(FilesystemService);

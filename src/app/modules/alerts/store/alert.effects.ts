@@ -24,7 +24,7 @@ import {
 import {
   AlertSlice, selectDismissedAlerts, selectIsAlertPanelOpen, selectUnreadAlerts,
 } from 'app/modules/alerts/store/alert.selectors';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { alertIndicatorPressed } from 'app/store/topbar/topbar.actions';
@@ -34,7 +34,7 @@ type AlertCallResult = { id: string; ok: true } | { id: string; ok: false; error
 @Injectable()
 export class AlertEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AlertSlice>>(Store);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);

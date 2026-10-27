@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { FibreChannelHost, FibreChannelPortChoices } from 'app/interfaces/fibre-channel.interface';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FcPortItemControlsComponent } from './fc-port-item-controls.component';
 
 describe('FcPortItemControlsComponent', () => {
@@ -36,9 +36,9 @@ describe('FcPortItemControlsComponent', () => {
     providers: [
       FormBuilder,
       provideTnFormFieldErrors(),
-      mockTypedApi([
-        mockTypedCall('fcport.port_choices', mockPortChoices),
-        mockTypedQuery('fc.fc_host.query', mockHosts),
+      mockApi([
+        mockCall('fcport.port_choices', mockPortChoices),
+        mockQuery('fc.fc_host.query', mockHosts),
       ]),
     ],
   });
@@ -278,7 +278,7 @@ describe('FcPortItemControlsComponent', () => {
 
   describe('API data loading', () => {
     it('calls fc.fc_host.query', () => {
-      const apiService = spectator.inject(TypedApiService);
+      const apiService = spectator.inject(ApiService);
       expect(apiService.query).toHaveBeenCalledWith('fc.fc_host.query');
     });
   });

@@ -5,10 +5,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonToggleHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { directIdMapping } from 'app/interfaces/user.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserService } from 'app/services/user.service';
 import { MapUserGroupIdsDialogComponent } from './map-user-group-ids-dialog.component';
 import { ViewType } from './mapping.types';
@@ -23,7 +23,7 @@ const mockUserService = {
 describe('MapUserGroupIdsDialogComponent', () => {
   let spectator: Spectator<MapUserGroupIdsDialogComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const mockUsers = [
     {
@@ -65,11 +65,11 @@ describe('MapUserGroupIdsDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('user.query', mockUsers),
-        mockTypedQuery('group.query', mockGroups),
-        mockTypedCall('user.update', null),
-        mockTypedCall('group.update', null),
+      mockApi([
+        mockQuery('user.query', mockUsers),
+        mockQuery('group.query', mockGroups),
+        mockCall('user.update', null),
+        mockCall('group.update', null),
       ]),
       mockProvider(DialogRef),
       mockProvider(UserService, mockUserService),
@@ -79,7 +79,7 @@ describe('MapUserGroupIdsDialogComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     // The typed double answers queries on a microtask, after the change detection that set
     // `[loading]`. Without automatic change detection nothing drops it again before the fake
     // progress bar's grace timer fires, which then starts a redraw interval the fixture never

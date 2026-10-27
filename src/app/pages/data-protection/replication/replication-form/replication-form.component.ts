@@ -27,7 +27,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import {
   SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   GeneralSectionComponent,
 } from 'app/pages/data-protection/replication/replication-form/sections/general-section/general-section.component';
@@ -70,7 +70,7 @@ import { ReplicationService } from 'app/services/replication.service';
   ],
 })
 export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorParser = inject(ErrorParserService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);

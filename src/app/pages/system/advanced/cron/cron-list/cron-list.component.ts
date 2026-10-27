@@ -36,7 +36,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { mapTnSortToTableSort, memoizedRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CronDeleteDialog } from 'app/pages/system/advanced/cron/cron-delete-dialog/cron-delete-dialog.component';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { cronElements } from 'app/pages/system/advanced/cron/cron-list/cron-list.elements';
@@ -70,7 +70,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class CronListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private taskService = inject(TaskService);
   private dialog = inject(DialogService);

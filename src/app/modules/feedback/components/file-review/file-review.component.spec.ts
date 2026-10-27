@@ -11,7 +11,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { FileReviewComponent } from 'app/modules/feedback/components/file-review/file-review.component';
@@ -37,7 +37,7 @@ describe('FileReviewComponent', () => {
       NgTemplateOutlet,
     ],
     providers: [
-      mockTypedApi(),
+      mockApi(),
       mockWindow(),
       mockProvider(FeedbackService, {
         createReview: jest.fn(() => of()),

@@ -39,7 +39,7 @@ import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultHomePath, UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 import { SudoCommandsValidatorService } from 'app/pages/credentials/users/user-form/validators/sudo-commands-validator.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -80,7 +80,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private storageService = inject(StorageService);
   private filesystemService = inject(FilesystemService);
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private userFormStore = inject(UserFormStore);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);

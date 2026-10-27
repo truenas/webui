@@ -4,8 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnButtonHarness, TnIconButtonHarness } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import {
   buildFingerprintField,
@@ -97,7 +97,7 @@ describe('LicenseFingerprintDialog', () => {
     component: LicenseFingerprintDialog,
     providers: [
       mockAuth(),
-      mockTypedApi([mockTypedCall('truenas.license.fingerprint', base64)]),
+      mockApi([mockCall('truenas.license.fingerprint', base64)]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
     ],
@@ -158,7 +158,7 @@ describe('LicenseFingerprintDialog fallback rendering', () => {
     component: LicenseFingerprintDialog,
     providers: [
       mockAuth(),
-      mockTypedApi([mockTypedCall('truenas.license.fingerprint', malformedRaw)]),
+      mockApi([mockCall('truenas.license.fingerprint', malformedRaw)]),
       mockProvider(DialogRef),
     ],
   });

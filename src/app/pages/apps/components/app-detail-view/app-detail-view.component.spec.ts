@@ -8,7 +8,7 @@ import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp } from 'app/interfaces/catalog.interface';
@@ -72,14 +72,14 @@ describe('AppDetailViewComponent', () => {
     ],
     providers: [
       InstalledAppsStore,
-      mockTypedApi([
-        mockTypedJob('app.create', { state: JobState.Success }),
-        mockTypedJob('app.update', { state: JobState.Success }),
-        mockTypedCall(
+      mockApi([
+        mockJob('app.create', { state: JobState.Success }),
+        mockJob('app.update', { state: JobState.Success }),
+        mockCall(
           'catalog.get_app_details',
           existingCatalogApp as unknown as CallResponse<WebUiApiDirectory, 'catalog.get_app_details'>,
         ),
-        mockTypedQuery('app.query', [{} as WebUiQueryEntity<'app.query'>]),
+        mockQuery('app.query', [{} as WebUiQueryEntity<'app.query'>]),
       ]),
       mockProvider(AuthService, {
         user$: of({ attributes: { appsAgreement: true } }),

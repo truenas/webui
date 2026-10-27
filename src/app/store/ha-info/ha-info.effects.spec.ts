@@ -3,15 +3,15 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore, MockStore } from '@ngrx/store/testing';
 import { EventUnion } from '@truenas/api-client';
 import { firstValueFrom, of, ReplaySubject, Subject } from 'rxjs';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { HaStatus } from 'app/interfaces/events/ha-status-event.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppState } from 'app/store';
 import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import {
@@ -27,7 +27,7 @@ type FailoverDisabledReasonsEvent = EventUnion<WebUiApiDirectory, 'failover.disa
 
 describe('HaInfoEffects', () => {
   let spectator: SpectatorService<HaInfoEffects>;
-  let api: TypedApiService;
+  let api: ApiService;
   let actions$: ReplaySubject<unknown>;
   let store$: MockStore<AppState>;
 
@@ -48,8 +48,8 @@ describe('HaInfoEffects', () => {
           { selector: selectHaInfoState, value: { isHaLicensed: null, haStatus: null } },
         ],
       }),
-      mockTypedApi([
-        mockTypedCall('failover.disabled.reasons', []),
+      mockApi([
+        mockCall('failover.disabled.reasons', []),
       ]),
       { provide: WINDOW, useValue: mockWindow },
     ],
@@ -57,7 +57,7 @@ describe('HaInfoEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
     actions$ = new ReplaySubject(1);
   });

@@ -2,10 +2,10 @@ import { inject, Injectable, Type } from '@angular/core';
 import {
   BehaviorSubject, Observable, of, shareReplay, switchMap, tap,
 } from 'rxjs';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   TypedQueryFilter, WebUiQueryEntity, WebUiQueryMethod,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 export interface GlobalStoreMembers<M extends WebUiQueryMethod> {
   call: Observable<WebUiQueryEntity<M>[]>;
@@ -22,7 +22,7 @@ export function globalStore<M extends WebUiQueryMethod>(
 ): Type<GlobalStoreMembers<M>> {
   @Injectable({ providedIn: 'root' })
   class GlobalStore implements GlobalStoreMembers<M> {
-    private api = inject(TypedApiService);
+    private api = inject(ApiService);
     private callResult$ = new BehaviorSubject<WebUiQueryEntity<M>[] | undefined>(undefined);
     private callInFlight$: Observable<WebUiQueryEntity<M>[]> | null = null;
 

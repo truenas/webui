@@ -6,22 +6,22 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebShareValidatorService } from 'app/pages/sharing/webshare/webshare-validator.service';
 import { WebShareFormData, WebShareSharesFormComponent } from './webshare-shares-form.component';
 
 describe('WebShareSharesFormComponent', () => {
   let spectator: Spectator<WebShareSharesFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   beforeEach(() => {
     // Suppress benign warnings: reactive-form disabled-state notices, the <ix-form> wrapper's
@@ -53,11 +53,11 @@ describe('WebShareSharesFormComponent', () => {
     providers: [
       WebShareValidatorService,
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
-        mockTypedCall('sharing.webshare.create', mockWebShares[0] as WebUiQueryEntity<'sharing.webshare.query'>),
-        mockTypedCall('sharing.webshare.update', mockWebShares[0] as WebUiQueryEntity<'sharing.webshare.query'>),
-        mockTypedCall('filesystem.stat', null),
+      mockApi([
+        mockQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
+        mockCall('sharing.webshare.create', mockWebShares[0] as WebUiQueryEntity<'sharing.webshare.query'>),
+        mockCall('sharing.webshare.update', mockWebShares[0] as WebUiQueryEntity<'sharing.webshare.query'>),
+        mockCall('filesystem.stat', null),
       ]),
       // Mocks the services `<ix-form>` injects, and zeroes the min-feedback hold so a
       // successful close stays synchronous.
@@ -89,7 +89,7 @@ describe('WebShareSharesFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       spectator.detectChanges();
     });
 
@@ -164,7 +164,7 @@ describe('WebShareSharesFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       spectator.detectChanges();
     });
 
@@ -255,7 +255,7 @@ describe('WebShareSharesFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       spectator.detectChanges();
     });
 
@@ -331,7 +331,7 @@ describe('WebShareSharesFormComponent', () => {
           } as WebShareFormData,
         },
       });
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(
         throwError(() => new Error('Failed to load shares')),
       );
 
@@ -362,7 +362,7 @@ describe('WebShareSharesFormComponent', () => {
           } as WebShareFormData,
         },
       });
-      spectator.inject(MockTypedApiService).mockCallError('sharing.webshare.update');
+      spectator.inject(MockApiService).mockCallError('sharing.webshare.update');
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
       const errorHandler = spectator.inject(FormErrorHandlerService);

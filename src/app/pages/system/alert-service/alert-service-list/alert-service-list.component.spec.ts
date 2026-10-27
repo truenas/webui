@@ -4,16 +4,16 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertService } from 'app/interfaces/alert-service.interface';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AlertServiceComponent } from 'app/pages/system/alert-service/alert-service/alert-service.component';
 import { AlertServiceListComponent } from 'app/pages/system/alert-service/alert-service-list/alert-service-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
@@ -44,9 +44,9 @@ describe('AlertServiceListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('alertservice.query', alertServices as unknown as WebUiQueryEntity<'alertservice.query'>[]),
-        mockTypedCall('alertservice.delete', null),
+      mockApi([
+        mockQuery('alertservice.query', alertServices as unknown as WebUiQueryEntity<'alertservice.query'>[]),
+        mockCall('alertservice.delete', null),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -107,6 +107,6 @@ describe('AlertServiceListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('alertservice.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alertservice.delete', [1]);
   });
 });

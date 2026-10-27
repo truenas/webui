@@ -18,7 +18,7 @@ import {
 } from 'app/interfaces/acl.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AclSaveFormParams,
   DatasetAclEditorState,
@@ -51,7 +51,7 @@ const initialState: DatasetAclEditorState = {
   providedIn: 'root',
 })
 export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
   private dialogService = inject(DialogService);

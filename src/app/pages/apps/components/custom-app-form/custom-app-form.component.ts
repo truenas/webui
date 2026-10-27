@@ -20,7 +20,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { forbiddenAsyncValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
@@ -53,7 +53,7 @@ type CustomAppFormValue = ReturnType<ReturnType<typeof createCustomAppForm>['get
 export class CustomAppFormComponent extends IxFormHostForm<boolean, CustomAppFormValue> implements OnInit {
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private appService = inject(ApplicationsService);
   private router = inject(Router);

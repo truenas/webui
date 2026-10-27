@@ -9,7 +9,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface FailoverValidationResult {
   success: boolean;
@@ -26,7 +26,7 @@ export enum FailoverErrorType {
 
 @Injectable({ providedIn: 'root' })
 export class FailoverValidationService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
 

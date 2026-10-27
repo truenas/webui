@@ -2,8 +2,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnEmptyComponent, TnEmptyHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
+import { mockApi, mockQuery, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   CloudBackupCardComponent,
@@ -34,8 +34,8 @@ describe('DataProtectionDashboardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('pool.query', pools),
+      mockApi([
+        mockQuery('pool.query', pools),
       ]),
     ],
     imports: [TnEmptyComponent],
@@ -44,7 +44,7 @@ describe('DataProtectionDashboardComponent', () => {
   it('renders data protection cards', async () => {
     pools.splice(0, pools.length, { id: 1 } as WebUiQueryEntity<'pool.query'>);
     spectator = createComponent();
-    await settleTypedApi();
+    await settleApi();
     spectator.detectChanges();
 
     expect(spectator.query(CloudBackupCardComponent)).toExist();
@@ -58,7 +58,7 @@ describe('DataProtectionDashboardComponent', () => {
     beforeEach(async () => {
       pools.length = 0;
       spectator = createComponent();
-      await settleTypedApi();
+      await settleApi();
       spectator.detectChanges();
     });
 

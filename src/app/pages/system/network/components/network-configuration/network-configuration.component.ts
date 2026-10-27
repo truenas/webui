@@ -19,7 +19,7 @@ import {
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4Validator, ipv6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -58,7 +58,7 @@ export type UiNetworkActivityType = NetworkActivityType | SpecificActivityType;
   ],
 })
 export class NetworkConfigurationComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);

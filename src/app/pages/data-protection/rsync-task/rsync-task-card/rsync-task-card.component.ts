@@ -48,7 +48,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { RsyncTaskFormComponent } from 'app/pages/data-protection/rsync-task/rsync-task-form/rsync-task-form.component';
 import { JobTaskCardBase } from 'app/pages/data-protection/utils/job-task-card-base.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -84,7 +84,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class RsyncTaskCardComponent extends JobTaskCardBase<RsyncTaskUi> {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   protected emptyService = inject(EmptyService);

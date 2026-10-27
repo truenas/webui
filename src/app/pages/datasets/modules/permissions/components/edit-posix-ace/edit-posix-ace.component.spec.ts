@@ -15,7 +15,7 @@ import {
   IxGroupComboboxHarness,
   IxUserComboboxHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
@@ -260,7 +260,7 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
     ],
     providers: [
       DatasetAclEditorStore,
-      mockProvider(TypedApiService),
+      mockProvider(ApiService),
       mockProvider(ErrorHandlerService),
       mockProvider(ErrorParserService),
       mockProvider(DialogService),

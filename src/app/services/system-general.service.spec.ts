@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -9,22 +9,22 @@ import { SystemGeneralService } from './system-general.service';
 
 describe('SystemGeneralService', () => {
   let spectator: SpectatorService<SystemGeneralService>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createService = createServiceFactory({
     service: SystemGeneralService,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('certificate.query', []),
-        mockTypedCall('certificate.country_choices', { US: 'United States' }),
-        mockTypedCall('system.general.ui_address_choices', {}),
-        mockTypedCall('system.general.ui_v6address_choices', {}),
-        mockTypedCall('system.general.kbdmap_choices', { us: 'United States' }),
-        mockTypedCall('system.general.timezone_choices', { 'America/New_York': 'Eastern Time' }),
-        mockTypedCall('system.general.ui_certificate_choices', {}),
-        mockTypedCall('system.general.ui_httpsprotocols_choices', {}),
-        mockTypedCall('system.general.ui_restart', null),
-        mockTypedJob('directoryservices.cache_refresh', { state: JobState.Success }),
+      mockApi([
+        mockQuery('certificate.query', []),
+        mockCall('certificate.country_choices', { US: 'United States' }),
+        mockCall('system.general.ui_address_choices', {}),
+        mockCall('system.general.ui_v6address_choices', {}),
+        mockCall('system.general.kbdmap_choices', { us: 'United States' }),
+        mockCall('system.general.timezone_choices', { 'America/New_York': 'Eastern Time' }),
+        mockCall('system.general.ui_certificate_choices', {}),
+        mockCall('system.general.ui_httpsprotocols_choices', {}),
+        mockCall('system.general.ui_restart', null),
+        mockJob('directoryservices.cache_refresh', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -37,7 +37,7 @@ describe('SystemGeneralService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
 

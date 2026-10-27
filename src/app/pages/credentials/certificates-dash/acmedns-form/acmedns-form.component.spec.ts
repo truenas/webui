@@ -8,16 +8,16 @@ import { CallResponse } from '@truenas/api-client';
 import {
   TnBannerHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DnsAuthenticatorType } from 'app/enums/dns-authenticator-type.enum';
 import { SchemaType } from 'app/enums/schema.enum';
 import { DnsAuthenticator } from 'app/interfaces/dns-authenticator.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AcmednsFormComponent } from 'app/pages/credentials/certificates-dash/acmedns-form/acmedns-form.component';
 
 describe('AcmednsFormComponent', () => {
@@ -49,10 +49,10 @@ describe('AcmednsFormComponent', () => {
     providers: [
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('acme.dns.authenticator.create', null),
-        mockTypedCall('acme.dns.authenticator.update', null),
-        mockTypedCall('acme.dns.authenticator.authenticator_schemas', [{
+      mockApi([
+        mockCall('acme.dns.authenticator.create', null),
+        mockCall('acme.dns.authenticator.update', null),
+        mockCall('acme.dns.authenticator.authenticator_schemas', [{
           key: DnsAuthenticatorType.Cloudflare,
           schema: {
             properties: {
@@ -99,7 +99,7 @@ describe('AcmednsFormComponent', () => {
       let authenticator: Option[] = [];
       spectator.component.authenticatorOptions$.subscribe((options) => authenticator = options);
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.authenticator_schemas');
 
       expect(authenticator).toEqual([
         { label: 'cloudflare', value: 'cloudflare' },
@@ -140,7 +140,7 @@ describe('AcmednsFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'acme.dns.authenticator.update',
         [
           123,
@@ -177,7 +177,7 @@ describe('AcmednsFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('acme.dns.authenticator.create', [{
         name: 'name_new',
         attributes: {
           authenticator: 'cloudflare',

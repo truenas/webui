@@ -26,7 +26,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { allowedAddressesCardElements } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.elements';
 import {
   AllowedAddressesFormComponent,
@@ -63,7 +63,7 @@ interface AllowedAddressRow {
   ],
 })
 export class AllowedAddressesCardComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
