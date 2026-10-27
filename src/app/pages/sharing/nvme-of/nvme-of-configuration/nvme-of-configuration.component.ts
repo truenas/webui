@@ -18,6 +18,7 @@ import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-ch
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxRadioGroupComponent } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.component';
+import { LicensedFeatureComponent } from 'app/modules/forms/licensed-feature/licensed-feature.component';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -49,6 +50,7 @@ import { selectService } from 'app/store/services/services.selectors';
     RequiresRolesDirective,
     TestDirective,
     MatTooltip,
+    LicensedFeatureComponent,
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {

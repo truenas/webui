@@ -43,11 +43,12 @@
           ></ix-checkbox>
         }
 
-        <ix-checkbox
-          formControlName="iser"
-          [label]="'Enable iSCSI Extensions for RDMA (iSER)' | translate"
-          [tooltip]="tooltips.iser | translate"
-        ></ix-checkbox>
+        <ix-licensed-feature [locked]="form.controls.iser.disabled" [tooltip]="tooltips.iser | translate">
+          <ix-checkbox
+            formControlName="iser"
+            [label]="'Enable iSCSI Extensions for RDMA (iSER)' | translate"
+          ></ix-checkbox>
+        </ix-licensed-feature>
       </ix-fieldset>
 
       <ix-form-actions class="form-actions">

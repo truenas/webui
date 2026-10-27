@@ -1,0 +1,27 @@
+<span class="control" [tnTooltip]="locked() ? lockedMessage() : ''">
+  <ng-content></ng-content>
+</span>
+
+@if (locked()) {
+  @if (lockedMessage()) {
+    <button
+      type="button"
+      class="icon-button locked"
+      [ixTest]="keyTestId()"
+      [attr.aria-label]="lockedMessage()"
+      [tnTooltip]="lockedMessage()"
+    >
+      <tn-icon name="key-variant" library="mdi" size="sm"></tn-icon>
+    </button>
+  }
+} @else if (tooltip()) {
+  <button
+    type="button"
+    class="icon-button"
+    [ixTest]="helpTestId()"
+    [attr.aria-label]="tooltip()"
+    [tnTooltip]="tooltip()"
+  >
+    <tn-icon name="help-circle" library="mdi" size="sm"></tn-icon>
+  </button>
+}

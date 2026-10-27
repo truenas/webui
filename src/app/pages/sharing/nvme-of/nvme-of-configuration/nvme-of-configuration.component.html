@@ -25,18 +25,24 @@
           </div>
         }
 
-        <ix-checkbox
-          formControlName="ana"
-          [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
-          [matTooltip]="form.controls.ana.disabled ? (helptext.anaDisabledTooltip | translate) : ''"
-        ></ix-checkbox>
+        <ix-licensed-feature
+          [locked]="form.controls.ana.disabled"
+          [lockedTooltip]="helptext.anaDisabledTooltip | translate"
+        >
+          <ix-checkbox
+            formControlName="ana"
+            [label]="'Enable Asymmetric Namespace Access (ANA)' | translate"
+          ></ix-checkbox>
+        </ix-licensed-feature>
 
-        <ix-checkbox
-          formControlName="rdma"
-          [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
-          [tooltip]="helptext.rdmaTooltip"
-          [matTooltip]="form.controls.rdma.disabled ? (helptext.rdmaDisabledTooltip | translate) : ''"
-        ></ix-checkbox>
+        <!-- `rdma.capable_protocols` folds the Enterprise license into its answer, so the UI can't tell a
+             missing license from missing hardware: the locked state shows the full requirement text. -->
+        <ix-licensed-feature [locked]="form.controls.rdma.disabled" [tooltip]="helptext.rdmaTooltip | translate">
+          <ix-checkbox
+            formControlName="rdma"
+            [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
+          ></ix-checkbox>
+        </ix-licensed-feature>
       </ix-fieldset>
 
       <ix-form-actions>
