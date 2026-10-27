@@ -11,7 +11,7 @@ import {
 } from 'ngx-webstorage';
 import {
   BehaviorSubject, firstValueFrom,
-  of, Subject,
+  of, Subject, throwError,
 } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -305,6 +305,18 @@ describe('AuthService', () => {
 
       await expect(firstValueFrom(spectator.service.logout())).resolves.toBeUndefined();
       expect(client.connection.sent).toContainEqual(expect.objectContaining({ method: 'auth.logout' }));
+    });
+
+    it('still signs out when the session cannot be logged out on the appliance', async () => {
+      const warn = jest.spyOn(console, 'warn').mockImplementation();
+      // The authenticator has already dropped the session when this fails; only the acknowledgement is lost.
+      jest.spyOn(client.authenticator, 'logout').mockReturnValue(throwError(() => new Error('socket gone')));
+
+      await expect(firstValueFrom(spectator.service.logout())).resolves.toBeUndefined();
+
+      expect(mockWsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+      expect(await firstValueFrom(spectator.service.user$)).toBeNull();
+      expect(warn).toHaveBeenCalledWith('Session logout was not acknowledged', expect.anything());
     });
   });
 
