@@ -38,7 +38,7 @@ export class DuplicateCallTrackerService {
    * Tracks an API call and logs a warning if a duplicate call (same method and params)
    * was made within the configured time window.
    */
-  trackCall(method: string, params?: unknown[]): void {
+  trackCall(method: string, params?: unknown): void {
     if (!this.enabled) {
       return;
     }
@@ -79,8 +79,8 @@ export class DuplicateCallTrackerService {
     });
   }
 
-  private hashParams(params?: unknown[]): string {
-    if (!params || params.length === 0) {
+  private hashParams(params?: unknown): string {
+    if (params === undefined || (Array.isArray(params) && params.length === 0)) {
       return '';
     }
     try {
@@ -96,7 +96,7 @@ export class DuplicateCallTrackerService {
       });
     } catch {
       // Fallback for non-serializable values
-      return `[NonSerializable:${params.length}]`;
+      return `[NonSerializable:${Array.isArray(params) ? params.length : typeof params}]`;
     }
   }
 }

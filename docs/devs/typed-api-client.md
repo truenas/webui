@@ -337,8 +337,11 @@ Once most call sites are typed, move what still depends on the legacy socket:
 - **Debug panel and mocks.** Done (NAS-144008), on the connection seam rather
   than a client hook — see gap 7 for the one path it cannot reach. The
   duplicate-call warning moved there too: `DuplicateCallTrackerService` lives in
-  the debug panel and `interceptConnection` feeds it every request frame, so it
-  sees both clients' calls rather than only `ApiService`'s.
+  the debug panel, and every `TypedApiService` request verb reports itself to it
+  as it is called, before waiting for the session. That keeps the warning's
+  stacks pointing at the caller (at the connection they would show only the
+  client's internals) and keeps it on in every non-production build, whether
+  or not the panel is enabled.
 
 ### Phase 3 — remove the legacy client
 

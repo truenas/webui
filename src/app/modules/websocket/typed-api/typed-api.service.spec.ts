@@ -1,4 +1,4 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { JobState } from '@truenas/api-client';
 import {
   createFakeClient, fakeApiError, fakeJob, FakeTrueNasClient, withSpies,
@@ -7,6 +7,7 @@ import { defaultIfEmpty, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -31,6 +32,7 @@ describe('TypedApiService', () => {
         provide: WebSocketStatusService,
         useFactory: () => wsStatus,
       },
+      mockProvider(DuplicateCallTrackerService),
     ],
   });
 
@@ -73,6 +75,21 @@ describe('TypedApiService', () => {
 
       client.authenticator.authenticated$.next(false);
       expect(wsStatus.setSessionStatus).toHaveBeenLastCalledWith(false);
+    });
+  });
+
+  describe('duplicate call tracking', () => {
+    it('reports each request as it is made, before the session is up, so the stack names the caller', () => {
+      const duplicates = spectator.inject(DuplicateCallTrackerService);
+
+      spectator.service.call('alert.dismiss', ['uuid-1']).subscribe();
+      spectator.service.query('user.query', [['id', '=', 1]]).subscribe();
+      spectator.service.job('pool.dataset.export_key', ['tank/enc']).subscribe();
+
+      expect(duplicates.trackCall).toHaveBeenCalledWith('alert.dismiss', ['uuid-1']);
+      expect(duplicates.trackCall).toHaveBeenCalledWith('user.query', [[['id', '=', 1]]]);
+      expect(duplicates.trackCall).toHaveBeenCalledWith('pool.dataset.export_key', ['tank/enc']);
+      expect(sentMethods()).toHaveLength(0);
     });
   });
 
