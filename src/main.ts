@@ -62,7 +62,6 @@ import { chunkReloadKey, handleChunkLoadError } from 'app/helpers/handle-chunk-l
 import { WINDOW, getWindow } from 'app/helpers/window.helper';
 import { IcuMissingTranslationHandler } from 'app/modules/language/translations/icu-missing-translation-handler';
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
@@ -196,7 +195,6 @@ bootstrapApplication(AppComponent, {
         } catch { /* sessionStorage may be unavailable */ }
       });
     }),
-    ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideRouter(

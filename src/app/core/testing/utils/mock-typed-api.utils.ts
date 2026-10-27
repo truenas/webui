@@ -14,7 +14,7 @@ type D = WebUiApiDirectory;
 export type MockTypedApiResponse = (api: MockTypedApiService) => void;
 
 /**
- * Sugar for mocking `TypedApiService`, the typed counterpart of `mockApi()`.
+ * Sugar for mocking `TypedApiService`.
  *
  * Behind it is a real `@truenas/api-client` on the package's fake connection
  * (`@truenas/api-client/testing`), so the real dispatch, job correlation and

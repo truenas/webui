@@ -17,10 +17,10 @@ type Messages = ReturnType<Connection['messages']>;
  * frame written is logged and checked against the enabled mock configs, every
  * frame read is logged, and mocked answers are read as if the appliance sent them.
  *
- * Done on the connection's own `send` and `messages()` because that is where both
- * clients meet: `ApiService`'s queue, `TypedApiService`, and the client's own
- * verbs and authenticator all write through `send` and listen on `messages()`.
- * Interception kept in any one of them would see only that one's traffic.
+ * Done on the connection's own `send` and `messages()` because that is where all
+ * traffic meets: `TypedApiService` and the client's own verbs and authenticator
+ * all write through `send` and listen on `messages()`. Interception kept in any
+ * one of them would see only that one's traffic.
  *
  * Install it last, after `limitConcurrentCalls`, so a mocked call never reaches
  * the gate: it is answered here and takes no place among the calls in flight.

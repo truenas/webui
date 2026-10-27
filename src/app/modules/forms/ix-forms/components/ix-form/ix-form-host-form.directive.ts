@@ -90,7 +90,7 @@ implements SidePanelHostForm<R> {
   private readonly loadedSnapshot = signal<object | null>(null);
 
   // The arguments of the most recent loadFormConfig call, replayed by retryLoad. The observable is
-  // re-subscribed rather than rebuilt: `ApiService.call` is cold, so a fresh subscription issues a
+  // re-subscribed rather than rebuilt: `TypedApiService.call` is cold, so a fresh subscription issues a
   // fresh request.
   private lastLoad: { config$: Observable<unknown>; patch: (config: never) => void } | null = null;
 

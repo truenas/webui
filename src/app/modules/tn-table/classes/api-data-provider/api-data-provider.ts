@@ -15,9 +15,9 @@ import {
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
- * What a provider needs from an API client: `call`, with its generics erased so that both
- * `ApiService` and `TypedApiService` fit while consumers move from one to the other. The
- * provider types each response by its method `T`.
+ * What a provider needs from an API client: `call`, with its generics erased so that
+ * `TypedApiService` and spec doubles both fit. The provider types each response by its
+ * method `T`.
  */
 export interface ApiDataProviderClient {
   call(method: string, params?: unknown): Observable<unknown>;

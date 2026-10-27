@@ -721,9 +721,9 @@ describe('AuthService', () => {
       expect(await firstValueFrom(spectator.service.user$)).toBeNull();
     });
 
-    // The legacy socket carries most of the app's calls; losing it is still a
-    // reason to go back to sign-in, even while the typed session is fine.
-    it('drops the signed-in state when the legacy socket disconnects', async () => {
+    // Losing the connection is a reason to go back to sign-in, even before the
+    // session has noticed.
+    it('drops the signed-in state when the connection drops', async () => {
       await signIn();
 
       connected$().next(false);

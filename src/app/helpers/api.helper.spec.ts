@@ -3,15 +3,14 @@ import { JobState } from 'app/enums/job-state.enum';
 import {
   extractApiErrorDetails,
   isApiCallError,
-  isCollectionUpdateMessage,
   isErrorResponse,
   isFailedJob,
   isFailedJobError,
   isIncomingMessage,
-  isSuccessfulResponse, makeRequestMessage, transformApiCallErrorMessage,
+  transformApiCallErrorMessage,
 } from 'app/helpers/api.helper';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
-import { IncomingMessage, JsonRpcError, RequestMessage } from 'app/interfaces/api-message.interface';
+import { IncomingMessage, JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 
@@ -68,31 +67,6 @@ describe('isIncomingMessage', () => {
   });
 });
 
-describe('isCollectionUpdateMessage', () => {
-  it('should return true for objects that look like CollectionUpdateMessage', () => {
-    const message = {
-      jsonrpc: '2.0',
-      method: 'collection_update',
-    } as IncomingMessage;
-
-    expect(isCollectionUpdateMessage(message)).toBe(true);
-  });
-});
-
-describe('isSuccessfulResponse', () => {
-  it('should return true for objects that look like SuccessfulResponse', () => {
-    const message = {
-      jsonrpc: '2.0',
-      result: 2,
-    } as IncomingMessage;
-
-    expect(isSuccessfulResponse(message)).toBe(true);
-
-    const notMessage = {};
-    expect(isSuccessfulResponse(notMessage)).toBe(false);
-  });
-});
-
 describe('isErrorResponse', () => {
   it('should return true for objects that look like ErrorResponse', () => {
     const message = {
@@ -122,21 +96,6 @@ describe('extractApiErrorDetails', () => {
 
     expect(result).toEqual({
       errname: ApiErrorName.NotAuthenticated,
-    });
-  });
-});
-
-describe('makeRequestMessage', () => {
-  it('wraps message to be a JSON-RPC message', () => {
-    const message = {
-      id: '123',
-    } as RequestMessage;
-
-    const result = makeRequestMessage(message);
-
-    expect(result).toEqual({
-      jsonrpc: '2.0',
-      id: '123',
     });
   });
 });

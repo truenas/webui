@@ -77,7 +77,7 @@ interface StigRequirementsApiOverrides {
 }
 
 /**
- * Creates an ApiService mock with default "all requirements satisfied" values
+ * Creates an API mock with default "all requirements satisfied" values
  * that can be overridden for specific test scenarios.
  */
 function createStigRequirementsApiMock(overrides: StigRequirementsApiOverrides = {}): StigRequirementsApiMock {
@@ -891,7 +891,7 @@ describe('SystemSecurityFormComponent', () => {
       }
     };
 
-    // Minimal factory without pre-configured ApiService mocks
+    // Minimal factory without pre-configured API mocks
     const createValidationComponent = createComponentFactory({
       component: SystemSecurityFormComponent,
       imports: [ReactiveFormsModule],
@@ -904,7 +904,7 @@ describe('SystemSecurityFormComponent', () => {
           navigate: jest.fn(),
         }),
         mockAuth(),
-        // ApiService mock will be set up in each individual test
+        // API mock will be set up in each individual test
         mockProvider(TypedApiService, {
           call: jest.fn(() => of(null)),
           query: queryThroughCall(),

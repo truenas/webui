@@ -39,9 +39,9 @@ interface WaitingCall {
  * `connection` at once. The rest wait their turn, in the order they were sent.
  *
  * Done on the connection's own `send` because that is where requests meet:
- * `ApiService`'s queue, `TypedApiService`, and the client's own verbs and
- * authenticator all write through it. A limit kept by any one of them counts
- * only its own calls, and the tab's total is what middleware refuses.
+ * `TypedApiService` and the client's own verbs and authenticator all write
+ * through it. A limit kept by any one of them counts only its own calls, and
+ * the tab's total is what middleware refuses.
  *
  * Only requests count: a frame with both an `id` and a `method`. A request is
  * finished when a frame with its id comes back, whether or not its caller is

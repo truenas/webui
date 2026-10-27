@@ -1,6 +1,6 @@
 import { of } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
-import { ApiEventTyped } from 'app/interfaces/api-message.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { applyApiEvent } from './apply-api-event.operator';
 
@@ -10,7 +10,7 @@ describe('applyApiEvent', () => {
     const event = {
       msg: CollectionChangeType.Added,
       fields: { id: 2 } as Pool,
-    } as ApiEventTyped<'pool.query'>;
+    } as ApiEvent;
 
     applyApiEvent()(of([items, event])).subscribe((result) => {
       expect(result).toEqual([{ id: '1' }, { id: '2' }]);
@@ -22,7 +22,7 @@ describe('applyApiEvent', () => {
     const event = {
       msg: CollectionChangeType.Added,
       fields: { id: 1, name: 'pool2' } as Pool,
-    } as ApiEventTyped<'pool.query'>;
+    } as ApiEvent;
 
     applyApiEvent()(of([items, event])).subscribe((result) => {
       expect(result).toEqual([{ id: 1, name: 'pool2' }]);
@@ -34,7 +34,7 @@ describe('applyApiEvent', () => {
     const event = {
       msg: CollectionChangeType.Removed,
       id: 1,
-    } as ApiEventTyped<'pool.query'>;
+    } as ApiEvent;
 
     applyApiEvent()(of([items, event])).subscribe((result) => {
       expect(result).toEqual([{ id: 2, name: 'pool2' }]);

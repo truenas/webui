@@ -1,7 +1,5 @@
-import { SubscribableEvent } from '@truenas/api-client';
 import { CollectionChangeType, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
  * General documentation about message format: https://www.jsonrpc.org/specification
@@ -64,12 +62,3 @@ export interface ApiEvent<T = unknown> {
     | CollectionChangeType.Removed;
   // TODO: | IncomingApiMessageType.NoSub
 }
-
-export type ApiEventMethod = SubscribableEvent<WebUiApiDirectory>;
-
-/**
- * An event from collection `M`, as the legacy `ApiService` hands it on. Its fields are left to the
- * caller to type: `TypedApiService.subscribe` types them per kind of change, with the client's `EventUnion`.
- */
-// eslint-disable-next-line unused-imports/no-unused-vars -- `M` names the collection at call sites.
-export type ApiEventTyped<M extends ApiEventMethod = ApiEventMethod, T = unknown> = ApiEvent<T>;

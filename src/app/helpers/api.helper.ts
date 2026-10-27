@@ -1,11 +1,6 @@
 import { isObject } from 'lodash-es';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
-import {
-  ErrorResponse,
-  RequestMessage,
-  IncomingMessage,
-  CollectionUpdateMessage, SuccessfulResponse, NotifyUnsubscribedMessage,
-} from 'app/interfaces/api-message.interface';
+import { ErrorResponse, IncomingMessage } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { AbortedJobError, ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 
@@ -45,25 +40,10 @@ export function isIncomingMessage(something: unknown): something is IncomingMess
   return isObject(something) && 'jsonrpc' in something;
 }
 
-export function isCollectionUpdateMessage(something: unknown): something is CollectionUpdateMessage {
-  return isIncomingMessage(something) && 'method' in something && something.method === 'collection_update';
-}
-
-export function isSuccessfulResponse(something: unknown): something is SuccessfulResponse {
-  return isIncomingMessage(something)
-    && 'result' in something;
-}
-
 export function isErrorResponse(something: unknown): something is ErrorResponse {
   return isIncomingMessage(something)
     && 'error' in something
     && Boolean(something.error);
-}
-
-export function isNotifyUnsubscribedMessage(something: unknown): something is NotifyUnsubscribedMessage {
-  return isIncomingMessage(something)
-    && 'method' in something
-    && something.method === 'notify_unsubscribed';
 }
 
 /**
@@ -75,13 +55,6 @@ export function extractApiErrorDetails(someError: unknown): ApiErrorDetails | un
   }
 
   return undefined;
-}
-
-export function makeRequestMessage(message: Pick<RequestMessage, 'id' | 'method' | 'params'>): RequestMessage {
-  return {
-    jsonrpc: '2.0',
-    ...message,
-  };
 }
 
 /**

@@ -1,5 +1,4 @@
 import baseConfig from '@truenas/common-typescript/eslint.config';
-import { legacyApiImportPatterns, migratedApiFilePatterns } from './scripts/api-migration-areas.mjs';
 
 // ESLint replaces a rule's options wholesale rather than merging them, so the base
 // config's `no-restricted-syntax` entries have to be carried over explicitly. Read them
@@ -75,37 +74,6 @@ const projectOverrides = {
     'no-restricted-imports': [
       'error',
       { patterns: restrictedImportPatterns, paths: restrictedImportPaths },
-    ],
-  },
-};
-
-/**
- * The regression half of the typed-API-client migration (`docs/devs/typed-api-client.md`).
- *
- * An area that has finished moving to `TypedApiService` is pinned: nothing below it may import
- * the legacy `ApiService` or its `mockApi` spec double again. The migration runs for months
- * across hundreds of PRs, so "finished" areas are otherwise only as finished as the next author
- * happens to notice — and the legacy import is one line that compiles and passes its own spec.
- *
- * The paths come from `scripts/api-migration-areas.mjs`, which `yarn check-api-migration` reads
- * as well: that script fails the build when an entry here has gone stale, and when an area has
- * finished migrating without being added, so the list cannot quietly stop covering the repo.
- */
-const migratedApiOverrides = {
-  files: migratedApiFilePatterns(),
-  rules: {
-    'no-restricted-imports': [
-      'error',
-      {
-        patterns: [
-          ...restrictedImportPatterns,
-          {
-            group: legacyApiImportPatterns,
-            message: 'This area has finished migrating to the typed API client. Inject `TypedApiService` (app/modules/websocket/typed-api/typed-api.service) and script specs with `mockTypedApi()`; see docs/devs/typed-api-client.md. If the legacy client is genuinely needed here again, remove the path from `migratedApiPaths` in scripts/api-migration-areas.mjs and say why.',
-          },
-        ],
-        paths: restrictedImportPaths,
-      },
     ],
   },
 };
@@ -208,7 +176,6 @@ export default [
   },
   ...baseConfig,
   projectOverrides,
-  migratedApiOverrides,
   templateOverrides,
   specOverrides,
   e2eOverrides,
