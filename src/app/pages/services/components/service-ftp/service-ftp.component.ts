@@ -7,7 +7,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { CallParams } from '@truenas/api-client';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnInputComponent, TnSelectComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
@@ -15,10 +15,8 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextServiceFtp } from 'app/helptext/services/components/service-ftp';
 import { IxPermissionsComponent } from 'app/modules/forms/controls/ix-permissions/ix-permissions.component';
 import { WithManageCertificatesLinkComponent } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -98,19 +96,20 @@ type FtpFormValue = ReturnType<ReturnType<typeof createFtpForm>['getRawValue']>;
   styleUrls: ['./service-ftp.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     IxFormComponent,
     ReactiveFormsModule,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
     TnCheckboxComponent,
-    IxExplorerComponent,
     IxPermissionsComponent,
     WithManageCertificatesLinkComponent,
     TnSelectComponent,
     TranslateModule,
     AsyncPipe,
-    ExplorerCreateDatasetComponent,
   ],
 })
 export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> implements OnInit {

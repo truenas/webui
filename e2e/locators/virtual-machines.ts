@@ -115,7 +115,7 @@ export const virtualMachinesLocators = {
     /** "Source Disk": the path of the disk being exported, `/dev/zvol/…` for a zvol. */
     sourceDisk: '[data-test="text-source-disk"]',
     /**
-     * "Destination Directory". `ix-explorer` renders a `tn-file-picker`, whose inner `<input>`
+     * "Destination Directory". A `tn-file-picker`, whose inner `<input>`
      * takes the control name, `destinationDir`. Typable, so the path goes in directly.
      */
     destinationDir: '[data-test="input-destination-dir"]',
@@ -238,7 +238,7 @@ export const virtualMachinesLocators = {
     /** "Import Image". Unticked by default. Ticking it shows {@link imageSource}. */
     importImage: '[data-test="checkbox-import-image"]',
     /**
-     * "Image Source", an `ix-explorer` that lists files too. Its `tn-file-picker`'s inner `<input>`
+     * "Image Source", a `tn-file-picker` that lists files too. Its inner `<input>`
      * takes the control name, `image_source`, and is typable.
      */
     imageSource: '[data-test="input-image-source"]',

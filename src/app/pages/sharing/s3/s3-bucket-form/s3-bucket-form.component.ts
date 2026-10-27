@@ -10,7 +10,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective, TnTooltipDirective,
-  type TnSelectOption,
+  type TnSelectOption, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, startWith, switchMap,
@@ -46,7 +46,7 @@ import {
   S3AuditMask, S3Bucket, S3BucketCreate, toS3Bucket, toS3BucketCreateArgs, toS3BucketUpdateArgs,
 } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -75,6 +75,8 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
   styleUrls: ['./s3-bucket-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     PremiumFeatureDirective,
     RequiresRolesDirective,
     ReactiveFormsModule,
@@ -87,7 +89,6 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     TnCheckboxComponent,
     TnChipInputComponent,
     TnSelectComponent,
-    IxExplorerComponent,
     IxUserComboboxComponent,
     S3GrantsListComponent,
     TranslateModule,

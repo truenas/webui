@@ -4,14 +4,14 @@ import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnStepperNextDirective,
-  TnStepperPreviousDirective,
+  TnStepperPreviousDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -23,10 +23,11 @@ import { FilesystemService } from 'app/services/filesystem.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     TnFormSectionComponent,
     ReactiveFormsModule,
     TnFormFieldComponent,
-    IxExplorerComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     FormActionsComponent,

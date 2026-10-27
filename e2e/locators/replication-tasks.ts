@@ -11,7 +11,7 @@
  *
  * The wizard is two steps in one side panel, with no panel footer: each step
  * owns its buttons. Its controls declare their `testId`s, and its two
- * `ix-explorer`s render a `tn-file-picker` whose inner `<input>` takes the
+ * The `tn-file-picker`s' inner `<input>` takes the
  * control name.
  *
  * Edit opens a different component, `ix-replication-form`: one long form in five
@@ -227,7 +227,7 @@ export const replicationTaskLocators = {
     /** `<tn-dialog-shell testId="replication-restore">`. What to wait on before acting on it. */
     title: '[data-test="dialog-title-replication-restore"]',
     name: '[data-test="input-name"]',
-    /** Where the restored data goes. An `ix-explorer` in dataset names, so a typed value is stored verbatim. */
+    /** Where the restored data goes. A `tn-file-picker` in dataset names, so a typed value is stored verbatim. */
     destination: '[data-test="input-target-dataset"]',
     /** Disabled until the name and the destination are both filled. */
     restore: '[data-test="button-restore"]',

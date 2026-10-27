@@ -5,13 +5,13 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnBannerComponent, TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent,
-  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
+  TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult, ixFormMinSubmitFeedbackMs,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -58,12 +58,13 @@ interface ExportDiskFormValue {
     { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
   ],
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     AsyncPipe,
     TnDialogShellComponent,
     TnBannerComponent,
     ReactiveFormsModule,
     IxFormComponent,
-    IxExplorerComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,

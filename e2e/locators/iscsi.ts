@@ -61,7 +61,7 @@ export const iscsiLocators = {
     disk: '[data-test="select-disk"]',
     diskCreateNew: '[data-test="option-disk-create-new"]',
     /**
-     * Where the new zvol goes. `ix-explorer` renders a `tn-file-picker`, whose inner
+     * Where the new zvol goes. A `tn-file-picker`, whose inner
      * `<input>` takes the control name, and it takes a `/mnt/…` path.
      */
     dataset: '[data-test="input-dataset"]',
@@ -261,7 +261,7 @@ export const iscsiLocators = {
     diskZvolOption: (zvol: string): string => `[data-test^="option-disk-${kebabTestSegment(zvol)}-"]`,
 
     /**
-     * "Path to the Extent", for a File extent. `ix-explorer` renders a
+     * "Path to the Extent", for a File extent. It is a
      * `tn-file-picker` whose inner `<input>` takes the control name.
      */
     path: '[data-test="input-path"]',

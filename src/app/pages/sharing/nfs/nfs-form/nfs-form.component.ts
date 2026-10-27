@@ -8,7 +8,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent,
+  TnInputComponent, TnSelectComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   Observable, catchError, filter, map, of, switchMap,
@@ -22,8 +22,8 @@ import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextSharingNfs } from 'app/helptext/sharing';
 import { NfsShare } from 'app/interfaces/nfs-share.interface';
 import { IxIpInputWithNetmaskComponent } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { ExplorerCreateDatasetComponent, ExplorerDatasetProperties } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe, ExplorerDatasetProperties } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -56,6 +56,9 @@ export interface NfsFormData {
   templateUrl: './nfs-form.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     TnFormListComponent,
     TnFormListItemComponent,
     ReactiveFormsModule,
@@ -67,8 +70,6 @@ export interface NfsFormData {
     TnSelectComponent,
     IxUserComboboxComponent,
     IxGroupComboboxComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     IxIpInputWithNetmaskComponent,
     TranslateModule,
   ],

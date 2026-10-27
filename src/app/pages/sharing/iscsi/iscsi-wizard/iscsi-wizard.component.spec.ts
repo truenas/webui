@@ -5,9 +5,13 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnChipInputHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
+  TnButtonHarness,
+  TnChipInputHarness,
+  TnFormListHarness,
+  TnInputHarness,
+  TnSelectHarness,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
@@ -24,10 +28,6 @@ import { newOption } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { fillControlValues, indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -52,7 +52,6 @@ describe('IscsiWizardComponent', () => {
       TargetWizardStepComponent,
       ExtentWizardStepComponent,
       ProtocolOptionsWizardStepComponent,
-      MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
       mockAuth(),
@@ -127,8 +126,8 @@ describe('IscsiWizardComponent', () => {
   const getTnChipInput = (name: string): Promise<TnChipInputHarness> => loader.getHarness(
     TnChipInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getDatasetExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: '[formControlName="dataset"]' }),
+  const getDatasetExplorer = (): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: '[formControlName="dataset"]' }),
   );
 
   /**

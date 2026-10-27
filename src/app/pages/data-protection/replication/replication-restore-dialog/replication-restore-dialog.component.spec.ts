@@ -3,11 +3,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
@@ -53,7 +52,7 @@ describe('ReplicationRestoreDialogComponent', () => {
     const nameInput = await loader.getHarness(TnInputHarness);
     await nameInput.setValue('Reverse task');
 
-    const destinationExplorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="target_dataset"]' }));
+    const destinationExplorer = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="target_dataset"]' }));
     await destinationExplorer.setValue('/mnt/dataset');
 
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));

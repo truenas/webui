@@ -6,7 +6,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent, TnTestIdDirective,
+  TnInputComponent, TnSelectComponent, TnTestIdDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   combineLatest,
@@ -33,10 +33,8 @@ import { DetailsItemComponent } from 'app/modules/details-table/details-item/det
 import { DetailsTableComponent } from 'app/modules/details-table/details-table.component';
 import { IxPermissionsComponent } from 'app/modules/forms/controls/ix-permissions/ix-permissions.component';
 import { EditableComponent } from 'app/modules/forms/editable/editable.component';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxGroupComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-combobox.component';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -54,6 +52,9 @@ import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-direct
   templateUrl: './additional-details-section.component.html',
   styleUrl: './additional-details-section.component.scss',
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormSectionComponent,
@@ -65,12 +66,10 @@ import { DirectoryQueryOptions, PrincipalOption } from 'app/services/user-direct
     TnTestIdDirective,
     TranslateModule,
     IxGroupComboboxComponent,
-    IxExplorerComponent,
     IxPermissionsComponent,
     DetailsTableComponent,
     DetailsItemComponent,
     EditableComponent,
-    ExplorerCreateDatasetComponent,
   ],
   providers: [
     SudoCommandsValidatorService,

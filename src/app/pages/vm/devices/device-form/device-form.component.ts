@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit,
-  inject, input, viewChild,
+  inject, input, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -10,9 +10,22 @@ import {
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnAutocompleteComponent, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnFormErrorsComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
-  TnSelectComponent, TnTestIdDirective,
+  InputType,
+  TnAutocompleteComponent,
+  TnBannerComponent,
+  TnButtonComponent,
+  TnCheckboxComponent,
+  TnFormErrorsComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnRadioComponent,
+  TnRadioGroupComponent,
+  TnSelectComponent,
+  TnTestIdDirective,
+  TnFilePickerComponent,
+  FileSystemItem,
+  FilePickerSelection,
 } from '@truenas/ui-components';
 import { BehaviorSubject, Observable, forkJoin, of, shareReplay } from 'rxjs';
 import { catchError, filter, map, switchMap, tap } from 'rxjs/operators';
@@ -36,8 +49,8 @@ import {
   toVmDevice, VmDevice, VmDeviceUpdate, VmDiskDevice, VmDisplayDevice,
 } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -69,6 +82,9 @@ export interface DeviceFormData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     AsyncPipe,
     ReactiveFormsModule,
     IxFormComponent,
@@ -79,8 +95,6 @@ export interface DeviceFormData {
     TnCheckboxComponent,
     TnRadioComponent,
     TnRadioGroupComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     RequiresRolesDirective,
     TnButtonComponent,
     TnFormErrorsComponent,
@@ -165,7 +179,8 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   existingDevice: VmDevice;
   private hostData: DeviceFormData;
 
-  readonly rawFileExplorer = viewChild<IxExplorerComponent>('rawFileExplorer');
+  /** The item last picked in the raw file picker, with `path` as the form holds it. */
+  private readonly rawFileItem = signal<FileSystemItem | null>(null);
 
   typeControl = new FormControl(VmDeviceType.Cdrom, Validators.required);
   orderControl = new FormControl(null as number | null);
@@ -194,7 +209,7 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   });
 
   rawFileForm = this.formBuilder.group({
-    path: ['', [Validators.required, this.fileValidator.fileIsSelectedInExplorer(this.rawFileExplorer)]],
+    path: ['', [Validators.required, this.fileValidator.fileIsSelected(this.rawFileItem)]],
     sectorsize: [0],
     type: [null as VmDiskMode | null],
     // `tn-input` in `InputType.Size` mode emits the parsed byte count (or null for empty /
@@ -538,29 +553,37 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   }
 
   /**
-   * Tracks when a file is selected from the explorer and updates the exists field.
-   * - Sets exists to true when a file is selected from the tree
+   * Tracks what was picked in the raw file picker and updates the exists field.
+   * - Sets exists to true when a file is selected from the listing
    * - Sets exists to false when a directory is selected or path is cleared
    * - Does not update exists when path is manually typed (handled by shouldIncludeExistsField)
+   *
+   * Runs on the picker's `itemSelectionChange`, which follows the control's value change, so the
+   * path is revalidated here once the item behind it is known.
    */
+  protected onRawFileSelection({ value, items }: FilePickerSelection): void {
+    const paths = [value].flat();
+    const lastItem = items[items.length - 1];
+    // Items carry the picker's absolute path; keep the one the form holds.
+    const selectedItem = lastItem ? { ...lastItem, path: paths[paths.length - 1] } : null;
+    this.rawFileItem.set(selectedItem);
+
+    if (selectedItem?.type === 'file') {
+      // User selected an existing file from the listing
+      this.rawFileForm.patchValue({ exists: true }, { emitEvent: false });
+    } else if (selectedItem) {
+      // User selected a directory or dataset - reset exists
+      this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
+    } else if (!this.rawFileForm.value.path) {
+      // Path was cleared - reset exists
+      this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
+    }
+    // Note: if no item was listed (manual typing), don't update exists here
+
+    this.rawFileForm.controls.path.updateValueAndValidity();
+  }
+
   setupRawFileExistsTracking(): void {
-    this.rawFileForm.controls.path.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      const explorer = this.rawFileExplorer();
-      const selectedItem = explorer?.lastSelectedItem();
-
-      if (selectedItem?.type === 'file') {
-        // User selected an existing file from the tree
-        this.rawFileForm.patchValue({ exists: true }, { emitEvent: false });
-      } else if (selectedItem) {
-        // User selected a directory or dataset - reset exists
-        this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
-      } else if (!this.rawFileForm.value.path) {
-        // Path was cleared - reset exists
-        this.rawFileForm.patchValue({ exists: false }, { emitEvent: false });
-      }
-      // Note: if no node selected (manual typing), don't update exists here
-    });
-
     // set up a subscription that updates the *path field's* validity upon changing the size field, since
     // if the user were to submit a nonexistent path without a size, (which is allowed) it would affect
     // the path field with an API error asking the user to provide the size. so, providing the size should
@@ -592,8 +615,7 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
       return true;
     }
 
-    const explorer = this.rawFileExplorer();
-    const selectedItem = explorer?.lastSelectedItem();
+    const selectedItem = this.rawFileItem();
     const hasSize = !!this.rawFileForm.value.size;
 
     // User selected an existing file from the tree

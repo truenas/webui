@@ -5,8 +5,17 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnDialog, TnFormFieldHarness,
-  TnFormListHarness, TnInputHarness, TnSelectHarness, TnTooltipDirective,
+  TnAutocompleteHarness,
+  TnButtonHarness,
+  TnCheckboxHarness,
+  TnChipInputHarness,
+  TnDialog,
+  TnFormFieldHarness,
+  TnFormListHarness,
+  TnInputHarness,
+  TnSelectHarness,
+  TnTooltipDirective,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -19,7 +28,6 @@ import {
 import { ServiceName } from 'app/enums/service-name.enum';
 import { S3Bucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
@@ -78,8 +86,8 @@ describe('S3BucketFormComponent', () => {
     locked: false,
   } as S3Bucket;
 
-  const getParentDatasetExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: '[formControlName="parent_dataset"]' }),
+  const getParentDatasetExplorer = (): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: '[formControlName="parent_dataset"]' }),
   );
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),

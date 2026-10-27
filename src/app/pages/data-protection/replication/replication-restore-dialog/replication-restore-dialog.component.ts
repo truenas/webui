@@ -3,14 +3,14 @@ import { ChangeDetectionStrategy, Component, inject, viewChild } from '@angular/
 import { NonNullableFormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult, ixFormMinSubmitFeedbackMs,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -35,12 +35,13 @@ interface ReplicationRestoreFormValue {
     { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
   ],
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     TnDialogShellComponent,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormFieldComponent,
     TnInputComponent,
-    IxExplorerComponent,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,

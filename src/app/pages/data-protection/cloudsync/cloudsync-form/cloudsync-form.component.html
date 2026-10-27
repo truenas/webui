@@ -61,10 +61,12 @@
           [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
         >
-          <ix-explorer
+          <tn-file-picker
             formControlName="path_destination"
-            [nodeProvider]="fileNodeProvider"
-          ></ix-explorer>
+            [source]="fileNodeProvider | filePickerSource"
+            [openOnClick]="true"
+            [allowFreeText]="true"
+          ></tn-file-picker>
         </tn-form-field>
       }
       @if (form.controls.path_source.enabled) {
@@ -73,11 +75,13 @@
           [tooltip]="helptext.pathTooltip | translate"
           [required]="true"
         >
-          <ix-explorer
+          <tn-file-picker
             formControlName="path_source"
-            [multiple]="true"
-            [nodeProvider]="fileNodeProvider"
-          ></ix-explorer>
+            [source]="fileNodeProvider | filePickerSource"
+            [multiSelect]="true"
+            [openOnClick]="true"
+            [allowFreeText]="true"
+          ></tn-file-picker>
         </tn-form-field>
       }
     </tn-form-section>
@@ -141,12 +145,13 @@
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
         >
-          <ix-explorer
+          <tn-file-picker
             formControlName="folder_destination"
-            [rootNodes]="slashRootNode"
+            [source]="bucketNodeProvider | filePickerSource : slashRootNode"
             [readonly]="!hasRequiredRoles()"
-            [nodeProvider]="bucketNodeProvider"
-          ></ix-explorer>
+            [openOnClick]="true"
+            [allowFreeText]="true"
+          ></tn-file-picker>
         </tn-form-field>
       }
       @if (form.controls.folder_source.enabled) {
@@ -154,13 +159,14 @@
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
         >
-          <ix-explorer
+          <tn-file-picker
             formControlName="folder_source"
-            [rootNodes]="slashRootNode"
+            [source]="bucketNodeProvider | filePickerSource : slashRootNode"
+            [multiSelect]="true"
             [readonly]="!hasRequiredRoles()"
-            [multiple]="true"
-            [nodeProvider]="bucketNodeProvider"
-          ></ix-explorer>
+            [openOnClick]="true"
+            [allowFreeText]="true"
+          ></tn-file-picker>
         </tn-form-field>
       }
       @if (form.controls.bucket_policy_only.enabled) {

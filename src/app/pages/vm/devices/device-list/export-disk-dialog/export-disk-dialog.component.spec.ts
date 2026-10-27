@@ -4,11 +4,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TranslateModule } from '@ngx-translate/core';
-import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnSelectHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
 import { VmDiskDevice } from 'app/interfaces/vm-device.interface';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FilesystemService } from 'app/services/filesystem.service';
 import {
   ExportDiskDialogComponent,
@@ -18,7 +16,7 @@ import {
 describe('ExportDiskDialogComponent', () => {
   let spectator: Spectator<ExportDiskDialogComponent>;
   let loader: HarnessLoader;
-  let destinationDir: IxExplorerHarness;
+  let destinationDir: TnFilePickerHarness;
   const mockDevice: VmDiskDevice = {
     id: 1,
     dtype: VmDeviceType.Disk,
@@ -42,7 +40,6 @@ describe('ExportDiskDialogComponent', () => {
     component: ExportDiskDialogComponent,
     imports: [
       ReactiveFormsModule,
-      IxExplorerComponent,
       TranslateModule.forRoot(),
     ],
     providers: [
@@ -60,7 +57,7 @@ describe('ExportDiskDialogComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    destinationDir = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="destinationDir"]' }));
+    destinationDir = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="destinationDir"]' }));
   });
 
   it('shows the source disk path', () => {

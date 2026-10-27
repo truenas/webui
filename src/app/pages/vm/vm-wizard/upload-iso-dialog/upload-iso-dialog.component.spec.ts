@@ -4,11 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { HttpEvent, HttpResponse } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { of, Subject, throwError } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
@@ -60,7 +59,7 @@ describe('UploadIsoDialogComponent', () => {
   });
 
   async function setPath(path: string): Promise<void> {
-    const explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="path"]' }));
+    const explorer = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
     await explorer.setValue(path);
     spectator.detectChanges();
   }

@@ -91,7 +91,7 @@ export const nvmeOfLocators = {
 
   namespaceForm: {
     /**
-     * The zvol picker. The form opens on the Zvol type, and `ix-explorer` renders a
+     * The zvol picker. The form opens on the Zvol type, and it is a
      * `tn-file-picker` whose inner `<input>` takes the control name. It takes a
      * `/dev/zvol/…` path, which the form rewrites to middleware's `zvol/…`.
      */

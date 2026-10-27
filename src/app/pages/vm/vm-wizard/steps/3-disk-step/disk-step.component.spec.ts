@@ -3,14 +3,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness, TnStepperComponent,
+  TnCheckboxHarness,
+  TnFormFieldHarness,
+  TnInputHarness,
+  TnRadioHarness,
+  TnSelectHarness,
+  TnStepperComponent,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { VmDeviceType, VmDiskMode } from 'app/enums/vm.enum';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { ImageVirtualSizeValidatorService } from 'app/pages/vm/utils/image-virtual-size-validator.service';
@@ -162,7 +167,7 @@ describe('DiskStepComponent', () => {
       });
 
       const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Image Source' }));
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="image_source"]' }));
+      const explorer = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="image_source"]' }));
       expect(field).toBeTruthy();
       expect(explorer).toBeTruthy();
     });

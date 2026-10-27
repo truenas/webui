@@ -6,7 +6,7 @@ import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
-  TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent,
+  TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { Observable, map } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
@@ -17,8 +17,8 @@ import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate, toRsyncTask } from 'app/interfaces/rsync-task.interface';
 import { SshCredentialsSelectComponent } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -39,6 +39,9 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./rsync-task-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -48,8 +51,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TnCheckboxComponent,
     TnChipInputComponent,
     TnSlideToggleComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     IxUserComboboxComponent,
     SshCredentialsSelectComponent,
     SchedulerComponent,

@@ -4,15 +4,20 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness,
+  TnChipInputHarness,
+  TnInputHarness,
+  TnRadioHarness,
+  TnSelectHarness,
+  TnFilePickerHarness,
+  TnFilePickerComponent,
 } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { LanguageService } from 'app/modules/language/language.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
@@ -179,16 +184,17 @@ describe('SourceSectionComponent', () => {
   });
 
   describe('explorer', () => {
-    it('uses tree node provider from input in explorer component', () => {
-      const sourceNodeProvider = jest.fn();
+    it('lists through the tree node provider from input', async () => {
+      const sourceNodeProvider = jest.fn(() => of([]));
       spectator.setInput('nodeProvider', sourceNodeProvider);
 
-      const explorer = spectator.query(IxExplorerComponent)!;
-      expect(explorer.nodeProvider()).toBe(sourceNodeProvider);
+      const picker = spectator.query(TnFilePickerComponent)!;
+      await picker.source()!.callbacks!.getChildren!('/');
+      expect(sourceNodeProvider).toHaveBeenCalled();
     });
 
     it('disables explorer when nodeProvider is not provided', async () => {
-      const explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="source_datasets"]' }));
+      const explorer = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="source_datasets"]' }));
       spectator.setInput('nodeProvider', null);
       expect(await explorer.isDisabled()).toBe(true);
 

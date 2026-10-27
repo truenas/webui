@@ -4,7 +4,7 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnChipInputComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,
-  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -14,9 +14,9 @@ import { SnapshotNamingOption, snapshotNamingOptionNames } from 'app/enums/snaps
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextReplication } from 'app/helptext/data-protection/replication/replication';
 import { ReplicationCreate, ReplicationTask } from 'app/interfaces/replication-task.interface';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
@@ -35,6 +35,9 @@ import { TaskService } from 'app/services/task.service';
     PropertiesOverrideValidatorService,
   ],
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormSectionComponent,
@@ -45,9 +48,7 @@ import { TaskService } from 'app/services/task.service';
     TnInputComponent,
     TnRadioComponent,
     TnRadioGroupComponent,
-    // ix-explorer / ix-scheduler have no tn-* equivalent yet.
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
+    // ix-scheduler has no tn-* equivalent yet.
     SchedulerComponent,
     TranslateModule,
   ],

@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
+import { FileSystemItem } from '@truenas/ui-components';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 
 @Injectable({
@@ -12,22 +12,15 @@ export class FileValidatorService {
   private translate = inject(TranslateService);
 
   /**
-   * validator that, given a function to retrieve the explorer component (like a signal),
-   * ensures the given explorer has a *file* selected. this is used specifically when
-   * something like a directory *must not* be selected. */
-  fileIsSelectedInExplorer(getExplorer: () => IxExplorerComponent | undefined) {
+   * validator that, given a function to retrieve the item last picked in a `tn-file-picker` (like a
+   * signal fed from its `itemSelectionChange`, with `path` in the form's value space), ensures a
+   * *file* is selected. this is used specifically when something like a directory *must not* be
+   * selected. */
+  fileIsSelected(getSelectedItem: () => FileSystemItem | null) {
     return (control: FormControl<string>): ValidationErrors | null => {
-      const explorer = getExplorer();
-
-      // if the retrieved explorer is `null` or `undefined`, then just assume validity.
-      // this prevents the form from being invalidated prior to initialization, like when the explorer
-      // may not have been created yet.
-      if (!explorer) {
-        return null;
-      }
-
+      const selectedItem = getSelectedItem();
       const path = control.value;
-      const lastSelectedPath = explorer.lastSelectedItem()?.path;
+      const lastSelectedPath = selectedItem?.path;
       const err = {
         selectionMustBeFile: true,
       };
@@ -41,7 +34,7 @@ export class FileValidatorService {
       // case: existing file or directory selected.
       if (path === lastSelectedPath) {
         // if the selected node is a file, no problems
-        if (explorer.lastSelectedItem()?.type === 'file') {
+        if (selectedItem?.type === 'file') {
           return null;
         }
 

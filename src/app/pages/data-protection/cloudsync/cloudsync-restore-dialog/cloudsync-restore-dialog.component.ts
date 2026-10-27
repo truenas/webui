@@ -6,6 +6,7 @@ import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent,
+  TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -13,8 +14,8 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { helptextCloudSync } from 'app/helptext/data-protection/cloudsync/cloudsync';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -27,6 +28,8 @@ import { FilesystemService } from 'app/services/filesystem.service';
   styleUrls: ['./cloudsync-restore-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     AsyncPipe,
     TnDialogShellComponent,
     ReactiveFormsModule,
@@ -34,7 +37,6 @@ import { FilesystemService } from 'app/services/filesystem.service';
     TnInputComponent,
     TnSelectComponent,
     TransferModeExplanationComponent,
-    IxExplorerComponent,
     FormActionsComponent,
     TnButtonComponent,
     RequiresRolesDirective,

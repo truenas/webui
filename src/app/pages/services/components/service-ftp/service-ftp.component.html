@@ -65,12 +65,14 @@
               [label]="'Path' | translate"
               [tooltip]="helptext.anonpathTooltip | translate"
             >
-              <ix-explorer
+              @let anonpathSource = treeNodeProvider | filePickerSource;
+              <tn-file-picker
                 formControlName="anonpath"
-                [nodeProvider]="treeNodeProvider"
-              >
-                <ix-explorer-create-dataset></ix-explorer-create-dataset>
-              </ix-explorer>
+                [source]="anonpathSource"
+                [createActions]="[anonpathSource | createDatasetAction]"
+                [openOnClick]="true"
+                [allowFreeText]="true"
+              ></tn-file-picker>
             </tn-form-field>
           }
 

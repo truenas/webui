@@ -21,6 +21,7 @@ import { CallResponse } from '@truenas/api-client';
 import {
   InputType, TnBannerComponent, TnFormErrorsComponent, TnCheckboxComponent, TnChipInputComponent, TnDialog,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
+  TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { endWith, Observable, of } from 'rxjs';
 import {
@@ -44,8 +45,8 @@ import {
 } from 'app/interfaces/smb-share.interface';
 import { ExplorerNodeData } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { ExplorerCreateDatasetComponent, ExplorerDatasetProperties } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe, ExplorerDatasetProperties } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -80,6 +81,9 @@ import { selectService } from 'app/store/services/services.selectors';
   styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     ReactiveFormsModule,
     IxFormComponent,
     TnFormSectionComponent,
@@ -89,8 +93,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TnCheckboxComponent,
     TnChipInputComponent,
     IxGroupChipsComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     TnFormErrorsComponent,
     TnTestIdDirective,
     TranslateModule,

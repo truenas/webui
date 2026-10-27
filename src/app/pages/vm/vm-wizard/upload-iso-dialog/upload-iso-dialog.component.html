@@ -10,12 +10,14 @@
         [tooltip]="helptext.upload_iso_path_tooltip | translate"
         [required]="true"
       >
-        <ix-explorer
+        @let pathSource = directoryNodeProvider | filePickerSource;
+        <tn-file-picker
           formControlName="path"
-          [nodeProvider]="directoryNodeProvider"
-        >
-          <ix-explorer-create-dataset></ix-explorer-create-dataset>
-        </ix-explorer>
+          [source]="pathSource"
+          [createActions]="[pathSource | createDatasetAction]"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
 
       <tn-form-field

@@ -34,14 +34,14 @@
         [tooltip]="tooltips.script | translate"
         [required]="true"
       >
-        <ix-explorer
+        @let scriptSource = treeNodeProvider | filePickerSource;
+        <tn-file-picker
           formControlName="script"
-          [nodeProvider]="treeNodeProvider"
-        >
-          @if (isNew) {
-            <ix-explorer-create-dataset></ix-explorer-create-dataset>
-          }
-        </ix-explorer>
+          [source]="scriptSource"
+          [createActions]="isNew ? [scriptSource | createDatasetAction] : []"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
       </tn-form-field>
     }
 

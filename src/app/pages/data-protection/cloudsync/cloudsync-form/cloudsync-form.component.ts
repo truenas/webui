@@ -20,7 +20,7 @@ import {
   TnInputComponent,
   TnSelectComponent,
   TnTestIdDirective,
-  TnTooltipDirective,
+  TnTooltipDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
@@ -53,8 +53,8 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import { FormSubmitEvent, IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { bwlimitValidator } from 'app/modules/forms/ix-forms/validators/bwlimit-validation/bwlimit-validation';
@@ -89,6 +89,8 @@ type FormValue = CloudSyncFormComponent['form']['value'];
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CloudCredentialService],
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     AsyncPipe,
     IxFormComponent,
     ReactiveFormsModule,
@@ -99,7 +101,6 @@ type FormValue = CloudSyncFormComponent['form']['value'];
     TnCheckboxComponent,
     TnChipInputComponent,
     TransferModeExplanationComponent,
-    IxExplorerComponent,
     TnTestIdDirective,
     TnIconComponent,
     TnTooltipDirective,

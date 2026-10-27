@@ -1,7 +1,7 @@
 /**
- * The popup of the `tn-file-picker` that every `ix-explorer` renders.
+ * The popup of a form's `tn-file-picker`.
  *
- * `ix-explorer` passes its control name to the picker as `testId`, and the
+ * The picker takes its control name as its test-id base, and the
  * picker builds every id below from that base. The base is the control name
  * kebab-cased, the same one its typable field is `input-<base>` by:
  * `folder-destination` for `folder_destination`.

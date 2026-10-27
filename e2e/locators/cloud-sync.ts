@@ -160,7 +160,7 @@ export const cloudSyncLocators = {
     /** Labelled PUSH and PULL, so `option-direction-push`. */
     directionOption: (label: string): string => `[data-test="option-direction-${kebabTestSegment(label)}"]`,
     /**
-     * The local directories a push sends. Rendered only in Push. `ix-explorer`
+     * The local directories a push sends. Rendered only in Push. The `tn-file-picker`
      * renders a `tn-file-picker` whose inner `<input>` takes the control name; in
      * multiple mode a typed value is split on commas and stored verbatim.
      */
@@ -275,7 +275,7 @@ export const cloudSyncLocators = {
     /** `<tn-dialog-shell testId="cloudsync-restore">`. What to wait on before acting on it. */
     title: '[data-test="dialog-title-cloudsync-restore"]',
     description: '[data-test="input-description"]',
-    /** Where the restored files go. A single `ix-explorer`, so a typed path is stored verbatim. */
+    /** Where the restored files go. A single `tn-file-picker`, so a typed path is stored verbatim. */
     path: '[data-test="input-path"]',
     /** Disabled until the description and the path are both filled. */
     restore: '[data-test="button-restore"]',

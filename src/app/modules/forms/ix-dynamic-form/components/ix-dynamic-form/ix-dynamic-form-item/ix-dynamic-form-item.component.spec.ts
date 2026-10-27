@@ -4,7 +4,6 @@ import { ElementRef, signal } from '@angular/core';
 import {
   FormArray, FormControl, FormGroup, ReactiveFormsModule, UntypedFormGroup,
 } from '@angular/forms';
-import { TreeComponent } from '@bugsplat/angular-tree-component';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormListComponent, TnFormListHarness,
@@ -33,7 +32,6 @@ import {
 } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untped-form-array';
 import { CustomUntypedFormField } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/classes/custom-untyped-form-field';
 import { IxDynamicFormItemComponent } from 'app/modules/forms/ix-dynamic-form/components/ix-dynamic-form/ix-dynamic-form-item/ix-dynamic-form-item.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
 
 const dynamicForm = new FormGroup({
   dict: new FormGroup({
@@ -152,7 +150,6 @@ describe('IxDynamicFormItemComponent', () => {
   beforeEach(() => {
     // TODO: Workaround for https://github.com/help-me-mom/ng-mocks/issues/8634
     MockInstance(IxCodeEditorComponent, 'inputArea', signal({} as ElementRef));
-    MockInstance(IxExplorerComponent, 'tree', signal({} as TreeComponent));
   });
 
   describe('Component rendering', () => {
@@ -268,26 +265,26 @@ describe('IxDynamicFormItemComponent', () => {
       expect(spectator.query('ix-ip-input-with-netmask')).toBeHidden();
     });
 
-    it('renders an "ix-explorer" when schema with "explorer" type is supplied', () => {
+    it('renders a "tn-file-picker" when schema with "explorer" type is supplied', () => {
       spectator = createComponent({
         props: {
           dynamicForm,
           dynamicSchema: explorerSchema,
         },
       });
-      expect(spectator.query('ix-explorer')).toBeVisible();
+      expect(spectator.query('tn-file-picker')).toBeVisible();
       const explorerField = spectator.query(TnFormFieldComponent)!;
       expect(explorerField.required()).toBe(explorerSchema.required);
       expect(explorerField.tooltip()).toBe(explorerSchema.tooltip);
 
-      expect(spectator.query('ix-explorer')).not.toBeHidden();
+      expect(spectator.query('tn-file-picker')).not.toBeHidden();
       const field = spectator.component.dynamicForm()!.controls.explorer as CustomUntypedFormField;
       if (!field.hidden$) {
         field.hidden$ = new BehaviorSubject<boolean>(false);
       }
       field.hidden$.next(true);
       spectator.detectComponentChanges();
-      expect(spectator.query('ix-explorer')).toBeHidden();
+      expect(spectator.query('tn-file-picker')).toBeHidden();
     });
 
     it('renders a "tn-form-list" when schema with "list" type is supplied', async () => {

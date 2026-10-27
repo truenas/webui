@@ -10,7 +10,7 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
-  getNamespacePathExplorer, mockExplorerCreateZvol, selectNamespaceType,
+  getNamespacePathPicker, mockCreateZvolAction, selectNamespaceType,
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/testing/namespace-form.testing';
 import {
   NamespaceFormComponent,
@@ -30,7 +30,7 @@ describe('NamespaceFormComponent', () => {
 
   const createComponent = createComponentFactory({
     component: NamespaceFormComponent,
-    overrideComponents: [mockExplorerCreateZvol()],
+    overrideComponents: [mockCreateZvolAction()],
     providers: [
       mockTypedApi([
         mockTypedCall('nvmet.namespace.create', null),
@@ -57,7 +57,7 @@ describe('NamespaceFormComponent', () => {
       spectator.component.closed.subscribe(closedSpy);
 
       await selectNamespaceType(loader, 'Existing File');
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/new-file');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank/new-file');
 
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -77,7 +77,7 @@ describe('NamespaceFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(false);
 
       await selectNamespaceType(loader, 'Existing File');
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/new-file');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank/new-file');
 
       expect(spectator.component.canSubmit()).toBe(true);
     });
@@ -97,14 +97,14 @@ describe('NamespaceFormComponent', () => {
     });
 
     it('prefills from the existing namespace', async () => {
-      expect(await (await getNamespacePathExplorer(loader)).getValue()).toBe('/mnt/tank/test-file');
+      expect(await (await getNamespacePathPicker(loader)).getValue()).toBe('/mnt/tank/test-file');
     });
 
     it('updates an existing namespace and signals success through `closed`', async () => {
       const closedSpy = jest.fn();
       spectator.component.closed.subscribe(closedSpy);
 
-      await (await getNamespacePathExplorer(loader)).setValue('/mnt/tank/updated-file');
+      await (await getNamespacePathPicker(loader)).setValue('/mnt/tank/updated-file');
 
       spectator.component.submit();
       await spectator.fixture.whenStable();

@@ -3,10 +3,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog, TnStepperComponent } from '@truenas/ui-components';
+import { TnButtonHarness, TnDialog, TnStepperComponent, TnFilePickerHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { UploadIsoDialogComponent } from 'app/pages/vm/vm-wizard/upload-iso-dialog/upload-iso-dialog.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { InstallationMediaStepComponent } from './installation-media-step.component';
@@ -14,7 +13,7 @@ import { InstallationMediaStepComponent } from './installation-media-step.compon
 describe('InstallationMediaStepComponent', () => {
   let spectator: Spectator<InstallationMediaStepComponent>;
   let loader: HarnessLoader;
-  let explorer: IxExplorerHarness;
+  let explorer: TnFilePickerHarness;
 
   const createComponent = createComponentFactory({
     component: InstallationMediaStepComponent,
@@ -39,7 +38,7 @@ describe('InstallationMediaStepComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    explorer = await loader.getHarness(IxExplorerHarness.with({ selector: '[formControlName="iso_path"]' }));
+    explorer = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="iso_path"]' }));
   });
 
   it('shows form with form field to select ISO path', async () => {

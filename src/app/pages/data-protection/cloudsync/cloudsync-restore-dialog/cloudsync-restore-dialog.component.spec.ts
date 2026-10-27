@@ -3,12 +3,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnButtonHarness, TnInputHarness, TnSelectHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   TransferModeExplanationComponent,
@@ -55,7 +54,7 @@ describe('CloudSyncRestoreDialogComponent', () => {
     // The explorer sits inside a `tn-form-field` that owns its label, so it is located by control
     // name rather than by label text.
     const pathExplorer = await loader.getHarness(
-      IxExplorerHarness.with({ selector: '[formControlName="path"]' }),
+      TnFilePickerHarness.with({ selector: '[formControlName="path"]' }),
     );
     await pathExplorer.setValue('/mnt/dir');
 

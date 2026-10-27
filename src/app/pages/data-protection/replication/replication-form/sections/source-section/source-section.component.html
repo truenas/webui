@@ -4,16 +4,15 @@
     [tooltip]="helptext.sourceDatasetsTooltip | translate"
     [required]="true"
   >
-    <ix-explorer
+    @let sourceDatasetsSource = nodeProvider() | filePickerSource : emptyRootNode;
+    <tn-file-picker
       formControlName="source_datasets"
-      [rootNodes]="emptyRootNode"
-      [multiple]="true"
-      [nodeProvider]="nodeProvider()"
-    >
-      @if (isLocal()) {
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      }
-    </ix-explorer>
+      [source]="sourceDatasetsSource"
+      [createActions]="isLocal() ? [sourceDatasetsSource | createDatasetAction] : []"
+      [multiSelect]="true"
+      [openOnClick]="true"
+      [allowFreeText]="true"
+    ></tn-file-picker>
   </tn-form-field>
   @if (!form.value.replicate) {
     <tn-form-field [tooltip]="helptext.recursiveTooltip | translate">

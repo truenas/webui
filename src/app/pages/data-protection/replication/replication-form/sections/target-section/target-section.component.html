@@ -4,15 +4,14 @@
     [tooltip]="helptext.targetDatasetTooltip | translate"
     [required]="true"
   >
-    <ix-explorer
+    @let targetDatasetSource = nodeProvider() | filePickerSource : emptyRootNode;
+    <tn-file-picker
       formControlName="target_dataset"
-      [rootNodes]="emptyRootNode"
-      [nodeProvider]="nodeProvider()"
-    >
-      @if (isLocal()) {
-        <ix-explorer-create-dataset></ix-explorer-create-dataset>
-      }
-    </ix-explorer>
+      [source]="targetDatasetSource"
+      [createActions]="isLocal() ? [targetDatasetSource | createDatasetAction] : []"
+      [openOnClick]="true"
+      [allowFreeText]="true"
+    ></tn-file-picker>
   </tn-form-field>
   <tn-form-field
     [label]="'Destination Dataset Read-only Policy' | translate"

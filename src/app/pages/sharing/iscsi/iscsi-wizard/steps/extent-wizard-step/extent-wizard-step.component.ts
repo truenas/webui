@@ -7,6 +7,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnIconComponent, TnInputComponent, TnSelectComponent,
+  TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of, switchMap } from 'rxjs';
 import { IscsiExtentType, iscsiExtentUseforMap } from 'app/enums/iscsi.enum';
@@ -15,10 +16,8 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { stepCompletedSignal } from 'app/helpers/step-completed-signal.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
 import { newOption } from 'app/interfaces/option.interface';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
@@ -29,15 +28,16 @@ import { IscsiService } from 'app/services/iscsi.service';
   styleUrls: ['./extent-wizard-step.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
-    IxExplorerComponent,
     TnIconComponent,
     TranslateModule,
-    ExplorerCreateDatasetComponent,
     AsyncPipe,
   ],
 })

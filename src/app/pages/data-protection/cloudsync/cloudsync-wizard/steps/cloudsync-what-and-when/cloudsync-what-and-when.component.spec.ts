@@ -3,14 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnDialog, TnInputHarness, TnSelectHarness, TnStepperComponent,
+  TnButtonHarness,
+  TnDialog,
+  TnInputHarness,
+  TnSelectHarness,
+  TnStepperComponent,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
 import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
@@ -56,7 +60,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     // The explorer sits inside a `tn-form-field` that owns its label, so it is located by control
     // name rather than by label text. `Direction.Pull` (the default) enables `path_destination`.
     const pathExplorer = await loader.getHarness(
-      IxExplorerHarness.with({ selector: '[formControlName="path_destination"]' }),
+      TnFilePickerHarness.with({ selector: '[formControlName="path_destination"]' }),
     );
     await pathExplorer.setValue('/mnt/gphotos');
 

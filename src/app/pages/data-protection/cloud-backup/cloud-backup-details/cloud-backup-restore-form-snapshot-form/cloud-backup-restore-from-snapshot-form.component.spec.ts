@@ -3,8 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
-import { TnInputHarness, TnRadioHarness } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { TnInputHarness, TnRadioHarness, TnFilePickerHarness } from '@truenas/ui-components';
 import { firstValueFrom, of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
@@ -17,10 +16,6 @@ import {
 } from 'app/interfaces/cloud-backup.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import {
-  ExplorerCreateDatasetComponent,
-} from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -40,7 +35,6 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
     component: CloudBackupRestoreFromSnapshotFormComponent,
     imports: [
       ReactiveFormsModule,
-      MockComponent(ExplorerCreateDatasetComponent),
     ],
     providers: [
       mockAuth(),
@@ -63,8 +57,8 @@ describe('CloudBackupRestoreFromSnapshotFormComponent', () => {
 
   // The explorers render inside a `tn-form-field` that owns their label, so they are located by
   // control name rather than through `IxFormHarness`'s label index.
-  const getExplorer = (name: string): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: `[formControlName="${name}"]` }),
+  const getExplorer = (name: string): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: `[formControlName="${name}"]` }),
   );
 
   describe('handles form', () => {

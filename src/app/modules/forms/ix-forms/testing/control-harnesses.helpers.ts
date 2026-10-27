@@ -10,8 +10,8 @@ import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/sch
 
 /**
  * The ix-* controls that still render a label row of their own, so a spec can find one by label
- * without an enclosing `tn-form-field`. `ix-permissions`, `ix-ip-input-with-netmask`,
- * `ix-code-editor` and `ix-explorer` are deliberately absent: they are bare controls now, so they
+ * without an enclosing `tn-form-field`. `ix-permissions`, `ix-ip-input-with-netmask`
+ * and `ix-code-editor` are deliberately absent: they are bare controls now, so they
  * have no label to be found by. Inside a form they are projected into a `tn-form-field` and
  * {@link TnFormControlHarness} reaches them through it; the few places that render one outside a
  * field — `job-logs-row` and the websocket debug `message-list` both show a read-only

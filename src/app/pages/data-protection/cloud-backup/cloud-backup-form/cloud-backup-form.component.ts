@@ -16,7 +16,7 @@ import {
   TnFormSectionComponent,
   TnInputComponent,
   TnSelectComponent,
-  TnTestIdDirective,
+  TnTestIdDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   Observable, debounceTime, distinctUntilChanged, filter, map, of,
@@ -34,9 +34,9 @@ import { SelectOption, newOption } from 'app/interfaces/option.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { CloudCredentialsSelectComponent } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
 import { addNewSelectOptionValueType } from 'app/modules/forms/custom-selects/ix-select-with-new-option.directive';
-import { ExplorerCreateDatasetComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/explorer-create-dataset/explorer-create-dataset.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
+import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
@@ -57,6 +57,9 @@ type FormValue = CloudBackupFormComponent['form']['value'];
   styleUrls: ['./cloud-backup-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
+    CreateDatasetActionPipe,
     AsyncPipe,
     ReactiveFormsModule,
     IxFormComponent,
@@ -66,8 +69,6 @@ type FormValue = CloudBackupFormComponent['form']['value'];
     TnSelectComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
-    IxExplorerComponent,
-    ExplorerCreateDatasetComponent,
     CloudCredentialsSelectComponent,
     SchedulerComponent,
     TnTestIdDirective,

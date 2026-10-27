@@ -18,11 +18,12 @@
       [tooltip]="helptext.targetDatasetTooltip | translate"
       [required]="true"
     >
-      <ix-explorer
+      <tn-file-picker
         formControlName="target_dataset"
-        [nodeProvider]="treeNodeProvider"
-        [rootNodes]="rootNodes"
-      ></ix-explorer>
+        [source]="treeNodeProvider | filePickerSource : rootNodes"
+        [openOnClick]="true"
+        [allowFreeText]="true"
+      ></tn-file-picker>
     </tn-form-field>
   </ix-form>
 

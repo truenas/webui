@@ -11,7 +11,7 @@ import { NavigationExtras, Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
-  TnStepperPreviousDirective,
+  TnStepperPreviousDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { find, findIndex, isArray } from 'lodash-es';
 import {
@@ -38,9 +38,9 @@ import { newOption, Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
+import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
-import { IxExplorerComponent } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.component';
-import { TreeNodeProvider } from 'app/modules/forms/ix-forms/components/ix-explorer/tree-node-provider.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
@@ -64,6 +64,8 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
   styleUrls: ['./cloudsync-what-and-when.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    TnFilePickerComponent,
+    FilePickerSourcePipe,
     AsyncPipe,
     ReactiveFormsModule,
     TnFormSectionComponent,
@@ -71,7 +73,6 @@ type FormValue = CloudSyncWhatAndWhenComponent['form']['value'];
     TnSelectComponent,
     TnInputComponent,
     TransferModeExplanationComponent,
-    IxExplorerComponent,
     SchedulerComponent,
     FormActionsComponent,
     TnButtonComponent,

@@ -6,7 +6,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnDialog, TnFormFieldHarness, TnFormListHarness, TnInputHarness,
+  TnCheckboxHarness,
+  TnDialog,
+  TnFormFieldHarness,
+  TnFormListHarness,
+  TnInputHarness,
+  TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -22,7 +27,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
-import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
@@ -66,8 +70,8 @@ describe('NfsFormComponent', () => {
   const getTnCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
   );
-  const getPathExplorer = (): Promise<IxExplorerHarness> => loader.getHarness(
-    IxExplorerHarness.with({ selector: '[formControlName="path"]' }),
+  const getPathExplorer = (): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: '[formControlName="path"]' }),
   );
   // The Advanced/Basic toggle is rendered by the side-panel host from `footerActions`.
   const clickAdvancedOptions = async (): Promise<void> => {

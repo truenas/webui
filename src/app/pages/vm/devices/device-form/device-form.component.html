@@ -31,12 +31,14 @@
             [tooltip]="helptext.cd_path_tooltip | translate"
             [required]="true"
           >
-            <ix-explorer
+            @let pathSource = fileNodeProvider | filePickerSource;
+            <tn-file-picker
               formControlName="path"
-              [nodeProvider]="fileNodeProvider"
-            >
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            </ix-explorer>
+              [source]="pathSource"
+              [createActions]="[pathSource | createDatasetAction]"
+              [openOnClick]="true"
+              [allowFreeText]="true"
+            ></tn-file-picker>
           </tn-form-field>
         }
         @case (VmDeviceType.Disk) {
@@ -182,13 +184,15 @@
             [tooltip]="helptext.raw_file_path_tooltip | translate"
             [required]="true"
           >
-            <ix-explorer
-              #rawFileExplorer
+            @let pathSource = fileNodeProvider | filePickerSource;
+            <tn-file-picker
               formControlName="path"
-              [nodeProvider]="fileNodeProvider"
-            >
-              <ix-explorer-create-dataset></ix-explorer-create-dataset>
-            </ix-explorer>
+              [source]="pathSource"
+              [createActions]="[pathSource | createDatasetAction]"
+              [openOnClick]="true"
+              [allowFreeText]="true"
+              (itemSelectionChange)="onRawFileSelection($event)"
+            ></tn-file-picker>
           </tn-form-field>
 
           <tn-form-field
