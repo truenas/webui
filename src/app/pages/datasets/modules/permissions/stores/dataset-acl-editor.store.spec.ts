@@ -80,6 +80,8 @@ describe('DatasetAclEditorStore', () => {
     spectator = createService();
     store = spectator.service;
     api = spectator.inject(TypedApiService);
+    // Saving navigates away; the testing router has no routes to match.
+    jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
   });
 
   describe('prepareSetAcl', () => {
@@ -241,7 +243,6 @@ describe('DatasetAclEditorStore', () => {
 
     beforeEach(async () => {
       router = spectator.inject(Router);
-      jest.spyOn(router, 'navigate').mockImplementation();
 
       store.loadAcl('/mnt/pool/dataset');
 

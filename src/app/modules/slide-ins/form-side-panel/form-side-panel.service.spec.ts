@@ -146,9 +146,12 @@ describe('FormSidePanelService', () => {
 
   beforeEach(() => {
     queuedFrames = [];
-    // The service defers opening across two animation frames; run them synchronously in tests.
+    // The service defers opening across two animation frames; run them on the next microtask in tests.
+    // Not synchronously: Angular's zoneless scheduler also schedules its tick through rAF, and a
+    // synchronous frame would run that tick from inside a signal write's notification, before the
+    // dirty view's ancestors are marked — swallowing the refresh.
     jest.spyOn(global, 'requestAnimationFrame').mockImplementation((callback) => {
-      callback(0);
+      queueMicrotask(() => callback(0));
       return 0;
     });
 

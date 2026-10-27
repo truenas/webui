@@ -15,6 +15,7 @@ describe('AuthGuardService', () => {
   const state = { url: redirectUrl } as RouterStateSnapshot;
 
   let spectator: SpectatorService<AuthGuardService>;
+  let navigateSpy: jest.SpyInstance;
   const createService = createServiceFactory({
     service: AuthGuardService,
     providers: [mockProvider(WebSocketStatusService, { isAuthenticated$ })],
@@ -22,6 +23,8 @@ describe('AuthGuardService', () => {
 
   beforeEach(() => {
     spectator = createService();
+    // No routes are configured, so a real navigation to /signin would reject.
+    navigateSpy = jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
     isAuthenticated$.next(false);
   });
 
@@ -38,8 +41,6 @@ describe('AuthGuardService', () => {
     });
 
     it('if the user is not logged in, the user is redirected to signin', () => {
-      const router = spectator.inject(Router);
-      const navigateSpy = jest.spyOn(router, 'navigate');
       spectator.service.canActivate(arSnapshot, state);
       expect(navigateSpy).toHaveBeenCalledWith(['/signin'], { queryParams: {} });
     });

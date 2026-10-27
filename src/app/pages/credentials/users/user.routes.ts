@@ -20,16 +20,5 @@ export const userRoutes: Routes = [{
         icon: 'group',
       },
     },
-    {
-      path: 'view/:id',
-      data: { title: T('Users'), breadcrumb: null },
-      children: [
-        {
-          path: '',
-          pathMatch: 'full',
-          component: AllUsersComponent,
-        },
-      ],
-    },
   ],
 }];

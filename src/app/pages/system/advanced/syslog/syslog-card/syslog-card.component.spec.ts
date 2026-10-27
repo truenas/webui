@@ -2,7 +2,6 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,7 +14,6 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SyslogCardComponent } from 'app/pages/system/advanced/syslog/syslog-card/syslog-card.component';
 import { SyslogFormComponent } from 'app/pages/system/advanced/syslog/syslog-form/syslog-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -39,10 +37,6 @@ describe('SyslogCardComponent', () => {
           1: 'Certificate 1',
           2: 'Certificate 2',
         }),
-        mockTypedCall('system.advanced.syslog_certificate_authority_choices', {
-          1: 'Authority 1',
-          2: 'Authority 2',
-        } as unknown as CallResponse<WebUiApiDirectory, 'system.advanced.syslog_certificate_authority_choices'>),
         mockTypedCall('system.advanced.update', null),
       ]),
       mockProvider(FormSidePanelService, {

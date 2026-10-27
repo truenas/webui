@@ -4,7 +4,7 @@ import {
 } from '@truenas/api-client';
 import { FakeApiErrorOverrides, JobUpdate } from '@truenas/api-client/testing';
 import {
-  MockTypedApiService, TypedCallMethod, TypedCallResponseOrFactory,
+  MockTypedApiService, TypedCallMethod, TypedCallResponseOrFactory, TypedRefusableMethod,
 } from 'app/core/testing/classes/mock-typed-api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
@@ -60,7 +60,10 @@ export function mockTypedCall<M extends TypedCallMethod>(
 }
 
 /** Answers `method` with a JSON-RPC error, thrown by `call` as an `ApiCallError`. */
-export function mockTypedCallError(method: TypedCallMethod, error: FakeApiErrorOverrides = {}): MockTypedApiResponse {
+export function mockTypedCallError(
+  method: TypedRefusableMethod,
+  error: FakeApiErrorOverrides = {},
+): MockTypedApiResponse {
   return (api) => api.mockCallError(method, error);
 }
 

@@ -122,8 +122,6 @@ describe('NfsFormComponent', () => {
         { group: 'sys' },
         { group: 'operator' },
       ]),
-      getUserByName: (username: string) => of({ username } as { username: string }),
-      getGroupByName: (groupName: string) => of({ group: groupName }),
       getUserByNameCached: (username: string) => of({ username } as { username: string }),
       getGroupByNameCached: (groupName: string) => of({ group: groupName }),
     }),

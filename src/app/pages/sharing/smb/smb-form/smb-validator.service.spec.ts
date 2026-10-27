@@ -1,4 +1,3 @@
-import { fakeAsync, tick } from '@angular/core/testing';
 import { FormControl, ValidationErrors } from '@angular/forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Observable, of, throwError } from 'rxjs';
@@ -15,7 +14,12 @@ describe('SmbValidationService', () => {
   });
 
   beforeEach(() => {
+    jest.useFakeTimers();
     spectator = createService();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
   });
 
   function refuseWith(reason: string): void {
@@ -31,25 +35,25 @@ describe('SmbValidationService', () => {
     (spectator.service.validate()(control) as Observable<ValidationErrors | null>)
       .subscribe((errors) => { result = errors; });
     control.setValue(name);
-    tick(300);
+    jest.advanceTimersByTime(300);
     return result;
   }
 
-  it('accepts a name the appliance has nothing to say about', fakeAsync(() => {
+  it('accepts a name the appliance has nothing to say about', () => {
     jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of(null));
 
     expect(validate('share')).toBeNull();
-  }));
+  });
 
-  it('says a name is taken', fakeAsync(() => {
+  it('says a name is taken', () => {
     refuseWith('[EEXIST] sharing.smb.share_precheck.name: Share with this name already exists.');
 
     expect(validate('taken')).toEqual({
       customValidator: { message: 'Share with this name already exists' },
     });
-  }));
+  });
 
-  it('names the invalid characters, however middleware capitalises the sentence', fakeAsync(() => {
+  it('names the invalid characters, however middleware capitalises the sentence', () => {
     refuseWith(
       '[EINVAL] smb_share_precheck.name: Value error, bad/name: share name contains the following invalid characters: /',
     );
@@ -57,13 +61,13 @@ describe('SmbValidationService', () => {
     expect(validate('bad/name')).toEqual({
       customValidator: { message: 'Share name contains the following invalid characters: /' },
     });
-  }));
+  });
 
-  it('passes on a refusal it does not recognise as middleware worded it', fakeAsync(() => {
+  it('passes on a refusal it does not recognise as middleware worded it', () => {
     refuseWith('[EINVAL] sharing.smb.share_precheck.name: Something else entirely');
 
     expect(validate('odd')).toEqual({
       customValidator: { message: '[EINVAL] sharing.smb.share_precheck.name: Something else entirely' },
     });
-  }));
+  });
 });

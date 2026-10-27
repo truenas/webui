@@ -49,8 +49,6 @@ describe('EditPosixAceComponent', () => {
           { group: 'wheel' },
           { group: 'vip' },
         ]),
-        getUserByName: (username: string) => of({ username } as User),
-        getGroupByName: (groupName: string) => of({ group: groupName }),
         getUserByNameCached: (username: string) => of({ username } as User),
         getGroupByNameCached: (groupName: string) => of({ group: groupName }),
       }),

@@ -18,7 +18,7 @@ rewrite. To see where it stands, run `yarn check-api-migration --report`.
 
 | Piece | Where |
 |---|---|
-| `@truenas/api-client` as a runtime dependency (8.0.0 at the time of writing) | `package.json` |
+| `@truenas/api-client` as a runtime dependency (9.0.1 at the time of writing) | `package.json` |
 | The client instance, typed against `v28.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `TypedApiService`, the migration target for `ApiService` | `src/app/modules/websocket/typed-api/typed-api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
@@ -159,10 +159,11 @@ Where things differ:
   generated entity (for example `CloudSyncCredentialEntry`), not the UI's
   reading of it. `mockTypedCall` refuses `.query` methods; script those with
   `mockTypedQuery`, which feeds `query`, `queryOne` and `queryCount` from one
-  set of rows. The double's `call` runs the same `dispatchTypedCall` as
+  set of rows. The double's verbs run the same `rethrowAsApiCallError` as
   `TypedApiService`, so an error scripted with `mockTypedCallError(method,
   { errname, extra })` is thrown as the `ApiCallError` production throws,
-  `extra` included, which is what a form's error-path spec needs. For
+  `extra` included, which is what a form's error-path spec needs. It takes
+  `.query` and job methods too, failing `query*` and `job` the same way. For
   connection-level scenarios reach the client itself:
   `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
   The fake answers frames on a microtask, as a socket would, so a spec that
@@ -227,7 +228,7 @@ Migrate by feature area, lowest risk first:
 1. Read-only `call` sites in services and stores.
 2. Mutating `call` sites (forms).
 3. `job` sites.
-4. `subscribe` sites, once parameterised subscriptions are supported (see gaps).
+4. `subscribe` sites, including event sources with arguments (gap 5).
 
 Each area is a small PR: swap the injection, fix the types the compiler now
 reports, update the spec's mock, and verify against a box. Prefer several
@@ -340,20 +341,18 @@ Rename `TypedApiService` back to `ApiService` if that reads better.
 Things the wrapper works around today, in the order they block the phases
 above. Each is a change for `truenas/api-client-ts`.
 
-1. **Errors lose their payload.** `client.api.call` reduces a JSON-RPC error
-   to its `reason` string. The UI needs `errname` (auth handling) and `extra`
-   (field validation), so `TypedApiService.call` does its own round trip over
-   `client.connection` (`dispatchTypedCall`, shared with the spec double).
-   `query*` and `job` still go through the client and so
-   throw plain `Error`s: `ErrorParserService` takes its generic branch and
-   shows the reason alone, without the `errname`, `extra` and trace that the
-   legacy `call` path renders. A migrated `query` read is therefore a small
-   downgrade in error reporting today (`cloudsync.credentials.query`,
-   `keychaincredential.query`), and the first `job` site will inherit the
-   same. Unchanged as of 8.0.0. Fix: a typed error class carrying the full
-   payload; until then, route a query through `call` where the report
-   matters. `call` is also the only verb that can act on `ENOTAUTHENTICATED`,
-   which is why ending the app's session on that refusal lives there.
+1. ~~**Errors lose their payload.**~~ Resolved by NAS-144007, on 9.0.1, which
+   carries api-client-ts #68 (TNC-2582). The client now
+   throws `TrueNasApiError` with the whole JSON-RPC error from `call`, the
+   query verbs, and a job method refused before it starts a job (which used
+   to hang forever). Every `TypedApiService` verb rethrows it as `ApiCallError`
+   through `rethrowAsApiCallError`, shared with the spec double, so
+   `ErrorParserService` renders `errname`, `extra` and the trace exactly as
+   on the legacy path, and every verb that needs a session ends it on
+   `ENOTAUTHENTICATED`. `dispatchTypedCall`, the hand-rolled round trip
+   `call` used to work around this, is gone. A job that starts and then
+   fails is unaffected: it still throws `FailedJobError` from its `FAILED`
+   state.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.
@@ -380,16 +379,23 @@ above. Each is a change for `truenas/api-client-ts`.
    a password session re-logs itself in on reconnect, racing the sign-in
    page's token login, which the authenticator's epoch guard resolves. Still so
    in 7.0.1.
-5. **Parameterised subscriptions.** `EventName` excludes events that take
-   subscription params (`method:param` style, e.g. file tailing), which the
-   legacy `subscribe` supports. Needed before Phase 1 step 4. Until then the
-   log tails stay on `ApiService`: `ConsoleMessagesStore` and the job progress
-   dialog's `filesystem.file_tail_follow`, the installed app's container logs
-   (`app.container_log_follow`), next to `NetworkService`'s `reporting.realtime`,
-   and the dashboard's `WidgetResourcesService`, which streams
-   `reporting.realtime` and `app.stats`. `SharingTierService` keeps `ApiService` for the storage
-   tier's rewrite jobs, `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status:<args>`: both
-   declare `subscriptionParams`, so neither is an `EventName`, even the one the UI subscribes to bare.
+5. ~~**Parameterised subscriptions.**~~ Resolved by NAS-144006, on 9.0.1, which
+   carries api-client-ts #69 (TNC-2583).
+   `events()` takes an event source's arguments after its name, typed from the
+   entry's `subscriptionParams`, and `TypedApiService.subscribe` forwards them:
+   `subscribe('filesystem.file_tail_follow', { path })`. The client builds the
+   `name:<json>` string itself, with sorted keys. A source middleware ends
+   completes the stream, and one whose arguments it rejects throws an
+   `ApiCallError` carrying middleware's error, as the other verbs do (gap 1).
+   NAS-144006 moved the log tails (`ConsoleMessagesStore`, the job progress dialog's
+   `filesystem.file_tail_follow`, the installed app's `app.container_log_follow`)
+   and `SharingTierService`'s `zfs.tier.rewrite_job_query` and
+   `zfs.tier.rewrite_job_status`. The generated models declare only `added` for
+   a source, so narrowing on it is what types `fields`. That holds on the wire
+   for the log tails, but not everywhere: `zfs.tier.rewrite_job_status` sends
+   `changed`, and `zfs.tier.rewrite_job_query` sends all three kinds (gap 16).
+   Still on `ApiService` and now unblocked: `NetworkService`'s and the dashboard's
+   `reporting.realtime` and `app.stats` (see gap 17).
 6. **Query, message and connection types are not exported.** `QueryFilters`
    and `QueryProjection` are internal, so the wrapper forwards the query verbs
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
@@ -463,7 +469,7 @@ above. Each is a change for `truenas/api-client-ts`.
 14. **Methods missing from the dump.** `interface.lag_supported_protocols` is
     in no generated directory, most likely because middleware marks it
     private. `NetworkService` therefore keeps `ApiService` for it, next to
-    `reporting.realtime` (gap 5), and `src/app/services` cannot be pinned as a
+    `reporting.realtime` (gap 17), and `src/app/services` cannot be pinned as a
     whole until both have a typed route. `kerberos.keytab.kerberos_principal_choices`
     and `nfs.add_principal` are missing the same way, so the directory services
     form's credential step and the NFS service's Add SPN dialog keep `ApiService`
@@ -489,18 +495,24 @@ above. Each is a change for `truenas/api-client-ts`.
     wire shape once for every consumer. Fix: wrap event payloads in the
     generator, or correct the model in middleware.
 
-17. **Event subscriptions are never released.** `client.api.events` shares one
-    stream per event with `resetOnRefCountZero: false` and never sends
-    `core.unsubscribe`, where the legacy `subscribe` unsubscribes when its last
-    consumer goes. For a collection that only emits on change (`pool.query`,
-    `app.query`) that costs little. For an event source that pushes on a timer
-    (`reporting.realtime`, `app.stats`, `container.metrics`) it would keep
-    streaming after the page that wanted it is closed, so those must not move
-    until the client releases subscriptions, even once gap 5 lets them compile.
-    `container.metrics` takes no params and already compiles, so
-    `ContainersStore` keeps `ApiService` for that one subscription. The apps
-    pages do the same for `app.stats` (`AppsStatsService`) and
-    `reporting.realtime` (the app details' resources card).
+    The storage tier's event sources go wrong the other way.
+    `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status` declare a
+    model that already has `fields`, and the generator wraps it again, so the
+    type reads `event.fields.fields`. Middleware sends the entry under `fields`
+    once (`send_event(..., fields=entry)` in `plugins/zfs/tier.py`). Both also
+    declare only `added`, while the status source sends `changed` and the query
+    source sends `added`, `changed` and `removed`. `tierJobFromEvent` in
+    `SharingTierService` reads the wire shape whatever the kind, and the list
+    refresh reloads on every kind.
+
+17. ~~**Event subscriptions are never released.**~~ Resolved by 9.0.1, which
+    carries api-client-ts #69 (TNC-2583). The client still shares one stream per
+    subscription name, but now resets it when the last subscriber leaves and
+    sends `core.unsubscribe`, as the legacy `subscribe` does. That was what kept
+    the event sources middleware pushes on a timer (`reporting.realtime`,
+    `app.stats`, `container.metrics`) on `ApiService`, so they can move now:
+    `ContainersStore`, `AppsStatsService`, the app details' resources card,
+    `NetworkService` and `WidgetResourcesService`.
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well

@@ -89,10 +89,15 @@ export async function deleteCardGroup(page: Page, index: number): Promise<void> 
  */
 export async function dragCardGroup(page: Page, fromIndex: number, toIndex: number): Promise<void> {
   const handle = page.locator(dashboardLocators.edit.dragHandle(fromIndex));
+
+  // Configure mode shrinks every group with a CSS transition and only then lets the handles take
+  // the pointer. A press measured mid-transition lands on card text, starts a text selection
+  // instead of a drag, and Save then stores the unchanged layout. `hover()` waits until the handle
+  // is stable and is the element the pointer actually hits, and leaves the pointer on it.
+  await handle.hover();
   const from = await centreOf(handle);
   const to = await centreOf(page.locator(dashboardLocators.edit.dragHandle(toIndex)));
 
-  await page.mouse.move(from.x, from.y);
   await page.mouse.down();
   await page.mouse.move(from.x, from.y - dragStartDistancePx, { steps: 2 });
   await page.mouse.move(to.x, to.y, { steps: dragSteps });

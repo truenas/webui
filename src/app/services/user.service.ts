@@ -1,14 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { CallResponse } from '@truenas/api-client';
 import { escapeRegExp } from 'lodash-es';
 import { Observable } from 'rxjs';
 import { finalize, map, shareReplay, tap } from 'rxjs/operators';
-import { DsUncachedGroup } from 'app/interfaces/ds-cache.interface';
 import { Group, toGroup } from 'app/interfaces/group.interface';
 import { toUser, User } from 'app/interfaces/user.interface';
-import {
-  TypedQueryFilter, WebUiApiDirectory, WebUiQueryEntity,
-} from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 type GroupFilter = TypedQueryFilter<WebUiQueryEntity<'group.query'>>;
@@ -88,14 +84,6 @@ export class UserService {
   }
 
   /**
-   * Gets a group by exact name match using the uncached API.
-   * @deprecated Use getGroupByNameCached() instead to populate the directory services cache.
-   */
-  getGroupByName(groupname: string): Observable<DsUncachedGroup> {
-    return this.api.call('group.get_group_obj', [{ groupname }]);
-  }
-
-  /**
    * Gets a group by exact name match using the cached query API with request deduplication.
    *
    * This method inserts the result into the middleware directory services cache,
@@ -104,9 +92,6 @@ export class UserService {
    *
    * Request deduplication ensures that multiple simultaneous calls for the same group
    * (e.g., from autocomplete and validation) share a single API request.
-   *
-   * Use this instead of getGroupByName() to improve performance when validating
-   * group names in forms or displaying group information.
    *
    * @param groupname - Exact group name to look up
    * @returns Observable of the group object
@@ -164,14 +149,6 @@ export class UserService {
   }
 
   /**
-   * Gets a user by exact name match using the uncached API.
-   * @deprecated Use getUserByNameCached() instead to populate the directory services cache.
-   */
-  getUserByName(username: string): Observable<CallResponse<WebUiApiDirectory, 'user.get_user_obj'>> {
-    return this.api.call('user.get_user_obj', [{ username }]);
-  }
-
-  /**
    * Gets a user by exact name match using the cached query API with request deduplication.
    *
    * This method inserts the result into the middleware directory services cache,
@@ -180,9 +157,6 @@ export class UserService {
    *
    * Request deduplication ensures that multiple simultaneous calls for the same user
    * (e.g., from autocomplete and validation) share a single API request.
-   *
-   * Use this instead of getUserByName() to improve performance when validating
-   * usernames in forms or displaying user information.
    *
    * @param username - Exact username to look up
    * @returns Observable of the user object

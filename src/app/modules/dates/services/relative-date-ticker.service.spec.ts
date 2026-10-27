@@ -1,4 +1,3 @@
-import { NgZone } from '@angular/core';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Subscription } from 'rxjs';
 import {
@@ -49,16 +48,6 @@ describe('RelativeDateTickerService', () => {
     // A second timer would put the two subscribers out of step.
     expect(first).toEqual(second);
     expect(jest.getTimerCount()).toBe(1);
-  });
-
-  // A timer inside the Angular zone would keep the app from ever reaching stability.
-  it('registers its timer outside the Angular zone', () => {
-    const zone = spectator.inject(NgZone);
-    jest.spyOn(zone, 'runOutsideAngular');
-
-    subscriptions.add(spectator.service.tick$.subscribe());
-
-    expect(zone.runOutsideAngular).toHaveBeenCalled();
   });
 
   it('stops the timer once the last subscriber leaves', () => {

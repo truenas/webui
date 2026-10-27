@@ -1,4 +1,3 @@
-import { discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { SimilarIssuesComponent } from 'app/modules/feedback/components/similar-issues/similar-issues.component';
@@ -33,36 +32,40 @@ describe('SimilarIssuesComponent', () => {
   });
 
   beforeEach(() => {
+    jest.useFakeTimers();
     spectator = createComponent();
     feedbackService = spectator.inject(FeedbackService);
   });
 
-  it('loads similar tickets when title is changed', fakeAsync(() => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('loads similar tickets when title is changed', async () => {
     spectator.setInput('query', 'Similar');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
 
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('Similar');
-  }));
+  });
 
-  it('does not check for similar tickets when title is too short', fakeAsync(() => {
+  it('does not check for similar tickets when title is too short', async () => {
     spectator.setInput('query', 't');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
 
     expect(feedbackService.getSimilarIssues).not.toHaveBeenCalled();
-  }));
+  });
 
-  it('debounces further changes to title', fakeAsync(() => {
+  it('debounces further changes to title', async () => {
     spectator.setInput('query', 'Similar');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
     spectator.setInput('query', 'Similar another');
 
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledTimes(1);
-    discardPeriodicTasks();
-  }));
+  });
 
-  it('shows similar tickets', fakeAsync(() => {
+  it('shows similar tickets', async () => {
     spectator.setInput('query', 'Similar');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
     spectator.detectChanges();
 
     const similarIssues = spectator.queryAll('.similar-issue');
@@ -77,23 +80,22 @@ describe('SimilarIssuesComponent', () => {
     });
     const iconElement = similarIssues[0].querySelector('.issue-type-icon') as HTMLElement;
     expect(iconElement.style.backgroundImage).toContain('https://ixsystems.atlassian.net/rest/api/2/universal_avatar/view/type/issuetype/avatar/10311');
-  }));
+  });
 
-  it('should reset similar issues when query is empty', fakeAsync(() => {
+  it('should reset similar issues when query is empty', async () => {
     spectator.setInput('query', 'Similar');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
     spectator.detectChanges();
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('Similar');
     expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
 
     spectator.setInput('query', '');
-    tick(300);
-    spectator.fixture.whenStable().then(() => {
-      expect(spectator.queryAll('.similar-issue')).toHaveLength(0);
-    });
-  }));
+    await jest.advanceTimersByTimeAsync(300);
+    spectator.detectChanges();
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(0);
+  });
 
-  it('should fetch and combine similar issues when query has more than 3 characters', fakeAsync(() => {
+  it('should fetch and combine similar issues when query has more than 3 characters', async () => {
     jest.spyOn(feedbackService, 'getSimilarIssues').mockReturnValue(of([
       {
         url: 'https://ixsystems.atlassian.net/browse/NAS-124850',
@@ -112,23 +114,20 @@ describe('SimilarIssuesComponent', () => {
     ] as SimilarIssue[]));
 
     spectator.setInput('query', 'gmail');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('gmail');
-    spectator.fixture.whenStable().then(() => {
-      expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
-    });
+    spectator.detectChanges();
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
 
     spectator.setInput('query', 'gmail not working');
-    tick(300);
+    await jest.advanceTimersByTimeAsync(300);
     expect(feedbackService.getSimilarIssues).toHaveBeenCalledWith('gmail not working');
-    spectator.fixture.whenStable().then(() => {
-      expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
-    });
+    spectator.detectChanges();
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(2);
 
     spectator.setInput('query', '');
-    tick(300);
-    spectator.fixture.whenStable().then(() => {
-      expect(spectator.queryAll('.similar-issue')).toHaveLength(0);
-    });
-  }));
+    await jest.advanceTimersByTimeAsync(300);
+    spectator.detectChanges();
+    expect(spectator.queryAll('.similar-issue')).toHaveLength(0);
+  });
 });

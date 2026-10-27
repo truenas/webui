@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync } from '@angular/core/testing';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { TnInputComponent, TnInputHarness } from '@truenas/ui-components';
@@ -70,7 +69,7 @@ describe('DetailsTableHarness', () => {
   });
 
   describe('setValues', () => {
-    it('attempts to edit all editable elements based on their keys', fakeAsync(async () => {
+    it('attempts to edit all editable elements based on their keys', async () => {
       await details.setValues({
         'Last Name': 'Gonzalez',
       });
@@ -84,7 +83,7 @@ describe('DetailsTableHarness', () => {
         'First Name': 'Manuel',
         'Last Name': 'Gonzalez',
       });
-    }));
+    });
   });
 
   describe('getItemByLabel', () => {
@@ -102,7 +101,7 @@ describe('DetailsTableHarness', () => {
   });
 
   describe('getHarnessForItem', () => {
-    it('returns harness found in specific details item', fakeAsync(async () => {
+    it('returns harness found in specific details item', async () => {
       const lastNameEditable = await details.getHarnessForItem('Last Name', EditableHarness);
       await lastNameEditable.setFirstControlValue('Gonzalez');
 
@@ -116,7 +115,7 @@ describe('DetailsTableHarness', () => {
         'First Name': 'Manuel',
         'Last Name': 'Gonzalez',
       });
-    }));
+    });
   });
 
   describe('getHarnessForItemOrNull', () => {

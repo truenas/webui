@@ -1,6 +1,5 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
   TnBannerComponent, TnBannerHarness, TnButtonComponent, TnButtonHarness, TnFormFieldHarness, TnInputHarness,
@@ -116,6 +115,7 @@ describe('TwoFactorComponent', () => {
   });
 
   afterEach(() => {
+    jest.useRealTimers();
     jest.spyOn(Date, 'now').mockRestore();
   });
 
@@ -607,7 +607,9 @@ describe('TwoFactorComponent', () => {
       expect(renewButtonOf(loading)?.disabled()).toBe(false);
     });
 
-    it('gives the load a terminal outcome when a source never settles at all', fakeAsync(() => {
+    it('gives the load a terminal outcome when a source never settles at all', async () => {
+      // Date stays unfaked: the Date.now() spy parks the browser clock.
+      jest.useFakeTimers({ doNotFake: ['Date'] });
       // defaultIfEmpty only fires on completion, and getGlobalTwoFactorConfig switchMaps
       // over a BehaviorSubject that never completes — so an inner call that ends without
       // a result hangs the load rather than emptying it. Without the timeout the card
@@ -617,12 +619,12 @@ describe('TwoFactorComponent', () => {
       const stuck = createComponent();
       expect(renewButtonOf(stuck)?.disabled()).toBe(true);
 
-      tick(30_000);
+      await jest.advanceTimersByTimeAsync(30_000);
       stuck.detectChanges();
 
       expect(renewButtonOf(stuck)?.disabled()).toBe(false);
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
-    }));
+    });
 
     it('lets the user retry the same code after a failed check', async () => {
       // checkFailed and unreadableSecret are set by hand and both say "try again"; if they
@@ -1021,7 +1023,9 @@ describe('TwoFactorComponent', () => {
   });
 
   describe('calls that never answer', () => {
-    it('gives the confirming re-read a terminal outcome of its own', fakeAsync(() => {
+    it('gives the confirming re-read a terminal outcome of its own', async () => {
+      // Date stays unfaked: the Date.now() spy parks the browser clock.
+      jest.useFakeTimers({ doNotFake: ['Date'] });
       // api.call applies no timeout, so a reply that never arrives would leave
       // isFormLoading on — and in the first-login dialog that is Confirm Code and Cancel
       // Setup, both disabled, inside a dialog opened with disableClose.
@@ -1034,14 +1038,16 @@ describe('TwoFactorComponent', () => {
       spectator.component.onVerifyOtp();
       expect(spectator.component.isFormLoading()).toBe(true);
 
-      tick(30_000);
+      await jest.advanceTimersByTimeAsync(30_000);
       spectator.detectChanges();
 
       expect(spectator.component.isFormLoading()).toBe(false);
       expect(spectator.component.verificationForm.controls.otp.errors).toEqual({ checkFailed: true });
-    }));
+    });
 
-    it('gives up on an unset that never answers, saying what is unclear', fakeAsync(() => {
+    it('gives up on an unset that never answers, saying what is unclear', async () => {
+      // Date stays unfaked: the Date.now() spy parks the browser clock.
+      jest.useFakeTimers({ doNotFake: ['Date'] });
       // Cancel Setup is the only exit offered while a secret is unconfirmed.
       spectator.component.renewSecretOrEnable2Fa();
       spectator.detectChanges();
@@ -1050,7 +1056,7 @@ describe('TwoFactorComponent', () => {
       spectator.component.unset2FaSecret();
       expect(spectator.component.isFormLoading()).toBe(true);
 
-      tick(30_000);
+      await jest.advanceTimersByTimeAsync(30_000);
       spectator.detectChanges();
 
       expect(spectator.component.isFormLoading()).toBe(false);
@@ -1059,7 +1065,7 @@ describe('TwoFactorComponent', () => {
       expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(
         new Error(helptext2fa.actionTimedOut),
       );
-    }));
+    });
   });
 
   it('shows skip button only in setup dialog when 2FA is not configured', async () => {

@@ -1,9 +1,6 @@
 import { Routes } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { AllContainersComponent } from 'app/pages/containers/components/all-containers/all-containers.component';
-import {
-  ContainerConsoleComponent,
-} from 'app/pages/containers/components/container-shell/container-console.component';
 import { ContainerShellComponent } from 'app/pages/containers/components/container-shell/container-shell.component';
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
@@ -35,11 +32,6 @@ export const containersRoutes: Routes = [{
           path: 'shell',
           component: ContainerShellComponent,
           data: { title: T('Container Shell') },
-        },
-        {
-          path: 'console',
-          component: ContainerConsoleComponent,
-          data: { title: T('Container Console') },
         },
       ],
     },

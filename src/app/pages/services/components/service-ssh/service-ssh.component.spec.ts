@@ -92,13 +92,6 @@ describe('ServiceSshComponent', () => {
       mockProvider(DialogService),
       mockProvider(UserService, {
         groupQueryDsCache: jest.fn(() => of(fakeGroupDataSource)),
-        getGroupByName: jest.fn((groupName: string) => {
-          const existingGroup = fakeGroupDataSource.find((group) => group.group === groupName);
-          if (existingGroup) {
-            return of(existingGroup);
-          }
-          return of(null);
-        }),
         getGroupByNameCached: jest.fn((groupName: string) => {
           const existingGroup = fakeGroupDataSource.find((group) => group.group === groupName);
           if (existingGroup) {
@@ -106,7 +99,6 @@ describe('ServiceSshComponent', () => {
           }
           return of(null);
         }),
-        getUserByName: jest.fn(() => of(null)),
       }),
       mockAuth(),
     ],
@@ -188,7 +180,22 @@ describe('ServiceSshComponent', () => {
   it('suggests groups from the directory-services cache as the user types', async () => {
     const groups = await getPasswordLoginGroups();
     await groups.removeChip('dummy-group');
-    await groups.typeText('dummy');
+    // The directory search is debounced, and whenStable() does not wait for timers.
+    jest.useFakeTimers();
+    try {
+      let isTyped = false;
+      const typed = groups.typeText('dummy').finally(() => {
+        isTyped = true;
+      });
+      while (!isTyped) {
+        await jest.advanceTimersByTimeAsync(10);
+      }
+      await typed;
+      // tn-chip-input's 250ms dataSourceDebounce starts on the change detection after typing.
+      await jest.advanceTimersByTimeAsync(500);
+    } finally {
+      jest.useRealTimers();
+    }
 
     expect(await groups.getSuggestions()).toEqual(['dummy-group']);
     // The directory passes the full query shape: (search, hideBuiltIn, offset, extraFilters).

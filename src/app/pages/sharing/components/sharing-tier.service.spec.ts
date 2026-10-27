@@ -4,12 +4,11 @@ import {
 } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { TnDialog } from '@truenas/ui-components';
-import { Subject, firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
-import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import {
   ChangeTierDialogComponent,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
@@ -24,7 +23,6 @@ describe('SharingTierService', () => {
     service: SharingTierService,
     providers: [
       mockTypedApi([]),
-      mockProvider(ApiService),
       mockProvider(TnDialog, { open: matDialogOpen }),
       mockProvider(ErrorHandlerService),
       mockProvider(TranslateService, {
@@ -202,13 +200,25 @@ describe('SharingTierService', () => {
 
   describe('job wiring', () => {
     const destroyRef = { onDestroy: jest.fn() } as unknown as DestroyRef;
-    let jobUpdates$: Subject<{ fields: unknown }>;
+    const job = { tier_job_id: 'job-1', dataset_name: 'tank/ds' } as ZfsTierRewriteJobEntry;
 
-    beforeEach(() => {
-      jobUpdates$ = new Subject();
-      jest.spyOn(spectator.inject(ApiService), 'subscribe').mockReturnValue(
-        jobUpdates$ as unknown as ReturnType<ApiService['subscribe']>,
-      );
+    // As middleware sends it: under `fields` once and as `changed`, where the generated model nests it twice.
+    function emitTierJob(event: 'zfs.tier.rewrite_job_query' | 'zfs.tier.rewrite_job_status', params?: object): void {
+      const api = spectator.inject(MockTypedApiService);
+      const emit = api.emitEvent.bind(api) as (event: string, change: object, params?: object) => void;
+      emit(event, { msg: 'changed', fields: job }, params);
+    }
+
+    describe('subscribeTierJobStatus', () => {
+      it('follows the job by its id and emits the entry', async () => {
+        const status = firstValueFrom(spectator.service.subscribeTierJobStatus('job-1'));
+
+        emitTierJob('zfs.tier.rewrite_job_status', { tier_job_id: 'job-1' });
+
+        expect(await status).toEqual(job);
+        expect(spectator.inject(MockTypedApiService).subscribe)
+          .toHaveBeenCalledWith('zfs.tier.rewrite_job_status', { tier_job_id: 'job-1' });
+      });
     });
 
     describe('wireTierJobRefresh', () => {
@@ -220,7 +230,17 @@ describe('SharingTierService', () => {
         spectator.service.wireTierJobRefresh({ destroyRef, reload });
 
         // tierJobRefreshes$ pipes through auditTime(500); event becomes a reload after the window.
-        jobUpdates$.next({ fields: {} });
+        emitTierJob('zfs.tier.rewrite_job_query');
+        jest.advanceTimersByTime(600);
+
+        expect(reload).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls reload when a tier job is removed', () => {
+        const reload = jest.fn();
+        spectator.service.wireTierJobRefresh({ destroyRef, reload });
+
+        spectator.inject(MockTypedApiService).emitEvent('zfs.tier.rewrite_job_query', { msg: 'removed', id: 'job-1' });
         jest.advanceTimersByTime(600);
 
         expect(reload).toHaveBeenCalledTimes(1);

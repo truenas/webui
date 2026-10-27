@@ -1,14 +1,12 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { CallResponse } from '@truenas/api-client';
 import { firstValueFrom } from 'rxjs';
 import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
 import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
-import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { UserService } from 'app/services/user.service';
 
 type Group = WebUiQueryEntity<'group.query'>;
 type User = WebUiQueryEntity<'user.query'>;
-type UserObj = CallResponse<WebUiApiDirectory, 'user.get_user_obj'>;
 
 describe('UserService', () => {
   let spectator: SpectatorService<UserService>;
@@ -146,19 +144,6 @@ describe('UserService', () => {
     });
   });
 
-  describe('getGroupByName (deprecated)', () => {
-    it('fetches group by name', async () => {
-      const mockGroup = { gr_name: 'admin', gr_gid: 1 } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>;
-
-      apiService.mockCall('group.get_group_obj', mockGroup);
-
-      // eslint-disable-next-line sonarjs/deprecation
-      const group = await firstValueFrom(spectator.service.getGroupByName('admin'));
-      expect(apiService.call).toHaveBeenCalledWith('group.get_group_obj', [{ groupname: 'admin' }]);
-      expect(group).toEqual(mockGroup);
-    });
-  });
-
   describe('getGroupByNameCached', () => {
     it('fetches group by name using cached query API', async () => {
       const mockGroup = { id: 1, name: 'admin', builtin: true } as Group;
@@ -220,19 +205,6 @@ describe('UserService', () => {
       await firstValueFrom(spectator.service.userQueryDsCache('user', 50));
 
       expect(apiService.query).toHaveBeenCalledWith('user.query', [['username', '~', '(?i).*user']], { limit: 50, offset: 50, order_by: ['builtin'] });
-    });
-  });
-
-  describe('getUserByName (deprecated)', () => {
-    it('fetches user by username', async () => {
-      const mockUser = { pw_name: 'admin', pw_uid: 1 } as UserObj;
-
-      apiService.mockCall('user.get_user_obj', mockUser);
-
-      // eslint-disable-next-line sonarjs/deprecation
-      const user = await firstValueFrom(spectator.service.getUserByName('admin'));
-      expect(apiService.call).toHaveBeenCalledWith('user.get_user_obj', [{ username: 'admin' }]);
-      expect(user).toEqual(mockUser);
     });
   });
 

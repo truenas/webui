@@ -1,4 +1,3 @@
-import { fakeAsync, flushMicrotasks } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import {
   createServiceFactory,
@@ -199,18 +198,18 @@ describe('SmartAlertService', () => {
   });
 
   describe('handleRunTask', () => {
-    it('navigates to the related route before showing the confirm dialog', fakeAsync(() => {
+    it('navigates to the related route before showing the confirm dialog', async () => {
       const dialogConfirmSpy = jest.spyOn(dialogService, 'confirm');
       const navigateByUrlSpy = jest.spyOn(router, 'navigateByUrl');
 
       findRunTaskAction(cloudBackupAlert)?.handler?.();
-      flushMicrotasks();
+      await Promise.resolve();
 
       expect(navigateByUrlSpy).toHaveBeenCalledWith('/data-protection/cloud-backup');
       const navigationCallOrder = navigateByUrlSpy.mock.invocationCallOrder[0];
       const confirmCallOrder = dialogConfirmSpy.mock.invocationCallOrder[0];
       expect(navigationCallOrder).toBeLessThan(confirmCallOrder);
-    }));
+    });
 
     it('skips navigation when the user is already on the related task page', () => {
       jest.replaceProperty(router, 'url', '/data-protection/cloud-backup');

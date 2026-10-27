@@ -262,6 +262,9 @@ export class AdditionalDetailsSectionComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (values) => {
+          // The view reads form values directly, and several of them are patched from async
+          // callbacks (shell choices, filesystem stat, SMB home share) — re-render on any change.
+          this.cdr.markForCheck();
           this.userFormStore.updateUserConfig({
             group_create: values.group_create,
             home_create: values.home_create,

@@ -1,5 +1,5 @@
 import {
-  DestroyRef, Directive, ElementRef, NgZone, OnChanges, Renderer2, input, inject,
+  DestroyRef, Directive, ElementRef, OnChanges, Renderer2, input, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { take, timer } from 'rxjs';
@@ -12,7 +12,6 @@ export class DisableFocusableElementsDirective implements OnChanges {
   private readonly destroyRef = inject(DestroyRef);
   private elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
   private renderer = inject(Renderer2);
-  private zone = inject(NgZone);
 
   readonly disableFocusableElements = input.required<boolean>();
 
@@ -76,18 +75,16 @@ export class DisableFocusableElementsDirective implements OnChanges {
     if (typeof MutationObserver === 'undefined') {
       return;
     }
-    // Nothing here needs change detection: the callback only writes attributes.
-    this.zone.runOutsideAngular(() => {
-      this.observer = new MutationObserver((records) => {
-        const addedElement = records.some((record) => {
-          return Array.from(record.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE);
-        });
-        if (addedElement) {
-          this.updateTabIndex(-1);
-        }
+    // The callback only writes attributes, so it never needs change detection.
+    this.observer = new MutationObserver((records) => {
+      const addedElement = records.some((record) => {
+        return Array.from(record.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE);
       });
-      this.observer.observe(this.elementRef.nativeElement, { childList: true, subtree: true });
+      if (addedElement) {
+        this.updateTabIndex(-1);
+      }
     });
+    this.observer.observe(this.elementRef.nativeElement, { childList: true, subtree: true });
   }
 
   private stopWatching(): void {

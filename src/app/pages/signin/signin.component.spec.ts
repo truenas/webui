@@ -1,5 +1,4 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { fakeAsync, tick } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
@@ -95,15 +94,21 @@ describe('SigninComponent', () => {
   });
 
   describe('disconnected', () => {
-    it('shows DisconnectedMessageComponent when there is no websocket connection', fakeAsync(() => {
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    it('shows DisconnectedMessageComponent when there is no websocket connection', async () => {
+      // isConnectedDelayed$ is only subscribed (and its delay scheduled) once the connection drops.
+      jest.useFakeTimers();
       isConnected$.next(false);
 
       spectator.detectChanges();
-      tick(1000); // Wait for isConnectedDelayed$ delay
+      await jest.advanceTimersByTimeAsync(1000); // Wait for isConnectedDelayed$ delay
       spectator.detectChanges();
 
       expect(spectator.query(DisconnectedMessageComponent)).toExist();
-    }));
+    });
   });
 
   describe('connected', () => {

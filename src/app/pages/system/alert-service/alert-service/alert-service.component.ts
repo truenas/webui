@@ -219,13 +219,11 @@ export class AlertServiceComponent implements OnInit {
     }, { emitEvent: false });
     this.renderAlertServiceForm();
 
-    // Defer one tick so the freshly-rendered child form is wired before patching.
-    // Guard the callback: if the panel closes within the same tick the timer is
-    // cleared, so it never fires against a torn-down child form.
-    const timeoutId = setTimeout(() => {
-      this.alertServiceForm.setValues(alertService.attributes);
-    });
-    this.destroyRef.onDestroy(() => clearTimeout(timeoutId));
+    // Patch straight away: every child builds its FormGroup (and wires its valueChanges) in
+    // field initializers / the constructor, so it is ready as soon as `createComponent` returns,
+    // and its controls pick the values up when they bind on the first change detection. A
+    // deferred patch would land outside change detection, which zoneless does not re-run for.
+    this.alertServiceForm.setValues(alertService.attributes);
   }
 
   protected onSendTestAlert(): void {

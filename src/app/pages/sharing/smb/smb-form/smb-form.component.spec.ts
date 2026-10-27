@@ -156,7 +156,6 @@ describe('SmbFormComponent', () => {
       mockEntitlements(),
       mockTypedApi([
         mockTypedQuery('group.query', [{ id: 1, group: 'test', builtin: false }] as WebUiQueryEntity<'group.query'>[]),
-        mockTypedCall('group.get_group_obj', { gr_gid: 1000, gr_name: 'test', gr_mem: [] } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
         mockTypedQuery('user.query', []),
         mockTypedCall('sharing.smb.create', { ...existingShareEntry }),
         mockTypedCall('sharing.smb.update', { ...existingShareEntry }),
@@ -243,14 +242,42 @@ describe('SmbFormComponent', () => {
    */
   async function applyCommonValues(): Promise<void> {
     const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-    await pathControl.setValue('/mnt/pool123/ds222');
-    await (await getTnInput('name')).setValue('Default');
+    await withDebounces(() => pathControl.setValue('/mnt/pool123/ds222'));
+    await setName('Default');
     await (await getTnInput('comment')).setValue('Description');
     await setTnCheckbox('enabled', true);
     await setTnCheckbox('readonly', true);
     await setTnCheckbox('browsable', true);
     await setTnCheckbox('access_based_share_enumeration', true);
     await setTnCheckbox('enable', false);
+  }
+
+  /**
+   * Runs a harness action under fake timers, then lets the form's debounces elapse: path changes
+   * (50ms) and the name's async validator (SmbValidationService, 300ms). whenStable() does not wait
+   * for timers, so without this the form is still PENDING when the test reads or submits it.
+   */
+  async function withDebounces(action: () => Promise<void>): Promise<void> {
+    jest.useFakeTimers();
+    try {
+      let isDone = false;
+      const result = action().finally(() => {
+        isDone = true;
+      });
+      while (!isDone) {
+        await jest.advanceTimersByTimeAsync(10);
+      }
+      await result;
+      // Covers a path debounce that then sets the name and starts the name's 300ms debounce.
+      await jest.advanceTimersByTimeAsync(500);
+    } finally {
+      jest.useRealTimers();
+    }
+    await spectator.fixture.whenStable();
+  }
+
+  async function setName(name: string): Promise<void> {
+    await withDebounces(async () => (await getTnInput('name')).setValue(name));
   }
 
   /** The side-panel host's footer Save drives the form through `submit()`. */
@@ -295,7 +322,7 @@ describe('SmbFormComponent', () => {
       } as Service]);
 
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/new');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/new'));
 
       await clickSave();
 
@@ -321,7 +348,7 @@ describe('SmbFormComponent', () => {
       } as Service]);
 
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/new');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/new'));
 
       await clickSave();
 
@@ -335,7 +362,7 @@ describe('SmbFormComponent', () => {
 
     it('should show strip acl warning if acl is trivial when path changes', async () => {
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool2/ds22');
+      await withDebounces(() => pathControl.setValue('/mnt/pool2/ds22'));
 
       // Wait for path change to be processed and ACL checkbox to appear
       await new Promise<void>((resolve) => {
@@ -485,7 +512,7 @@ describe('SmbFormComponent', () => {
 
     it('creates External share', async () => {
       await selectPurpose('External Share');
-      await (await getTnInput('name')).setValue('Default');
+      await setName('Default');
       await (await getTnInput('comment')).setValue('Description');
       await setTnCheckbox('enabled', true);
       await (await getTnChipInput('remote_path')).addChip('192.168.0.1\\SHARE');
@@ -855,7 +882,7 @@ describe('SmbFormComponent', () => {
       expect(spectator.component.form.controls.name.dirty).toBeFalsy();
 
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool2/ds22');
+      await withDebounces(() => pathControl.setValue('/mnt/pool2/ds22'));
 
       // Wait for debounced changes to trigger autofill
       await new Promise<void>((resolve) => {
@@ -892,7 +919,7 @@ describe('SmbFormComponent', () => {
       expect(await purposeControl.getDisplayText()).toBe('Default Share');
 
       // Set IP address path format
-      await pathControl.setValue('192.168.0.200\\SHARE');
+      await withDebounces(() => pathControl.setValue('192.168.0.200\\SHARE'));
 
       // Wait for debounced changes to trigger
       await new Promise<void>((resolve) => {
@@ -910,7 +937,7 @@ describe('SmbFormComponent', () => {
 
       expect(await purposeControl.getDisplayText()).toBe('Default Share');
 
-      await pathControl.setValue('EXTERNAL:192.168.0.200\\SHARE');
+      await withDebounces(() => pathControl.setValue('EXTERNAL:192.168.0.200\\SHARE'));
 
       // Wait for debounced changes to trigger
       await new Promise<void>((resolve) => {
@@ -927,7 +954,7 @@ describe('SmbFormComponent', () => {
 
       expect(await purposeControl.getDisplayText()).toBe('Default Share');
 
-      await pathControl.setValue('external:');
+      await withDebounces(() => pathControl.setValue('external:'));
 
       // Wait for debounced changes to trigger
       await new Promise<void>((resolve) => {
@@ -954,8 +981,7 @@ describe('SmbFormComponent', () => {
     });
 
     it('should have error for duplicate share name', async () => {
-      const nameControl = await getTnInput('name');
-      await nameControl.setValue('ds222');
+      await setName('ds222');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -983,8 +1009,8 @@ describe('SmbFormComponent', () => {
     it('calls handleValidationErrors when an error occurs during save', async () => {
       jest.spyOn(console, 'warn').mockImplementation();
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/ds222');
-      await (await getTnInput('name')).setValue('test-share');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/ds222'));
+      await setName('test-share');
       await selectPurpose('Default Share');
 
       await clickSave();
@@ -1059,7 +1085,7 @@ describe('SmbFormComponent', () => {
       await selectPurpose('Legacy Share');
 
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool2/ds22');
+      await withDebounces(() => pathControl.setValue('/mnt/pool2/ds22'));
 
       // Wait for path change to be processed
       await new Promise<void>((resolve) => {
@@ -1088,7 +1114,7 @@ describe('SmbFormComponent', () => {
       await selectPurpose('Default Share');
 
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool2/ds22');
+      await withDebounces(() => pathControl.setValue('/mnt/pool2/ds22'));
 
       // Default shares don't have ACL checkbox, so this simulates the scenario
       spectator.detectChanges();
@@ -1155,8 +1181,8 @@ describe('SmbFormComponent', () => {
     it('should disable save button when audit logging is enabled without groups', async () => {
       // Fill in required fields first
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1170,8 +1196,8 @@ describe('SmbFormComponent', () => {
     it('should enable save button when group is added to watch list', async () => {
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1195,8 +1221,8 @@ describe('SmbFormComponent', () => {
     it('should enable save button when group is added to ignore list', async () => {
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1220,8 +1246,8 @@ describe('SmbFormComponent', () => {
     it('should enable save button when audit logging is disabled', async () => {
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1244,8 +1270,8 @@ describe('SmbFormComponent', () => {
     it('should display error message when audit logging is enabled without groups', async () => {
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1259,8 +1285,8 @@ describe('SmbFormComponent', () => {
     it('should re-validate and show error when group is added then removed (reactivity)', async () => {
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1297,8 +1323,8 @@ describe('SmbFormComponent', () => {
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1333,8 +1359,8 @@ describe('SmbFormComponent', () => {
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1375,8 +1401,8 @@ describe('SmbFormComponent', () => {
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1417,8 +1443,8 @@ describe('SmbFormComponent', () => {
 
       // Fill in required fields and enable audit logging
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/test');
-      await (await getTnInput('name')).setValue('TestShare');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/test'));
+      await setName('TestShare');
       await selectPurpose('Default Share');
       await (await getTnCheckbox('enable')).check();
 
@@ -1464,8 +1490,8 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/time-machine');
-      await (await getTnInput('name')).setValue('time-machine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/time-machine'));
+      await setName('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
 
       await spectator.fixture.whenStable();
@@ -1479,8 +1505,8 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/time-machine');
-      await (await getTnInput('name')).setValue('time-machine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/time-machine'));
+      await setName('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
       await (await getTnInput('dataset_naming_schema')).setValue('test-schema');
 
@@ -1502,8 +1528,8 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/time-machine');
-      await (await getTnInput('name')).setValue('time-machine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/time-machine'));
+      await setName('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
 
       await clickSave();
@@ -1528,8 +1554,8 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/time-machine');
-      await (await getTnInput('name')).setValue('time-machine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/time-machine'));
+      await setName('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
       await (await getTnInput('dataset_naming_schema')).setValue('initial-value');
 
@@ -1560,8 +1586,8 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/time-machine');
-      await (await getTnInput('name')).setValue('time-machine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/time-machine'));
+      await setName('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
       await (await getTnInput('dataset_naming_schema')).setValue('%u');
 
@@ -1606,8 +1632,8 @@ describe('SmbFormComponent', () => {
 
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/time-machine');
-      await (await getTnInput('name')).setValue('time-machine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/time-machine'));
+      await setName('time-machine');
       await (await getTnCheckbox('auto_dataset_creation')).check();
       await (await getTnInput('dataset_naming_schema')).setValue('%u');
 
@@ -1650,8 +1676,8 @@ describe('SmbFormComponent', () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/timemachine');
-      await (await getTnInput('name')).setValue('timemachine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/timemachine'));
+      await setName('timemachine');
 
       // Manually set the smbConfig signal to trigger the warning
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -1676,8 +1702,8 @@ describe('SmbFormComponent', () => {
       // Select Time Machine Share (requires Apple SMB2/3 extensions)
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/timemachine');
-      await (await getTnInput('name')).setValue('timemachine');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/timemachine'));
+      await setName('timemachine');
 
       // Set config to show warning
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -1708,8 +1734,8 @@ describe('SmbFormComponent', () => {
       // Start with Default Share (no warning)
       await selectPurpose('Default Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool/default');
-      await (await getTnInput('name')).setValue('default');
+      await withDebounces(() => pathControl.setValue('/mnt/pool/default'));
+      await setName('default');
 
       // eslint-disable-next-line @typescript-eslint/dot-notation
       spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
@@ -1777,8 +1803,8 @@ describe('SmbFormComponent', () => {
     it('should disable save button when grace_period is below minimum (60)', async () => {
       await selectPurpose('Time Locked Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/locked');
-      await (await getTnInput('name')).setValue('locked-share');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/locked'));
+      await setName('locked-share');
       await (await getTnInput('grace_period')).setValue('59');
 
       expect(spectator.component.canSubmit()).toBe(false);
@@ -1787,8 +1813,8 @@ describe('SmbFormComponent', () => {
     it('should disable save button when grace_period is above maximum (15552000)', async () => {
       await selectPurpose('Time Locked Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await pathControl.setValue('/mnt/pool123/locked');
-      await (await getTnInput('name')).setValue('locked-share');
+      await withDebounces(() => pathControl.setValue('/mnt/pool123/locked'));
+      await setName('locked-share');
       await (await getTnInput('grace_period')).setValue('15552001');
 
       expect(spectator.component.canSubmit()).toBe(false);

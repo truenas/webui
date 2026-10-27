@@ -3,7 +3,7 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 export const twoFactorElements = {
   hierarchy: [T('Credentials'), T('Two-Factor Authentication')],
-  anchorRouterLink: ['/credentials', 'two-factor'],
+  anchorRouterLink: ['/two-factor-auth'],
   elements: {
     twoFactor: {
       anchor: 'two-factor',
