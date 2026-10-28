@@ -1,5 +1,7 @@
 import { S3Bucket } from 'app/interfaces/s3.interface';
 
+export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
+
 /**
  * A bucket is its dataset, mounted where every dataset is. Shapes it for the share
  * availability helpers, which reason about mount paths.

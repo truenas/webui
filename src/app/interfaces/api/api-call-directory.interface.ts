@@ -249,6 +249,9 @@ import {
   S3BucketUpdate,
   S3Config,
   S3ConfigUpdate,
+  S3RecoverableBucket,
+  S3RecoverBucket,
+  S3RecoveredBucket,
 } from 'app/interfaces/s3.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ResizeShellRequest } from 'app/interfaces/shell.interface';
@@ -810,6 +813,8 @@ export interface ApiCallDirectory {
   'sharing.s3.delete': { params: [id: number]; response: boolean };
   'sharing.s3.force_disable_versioning': { params: [id: number]; response: S3Bucket };
   'sharing.s3.query': { params: QueryParams<S3Bucket>; response: S3Bucket[] };
+  'sharing.s3.recover': { params: [buckets: S3RecoverBucket[]]; response: S3RecoveredBucket[] };
+  'sharing.s3.recoverable_buckets': { params: void; response: S3RecoverableBucket[] };
   'sharing.s3.update': { params: [id: number, update: S3BucketUpdate]; response: S3Bucket };
   'sharing.smb.create': { params: [Partial<SmbShare>]; response: SmbShare };
   'sharing.smb.delete': { params: [id: number]; response: boolean };

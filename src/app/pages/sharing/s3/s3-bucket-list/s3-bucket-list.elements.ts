@@ -19,5 +19,14 @@ export const s3BucketListElements = {
         T('New Bucket'),
       ],
     },
+    recoverS3Buckets: {
+      hierarchy: [T('Recover S3 Buckets')],
+      synonyms: [
+        T('Restore S3 Bucket'),
+        T('Recover Bucket'),
+        T('Restore Bucket'),
+        T('Undelete Bucket'),
+      ],
+    },
   },
 } satisfies UiSearchableElement;

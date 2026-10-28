@@ -28,6 +28,16 @@
       <button
         *ixRequiresRoles="requiredRoles"
         mat-button
+        ixTest="recover-s3-buckets"
+        [ixUiSearch]="searchableElements.elements.recoverS3Buckets"
+        (click)="doRecover()"
+      >
+        {{ 'Recover' | translate }}
+      </button>
+
+      <button
+        *ixRequiresRoles="requiredRoles"
+        mat-button
         color="primary"
         ixTest="add-s3-bucket"
         [ixUiSearch]="searchableElements.elements.createS3Bucket"

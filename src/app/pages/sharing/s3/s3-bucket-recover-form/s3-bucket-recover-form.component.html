@@ -1,0 +1,61 @@
+<ix-modal-header
+  [requiredRoles]="requiredRoles"
+  [title]="title"
+  [loading]="isLoading()"
+></ix-modal-header>
+
+<mat-card>
+  <mat-card-content>
+    <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+      @if (loadFailed()) {
+        <p class="message">{{ 'Recoverable buckets could not be loaded.' | translate }}</p>
+      } @else if (rows().length) {
+        <ix-warning [message]="helptext.recoverWarning"></ix-warning>
+
+        @for (row of rows(); track row.bucket.dataset) {
+          <section class="bucket" [formGroup]="row.group" [attr.aria-label]="row.bucket.name">
+            <ix-checkbox formControlName="selected" [label]="row.bucket.name"></ix-checkbox>
+            <p class="dataset">{{ row.bucket.dataset }}</p>
+
+            @if (row.group.controls.selected.value) {
+              <ix-input
+                formControlName="name"
+                [label]="'Name' | translate"
+                [tooltip]="helptext.recoverNameTooltip | translate"
+                [required]="true"
+              ></ix-input>
+
+              <ix-user-picker
+                formControlName="owner"
+                [label]="'Owner' | translate"
+                [tooltip]="helptext.recoverOwnerTooltip | translate"
+                [required]="true"
+                [provider]="ownerProvider"
+                [createPreset]="userFormPreset"
+              ></ix-user-picker>
+            }
+
+            @if (row.error(); as error) {
+              <ix-warning color="red" [message]="error"></ix-warning>
+            }
+          </section>
+        }
+      } @else if (!isLoading()) {
+        <p class="message">{{ helptext.recoverEmpty | translate }}</p>
+      }
+
+      <ix-form-actions>
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          type="submit"
+          color="primary"
+          ixTest="recover"
+          [disabled]="!canSubmit()"
+        >
+          {{ 'Recover' | translate }}
+        </button>
+      </ix-form-actions>
+    </form>
+  </mat-card-content>
+</mat-card>

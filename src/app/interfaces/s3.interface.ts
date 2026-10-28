@@ -102,6 +102,31 @@ export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid
 
 export type S3BucketUpdate = Partial<Omit<S3BucketCreate, 'dataset'>>;
 
+/**
+ * A bucket no longer registered whose dataset still holds it, as `sharing.s3.recoverable_buckets` reads it from
+ * the config backup on that dataset. Only the fields the recover form shows.
+ */
+export interface S3RecoverableBucket {
+  name: string;
+  dataset: string;
+  owner: string;
+  owner_uid: number;
+}
+
+/** One dataset to hand `sharing.s3.recover`, with the name and owner it should come back under if not its own. */
+export interface S3RecoverBucket {
+  dataset: string;
+  name_override?: string | null;
+  owner_override?: string | null;
+}
+
+/** `sharing.s3.recover`'s answer for one dataset: the bucket on success, the reason otherwise. */
+export interface S3RecoveredBucket {
+  dataset: string;
+  bucket: S3Bucket | null;
+  error: string | null;
+}
+
 export interface S3AccessKey {
   id: number;
   name: string;

@@ -26,6 +26,9 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { S3BucketListComponent } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.component';
+import {
+  S3BucketRecoverFormComponent,
+} from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
 describe('S3BucketListComponent', () => {
@@ -106,6 +109,18 @@ describe('S3BucketListComponent', () => {
     await addButton.click();
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(S3BucketFormComponent);
+  });
+
+  it('opens the recover panel when Recover is pressed and reloads on any close', async () => {
+    const slideIn = spectator.inject(SlideIn);
+    // A cancel after a partial recovery still leaves the buckets that came back registered.
+    jest.mocked(slideIn.open).mockReturnValueOnce(of({ response: undefined }));
+    const loadSpy = jest.spyOn(spectator.component.dataProvider, 'load');
+
+    await (await loader.getHarness(MatButtonHarness.with({ text: 'Recover' }))).click();
+
+    expect(slideIn.open).toHaveBeenCalledWith(S3BucketRecoverFormComponent);
+    expect(loadSpy).toHaveBeenCalled();
   });
 
   it('opens bucket form for editing when Edit is pressed', async () => {

@@ -1,0 +1,25 @@
+.bucket {
+  border-top: 1px solid var(--lines);
+  padding-top: 16px;
+
+  &:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+.dataset {
+  color: var(--fg2);
+  font-size: 12px;
+  margin: -8px 0 12px;
+  overflow-wrap: anywhere;
+}
+
+ix-warning {
+  display: block;
+  margin-bottom: 16px;
+}
+
+.message {
+  margin: 0 0 16px;
+}
