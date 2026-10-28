@@ -72,11 +72,6 @@ let containerId: number;
 let nic: string;
 /** The next one, if the appliance has one: proof the menu opened when `nic` is absent from it. */
 let otherNic: string | undefined;
-/**
- * The bridge a NIC added without `nic_attach` lands on: `bridge` from the
- * baseline settings, which is automatic, so the TrueNAS-managed bridge.
- */
-const defaultBridge = 'truenasbr0';
 
 test.beforeAll(async ({ api }) => {
   found = await readContainerConfig(api);
@@ -135,7 +130,7 @@ test.afterAll(async ({ api, pool }) => {
   await ensureDatasetAbsent(api, containersDataset(pool));
 });
 
-test('an admin adds a NIC on the default bridge from the no network notice', async ({ page, api }) => {
+test('an admin adds a NIC from the no network notice without choosing an interface', async ({ page, api }) => {
   await openContainerDetails(page, containerName);
   await expect(page.locator(card.noNetwork)).toHaveText('No network access');
 
@@ -146,9 +141,10 @@ test('an admin adds a NIC on the default bridge from the no network notice', asy
   if (!device) {
     throw new Error('the add was accepted and no NIC device is on the container');
   }
-  // Sent with no attachment; middleware stores the default bridge it chose.
-  expect(device.nic_attach).toBe(defaultBridge);
-  await expect(page.locator(card.device(device.id))).toContainText(`${defaultBridge} (`);
+  // The button sends no `nic_attach`. Where the NIC lands is middleware's call
+  // (the default bridge, recorded on newer middleware; left blank on older), so
+  // the claim is the one device, not which interface middleware gave it.
+  await expect(page.locator(card.device(device.id))).toBeVisible();
   await expect(page.locator(card.noNetwork)).toBeHidden();
 });
 
