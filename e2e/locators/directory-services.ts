@@ -78,7 +78,16 @@ export const directoryServicesLocators = {
     domainName: '[data-test="text-domain-name-value"]',
     /** "Enabled" or "Disabled". */
     accountCache: '[data-test="text-account-cache-value"]',
-    /** The card header's menu trigger, `menuTriggerTestId`. */
+    /**
+     * Settings in the card's footer, which opens the configuration form on what is
+     * stored. Gated on no role; the form's Save is. Keyed by the card's title.
+     */
+    settings: '[data-test="button-active-directory-settings"]',
+    /**
+     * The card header's menu trigger, `menuTriggerTestId`. Every item in that menu
+     * needs `DIRECTORY_SERVICE_WRITE`, and the card draws no trigger for an empty
+     * menu, so an account without the role gets none.
+     */
     actionsMenu: '[data-test="button-directory-services-actions-menu"]',
     /**
      * Leave, in that menu, offered only while the status is `HEALTHY`. Keyed by
