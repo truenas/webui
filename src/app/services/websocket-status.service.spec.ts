@@ -80,8 +80,8 @@ describe('WebSocketStatusSerice', () => {
     expect(spectator.service.isConnected).toBe(true);
   });
 
-  // The app is authenticated because the typed session is, not because the legacy
-  // socket happens to be up: that socket only borrows the session now.
+  // The app is authenticated because the session is, not because the socket
+  // happens to be up.
   it('reverses auth status when the typed session ends', () => {
     spectator.service.setSessionStatus(true);
     spectator.service.setConnectionStatus(true);
@@ -98,7 +98,7 @@ describe('WebSocketStatusSerice', () => {
     expect(spectator.service.isConnected).toBe(true);
   });
 
-  it('does not count the app as authenticated while only the legacy socket is up', () => {
+  it('does not count the app as authenticated while only the socket is up', () => {
     spectator.service.setConnectionStatus(true);
     spectator.service.setLoginStatus(true);
 

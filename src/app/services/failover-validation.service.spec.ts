@@ -10,7 +10,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEventTyped } from 'app/interfaces/api-message.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
@@ -19,7 +19,7 @@ import {
   FailoverValidationService,
 } from 'app/services/failover-validation.service';
 
-function vrrpMasterEvent(state: JobState): ApiEventTyped<'core.get_jobs'> {
+function vrrpMasterEvent(state: JobState): ApiEvent {
   return {
     id: 1,
     msg: CollectionChangeType.Changed,
@@ -136,7 +136,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
 
       // Mock the job subscription
-      const mockJobEvent: ApiEventTyped<'core.get_jobs'> = {
+      const mockJobEvent: ApiEvent = {
         id: 1,
         msg: CollectionChangeType.Changed,
         collection: 'core.get_jobs',
@@ -163,7 +163,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
 
-      const mockFailedJobEvent: ApiEventTyped<'core.get_jobs'> = {
+      const mockFailedJobEvent: ApiEvent = {
         id: 1,
         msg: CollectionChangeType.Changed,
         collection: 'core.get_jobs',

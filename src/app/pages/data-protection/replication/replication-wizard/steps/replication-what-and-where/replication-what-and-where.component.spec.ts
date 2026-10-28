@@ -67,8 +67,6 @@ describe('ReplicationWhatAndWhereComponent', () => {
             },
           },
         ] as KeychainCredential[]),
-        // Read both here, over the legacy client, and through `ReplicationService`.
-        mockTypedQuery('replication.query', existingTasks as WebUiQueryEntity<'replication.query'>[]),
         mockTypedQuery('replication.query', existingTasks as unknown as WebUiQueryEntity<'replication.query'>[]),
         mockTypedCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),

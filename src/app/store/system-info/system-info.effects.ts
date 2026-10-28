@@ -67,9 +67,9 @@ export class SystemInfoEffects {
   private store$ = inject<Store<AppState>>(Store);
 
   /**
-   * The debug panel's enclosure mock stands in for iX hardware on a dev box. Its mocks only
-   * intercept `ApiService` calls, so the typed `truenas.is_ix_hardware` answer is overridden here
-   * instead. The debug panel's state only exists when the panel is enabled (see `main.ts`).
+   * The debug panel's enclosure mock stands in for iX hardware on a dev box. It registers no
+   * `truenas.is_ix_hardware` mock, so the answer is overridden here instead. The debug panel's
+   * state only exists when the panel is enabled (see `main.ts`).
    */
   private isEnclosureMockEnabled$: Observable<boolean> = defer(() => {
     if (!environment.debugPanel?.enabled) {

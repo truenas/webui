@@ -53,24 +53,20 @@ type ClientApi = WebUiApiClient['api'];
 /**
  * Fully-typed API access, backed by `@truenas/api-client`.
  *
- * This is the migration target for `ApiService`. Method names, params and
- * responses come from types generated from `middlewared --dump-api`, so an
- * unknown method or a wrong param shape is a compile error rather than a
- * runtime surprise, and there is no hand-maintained directory to keep in sync.
+ * Method names, params and responses come from types generated from
+ * `middlewared --dump-api`, so an unknown method or a wrong param shape is a
+ * compile error rather than a runtime surprise, and there is no hand-maintained
+ * directory to keep in sync.
  *
- * ## Coexistence with `ApiService`
+ * ## Session
  *
  * There is one socket, one session and one login, and they are this client's:
- * `AuthService` drives `client.authenticator`, so the typed session holds the
- * credentials, the reconnect-token chain and the session's roles. `ApiService`
- * and everything still riding it — the jobs store, the debug panel, every call
- * that has not moved — share this client's connection rather than opening one
- * of their own, so they are authenticated by the same login (NAS-143989).
+ * `AuthService` drives `client.authenticator`, so the session holds the
+ * credentials, the reconnect-token chain and the session's roles.
  *
- * Call sites therefore never authenticate here. Migrate a call by swapping the
- * injected service. Requests are held until the session is authenticated,
- * which is what a page loaded before sign-in, or one caught mid-reconnect, is
- * waiting for.
+ * Call sites therefore never authenticate here. Requests are held until the
+ * session is authenticated, which is what a page loaded before sign-in, or one
+ * caught mid-reconnect, is waiting for.
  *
  * ## Duplicate calls
  *
@@ -82,9 +78,8 @@ type ClientApi = WebUiApiClient['api'];
  * ## Errors
  *
  * Every verb throws a refusal as `ApiCallError` carrying the full JSON-RPC
- * error, the same class the legacy `ApiService` throws, so
- * `ErrorHandlerService` and form validation keep working unchanged. The verbs
- * that need a session also end it on `ENOTAUTHENTICATED`, as `ApiService` does.
+ * error, which `ErrorHandlerService` and form validation read. The verbs that
+ * need a session also end it on `ENOTAUTHENTICATED`.
  */
 @Injectable({
   providedIn: 'root',
@@ -217,9 +212,9 @@ export class TypedApiService {
    * Start a job and follow it to completion.
    *
    * Emits every update, completes on success and throws `FailedJobError` on
-   * failure — the same contract as `ApiService.job`, so `observeJob`-based
-   * consumers migrate without changes. A method refused before it starts a
-   * job (validation, a missing role) throws `ApiCallError` instead.
+   * failure, the contract `observeJob`-based consumers rely on. A method
+   * refused before it starts a job (validation, a missing role) throws
+   * `ApiCallError` instead.
    */
   job<M extends JobMethod<D>>(
     method: M,
@@ -282,8 +277,7 @@ export class TypedApiService {
   }
 
   /**
-   * Query a collection and keep the rows current from its change events, the typed counterpart
-   * of `ApiService.callAndSubscribe`.
+   * Query a collection and keep the rows current from its change events.
    *
    * There is no `select`: the change events carry whole rows, so a projection would be undone
    * by the first one. The client shares one event stream per collection and releases it with
@@ -328,8 +322,7 @@ export class TypedApiService {
 
   /**
    * Rethrows a refusal as `ApiCallError`, and ends the app's session when
-   * middleware refused for want of one, as `ApiService` does for the calls
-   * that still ride it: swallow the error, drop the session, and let the app
+   * middleware refused for want of one: swallow the error, drop the session, and let the app
    * fall back to the sign-in page, which logs straight back in when the stored
    * token is still good.
    */

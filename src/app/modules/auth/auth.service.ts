@@ -309,8 +309,7 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Ends the session. There is one — the socket is shared — so one
-   * `auth.logout` ends it for the typed calls and the legacy ones alike.
+   * Ends the session with `auth.logout`.
    *
    * The stored token goes first, before the call. `authenticator.logout()`
    * drops `authenticated$` at the call rather than when middleware answers, and

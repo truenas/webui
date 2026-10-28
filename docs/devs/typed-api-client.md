@@ -6,13 +6,14 @@ from `middlewared --dump-api`, so a typo in a method name or a wrong param
 shape is a compile error, and there is no hand-maintained directory to keep in
 sync with middleware.
 
-The UI has its own client — `ApiService` over `WebSocketHandlerService` — with
+The UI used to have its own client — `ApiService` over `WebSocketHandlerService` — with
 hand-written directories (`src/app/interfaces/api/*-directory.interface.ts`,
-about 1,350 lines describing 555 calls, 80 jobs and 31 events) that drift from
+about 1,350 lines describing 555 calls, 80 jobs and 31 events) that drifted from
 middleware. When the migration started on 2026-09-08 they were used from
 roughly 870 `call`, 110 `job` and 45 `subscribe` sites across 414 files. This
-document describes how the UI moves from one to the other without a big-bang
-rewrite. To see where it stands, run `yarn check-api-migration --report`.
+document describes how the UI moved from one to the other without a big-bang
+rewrite. The migration finished in NAS-144009, which deleted the legacy client
+(Phase 3 below); the spec rules and known gaps still apply.
 
 ## What is in place
 
@@ -148,8 +149,7 @@ Where things differ:
   (`port = 22`) come through as optional properties. A UI interface that
   requires them cannot receive the generated value; loosen it.
 - **Specs** use `mockTypedApi()` from
-  `app/core/testing/utils/mock-typed-api.utils`, the typed counterpart of
-  `mockApi()`: `mockTypedCall`, `mockTypedCallError`, `mockTypedQuery`,
+  `app/core/testing/utils/mock-typed-api.utils`: `mockTypedCall`, `mockTypedCallError`, `mockTypedQuery`,
   `mockTypedJob`, and `MockTypedApiService` for adjusting answers on the fly. Behind it is a real
   `@truenas/api-client` running on the package's own fake connection
   (`@truenas/api-client/testing`, since 6.0), so the real dispatch, job
@@ -179,8 +179,7 @@ Where things differ:
   `connection.reply` / `replyError`, which is how the auth bridge and the
   service's own dispatch are exercised end to end without a socket.
 - **A spec that reaches `TypedApiService` unmocked fails fast.**
-  `setup-jest.ts` provides `EmptyTypedApiService` globally, the way it
-  provides `EmptyApiService`, so an unmocked call throws
+  `setup-jest.ts` provides `EmptyTypedApiService` globally, so an unmocked call throws
   `TypedApiService injection not provided` instead of building the real
   client, which would open a WebSocket to `environment.remote` from jsdom and
   hang the test until its timeout. That guard exists because the first
@@ -189,7 +188,7 @@ Where things differ:
   timed out at 30 seconds with nothing in the assertion to explain why.
 - **Migrating a service migrates its consumers' specs.** The service's own
   spec is the small part. Every spec that used `mockCall('x.query', ...)` to
-  feed that service through the legacy `ApiService` now needs
+  feed that service through the legacy `ApiService` needed
   `mockTypedQuery('x.query', ...)` instead, including specs of components
   that only embed a consumer. Before moving a service, grep for its methods'
   names in `mockCall(` across `src/app` and convert those specs in the same
@@ -235,75 +234,10 @@ reports, update the spec's mock, and verify against a box. Prefer several
 narrow PRs to one wide one; the diff per file is mechanical and easy to review
 in isolation.
 
-The spec half has a codemod. Once an area's production code injects
-`TypedApiService`, run
-
-```bash
-yarn codemod:typed-api-specs src/app/pages/<area>
-yarn codemod:typed-api-specs --only 'keychaincredential.*' src/app/pages/<consumers>   # a shared service moved
-yarn codemod:typed-api-specs --keep-legacy 'cloudsync.create' src/app/pages/<area>    # some calls stay legacy
-```
-
-It rewrites `mockApi` / `mockCall` / `mockJob` to `mockTypedApi` /
-`mockTypedCall` / `mockTypedQuery` / `mockTypedJob`, renames `ApiService` and
-`MockApiService`, moves `call('x.query', [filters, options])` assertions to
-`query` / `queryOne` / `queryCount`, adds `await spectator.fixture.whenStable()`
-after `spectator.component.submit()`, and fixes the imports. It prints
-`file:line` for what it left alone: query factories, `mockProvider(ApiService)`
-(bare or with stubs: a spy object leaves the query verbs undefined), `jest.spyOn(api, 'call')`
-in a spec whose queries moved, hand-written `method === 'x.query'` dispatch, `failApiCall`,
-`emitSubscribeEvent`, `mockCallOnce`, `callAndSubscribe`,
-`expect(api.call).not.toHaveBeenCalled()` / `.toHaveBeenCalledTimes(n)` (which name no method, so they
-pass once a query has moved to `query`), and, under `--only` /
-`--keep-legacy`, a bare `mockApi()`, since nothing in it says whether the
-spec's calls moved.
-
-`mockTypedApi()` is not a drop-in for everything `mockApi()` provided.
-`mockApi()` also stubs `WebSocketStatusService`, `WebSocketHandlerService`,
-`SubscriptionManagerService` and its own ICU-aware `TranslateService`. After
-conversion a spec gets `setup-jest.ts`'s global `TranslateModule` instead. A
-spec whose component injects one of those websocket services needs its own
-`mockProvider`. The specs checked so far already have one.
-
-Two things it gets wrong, both found moving `src/app/services`. A spec that
-already has a `mockTypedApi([...])` gets a second one rather than a merged
-one, and the later provider hides the earlier; merge them by hand. And a
-method a component reads both directly and through a migrated service (the
-replication wizard's `replication.query`, the S3 grant rows' `user.query`)
-needs a mock on both doubles, which `--only` cannot express: it moves the
-legacy mock rather than copying it.
-
-Follow it with
-`yarn lint:fix` on the changed files, then `tsc`. `tsc` is where the real
-work is. Typed fixtures are checked against the generated directory, so a UI
-interface cast (`as Pool[]` where the query returns `PoolEntry`) or a
-`mockTypedCall('x', null)` for a method that returns something fails to
-compile. Each of those is drift the legacy mocks were hiding. Run on all of
-`src/app` at the time of writing, it rewrote 444 specs and flagged 84 for
-hand conversion.
-
-As the last consumer of a method moves, delete its entry from the hand-written
-directory. The shrinking directories are the progress bar.
-
-Guardrails, in place since NAS-143991 and both keyed to one list of finished
-paths (`scripts/api-migration-areas.mjs`):
-
-- `yarn check-api-migration` counts remaining legacy dependants per area, and
-  runs in CI's lint job. `--report` prints the breakdown; the gate itself only
-  fails on the list going stale — an entry that matches nothing, an entry that
-  imports the legacy client again, or an area that has finished migrating and
-  has not been pinned. It counts *files that import the client*, not `inject()`
-  sites: about twenty dependants take `api: ApiService` as a parameter instead
-  (the `*.form-config.ts` helpers, `ApiDataProvider`), and the import is what
-  the lint rule below keys on, so the two agree on what "moved" means.
-- A path-scoped `no-restricted-imports` (`migratedApiOverrides` in
-  `eslint.config.mjs`) bans `ApiService` and `mockApi` in those same paths, so
-  a finished area cannot slide back.
-
-Adding a path is the last step of migrating it: once the area's last legacy
-import goes, `check-api-migration` fails until it is listed. Infrastructure
-that owns both clients by definition — `modules/websocket`, `core/testing`,
-and `interfaces`, which only aliases generated types — is exempt.
+The spec half had a codemod (`yarn codemod:typed-api-specs`), and two
+guardrails pinned finished areas against sliding back: `yarn
+check-api-migration` in CI, and a path-scoped `no-restricted-imports` in
+`eslint.config.mjs`. All three went with the legacy client in NAS-144009.
 
 ### Phase 2 — move the infrastructure
 
@@ -345,15 +279,13 @@ Once most call sites are typed, move what still depends on the legacy socket:
 
 ### Phase 3 — remove the legacy client
 
-Nothing outside the legacy layer itself calls `ApiService` any more, and the
-hand-written directories are read only by it. Delete `ApiService`,
-`WebSocketHandlerService`, `SubscriptionManagerService`, the hand-written
-directories, `mockApi` / `MockApiService` / `EmptyApiService` and their
-registrations in `main.ts` and `setup-jest.ts`, along with the migration
-guardrails (`check-api-migration`, `scripts/api-migration-areas.mjs`,
-`migratedApiOverrides` in `eslint.config.mjs`). `DuplicateCallTrackerService` stays: it is
-the debug panel's now. Rename `TypedApiService` back to `ApiService` in a
-change of its own.
+Done (NAS-144009). `ApiService`, `WebSocketHandlerService`,
+`SubscriptionManagerService`, the hand-written directories,
+`mockApi` / `MockApiService` / `EmptyApiService` and their registrations in
+`main.ts` and `setup-jest.ts` are gone, along with the migration guardrails
+(`check-api-migration`, `scripts/api-migration-areas.mjs`,
+`migratedApiOverrides` in `eslint.config.mjs`) and the spec codemod.
+`DuplicateCallTrackerService` stays: it is the debug panel's now.
 
 ## Known gaps and library follow-ups
 
