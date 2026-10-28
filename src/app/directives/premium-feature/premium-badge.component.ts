@@ -10,7 +10,7 @@ import {
  * the answer cannot drift between the places that give it.
  */
 export const premiumFeatureExplanation = T(
-  'Premium features are available with TrueNAS Connect memberships, or on TrueNAS Enterprise appliances.',
+  'Premium features are available with TrueNAS Connect subscriptions, or on TrueNAS Enterprise appliances.',
 );
 
 /**

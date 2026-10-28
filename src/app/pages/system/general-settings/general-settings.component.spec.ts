@@ -9,6 +9,9 @@ import { GeneralSettingsComponent } from 'app/pages/system/general-settings/gene
 import { GuiCardComponent } from 'app/pages/system/general-settings/gui/gui-card/gui-card.component';
 import { LocalizationCardComponent } from 'app/pages/system/general-settings/localization/localization-card/localization-card.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
+import {
+  TncFeaturesCardComponent,
+} from 'app/pages/system/general-settings/tnc-features/tnc-features-card/tnc-features-card.component';
 
 describe('GeneralSettingsComponent', () => {
   let spectator: Spectator<GeneralSettingsComponent>;
@@ -20,6 +23,7 @@ describe('GeneralSettingsComponent', () => {
     declarations: [
       MockComponents(
         SupportCardComponent,
+        TncFeaturesCardComponent,
         GuiCardComponent,
         LocalizationCardComponent,
         EmailCardComponent,
@@ -34,6 +38,7 @@ describe('GeneralSettingsComponent', () => {
 
   it('shows cards with general settings', () => {
     expect(spectator.query(SupportCardComponent)).toExist();
+    expect(spectator.query(TncFeaturesCardComponent)).toExist();
     expect(spectator.query(GuiCardComponent)).toExist();
     expect(spectator.query(LocalizationCardComponent)).toExist();
     expect(spectator.query(EmailCardComponent)).toExist();

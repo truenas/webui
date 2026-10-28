@@ -1,0 +1,52 @@
+:host {
+  color: var(--fg2);
+}
+
+.tnc-banner {
+  display: block;
+  margin: 0 1rem 0.5rem;
+}
+
+.feature-row {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.feature-icon {
+  color: var(--green);
+  flex: none;
+}
+
+.feature-label {
+  font-weight: 500;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.feature-expiry {
+  color: var(--fg2);
+  flex: none;
+  margin-left: auto;
+  opacity: 0.85;
+}
+
+.tnc-feature.expiring {
+  .feature-icon,
+  .feature-expiry {
+    color: var(--orange);
+    opacity: 1;
+  }
+}
+
+.tnc-feature.critical {
+  .feature-icon,
+  .feature-expiry {
+    color: var(--red);
+    font-weight: 600;
+    opacity: 1;
+  }
+}
