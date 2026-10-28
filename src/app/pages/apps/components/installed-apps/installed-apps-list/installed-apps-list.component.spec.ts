@@ -40,6 +40,7 @@ describe('InstalledAppsListComponent', () => {
   let loader: HarnessLoader;
   let searchQuery$: BehaviorSubject<string>;
   let sortingInfo$: BehaviorSubject<{ active: string; direction: SortDirection }>;
+  let installedApps$: BehaviorSubject<App[]>;
 
   const apps = [
     {
@@ -90,9 +91,10 @@ describe('InstalledAppsListComponent', () => {
         useFactory: () => {
           searchQuery$ = new BehaviorSubject('');
           sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' as SortDirection });
+          installedApps$ = new BehaviorSubject(apps);
           return {
             isLoading$: of(false),
-            installedApps$: of(apps),
+            installedApps$: installedApps$.asObservable(),
             searchQuery$: searchQuery$.asObservable(),
             sortingInfo$: sortingInfo$.asObservable(),
             setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
@@ -170,6 +172,20 @@ describe('InstalledAppsListComponent', () => {
     spectator.click(spectator.query('ix-app-row')!);
     expect(locationSpy).toHaveBeenCalledWith('/apps/installed/test-catalog-train/ix-test-app-1');
     expect(spectator.component.selectedApp).toEqual(apps[0]);
+  });
+
+  it('keeps the selected app (and URL) when the list refreshes', () => {
+    spectator.click(spectator.queryAll('ix-app-row')[1]);
+    expect(spectator.component.selectedApp).toEqual(apps[1]);
+
+    const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
+
+    // Every app update event re-emits installedApps$ with fresh objects.
+    installedApps$.next(apps.map((app) => ({ ...app })));
+    spectator.detectChanges();
+
+    expect(spectator.component.selectedApp).toEqual(apps[1]);
+    expect(locationSpy).not.toHaveBeenCalled();
   });
 
   it('starts application', () => {

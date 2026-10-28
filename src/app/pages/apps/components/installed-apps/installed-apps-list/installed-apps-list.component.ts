@@ -279,7 +279,13 @@ export class InstalledAppsListComponent implements OnInit {
     ).subscribe({
       next: ([,, apps]) => {
         this.setDatasourceWithSort(this.sortingInfo(), apps);
-        this.selectAppForDetails(this.appId());
+        // Preserve the user's current selection across data refreshes (every app
+        // update event re-emits installedApps$). viewDetails() updates the URL via
+        // replaceState without touching the route params, so this.appId() only
+        // reflects the initial deep-link — falling back to it on every refresh would
+        // snap the selection back to that app (or selectFirstApp). Only use it when
+        // nothing is selected yet.
+        this.selectAppForDetails(this.selectedApp?.id ?? this.appId() ?? null);
         this.cdr.markForCheck();
       },
     });
