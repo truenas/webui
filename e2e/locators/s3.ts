@@ -88,13 +88,8 @@ export const s3BucketLocators = {
     /** Prefilled from the backup; rendered only while the row is ticked. */
     name: (dataset: string) => `[data-test="input-recover-bucket-name-${kebabTestSegment(dataset)}"]`,
     owner: (dataset: string) => `[data-test="autocomplete-recover-bucket-owner-${kebabTestSegment(dataset)}"]`,
-    ownerOption: (dataset: string, username: string) => (
-      `[data-test="option-recover-bucket-owner-${kebabTestSegment(dataset)}-${kebabTestSegment(username)}"]`
-    ),
     /** Middleware's reason a row was not recovered, left on screen under it. */
     error: (dataset: string) => `[data-test="banner-recover-bucket-error-${kebabTestSegment(dataset)}"]`,
-    /** "No recoverable buckets were found…", in place of the rows. */
-    empty: '[data-test="text-no-recoverable-buckets"]',
     /** The side panel's footer button: labelled "Recover", still `testId="save"` in form-side-panel-container. */
     submit: '[data-test="button-save"]',
   },
@@ -106,6 +101,13 @@ export const s3BucketLocators = {
     owner: '[data-test="autocomplete-owner"]',
     /** A row of the owner autocomplete, keyed by the username it shows. */
     ownerOption: (username: string) => `[data-test="option-owner-${kebabTestSegment(username)}"]`,
+    /**
+     * Shown under the parent dataset when the new bucket's dataset holds a deleted bucket — once
+     * `sharing.s3.recoverable_buckets`, asked only on a clash, has answered. Save stays refused meanwhile.
+     */
+    deletedBucket: '[data-test="banner-deleted-bucket"]',
+    /** Its "Recover", which swaps the panel over to the Recover form scoped to that one dataset. */
+    recoverDeletedBucket: '[data-test="button-recover-deleted-bucket"]',
     objectLock: '[data-test="checkbox-object-lock"]',
     /**
      * Rendered only while object lock is checked, so it doubles as a readback

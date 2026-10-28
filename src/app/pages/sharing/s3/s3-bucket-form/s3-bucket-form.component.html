@@ -30,6 +30,22 @@
       @if (datasetHint(); as hint) {
         <p class="dataset-hint" tnTestId="dataset-hint" tnTestIdType="text">{{ hint }}</p>
       }
+      @if (deletedBucketDataset(); as dataset) {
+        <tn-banner
+          class="deleted-bucket"
+          type="info"
+          testId="deleted-bucket"
+          [message]="helptext.deletedBucketMessage | translate"
+        >
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            tnBannerAction
+            testId="recover-deleted-bucket"
+            [label]="'Recover' | translate"
+            (onClick)="recoverDeletedBucket(dataset)"
+          ></tn-button>
+        </tn-banner>
+      }
     } @else {
       <tn-form-field [label]="'Dataset' | translate">
         <tn-input testId="dataset" name="dataset" [formControl]="datasetControl"></tn-input>

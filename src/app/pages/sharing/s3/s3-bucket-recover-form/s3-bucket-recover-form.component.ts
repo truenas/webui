@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit, signal, WritableSignal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnInit, signal, WritableSignal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
@@ -16,8 +16,8 @@ import { S3RecoverableBucket, S3RecoverBucket, S3RecoveredBucket } from 'app/int
 import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
-import { s3BucketNamePattern } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
+import { ApiService } from 'app/modules/websocket/api.service';
+import { s3BucketNamePattern } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
 import { s3UserDirectoryOptions, s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -42,6 +42,9 @@ interface RecoverRow {
  *
  * Every dataset gets its own answer, so a partial failure keeps the panel open on the buckets that failed, each
  * with its reason, while the ones that worked drop out of the list. The opener reloads on any close for that reason.
+ *
+ * Also swapped in for the bucket form when a new bucket's dataset turns out to hold a deleted one, scoped to that
+ * dataset by {@link dataset}.
  */
 @Component({
   selector: 'ix-s3-bucket-recover-form',
@@ -60,12 +63,15 @@ interface RecoverRow {
   ],
 })
 export class S3BucketRecoverFormComponent extends SidePanelForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
+
+  /** Limits the panel to the bucket on this dataset; absent, every recoverable bucket is listed. */
+  readonly dataset = input<string | undefined>(undefined);
 
   /** Gates the host-rendered footer Save. */
   readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
@@ -92,7 +98,9 @@ export class S3BucketRecoverFormComponent extends SidePanelForm implements OnIni
   ngOnInit(): void {
     this.api.call('sharing.s3.recoverable_buckets').pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (buckets) => {
-        const rows = [...buckets]
+        const dataset = this.dataset();
+        const rows = buckets
+          .filter((bucket) => !dataset || bucket.dataset === dataset)
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((bucket) => this.createRow(bucket));
         rows.forEach((row) => this.form.push(row.group));
@@ -114,15 +122,32 @@ export class S3BucketRecoverFormComponent extends SidePanelForm implements OnIni
     }
 
     this.isLoading.set(true);
+    // Held while the request is out: an edit made now would land on a row whose values were already sent, and a
+    // failed row would then show what middleware never saw. Without events, so the `selected` subscriptions in
+    // `createRow` do not re-enable the fields they hold.
+    this.form.disable({ emitEvent: false });
     this.api.call('sharing.s3.recover', [selected.map((row) => this.toRecoverBucket(row))]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (results) => this.applyResults(results),
       error: (error: unknown) => {
         this.isLoading.set(false);
+        this.enableRows();
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  /** Undoes the hold in `onSubmit`, leaving an unticked row's fields disabled as `createRow` keeps them. */
+  private enableRows(): void {
+    this.rows().forEach(({ group }) => {
+      group.controls.selected.enable({ emitEvent: false });
+      if (group.controls.selected.value) {
+        group.controls.name.enable({ emitEvent: false });
+        group.controls.owner.enable({ emitEvent: false });
+      }
+    });
+    this.form.updateValueAndValidity();
   }
 
   private createRow(bucket: S3RecoverableBucket): RecoverRow {
@@ -186,6 +211,7 @@ export class S3BucketRecoverFormComponent extends SidePanelForm implements OnIni
 
     recovered.forEach((row) => this.form.removeAt(this.form.controls.indexOf(row.group)));
     this.rows.set(remaining);
+    this.enableRows();
 
     if (recovered.length) {
       this.snackbar.success(this.translate.instant(

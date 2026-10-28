@@ -4,6 +4,7 @@
  * Deleting a bucket leaves its dataset, its objects and a config backup in place; the Recover panel on the full
  * bucket list reads that backup back. An administrator recovers a bucket deleted by mistake, and recovers two at
  * once where another bucket has since taken one's name — that one fails on its own, and comes back once renamed.
+ * An administrator who instead tries to add the bucket again is offered its recovery by the Add form.
  *
  * What only an appliance can answer here: that the backup middleware writes when a bucket is saved is there to
  * find once the bucket is gone, that a recovery puts the bucket back on its own dataset under its old owner, and
@@ -17,8 +18,8 @@ import {
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
 import {
-  openS3BucketRecovery, renameBucketToRecover, selectBucketsToRecover, submitBucketRecovery,
-  submitBucketRecoveryExpectingFailure,
+  openS3BucketRecovery, recoverBucketFromCreator, renameBucketToRecover, selectBucketsToRecover,
+  submitBucketRecovery, submitBucketRecoveryExpectingFailure,
 } from '../flows/s3';
 import { s3BucketLocators } from '../locators/s3';
 import type { E2eApiClient } from '../support/api/client';
@@ -127,4 +128,24 @@ test('a bucket whose name was taken fails on its own and recovers once renamed',
       .toBe(clashingDataset);
     expect(renamed?.owner).toBe(owner);
   });
+});
+
+test('adding a bucket over a deleted one offers its recovery instead', async ({ page, api, pool }) => {
+  const keptDataset = `${pool}/${parentDataset}/${keptBucket}`;
+  await ensureS3BucketOrphaned(api, { name: keptBucket, parentDataset: `${pool}/${parentDataset}`, owner });
+
+  await recoverBucketFromCreator(page, { name: keptBucket, parentDataset: `${pool}/${parentDataset}` });
+  // Scoped to the one dataset, whatever else the appliance has orphaned.
+  await expect(page.locator(s3BucketLocators.recover.anyBucket)).toHaveCount(1);
+  await expect(page.locator(s3BucketLocators.recover.owner(keptDataset))).toHaveValue(owner);
+
+  await submitBucketRecovery(page);
+
+  // The dashboard card reloads once the swapped-in panel closes, as it would after a create.
+  await expect(page.locator(s3BucketLocators.dashboardRowName(keptBucket))).toBeVisible();
+
+  const recovered = await findS3Bucket(api, keptBucket);
+  expect(recovered?.dataset, 'the bucket was not registered on the dataset it was recovered from')
+    .toBe(keptDataset);
+  expect(recovered?.owner).toBe(owner);
 });

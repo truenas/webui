@@ -4,15 +4,15 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnBannerHarness, TnCheckboxHarness, TnInputHarness,
 } from '@truenas/ui-components';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockTypedApi, mockTypedCall, mockTypedQuery,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockCall, mockQuery,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { S3RecoverableBucket, S3RecoveredBucket } from 'app/interfaces/s3.interface';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   S3BucketRecoverFormComponent,
 } from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
@@ -21,7 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 describe('S3BucketRecoverFormComponent', () => {
   let spectator: Spectator<S3BucketRecoverFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let closed: jest.Mock;
 
   const recoverable = [
@@ -38,14 +38,14 @@ describe('S3BucketRecoverFormComponent', () => {
       mockAuth(),
       mockProvider(SnackbarService),
       mockProvider(ErrorHandlerService),
-      mockTypedApi([
-        mockTypedQuery('user.query', [
+      mockApi([
+        mockQuery('user.query', [
           { username: 'alice', uid: 1000 },
           { username: 'bob', uid: 1001 },
           { username: 'carol', uid: 1002 },
         ] as WebUiQueryEntity<'user.query'>[]),
-        mockTypedCall('sharing.s3.recoverable_buckets', () => recoverableBuckets),
-        mockTypedCall('sharing.s3.recover', () => recoverAnswer),
+        mockCall('sharing.s3.recoverable_buckets', () => recoverableBuckets),
+        mockCall('sharing.s3.recover', () => recoverAnswer),
       ]),
     ],
   });
@@ -58,10 +58,10 @@ describe('S3BucketRecoverFormComponent', () => {
     error: null,
   });
 
-  async function setUp(): Promise<void> {
-    spectator = createComponent();
+  async function setUp(dataset?: string): Promise<void> {
+    spectator = createComponent({ props: { dataset } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     closed = jest.fn();
     spectator.component.closed.subscribe(closed);
     await spectator.fixture.whenStable();
@@ -158,6 +158,42 @@ describe('S3BucketRecoverFormComponent', () => {
     expect(await error.getText()).toContain('Another bucket already uses this name.');
     // Nothing left is unsaved, so closing to sort out the clash elsewhere does not ask to discard anything.
     expect(spectator.component.hasUnsavedChanges()).toBe(false);
+  });
+
+  it('holds every row while the recovery is in flight and gives a failed one back for a retry', async () => {
+    recoverAnswer = [
+      { dataset: 'tank/buckets/backups', bucket: null, error: 'Another bucket already uses this name.' },
+      recovered('tank/buckets/photos'),
+    ];
+    await setUp();
+
+    spectator.component.submit();
+    // Read straight off the DOM: a harness would wait for the answer, and the hold lasts only until it lands.
+    spectator.detectChanges();
+    const inputs = spectator.queryAll<HTMLInputElement>('section input');
+    expect(inputs.length).toBeGreaterThan(0);
+    expect(inputs.every((input) => input.disabled)).toBe(true);
+
+    await spectator.fixture.whenStable();
+
+    const backups = await bucketLoader('backups');
+    expect(await (await backups.getHarness(TnInputHarness)).isDisabled()).toBe(false);
+    expect(await (await loader.getHarness(TnCheckboxHarness.with({ label: 'backups' }))).isDisabled()).toBe(false);
+    expect(spectator.component.canSubmit()).toBe(true);
+  });
+
+  it('lists only the bucket on the dataset it was opened for', async () => {
+    await setUp('tank/buckets/photos');
+
+    const checkboxes = await loader.getAllHarnesses(TnCheckboxHarness);
+    expect(await Promise.all(checkboxes.map((checkbox) => checkbox.getLabelText()))).toEqual(['photos']);
+
+    spectator.component.submit();
+    await spectator.fixture.whenStable();
+
+    expect(api.call).toHaveBeenCalledWith('sharing.s3.recover', [[
+      { dataset: 'tank/buckets/photos', name_override: null, owner_override: null },
+    ]]);
   });
 
   it('says so when nothing can be recovered', async () => {

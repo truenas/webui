@@ -522,6 +522,28 @@ export async function openS3BucketRecovery(page: Page, dataset: string): Promise
 }
 
 /**
+ * Starts adding a bucket from the Shares dashboard over a dataset that holds a deleted one, and takes the form's
+ * offer to recover it instead. Returns once the Recover panel shows that bucket's row.
+ */
+export async function recoverBucketFromCreator(
+  page: Page,
+  bucket: Pick<NewS3Bucket, 'name' | 'parentDataset'>,
+): Promise<void> {
+  await openBucketCreator(page);
+
+  const form = s3BucketLocators.form;
+  await page.locator(form.name).fill(bucket.name);
+  await page.locator(form.parentDataset).fill(bucket.parentDataset);
+  await page.locator(form.parentDataset).blur();
+
+  // The scan for deleted buckets runs only once the name lands on an existing dataset, so this waits on it.
+  await expect(page.locator(form.deletedBucket)).toBeVisible({ timeout: saveTimeoutMs });
+  await page.locator(form.recoverDeletedBucket).click();
+  await expect(page.locator(s3BucketLocators.recover.bucket(`${bucket.parentDataset}/${bucket.name}`)))
+    .toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
  * Ticks exactly the rows for `datasets` and unticks the rest.
  *
  * Every row starts ticked, and the panel lists every orphaned dataset on the appliance — including what another

@@ -85,6 +85,9 @@ export const helptextSharingS3 = {
  exists on this system or now belongs to someone else.'),
   recoverEmpty: T('No recoverable buckets were found. Only mounted datasets that held a bucket and are not\
  used by another bucket are listed.'),
+  deletedBucketNameError: T('A deleted bucket is on this dataset.'),
+  deletedBucketMessage: T('Its objects and configuration are still on the dataset. Recover the bucket to register\
+ it again, or choose another name.'),
 
   forceDisableVersioningMessage: T('Every earlier version of every object in this bucket, and every delete\
  marker, is destroyed. Version history stops being served at once, and the S3 service reclaims the space in the\
