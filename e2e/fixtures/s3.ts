@@ -96,6 +96,19 @@ export async function ensureS3BucketAbsent(client: E2eApiClient, name: string): 
   );
 }
 
+/**
+ * Leaves a bucket's dataset behind with no bucket on it — the state the Recover panel starts from.
+ *
+ * Created and then deleted over the API: `sharing.s3.delete` keeps the dataset, its objects and the config backup
+ * middleware wrote to `.truenas_s3/config_backup.json` when the bucket was saved, which is what a recovery reads.
+ * A bucket of that name still registered is deleted too, so this also turns a leftover from a failed run back
+ * into an orphan.
+ */
+export async function ensureS3BucketOrphaned(client: E2eApiClient, bucket: S3BucketSpec): Promise<void> {
+  await ensureS3BucketPresent(client, bucket);
+  await ensureS3BucketAbsent(client, bucket.name);
+}
+
 export async function findS3AccessKeys(client: E2eApiClient, username: string): Promise<S3AccessKeyEntry[]> {
   return firstValueFrom(
     client.api.query('s3.accesskey.query', [['username', '=', username]]).pipe(timeout(readTimeoutMs)),

@@ -512,6 +512,85 @@ export async function openS3BucketList(page: Page): Promise<void> {
 }
 
 /**
+ * Opens the Recover panel from the full bucket list. The panel lists what `sharing.s3.recoverable_buckets` finds,
+ * so a row for `dataset` appearing is the signal that the scan has answered.
+ */
+export async function openS3BucketRecovery(page: Page, dataset: string): Promise<void> {
+  await openS3BucketList(page);
+  await page.locator(s3BucketLocators.list.recover).click();
+  await expect(page.locator(s3BucketLocators.recover.dataset(dataset))).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Starts adding a bucket from the Shares dashboard over a dataset that holds a deleted one, and takes the form's
+ * offer to recover it instead. Returns once the Recover panel shows that bucket's row.
+ */
+export async function recoverBucketFromCreator(
+  page: Page,
+  bucket: Pick<NewS3Bucket, 'name' | 'parentDataset'>,
+): Promise<void> {
+  await openBucketCreator(page);
+
+  const form = s3BucketLocators.form;
+  await page.locator(form.name).fill(bucket.name);
+  await page.locator(form.parentDataset).fill(bucket.parentDataset);
+  await page.locator(form.parentDataset).blur();
+
+  // The scan for deleted buckets runs only once the name lands on an existing dataset, so this waits on it.
+  await expect(page.locator(form.deletedBucket)).toBeVisible({ timeout: saveTimeoutMs });
+  await page.locator(form.recoverDeletedBucket).click();
+  await expect(page.locator(s3BucketLocators.recover.bucket(`${bucket.parentDataset}/${bucket.name}`)))
+    .toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Ticks exactly the rows for `datasets` and unticks the rest.
+ *
+ * Every row starts ticked, and the panel lists every orphaned dataset on the appliance — including what another
+ * spec's interrupted run left, or a developer's own. Recovering one of those would register a bucket the test
+ * does not clean up, so a run only ever sends its own.
+ */
+export async function selectBucketsToRecover(page: Page, datasets: string[]): Promise<void> {
+  const { recover } = s3BucketLocators;
+  const wanted = new Set(datasets.map((dataset) => recover.bucket(dataset)));
+
+  for (const box of await page.locator(recover.anyBucket).all()) {
+    const testId = await box.getAttribute('data-test');
+    if (wanted.has(`[data-test="${testId}"]`)) {
+      await box.check();
+    } else {
+      await box.uncheck();
+    }
+  }
+}
+
+/** Replaces the name a row will be registered under; the field holds the backed-up name until then. */
+export async function renameBucketToRecover(page: Page, dataset: string, name: string): Promise<void> {
+  await page.locator(s3BucketLocators.recover.name(dataset)).fill(name);
+}
+
+/**
+ * Presses Recover and waits for every ticked row to come back: the panel closes only when none failed.
+ *
+ * A row that fails stays on screen with its reason and the panel stays open; use
+ * {@link submitBucketRecoveryExpectingFailure} for that.
+ */
+export async function submitBucketRecovery(page: Page): Promise<void> {
+  const submit = page.locator(s3BucketLocators.recover.submit);
+  await submit.click();
+  await expect(submit).toBeHidden({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Presses Recover where `failing` is expected to be refused, and returns once its reason is on screen. The rows
+ * that did come back drop out of the panel; the failed one keeps its fields for a retry.
+ */
+export async function submitBucketRecoveryExpectingFailure(page: Page, failing: string): Promise<void> {
+  await page.locator(s3BucketLocators.recover.submit).click();
+  await expect(page.locator(s3BucketLocators.recover.error(failing))).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
  * Deletes a bucket from the dashboard card's row menu.
  *
  * `confirmDelete` raises the standard confirm dialog with its tick box, so the

@@ -6,6 +6,7 @@ import { Store } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnAutocompleteHarness,
+  TnBannerHarness,
   TnButtonHarness,
   TnCheckboxHarness,
   TnChipInputHarness,
@@ -26,7 +27,7 @@ import {
   S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
-import { S3Bucket } from 'app/interfaces/s3.interface';
+import { S3Bucket, S3RecoverableBucket } from 'app/interfaces/s3.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxUserComboboxComponent,
@@ -34,9 +35,13 @@ import {
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
+import {
+  S3BucketRecoverFormComponent,
+} from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -127,8 +132,15 @@ describe('S3BucketFormComponent', () => {
         mockCall('sharing.s3.update', {} as WebUiQueryEntity<'sharing.s3.query'>),
         mockCall('sharing.s3.force_disable_versioning', null),
         mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
-        mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
+        mockCall('pool.filesystem_choices', [
+          'tank', 'tank/buckets', 'tank/buckets/photos', 'tank/buckets/archive',
+        ]),
+        // `tank/buckets/archive` held a bucket that was deleted; `photos` is a dataset like any other.
+        mockCall('sharing.s3.recoverable_buckets', [
+          { name: 'archive', dataset: 'tank/buckets/archive', owner: 'alice' },
+        ] as S3RecoverableBucket[]),
       ]),
+      mockProvider(FormSidePanelService),
       mockAuth(),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockEntitlements(),
@@ -335,6 +347,29 @@ describe('S3BucketFormComponent', () => {
 
       await (await getInput('name')).setValue('videos');
       expect(spectator.component.canSubmit()).toBe(true);
+      expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
+    });
+
+    it('offers to recover the deleted bucket a new one would land on, and swaps the panel over to it', async () => {
+      await (await getInput('name')).setValue('archive');
+      await (await getParentDatasetExplorer()).setValue('tank/buckets');
+      await setOwner('alice');
+      await spectator.fixture.whenStable();
+
+      expect(spectator.component.canSubmit()).toBe(false);
+      expect(spectator.component.form.controls.name.errors).toMatchObject({
+        customValidator: { message: 'A deleted bucket is on this dataset.' },
+      });
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('Recover the bucket to register it again');
+
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Recover' }))).click();
+
+      expect(spectator.inject(FormSidePanelService).swap).toHaveBeenCalledWith(S3BucketRecoverFormComponent, {
+        title: 'Recover S3 Bucket',
+        saveLabel: 'Recover',
+        inputs: { dataset: 'tank/buckets/archive' },
+      });
     });
 
     it('creates a bucket under the chosen parent dataset', async () => {
@@ -367,6 +402,8 @@ describe('S3BucketFormComponent', () => {
       }]);
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.S3 }));
       expect(closed).toHaveBeenCalledWith(true);
+      // Only a name landing on an existing dataset is worth the scan for deleted buckets.
+      expect(api.call).not.toHaveBeenCalledWith('sharing.s3.recoverable_buckets');
     });
 
     it('adds grants in advanced mode', async () => {

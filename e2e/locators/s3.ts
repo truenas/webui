@@ -67,6 +67,31 @@ export const s3BucketLocators = {
     delete: (bucket: string) => (
       `[data-test="button-${bucketListRowTag(bucket)}-more-action-mdi-delete-row-action"]`
     ),
+    /** "Recover", beside Add: `[testId]="'recover-s3-buckets'"`. The card has no counterpart. */
+    recover: '[data-test="button-recover-s3-buckets"]',
+  },
+
+  /**
+   * The Recover panel (`s3-bucket-recover-form.component.html`). It lists every bucket middleware can find a
+   * config backup for — every mounted dataset no bucket uses, not only the suite's — each keyed by its dataset
+   * through the library normalizer: `tank/e2e_s3/b` is `tank-e2e-s3-b`. Every row starts ticked.
+   *
+   * The tick box's id lands on its `<label>`, which Playwright resolves to the checkbox it labels, so
+   * `check()` / `isChecked()` work on it directly.
+   */
+  recover: {
+    /** Every row's tick box, for unticking what a test does not own. */
+    anyBucket: '[data-test^="checkbox-recover-bucket-"]',
+    bucket: (dataset: string) => `[data-test="checkbox-recover-bucket-${kebabTestSegment(dataset)}"]`,
+    /** The dataset line under the tick box. */
+    dataset: (dataset: string) => `[data-test="text-recover-bucket-dataset-${kebabTestSegment(dataset)}"]`,
+    /** Prefilled from the backup; rendered only while the row is ticked. */
+    name: (dataset: string) => `[data-test="input-recover-bucket-name-${kebabTestSegment(dataset)}"]`,
+    owner: (dataset: string) => `[data-test="autocomplete-recover-bucket-owner-${kebabTestSegment(dataset)}"]`,
+    /** Middleware's reason a row was not recovered, left on screen under it. */
+    error: (dataset: string) => `[data-test="banner-recover-bucket-error-${kebabTestSegment(dataset)}"]`,
+    /** The side panel's footer button: labelled "Recover", still `testId="save"` in form-side-panel-container. */
+    submit: '[data-test="button-save"]',
   },
 
   form: {
@@ -76,6 +101,13 @@ export const s3BucketLocators = {
     owner: '[data-test="autocomplete-owner"]',
     /** A row of the owner autocomplete, keyed by the username it shows. */
     ownerOption: (username: string) => `[data-test="option-owner-${kebabTestSegment(username)}"]`,
+    /**
+     * Shown under the parent dataset when the new bucket's dataset holds a deleted bucket — once
+     * `sharing.s3.recoverable_buckets`, asked only on a clash, has answered. Save stays refused meanwhile.
+     */
+    deletedBucket: '[data-test="banner-deleted-bucket"]',
+    /** Its "Recover", which swaps the panel over to the Recover form scoped to that one dataset. */
+    recoverDeletedBucket: '[data-test="button-recover-deleted-bucket"]',
     objectLock: '[data-test="checkbox-object-lock"]',
     /**
      * Rendered only while object lock is checked, so it doubles as a readback
