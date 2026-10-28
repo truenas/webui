@@ -5,7 +5,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemAdvanced } from 'app/helptext/system/advanced';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
@@ -15,7 +15,7 @@ export interface SedFormValues {
 }
 
 export function getSelfEncryptingDriveFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
 ): FormDefinition<SedFormValues> {

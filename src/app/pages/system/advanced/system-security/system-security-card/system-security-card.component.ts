@@ -14,7 +14,7 @@ import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { toSystemSecurityConfig } from 'app/interfaces/system-security-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { systemSecurityCardElements } from 'app/pages/system/advanced/system-security/system-security-card/system-security-card.elements';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 
@@ -37,7 +37,7 @@ import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-se
 export class SystemSecurityCardComponent {
   protected readonly searchableElements = systemSecurityCardElements;
 
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);

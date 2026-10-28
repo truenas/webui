@@ -18,7 +18,7 @@ import { helptextSystemEmail } from 'app/helptext/system/email';
 import { MailConfig, toMailConfig } from 'app/interfaces/mail-config.interface';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { emailCardElements } from 'app/pages/system/general-settings/email/email-card/email-card.elements';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 
@@ -42,7 +42,7 @@ import { EmailFormComponent } from 'app/pages/system/general-settings/email/emai
 })
 export class EmailCardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 

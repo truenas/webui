@@ -5,7 +5,7 @@ import {
 } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ContainerConfigState {
@@ -20,7 +20,7 @@ const initialState: ContainerConfigState = {
 
 @Injectable()
 export class ContainerConfigStore extends ComponentStore<ContainerConfigState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading = computed(() => this.state().isLoading);

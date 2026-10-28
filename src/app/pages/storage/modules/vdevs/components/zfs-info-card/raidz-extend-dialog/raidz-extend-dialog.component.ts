@@ -18,7 +18,7 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
@@ -48,7 +48,7 @@ export interface RaidzExtendDialogParams {
 })
 export class RaidzExtendDialog {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);

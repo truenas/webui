@@ -23,7 +23,7 @@ import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InterfaceFormComponent } from 'app/pages/system/network/components/interface-form/interface-form.component';
 import { InterfacesCardComponent } from 'app/pages/system/network/components/interfaces-card/interfaces-card.component';
 import { IpmiCardComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-card.component';
@@ -61,7 +61,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class NetworkComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private router = inject(Router);
   private dialogService = inject(DialogService);
   private loader = inject(LoaderService);

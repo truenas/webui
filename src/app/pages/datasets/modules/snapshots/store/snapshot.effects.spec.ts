@@ -2,11 +2,11 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   snapshotPageEntered,
   snapshotsLoaded,
@@ -23,7 +23,7 @@ const fakeSnapshots = [
 
 describe('SnapshotEffects', () => {
   let spectator: SpectatorService<SnapshotEffects>;
-  let api: TypedApiService;
+  let api: ApiService;
   let store$: MockStore<AppState>;
   let actions$: ReplaySubject<unknown>;
 
@@ -31,8 +31,8 @@ describe('SnapshotEffects', () => {
     service: SnapshotEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockTypedApi([
-        mockTypedQuery('pool.snapshot.query', fakeSnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
+      mockApi([
+        mockQuery('pool.snapshot.query', fakeSnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
       ]),
       provideMockStore({
         initialState: {
@@ -51,7 +51,7 @@ describe('SnapshotEffects', () => {
   beforeEach(() => {
     actions$ = new ReplaySubject<unknown>(1);
     spectator = createService();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     store$ = spectator.inject(MockStore);
   });
 

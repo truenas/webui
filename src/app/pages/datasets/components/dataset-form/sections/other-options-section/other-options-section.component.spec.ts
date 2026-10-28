@@ -8,7 +8,7 @@ import { CallResponse } from '@truenas/api-client';
 import { TnFormSectionHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -208,18 +208,18 @@ describe('OtherOptionsSectionComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('pool.dataset.checksum_choices', {
+      mockApi([
+        mockCall('pool.dataset.checksum_choices', {
           ON: 'ON',
           SHA256: 'SHA256',
         } as CallResponse<WebUiApiDirectory, 'pool.dataset.checksum_choices'>),
-        mockTypedCall('pool.dataset.compression_choices', {
+        mockCall('pool.dataset.compression_choices', {
           LZ4: 'LZ4',
           LZJB: 'LZJB',
           OFF: 'OFF',
         }),
-        mockTypedCall('pool.dataset.recordsize_choices', ['1K', '64K']),
-        mockTypedCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
+        mockCall('pool.dataset.recordsize_choices', ['1K', '64K']),
+        mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(SharingTierService, {

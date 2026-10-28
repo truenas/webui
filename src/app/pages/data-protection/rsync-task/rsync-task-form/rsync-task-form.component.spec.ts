@@ -13,8 +13,8 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
@@ -28,8 +28,8 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { UserService } from 'app/services/user.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -78,13 +78,13 @@ describe('RsyncTaskFormComponent', () => {
         timezone: 'America/New_York',
       }),
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', [
+      mockApi([
+        mockQuery('keychaincredential.query', [
           { id: 1, name: 'ssh01' },
           { id: 2, name: 'ssh02' },
         ] as KeychainCredential[]),
-        mockTypedCall('rsynctask.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.create'>),
-        mockTypedCall('rsynctask.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.update'>),
+        mockCall('rsynctask.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.create'>),
+        mockCall('rsynctask.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.update'>),
       ]),
       mockProvider(FilesystemService),
       mockProvider(UserService, {
@@ -170,7 +170,7 @@ describe('RsyncTaskFormComponent', () => {
 
       await saveForm();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.create', [{
         archive: false,
         compress: true,
         delayupdates: false,
@@ -235,7 +235,7 @@ describe('RsyncTaskFormComponent', () => {
 
       await saveForm();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTask,
@@ -264,7 +264,7 @@ describe('RsyncTaskFormComponent', () => {
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,
@@ -289,7 +289,7 @@ describe('RsyncTaskFormComponent', () => {
       const existingTaskWithoutModule = { ...existingTask };
       delete existingTaskWithoutModule.remotemodule;
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [
         1,
         {
           ...existingTaskWithoutModule,
@@ -321,7 +321,7 @@ describe('RsyncTaskFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('rsynctask.update', [1, expect.anything()]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('rsynctask.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });

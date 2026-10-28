@@ -3,18 +3,18 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnChipInputHarness, TnInputHarness } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KerberosRealm } from 'app/interfaces/kerberos-realm.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { KerberosRealmsFormComponent } from 'app/pages/directory-service/components/kerberos-realms-form/kerberos-realms-form.component';
 
 describe('KerberosRealmsFormComponent', () => {
   let spectator: Spectator<KerberosRealmsFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const editingRealm = {
     id: 13,
@@ -32,9 +32,9 @@ describe('KerberosRealmsFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('kerberos.realm.create', editingRealm),
-        mockTypedCall('kerberos.realm.update', editingRealm),
+      mockApi([
+        mockCall('kerberos.realm.create', editingRealm),
+        mockCall('kerberos.realm.update', editingRealm),
       ]),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
@@ -45,7 +45,7 @@ describe('KerberosRealmsFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends a create payload to websocket and closes the form when saved', async () => {
@@ -83,7 +83,7 @@ describe('KerberosRealmsFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({ props: { editingRow: editingRealm } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current realm values when form is being edited', async () => {

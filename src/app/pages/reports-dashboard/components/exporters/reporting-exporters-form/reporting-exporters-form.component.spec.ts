@@ -6,13 +6,13 @@ import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SchemaType } from 'app/enums/schema.enum';
 import { helptextReportingExporters } from 'app/helptext/reporting/reporting-exporters';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -37,8 +37,8 @@ describe('ReportingExportersFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('reporting.exporters.exporter_schemas', [{
+      mockApi([
+        mockCall('reporting.exporters.exporter_schemas', [{
           key: ReportingExporterKey.Graphite,
           schema: [
             {
@@ -55,8 +55,8 @@ describe('ReportingExportersFormComponent', () => {
             },
           ],
         }]),
-        mockTypedCall('reporting.exporters.create', null),
-        mockTypedCall('reporting.exporters.update', null),
+        mockCall('reporting.exporters.create', null),
+        mockCall('reporting.exporters.update', null),
       ]),
       mockAuth(),
       ...ixFormTestingProviders(),
@@ -87,7 +87,7 @@ describe('ReportingExportersFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.create', [{
         name: 'exporter1',
         enabled: true,
         attributes: {
@@ -123,7 +123,7 @@ describe('ReportingExportersFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(TypedApiService, {
+          mockProvider(ApiService, {
             call: jest.fn(() => throwError(() => new Error('Schemas unavailable'))),
           }),
           mockProvider(ErrorHandlerService),
@@ -159,7 +159,7 @@ describe('ReportingExportersFormComponent', () => {
     });
 
     it('shows values for existing exporter', async () => {
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.exporter_schemas');
 
       const typeSelect = await loader.getHarness(TnSelectHarness);
       const typeOptions = await typeSelect.getOptions();
@@ -195,7 +195,7 @@ describe('ReportingExportersFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'reporting.exporters.update',
         [
           123,

@@ -4,11 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ExportDatasetKeyDialog } from './export-dataset-key-dialog.component';
 
@@ -18,8 +18,8 @@ describe('ExportDatasetKeyDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: ExportDatasetKeyDialog,
     providers: [
-      mockTypedApi([
-        mockTypedJob('pool.dataset.export_key', { state: JobState.Success, result: '12345678' }),
+      mockApi([
+        mockJob('pool.dataset.export_key', { state: JobState.Success, result: '12345678' }),
       ]),
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
@@ -43,7 +43,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
   });
 
   it('loads and shows dataset encryption key', () => {
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
     const key = spectator.query('.key');
     expect(key).toHaveText('12345678');
   });
@@ -61,7 +61,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
   });
 
   it('auto closes dialog if there was an error loading the key', () => {
-    const mockedApi = spectator.inject(MockTypedApiService);
+    const mockedApi = spectator.inject(MockApiService);
     jest.spyOn(mockedApi, 'job').mockReturnValue(throwError(() => new Error('Failed to load key')));
 
     spectator.component.ngOnInit();

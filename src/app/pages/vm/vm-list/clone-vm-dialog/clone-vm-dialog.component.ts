@@ -11,7 +11,7 @@ import { Role } from 'app/enums/role.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -33,7 +33,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class CloneVmDialogComponent {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   vm = inject<VirtualMachine>(DIALOG_DATA);
   protected dialogRef = inject<DialogRef<unknown, CloneVmDialogComponent>>(DialogRef);

@@ -5,11 +5,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { helptextAcl } from 'app/helptext/storage/volumes/datasets/dataset-acl';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   StripAclModalComponent, StripAclModalData,
 } from 'app/pages/datasets/modules/permissions/components/strip-acl-modal/strip-acl-modal.component';
@@ -23,8 +23,8 @@ describe('StripAclModalComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedJob('filesystem.setacl', { state: JobState.Success }),
+      mockApi([
+        mockJob('filesystem.setacl', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -51,7 +51,7 @@ describe('StripAclModalComponent', () => {
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'filesystem.setacl',
       [{
         dacl: [],
@@ -76,7 +76,7 @@ describe('StripAclModalComponent', () => {
     await stripButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'filesystem.setacl',
       [{
         dacl: [],

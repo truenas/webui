@@ -34,7 +34,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownFormComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-form/init-shutdown-form.component';
@@ -65,7 +65,7 @@ import { initShudownListElements } from 'app/pages/system/advanced/init-shutdown
 export class InitShutdownListComponent implements OnInit {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);

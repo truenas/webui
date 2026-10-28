@@ -10,7 +10,7 @@ import { Role } from 'app/enums/role.enum';
 import { emptyConfigIcon } from 'app/helpers/empty-config.helper';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FlattenEmptyMessagePipe } from 'app/modules/pipes/flatten-empty-message/flatten-empty-message.pipe';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { dataProtectionDashboardElements } from 'app/pages/data-protection/data-protection-dashboard.elements';
 import { CloudBackupCardComponent } from './cloud-backup/cloud-backup-card/cloud-backup-card.component';
 import { CloudSyncTaskCardComponent } from './cloudsync/cloudsync-task-card/cloudsync-task-card.component';
@@ -39,7 +39,7 @@ import { SnapshotTaskCardComponent } from './snapshot-task/snapshot-task-card/sn
   ],
 })
 export class DataProtectionDashboardComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private router = inject(Router);
 
   protected readonly searchableElements = dataProtectionDashboardElements;

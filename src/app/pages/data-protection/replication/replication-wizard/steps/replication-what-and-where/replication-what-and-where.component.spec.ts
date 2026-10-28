@@ -13,8 +13,8 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
 import { Direction } from 'app/enums/direction.enum';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -57,8 +57,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', [
+      mockApi([
+        mockQuery('keychaincredential.query', [
           {
             id: 123,
             name: 'non-root-ssh-connection',
@@ -67,8 +67,8 @@ describe('ReplicationWhatAndWhereComponent', () => {
             },
           },
         ] as KeychainCredential[]),
-        mockTypedQuery('replication.query', existingTasks as unknown as WebUiQueryEntity<'replication.query'>[]),
-        mockTypedCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
+        mockQuery('replication.query', existingTasks as unknown as WebUiQueryEntity<'replication.query'>[]),
+        mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
       ]),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {

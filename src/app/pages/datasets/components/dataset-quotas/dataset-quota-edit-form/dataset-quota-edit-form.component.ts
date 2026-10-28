@@ -25,7 +25,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-dataset-quota-edit-form',
@@ -41,7 +41,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 })
 export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   protected dialogService = inject(DialogService);

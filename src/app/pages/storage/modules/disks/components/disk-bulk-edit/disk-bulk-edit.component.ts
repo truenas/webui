@@ -25,7 +25,7 @@ import {
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   advPowerManagementOptionTestId, DiskFormResponse,
 } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
@@ -58,7 +58,7 @@ interface DiskBulkResult {
 export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> implements OnInit {
   private fb = inject(NonNullableFormBuilder);
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private snackbar = inject(SnackbarService);
 

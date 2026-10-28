@@ -14,7 +14,7 @@ import { helptextActiveDirectory } from 'app/helptext/directory-service/active-d
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -38,7 +38,7 @@ export class LeaveDomainDialog {
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(FormBuilder);
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   protected dialogRef = inject<DialogRef<unknown, LeaveDomainDialog>>(DialogRef);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);

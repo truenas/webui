@@ -32,8 +32,8 @@ import { LoggedInUser, toLoggedInUser } from 'app/interfaces/ds-cache.interface'
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
 import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { asLoginExResponse } from 'app/modules/auth/typed-login-response';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -49,7 +49,7 @@ const logoutAckTimeoutMs = 10_000;
 })
 export class AuthService implements OnDestroy {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private client$ = inject(TYPED_API_CLIENT);
   private tokenLastUsedService = inject(TokenLastUsedService);
   private wsStatus = inject(WebSocketStatusService);

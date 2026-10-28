@@ -32,7 +32,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   formatLicenseExpiration,
   getDaysUntilLicenseExpiration,
@@ -79,7 +79,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class SupportCardComponent implements OnInit {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
   private loader = inject(LoaderService);
   private tnDialog = inject(TnDialog);
   private formPanel = inject(FormSidePanelService);

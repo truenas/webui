@@ -4,10 +4,10 @@ import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnIconHarness } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { IdentifyLightComponent } from 'app/pages/system/enclosure/components/identify-light/identify-light.component';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 
@@ -20,8 +20,8 @@ describe('IdentifyLightComponent', () => {
   const createComponent = createComponentFactory({
     component: IdentifyLightComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('enclosure2.set_slot_status', null),
+      mockApi([
+        mockCall('enclosure2.set_slot_status', null),
       ]),
       mockProvider(EnclosureStore, {
         selectedSlot,
@@ -132,7 +132,7 @@ describe('IdentifyLightComponent', () => {
         enclosureId: 'enclosure1',
         status: DriveBayLightStatus.Off,
       });
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('enclosure2.set_slot_status', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure2.set_slot_status', [{
         enclosure_id: 'enclosure1',
         slot: 5,
         status: DriveBayLightStatus.Off,
@@ -148,7 +148,7 @@ describe('IdentifyLightComponent', () => {
         enclosureId: 'enclosure1',
         status: DriveBayLightStatus.On,
       });
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('enclosure2.set_slot_status', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure2.set_slot_status', [{
         enclosure_id: 'enclosure1',
         slot: 5,
         status: DriveBayLightStatus.On,
@@ -156,7 +156,7 @@ describe('IdentifyLightComponent', () => {
     });
 
     it('reverts to old status if status could not be changed', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       api.call.mockImplementationOnce(() => throwError(() => new Error('Failed to change status')));
 
       const identifyButton = await loader.getHarness(TnButtonHarness.with({ label: 'Identify' }));

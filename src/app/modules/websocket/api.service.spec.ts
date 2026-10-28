@@ -5,8 +5,8 @@ import {
 } from '@truenas/api-client/testing';
 import { defaultIfEmpty, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -16,13 +16,13 @@ const settle = (): Promise<void> => new Promise((resolve) => {
   setTimeout(resolve);
 });
 
-describe('TypedApiService', () => {
-  let spectator: SpectatorService<TypedApiService>;
+describe('ApiService', () => {
+  let spectator: SpectatorService<ApiService>;
   let client: FakeTrueNasClient<WebUiApiDirectory>;
   let wsStatus: WebSocketStatusService;
 
   const createService = createServiceFactory({
-    service: TypedApiService,
+    service: ApiService,
     providers: [
       {
         provide: TYPED_API_CLIENT,

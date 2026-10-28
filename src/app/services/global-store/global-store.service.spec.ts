@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { of, throwError } from 'rxjs';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { globalStore } from 'app/services/global-store/global-store.service';
 
 type Pool = WebUiQueryEntity<'pool.query'>;
@@ -20,18 +20,18 @@ const filters: TypedQueryFilter<Pool>[] = [
 const poolStore = globalStore('pool.query', filters);
 
 describe('GlobalStoreService', () => {
-  let api: TypedApiService;
+  let api: ApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         // Answered synchronously, so each subscription below sees the cache the previous one left.
-        mockProvider(TypedApiService, {
+        mockProvider(ApiService, {
           query: jest.fn(() => of(poolResponse)),
         }),
       ],
     });
-    api = TestBed.inject(TypedApiService);
+    api = TestBed.inject(ApiService);
   });
 
   it('sends the query after subscription', () => {

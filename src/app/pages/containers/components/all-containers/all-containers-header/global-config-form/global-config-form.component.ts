@@ -17,8 +17,8 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Component({
   selector: 'ix-global-config-form',
@@ -39,7 +39,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit {
   private destroyRef = inject(DestroyRef);
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
 
   /**

@@ -35,7 +35,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { IscsiService } from 'app/services/iscsi.service';
 
@@ -65,7 +65,7 @@ export class ExtentFormComponent extends IxFormHostForm implements OnInit {
   protected iscsiService = inject(IscsiService);
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private filesystemService = inject(FilesystemService);
   private destroyRef = inject(DestroyRef);
 

@@ -17,16 +17,16 @@ import {
   jobsNotLoaded,
 } from 'app/modules/jobs/store/job.actions';
 import { JobEffects } from 'app/modules/jobs/store/job.effects';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 
 // Middleware's `core.get_jobs` frames, which the generated event union does not fully describe (it has no `removed`).
-const jobEvent = (event: object): ReturnType<TypedApiService['subscribe']> => of(event) as ReturnType<TypedApiService['subscribe']>;
+const jobEvent = (event: object): ReturnType<ApiService['subscribe']> => of(event) as ReturnType<ApiService['subscribe']>;
 
 describe('JobEffects', () => {
   let effects: JobEffects;
   let actions$: Observable<unknown>;
-  let apiService: TypedApiService;
+  let apiService: ApiService;
   let translateService: TranslateService;
   let testScheduler: TestScheduler;
 
@@ -53,7 +53,7 @@ describe('JobEffects', () => {
       providers: [
         JobEffects,
         provideMockActions(() => actions$),
-        MockProvider(TypedApiService, {
+        MockProvider(ApiService, {
           call: jest.fn(),
           query: jest.fn(),
           subscribe: jest.fn(),
@@ -68,7 +68,7 @@ describe('JobEffects', () => {
     });
 
     effects = TestBed.inject(JobEffects);
-    apiService = TestBed.inject(TypedApiService);
+    apiService = TestBed.inject(ApiService);
     translateService = TestBed.inject(TranslateService);
 
     testScheduler = new TestScheduler((actual, expected) => {

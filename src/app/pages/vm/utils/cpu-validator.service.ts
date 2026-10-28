@@ -9,7 +9,7 @@ import {
 } from 'rxjs/operators';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 /**
  * An async validator.
@@ -19,7 +19,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 export class CpuValidatorService {
   private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   private maximumCpus$: Observable<number>;
 

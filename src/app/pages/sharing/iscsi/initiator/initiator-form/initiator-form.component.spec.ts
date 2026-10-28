@@ -7,20 +7,20 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnIconButtonHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { firstValueFrom, of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { InitiatorFormComponent } from 'app/pages/sharing/iscsi/initiator/initiator-form/initiator-form.component';
 
 describe('InitiatorFormComponent', () => {
   let spectator: SpectatorRouting<InitiatorFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: InitiatorFormComponent,
     imports: [
@@ -34,14 +34,14 @@ describe('InitiatorFormComponent', () => {
           userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
         },
       }),
-      mockTypedApi([
-        mockTypedQuery('iscsi.global.sessions', [{
+      mockApi([
+        mockQuery('iscsi.global.sessions', [{
           initiator: 'inr1',
           initiator_addr: '10.0.0.1',
         }] as WebUiQueryEntity<'iscsi.global.sessions'>[]),
-        mockTypedQuery('iscsi.initiator.query', [{ id: 1, comment: 'comment1', initiators: ['inr11', 'inr12'] }]),
-        mockTypedCall('iscsi.initiator.create', null),
-        mockTypedCall('iscsi.initiator.update', null),
+        mockQuery('iscsi.initiator.query', [{ id: 1, comment: 'comment1', initiators: ['inr11', 'inr12'] }]),
+        mockCall('iscsi.initiator.create', null),
+        mockCall('iscsi.initiator.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(UnsavedChangesService, {
@@ -60,7 +60,7 @@ describe('InitiatorFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows current initiator values when form is being edited', async () => {

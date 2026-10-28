@@ -8,13 +8,13 @@ import { macAddressRegex } from 'app/constants/mac-address.constant';
 import { Choices } from 'app/interfaces/choices.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { AllNetworkInterfacesUpdate } from 'app/interfaces/reporting.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { selectIsHaEnabled } from 'app/store/ha-info/ha-info.selectors';
 
 @Injectable({ providedIn: 'root' })
 export class NetworkService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store = inject(Store<AppState>);
 
   macRegex = macAddressRegex;

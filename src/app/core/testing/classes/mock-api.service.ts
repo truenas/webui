@@ -19,12 +19,12 @@ import {
 type D = WebUiApiDirectory;
 
 /** Methods `mockCall` accepts: everything in the call directory except the `.query` family, which `mockQuery` owns. */
-export type TypedCallMethod = Exclude<CallMethod<D>, QueryMethod<D['call']>>;
+export type MockCallMethod = Exclude<CallMethod<D>, QueryMethod<D['call']>>;
 
 /** Methods `mockCallError` can refuse: calls, `.query` methods and job methods alike. */
-export type TypedRefusableMethod = TypedCallMethod | QueryMethod<D['call']> | JobMethod<D>;
+export type RefusableMethod = MockCallMethod | QueryMethod<D['call']> | JobMethod<D>;
 
-export type TypedCallResponseOrFactory<M extends TypedCallMethod>
+export type CallResponseOrFactory<M extends MockCallMethod>
   = | CallResponse<D, M>
     | ((params: CallParams<D, M>) => CallResponse<D, M>);
 
@@ -32,7 +32,7 @@ export type TypedCallResponseOrFactory<M extends TypedCallMethod>
  * The client's verbs with their generics erased. The typing lives on the
  * scripting side (`mockCall`, `mockQuery`, `mockJob`), where fixtures are
  * checked against the directory; the verbs themselves mirror
- * `TypedApiService`'s loose-argument `jest.fn` shape so specs can assert on
+ * `ApiService`'s loose-argument `jest.fn` shape so specs can assert on
  * them the way they always have.
  */
 interface LooseApi {
@@ -46,7 +46,7 @@ interface LooseApi {
 }
 
 /**
- * Test double for `TypedApiService`, running a real `@truenas/api-client`
+ * Test double for `ApiService`, running a real `@truenas/api-client`
  * over the package's fake connection.
  *
  * Nothing here reimplements dispatch, job correlation or subscriptions: every
@@ -56,14 +56,14 @@ interface LooseApi {
  * rather than hanging.
  *
  * Every verb rethrows a refusal through the same `rethrowAsApiCallError` as
- * `TypedApiService`, so an error scripted with `mockCallError` surfaces as the
+ * `ApiService`, so an error scripted with `mockCallError` surfaces as the
  * `ApiCallError` production throws, `extra` and all.
  *
- * Set it up with `mockTypedApi()`. For connection-level scenarios — a dropped
+ * Set it up with `mockApi()`. For connection-level scenarios — a dropped
  * socket, a hand-written reply — reach the client through `client`.
  */
 @Injectable()
-export class MockTypedApiService implements OnDestroy {
+export class MockApiService implements OnDestroy {
   readonly client: FakeTrueNasClient<D> = withSpies(
     createFakeClient({ version: 'v28.0.0', strict: true }),
     jest.fn,
@@ -95,7 +95,7 @@ export class MockTypedApiService implements OnDestroy {
     return this.api.queryCount(method, filters).pipe(rethrowAsApiCallError(), this.untilAnswered());
   });
 
-  /** Same contract as `TypedApiService.job`: emits every update, throws `FailedJobError` on failure. */
+  /** Same contract as `ApiService.job`: emits every update, throws `FailedJobError` on failure. */
   readonly job = jest.fn((method: string, params?: unknown) => {
     return this.api.job(method, params).pipe(
       rethrowAsApiCallError(),
@@ -114,7 +114,7 @@ export class MockTypedApiService implements OnDestroy {
   });
 
   /**
-   * Same folding as `TypedApiService.queryAndSubscribe`: script the rows with `mockQuery`, the
+   * Same folding as `ApiService.queryAndSubscribe`: script the rows with `mockQuery`, the
    * changes with `emitEvent`.
    */
   readonly queryAndSubscribe = jest.fn((method: string, filters?: unknown, options?: unknown) => {
@@ -135,7 +135,7 @@ export class MockTypedApiService implements OnDestroy {
     return pendingUntilEvent<T>(this.injector);
   }
 
-  mockCall<M extends TypedCallMethod>(method: M, response: TypedCallResponseOrFactory<M>): void {
+  mockCall<M extends MockCallMethod>(method: M, response: CallResponseOrFactory<M>): void {
     this.client.mock.call(method, response);
   }
 
@@ -152,7 +152,7 @@ export class MockTypedApiService implements OnDestroy {
    * for the error path of a form: `extra` carries the field-level validation
    * errors.
    */
-  mockCallError(method: TypedRefusableMethod, error: FakeApiErrorOverrides = {}): void {
+  mockCallError(method: RefusableMethod, error: FakeApiErrorOverrides = {}): void {
     const frame = fakeApiError(error);
     this.client.connection.autoReply(method, ({ id }) => {
       // On a microtask, as the package's own answers are.

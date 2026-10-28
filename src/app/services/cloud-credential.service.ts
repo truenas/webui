@@ -5,7 +5,7 @@ import {
   CloudSyncBucket, CloudSyncCredential, CloudSyncCredentialEntry, CloudSyncCredentialVerifyResult,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 /** The create payload as middleware declares it: a name and one provider model, discriminated on `type`. */
 export type CloudCredentialPayload = v28_0_0.CloudCredentialCreate;
@@ -17,7 +17,7 @@ export type CloudCredentialProviderPayload = CloudCredentialPayload['provider'];
   providedIn: 'root',
 })
 export class CloudCredentialService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   getProviders(): Observable<CloudSyncProvider[]> {
     return this.api.call('cloudsync.providers').pipe(

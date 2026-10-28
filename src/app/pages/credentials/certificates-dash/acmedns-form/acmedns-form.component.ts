@@ -32,7 +32,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudflareAuthValidator } from 'app/pages/credentials/certificates-dash/acmedns-form/cloudflare-auth.validator';
 
 interface DnsAuthenticatorList {
@@ -61,7 +61,7 @@ interface DnsAuthenticatorList {
 export class AcmednsFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];

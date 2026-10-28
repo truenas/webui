@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { toLoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroup, WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { SomeWidgetSettings, WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -62,7 +62,7 @@ export const initialState: DashboardState = {
 @Injectable()
 export class DashboardStore extends ComponentStore<DashboardState> {
   private authService = inject(AuthService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
 

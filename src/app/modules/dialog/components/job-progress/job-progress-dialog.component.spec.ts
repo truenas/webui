@@ -4,8 +4,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialogHarness, TnIconButtonHarness, TnProgressBarComponent } from '@truenas/ui-components';
 import { BehaviorSubject, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
 import {
@@ -13,7 +13,7 @@ import {
   JobProgressDialogConfig,
 } from 'app/modules/dialog/components/job-progress/job-progress-dialog.component';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 describe('JobProgressDialogComponent', () => {
   let spectator: Spectator<JobProgressDialog<unknown>>;
@@ -23,8 +23,8 @@ describe('JobProgressDialogComponent', () => {
   const createComponent = createComponentFactory({
     component: JobProgressDialog<unknown>,
     providers: [
-      mockTypedApi([
-        mockTypedCall('core.job_abort', null),
+      mockApi([
+        mockCall('core.job_abort', null),
       ]),
       mockProvider(DialogRef),
     ],
@@ -165,7 +165,7 @@ describe('JobProgressDialogComponent', () => {
       const abortButton = await loader.getHarness(TnButtonHarness.with({ label: 'Abort' }));
       await abortButton.click();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('core.job_abort', [testJob.id]);
 
       const abortingButton = await loader.getHarness(TnButtonHarness.with({ label: 'Aborting...' }));
       expect(await abortingButton.isDisabled()).toBe(true);
@@ -252,12 +252,12 @@ describe('JobProgressDialogComponent', () => {
         ],
       });
 
-      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith(
         'filesystem.file_tail_follow',
         { path: '/var/log/test.log' },
       );
 
-      spectator.inject(MockTypedApiService).emitEvent(
+      spectator.inject(MockApiService).emitEvent(
         'filesystem.file_tail_follow',
         { msg: 'added', fields: { data: 'Log line 1\nLog line 2\n' } },
         { path: '/var/log/test.log' },

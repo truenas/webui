@@ -14,7 +14,7 @@ import { ApiCallError } from 'app/services/errors/error.classes';
  * Any other error, such as a connection failure or `FailedJobError`, passes
  * through untouched.
  *
- * Shared by `TypedApiService` and its spec double, so a spec that answers with
+ * Shared by `ApiService` and its spec double, so a spec that answers with
  * an error frame sees the same `ApiCallError` production does.
  */
 export function rethrowAsApiCallError<T>(): MonoTypeOperatorFunction<T> {

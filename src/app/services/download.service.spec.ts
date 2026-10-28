@@ -2,9 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Store } from '@ngrx/store';
 import { lastValueFrom, of } from 'rxjs';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { TaskState } from 'app/enums/task-state.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 
 describe('DownloadService', () => {
@@ -14,8 +14,8 @@ describe('DownloadService', () => {
     service: DownloadService,
     providers: [
       mockProvider(HttpClient),
-      mockTypedApi([
-        mockTypedCall('core.download', [123, 'http://localhost/download.file']),
+      mockApi([
+        mockCall('core.download', [123, 'http://localhost/download.file']),
       ]),
     ],
   });
@@ -83,7 +83,7 @@ describe('DownloadService', () => {
         mimeType: 'application/x-x509-user-cert',
       }));
 
-      expect(spectator.inject(TypedApiService).call)
+      expect(spectator.inject(ApiService).call)
         .toHaveBeenCalledWith('core.download', ['filesystem.get', ['argument'], 'test.csr']);
       const downloadService = spectator.inject(DownloadService);
       expect(downloadService.downloadUrl).toHaveBeenCalledTimes(1);

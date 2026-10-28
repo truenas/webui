@@ -7,8 +7,8 @@ import {
   catchError, filter, map, switchMap, take,
 } from 'rxjs/operators';
 import { toZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   snapshotAdded, snapshotChanged,
   snapshotPageEntered,
@@ -20,7 +20,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Injectable()
 export class SnapshotEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
 

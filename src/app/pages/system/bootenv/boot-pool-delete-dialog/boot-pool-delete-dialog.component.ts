@@ -12,7 +12,7 @@ import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { BulkListItem, BulkListItemState } from 'app/modules/lists/bulk-list-item/bulk-list-item.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -35,7 +35,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class BootPoolDeleteDialog {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   protected dialogRef = inject<DialogRef<unknown, BootPoolDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   bootenvs = inject<BootEnvironment[]>(DIALOG_DATA);

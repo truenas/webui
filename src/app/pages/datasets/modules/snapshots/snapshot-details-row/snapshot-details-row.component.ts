@@ -20,7 +20,7 @@ import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.compone
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
@@ -48,7 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private authService = inject(AuthService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);

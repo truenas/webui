@@ -10,15 +10,15 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { RdmaProtocolName, ServiceName } from 'app/enums/service-name.enum';
 import { Service } from 'app/interfaces/service.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -29,7 +29,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
 describe('TargetGlobalConfigurationComponent', () => {
   let spectator: Spectator<GlobalTargetConfigurationComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let mockStore$: MockStore<AppState>;
   let store$: Store<AppState>;
 
@@ -53,15 +53,15 @@ describe('TargetGlobalConfigurationComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('rdma.capable_protocols', [RdmaProtocolName.Iser]),
-        mockTypedCall('iscsi.global.config', {
+      mockApi([
+        mockCall('rdma.capable_protocols', [RdmaProtocolName.Iser]),
+        mockCall('iscsi.global.config', {
           basename: 'iqn.2005-10.org.freenas.ctl',
           isns_servers: ['188.23.4.23', '92.233.1.1'],
           pool_avail_threshold: 20,
           listen_port: 3260,
         } as CallResponse<WebUiApiDirectory, 'iscsi.global.config'>),
-        mockTypedCall('iscsi.global.update', null),
+        mockCall('iscsi.global.update', null),
       ]),
       mockProvider(TnDialog),
       mockProvider(DialogService, {
@@ -99,7 +99,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     mockStore$ = spectator.inject(MockStore);
     store$ = spectator.inject(Store);
     jest.spyOn(store$, 'dispatch');
@@ -196,7 +196,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   it('disables the iSER field when iSER is not an RDMA capable protocol', async () => {
     // An empty list is how both "no capable NIC" and "not entitled" reach the UI:
     // `rdma.capable_protocols` already accounts for the RDMA entitlement.
-    spectator.inject(MockTypedApiService).mockCall('rdma.capable_protocols', []);
+    spectator.inject(MockApiService).mockCall('rdma.capable_protocols', []);
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions.
@@ -206,7 +206,7 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('explains on hover that a disabled iSER field needs an Enterprise license and RDMA hardware', async () => {
-    spectator.inject(MockTypedApiService).mockCall('rdma.capable_protocols', []);
+    spectator.inject(MockApiService).mockCall('rdma.capable_protocols', []);
     recreateComponent();
     expect(await (await getTnCheckbox('iser')).isDisabled()).toBe(true);
 
@@ -225,15 +225,15 @@ describe('TargetGlobalConfigurationComponent', () => {
   });
 
   it('keeps the loaded ALUA value across a change in HA license status', async () => {
-    const mockApi = spectator.inject(MockTypedApiService);
-    mockApi.mockCall('iscsi.global.config', {
+    const apiMock = spectator.inject(MockApiService);
+    apiMock.mockCall('iscsi.global.config', {
       basename: 'iqn.2005-10.org.freenas.ctl',
       isns_servers: [],
       pool_avail_threshold: 20,
       listen_port: 3260,
       alua: true,
     } as CallResponse<WebUiApiDirectory, 'iscsi.global.config'>);
-    mockApi.mockCall('rdma.capable_protocols', []);
+    apiMock.mockCall('rdma.capable_protocols', []);
 
     recreateComponent();
     expect(await (await getTnCheckbox('alua')).isChecked()).toBe(true);
@@ -286,7 +286,7 @@ describe('TargetGlobalConfigurationComponent', () => {
 
   it('allows saving form when only modifying non-basename fields, even with non-conforming basename', async () => {
     // Setup a mock with a non-conforming basename (uppercase)
-    spectator.inject(MockTypedApiService).mockCall('iscsi.global.config', {
+    spectator.inject(MockApiService).mockCall('iscsi.global.config', {
       basename: 'IQN.2005-10.ORG.FREENAS.CTL', // Non-conforming
       isns_servers: ['188.23.4.23'],
       pool_avail_threshold: 20,

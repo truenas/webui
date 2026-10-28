@@ -19,7 +19,7 @@ import { ReadOnlyComponent } from 'app/modules/page-header/readonly-badge/readon
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { CanComponentDeactivate } from 'app/modules/unsaved-changes/unsaved-form.guard';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -39,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class GroupMembersComponent implements OnInit, CanComponentDeactivate {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private activatedRoute = inject(ActivatedRoute);
   private router = inject(Router);
   private errorHandler = inject(ErrorHandlerService);

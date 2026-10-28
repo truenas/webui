@@ -6,7 +6,7 @@ import { sortBy } from 'lodash-es';
 import { map } from 'rxjs/operators';
 import { helptextSystemGeneral as helptext } from 'app/helptext/system/general';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { AppState } from 'app/store';
 import { generalConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -19,7 +19,7 @@ export interface LocalizationFormValues {
 
 export function getLocalizationFormConfig(
   sysGeneralService: SystemGeneralService,
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
 ): FormDefinition<LocalizationFormValues> {

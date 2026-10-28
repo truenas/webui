@@ -7,11 +7,11 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { Subject, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
-  MockTypedApiResponse, mockTypedApi, mockTypedCall, mockTypedQuery,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  MockApiResponse, mockApi, mockCall, mockQuery,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DirectoryServiceStatus } from 'app/enums/directory-services.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
@@ -21,8 +21,8 @@ import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { PrivilegeFormComponent } from 'app/pages/credentials/privileges/privilege-form/privilege-form.component';
 import { UserService } from 'app/services/user.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
@@ -59,9 +59,9 @@ const testGroups: Group[] = [
 /**
  * Answers `group.query` from `testGroups` by its filters, as middleware would: a `group in` filter
  * returns the named groups, `local = false` (directory service groups) returns none, anything else
- * every local group. `mockTypedQuery` answers with fixed rows whatever the filters.
+ * every local group. `mockQuery` answers with fixed rows whatever the filters.
  */
-function mockGroupQueryByFilters(): MockTypedApiResponse {
+function mockGroupQueryByFilters(): MockApiResponse {
   return (api) => {
     api.client.connection.autoReply('group.query', (frame) => {
       const { id, params } = frame as { id: string; params?: [unknown[]?] };
@@ -85,7 +85,7 @@ function mockGroupQueryByFilters(): MockTypedApiResponse {
 describe('PrivilegeFormComponent', () => {
   let spectator: Spectator<PrivilegeFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const fakeDataPrivilege = {
     id: 10,
@@ -106,18 +106,18 @@ describe('PrivilegeFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('privilege.create', null),
-        mockTypedCall('privilege.update', null),
-        mockTypedQuery('privilege.roles', [
+      mockApi([
+        mockCall('privilege.create', null),
+        mockCall('privilege.update', null),
+        mockQuery('privilege.roles', [
           { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
           { name: Role.SharingAdmin, title: Role.SharingAdmin, builtin: false },
           { name: Role.ReadonlyAdmin, title: Role.ReadonlyAdmin, builtin: false },
           { name: Role.SharingSmbRead, title: Role.SharingSmbRead, builtin: false },
           { name: Role.SharingSmbWrite, title: Role.SharingSmbWrite, builtin: false },
         ] as unknown as WebUiQueryEntity<'privilege.roles'>[]),
-        mockTypedCall('system.general.update', null),
-        mockTypedCall('directoryservices.status', {
+        mockCall('system.general.update', null),
+        mockCall('directoryservices.status', {
           status: DirectoryServiceStatus.Disabled,
         } as DirectoryServicesStatus),
         mockGroupQueryByFilters(),
@@ -149,7 +149,7 @@ describe('PrivilegeFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows roles sorted alphabetically with compound (non-builtin) roles on top', async () => {
@@ -225,7 +225,7 @@ describe('PrivilegeFormComponent', () => {
       spectator.setInput('editPrivilege', fakeDataPrivilege);
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows current privilege values when form is being edited', async () => {
@@ -280,7 +280,7 @@ describe('PrivilegeFormComponent', () => {
       spectator.setInput('editPrivilege', { ...fakeDataPrivilege, builtin_name: 'ADMIN' } as Privilege);
       spectator.detectChanges();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload to websocket and closes the panel when submitted', async () => {
@@ -316,7 +316,7 @@ describe('PrivilegeFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('prevents saving when local group does not exist and shows error', async () => {
@@ -382,7 +382,7 @@ describe('PrivilegeFormComponent', () => {
   describe('local groups field', () => {
     beforeEach(() => {
       spectator = createComponent();
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -408,12 +408,12 @@ describe('PrivilegeFormComponent', () => {
       spectator = createComponent({
         providers: [
           ...ixFormTestingProviders(),
-          mockTypedApi([
-            mockTypedQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
-            mockTypedQuery('privilege.roles', [
+          mockApi([
+            mockQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
+            mockQuery('privilege.roles', [
               { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
             ] as unknown as WebUiQueryEntity<'privilege.roles'>[]),
-            mockTypedCall('directoryservices.status', {
+            mockCall('directoryservices.status', {
               type: 'ACTIVEDIRECTORY',
               status: DirectoryServiceStatus.Healthy,
             } as DirectoryServicesStatus),
@@ -440,7 +440,7 @@ describe('PrivilegeFormComponent', () => {
         ],
       });
 
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       // Wait for ngOnInit to complete
       spectator.detectChanges();
@@ -463,12 +463,12 @@ describe('PrivilegeFormComponent', () => {
       spectator = createComponent({
         providers: [
           ...ixFormTestingProviders(),
-          mockTypedApi([
-            mockTypedQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
-            mockTypedQuery('privilege.roles', [
+          mockApi([
+            mockQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
+            mockQuery('privilege.roles', [
               { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
             ] as unknown as WebUiQueryEntity<'privilege.roles'>[]),
-            mockTypedCall('directoryservices.status', {
+            mockCall('directoryservices.status', {
               status: DirectoryServiceStatus.Disabled,
             } as DirectoryServicesStatus),
           ]),
@@ -494,7 +494,7 @@ describe('PrivilegeFormComponent', () => {
         ],
       });
 
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       // Trigger DS groups being added
       // eslint-disable-next-line @typescript-eslint/dot-notation
@@ -517,12 +517,12 @@ describe('PrivilegeFormComponent', () => {
       spectator = createComponent({
         providers: [
           ...ixFormTestingProviders(),
-          mockTypedApi([
-            mockTypedQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
-            mockTypedQuery('privilege.roles', [
+          mockApi([
+            mockQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
+            mockQuery('privilege.roles', [
               { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
             ] as unknown as WebUiQueryEntity<'privilege.roles'>[]),
-            mockTypedCall('directoryservices.status', {
+            mockCall('directoryservices.status', {
               type: 'ACTIVEDIRECTORY',
               status: DirectoryServiceStatus.Healthy,
             } as DirectoryServicesStatus),
@@ -549,7 +549,7 @@ describe('PrivilegeFormComponent', () => {
         ],
       });
 
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       // Wait for initial config load
       spectator.detectChanges();
@@ -574,12 +574,12 @@ describe('PrivilegeFormComponent', () => {
       spectator = createComponent({
         providers: [
           ...ixFormTestingProviders(),
-          mockTypedApi([
-            mockTypedQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
-            mockTypedQuery('privilege.roles', [
+          mockApi([
+            mockQuery('group.query', testGroups as unknown as WebUiQueryEntity<'group.query'>[]),
+            mockQuery('privilege.roles', [
               { name: Role.FullAdmin, title: Role.FullAdmin, builtin: false },
             ] as unknown as WebUiQueryEntity<'privilege.roles'>[]),
-            mockTypedCall('directoryservices.status', {
+            mockCall('directoryservices.status', {
               type: 'ACTIVEDIRECTORY',
               status: DirectoryServiceStatus.Healthy,
             } as DirectoryServicesStatus),
@@ -653,13 +653,13 @@ describe('PrivilegeFormComponent', () => {
         ],
       });
 
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       // Report DS as active (with a type) before ngOnInit reads the status, so the
       // enable button becomes available — drives visibility through the mocked call
       // rather than poking the component's private state. `detectChanges: false`
       // defers ngOnInit until after this override is in place.
-      spectator.inject(MockTypedApiService).mockCall('directoryservices.status', {
+      spectator.inject(MockApiService).mockCall('directoryservices.status', {
         type: 'ACTIVEDIRECTORY',
         status: DirectoryServiceStatus.Healthy,
       } as DirectoryServicesStatus);
@@ -725,7 +725,7 @@ describe('PrivilegeFormComponent', () => {
       // `mockCall` answers synchronously, which hides this bug: the status would land
       // during ngOnInit, before the chips control replays `ds_groups`. A real WebSocket
       // round-trip resolves *after* the form has settled, so drive the status by hand.
-      const mockApiService = spectator.inject(MockTypedApiService);
+      const mockApiService = spectator.inject(MockApiService);
       const status$ = new Subject<DirectoryServicesStatus>();
       const passThrough = mockApiService.call.getMockImplementation();
       mockApiService.call.mockImplementation((method: string, params: unknown) => {

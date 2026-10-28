@@ -3,10 +3,10 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
-  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockCall, mockQuery, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -18,8 +18,8 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { WebShareSharesFormComponent } from 'app/pages/sharing/webshare/webshare-shares-form/webshare-shares-form.component';
 import { LicenseService } from 'app/services/license.service';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -59,10 +59,10 @@ describe('WebShareService', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockQuery('sharing.webshare.query', mockWebShares as WebUiQueryEntity<'sharing.webshare.query'>[]),
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -199,7 +199,7 @@ describe('WebShareService', () => {
         },
       ]);
 
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       expect(api.query).toHaveBeenCalledWith('sharing.webshare.query', []);
     });
   });
@@ -231,12 +231,12 @@ describe('WebShareService', () => {
 
   describe('hasWebshareUsers$', () => {
     it('re-runs the query on every subscription so each screen re-checks on open', async () => {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       api.mockQuery('user.query', []);
 
       let firstResult: boolean | undefined;
       spectator.service.hasWebshareUsers$.subscribe((value) => firstResult = value);
-      await settleTypedApi();
+      await settleApi();
       expect(firstResult).toBe(false);
       expect(api.query).toHaveBeenCalledWith('user.query', [['webshare', '=', true], ['local', '=', true]]);
 
@@ -244,12 +244,12 @@ describe('WebShareService', () => {
 
       let secondResult: boolean | undefined;
       spectator.service.hasWebshareUsers$.subscribe((value) => secondResult = value);
-      await settleTypedApi();
+      await settleApi();
       expect(secondResult).toBe(true);
     });
 
     it('emits false instead of erroring when the query fails', () => {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       jest.spyOn(api, 'query').mockReturnValue(throwError(() => new Error('query failed')));
 
       let result: boolean | undefined;
@@ -271,9 +271,9 @@ describe('WebShareService - non-TrueNAS Direct domain', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService),
@@ -319,12 +319,12 @@ describe('WebShareService - hostname mapping', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {
           '192.168.1.100': 'mynas.truenas.direct',
           '10.0.0.5': 'other.truenas.direct',
         }),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -389,11 +389,11 @@ describe('WebShareService - no hostname mapping', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {
           '192.168.1.100': 'mynas.truenas.direct',
         }),
-        mockTypedCall('interface.websocket_local_ip', '10.0.0.99'),
+        mockCall('interface.websocket_local_ip', '10.0.0.99'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -456,7 +456,7 @@ describe('WebShareService - no hostname mapping', () => {
   });
 
   it('exposes the domain reason when TrueNAS Connect has no hostnames at all', async () => {
-    spectator.inject(MockTypedApiService).mockCall('tn_connect.ips_with_hostnames', {});
+    spectator.inject(MockApiService).mockCall('tn_connect.ips_with_hostnames', {});
 
     await firstValueFrom(spectator.service.hostnameMapping$);
 
@@ -482,9 +482,9 @@ describe('WebShareService - TrueNAS Connect disabled', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -546,9 +546,9 @@ describe('WebShareService - TrueNAS Connect not configured', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -605,9 +605,9 @@ describe('WebShareService - WebShare service not running', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {
@@ -668,9 +668,9 @@ describe('WebShareService - service state not loaded yet', () => {
   const createService = createServiceFactory({
     service: WebShareService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('tn_connect.ips_with_hostnames', {}),
-        mockTypedCall('interface.websocket_local_ip', '192.168.1.100'),
+      mockApi([
+        mockCall('tn_connect.ips_with_hostnames', {}),
+        mockCall('interface.websocket_local_ip', '192.168.1.100'),
       ]),
       mockProvider(SnackbarService),
       mockProvider(TranslateService, {

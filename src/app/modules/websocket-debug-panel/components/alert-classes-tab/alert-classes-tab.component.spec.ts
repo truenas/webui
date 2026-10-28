@@ -5,7 +5,7 @@ import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { BehaviorSubject, of, throwError } from 'rxjs';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertCategory } from 'app/interfaces/alert.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 import { AlertClassesTabComponent } from './alert-classes-tab.component';
 
@@ -34,7 +34,7 @@ describe('AlertClassesTabComponent', () => {
   const createComponent = createComponentFactory({
     component: AlertClassesTabComponent,
     providers: [
-      mockProvider(TypedApiService, {
+      mockProvider(ApiService, {
         call: jest.fn(() => of(mockCategories)),
       }),
     ],
@@ -60,7 +60,7 @@ describe('AlertClassesTabComponent', () => {
   it('should show waiting message before authentication', () => {
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
     expect(spectator.query('.not-authenticated')).toExist();
   });
 
@@ -69,7 +69,7 @@ describe('AlertClassesTabComponent', () => {
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('alert.list_categories');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
     expect(spectator.query('.last-checked')).toExist();
   });
 
@@ -106,7 +106,7 @@ describe('AlertClassesTabComponent', () => {
   });
 
   it('should display error message in UI when API fails', async () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     (api.call as jest.Mock).mockReturnValue(throwError(() => new Error('Connection failed')));
 
     spectator.detectChanges();
@@ -126,7 +126,7 @@ describe('AlertClassesTabComponent', () => {
     isAuthenticated$.next(true);
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
   });
 
   it('should run comparison when Check Now button is clicked', async () => {
@@ -140,6 +140,6 @@ describe('AlertClassesTabComponent', () => {
     const button = await loader.getHarness(TnButtonHarness);
     await button.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('alert.list_categories');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('alert.list_categories');
   });
 });

@@ -2,11 +2,11 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockActions } from '@ngrx/effects/testing';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { defaultPreferences } from 'app/store/preferences/default-preferences.constant';
 import {
   lifetimeTokenUpdated, preferencesLoaded, preferencesRefreshRequested,
@@ -22,9 +22,9 @@ describe('PreferencesEffects', () => {
     service: PreferencesEffects,
     providers: [
       provideMockActions(() => actions$),
-      mockTypedApi([
-        mockTypedCall('auth.set_attribute', null),
-        mockTypedCall('auth.me', {
+      mockApi([
+        mockCall('auth.set_attribute', null),
+        mockCall('auth.me', {
           attributes: { preferences: { ...defaultPreferences, lifetime: 600 } },
         } as LoggedInUser),
       ]),
@@ -48,7 +48,7 @@ describe('PreferencesEffects', () => {
     actions$.next(lifetimeTokenUpdated({ lifetime: defaultPreferences.lifetime }));
     spectator.service.saveUpdatedPreferences$.subscribe();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'auth.set_attribute',
       ['preferences', defaultPreferences],
     );
@@ -60,6 +60,6 @@ describe('PreferencesEffects', () => {
     expect(await firstValueFrom(spectator.service.refreshPreferences$)).toEqual(
       preferencesLoaded({ preferences: { ...defaultPreferences, lifetime: 600 } as Preferences }),
     );
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('auth.me');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('auth.me');
   });
 });

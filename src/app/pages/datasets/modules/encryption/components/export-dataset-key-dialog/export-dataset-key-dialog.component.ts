@@ -7,7 +7,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -25,7 +25,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class ExportDatasetKeyDialog implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<DialogRef>(DialogRef);

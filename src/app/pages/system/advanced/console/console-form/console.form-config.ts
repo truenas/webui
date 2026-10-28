@@ -7,13 +7,13 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemAdvanced as helptext } from 'app/helptext/system/advanced';
 import { toAdvancedConfigUpdateArgs } from 'app/interfaces/advanced-config.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ConsoleConfig } from 'app/pages/system/advanced/console/console-card/console-card.component';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 
 export function getConsoleFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
 ): FormDefinition<ConsoleConfig> {

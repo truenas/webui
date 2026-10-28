@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCardComponent, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerCapabilitiesPolicy, ContainerIdmapType, ContainerStatus } from 'app/enums/container.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -16,7 +16,7 @@ import { YesNoPipe } from 'app/modules/pipes/yes-no/yes-no.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ContainerGeneralInfoComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-general-info/container-general-info.component';
@@ -58,8 +58,8 @@ describe('ContainerGeneralInfoComponent', () => {
         containerUpdated: jest.fn(),
         reload: jest.fn(),
       }),
-      mockTypedApi([
-        mockTypedJob('container.delete', { state: JobState.Success }),
+      mockApi([
+        mockJob('container.delete', { state: JobState.Success }),
       ]),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
@@ -114,7 +114,7 @@ describe('ContainerGeneralInfoComponent', () => {
       expect.objectContaining({ data: container }),
     );
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'container.delete',
       [1, { force: false, recursive: false }],
     );
@@ -129,7 +129,7 @@ describe('ContainerGeneralInfoComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'container.delete',
       [1, { force: true, recursive: true }],
     );
@@ -153,7 +153,7 @@ describe('ContainerGeneralInfoComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
     expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
   });
 

@@ -16,7 +16,7 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-boot-pool-attach-dialog',
@@ -42,7 +42,7 @@ export class BootPoolAttachDialog implements OnInit {
   private dialogService = inject(DialogService);
   protected dialogRef = inject<DialogRef<unknown, BootPoolAttachDialog>>(DialogRef);
   private translate = inject(TranslateService);
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(FormErrorHandlerService);
   private destroyRef = inject(DestroyRef);

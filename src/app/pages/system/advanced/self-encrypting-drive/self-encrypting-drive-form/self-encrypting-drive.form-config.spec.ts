@@ -2,7 +2,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { firstValueFrom, of } from 'rxjs';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   getSelfEncryptingDriveFormConfig, SedFormValues,
 } from 'app/pages/system/advanced/self-encrypting-drive/self-encrypting-drive-form/self-encrypting-drive.form-config';
@@ -13,7 +13,7 @@ describe('getSelfEncryptingDriveFormConfig', () => {
     sed_passwd: 'pleasechange', sed_passwd2: 'pleasechange',
   } as SedFormValues;
 
-  const api = { call: jest.fn(() => of('savedpassword')) } as unknown as TypedApiService;
+  const api = { call: jest.fn(() => of('savedpassword')) } as unknown as ApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
   const store$ = { dispatch: jest.fn() } as unknown as Store;
 

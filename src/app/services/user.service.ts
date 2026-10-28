@@ -4,15 +4,15 @@ import { Observable } from 'rxjs';
 import { finalize, map, shareReplay, tap } from 'rxjs/operators';
 import { Group, toGroup } from 'app/interfaces/group.interface';
 import { toUser, User } from 'app/interfaces/user.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 type GroupFilter = TypedQueryFilter<WebUiQueryEntity<'group.query'>>;
 type UserFilter = TypedQueryFilter<WebUiQueryEntity<'user.query'>>;
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
 
   static readonly namePattern = /^[a-zA-Z0-9_][a-zA-Z0-9_.-]*[$]?$/;
   protected queryOptions = { limit: 50 };

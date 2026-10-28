@@ -8,11 +8,11 @@ import {
   TnButtonToggleHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { tap } from 'rxjs/operators';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
-  MockTypedApiResponse, mockTypedApi, mockTypedCall, mockTypedQuery,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  MockApiResponse, mockApi, mockCall, mockQuery,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   DatasetCaseSensitivity, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
 } from 'app/enums/dataset.enum';
@@ -30,8 +30,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
@@ -77,10 +77,10 @@ async function setEditableTnInput(
 }
 
 /**
- * `mockTypedQuery` answers every filter with the same rows. The form reads both the zvol and its parent through
+ * `mockQuery` answers every filter with the same rows. The form reads both the zvol and its parent through
  * `pool.dataset.query`, and tells them apart only by the `id` filter.
  */
-function mockDatasetQueryById(rowsFor: (id: unknown) => Dataset[]): MockTypedApiResponse {
+function mockDatasetQueryById(rowsFor: (id: unknown) => Dataset[]): MockApiResponse {
   return (api) => {
     api.client.connection.autoReply('pool.dataset.query', (frame) => {
       const { id, params } = frame as { id: string; params?: [[string, string, unknown][]?] };
@@ -166,11 +166,11 @@ describe('ZvolFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('pool.dataset.create', { id: 'parentId/new zvol', name: 'parentId/new zvol' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockTypedCall('pool.dataset.update', { id: 'zvolId', name: 'zvolId' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockTypedCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-        mockTypedCall('pool.dataset.compression_choices', {
+      mockApi([
+        mockCall('pool.dataset.create', { id: 'parentId/new zvol', name: 'parentId/new zvol' } as WebUiQueryEntity<'pool.dataset.query'>),
+        mockCall('pool.dataset.update', { id: 'zvolId', name: 'zvolId' } as WebUiQueryEntity<'pool.dataset.query'>),
+        mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+        mockCall('pool.dataset.compression_choices', {
           OFF: 'Off',
           LZ4: 'lz4 (recommended)',
           GZIP: 'gzip (default level, 6)',
@@ -245,7 +245,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
         name: 'parentId/new zvol',
         comments: 'comments text',
         compression: 'LZ4',
@@ -272,7 +272,7 @@ describe('ZvolFormComponent', () => {
       // `closed` is the only signal that tears the panel down, so an unexpected response must
       // still emit — falsy, which `FormSidePanelService` reads as a cancel — rather than leaving
       // the panel wedged open with no Save in flight.
-      spectator.inject(MockTypedApiService).mockCall('pool.dataset.create', undefined);
+      spectator.inject(MockApiService).mockCall('pool.dataset.create', undefined);
 
       await setTnInput(loader, 'name', 'new zvol');
       await setTnInput(loader, 'volsize', '1 GiB');
@@ -366,7 +366,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'pool.dataset.create',
         [expect.not.objectContaining({ deduplication: expect.anything() })],
       );
@@ -395,12 +395,12 @@ describe('ZvolFormComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockTypedApi([
-          mockTypedCall('pool.dataset.create', null),
-          mockTypedCall('pool.dataset.update', null),
-          mockTypedCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-          mockTypedQuery('pool.dataset.query', [encryptedParent as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
-          mockTypedCall('pool.dataset.compression_choices', {
+        mockApi([
+          mockCall('pool.dataset.create', null),
+          mockCall('pool.dataset.update', null),
+          mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+          mockQuery('pool.dataset.query', [encryptedParent as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
+          mockCall('pool.dataset.compression_choices', {
             OFF: 'Off',
             LZ4: 'lz4 (recommended)',
             GZIP: 'gzip (default level, 6)',
@@ -437,7 +437,7 @@ describe('ZvolFormComponent', () => {
       // Wait for the async operations to complete
       await encryptedSpectator.fixture.whenStable();
 
-      const calls = (encryptedSpectator.inject(TypedApiService).call as jest.Mock).mock.calls;
+      const calls = (encryptedSpectator.inject(ApiService).call as jest.Mock).mock.calls;
       const createCall = calls.find((call) => call[0] === 'pool.dataset.create');
 
       expect(createCall).toBeDefined();
@@ -489,7 +489,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
         volsize: 2147483648,
       }]);
 
@@ -515,7 +515,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const updateCall = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.update');
 
       expect(updateCall).toBeDefined();
@@ -536,7 +536,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const updateCall = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.update');
 
       expect(updateCall).toBeDefined();
@@ -550,11 +550,11 @@ describe('ZvolFormComponent', () => {
       spectator = createComponent({
         props: { params: { isNew: true, parentOrZvolId: 'parentId' } },
         providers: [
-          mockTypedApi([
-            mockTypedQuery('pool.dataset.query', [dataset as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
-            mockTypedCall('pool.dataset.recommended_zvol_blocksize', '16K'),
-            mockTypedCall('pool.dataset.create', { id: 'parentId/zvol1' } as WebUiQueryEntity<'pool.dataset.query'>),
-            mockTypedCall('pool.dataset.compression_choices', {
+          mockApi([
+            mockQuery('pool.dataset.query', [dataset as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
+            mockCall('pool.dataset.recommended_zvol_blocksize', '16K'),
+            mockCall('pool.dataset.create', { id: 'parentId/zvol1' } as WebUiQueryEntity<'pool.dataset.query'>),
+            mockCall('pool.dataset.compression_choices', {
               OFF: 'Off',
               LZ4: 'lz4 (recommended)',
               GZIP: 'gzip (default level, 6)',
@@ -587,7 +587,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
       const payload = callArgs[1][0];
 
@@ -605,7 +605,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
       const payload = callArgs[1][0];
 
@@ -623,7 +623,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
       const payload = callArgs[1][0];
 
@@ -642,7 +642,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.create');
       const payload = callArgs[1][0];
 
@@ -742,7 +742,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const updateCall = (spectator.inject(TypedApiService).call as jest.Mock).mock.calls
+      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
         .find(([method]) => method === 'pool.dataset.update');
 
       expect(updateCall).toBeDefined();

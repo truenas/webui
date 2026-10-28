@@ -4,8 +4,8 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { InitShutdownScriptType } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen } from 'app/enums/init-shutdown-script-when.enum';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
@@ -14,7 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   InitShutdownCardComponent,
 } from 'app/pages/system/advanced/init-shutdown/init-shutdown-card/init-shutdown-card.component';
@@ -53,9 +53,9 @@ describe('InitShutdownCardComponent', () => {
   const createComponent = createComponentFactory({
     component: InitShutdownCardComponent,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('initshutdownscript.query', scripts),
-        mockTypedCall('initshutdownscript.delete', null),
+      mockApi([
+        mockQuery('initshutdownscript.query', scripts),
+        mockCall('initshutdownscript.delete', null),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -127,6 +127,6 @@ describe('InitShutdownCardComponent', () => {
       successMessage: 'Script deleted.',
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('initshutdownscript.delete', [1]);
   });
 });

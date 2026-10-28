@@ -27,8 +27,8 @@ import {
 } from 'rxjs';
 import { defaultLanguage } from 'app/constants/languages.constant';
 import { provideTnSelectLabels } from 'app/core/providers/tn-select-labels.provider';
+import { EmptyApiService } from 'app/core/testing/utils/empty-api.service';
 import { EmptyAuthService } from 'app/core/testing/utils/empty-auth.service';
-import { EmptyTypedApiService } from 'app/core/testing/utils/empty-typed-api.service';
 import { getMissingInjectionErrorObservable } from 'app/core/testing/utils/missing-injection-factories';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -42,8 +42,8 @@ import {
 } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { WarningComponent } from 'app/modules/warning/warning.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
@@ -191,11 +191,11 @@ defineGlobalsInjections({
       useClass: EmptyAuthService,
     },
     {
-      provide: TypedApiService,
-      useClass: EmptyTypedApiService,
+      provide: ApiService,
+      useClass: EmptyApiService,
     },
     {
-      // Belt and braces: nothing but `TypedApiService` injects the client, but
+      // Belt and braces: nothing but `ApiService` injects the client, but
       // if anything ever does, it must not open a socket from a spec.
       provide: TYPED_API_CLIENT,
       useValue: getMissingInjectionErrorObservable('TYPED_API_CLIENT'),

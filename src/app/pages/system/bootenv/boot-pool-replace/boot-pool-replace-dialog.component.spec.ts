@@ -5,15 +5,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnAutocompleteHarness, TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   UnusedDiskSelectComponent,
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolReplaceDialog } from './boot-pool-replace-dialog.component';
 
 describe('BootPoolReplaceDialogComponent', () => {
@@ -27,8 +27,8 @@ describe('BootPoolReplaceDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('disk.details', {
           unused: [
             {
               name: 'sdb',
@@ -38,7 +38,7 @@ describe('BootPoolReplaceDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
-        mockTypedJob('boot.replace', { state: JobState.Success }),
+        mockJob('boot.replace', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -67,7 +67,7 @@ describe('BootPoolReplaceDialogComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).job)
+    expect(spectator.inject(ApiService).job)
       .toHaveBeenCalledWith('boot.replace', ['sda3', 'sdb']);
   });
 });

@@ -2,11 +2,11 @@ import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { EventUnion } from '@truenas/api-client';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppResourcesCardComponent } from 'app/pages/apps/components/app-detail-view/app-resources-card/app-resources-card.component';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
@@ -14,7 +14,7 @@ type RealtimeUpdate = Extract<EventUnion<WebUiApiDirectory, 'reporting.realtime'
 
 describe('AppResourcesCardComponent', () => {
   let spectator: Spectator<AppResourcesCardComponent>;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: AppResourcesCardComponent,
@@ -22,8 +22,8 @@ describe('AppResourcesCardComponent', () => {
       FileSizePipe,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('app.available_space', 2500),
+      mockApi([
+        mockCall('app.available_space', 2500),
       ]),
       mockProvider(DockerStore, {
         selectedPool$: of('pool'),
@@ -37,7 +37,7 @@ describe('AppResourcesCardComponent', () => {
         isLoading: false,
       },
     });
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows header', () => {
@@ -61,7 +61,7 @@ describe('AppResourcesCardComponent', () => {
   });
 
   it('shows CPU and memory usage from realtime updates', () => {
-    spectator.inject(MockTypedApiService).emitEvent('reporting.realtime', {
+    spectator.inject(MockApiService).emitEvent('reporting.realtime', {
       msg: 'added',
       fields: {
         cpu: { cpu: { usage: 12.34 } },

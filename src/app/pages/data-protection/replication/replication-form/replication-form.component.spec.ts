@@ -3,8 +3,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -18,8 +18,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -152,8 +152,8 @@ describe('ReplicationFormComponent', () => {
       mockProvider(DatasetService, {
         getDatasetNodeProvider: jest.fn(() => localNodeProvider),
       }),
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', [
+      mockApi([
+        mockQuery('keychaincredential.query', [
           {
             id: 123,
             name: 'non-root-ssh-connection',
@@ -162,12 +162,12 @@ describe('ReplicationFormComponent', () => {
             },
           },
         ] as KeychainCredential[]),
-        mockTypedCall('replication.count_eligible_manual_snapshots', {
+        mockCall('replication.count_eligible_manual_snapshots', {
           eligible: 3,
           total: 5,
         }),
-        mockTypedCall('replication.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'replication.create'>),
-        mockTypedCall('replication.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'replication.update'>),
+        mockCall('replication.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'replication.create'>),
+        mockCall('replication.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'replication.update'>),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of()),
@@ -228,7 +228,7 @@ describe('ReplicationFormComponent', () => {
       expect(spectator.query(TargetSectionComponent)!.getPayload).toHaveBeenCalled();
       expect(spectator.query(ScheduleSectionComponent)!.getPayload).toHaveBeenCalled();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.create', [{
         name: 'dataset',
         ssh_credentials: 5,
         direction: Direction.Pull,
@@ -263,7 +263,7 @@ describe('ReplicationFormComponent', () => {
       jest.advanceTimersByTime(0);
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'replication.count_eligible_manual_snapshots',
         [
           {
@@ -299,7 +299,7 @@ describe('ReplicationFormComponent', () => {
       await jest.runAllTimersAsync();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [
         1,
         {
           name: 'dataset',
@@ -382,7 +382,7 @@ describe('ReplicationFormComponent', () => {
       await jest.runAllTimersAsync();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.update', [1, expect.anything()]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.update', [1, expect.anything()]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
   });

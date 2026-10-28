@@ -21,7 +21,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/components/smb-open-files/smb-open-files.component';
 
 @Component({
@@ -48,7 +48,7 @@ import { SmbOpenFilesComponent } from 'app/pages/sharing/smb/smb-status/componen
   ],
 })
 export class SmbLockListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);

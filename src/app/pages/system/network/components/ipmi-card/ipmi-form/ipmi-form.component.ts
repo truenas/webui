@@ -28,7 +28,7 @@ import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
@@ -53,7 +53,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
   ],
 })
 export class IpmiFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private redirect = inject(RedirectService);
   private fb = inject(FormBuilder);

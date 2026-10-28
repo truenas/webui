@@ -5,8 +5,8 @@ import {
   TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { BehaviorSubject, of, Subject } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
 import { KeychainCredentialUsedBy, KeychainSshCredentials } from 'app/interfaces/keychain-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -15,7 +15,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SshConnectionCardComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-card/ssh-connection-card.component';
 import { SshConnectionFormComponent } from 'app/pages/credentials/backup-credentials/ssh-connection-form/ssh-connection-form.component';
 import { KeychainCredentialService } from 'app/services/keychain-credential.service';
@@ -61,9 +61,9 @@ describe('SshConnectionCardComponent', () => {
       TablePagerShowMoreComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', connections),
-        mockTypedCall('keychaincredential.delete', null),
+      mockApi([
+        mockQuery('keychaincredential.query', connections),
+        mockCall('keychaincredential.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -142,7 +142,7 @@ describe('SshConnectionCardComponent', () => {
         secondaryCheckbox: true, // Connection has private_key: 4
       }),
     );
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [5]);
   });
 
   it('hides cascade checkbox when connection has no associated keypair', async () => {
@@ -188,7 +188,7 @@ describe('SshConnectionCardComponent', () => {
     await deleteButton.click();
 
     // Should delete keypair with cascade, which also deletes the connection
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('keychaincredential.delete', [4, { cascade: true }]);
     expect(refetchSpy).toHaveBeenCalled();
   });
 

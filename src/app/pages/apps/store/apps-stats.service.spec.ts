@@ -2,8 +2,8 @@ import {
   createServiceFactory,
   SpectatorService,
 } from '@ngneat/spectator/jest';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AppStats } from 'app/interfaces/app.interface';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 
@@ -41,7 +41,7 @@ describe('AppsStatsService', () => {
   const createService = createServiceFactory({
     service: AppsStatsService,
     providers: [
-      mockTypedApi(),
+      mockApi(),
     ],
   });
 
@@ -52,14 +52,14 @@ describe('AppsStatsService', () => {
   describe('subscribeToUpdates()', () => {
     it('subscribes to app stats updates when subscribeToUpdates() is called', () => {
       spectator.service.subscribeToUpdates();
-      expect(spectator.inject(MockTypedApiService).subscribe).toHaveBeenCalledWith('app.stats');
+      expect(spectator.inject(MockApiService).subscribe).toHaveBeenCalledWith('app.stats');
     });
   });
 
   describe('getStatsForApp()', () => {
     it('returns an observable with stats for an app', () => {
       spectator.service.subscribeToUpdates();
-      spectator.inject(MockTypedApiService).emitEvent('app.stats', { msg: 'added', fields: [plexStats, minioStats] });
+      spectator.inject(MockApiService).emitEvent('app.stats', { msg: 'added', fields: [plexStats, minioStats] });
       const plexStats$ = spectator.service.getStatsForApp('plex');
 
       let plexStatsUpdate: AppStats | undefined = undefined;

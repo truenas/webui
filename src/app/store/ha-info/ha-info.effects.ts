@@ -8,7 +8,7 @@ import {
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { WINDOW } from 'app/helpers/window.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { entitlementsLoaded } from 'app/store/entitlements/entitlements.actions';
 import { passiveNodeReplaced } from 'app/store/system-info/system-info.actions';
@@ -22,7 +22,7 @@ import { selectHaInfoState, selectIsHaLicensed } from './ha-info.selectors';
 @Injectable()
 export class HaInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private window = inject<Window>(WINDOW);
   private store$ = inject<Store<AppState>>(Store);
 

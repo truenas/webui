@@ -6,7 +6,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
 
@@ -28,10 +28,10 @@ describe('ContainersStore', () => {
   const createService = createServiceFactory({
     service: ContainersStore,
     providers: [
-      // A stub rather than `mockTypedApi()`: the store's name-keyed, status-only change events are
+      // A stub rather than `mockApi()`: the store's name-keyed, status-only change events are
       // the wire shape the generated `container.query` event type does not describe, so they are
       // fed in as they arrive.
-      mockProvider(TypedApiService, {
+      mockProvider(ApiService, {
         query: jest.fn(() => of(containers)),
         subscribe: jest.fn((event: string) => (event === 'container.metrics' ? metricsEvent$ : event$)),
       }),
@@ -65,7 +65,7 @@ describe('ContainersStore', () => {
   it('should load containers when initialize is called', () => {
     spectator.service.initialize();
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.query');
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('container.query');
     expect(spectator.service.state()).toEqual({
       containers,
       selectedContainer: undefined,
@@ -80,21 +80,21 @@ describe('ContainersStore', () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.initialize();
 
-    expect(spectator.inject(TypedApiService).query).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
   });
 
   it('should make API call when reload is called after initialization', () => {
     spectator.service.initialize();
     spectator.service.reload();
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledTimes(2);
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledTimes(2);
   });
 
   it('should make API call when reload is called even while loading', () => {
     spectator.service.patchState({ isLoading: true });
     spectator.service.reload();
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.query');
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('container.query');
   });
 
   it('should select container when method is called', () => {
@@ -150,18 +150,18 @@ describe('ContainersStore', () => {
 
   describe('container updates subscription', () => {
     it('subscribes to container updates in constructor', () => {
-      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('container.query');
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('container.query');
     });
 
     it('does not create duplicate subscriptions on multiple initialize calls', () => {
-      const initialSubscribeCalls = spectator.inject(TypedApiService).subscribe.mock.calls.filter(
+      const initialSubscribeCalls = spectator.inject(ApiService).subscribe.mock.calls.filter(
         (call: [string]) => call[0] === 'container.query',
       ).length;
 
       spectator.service.initialize();
       spectator.service.initialize();
 
-      const currentSubscribeCalls = spectator.inject(TypedApiService).subscribe.mock.calls.filter(
+      const currentSubscribeCalls = spectator.inject(ApiService).subscribe.mock.calls.filter(
         (call: [string]) => call[0] === 'container.query',
       ).length;
 
@@ -286,7 +286,7 @@ describe('ContainersStore', () => {
 
       metricsEvent$.next({ msg: 'added', fields: mockInstanceMetrics });
 
-      expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('container.metrics');
+      expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('container.metrics');
       expect(spectator.service.metrics()).toEqual(mockInstanceMetrics);
     });
   });
@@ -339,7 +339,7 @@ describe('ContainersStore', () => {
     it('sorts client-side without sending order_by to the backend', () => {
       spectator.service.setSort({ active: ContainerSortField.Name, direction: SortDirection.Desc });
 
-      expect(jest.mocked(spectator.inject(TypedApiService).query).mock.calls).toEqual([['container.query']]);
+      expect(jest.mocked(spectator.inject(ApiService).query).mock.calls).toEqual([['container.query']]);
     });
   });
 });

@@ -43,7 +43,7 @@ import { SortingServerSide } from 'app/modules/tn-table/classes/api-data-provide
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { mapTnSortToTableSort, toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ApiKeyFormComponent } from 'app/pages/credentials/users/user-api-keys/components/api-key-form/api-key-form.component';
 import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/user-api-keys.elements';
 
@@ -75,7 +75,7 @@ import { userApiKeysElements } from 'app/pages/credentials/users/user-api-keys/u
 export class UserApiKeysComponent implements OnInit {
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialog = inject(DialogService);
 
   private authService = inject(AuthService);

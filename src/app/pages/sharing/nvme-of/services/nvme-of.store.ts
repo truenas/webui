@@ -8,7 +8,7 @@ import {
   NvmeOfHost, NvmeOfNamespace, NvmeOfPort, NvmeOfSubsystem,
   NvmeOfSubsystemDetails, toNvmeOfHost, toNvmeOfNamespace, toNvmeOfPort, toNvmeOfSubsystem,
 } from 'app/interfaces/nvme-of.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface NvmeOfState {
@@ -31,7 +31,7 @@ const initialState: NvmeOfState = {
   providedIn: 'root',
 })
 export class NvmeOfStore extends ComponentStore<NvmeOfState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly subsystems = computed((): NvmeOfSubsystemDetails[] => {

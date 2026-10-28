@@ -12,7 +12,7 @@ import { Role } from 'app/enums/role.enum';
 import { secondsToDuration } from 'app/helpers/time.helpers';
 import { Pool, PoolScanUpdate } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -32,7 +32,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ActivePoolScanComponent {
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 

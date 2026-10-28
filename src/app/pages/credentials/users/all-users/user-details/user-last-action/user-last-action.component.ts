@@ -9,7 +9,7 @@ import { map, switchMap } from 'rxjs/operators';
 import { AuditEntry, toAuditEntries } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UrlOptionsService } from 'app/services/url-options.service';
 
@@ -27,7 +27,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
   ],
 })
 export class UserLastActionComponent implements OnChanges {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private urlOptions = inject(UrlOptionsService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

@@ -5,8 +5,8 @@ import {
   TnButtonHarness, TnCardComponent, TnDialog, TnIconButtonHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { CloudSyncProvider } from 'app/interfaces/cloudsync-provider.interface';
@@ -17,7 +17,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
   TablePagerShowMoreComponent,
 } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialsCardComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-card/cloud-credentials-card.component';
 import { CloudCredentialsFormComponent } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/cloud-credentials-form.component';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
@@ -64,10 +64,10 @@ describe('CloudCredentialsCardComponent', () => {
       TablePagerShowMoreComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('cloudsync.providers', providers),
-        mockTypedQuery('cloudsync.credentials.query', credentials),
-        mockTypedCall('cloudsync.credentials.delete', true),
+      mockApi([
+        mockCall('cloudsync.providers', providers),
+        mockQuery('cloudsync.credentials.query', credentials),
+        mockCall('cloudsync.credentials.delete', true),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -127,7 +127,7 @@ describe('CloudCredentialsCardComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cloudsync.credentials.delete', [1]);
   });
 
   it('should show table rows', async () => {

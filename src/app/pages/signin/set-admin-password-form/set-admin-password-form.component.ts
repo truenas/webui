@@ -13,7 +13,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SigninStore } from 'app/pages/signin/store/signin.store';
 
 // The one name `user.setup_local_administrator` accepts besides `root`.
@@ -36,7 +36,7 @@ const adminUsername = 'truenas_admin' as const;
 })
 export class SetAdminPasswordFormComponent {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private authService = inject(AuthService);
   private errorHandler = inject(FormErrorHandlerService);
   private translate = inject(TranslateService);

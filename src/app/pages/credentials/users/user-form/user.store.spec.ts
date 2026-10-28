@@ -1,11 +1,11 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { allCommands } from 'app/constants/all-commands.constant';
-import { mockTypedApi, mockTypedCall, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { Choices } from 'app/interfaces/choices.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
 
 describe('UserFormStore', () => {
@@ -13,14 +13,14 @@ describe('UserFormStore', () => {
   const createComponent = createServiceFactory({
     service: UserFormStore,
     providers: [
-      mockTypedApi([
-        mockTypedCall('system.security.config', {
+      mockApi([
+        mockCall('system.security.config', {
           enable_gpos_stig: false,
         } as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
-        mockTypedCall('user.get_next_uid', 1004),
-        mockTypedCall('user.create', { id: 1000 } as CallResponse<WebUiApiDirectory, 'user.create'>),
-        mockTypedCall('user.update', { id: 1000 } as CallResponse<WebUiApiDirectory, 'user.update'>),
-        mockTypedCall('user.shell_choices', {
+        mockCall('user.get_next_uid', 1004),
+        mockCall('user.create', { id: 1000 } as CallResponse<WebUiApiDirectory, 'user.create'>),
+        mockCall('user.update', { id: 1000 } as CallResponse<WebUiApiDirectory, 'user.update'>),
+        mockCall('user.shell_choices', {
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
@@ -65,7 +65,7 @@ describe('UserFormStore', () => {
     });
     spectator.service.createUser();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
       full_name: 'Operator',
       password: 'password123',
       email: 'operator@truenas.local',
@@ -108,7 +108,7 @@ describe('UserFormStore', () => {
 
     spectator.service.updateUser(1000, spectator.service.userConfig());
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
       full_name: 'Test User',
       home: '/home/test',
       shell: '/usr/bin/bash',
@@ -283,7 +283,7 @@ describe('UserFormStore', () => {
 
       spectator.service.createUser();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
         full_name: 'Operator',
         password: null,
         password_disabled: true,
@@ -306,7 +306,7 @@ describe('UserFormStore', () => {
 
       spectator.service.createUser();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.create', [{
         full_name: 'Operator',
         password: null,
         random_password: true,
@@ -329,16 +329,16 @@ describe('UserFormStore', () => {
       });
 
       spectator.service.updateUser(1000, spectator.service.userConfig()).subscribe();
-      await settleTypedApi();
+      await settleApi();
 
       // First call to create home directory
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
         home_create: true,
         home: '/mnt/tank/home/test',
       }]);
 
       // Second call should update user without home_create
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
         username: 'test',
         shell: '/usr/bin/bash',
       }]);
@@ -354,7 +354,7 @@ describe('UserFormStore', () => {
 
       spectator.service.updateUser(1000, spectator.service.userConfig()).subscribe();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('user.update', [1000, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('user.update', [1000, {
         username: 'test',
         home: '/mnt/tank/home/test',
         shell: '/usr/bin/bash',

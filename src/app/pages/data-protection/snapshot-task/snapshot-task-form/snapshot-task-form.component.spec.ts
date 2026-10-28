@@ -7,16 +7,16 @@ import {
   TnCheckboxHarness, TnChipInputHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { StorageService } from 'app/services/storage.service';
 import { TaskService } from 'app/services/task.service';
@@ -60,10 +60,10 @@ describe('SnapshotTaskComponent', () => {
     mockProvider(LocaleService, {
       timezone: 'America/New_York',
     }),
-    mockTypedApi([
-      mockTypedCall('pool.snapshottask.update_will_change_retention_for', {}),
-      mockTypedCall('pool.snapshottask.create', null),
-      mockTypedCall('pool.snapshottask.update', null),
+    mockApi([
+      mockCall('pool.snapshottask.update_will_change_retention_for', {}),
+      mockCall('pool.snapshottask.create', null),
+      mockCall('pool.snapshottask.update', null),
     ]),
     mockProvider(DialogService),
     mockProvider(StorageService, {
@@ -137,7 +137,7 @@ describe('SnapshotTaskComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
         allow_empty: false,
         dataset: 'test',
         enabled: true,
@@ -189,7 +189,7 @@ describe('SnapshotTaskComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.update', [
         1,
         {
           allow_empty: true,
@@ -214,7 +214,7 @@ describe('SnapshotTaskComponent', () => {
     });
 
     it('includes fixate_removal_date as false when no snapshots are affected', async () => {
-      const apiService = spectator.inject(TypedApiService);
+      const apiService = spectator.inject(ApiService);
 
       await (await getCheckbox('allow_empty')).uncheck();
 
@@ -235,7 +235,7 @@ describe('SnapshotTaskComponent', () => {
 
     it('shows retention warning when snapshots are affected', async () => {
       const mockSnapshots = ['snapshot1', 'snapshot2', 'snapshot3'];
-      spectator.inject(MockTypedApiService).mockCall(
+      spectator.inject(MockApiService).mockCall(
         'pool.snapshottask.update_will_change_retention_for',
         { 'pool/dataset': mockSnapshots },
       );
@@ -260,7 +260,7 @@ describe('SnapshotTaskComponent', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       const mockError = new Error('API Error');
-      spectator.inject(MockTypedApiService).call.mockImplementation(() => {
+      spectator.inject(MockApiService).call.mockImplementation(() => {
         throw mockError;
       });
 
@@ -312,7 +312,7 @@ describe('SnapshotTaskComponent', () => {
       panelSpectator.component.submit();
       await panelSpectator.fixture.whenStable();
 
-      expect(panelSpectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(panelSpectator.inject(ApiService).call).toHaveBeenCalledWith(
         'pool.snapshottask.update',
         [1, expect.any(Object)],
       );

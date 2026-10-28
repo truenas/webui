@@ -11,10 +11,10 @@ import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog, TnIconHarness } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { UpdateCode } from 'app/enums/system-update.enum';
@@ -29,8 +29,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { jobsInitialState } from 'app/modules/jobs/store/job.reducer';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   SaveConfigDialog,
 } from 'app/pages/system/advanced/manage-configuration-menu/save-config-dialog/save-config-dialog.component';
@@ -79,14 +79,14 @@ describe('UpdateComponent', () => {
       MockComponent(UpdateProfileCard),
     ],
     providers: [
-      mockTypedApi([
-        mockTypedJob('update.run', { state: JobState.Success }),
-        mockTypedJob('failover.upgrade', { state: JobState.Success }),
-        mockTypedCall('webui.main.dashboard.sys_info', {
+      mockApi([
+        mockJob('update.run', { state: JobState.Success }),
+        mockJob('failover.upgrade', { state: JobState.Success }),
+        mockCall('webui.main.dashboard.sys_info', {
           version: '22.12.3',
         } as SystemInfo as unknown as CallResponse<WebUiApiDirectory, 'webui.main.dashboard.sys_info'>),
-        mockTypedCall('update.profile_choices', profileChoices),
-        mockTypedCall('update.status', {
+        mockCall('update.profile_choices', profileChoices),
+        mockCall('update.status', {
           code: UpdateCode.Normal,
           error: null,
           status: {
@@ -96,7 +96,7 @@ describe('UpdateComponent', () => {
             new_version: null,
           },
         } as UpdateStatus as unknown as CallResponse<WebUiApiDirectory, 'update.status'>),
-        mockTypedCall('update.config', updateConfig),
+        mockCall('update.config', updateConfig),
       ]),
       mockAuth(),
       mockEntitlements(),
@@ -165,7 +165,7 @@ describe('UpdateComponent', () => {
     });
 
     it('queries update status, config and profile choices on page load', () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
 
       expect(api.call).toHaveBeenCalledWith('update.profile_choices');
       expect(api.call).toHaveBeenCalledWith('update.status');
@@ -173,7 +173,7 @@ describe('UpdateComponent', () => {
     });
 
     it('reloads update info when profile is switched', () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       jest.clearAllMocks();
 
       const updateProfileCard = spectator.query(UpdateProfileCard);
@@ -197,7 +197,7 @@ describe('UpdateComponent', () => {
 
   describe('when there are updates', () => {
     beforeEach(async () => {
-      const mockedApi = spectator.inject(MockTypedApiService);
+      const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.Normal,
         error: null,
@@ -236,7 +236,7 @@ describe('UpdateComponent', () => {
     });
 
     it('exposes hardware, HA, license and support flags to release-notes markdown', async () => {
-      spectator.inject(MockTypedApiService).mockCall('update.status', {
+      spectator.inject(MockApiService).mockCall('update.status', {
         code: UpdateCode.Normal,
         error: null,
         status: {
@@ -293,7 +293,7 @@ describe('UpdateComponent', () => {
       const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalledWith(
         expect.any(Object),
         { title: 'Update' },
@@ -310,7 +310,7 @@ describe('UpdateComponent', () => {
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('update.run', [{ reboot: true }]);
 
       openSpy.mockReturnValue({
         close: jest.fn(),
@@ -328,7 +328,7 @@ describe('UpdateComponent', () => {
       await installButton.click();
 
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
-      expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalled();
+      expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
 
       openSpy.mockReturnValue({
         close: jest.fn(),
@@ -344,13 +344,13 @@ describe('UpdateComponent', () => {
       const installButton = await loader.getHarness(TnButtonHarness.with({ label: 'Install Update' }));
       await installButton.click();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('failover.upgrade');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.upgrade');
     });
   });
 
   describe('when there is an error getting an update', () => {
     it('shows the error', async () => {
-      const mockedApi = spectator.inject(MockTypedApiService);
+      const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.Error,
         error: {
@@ -445,7 +445,7 @@ describe('UpdateComponent', () => {
 
   describe('when network activity is disabled', () => {
     it('shows network activity disabled message', async () => {
-      const mockedApi = spectator.inject(MockTypedApiService);
+      const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.NetworkActivityDisabled,
         error: null,
@@ -463,7 +463,7 @@ describe('UpdateComponent', () => {
     });
 
     it('does not show error field when network activity is disabled', async () => {
-      const mockedApi = spectator.inject(MockTypedApiService);
+      const mockedApi = spectator.inject(MockApiService);
       mockedApi.mockCall('update.status', {
         code: UpdateCode.NetworkActivityDisabled,
         error: {
@@ -490,7 +490,7 @@ describe('UpdateComponent', () => {
     });
 
     it('does not show error dialog for ENONET errors', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const enonetError = new ApiCallError({
@@ -536,7 +536,7 @@ describe('UpdateComponent', () => {
     });
 
     it('shows error dialog for other API errors', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const validationError = new ApiCallError({
@@ -582,7 +582,7 @@ describe('UpdateComponent', () => {
     });
 
     it('handles multiple API errors correctly', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const enonetError = new ApiCallError({
@@ -639,7 +639,7 @@ describe('UpdateComponent', () => {
     });
 
     it('shows network error dialog for ECONNRESET errors', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const connectionResetError = new ApiCallError({
@@ -682,7 +682,7 @@ describe('UpdateComponent', () => {
     });
 
     it('shows network error dialog for ETIMEDOUT errors', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       const errorHandler = spectator.inject(ErrorHandlerService);
 
       const timedOutError = new ApiCallError({
@@ -725,7 +725,7 @@ describe('UpdateComponent', () => {
     });
 
     it('shows custom error message for ECONNRESET in update.status response', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
 
       // Override the API call to return ECONNRESET error in update.status response
       jest.spyOn(api, 'call').mockImplementation((method) => {
@@ -763,7 +763,7 @@ describe('UpdateComponent', () => {
     });
 
     it('shows custom error message for ETIMEDOUT in update.status response', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
 
       // Override the API call to return ETIMEDOUT error in update.status response
       jest.spyOn(api, 'call').mockImplementation((method) => {
@@ -801,7 +801,7 @@ describe('UpdateComponent', () => {
     });
 
     it('shows custom error message for ENETUNREACH in update.status response', async () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
 
       // Override the API call to return ENETUNREACH error in update.status response
       jest.spyOn(api, 'call').mockImplementation((method) => {

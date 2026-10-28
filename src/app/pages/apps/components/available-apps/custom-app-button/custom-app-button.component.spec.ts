@@ -11,8 +11,8 @@ import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
@@ -45,9 +45,9 @@ describe('CustomAppButtonComponent', () => {
         selectedPool$: of('selected pool'),
       }),
       // Dependencies of the CustomAppForm rendered inside the side panel.
-      mockTypedApi([
-        mockTypedJob('app.create', { state: JobState.Success }),
-        mockTypedJob('app.update', { state: JobState.Success }),
+      mockApi([
+        mockJob('app.create', { state: JobState.Success }),
+        mockJob('app.update', { state: JobState.Success }),
       ]),
       mockProvider(ApplicationsService, {
         getAllApps: jest.fn(() => of([])),

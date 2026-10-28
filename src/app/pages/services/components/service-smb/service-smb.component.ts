@@ -33,8 +33,8 @@ import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-vali
 import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -112,7 +112,7 @@ type SmbConfigUpdate = NonNullable<CallParams<WebUiApiDirectory, 'smb.update'>[0
   ],
 })
 export class ServiceSmbComponent extends IxFormHostForm<boolean, SmbFormValue> implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private entitlements = inject(EntitlementsService);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);

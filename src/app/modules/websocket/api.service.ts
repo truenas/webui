@@ -84,7 +84,7 @@ type ClientApi = WebUiApiClient['api'];
 @Injectable({
   providedIn: 'root',
 })
-export class TypedApiService {
+export class ApiService {
   private client$ = inject(TYPED_API_CLIENT);
   private wsStatus = inject(WebSocketStatusService);
   private destroyRef = inject(DestroyRef);

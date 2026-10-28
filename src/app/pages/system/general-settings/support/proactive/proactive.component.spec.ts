@@ -6,18 +6,18 @@ import {
   Spectator,
 } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SupportConfig } from 'app/modules/feedback/interfaces/file-ticket.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 
 describe('ProactiveComponent', () => {
   let spectator: Spectator<ProactiveComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -33,9 +33,9 @@ describe('ProactiveComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('support.update', null),
-        mockTypedCall('support.config', {
+      mockApi([
+        mockCall('support.update', null),
+        mockCall('support.config', {
           enabled: true,
           name: 'Zepp Karlsen',
           title: 'Cannot connect',
@@ -46,8 +46,8 @@ describe('ProactiveComponent', () => {
           secondary_email: 'test-user@test-user.com',
           secondary_phone: '+999999999',
         } as SupportConfig),
-        mockTypedCall('support.is_available', true),
-        mockTypedCall('support.is_available_and_enabled', true),
+        mockCall('support.is_available', true),
+        mockCall('support.is_available_and_enabled', true),
       ]),
       ...ixFormTestingProviders(),
     ],
@@ -56,7 +56,7 @@ describe('ProactiveComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current proactive settings and shows them in the form', async () => {
@@ -98,7 +98,7 @@ describe('ProactiveComponent', () => {
   });
 
   it('disables form when support is not available', () => {
-    spectator.inject(MockTypedApiService).mockCall('support.is_available', false);
+    spectator.inject(MockApiService).mockCall('support.is_available', false);
     spectator.component.ngOnInit();
     spectator.detectChanges();
 

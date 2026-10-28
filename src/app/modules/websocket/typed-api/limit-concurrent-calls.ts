@@ -39,7 +39,7 @@ interface WaitingCall {
  * `connection` at once. The rest wait their turn, in the order they were sent.
  *
  * Done on the connection's own `send` because that is where requests meet:
- * `TypedApiService` and the client's own verbs and authenticator all write
+ * `ApiService` and the client's own verbs and authenticator all write
  * through it. A limit kept by any one of them counts only its own calls, and
  * the tab's total is what middleware refuses.
  *

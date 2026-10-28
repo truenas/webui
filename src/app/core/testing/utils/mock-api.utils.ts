@@ -4,17 +4,17 @@ import {
 } from '@truenas/api-client';
 import { FakeApiErrorOverrides, JobUpdate } from '@truenas/api-client/testing';
 import {
-  MockTypedApiService, TypedCallMethod, TypedCallResponseOrFactory, TypedRefusableMethod,
-} from 'app/core/testing/classes/mock-typed-api.service';
+  MockApiService, MockCallMethod, CallResponseOrFactory, RefusableMethod,
+} from 'app/core/testing/classes/mock-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UndeclaredCallDirectory, UndeclaredCallMethod, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 type D = WebUiApiDirectory;
 
-export type MockTypedApiResponse = (api: MockTypedApiService) => void;
+export type MockApiResponse = (api: MockApiService) => void;
 
 /**
- * Sugar for mocking `TypedApiService`.
+ * Sugar for mocking `ApiService`.
  *
  * Behind it is a real `@truenas/api-client` on the package's fake connection
  * (`@truenas/api-client/testing`), so the real dispatch, job correlation and
@@ -23,68 +23,68 @@ export type MockTypedApiResponse = (api: MockTypedApiService) => void;
  *
  * @example
  * providers: [
- *   mockTypedApi([
- *     mockTypedCall('system.info', { version: 'x' } as SystemInfoResult),
- *     mockTypedCallError('user.delete', { errname: 'EINVAL', extra: [['user_delete.id', 'No such user', 22]] }),
- *     mockTypedQuery('user.query', [{ id: 1 } as UserEntry]),
- *     mockTypedJob('pool.dataset.export_key', [{ state: JobState.Success, result: 'key' }]),
+ *   mockApi([
+ *     mockCall('system.info', { version: 'x' } as SystemInfoResult),
+ *     mockCallError('user.delete', { errname: 'EINVAL', extra: [['user_delete.id', 'No such user', 22]] }),
+ *     mockQuery('user.query', [{ id: 1 } as UserEntry]),
+ *     mockJob('pool.dataset.export_key', [{ state: JobState.Success, result: 'key' }]),
  *   ]),
  * ]
  *
- * `MockTypedApiService` is also available for adjusting answers on the fly, and
+ * `MockApiService` is also available for adjusting answers on the fly, and
  * exposes the fake client for connection-level scenarios:
- * `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
+ * `spectator.inject(MockApiService).client.connection.simulateClose()`.
  */
-export function mockTypedApi(mocks: MockTypedApiResponse[] = []): (FactoryProvider | ExistingProvider)[] {
+export function mockApi(mocks: MockApiResponse[] = []): (FactoryProvider | ExistingProvider)[] {
   return [
     {
-      provide: TypedApiService,
+      provide: ApiService,
       useFactory: () => {
-        const api = new MockTypedApiService();
+        const api = new MockApiService();
         mocks.forEach((apply) => apply(api));
         return api;
       },
     },
     {
-      provide: MockTypedApiService,
-      useExisting: TypedApiService,
+      provide: MockApiService,
+      useExisting: ApiService,
     },
   ];
 }
 
-export function mockTypedCall<M extends TypedCallMethod>(
+export function mockCall<M extends MockCallMethod>(
   method: M,
-  response: TypedCallResponseOrFactory<M>,
-): MockTypedApiResponse {
+  response: CallResponseOrFactory<M>,
+): MockApiResponse {
   return (api) => api.mockCall(method, response);
 }
 
-export function mockTypedUndeclaredCall<M extends UndeclaredCallMethod>(
+export function mockUndeclaredCall<M extends UndeclaredCallMethod>(
   method: M,
   response: UndeclaredCallDirectory[M]['response'],
-): MockTypedApiResponse {
+): MockApiResponse {
   return (api) => api.mockUndeclaredCall(method, response);
 }
 
 /** Answers `method` with a JSON-RPC error, thrown by `call` as an `ApiCallError`. */
-export function mockTypedCallError(
-  method: TypedRefusableMethod,
+export function mockCallError(
+  method: RefusableMethod,
   error: FakeApiErrorOverrides = {},
-): MockTypedApiResponse {
+): MockApiResponse {
   return (api) => api.mockCallError(method, error);
 }
 
-export function mockTypedQuery<M extends QueryMethod<D['call']>>(
+export function mockQuery<M extends QueryMethod<D['call']>>(
   method: M,
   rows: QueryEntity<D['call'], M>[],
-): MockTypedApiResponse {
+): MockApiResponse {
   return (api) => api.mockQuery(method, rows);
 }
 
-export function mockTypedJob<M extends JobMethod<D>>(
+export function mockJob<M extends JobMethod<D>>(
   method: M,
   updates: JobUpdate<JobResult<D, M>> | JobUpdate<JobResult<D, M>>[],
-): MockTypedApiResponse {
+): MockApiResponse {
   return (api) => api.mockJob(method, updates);
 }
 
@@ -94,7 +94,7 @@ export function mockTypedJob<M extends JobMethod<D>>(
  * `await spectator.fixture.whenStable()` for this; a service or store spec, with no fixture to
  * wait on, awaits this instead. A macrotask runs after every microtask already queued.
  */
-export function settleTypedApi(): Promise<void> {
+export function settleApi(): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve);
   });

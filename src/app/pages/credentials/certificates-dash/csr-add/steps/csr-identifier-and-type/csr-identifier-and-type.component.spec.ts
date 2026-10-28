@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { CertificateProfile } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -34,8 +34,8 @@ describe('CsrIdentifierAndTypeComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedCall('webui.crypto.csr_profiles', {
+      mockApi([
+        mockCall('webui.crypto.csr_profiles', {
           'HTTPS ECC Certificate': httpsProfile,
           'Openvpn Client Certificate': openvpnProfile,
         } as unknown as CallResponse<WebUiApiDirectory, 'webui.crypto.csr_profiles'>),

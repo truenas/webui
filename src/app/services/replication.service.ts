@@ -8,11 +8,11 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable()
 export class ReplicationService {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
   private authService = inject(AuthService);
 
 

@@ -4,7 +4,7 @@ import { EMPTY, forkJoin } from 'rxjs';
 import { catchError, map, mergeMap } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import {
   advancedConfigUpdated,
@@ -16,7 +16,7 @@ import {
 @Injectable()
 export class SystemConfigEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private window = inject<Window>(WINDOW);
 
   loadConfig$ = createEffect(() => this.actions$.pipe(

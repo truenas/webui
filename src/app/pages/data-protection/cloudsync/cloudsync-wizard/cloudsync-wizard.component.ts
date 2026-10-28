@@ -12,7 +12,7 @@ import { cloudSyncProviderNameMap } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncTask, CloudSyncTaskUpdate, toCloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync-provider.component';
@@ -32,7 +32,7 @@ import { CloudSyncProviderComponent } from './steps/cloudsync-provider/cloudsync
   ],
 })
 export class CloudSyncWizardComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private snackbarService = inject(SnackbarService);
   private cdr = inject(ChangeDetectorRef);
   private translate = inject(TranslateService);

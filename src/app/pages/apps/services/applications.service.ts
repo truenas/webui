@@ -14,8 +14,8 @@ import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-
 import { AvailableApp, toAvailableApp } from 'app/interfaces/available-app.interface';
 import { CatalogApp, toCatalogApp } from 'app/interfaces/catalog.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 const ignoredAppsList = [customApp];
 
@@ -39,7 +39,7 @@ export function filterIgnoredApps(): OperatorFunction<AvailableApp[], AvailableA
 
 @Injectable({ providedIn: 'root' })
 export class ApplicationsService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private window = inject<Window>(WINDOW);
 

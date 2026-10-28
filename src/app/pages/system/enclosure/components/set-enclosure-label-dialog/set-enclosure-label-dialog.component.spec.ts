@@ -4,9 +4,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SetEnclosureLabelDialog, SetEnclosureLabelDialogData,
 } from 'app/pages/system/enclosure/components/set-enclosure-label-dialog/set-enclosure-label-dialog.component';
@@ -20,8 +20,8 @@ describe('SetEnclosureLabelDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('enclosure.label.set', null),
+      mockApi([
+        mockCall('enclosure.label.set', null),
       ]),
       mockProvider(DialogService),
       mockProvider(DialogRef),
@@ -48,7 +48,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'New label']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'New label']);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('New label');
   });
 
@@ -59,7 +59,7 @@ describe('SetEnclosureLabelDialogComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'TRUENAS-M40-HA']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('enclosure.label.set', ['1234', 'TRUENAS-M40-HA']);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith('TRUENAS-M40-HA');
   });
 });

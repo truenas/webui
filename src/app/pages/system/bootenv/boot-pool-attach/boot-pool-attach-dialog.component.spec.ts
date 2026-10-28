@@ -5,8 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -15,13 +15,13 @@ import {
 } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolAttachDialog } from './boot-pool-attach-dialog.component';
 
 describe('BootPoolAttachDialogComponent', () => {
   let spectator: Spectator<BootPoolAttachDialog>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: BootPoolAttachDialog,
@@ -30,8 +30,8 @@ describe('BootPoolAttachDialogComponent', () => {
       UnusedDiskSelectComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('disk.details', {
           unused: [
             {
               devname: 'sdb',
@@ -41,7 +41,7 @@ describe('BootPoolAttachDialogComponent', () => {
           ] as DetailsDisk[],
           used: [],
         }),
-        mockTypedJob('boot.attach', { state: JobState.Success }),
+        mockJob('boot.attach', { state: JobState.Success }),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService, {
@@ -58,7 +58,7 @@ describe('BootPoolAttachDialogComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('sends an update payload to websocket when save is pressed', async () => {

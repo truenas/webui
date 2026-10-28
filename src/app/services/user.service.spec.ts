@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { UserService } from 'app/services/user.service';
 
@@ -10,18 +10,18 @@ type User = WebUiQueryEntity<'user.query'>;
 
 describe('UserService', () => {
   let spectator: SpectatorService<UserService>;
-  let apiService: MockTypedApiService;
+  let apiService: MockApiService;
 
   const createService = createServiceFactory({
     service: UserService,
     providers: [
-      mockTypedApi(),
+      mockApi(),
     ],
   });
 
   beforeEach(() => {
     spectator = createService();
-    apiService = spectator.inject(MockTypedApiService);
+    apiService = spectator.inject(MockApiService);
   });
 
   describe('groupQueryDsCache', () => {

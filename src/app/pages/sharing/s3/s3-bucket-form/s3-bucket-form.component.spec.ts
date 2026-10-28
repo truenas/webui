@@ -18,9 +18,9 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
@@ -34,8 +34,8 @@ import {
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
 import { DatasetService } from 'app/services/dataset/dataset.service';
@@ -58,7 +58,7 @@ describe('S3BucketFormComponent', () => {
   let spectator: Spectator<S3BucketFormComponent>;
   let loader: HarnessLoader;
   let form: IxFormHarness;
-  let api: TypedApiService;
+  let api: ApiService;
   let store$: Store<AppState>;
 
   const existingBucket = {
@@ -120,14 +120,14 @@ describe('S3BucketFormComponent', () => {
     providers: [
       // The owner picker reads users through `UserDirectoryService`, and the grant rows' principal
       // pickers read them directly.
-      mockTypedApi([
-        mockTypedQuery('user.query', users as WebUiQueryEntity<'user.query'>[]),
-        mockTypedQuery('group.query', groups as WebUiQueryEntity<'group.query'>[]),
-        mockTypedCall('sharing.s3.create', {} as WebUiQueryEntity<'sharing.s3.query'>),
-        mockTypedCall('sharing.s3.update', {} as WebUiQueryEntity<'sharing.s3.query'>),
-        mockTypedCall('sharing.s3.force_disable_versioning', null),
-        mockTypedCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
-        mockTypedCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
+      mockApi([
+        mockQuery('user.query', users as WebUiQueryEntity<'user.query'>[]),
+        mockQuery('group.query', groups as WebUiQueryEntity<'group.query'>[]),
+        mockCall('sharing.s3.create', {} as WebUiQueryEntity<'sharing.s3.query'>),
+        mockCall('sharing.s3.update', {} as WebUiQueryEntity<'sharing.s3.query'>),
+        mockCall('sharing.s3.force_disable_versioning', null),
+        mockCall('sharing.s3.audit_choices', { GetObject: 'GetObject', PutObject: 'PutObject' }),
+        mockCall('pool.filesystem_choices', ['tank', 'tank/buckets', 'tank/buckets/photos']),
       ]),
       mockAuth(),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
@@ -152,7 +152,7 @@ describe('S3BucketFormComponent', () => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       store$ = spectator.inject(Store);
       jest.spyOn(store$, 'dispatch');
     });
@@ -482,7 +482,7 @@ describe('S3BucketFormComponent', () => {
         providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       await clickAdvancedOptions();
 
       expect(premiumBadge('Versioning')).not.toBeNull();
@@ -534,7 +534,7 @@ describe('S3BucketFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       await form.fillForm({ Name: 'videos' });
       await (await getParentDatasetExplorer()).setValue('tank/buckets');
@@ -569,7 +569,7 @@ describe('S3BucketFormComponent', () => {
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       await form.fillForm({ Name: 'videos' });
       await (await getParentDatasetExplorer()).setValue('tank/buckets');
@@ -599,7 +599,7 @@ describe('S3BucketFormComponent', () => {
         props: { bucket: lockedBucket },
         providers: [mockEntitlements([EntitlementFeature.S3Versioning])],
       });
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
 
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -617,7 +617,7 @@ describe('S3BucketFormComponent', () => {
       spectator = createComponent({ props: { bucket: existingBucket } });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       form = await loader.getHarness(IxFormHarness);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('shows existing values with the dataset read only', async () => {

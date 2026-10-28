@@ -8,16 +8,16 @@ import { CallResponse } from '@truenas/api-client';
 import {
   TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration, NetworkConfigurationActivity } from 'app/interfaces/network-configuration.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { LanguageService } from 'app/modules/language/language.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -26,7 +26,7 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 describe('NetworkConfigurationComponent', () => {
   let spectator: Spectator<NetworkConfigurationComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: NetworkConfigurationComponent,
@@ -35,13 +35,13 @@ describe('NetworkConfigurationComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('network.configuration.activity_choices', [
+      mockApi([
+        mockCall('network.configuration.activity_choices', [
           ['acme', 'ACME'],
           ['catalog', 'Catalog(s) information'],
           ['cloud_sync', 'Cloud sync'],
         ]),
-        mockTypedCall('network.configuration.config', {
+        mockCall('network.configuration.config', {
           activity: {
             activities: [],
             type: NetworkActivityType.Deny,
@@ -71,7 +71,7 @@ describe('NetworkConfigurationComponent', () => {
             nameserver3: '',
           },
         } as NetworkConfiguration as unknown as CallResponse<WebUiApiDirectory, 'network.configuration.config'>),
-        mockTypedCall('network.configuration.update', null),
+        mockCall('network.configuration.update', null),
       ]),
       mockProvider(FormErrorHandlerService),
       mockProvider(DialogService),
@@ -95,7 +95,7 @@ describe('NetworkConfigurationComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads and shows current network global configuration when form is opened', async () => {

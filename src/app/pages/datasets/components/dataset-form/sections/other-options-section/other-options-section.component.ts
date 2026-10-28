@@ -50,7 +50,7 @@ import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
 import { WarningComponent } from 'app/modules/warning/warning.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
@@ -83,7 +83,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
   private systemGeneralService = inject(SystemGeneralService);
   private dialogService = inject(DialogService);
   private formatter = inject(IxFormatterService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private datasetFormService = inject(DatasetFormService);
   private tierService = inject(SharingTierService);
   private destroyRef = inject(DestroyRef);

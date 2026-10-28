@@ -6,7 +6,7 @@ import {
   FibreChannelPort, toFibreChannelPort, toFibreChannelStatuses,
 } from 'app/interfaces/fibre-channel.interface';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AssociatedExtentsCardComponent } from 'app/pages/sharing/iscsi/target/all-targets/target-details/associated-extents-card/associated-extents-card.component';
 import {
   AuthorizedNetworksCardComponent,
@@ -30,7 +30,7 @@ import { IscsiGroupsCardComponent } from 'app/pages/sharing/iscsi/target/all-tar
   ],
 })
 export class TargetDetailsComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly target = input.required<IscsiTarget>();

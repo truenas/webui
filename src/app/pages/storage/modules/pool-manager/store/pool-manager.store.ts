@@ -16,7 +16,7 @@ import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Enclosure, toEnclosure } from 'app/interfaces/enclosure.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import {
   DispersalStrategy,
@@ -140,7 +140,7 @@ export const initialState: PoolManagerState = {
 @Injectable()
 export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private diskStore = inject(DiskStore);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private generateVdevs = inject(GenerateVdevsService);
   private tnDialog = inject(TnDialog);

@@ -9,7 +9,7 @@ import { HardwareType } from 'app/enums/hardware-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -23,7 +23,7 @@ import {
 })
 export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
   private entitlements = inject(EntitlementsService);
 

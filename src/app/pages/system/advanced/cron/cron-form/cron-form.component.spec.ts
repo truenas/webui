@@ -5,8 +5,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Cronjob } from 'app/interfaces/cronjob.interface';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -15,7 +15,7 @@ import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harnes
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CronFormComponent } from 'app/pages/system/advanced/cron/cron-form/cron-form.component';
 import { UserService } from 'app/services/user.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -68,9 +68,9 @@ describe('CronFormComponent', () => {
         timezone: 'America/New_York',
       }),
       mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('cronjob.create', null),
-        mockTypedCall('cronjob.update', null),
+      mockApi([
+        mockCall('cronjob.create', null),
+        mockCall('cronjob.update', null),
       ]),
       provideMockStore({
         selectors: [
@@ -118,7 +118,7 @@ describe('CronFormComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cronjob.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.create', [{
         command: 'rm -rf /',
         description: 'Final cron job',
         enabled: true,
@@ -172,7 +172,7 @@ describe('CronFormComponent', () => {
 
       spectator.detectChanges();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('cronjob.update', [234, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('cronjob.update', [234, {
         command: 'ls -la',
         description: 'Updated cron job',
         enabled: false,

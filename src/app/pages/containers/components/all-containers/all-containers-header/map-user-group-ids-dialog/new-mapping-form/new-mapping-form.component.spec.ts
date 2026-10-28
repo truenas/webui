@@ -4,11 +4,11 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { directIdMapping } from 'app/interfaces/user.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ViewType } from 'app/pages/containers/components/all-containers/all-containers-header/map-user-group-ids-dialog/mapping.types';
 import { UserService } from 'app/services/user.service';
 import { NewMappingFormComponent } from './new-mapping-form.component';
@@ -23,7 +23,7 @@ const mockUserService = {
 describe('NewMappingFormComponent', () => {
   let spectator: Spectator<NewMappingFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const mockUser = { id: 1000, username: 'testuser', uid: 1000 } as WebUiQueryEntity<'user.query'>;
   const mockGroup = { id: 2000, group: 'testgroup', gid: 1000 } as WebUiQueryEntity<'group.query'>;
@@ -34,11 +34,11 @@ describe('NewMappingFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('user.query', [mockUser]),
-        mockTypedQuery('group.query', [mockGroup]),
-        mockTypedCall('user.update', null),
-        mockTypedCall('group.update', null),
+      mockApi([
+        mockQuery('user.query', [mockUser]),
+        mockQuery('group.query', [mockGroup]),
+        mockCall('user.update', null),
+        mockCall('group.update', null),
       ]),
       mockProvider(UserService, mockUserService),
       ...ixFormTestingProviders(),
@@ -52,7 +52,7 @@ describe('NewMappingFormComponent', () => {
       },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   const getInstanceIdInput = (): Promise<TnInputHarness> => loader.getHarness(

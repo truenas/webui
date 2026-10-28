@@ -8,7 +8,7 @@ import { Group } from 'app/interfaces/group.interface';
 import { Privilege } from 'app/interfaces/privilege.interface';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormFieldDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getGroupFormConfig, GroupFormValue } from 'app/pages/credentials/groups/group-form/group.form-config';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { AppState } from 'app/store';
@@ -45,7 +45,7 @@ describe('group form config', () => {
   const makeApi = (
     privileges: Privilege[] = fakePrivileges,
     groups = [{ group: 'existing', gid: 9999 }] as Group[],
-  ): TypedApiService => ({
+  ): ApiService => ({
     call: jest.fn((method: string) => {
       switch (method) {
         case 'group.get_next_gid': return of(1234);
@@ -55,7 +55,7 @@ describe('group form config', () => {
     }),
     query: jest.fn((method: string) => of(method === 'privilege.query' ? privileges : groups)),
     queryOne: jest.fn(() => of(groups[0])),
-  } as unknown as TypedApiService);
+  } as unknown as ApiService);
 
   const fieldByName = (
     definition: ReturnType<typeof getGroupFormConfig>,

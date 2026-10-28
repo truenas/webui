@@ -13,8 +13,8 @@ import {
 } from 'app/interfaces/disk.interface';
 import { ScrubTask, toScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, toPool } from 'app/interfaces/pool.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
@@ -40,7 +40,7 @@ const initialState: PoolsDashboardState = {
 @Injectable()
 export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private poolStoreService = inject(poolStore);
 
   readonly pools = computed(() => this.state().pools);

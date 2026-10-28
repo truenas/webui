@@ -21,7 +21,7 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { CronPresetValue } from 'app/modules/scheduler/utils/get-default-crontab-presets.utils';
 import { scheduleToCrontab } from 'app/modules/scheduler/utils/schedule-to-crontab.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   PropertiesOverrideValidatorService,
 } from 'app/pages/data-protection/replication/replication-form/properties-override-validator/properties-override-validator.service';
@@ -54,7 +54,7 @@ import { TaskService } from 'app/services/task.service';
   ],
 })
 export class SourceSectionComponent implements OnChanges {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private taskService = inject(TaskService);
   private translate = inject(TranslateService);

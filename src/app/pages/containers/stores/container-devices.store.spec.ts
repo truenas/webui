@@ -2,12 +2,12 @@ import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import {
-  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockCall, mockQuery, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
 import { containerGpuType } from 'app/enums/container.enum';
 import { Container } from 'app/interfaces/container.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
@@ -45,9 +45,9 @@ describe('ContainerDevicesStore', () => {
   const createService = createServiceFactory({
     service: ContainerDevicesStore,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('container.device.query', containerDevices),
-        mockTypedCall('container.device.gpu_choices', gpuChoices),
+      mockApi([
+        mockQuery('container.device.query', containerDevices),
+        mockCall('container.device.gpu_choices', gpuChoices),
       ]),
       mockProvider(ContainersStore, {
         containers: jest.fn(() => containers),
@@ -73,9 +73,9 @@ describe('ContainerDevicesStore', () => {
 
   it('should load devices when loadDevices is called', async () => {
     spectator.service.reload();
-    await settleTypedApi();
+    await settleApi();
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
     expect(spectator.service.state()).toEqual({
       devices: [
         device1,
@@ -89,19 +89,19 @@ describe('ContainerDevicesStore', () => {
 
   it('loadDevices – loads a list of devices for the selected container', async () => {
     spectator.service.reload();
-    await settleTypedApi();
+    await settleApi();
 
     expect(spectator.service.devices()).toEqual([
       device1,
       device2,
     ]);
-    expect(spectator.inject(TypedApiService).query)
+    expect(spectator.inject(ApiService).query)
       .toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
   });
 
   it('deviceDeleted – removes a device from list of devices for selected container', async () => {
     spectator.service.reload();
-    await settleTypedApi();
+    await settleApi();
     spectator.service.deviceDeleted(1);
 
     expect(spectator.service.devices()).toEqual([device2]);
@@ -117,13 +117,13 @@ describe('ContainerDevicesStore', () => {
     });
 
     it('gpuChoices - returns gpuChoices part of the state', async () => {
-      await settleTypedApi();
+      await settleApi();
 
       expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
     });
 
     it('isLoadingGpuChoices - returns isLoadingGpuChoices part of the state', async () => {
-      await settleTypedApi();
+      await settleApi();
 
       expect(spectator.service.isLoadingGpuChoices()).toBe(false);
     });
@@ -140,7 +140,7 @@ describe('ContainerDevicesStore', () => {
   describe('error handling', () => {
     it('sets isLoading to false on API error', () => {
       const delayedResponse$ = new Subject<WebUiQueryEntity<'container.device.query'>[]>();
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(delayedResponse$);
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(delayedResponse$);
 
       spectator.service.reload();
       expect(spectator.service.isLoading()).toBe(true);
@@ -153,7 +153,7 @@ describe('ContainerDevicesStore', () => {
 
     it('shows error modal when loadDevices fails', () => {
       const error = new Error('Failed to load devices');
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(
         throwError(() => error),
       );
       const errorHandler = spectator.inject(ErrorHandlerService);
@@ -166,13 +166,13 @@ describe('ContainerDevicesStore', () => {
 
     it('clears devices on API error', async () => {
       spectator.service.reload();
-      await settleTypedApi();
+      await settleApi();
       expect(spectator.service.devices()).toEqual([
         device1,
         device2,
       ]);
 
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(
         throwError(() => new Error('API error')),
       );
 
@@ -185,7 +185,7 @@ describe('ContainerDevicesStore', () => {
   describe('loading state', () => {
     it('sets isLoading to true while fetching devices', () => {
       const delayedResponse$ = new Subject<WebUiQueryEntity<'container.device.query'>[]>();
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(delayedResponse$);
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(delayedResponse$);
 
       spectator.service.reload();
 
@@ -198,7 +198,7 @@ describe('ContainerDevicesStore', () => {
 
     it('sets isLoading to false after devices are loaded', async () => {
       spectator.service.reload();
-      await settleTypedApi();
+      await settleApi();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.devices()).toEqual([
@@ -211,7 +211,7 @@ describe('ContainerDevicesStore', () => {
   describe('deviceDeleted', () => {
     beforeEach(async () => {
       spectator.service.reload();
-      await settleTypedApi();
+      await settleApi();
     });
 
     it('removes only the specified device', () => {
@@ -240,9 +240,9 @@ describe('ContainerDevicesStore', () => {
 
   describe('gpu choices', () => {
     it('loads gpu choices in constructor', async () => {
-      await settleTypedApi();
+      await settleApi();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.gpu_choices');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.gpu_choices');
       expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
     });
   });

@@ -20,7 +20,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -48,7 +48,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class BootenvStatsDialog implements OnInit {
   protected readonly InputType = InputType;
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   private store$ = inject<Store<AppState>>(Store);
   protected dialogRef = inject<DialogRef<unknown, BootenvStatsDialog>>(DialogRef);

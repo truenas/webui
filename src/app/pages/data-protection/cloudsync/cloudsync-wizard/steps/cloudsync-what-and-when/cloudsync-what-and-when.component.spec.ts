@@ -11,8 +11,8 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -35,11 +35,11 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       mockProvider(TnStepperComponent),
       mockProvider(FormSidePanelService),
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry]),
-        mockTypedCall('cloudsync.providers', [googlePhotosProvider]),
-        mockTypedCall('cloudsync.create', null),
-        mockTypedCall('cloudsync.update', null),
+      mockApi([
+        mockQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry]),
+        mockCall('cloudsync.providers', [googlePhotosProvider]),
+        mockCall('cloudsync.create', null),
+        mockCall('cloudsync.update', null),
       ]),
       mockProvider(DatasetService),
       mockProvider(TnDialog, {

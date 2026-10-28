@@ -8,8 +8,8 @@ import {
 import { TnAutocompleteHarness, TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { VDev } from 'app/interfaces/storage.interface';
@@ -17,7 +17,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   mockSedDiskPasswordCalls, sedEntitledProvider,
 } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/testing/sed-disk-password-mocks';
@@ -41,8 +41,8 @@ describe('RaidzExtendDialogComponent', () => {
     providers: [
       mockAuth(),
       sedEntitledProvider,
-      mockTypedApi([
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('disk.details', {
           unused: [
             {
               devname: 'sde',
@@ -58,7 +58,7 @@ describe('RaidzExtendDialogComponent', () => {
           used: [],
         }),
         ...mockSedDiskPasswordCalls(),
-        mockTypedJob('pool.attach', { state: JobState.Success }),
+        mockJob('pool.attach', { state: JobState.Success }),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
@@ -120,7 +120,7 @@ describe('RaidzExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.attach', [
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [
       4,
       {
         new_disk: 'sde',

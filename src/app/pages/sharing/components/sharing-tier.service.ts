@@ -13,7 +13,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { SharingTierInfo, ZfsTierConfig, ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
@@ -52,7 +52,7 @@ function tierJobFromEvent(event: object): ZfsTierRewriteJobEntry | null {
   providedIn: 'root',
 })
 export class SharingTierService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);

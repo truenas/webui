@@ -3,13 +3,13 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
 import { of, ReplaySubject } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
 import { EulaEffects } from 'app/store/eula/eula.effects';
 import { selectIsTruenasHardware } from 'app/store/system-info/system-info.selectors';
@@ -21,10 +21,10 @@ describe('EulaEffects', () => {
   const createService = createServiceFactory({
     service: EulaEffects,
     providers: [
-      mockTypedApi([
-        mockTypedCall('truenas.get_eula', 'Please do not sue us.'),
-        mockTypedCall('truenas.accept_eula', null),
-        mockTypedCall('truenas.is_eula_accepted', false),
+      mockApi([
+        mockCall('truenas.get_eula', 'Please do not sue us.'),
+        mockCall('truenas.accept_eula', null),
+        mockCall('truenas.is_eula_accepted', false),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -64,7 +64,7 @@ describe('EulaEffects', () => {
     });
 
     it('calls truenas.accept_eula when the EULA dialog is accepted', () => {
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('truenas.accept_eula');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.accept_eula');
     });
   });
 
@@ -76,7 +76,7 @@ describe('EulaEffects', () => {
           provideMockActions(() => actions$),
         ],
       });
-      spectator.inject(MockTypedApiService).mockCall('truenas.is_eula_accepted', true);
+      spectator.inject(MockApiService).mockCall('truenas.is_eula_accepted', true);
       actions$.next(adminUiInitialized());
       spectator.service.checkEula$.subscribe();
       // The answer lands on a microtask; let it arrive before asserting nothing followed it.
@@ -84,7 +84,7 @@ describe('EulaEffects', () => {
         setTimeout(resolve);
       });
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('truenas.is_eula_accepted');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.is_eula_accepted');
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     });
   });
@@ -97,16 +97,16 @@ describe('EulaEffects', () => {
           provideMockActions(() => actions$),
         ],
       });
-      spectator.inject(MockTypedApiService).mockCall('truenas.get_eula', null);
+      spectator.inject(MockApiService).mockCall('truenas.get_eula', null);
       actions$.next(adminUiInitialized());
       spectator.service.checkEula$.subscribe();
       await new Promise((resolve) => {
         setTimeout(resolve);
       });
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('truenas.get_eula');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.get_eula');
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('truenas.accept_eula');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('truenas.accept_eula');
     });
   });
 
@@ -126,7 +126,7 @@ describe('EulaEffects', () => {
       actions$.next(adminUiInitialized());
       spectator.service.checkEula$.subscribe();
 
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('truenas.is_eula_accepted');
       expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     });
   });
@@ -147,7 +147,7 @@ describe('EulaEffects', () => {
         ],
       });
 
-      const apiService = spectator.inject(TypedApiService);
+      const apiService = spectator.inject(ApiService);
       jest.clearAllMocks();
 
       actions$.next(adminUiInitialized());

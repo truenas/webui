@@ -6,7 +6,7 @@ import { Role } from 'app/enums/role.enum';
 import { helptextSystemBootenv } from 'app/helptext/system/boot-env';
 import { BootenvCloneParams } from 'app/interfaces/boot-environment.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface BootenvFormValues {
   source: string;
@@ -14,7 +14,7 @@ export interface BootenvFormValues {
 }
 
 export function getBootenvFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   currentName: string | undefined,
 ): FormDefinition<BootenvFormValues> {

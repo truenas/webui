@@ -8,8 +8,8 @@ import {
 } from '@truenas/ui-components';
 import { parseISO } from 'date-fns';
 import { of } from 'rxjs';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { S3AccessKeyStatus } from 'app/enums/s3.enum';
 import { S3AccessKey } from 'app/interfaces/s3.interface';
 import {
@@ -20,8 +20,8 @@ import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-g
 import { LocaleService } from 'app/modules/language/locale.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   S3AccessKeyCredentialsDialogComponent,
 } from 'app/pages/credentials/s3-access-keys/s3-access-key-credentials-dialog/s3-access-key-credentials-dialog.component';
@@ -57,10 +57,10 @@ describe('S3AccessKeyFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedQuery('user.query', [{ username: 'alice', uid: 1000 }] as WebUiQueryEntity<'user.query'>[]),
-        mockTypedCall('s3.accesskey.create', createdKey as unknown as CallResponse<WebUiApiDirectory, 's3.accesskey.create'>),
-        mockTypedCall('s3.accesskey.update', createdKey as unknown as CallResponse<WebUiApiDirectory, 's3.accesskey.update'>),
+      mockApi([
+        mockQuery('user.query', [{ username: 'alice', uid: 1000 }] as WebUiQueryEntity<'user.query'>[]),
+        mockCall('s3.accesskey.create', createdKey as unknown as CallResponse<WebUiApiDirectory, 's3.accesskey.create'>),
+        mockCall('s3.accesskey.update', createdKey as unknown as CallResponse<WebUiApiDirectory, 's3.accesskey.update'>),
       ]),
       mockAuth(),
       mockProvider(SnackbarService),
@@ -114,7 +114,7 @@ describe('S3AccessKeyFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('s3.accesskey.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.accesskey.create', [{
         name: 'backup-key',
         username: 'alice',
         enabled: true,
@@ -143,7 +143,7 @@ describe('S3AccessKeyFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const api = spectator.inject(TypedApiService) as unknown as { call: jest.Mock };
+      const api = spectator.inject(ApiService) as unknown as { call: jest.Mock };
       const [, [payload]] = api.call.mock.calls.find(([method]) => method === 's3.accesskey.create');
       const expiresAt = new Date((payload as { expires_at: { $date: number } }).expires_at.$date);
       expect([expiresAt.getFullYear(), expiresAt.getMonth() + 1, expiresAt.getDate()]).toEqual([2030, 1, 15]);
@@ -190,7 +190,7 @@ describe('S3AccessKeyFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('s3.accesskey.update', [3, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.accesskey.update', [3, {
         name: 'renamed-key',
         enabled: true,
         expires_at: null,

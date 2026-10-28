@@ -28,7 +28,7 @@ import { convertStringToId, dataProviderLoading, dataProviderRows } from 'app/mo
 import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ipmiCardElements } from 'app/pages/system/network/components/ipmi-card/ipmi-card.elements';
 import {
   IpmiEventsDialog,
@@ -56,7 +56,7 @@ import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card
   ],
 })
 export class IpmiCardComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);

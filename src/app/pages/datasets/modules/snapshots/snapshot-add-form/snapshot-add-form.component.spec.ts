@@ -6,9 +6,9 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of, Subject, throwError } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
@@ -20,7 +20,7 @@ const mockNamingSchema = ['%Y %H %d %M %m'];
 describe('SnapshotAddFormComponent', () => {
   let spectator: Spectator<SnapshotAddFormComponent>;
   let loader: HarnessLoader;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createComponent = createComponentFactory({
     component: SnapshotAddFormComponent,
@@ -29,11 +29,11 @@ describe('SnapshotAddFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('pool.filesystem_choices', ['APPS', 'POOL']),
-        mockTypedCall('pool.snapshot.create', null),
-        mockTypedCall('replication.list_naming_schemas', mockNamingSchema),
-        mockTypedCall('vmware.dataset_has_vms', true),
+      mockApi([
+        mockCall('pool.filesystem_choices', ['APPS', 'POOL']),
+        mockCall('pool.snapshot.create', null),
+        mockCall('replication.list_naming_schemas', mockNamingSchema),
+        mockCall('vmware.dataset_has_vms', true),
       ]),
       ...ixFormTestingProviders(),
     ],
@@ -54,7 +54,7 @@ describe('SnapshotAddFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('presets name with current date and time', async () => {
@@ -369,9 +369,9 @@ describe('SnapshotAddFormComponent option loading failures', () => {
     imports: [ReactiveFormsModule],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('replication.list_naming_schemas', mockNamingSchema),
-        mockTypedCall('vmware.dataset_has_vms', true),
+      mockApi([
+        mockCall('replication.list_naming_schemas', mockNamingSchema),
+        mockCall('vmware.dataset_has_vms', true),
       ]),
       mockProvider(StorageService, {
         getDatasetNameOptions: jest.fn(() => throwError(() => new Error('choices are down'))),

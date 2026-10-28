@@ -25,8 +25,8 @@ import {
   SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -54,7 +54,7 @@ import { waitForGeneralConfig } from 'app/store/system-config/system-config.sele
 export class GuiFormComponent implements OnInit {
   private fb = inject(FormBuilder);
   private sysGeneralService = inject(SystemGeneralService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private connection = inject(ConnectionService);
   private wsStatus = inject(WebSocketStatusService);
   private dialog = inject(DialogService);

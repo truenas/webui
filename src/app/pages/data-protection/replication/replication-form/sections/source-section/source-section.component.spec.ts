@@ -13,7 +13,7 @@ import {
   TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
@@ -37,8 +37,8 @@ describe('SourceSectionComponent', () => {
     providers: [
       mockProvider(LanguageService),
       mockProvider(LocaleService),
-      mockTypedApi([
-        mockTypedQuery('pool.snapshottask.query', [
+      mockApi([
+        mockQuery('pool.snapshottask.query', [
           {
             id: 1,
             dataset: 'files',

@@ -16,7 +16,7 @@ import { Pool, toPoolUpdateArgs, UpdatePool } from 'app/interfaces/pool.interfac
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export enum QuotaType {
@@ -51,7 +51,7 @@ export const quotaTypeLabels = new Map<QuotaType, string>([
 export class SetDedupQuotaComponent {
   protected readonly InputType = InputType;
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialog = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);

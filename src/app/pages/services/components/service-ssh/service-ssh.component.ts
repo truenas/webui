@@ -18,7 +18,7 @@ import {
   advancedModeFooterAction, advancedModeSettingLabels, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -67,7 +67,7 @@ type SshFormValue = ReturnType<ReturnType<typeof createSshForm>['getRawValue']>;
   ],
 })
 export class ServiceSshComponent extends IxFormHostForm<boolean, SshFormValue> implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
 

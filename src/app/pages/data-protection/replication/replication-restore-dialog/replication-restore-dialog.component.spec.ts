@@ -4,11 +4,11 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness, TnFilePickerHarness } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationRestoreDialog,
 } from 'app/pages/data-protection/replication/replication-restore-dialog/replication-restore-dialog.component';
@@ -24,8 +24,8 @@ describe('ReplicationRestoreDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('replication.restore', null),
+      mockApi([
+        mockCall('replication.restore', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -58,7 +58,7 @@ describe('ReplicationRestoreDialogComponent', () => {
     const save = await loader.getHarness(TnButtonHarness.with({ label: 'Restore' }));
     await save.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('replication.restore', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('replication.restore', [
       23,
       {
         name: 'Reverse task',

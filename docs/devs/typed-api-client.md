@@ -13,7 +13,11 @@ middleware. When the migration started on 2026-09-08 they were used from
 roughly 870 `call`, 110 `job` and 45 `subscribe` sites across 414 files. This
 document describes how the UI moved from one to the other without a big-bang
 rewrite. The migration finished in NAS-144009, which deleted the legacy client
-(Phase 3 below); the spec rules and known gaps still apply.
+(Phase 3 below). A follow-up gave the typed one its name back: what the history below
+calls `TypedApiService`, `mockTypedApi()`, `mockTypedCall()` and so on is now
+`ApiService`, `mockApi()`, `mockCall()`. The sections up to "Phases" describe
+the client as it is; the rest is the record of how it got there, in the names
+of the time.
 
 ## What is in place
 
@@ -21,36 +25,25 @@ rewrite. The migration finished in NAS-144009, which deleted the legacy client
 |---|---|
 | `@truenas/api-client` as a runtime dependency (9.0.1 at the time of writing) | `package.json` |
 | The client instance, typed against `v28.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
-| `TypedApiService`, the migration target for `ApiService` | `src/app/modules/websocket/typed-api/typed-api.service.ts` |
+| `ApiService`, what the app injects | `src/app/modules/websocket/api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
-| `mockTypedApi()` and `MockTypedApiService`, the spec double | `src/app/core/testing/utils/mock-typed-api.utils.ts`, `src/app/core/testing/classes/mock-typed-api.service.ts` |
-| `EmptyTypedApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-typed-api.service.ts`, registered in `src/setup-jest.ts` |
+| `mockApi()` and `MockApiService`, the spec double | `src/app/core/testing/utils/mock-api.utils.ts`, `src/app/core/testing/classes/mock-api.service.ts` |
+| `EmptyApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-api.service.ts`, registered in `src/setup-jest.ts` |
 
 The typed client owns **the** WebSocket — one per tab, on `/api/v28.0.0`. It
 is opened at startup by an app initializer in `main.ts`, unconditionally on
 purpose: migrated pages run entirely on it, so there is no build in which it
 can be left closed.
 
-Since NAS-143989 the legacy client has no socket of its own. Everything still
-riding `ApiService` — the jobs store, the debug panel, every call that has not
-moved — goes over the same connection: `WebSocketHandlerService.responses$` is
-`client.connection.messages()`, and `scheduleCall` writes through
-`client.connection.send()`. Phase 0 and 1 ran two sockets and two sessions per
-tab, which showed up as two entries in `auth.sessions` and every audited call
-recorded twice. That is gone.
-
-What the handler still owns is the legacy call queue. The debug panel's logging
-and mock interception moved to the connection in NAS-144008
-(`interceptConnection`, installed by the `TYPED_API_CLIENT` factory when the
-panel is enabled), so they see and answer both clients' traffic. The ceiling on
-concurrent calls is no longer the handler's alone: middleware refuses the 21st
-call in flight on a connection, whoever sent it, so `limitConcurrentCalls` holds
-the whole tab to 19 on the connection's `send`, one short of the ceiling to
-leave room for the keepalive ping (see gap 20). Connection state — open, closed, refused, shutting down — is
-`ConnectionService`'s (NAS-143990). What it lost with the socket: the reconnect timer (the client's
-connection retries on its own), `core.set_options` on open (the client sends
-it), and the ping timer (the client pings every 20s, so `PingService` is
-gone too).
+Everything goes over that one connection. The debug panel's logging and mock
+interception sit on it (`interceptConnection`, installed by the
+`TYPED_API_CLIENT` factory when the panel is enabled, NAS-144008), so they see
+and answer all traffic. Middleware refuses the 21st call in flight on a
+connection, so `limitConcurrentCalls` holds the whole tab to 19 on the
+connection's `send`, one short of the ceiling to leave room for the keepalive
+ping (see gap 20). Connection state — open, closed, refused, shutting down — is
+`ConnectionService`'s (NAS-143990). The client retries the connection on its
+own, sends `core.set_options` on open and pings every 20s.
 
 ### One session
 
@@ -62,42 +55,29 @@ the sign-in page spends it on the next reconnect. `WebSocketStatusService`
 projects `authenticator.authenticated$`, so "the app is authenticated" is a
 statement about that session.
 
-One socket means one session: a login authenticates the legacy calls as much as
-the typed ones, and there is nothing to keep in step. An `ENOTAUTHENTICATED`
-refusal on either path therefore means the same thing — the session lapsed —
-and both answer it the same way: drop the call, end the app's session, and let
+An `ENOTAUTHENTICATED` refusal means the session lapsed, and `ApiService`
+answers it the same way on every verb: drop the call, end the app's session, and let
 `AppComponent` bounce the tab to /signin, which logs straight back in from the
 stored token and navigates back to `redirectUrl`.
 
-Call sites never authenticate. Every typed request is held until the session is
+Call sites never authenticate. Every request is held until the session is
 authenticated, so a call made before sign-in or across a reconnect waits
 instead of being refused by middleware.
 
-## Migrating a call site
-
-Swap the injected service. The call syntax is the same.
+## Calling the API
 
 ```typescript
-// before
 private api = inject(ApiService);
-this.api.call('system.info');
-this.api.call('alert.dismiss', [uuid]);
-this.api.job('pool.dataset.export_key', [dataset]);
-this.api.subscribe('alert.list');
-
-// after
-private api = inject(TypedApiService);
 this.api.call('system.info');
 this.api.call('alert.dismiss', [uuid]);
 this.api.job('pool.dataset.export_key', [dataset]);
 this.api.subscribe('alert.list');
 ```
 
-Where things differ:
+What to know, much of it learned moving off the hand-written directories:
 
 - **Response types come from the client.** Name a shape with
-  `CallResponse<WebUiApiDirectory, 'system.info'>` rather than
-  `ApiCallResponse<'system.info'>`. When a generated type disagrees with a
+  `CallResponse<WebUiApiDirectory, 'system.info'>`. When a generated type disagrees with a
   hand-written interface in `src/app/interfaces`, the generated one is the
   truth — it came from middleware. Fix or retire the interface; do not cast the
   response into it.
@@ -116,12 +96,12 @@ Where things differ:
   one (`system.advanced.login_banner`, `user.has_local_administrator_set_up`,
   `truenas.managed_by_truecommand`, `user.setup_local_administrator`) would
   hang on the sign-in page through `call`. `callUnauthenticated` waits for the
-  client only. The legacy client sent these regardless of the session, so
-  nothing marks them; check whether a page runs before login when moving it.
-- **`callAndSubscribe` is `queryAndSubscribe`.** It queries the collection,
+  client only. Nothing marks these methods; check whether a page runs before
+  login when it calls one.
+- **`queryAndSubscribe`** queries the collection,
   then folds its change events into the rows by `id` (`followCollection`), and
   takes filters and `extra` but no `select`, since the events carry whole rows.
-  Script it in specs with `mockTypedQuery` for the rows and `emitEvent` for the
+  Script it in specs with `mockQuery` for the rows and `emitEvent` for the
   changes.
 - **A form's enums still come back as literals.** A config read (`smb.config`,
   `ssh.config`, `ups.config`) spells its enum fields as the wire literals, and a
@@ -134,7 +114,7 @@ Where things differ:
 - **A query whose params are one object is a `call`.** `audit.query` takes its
   filters and options inside a single object rather than as
   `[filters, options]`, so it is not a typed query method: call it with `call`
-  and script it with `mockTypedCall`.
+  and script it with `mockCall`.
 - **Errors are unchanged.** `call` throws the same `ApiCallError` as
   `ApiService`, with the full JSON-RPC payload, so `ErrorHandlerService` and
   form validation work as before. `job` throws `FailedJobError` on failure.
@@ -148,53 +128,44 @@ Where things differ:
 - **Optional on the wire is optional in the interface.** Middleware defaults
   (`port = 22`) come through as optional properties. A UI interface that
   requires them cannot receive the generated value; loosen it.
-- **Specs** use `mockTypedApi()` from
-  `app/core/testing/utils/mock-typed-api.utils`: `mockTypedCall`, `mockTypedCallError`, `mockTypedQuery`,
-  `mockTypedJob`, and `MockTypedApiService` for adjusting answers on the fly. Behind it is a real
+- **Specs** use `mockApi()` from
+  `app/core/testing/utils/mock-api.utils`: `mockCall`, `mockCallError`, `mockQuery`,
+  `mockJob`, and `MockApiService` for adjusting answers on the fly. Behind it is a real
   `@truenas/api-client` running on the package's own fake connection
   (`@truenas/api-client/testing`, since 6.0), so the real dispatch, job
   correlation and subscriptions run and only the *answers* are scripted. The
   client is strict: a call nothing scripted fails with `UnmockedCallError`
   naming the method. Fixtures for a query or entry response are typed as the
   generated entity (for example `CloudSyncCredentialEntry`), not the UI's
-  reading of it. `mockTypedCall` refuses `.query` methods; script those with
-  `mockTypedQuery`, which feeds `query`, `queryOne` and `queryCount` from one
+  reading of it. `mockCall` refuses `.query` methods; script those with
+  `mockQuery`, which feeds `query`, `queryOne` and `queryCount` from one
   set of rows. The double's verbs run the same `rethrowAsApiCallError` as
-  `TypedApiService`, so an error scripted with `mockTypedCallError(method,
+  `ApiService`, so an error scripted with `mockCallError(method,
   { errname, extra })` is thrown as the `ApiCallError` production throws,
   `extra` included, which is what a form's error-path spec needs. It takes
   `.query` and job methods too, failing `query*` and `job` the same way. For
   connection-level scenarios reach the client itself:
-  `spectator.inject(MockTypedApiService).client.connection.simulateClose()`.
+  `spectator.inject(MockApiService).client.connection.simulateClose()`.
   The fake answers frames on a microtask, as a socket would, so a spec that
   asserts on the outcome of a submit needs `await spectator.fixture.whenStable()`
   after `submit()`; asserting that the call was made does not, since the frame
   goes out synchronously. A service or store spec, with no fixture to wait on,
-  awaits `settleTypedApi()` from the same utils instead. The same applies before a submit when the component
+  awaits `settleApi()` from the same utils instead. The same applies before a submit when the component
   loads data on init and gates saving on it: settle, then `detectChanges()`,
   because a loading flag that flipped back on the microtask has not yet
   crossed an input binding such as `<ix-form [externalLoading]>`.
-- **`TypedApiService`'s own spec** provides `TYPED_API_CLIENT` with a
+- **`ApiService`'s own spec** provides `TYPED_API_CLIENT` with a
   non-strict `createFakeClient` and answers frames by hand with
   `connection.reply` / `replyError`, which is how the auth bridge and the
   service's own dispatch are exercised end to end without a socket.
-- **A spec that reaches `TypedApiService` unmocked fails fast.**
-  `setup-jest.ts` provides `EmptyTypedApiService` globally, so an unmocked call throws
-  `TypedApiService injection not provided` instead of building the real
+- **A spec that reaches `ApiService` unmocked fails fast.**
+  `setup-jest.ts` provides `EmptyApiService` globally, so an unmocked call throws
+  `ApiService injection not provided` instead of building the real
   client, which would open a WebSocket to `environment.remote` from jsdom and
   hang the test until its timeout. That guard exists because the first
   service migration caused exactly that: `KeychainCredentialService` moved,
   and every spec of every component that renders `ix-ssh-credentials-select`
   timed out at 30 seconds with nothing in the assertion to explain why.
-- **Migrating a service migrates its consumers' specs.** The service's own
-  spec is the small part. Every spec that used `mockCall('x.query', ...)` to
-  feed that service through the legacy `ApiService` needed
-  `mockTypedQuery('x.query', ...)` instead, including specs of components
-  that only embed a consumer. Before moving a service, grep for its methods'
-  names in `mockCall(` across `src/app` and convert those specs in the same
-  change. A spec's `mockProvider(TheService)` is not proof it is safe: a
-  component that lists the service in its own `providers: [...]` gets a fresh
-  real instance that the spec's mock never reaches, so grep for that too.
 - **A shared interface is retired by its last consumer.** Until then the
   service that fronts it is the one place that converts, with a named adapter
   rather than a cast at each call site (`CloudCredentialService`'s

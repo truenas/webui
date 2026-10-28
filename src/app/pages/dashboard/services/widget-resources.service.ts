@@ -24,8 +24,8 @@ import {
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
 import { DashboardSystemInfo } from 'app/interfaces/system-info.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { processNetworkInterfaces } from 'app/pages/dashboard/widgets/network/widget-interface/widget-interface.utils';
 import { AppState } from 'app/store';
 import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -69,7 +69,7 @@ export interface PoolUsage {
   providedIn: 'root',
 })
 export class WidgetResourcesService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
   /** Kept in the `{ fields }` envelope the CPU widgets read. */

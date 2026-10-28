@@ -7,7 +7,7 @@ import {
   TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
 } from '@truenas/ui-components';
 import { BehaviorSubject, of, Subject } from 'rxjs';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -37,10 +37,10 @@ describe('GeneralWizardStepComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedQuery('pool.query', []),
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('system.advanced.sed_global_password_is_set', false),
+      mockApi([
+        mockQuery('pool.query', []),
+        mockCall('pool.validate_name', true),
+        mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -229,10 +229,10 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
     imports: [ReactiveFormsModule, PoolWarningsComponent],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedQuery('pool.query', []),
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('system.advanced.sed_global_password_is_set', false),
+      mockApi([
+        mockQuery('pool.query', []),
+        mockCall('pool.validate_name', true),
+        mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -330,10 +330,10 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
     imports: [ReactiveFormsModule, PoolWarningsComponent],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedQuery('pool.query', []),
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('system.advanced.sed_global_password_is_set', true),
+      mockApi([
+        mockQuery('pool.query', []),
+        mockCall('pool.validate_name', true),
+        mockCall('system.advanced.sed_global_password_is_set', true),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

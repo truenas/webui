@@ -6,16 +6,16 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SshSftpLogFacility, SshSftpLogLevel, SshWeakCipher } from 'app/enums/ssh.enum';
 import { Group } from 'app/interfaces/group.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxGroupChipsHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceSshComponent } from 'app/pages/services/components/service-ssh/service-ssh.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UserService } from 'app/services/user.service';
@@ -34,7 +34,7 @@ const fakeGroupDataSource = [{
 describe('ServiceSshComponent', () => {
   let spectator: Spectator<ServiceSshComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -67,9 +67,9 @@ describe('ServiceSshComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('group.query', fakeGroupDataSource as WebUiQueryEntity<'group.query'>[]),
-        mockTypedCall('ssh.config', {
+      mockApi([
+        mockQuery('group.query', fakeGroupDataSource as WebUiQueryEntity<'group.query'>[]),
+        mockCall('ssh.config', {
           tcpport: 22,
           password_login_groups: ['dummy-group'],
           passwordauth: true,
@@ -82,11 +82,11 @@ describe('ServiceSshComponent', () => {
           weak_ciphers: [SshWeakCipher.Aes128Cbc],
           options: 'options',
         } as SshConfig),
-        mockTypedCall('ssh.bindiface_choices', {
+        mockCall('ssh.bindiface_choices', {
           enp0s3: 'enp0s3',
           macvtap0: 'macvtap0',
         }),
-        mockTypedCall('ssh.update', {} as SshConfig),
+        mockCall('ssh.update', {} as SshConfig),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
@@ -107,7 +107,7 @@ describe('ServiceSshComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('blocks Save when the initial config load fails', async () => {
@@ -115,7 +115,7 @@ describe('ServiceSshComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    spectator.inject(MockTypedApiService).mockCallError('ssh.config');
+    spectator.inject(MockApiService).mockCallError('ssh.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
@@ -161,7 +161,7 @@ describe('ServiceSshComponent', () => {
   it('blocks Save while a typed group does not exist on the system', async () => {
     // An EMPTY result is what the directory reads as "no such group" — a lookup that
     // ERRORS is a transport failure and deliberately leaves the name unflagged.
-    spectator.inject(MockTypedApiService).mockQuery('group.query', []);
+    spectator.inject(MockApiService).mockQuery('group.query', []);
 
     const groups = spectator.component.form.controls.password_login_groups;
     groups.setValue(['ghost-group']);
@@ -172,7 +172,7 @@ describe('ServiceSshComponent', () => {
     });
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).queryCount).toHaveBeenCalledWith('group.query', [['name', '=', 'ghost-group']]);
+    expect(spectator.inject(ApiService).queryCount).toHaveBeenCalledWith('group.query', [['name', '=', 'ghost-group']]);
     expect(groups.hasError('groupsDoNotExist')).toBe(true);
     expect(spectator.component.canSubmit()).toBe(false);
   });

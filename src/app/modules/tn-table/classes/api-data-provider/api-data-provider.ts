@@ -16,7 +16,7 @@ import {
 
 /**
  * What a provider needs from an API client: `call`, with its generics erased so that
- * `TypedApiService` and spec doubles both fit. The provider types each response by its
+ * `ApiService` and spec doubles both fit. The provider types each response by its
  * method `T`.
  */
 export interface ApiDataProviderClient {

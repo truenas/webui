@@ -27,7 +27,7 @@ import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { detailActionTestId, tnTableListHost } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { VmwareSnapshotFormComponent } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-form/vmware-snapshot-form.component';
 import { vmwareSnapshotListElements } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-snapshot-list.elements';
 import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-cell.component';
@@ -58,7 +58,7 @@ import { VmwareStatusCellComponent } from './vmware-status-cell/vmware-status-ce
 export class VmwareSnapshotListComponent implements OnInit {
   protected translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);
 

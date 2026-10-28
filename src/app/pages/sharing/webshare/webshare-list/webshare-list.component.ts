@@ -34,7 +34,7 @@ import {
 } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares-dashboard/service-state-button/service-state-button.component';
 import { webshareListElements } from 'app/pages/sharing/webshare/webshare-list/webshare-list.elements';
 import { WebShareOpenButtonComponent } from 'app/pages/sharing/webshare/webshare-open-button/webshare-open-button.component';
@@ -80,7 +80,7 @@ export class WebShareListComponent implements OnInit {
   protected readonly EmptyType = EmptyType;
   protected readonly searchableElements = webshareListElements;
 
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private dialog = inject(DialogService);

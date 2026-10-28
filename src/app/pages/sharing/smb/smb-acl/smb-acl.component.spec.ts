@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnAutocompleteHarness, TnFormListHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of, throwError } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -13,8 +13,8 @@ import { SmbSharesec, SmbSharesecAce } from 'app/interfaces/smb-share.interface'
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserService } from 'app/services/user.service';
 import { SmbAclComponent } from './smb-acl.component';
 
@@ -80,13 +80,13 @@ describe('SmbAclComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('sharing.smb.getacl', mockAcl),
-        mockTypedCall('sharing.smb.setacl', mockAcl),
-        mockTypedQuery('user.query', [{
+      mockApi([
+        mockCall('sharing.smb.getacl', mockAcl),
+        mockCall('sharing.smb.setacl', mockAcl),
+        mockQuery('user.query', [{
           id: 3001, uid: 3001, username: 'myuser', smb: true,
         }] as WebUiQueryEntity<'user.query'>[]),
-        mockTypedQuery('group.query', [{
+        mockQuery('group.query', [{
           group: 'wheel', id: 1, gid: 1, smb: true,
         }] as WebUiQueryEntity<'group.query'>[]),
       ]),
@@ -191,7 +191,7 @@ describe('SmbAclComponent', () => {
   });
 
   it('loads and shows current acl for a share', async () => {
-    expect(spectator.inject(TypedApiService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('sharing.smb.getacl', [{ share_name: 'myshare' }]);
 
     const whoSelects = await getSelects('ae_who');
@@ -238,7 +238,7 @@ describe('SmbAclComponent', () => {
     // The submit pipeline resolves each ACE's user/group id before calling setacl.
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('sharing.smb.setacl', [{
       share_name: 'myshare',
       share_acl: [
         { ae_perm: SmbSharesecPermission.Read, ae_type: SmbSharesecType.Allowed, ae_who_sid: 'S-1-1-0' },

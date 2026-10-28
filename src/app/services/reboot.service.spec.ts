@@ -5,11 +5,11 @@ import {
   SpectatorService,
 } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { RebootService } from 'app/services/reboot.service';
 
 describe('RebootService', () => {
@@ -24,8 +24,8 @@ describe('RebootService', () => {
         })),
       }),
       mockProvider(Router),
-      mockTypedApi([
-        mockTypedJob('failover.reboot.other_node', { state: JobState.Success }),
+      mockApi([
+        mockJob('failover.reboot.other_node', { state: JobState.Success }),
       ]),
       mockProvider(AuthService, {
         clearAuthToken: jest.fn(),
@@ -73,7 +73,7 @@ describe('RebootService', () => {
           buttonText: 'Restart Standby',
         }),
       );
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('failover.reboot.other_node');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('failover.reboot.other_node');
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     });
   });

@@ -32,7 +32,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { convertStringToId } from 'app/modules/tn-table/utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { reportingExportersElements } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -63,7 +63,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class ReportingExporterListComponent implements OnInit {
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);

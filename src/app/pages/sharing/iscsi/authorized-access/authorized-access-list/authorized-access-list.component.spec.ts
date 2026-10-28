@@ -5,15 +5,15 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { IscsiAuthAccess } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AuthorizedAccessListComponent } from 'app/pages/sharing/iscsi/authorized-access/authorized-access-list/authorized-access-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -36,9 +36,9 @@ describe('AuthorizedAccessListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
-      mockTypedApi([
-        mockTypedQuery('iscsi.auth.query', authAccess),
-        mockTypedCall('iscsi.auth.delete', null),
+      mockApi([
+        mockQuery('iscsi.auth.query', authAccess),
+        mockCall('iscsi.auth.delete', null),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -108,7 +108,7 @@ describe('AuthorizedAccessListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.auth.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.auth.delete', [1]);
   });
 
   it('should show table rows', async () => {

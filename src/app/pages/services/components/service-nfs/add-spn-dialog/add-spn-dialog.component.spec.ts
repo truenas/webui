@@ -4,10 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
+import { mockApi, mockUndeclaredCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedUndeclaredCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 
 describe('AddSpnDialogComponent', () => {
@@ -20,8 +20,8 @@ describe('AddSpnDialogComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedUndeclaredCall('nfs.add_principal', true),
+      mockApi([
+        mockUndeclaredCall('nfs.add_principal', true),
       ]),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
@@ -44,7 +44,7 @@ describe('AddSpnDialogComponent', () => {
     await save.click();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).callUndeclared).toHaveBeenCalledWith('nfs.add_principal', [{
+    expect(spectator.inject(ApiService).callUndeclared).toHaveBeenCalledWith('nfs.add_principal', [{
       username: 'username',
       password: 'password',
     }]);

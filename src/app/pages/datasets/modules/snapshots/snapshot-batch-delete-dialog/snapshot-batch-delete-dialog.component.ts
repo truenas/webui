@@ -15,7 +15,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotDialogData } from 'app/pages/datasets/modules/snapshots/interfaces/snapshot-dialog-data.interface';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -39,7 +39,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class SnapshotBatchDeleteDialog implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   protected dialogRef = inject<DialogRef<boolean, SnapshotBatchDeleteDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);

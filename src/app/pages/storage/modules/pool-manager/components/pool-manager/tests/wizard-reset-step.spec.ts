@@ -4,8 +4,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,10 +32,10 @@ describe('PoolManagerComponent – wizard step reset', () => {
     ],
     componentProviders: [
       ...commonProviders,
-      mockTypedApi([
-        mockTypedCall('pool.validate_name', true),
+      mockApi([
+        mockCall('pool.validate_name', true),
         // TODO: see if all disk.details calls from multiple files can be extracted somewhere.
-        mockTypedCall('disk.details', {
+        mockCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -125,9 +125,9 @@ describe('PoolManagerComponent – wizard step reset', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockTypedQuery('enclosure2.query', []),
-        mockTypedQuery('pool.query', []),
-        mockTypedCall('system.advanced.sed_global_password_is_set', false),
+        mockQuery('enclosure2.query', []),
+        mockQuery('pool.query', []),
+        mockCall('system.advanced.sed_global_password_is_set', false),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),

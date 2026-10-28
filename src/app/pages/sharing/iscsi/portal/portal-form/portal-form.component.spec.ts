@@ -6,19 +6,19 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnFormListHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiAuthMethod } from 'app/enums/iscsi.enum';
 import { IscsiPortal } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { PortalFormComponent } from './portal-form.component';
 
 describe('PortalFormComponent', () => {
   let spectator: Spectator<PortalFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const editingPortal = {
     comment: 'test',
@@ -38,8 +38,8 @@ describe('PortalFormComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('iscsi.auth.query', [{
+      mockApi([
+        mockQuery('iscsi.auth.query', [{
           id: 1,
           peersecret: '',
           peeruser: '',
@@ -48,12 +48,12 @@ describe('PortalFormComponent', () => {
           user: 'root',
           discovery_auth: IscsiAuthMethod.None,
         }]),
-        mockTypedCall('iscsi.portal.listen_ip_choices', {
+        mockCall('iscsi.portal.listen_ip_choices', {
           '0.0.0.0': '0.0.0.0',
           '192.168.1.3': '192.168.1.3',
         }),
-        mockTypedCall('iscsi.portal.create', null),
-        mockTypedCall('iscsi.portal.update', null),
+        mockCall('iscsi.portal.create', null),
+        mockCall('iscsi.portal.update', null),
       ]),
       mockProvider(DialogService),
       provideMockStore(),
@@ -65,7 +65,7 @@ describe('PortalFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
@@ -103,7 +103,7 @@ describe('PortalFormComponent', () => {
         },
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 
@@ -138,7 +138,7 @@ describe('PortalFormComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       jest.spyOn(console, 'warn').mockImplementation();
     });
 

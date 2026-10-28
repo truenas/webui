@@ -17,9 +17,9 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { BehaviorSubject, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { NetworkInterfaceAliasType, NetworkInterfaceType } from 'app/enums/network-interface.enum';
 import { helptextInterfaces } from 'app/helptext/network/interfaces/interfaces-list';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
@@ -52,7 +52,7 @@ import { NetworkService } from 'app/services/network.service';
 describe('NetworkComponent', () => {
   let spectator: Spectator<NetworkComponent>;
   let loader: HarnessLoader;
-  let api: MockTypedApiService;
+  let api: MockApiService;
   const isHaEnabled$ = new BehaviorSubject(false);
 
   const existingInterface = {
@@ -101,30 +101,30 @@ describe('NetworkComponent', () => {
     providers: [
       InterfacesStore,
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
-        mockTypedCall('interface.has_pending_changes', () => wasEditMade),
-        mockTypedCall('interface.services_restarted_on_sync', []),
-        mockTypedCall('interface.checkin', null),
-        mockTypedCall('interface.cancel_rollback', (): undefined => {
+      mockApi([
+        mockCall('interface.checkin_waiting', () => (isTestingChanges ? 60 : null)),
+        mockCall('interface.has_pending_changes', () => wasEditMade),
+        mockCall('interface.services_restarted_on_sync', []),
+        mockCall('interface.checkin', null),
+        mockCall('interface.cancel_rollback', (): undefined => {
           isTestingChanges = false;
           return undefined;
         }),
-        mockTypedCall('interface.rollback', (): undefined => {
+        mockCall('interface.rollback', (): undefined => {
           wasEditMade = false;
           isTestingChanges = false;
           return undefined;
         }),
-        mockTypedCall('interface.commit', (): undefined => {
+        mockCall('interface.commit', (): undefined => {
           isTestingChanges = true;
           return undefined;
         }),
-        mockTypedCall('failover.config', {
+        mockCall('failover.config', {
           disabled: true,
         } as FailoverConfig),
-        mockTypedCall('interface.xmit_hash_policy_choices', null),
-        mockTypedCall('interface.lacpdu_rate_choices', null),
-        mockTypedQuery('interface.query', [existingInterface] as unknown as WebUiQueryEntity<'interface.query'>[]),
+        mockCall('interface.xmit_hash_policy_choices', null),
+        mockCall('interface.lacpdu_rate_choices', null),
+        mockQuery('interface.query', [existingInterface] as unknown as WebUiQueryEntity<'interface.query'>[]),
       ]),
       mockProvider(NetworkService, {
         subscribeToInOutUpdates: jest.fn(() => of(undefined)),
@@ -147,7 +147,7 @@ describe('NetworkComponent', () => {
     spectator = createComponent();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
 
     isTestingChanges = false;
     wasEditMade = false;

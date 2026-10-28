@@ -12,8 +12,8 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
@@ -21,8 +21,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wizard.component';
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
@@ -307,15 +307,15 @@ describe('AppWizardComponent', () => {
         getApp: jest.fn(() => of([existingAppEdit])),
         getAllApps: jest.fn(() => of([existingAppEdit])),
       }),
-      mockTypedApi([
-        mockTypedJob('app.create', { state: JobState.Success }),
-        mockTypedJob('app.update', { state: JobState.Success }),
-        mockTypedCall(
+      mockApi([
+        mockJob('app.create', { state: JobState.Success }),
+        mockJob('app.update', { state: JobState.Success }),
+        mockCall(
           'catalog.get_app_details',
           existingCatalogApp as unknown as CallResponse<WebUiApiDirectory, 'catalog.get_app_details'>,
         ),
-        mockTypedQuery('app.query', [existingAppEdit as unknown as WebUiQueryEntity<'app.query'>]),
-        mockTypedCall('app.image.dockerhub_rate_limit', {
+        mockQuery('app.query', [existingAppEdit as unknown as WebUiQueryEntity<'app.query'>]),
+        mockCall('app.image.dockerhub_rate_limit', {
           total_pull_limit: 13,
           total_time_limit_in_secs: 21600,
           remaining_pull_limit: 3,
@@ -378,7 +378,7 @@ describe('AppWizardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.update',
         ['app_name', {
           values: {
@@ -492,7 +492,7 @@ describe('AppWizardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           app_name: 'appname',
@@ -538,7 +538,7 @@ describe('AppWizardComponent', () => {
       await saveButton.click();
 
       expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           app_name: 'ipfs',

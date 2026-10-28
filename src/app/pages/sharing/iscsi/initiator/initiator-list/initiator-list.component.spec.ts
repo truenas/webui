@@ -7,13 +7,13 @@ import { provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnCardComponent, TnIconButtonHarness, TnMenuHarness, TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { IscsiInitiatorGroup } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { InitiatorListComponent } from 'app/pages/sharing/iscsi/initiator/initiator-list/initiator-list.component';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -34,9 +34,9 @@ describe('InitiatorListComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(EmptyService),
-      mockTypedApi([
-        mockTypedQuery('iscsi.initiator.query', initiators),
-        mockTypedCall('iscsi.initiator.delete', null),
+      mockApi([
+        mockQuery('iscsi.initiator.query', initiators),
+        mockCall('iscsi.initiator.delete', null),
       ]),
       mockProvider(DialogService, {
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
@@ -92,7 +92,7 @@ describe('InitiatorListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.initiator.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.initiator.delete', [1]);
   });
 
   it('should show table rows', async () => {

@@ -9,7 +9,7 @@ import { IpmiEvent, toIpmiEvents } from 'app/interfaces/ipmi.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -30,7 +30,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class IpmiEventsDialog implements OnInit {
   protected dialogRef = inject<DialogRef<unknown, IpmiEventsDialog>>(DialogRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 

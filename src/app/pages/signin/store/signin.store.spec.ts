@@ -5,8 +5,8 @@ import { Store } from '@ngrx/store';
 import {
   BehaviorSubject, firstValueFrom, NEVER, of, throwError,
 } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interface';
@@ -23,7 +23,7 @@ import { failoverLicensedStatusLoaded } from 'app/store/ha-info/ha-info.actions'
 
 describe('SigninStore', () => {
   let spectator: SpectatorService<SigninStore>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
   let authService: AuthService;
 
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
@@ -41,10 +41,10 @@ describe('SigninStore', () => {
   const createService = createServiceFactory({
     service: SigninStore,
     providers: [
-      mockTypedApi([
-        mockTypedCall('user.has_local_administrator_set_up', true),
-        mockTypedCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
-        mockTypedCall('system.advanced.login_banner', ''),
+      mockApi([
+        mockCall('user.has_local_administrator_set_up', true),
+        mockCall('auth.twofactor.config', { enabled: false } as GlobalTwoFactorConfig),
+        mockCall('system.advanced.login_banner', ''),
       ]),
       mockProvider(WebSocketStatusService, {
         isConnected$: of(true),
@@ -94,7 +94,7 @@ describe('SigninStore', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
     authService = spectator.inject(AuthService);
   });
 

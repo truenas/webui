@@ -20,7 +20,7 @@ import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -64,7 +64,7 @@ type WebShareFormValue = ReturnType<ReturnType<typeof createWebshareForm>['getRa
 export class ServiceWebshareComponent extends IxFormHostForm<boolean, WebShareFormValue> implements OnInit {
   readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
 
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private truenasConnectService = inject(TruenasConnectService);

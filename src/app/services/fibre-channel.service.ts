@@ -3,12 +3,12 @@ import {
   forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
 import { FcPortFormValue } from 'app/interfaces/fibre-channel.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 @Injectable({ providedIn: 'root' })
 export class FibreChannelService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
 
   /**

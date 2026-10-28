@@ -6,15 +6,15 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnIconHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AllowedAddressesCardComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-card/allowed-addresses-card.component';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -40,10 +40,10 @@ describe('AllowedAddressesCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockTypedApi([
-        mockTypedCall('system.general.config', config as unknown as CallResponse<WebUiApiDirectory, 'system.general.config'>),
-        mockTypedCall('system.general.update', null),
-        mockTypedCall('system.general.ui_restart', null),
+      mockApi([
+        mockCall('system.general.config', config as unknown as CallResponse<WebUiApiDirectory, 'system.general.config'>),
+        mockCall('system.general.update', null),
+        mockCall('system.general.ui_restart', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -105,7 +105,7 @@ describe('AllowedAddressesCardComponent', () => {
       const deleteIcon = await loader.getHarness(TnIconHarness.with({ name: 'mdi-delete' }));
       await deleteIcon.click();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('system.general.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('system.general.update', [
         { ui_allowlist: [] }, // The single IP should be removed, leaving an empty array
       ]);
     });

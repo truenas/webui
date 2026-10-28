@@ -9,7 +9,7 @@ import {
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface SetEnclosureLabelDialogData {
@@ -36,7 +36,7 @@ export interface SetEnclosureLabelDialogData {
 })
 export class SetEnclosureLabelDialog implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   protected dialogRef = inject<DialogRef<string, SetEnclosureLabelDialog>>(DialogRef);
   private errorHandler = inject(ErrorHandlerService);

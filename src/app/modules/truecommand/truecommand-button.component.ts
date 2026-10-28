@@ -27,8 +27,8 @@ import {
 } from 'app/modules/truecommand/components/truecommand-signup-modal/truecommand-signup-modal.component';
 import { TruecommandStatusModalComponent } from 'app/modules/truecommand/components/truecommand-status-modal/truecommand-status-modal.component';
 import { trueCommandElements } from 'app/modules/truecommand/truecommand-button.elements';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const truecommandStatusLabels: Record<TrueCommandStatus, string> = {
@@ -64,7 +64,7 @@ function toTrueCommandConfig(
   ],
 })
 export class TruecommandButtonComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private tnDialog = inject(TnDialog);
   private overlay = inject(Overlay);

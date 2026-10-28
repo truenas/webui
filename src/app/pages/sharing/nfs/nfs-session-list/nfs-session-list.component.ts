@@ -25,7 +25,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { nfsSessionListElements } from 'app/pages/sharing/nfs/nfs-session-list/nfs-session-list.elements';
 
 let nextLabelId = 0;
@@ -55,7 +55,7 @@ let nextLabelId = 0;
   ],
 })
 export class NfsSessionListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
   private destroyRef = inject(DestroyRef);

@@ -15,7 +15,7 @@ import {
 import { AppContainerLog } from 'app/interfaces/app.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { LogsDetailsDialog } from 'app/pages/apps/components/logs-details-dialog/logs-details-dialog.component';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -41,7 +41,7 @@ import { ShellService } from 'app/services/shell.service';
   ],
 })
 export class ContainerLogsComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   protected aroute = inject(ActivatedRoute);
   protected loader = inject(LoaderService);
   protected download = inject(DownloadService);

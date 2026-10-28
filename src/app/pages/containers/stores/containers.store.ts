@@ -14,7 +14,7 @@ import { CollectionChangeType } from 'app/enums/api.enum';
 import { containerStatusLabels } from 'app/enums/container.enum';
 import { Container, ContainerMetrics, toContainer } from 'app/interfaces/container.interface';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
@@ -108,7 +108,7 @@ const initialState: ContainersState = {
 
 @Injectable()
 export class ContainersStore extends ComponentStore<ContainersState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);

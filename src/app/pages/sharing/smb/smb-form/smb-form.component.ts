@@ -59,8 +59,8 @@ import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
 import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
@@ -104,7 +104,7 @@ import { selectService } from 'app/store/services/services.selectors';
 })
 export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private entitlements = inject(EntitlementsService);
   private tnDialog = inject(TnDialog);
   private dialogService = inject(DialogService);

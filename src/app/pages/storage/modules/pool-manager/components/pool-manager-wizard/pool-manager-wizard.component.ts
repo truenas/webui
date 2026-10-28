@@ -19,7 +19,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import {
   DownloadKeyDialog, DownloadKeyDialogParams,
@@ -81,7 +81,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private poolManagerValidation = inject(PoolManagerValidationService);
   private addVdevsStore = inject(AddVdevsStore);
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 

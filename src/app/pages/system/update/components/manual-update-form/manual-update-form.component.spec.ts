@@ -8,8 +8,8 @@ import {
   TnCheckboxHarness, TnDialog, TnFileInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Pool } from 'app/interfaces/pool.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -32,15 +32,15 @@ describe('ManualUpdateFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('pool.query', [
+      mockApi([
+        mockQuery('pool.query', [
           {
             name: 'pool2',
           } as Pool,
         ] as unknown as WebUiQueryEntity<'pool.query'>[]),
-        mockTypedCall('failover.licensed', null),
-        mockTypedQuery('core.get_jobs', []),
-        mockTypedCall('auth.set_attribute', null),
+        mockCall('failover.licensed', null),
+        mockQuery('core.get_jobs', []),
+        mockCall('auth.set_attribute', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

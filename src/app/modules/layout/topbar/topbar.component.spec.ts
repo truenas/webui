@@ -10,7 +10,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { AlertBadgeType } from 'app/enums/alert-badge-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Job } from 'app/interfaces/job.interface';
@@ -107,7 +107,7 @@ function createTopbarComponent(options: ComponentOptions = {}): {
         update: jest.fn(() => ({ close: jest.fn() })),
         rebootRequired: jest.fn(() => of(undefined)),
       }),
-      mockTypedApi([]),
+      mockApi([]),
       mockProvider(TruenasConnectService, {
         config: mockConfigSignal,
       }),

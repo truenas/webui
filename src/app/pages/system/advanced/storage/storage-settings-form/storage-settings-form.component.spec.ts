@@ -4,9 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -27,7 +27,7 @@ describe('StorageSettingsFormComponent', () => {
   let spectator: Spectator<StorageSettingsFormComponent>;
   let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -43,19 +43,19 @@ describe('StorageSettingsFormComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('systemdataset.pool_choices', {
+      mockApi([
+        mockCall('systemdataset.pool_choices', {
           'current-pool': 'current-pool',
           'new-pool': 'new-pool',
         }),
-        mockTypedCall('systemdataset.config', {
+        mockCall('systemdataset.config', {
           pool: 'current-pool',
         } as SystemDatasetConfig),
-        mockTypedCall('pool.resilver.config', {
+        mockCall('pool.resilver.config', {
           enabled: false,
         } as ResilverConfig),
-        mockTypedJob('systemdataset.update', { state: JobState.Success }),
-        mockTypedCall('pool.resilver.update', null),
+        mockJob('systemdataset.update', { state: JobState.Success }),
+        mockCall('pool.resilver.update', null),
       ]),
       provideMockStore({
         selectors: [
@@ -77,7 +77,7 @@ describe('StorageSettingsFormComponent', () => {
     spectator = createComponent();
     closedSpy = jest.spyOn(spectator.component.closed, 'emit');
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('loads and shows current storage settings', async () => {

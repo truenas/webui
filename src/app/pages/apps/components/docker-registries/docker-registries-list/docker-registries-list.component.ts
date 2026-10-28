@@ -26,7 +26,7 @@ import {
   createTable, mapTnSortToProviderSorting, toDisplayedColumns, toUniqueRowTag,
 } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { dockerRegistriesListElements } from 'app/pages/apps/components/docker-registries/docker-registries-list/docker-registries-list.elements';
 import { DockerRegistryFormComponent } from 'app/pages/apps/components/docker-registries/docker-registry-form/docker-registry-form.component';
 
@@ -61,7 +61,7 @@ export class DockerRegistriesListComponent implements OnInit {
 
   protected emptyService = inject(EmptyService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
   private destroyRef = inject(DestroyRef);

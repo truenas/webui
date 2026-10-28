@@ -18,7 +18,7 @@ import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { FilesystemService } from 'app/services/filesystem.service';
 
@@ -44,7 +44,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
   ],
 })
 export class CloudSyncRestoreDialog {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private filesystem = inject(FilesystemService);
   private translate = inject(TranslateService);

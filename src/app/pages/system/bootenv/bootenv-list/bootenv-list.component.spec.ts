@@ -5,23 +5,23 @@ import { TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { BootEnvironment } from 'app/interfaces/boot-environment.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { BootEnvironmentListComponent } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 
 describe('BootEnvironmentListComponent', () => {
   let spectator: Spectator<BootEnvironmentListComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let table: TnTableHarness;
 
   const bootEnvironmentsWithKeep = [
@@ -49,9 +49,9 @@ describe('BootEnvironmentListComponent', () => {
       FakeFormatDateTimePipe,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('boot.environment.query', bootEnvironmentsWithKeep as unknown as WebUiQueryEntity<'boot.environment.query'>[]),
-        mockTypedCall('boot.environment.keep', null),
+      mockApi([
+        mockQuery('boot.environment.query', bootEnvironmentsWithKeep as unknown as WebUiQueryEntity<'boot.environment.query'>[]),
+        mockCall('boot.environment.keep', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -66,7 +66,7 @@ describe('BootEnvironmentListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(TnTableHarness);
   });
 

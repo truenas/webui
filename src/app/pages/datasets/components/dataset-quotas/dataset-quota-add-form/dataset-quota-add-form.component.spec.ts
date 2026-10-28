@@ -4,8 +4,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -13,14 +13,14 @@ import {
   IxGroupChipsHarness,
   IxUserChipsHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { UserService } from 'app/services/user.service';
 
 describe('DatasetQuotaAddFormComponent', () => {
   let spectator: Spectator<DatasetQuotaAddFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getTnInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -32,8 +32,8 @@ describe('DatasetQuotaAddFormComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('pool.dataset.set_quota', null),
+      mockApi([
+        mockCall('pool.dataset.set_quota', null),
       ]),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -70,7 +70,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           datasetId: 'my-dataset',
         },
       });
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
@@ -107,7 +107,7 @@ describe('DatasetQuotaAddFormComponent', () => {
           datasetId: 'my-dataset',
         },
       });
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 

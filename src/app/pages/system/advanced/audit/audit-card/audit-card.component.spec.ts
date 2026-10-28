@@ -5,8 +5,8 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -26,8 +26,8 @@ describe('AuditCardComponent', () => {
       mockProvider(FirstTimeWarningService, {
         showFirstTimeWarningIfNeeded: jest.fn(() => of(true)),
       }),
-      mockTypedApi([
-        mockTypedCall('audit.config', {
+      mockApi([
+        mockCall('audit.config', {
           retention: 30,
           reservation: 100,
           quota: 100,

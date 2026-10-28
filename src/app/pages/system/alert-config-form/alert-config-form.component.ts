@@ -30,7 +30,7 @@ import {
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -59,7 +59,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class AlertConfigFormComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   protected translate = inject(TranslateService);

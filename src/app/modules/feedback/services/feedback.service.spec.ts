@@ -7,7 +7,7 @@ import {
 import { provideMockStore } from '@ngrx/store/testing';
 import { lastValueFrom, of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import {
   TicketCategory, TicketCriticality, TicketEnvironment, TicketType,
@@ -18,7 +18,7 @@ import { LicenseType } from 'app/enums/license-type.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { UploadService } from 'app/services/upload.service';
 import { SystemInfoState } from 'app/store/system-info/system-info.reducer';
@@ -43,9 +43,9 @@ describe('FeedbackService', () => {
   const createService = createServiceFactory({
     service: FeedbackService,
     providers: [
-      mockTypedApi([
-        mockTypedJob('support.new_ticket', { state: JobState.Success, result: newTicket }),
-        mockTypedCall('system.host_id', 'testHostId'),
+      mockApi([
+        mockJob('support.new_ticket', { state: JobState.Success, result: newTicket }),
+        mockCall('system.host_id', 'testHostId'),
       ]),
       provideMockStore({
         initialState: {
@@ -137,7 +137,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
         body: 'Help me',
         title: 'Cannot shutdown',
@@ -160,7 +160,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Bug, data));
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: true,
         body: 'Help me',
         title: 'Cannot shutdown',
@@ -192,7 +192,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicket('test-token', TicketType.Suggestion, data));
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         attach_debug: false,
         body: 'test msg',
         title: 'test title',
@@ -259,7 +259,7 @@ describe('FeedbackService', () => {
       };
 
       const response = await lastValueFrom(spectator.service.createTicketLicensed(data));
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('support.new_ticket', [{
         body: 'New request',
         attach_debug: true,
         category: TicketCategory.Performance,
