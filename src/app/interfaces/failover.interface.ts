@@ -1,11 +1,3 @@
-export interface FailoverConfig {
-  disabled: boolean;
-  id: number;
-  master: boolean;
-  timeout: number;
-}
+import { v28_0_0 } from '@truenas/api-client';
 
-export interface FailoverUpgradeParams {
-  resume?: boolean;
-  resume_manual?: boolean;
-}
+export type FailoverConfig = v28_0_0.FailoverEntry;

@@ -1,3 +1,4 @@
+import { v28_0_0 } from '@truenas/api-client';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { ZfsProperty } from './zfs-property.interface';
@@ -122,8 +123,4 @@ export interface ZfsProperties {
   written: ZfsProperty<string>;
 }
 
-export interface TemperatureAgg {
-  min: number | null;
-  max: number | null;
-  avg: number | null;
-}
+export type TemperatureAgg = v28_0_0.DiskTemperatureAggEntry;

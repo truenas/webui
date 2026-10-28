@@ -1,4 +1,4 @@
-import { CallParams } from '@truenas/api-client';
+import { CallParams, v28_0_0 } from '@truenas/api-client';
 import {
   IscsiAuthMethod, IscsiExtentRpm, IscsiExtentType, IscsiTargetMode,
 } from 'app/enums/iscsi.enum';
@@ -6,25 +6,13 @@ import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed
 
 type D = WebUiApiDirectory;
 
-export interface IscsiPortal {
-  comment?: string;
-  id: number;
-  listen: IscsiInterface[];
-  tag: number;
-}
+export type IscsiPortal = v28_0_0.ISCSIPortalEntry;
 
 export type IscsiPortalUpdate = Omit<IscsiPortal, 'id' | 'tag'>;
 
-export interface IscsiInterface {
-  ip: string;
-  port: number;
-}
+export type IscsiInterface = v28_0_0.IscsiPortalIPInfo;
 
-export interface IscsiInitiatorGroup {
-  comment?: string;
-  id: number;
-  initiators?: string[];
-}
+export type IscsiInitiatorGroup = v28_0_0.ISCSITargetAuthorizedInitiatorEntry;
 
 export type IscsiInitiatorGroupUpdate = Partial<Omit<IscsiInitiatorGroup, 'id'>>;
 
@@ -79,12 +67,7 @@ export interface IscsiExtent {
 
 export type IscsiExtentUpdate = Omit<IscsiExtent, 'id' | 'naa'>;
 
-export interface IscsiTargetExtent {
-  extent: number;
-  id: number;
-  lunid: number;
-  target: number;
-}
+export type IscsiTargetExtent = v28_0_0.ISCSITargetToExtentEntry;
 
 export type IscsiTargetExtentUpdate = Omit<IscsiTargetExtent, 'id'>;
 

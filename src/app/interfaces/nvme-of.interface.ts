@@ -1,18 +1,11 @@
-import { CallParams } from '@truenas/api-client';
+import { CallParams, v28_0_0 } from '@truenas/api-client';
 import { Required, Overwrite } from 'utility-types';
 import { NvmeOfAddressFamily, NvmeOfNamespaceType, NvmeOfTransportType } from 'app/enums/nvme-of.enum';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type D = WebUiApiDirectory;
 
-export interface NvmeOfGlobalConfig {
-  id: number;
-  basenqn: string;
-  kernel: boolean;
-  ana: boolean;
-  rdma: boolean;
-  xport_referral: boolean;
-}
+export type NvmeOfGlobalConfig = v28_0_0.NVMetGlobalEntry;
 
 export interface NvmeOfSubsystem {
   id: number;

@@ -1,15 +1,8 @@
-export interface DeviceAddress {
-  bus: string;
-  domain: string;
-  pci_slot: string;
-  slot: string;
-}
+import { v28_0_0 } from '@truenas/api-client';
 
-export interface PciDevice {
-  pci_id: string;
-  pci_slot: string;
-  vm_pci_slot: string;
-}
+export type DeviceAddress = v28_0_0.GPUInfoAddr;
+
+export type PciDevice = v28_0_0.GPUInfoDevice;
 
 export interface Device {
   addr: DeviceAddress;

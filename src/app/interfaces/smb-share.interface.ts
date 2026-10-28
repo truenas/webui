@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { CallParams, CallResponse } from '@truenas/api-client';
+import { CallParams, CallResponse, v28_0_0 } from '@truenas/api-client';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -155,11 +155,7 @@ export interface LegacySmbShareOptions {
   vuid?: string;
 }
 
-export interface DefaultSmbShareOptions {
-  aapl_name_mangling?: boolean;
-  hostsallow?: string[];
-  hostsdeny?: string[];
-}
+export type DefaultSmbShareOptions = v28_0_0.DefaultOpt;
 
 export interface TimeMachineSmbShareOptions {
   timemachine_quota?: number;
@@ -171,35 +167,17 @@ export interface TimeMachineSmbShareOptions {
   hostsdeny?: string[];
 }
 
-export interface MultiProtocolSmbShareOptions {
-  aapl_name_mangling?: boolean;
-  hostsallow?: string[];
-  hostsdeny?: string[];
-}
+export type MultiProtocolSmbShareOptions = v28_0_0.MultiprotocolOpt;
 
-export interface TimeLockedSmbShareOptions {
-  grace_period?: number;
-  aapl_name_mangling?: boolean;
-  hostsallow?: string[];
-  hostsdeny?: string[];
-}
+export type TimeLockedSmbShareOptions = v28_0_0.TimeLockedOpt;
 
-export interface PrivateDatasetsSmbShareOptions {
-  dataset_naming_schema?: string | null;
-  auto_quota?: number;
-  aapl_name_mangling?: boolean;
-  hostsallow?: string[];
-  hostsdeny?: string[];
-}
+export type PrivateDatasetsSmbShareOptions = v28_0_0.PrivateDatasetOpt;
 
 export interface ExternalSmbShareOptions {
   remote_path?: string[];
 }
 
-export interface VeeamRepositorySmbShareOptions {
-  hostsallow?: string[];
-  hostsdeny?: string[];
-}
+export type VeeamRepositorySmbShareOptions = v28_0_0.VeeamRepositoryOpt;
 
 /** What `sharing.smb.getacl` and `sharing.smb.setacl` return: the share's name and its share-level ACL. */
 export type SmbSharesec = CallResponse<D, 'sharing.smb.getacl'>;

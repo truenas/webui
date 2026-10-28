@@ -5,7 +5,6 @@ import {
   createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { CallResponse } from '@truenas/api-client';
 import { TnFormListHarness, TnInputHarness } from '@truenas/ui-components';
 import { EMPTY, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -16,7 +15,6 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { WarningComponent } from 'app/modules/warning/warning.component';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { AllowedAddressesFormComponent } from 'app/pages/system/advanced/allowed-addresses/allowed-addresses-form/allowed-addresses-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -37,7 +35,7 @@ describe('AllowedAddressesComponent', () => {
         mockCall('system.general.ui_restart', null),
         mockCall('system.general.config', {
           ui_allowlist: ['1.1.1.1/32'],
-        } as SystemGeneralConfig as unknown as CallResponse<WebUiApiDirectory, 'system.general.config'>),
+        } as SystemGeneralConfig),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

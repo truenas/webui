@@ -1,3 +1,4 @@
+import { v28_0_0 } from '@truenas/api-client';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { VmwareState } from 'app/pages/data-protection/vmware-snapshot/vmware-snapshot-list/vmware-status-cell/vmware-status-cell.component';
@@ -7,11 +8,7 @@ export interface MatchDatastoresWithDatasets {
   filesystems: VmwareFilesystem[];
 }
 
-export interface VmwareDatastore {
-  name: string;
-  description: string;
-  filesystems: string[];
-}
+export type VmwareDatastore = v28_0_0.VMWareMatchDatastoresWithDatasetsResultDatastore;
 
 export interface VmwareFilesystem {
   type: DatasetType;

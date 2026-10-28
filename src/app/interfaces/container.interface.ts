@@ -1,5 +1,5 @@
 import { FormControl, FormGroup } from '@angular/forms';
-import { CallParams, CallResponse, JobParams } from '@truenas/api-client';
+import { CallParams, CallResponse, JobParams, v28_0_0 } from '@truenas/api-client';
 import {
   AllowedImageOs,
   ContainerCapabilitiesPolicy,
@@ -113,25 +113,9 @@ export interface ContainerImage {
   secureboot: boolean | null;
 }
 
-export interface ContainerStopParams {
-  force?: boolean;
-  force_after_timeout?: boolean;
-}
+export type ContainerStopParams = v28_0_0.ContainerStopOptions;
 
-export interface ContainerDeleteOptions {
-  /**
-   * Stops the container first when it is not already stopped.
-   * Without it, deleting a running or suspended container is refused up front.
-   */
-  force?: boolean;
-
-  /**
-   * Destroys the container dataset together with its child datasets, snapshots,
-   * clones of those snapshots and any holds on them. Not recoverable.
-   * Without it, deleting a container whose dataset has children or snapshots is refused.
-   */
-  recursive?: boolean;
-}
+export type ContainerDeleteOptions = v28_0_0.ContainerDeleteOptions;
 
 export type ContainerGlobalConfig = CallResponse<WebUiApiDirectory, 'lxc.config'>;
 

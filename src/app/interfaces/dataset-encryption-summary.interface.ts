@@ -1,4 +1,4 @@
-import { JobResult } from '@truenas/api-client';
+import { JobResult, v28_0_0 } from '@truenas/api-client';
 import { DatasetEncryptionType } from 'app/enums/dataset.enum';
 import { Job } from 'app/interfaces/job.interface';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -13,11 +13,7 @@ export interface DatasetEncryptionSummary {
   valid_key: boolean;
 }
 
-export interface DatasetEncryptionSummaryQueryParams {
-  key_file?: boolean;
-  force?: boolean;
-  datasets?: DatasetEncryptionSummaryQueryParamsDataset[];
-}
+export type DatasetEncryptionSummaryQueryParams = v28_0_0.PoolDatasetEncryptionSummaryOptions;
 
 export interface DatasetEncryptionSummaryQueryParamsDataset {
   name: string;

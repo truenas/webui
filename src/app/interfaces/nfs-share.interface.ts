@@ -1,3 +1,4 @@
+import { v28_0_0 } from '@truenas/api-client';
 import { NfsSecurityProvider } from 'app/enums/nfs-security-provider.enum';
 import { SharingTierInfo } from 'app/interfaces/zfs-tier.interface';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -34,10 +35,7 @@ export function toNfsShare(share: WebUiQueryEntity<'sharing.nfs.query'>): NfsSha
   return share as unknown as NfsShare;
 }
 
-export interface Nfs3Session {
-  ip: string;
-  export: string;
-}
+export type Nfs3Session = v28_0_0.NFSGetNfs3ClientsEntry;
 
 export interface Nfs4Session {
   id: number;

@@ -19,10 +19,6 @@ export interface CloudSyncCredential {
  */
 export type CloudSyncCredentialEntry = v28_0_0.CredentialsEntry;
 
-export type CloudSyncCredentialUpdate = Omit<CloudSyncCredential, 'id'>;
-
-export type CloudSyncCredentialVerify = CloudSyncCredential['provider'];
-
 /** Not in the client's `v28_0_0` namespace (unchanged since v25.10), so derived from the directory. */
 export type CloudSyncCredentialVerifyResult = CallResponse<WebUiApiDirectory, 'cloudsync.credentials.verify'>;
 
@@ -34,5 +30,3 @@ export interface CloudSyncBucket {
 
 /** `drive_type` is the wire literal; compare against `OneDriveType`. */
 export type CloudSyncOneDriveDrive = v28_0_0.CloudSyncOneDriveListDrivesDrive;
-
-export type CloudSyncOneDriveParams = v28_0_0.CloudSyncOneDriveListDrivesArgs;

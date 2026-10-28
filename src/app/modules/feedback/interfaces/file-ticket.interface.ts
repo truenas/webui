@@ -68,12 +68,6 @@ export type OauthJiraMessage = MessageEvent<{
   data?: string;
 }>;
 
-export type AttachTicketParams = [
-  token: string,
-  filename: string,
-  ticket: number,
-];
-
 export interface SimilarIssue {
   id: number;
   url: string;

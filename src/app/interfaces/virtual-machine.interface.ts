@@ -1,4 +1,4 @@
-import { CallParams } from '@truenas/api-client';
+import { CallParams, v28_0_0 } from '@truenas/api-client';
 import {
   VmBootloader, VmCpuMode, VmState, VmTime,
 } from 'app/enums/vm.enum';
@@ -49,10 +49,7 @@ export interface VirtualMachine {
 /** What the VM forms send, to `vm.create` and `vm.update` alike. */
 export type VirtualMachineUpdate = CallParams<WebUiApiDirectory, 'vm.create'>[0];
 
-export interface VirtualizationDetails {
-  supported: boolean;
-  error: string | null;
-}
+export type VirtualizationDetails = v28_0_0.VMVirtualizationDetails;
 
 /**
  * Reads a `vm.query` row into the shape the VM pages are written against. The generated entry

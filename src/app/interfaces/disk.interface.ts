@@ -38,33 +38,6 @@ export interface StorageDashboardDisk extends Disk {
   tempAggregates: TemperatureAgg;
 }
 
-/**
- * Additional disk query options
- */
-export interface ExtraDiskQueryOptions {
-  extra?: {
-    /**
-     * Will also include expired disks.
-     */
-    include_expired?: boolean;
-
-    /**
-     * Will not hide KMIP password for the disks.
-     */
-    passwords?: boolean;
-
-    /**
-     * Will join pool name for each disk.
-     */
-    pools?: boolean;
-
-    /**
-     * Will include SED status for each disk.
-     */
-    sed_status?: boolean;
-  };
-}
-
 export interface DiskUpdate {
   advpowermgmt?: DiskPowerLevel;
   description?: string;

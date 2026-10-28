@@ -1,4 +1,4 @@
-import { CallResponse } from '@truenas/api-client';
+import { CallResponse, v28_0_0 } from '@truenas/api-client';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -19,13 +19,7 @@ export interface NetworkConfiguration extends NetworkConfigurationState {
   state: NetworkConfigurationState;
 }
 
-export interface NetworkConfigurationState {
-  ipv4gateway: string;
-  ipv6gateway: string;
-  nameserver1: string;
-  nameserver2: string;
-  nameserver3: string;
-}
+export type NetworkConfigurationState = v28_0_0.NetWorkConfigurationState;
 
 export interface NetworkServiceAnnouncement {
   mdns: true;

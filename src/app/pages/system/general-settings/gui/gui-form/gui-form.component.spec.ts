@@ -41,8 +41,8 @@ describe('GuiFormComponent', () => {
 
   const mockSystemGeneralConfig = {
     usage_collection: false,
-    ui_address: ['0.0.0.0'],
-    ui_v6address: ['::'],
+    ui_address: ['0.0.0.0'] as SystemGeneralConfig['ui_address'],
+    ui_v6address: ['::'] as SystemGeneralConfig['ui_v6address'],
     ui_port: 80,
     ui_httpsport: 443,
     ui_httpsredirect: false,
@@ -61,7 +61,7 @@ describe('GuiFormComponent', () => {
     providers: [
       DialogService,
       mockApi([
-        mockCall('system.general.update', mockSystemGeneralConfig as unknown as CallResponse<WebUiApiDirectory, 'system.general.update'>),
+        mockCall('system.general.update', mockSystemGeneralConfig),
         mockCall('system.general.ui_restart', null),
         mockCall('system.security.config', {
           enable_gpos_stig: false,

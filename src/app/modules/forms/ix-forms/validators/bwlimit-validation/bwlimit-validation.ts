@@ -1,6 +1,6 @@
 import { ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { prepareBwlimit } from 'app/helpers/bwlimit.utils';
-import { BwLimitUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { BwLimit } from 'app/interfaces/cloud-sync-task.interface';
 
 /**
  * validator that ensures *rclone bandwidth limit strings*
@@ -25,13 +25,13 @@ export function bwlimitValidator(): ValidatorFn {
 
     // predicate that checks whether or not the bandwidth value is invalid.
     // returns `true` if the bandwidth is invalid.
-    const invalidBandwidthPredicate = (limit: BwLimitUpdate): boolean => {
+    const invalidBandwidthPredicate = (limit: BwLimit): boolean => {
       return Number.isNaN(limit.bandwidth) || limit.bandwidth < 0;
     };
 
     // predicate that checks whether or not the time string is invalid
     // returns `true` if the time is invalid.
-    const invalidTimePredicate = (limit: BwLimitUpdate): boolean => {
+    const invalidTimePredicate = (limit: BwLimit): boolean => {
       const timeComponents = limit.time.split(':');
       if (timeComponents.length !== 2) {
         return true;

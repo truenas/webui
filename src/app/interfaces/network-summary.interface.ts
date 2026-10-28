@@ -1,8 +1,3 @@
-export interface NetworkSummary {
-  default_routes: string[];
-  ips: Record<string, {
-    IPV4?: string[];
-    IPV6?: string[];
-  }>;
-  nameservers: string[];
-}
+import { v28_0_0 } from '@truenas/api-client';
+
+export type NetworkSummary = v28_0_0.NetworkGeneralSummaryResult;

@@ -1,5 +1,5 @@
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { JobParams } from '@truenas/api-client';
+import { JobParams, v28_0_0 } from '@truenas/api-client';
 import { AppState } from 'app/enums/app-state.enum';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
@@ -15,16 +15,9 @@ export interface ChartFormValues extends HierarchicalObjectMap<ChartFormValue> {
   version?: string;
 }
 
-export interface AppHostPort {
-  host_port: number;
-  host_ip: string;
-}
+export type AppHostPort = v28_0_0.HostPorts;
 
-export interface AppUsedPort {
-  container_port: number;
-  protocol: string;
-  host_ports?: AppHostPort[];
-}
+export type AppUsedPort = v28_0_0.UsedPorts;
 
 export enum AppContainerState {
   Running = 'running',
@@ -108,43 +101,8 @@ export function toApp(app: WebUiQueryEntity<'app.query'>): App {
   return app as unknown as App;
 }
 
-export interface AppStats {
-  app_name: string;
-  /**
-   * Percentage of cpu used by an app
-   */
-  cpu_usage: number;
-  /**
-   * Current memory(in bytes) used by an app
-   */
-  memory: number;
-  networks: AppNetworkStats[];
-  blkio: {
-    /**
-     * Blkio read bytes
-     */
-    read: number;
-    /**
-     * Blkio write bytes
-     */
-    write: number;
-  };
-}
+export type AppStats = v28_0_0.AppStatsEventSourceEventItem;
 
-interface AppNetworkStats {
-  /**
-   * Name of the interface use by the app
-   */
-  interface_name: string;
-  /**
-   * Received bytes/s by an interface
-   */
-  rx_bytes: number;
-  /**
-   * Transmitted bytes/s by an interface
-   */
-  tx_bytes: number;
-}
 
 /** One app's arguments to `app.upgrade`, as the bulk update sends them through `core.bulk`. */
 export type AppUpgradeParams = JobParams<WebUiApiDirectory, 'app.upgrade'>;
@@ -259,7 +217,4 @@ export type AppStartQueryParams = [
 ];
 export type AppRollbackParams = JobParams<WebUiApiDirectory, 'app.rollback'>;
 
-export interface AppContainerLog {
-  data: string;
-  timestamp: string | null;
-}
+export type AppContainerLog = v28_0_0.AppContainerLogsFollowTailEventSourceEvent;
