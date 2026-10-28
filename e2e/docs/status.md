@@ -47,9 +47,10 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   tests sync the catalog so that the form has trains to offer. Without it they
   fail at the sync, and the file's other tests still run.
 - **An Active Directory domain it can reach and join**, for
-  `tests/unpublished/directory-services-ad.e2e.ts`, named by the `TN_AD_*` variables
-  (`.env.example`); without `TN_AD_DOMAIN` that file skips. The domain
-  controllers must serve its DNS, since the spec points the nameservers at
+  `tests/unpublished/directory-services-ad.e2e.ts` and
+  `tests/unpublished/roles-directory-services-ad.e2e.ts`, named by the `TN_AD_*` variables
+  (`.env.example`); without `TN_AD_DOMAIN` those files skip. The domain
+  controllers must serve its DNS, since the specs point the nameservers at
   them, and the account must be allowed to create and delete computer objects
   in `TN_AD_COMPUTER_OU`. CI uses the internal test domain (`docs/05-ci.md`).
 - **A spare NIC with no address and no peer**, for

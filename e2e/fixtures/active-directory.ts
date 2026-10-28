@@ -26,9 +26,11 @@ import type { JobParams } from '@truenas/api-client';
 import { escapeRegExp } from 'lodash-es';
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureDirectoryServicesCleared, readDirectoryServices } from './directory-services';
+import { type NetworkSettings, restoreNetworkConfig } from './network-config';
 import { kebabTestSegment, legacyKebabTestSegment } from '../locators/test-id';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
-import type { ActiveDirectoryTarget } from '../support/config';
+import { leavingTestData, runCleanupSteps } from '../support/cleanup';
+import type { ActiveDirectoryTarget, TargetConfig } from '../support/config';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs } from '../support/timeouts';
 
@@ -57,6 +59,19 @@ export const adComputerNamePrefix = 'e2eui-';
 export function adComputerName(): string {
   const random = Math.random().toString(36).slice(2, 10).padEnd(8, '0');
   return `${adComputerNamePrefix}${random}`;
+}
+
+/** The run's domain, for a test whose hooks have already skipped a run without one. */
+export function domainOf(config: TargetConfig): ActiveDirectoryTarget {
+  if (!config.activeDirectory) {
+    throw new Error('No Active Directory domain for this run (TN_AD_DOMAIN unset)');
+  }
+  return config.activeDirectory;
+}
+
+/** Matches the domain as the card and middleware show it: upper-cased, whatever it was typed as. */
+export function domainPattern(ad: ActiveDirectoryTarget): RegExp {
+  return new RegExp(`^${escapeRegExp(ad.domain)}$`, 'i');
 }
 
 /**
@@ -209,4 +224,29 @@ export async function ensureActiveDirectoryJoined(
   // A `FAULTED` join still holds a computer account, and a stored configuration blocks a fresh one.
   await ensureActiveDirectoryLeft(client, ad);
   await joinActiveDirectory(client, ad, hostname);
+}
+
+/**
+ * Teardown for a spec that pointed the nameservers at the domain and joined it:
+ * leaves the domain and clears the configuration, then puts back the nameservers
+ * `before` holds. Unconditional, and in this order: leaving needs the domain's
+ * nameservers. A run with no domain changed neither, so it returns at once.
+ */
+export async function leaveTheDomain(
+  client: E2eApiClient,
+  ad: ActiveDirectoryTarget | undefined,
+  before: NetworkSettings | undefined,
+): Promise<void> {
+  if (!ad || leavingTestData('the Active Directory join and the nameservers pointing at the domain')) {
+    return;
+  }
+
+  await withActiveDirectoryRedacted(ad, () => runCleanupSteps([
+    ['leave the domain and clear the configuration', () => ensureActiveDirectoryLeft(client, ad)],
+    ['restore the nameservers', async () => {
+      if (before) {
+        await restoreNetworkConfig(client, before);
+      }
+    }],
+  ]));
 }

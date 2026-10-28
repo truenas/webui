@@ -35,18 +35,16 @@ import {
   adComputerName,
   adJoinTimeoutMs,
   domainAccountName,
+  domainOf,
+  domainPattern,
   ensureActiveDirectoryJoined,
   ensureActiveDirectoryLeft,
+  leaveTheDomain,
   withActiveDirectoryRedacted,
 } from '../../fixtures/active-directory';
 import { readDirectoryServices } from '../../fixtures/directory-services';
 import { entitlementFeature, isNotDenied } from '../../fixtures/entitlements';
-import {
-  type NetworkSettings,
-  readNetworkConfig,
-  restoreNetworkConfig,
-  setNameservers,
-} from '../../fixtures/network-config';
+import { type NetworkSettings, readNetworkConfig, setNameservers } from '../../fixtures/network-config';
 import {
   nfs4Entries, readAcl, readOwnership, setOwnership, type Ownership,
 } from '../../fixtures/permissions';
@@ -105,19 +103,6 @@ const deadNameserver = '192.0.2.53';
  * or dialog has closed, but the status settles a moment after the job does.
  */
 const cardTimeoutMs = 60_000;
-
-/** The run's domain. `beforeEach` has already skipped a run without one. */
-function domainOf(config: TargetConfig): ActiveDirectoryTarget {
-  if (!config.activeDirectory) {
-    throw new Error('No Active Directory domain for this run (TN_AD_DOMAIN unset)');
-  }
-  return config.activeDirectory;
-}
-
-/** Matches the domain as the card and middleware show it: upper-cased, whatever it was typed as. */
-function domainPattern(ad: ActiveDirectoryTarget): RegExp {
-  return new RegExp(`^${escapeRegExp(ad.domain)}$`, 'i');
-}
 
 /**
  * Picks Active Directory and fills it in to join the run's domain as
@@ -194,30 +179,6 @@ async function startOffTheDomain(api: E2eApiClient, config: TargetConfig): Promi
     await ensureActiveDirectoryLeft(api, ad);
     return before;
   });
-}
-
-/**
- * Unconditional, and in this order: leaving needs the domain's nameservers,
- * so they are restored last.
- */
-async function leaveTheDomain(
-  api: E2eApiClient,
-  config: TargetConfig,
-  before: NetworkSettings | undefined,
-): Promise<void> {
-  const ad = config.activeDirectory;
-  if (!ad || leavingTestData('the Active Directory join and the nameservers pointing at the domain')) {
-    return;
-  }
-
-  await withActiveDirectoryRedacted(ad, () => runCleanupSteps([
-    ['leave the domain and clear the configuration', () => ensureActiveDirectoryLeft(api, ad)],
-    ['restore the nameservers', async () => {
-      if (before) {
-        await restoreNetworkConfig(api, before);
-      }
-    }],
-  ]));
 }
 
 /**
@@ -333,7 +294,7 @@ test.describe('joining and leaving', () => {
   });
 
   test.afterAll(async ({ api, config }) => {
-    await leaveTheDomain(api, config, networkBefore);
+    await leaveTheDomain(api, config.activeDirectory, networkBefore);
   });
 
   test('joining Active Directory from the form shows the domain healthy on the card', async ({ page, api, config }) => {
@@ -723,7 +684,7 @@ test.describe('refusing a join', () => {
   });
 
   test.afterEach(async ({ api, config }) => {
-    await leaveTheDomain(api, config, networkBefore);
+    await leaveTheDomain(api, config.activeDirectory, networkBefore);
   });
 
   test('a join through a nameserver that cannot resolve the domain is refused on the form', async ({
