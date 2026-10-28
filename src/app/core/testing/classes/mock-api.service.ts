@@ -1,135 +1,198 @@
-import { Injectable } from '@angular/core';
-import { when } from 'jest-when';
-import { Observable, Subject, of, throwError, merge } from 'rxjs';
-import { filter, take } from 'rxjs/operators';
+import { inject, Injectable, Injector, OnDestroy } from '@angular/core';
+import { pendingUntilEvent } from '@angular/core/rxjs-interop';
 import {
-  CallResponseOrFactory,
-  JobResponseOrFactory,
-} from 'app/core/testing/interfaces/mock-api-responses.interface';
-import { ApiCallAndSubscribeMethod } from 'app/interfaces/api/api-call-and-subscribe-directory.interface';
+  CallMethod, CallParams, CallResponse, EventName, EventSourceName, EventUnion, JobMethod, JobResult, QueryEntity,
+  QueryMethod, SubscriptionArgs,
+} from '@truenas/api-client';
 import {
-  ApiCallMethod,
-  ApiCallParams,
-  ApiCallResponse,
-} from 'app/interfaces/api/api-call-directory.interface';
-import {
-  ApiJobMethod,
-  ApiJobParams,
-} from 'app/interfaces/api/api-job-directory.interface';
-import { ApiEventTyped } from 'app/interfaces/api-message.interface';
+  createFakeClient, fakeApiError, FakeApiErrorOverrides, FakeTrueNasClient, JobUpdate, withSpies,
+} from '@truenas/api-client/testing';
+import { map, Observable } from 'rxjs';
+import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
+import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
+import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-as-api-call-error';
+import {
+  UndeclaredCallDirectory, UndeclaredCallMethod, WebUiApiDirectory,
+} from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
+
+/** Methods `mockCall` accepts: everything in the call directory except the `.query` family, which `mockQuery` owns. */
+export type MockCallMethod = Exclude<CallMethod<D>, QueryMethod<D['call']>>;
+
+/** Methods `mockCallError` can refuse: calls, `.query` methods and job methods alike. */
+export type RefusableMethod = MockCallMethod | QueryMethod<D['call']> | JobMethod<D>;
+
+export type CallResponseOrFactory<M extends MockCallMethod>
+  = | CallResponse<D, M>
+    | ((params: CallParams<D, M>) => CallResponse<D, M>);
 
 /**
- * Better than just expect.anything() because it allows null and undefined.
+ * The client's verbs with their generics erased. The typing lives on the
+ * scripting side (`mockCall`, `mockQuery`, `mockJob`), where fixtures are
+ * checked against the directory; the verbs themselves mirror
+ * `ApiService`'s loose-argument `jest.fn` shape so specs can assert on
+ * them the way they always have.
  */
-const anyArgument = when((_: ApiJobParams<ApiJobMethod>) => true);
+interface LooseApi {
+  call(method: string, params?: unknown): Observable<unknown>;
+  query(method: string, filters?: unknown, options?: unknown): Observable<unknown[]>;
+  queryOne(method: string, filters?: unknown, options?: unknown): Observable<unknown>;
+  queryCount(method: string, filters?: unknown): Observable<number>;
+  job(method: string, params?: unknown): Observable<unknown>;
+  callAndGetJobId(method: string, params?: unknown): Observable<number>;
+  events(event: string, params?: unknown): Observable<unknown>;
+}
 
 /**
- * MockApiService can be used to update api mocks on the fly.
- * For initial setup prefer mockApi();
+ * Test double for `ApiService`, running a real `@truenas/api-client`
+ * over the package's fake connection.
  *
- * To update on the fly:
- * @example
- * ```
- * // In test case:
- * const apiService = spectator.inject(MockApiService);
- * apiService.mockCallOnce('filesystem.stat', { gid: 5 } as FileSystemStat);
- * ```
+ * Nothing here reimplements dispatch, job correlation or subscriptions: every
+ * verb forwards to the real client, and `mockCall` / `mockQuery` / `mockJob`
+ * script the *answers* the fake connection gives. The client is strict, so a
+ * call nothing scripted fails with `UnmockedCallError` naming the method
+ * rather than hanging.
+ *
+ * Every verb rethrows a refusal through the same `rethrowAsApiCallError` as
+ * `ApiService`, so an error scripted with `mockCallError` surfaces as the
+ * `ApiCallError` production throws, `extra` and all.
+ *
+ * Set it up with `mockApi()`. For connection-level scenarios — a dropped
+ * socket, a hand-written reply — reach the client through `client`.
  */
 @Injectable()
-export class MockApiService {
-  private subscribeStream$ = new Subject<ApiEventTyped>();
-  private jobIdCounter = 1;
+export class MockApiService implements OnDestroy {
+  readonly client: FakeTrueNasClient<D> = withSpies(
+    createFakeClient({ version: 'v28.0.0', strict: true }),
+    jest.fn,
+  );
 
-  call: jest.Mock;
-  job: jest.Mock;
-  startJob: jest.Mock;
-  subscribe: jest.Mock;
-  callAndSubscribe: jest.Mock;
-  clearSubscriptions$ = new Subject<void>();
+  private injector = inject(Injector);
 
-  private mockCalls = new Map<ApiCallMethod, CallResponseOrFactory<ApiCallMethod>>();
-  private mockJobs = new Map<ApiJobMethod, JobResponseOrFactory<ApiJobMethod>>();
+  readonly call = jest.fn((method: string, params?: unknown) => {
+    return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
 
-  constructor() {
-    this.call = jest.fn((method: ApiCallMethod, params?: unknown) => {
-      if (this.mockCalls.has(method)) {
-        const response = this.mockCalls.get(method);
-        let preparedResponse = response;
-        if (response instanceof Function) {
-          preparedResponse = response(params);
-        }
-        return of(preparedResponse);
-      }
-      return throwError(() => new Error(`Unmocked api call ${method} with ${JSON.stringify(params)}`));
+  readonly callUndeclared = jest.fn((method: string, params?: unknown) => {
+    return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  readonly callUnauthenticated = jest.fn((method: string, params?: unknown) => {
+    return this.api.call(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  readonly query = jest.fn((method: string, filters?: unknown, options?: unknown) => {
+    return this.api.query(method, filters, options).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  readonly queryOne = jest.fn((method: string, filters?: unknown, options?: unknown) => {
+    return this.api.queryOne(method, filters, options).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  readonly queryCount = jest.fn((method: string, filters?: unknown) => {
+    return this.api.queryCount(method, filters).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  /** Same contract as `ApiService.job`: emits every update, throws `FailedJobError` on failure. */
+  readonly job = jest.fn((method: string, params?: unknown) => {
+    return this.api.job(method, params).pipe(
+      rethrowAsApiCallError(),
+      map((job) => job as Job),
+      observeJob(),
+      this.untilAnswered(),
+    );
+  });
+
+  readonly startJob = jest.fn((method: string, params?: unknown) => {
+    return this.api.callAndGetJobId(method, params).pipe(rethrowAsApiCallError(), this.untilAnswered());
+  });
+
+  readonly subscribe = jest.fn((event: string, params?: unknown) => {
+    return this.api.events(event, params).pipe(rethrowAsApiCallError());
+  });
+
+  /**
+   * Same folding as `ApiService.queryAndSubscribe`: script the rows with `mockQuery`, the
+   * changes with `emitEvent`.
+   */
+  readonly queryAndSubscribe = jest.fn((method: string, filters?: unknown, options?: unknown) => {
+    return followCollection(
+      this.api.query(method, filters, options) as Observable<{ id?: unknown }[]>,
+      this.api.events(method) as Observable<{ msg: string; id?: unknown; fields?: { id?: unknown } }>,
+    ).pipe(this.untilAnswered());
+  });
+
+  /**
+   * Holds the app unstable until the fake connection answers. The answers arrive on a
+   * microtask, and without zone.js `fixture.whenStable()` (and every harness) only waits
+   * for work registered as an Angular pending task, so this is what keeps a spec's
+   * `await whenStable()` meaning "the scripted responses have been rendered".
+   * `subscribe` is left out on purpose: an event stream may never emit.
+   */
+  private untilAnswered<T>(): (source$: Observable<T>) => Observable<T> {
+    return pendingUntilEvent<T>(this.injector);
+  }
+
+  mockCall<M extends MockCallMethod>(method: M, response: CallResponseOrFactory<M>): void {
+    this.client.mock.call(method, response);
+  }
+
+  /** Scripts a method `callUndeclared` reaches; see `UndeclaredCallDirectory`. */
+  mockUndeclaredCall<M extends UndeclaredCallMethod>(method: M, response: UndeclaredCallDirectory[M]['response']): void {
+    // The fake only names generated methods; it answers an undeclared one all the same.
+    (this.client.mock.call as (method: string, response: unknown) => void)(method, response);
+  }
+
+  /**
+   * Answers `method` with a JSON-RPC error frame, completed by the package's
+   * `fakeApiError`, which every verb throws as an `ApiCallError`: a `.query`
+   * method fails `query`, a job method fails `job` before a job starts. Use it
+   * for the error path of a form: `extra` carries the field-level validation
+   * errors.
+   */
+  mockCallError(method: RefusableMethod, error: FakeApiErrorOverrides = {}): void {
+    const frame = fakeApiError(error);
+    this.client.connection.autoReply(method, ({ id }) => {
+      // On a microtask, as the package's own answers are.
+      queueMicrotask(() => this.client.connection.receive({ jsonrpc: '2.0', id, error: frame }));
     });
-    this.job = jest.fn((method: ApiJobMethod, params?: unknown) => {
-      if (this.mockJobs.has(method)) {
-        const getJobResponse = (): Job => {
-          const response = this.mockJobs.get(method);
-          if (response instanceof Function) {
-            return response(params as ApiJobParams<ApiJobMethod>);
-          }
-          return response;
-        };
-
-        const fullResponse$ = merge(
-          of(getJobResponse()),
-          this.clearSubscriptions$,
-        ).pipe(
-          filter((message) => message !== undefined),
-          take(1),
-        );
-
-        // Also mock the core.get_jobs call
-        when(this.call)
-          .calledWith('core.get_jobs', [[['id', '=', this.jobIdCounter]]])
-          .mockImplementation(() => of([getJobResponse()]));
-
-        this.jobIdCounter += 1;
-        return fullResponse$;
-      }
-      return throwError(() => new Error(`Unmocked api job call ${method} with ${JSON.stringify(params)}`));
-    });
-    this.startJob = jest.fn();
-    this.subscribe = jest.fn(() => this.subscribeStream$.asObservable());
-    this.callAndSubscribe = jest.fn((method: ApiCallAndSubscribeMethod, args: unknown) => {
-      return throwError(() => new Error(`Unmocked api callAndSubscribe ${method} with ${JSON.stringify(args)}`));
-    });
   }
 
-  mockCall<K extends ApiCallMethod>(method: K, response: CallResponseOrFactory<K>): void {
-    this.mockCalls.set(method, response as CallResponseOrFactory<ApiCallMethod>);
-
-    // Still use jest-when for callAndSubscribe if needed
-    const mockedImplementation = (_: K, params: ApiCallParams<K>): Observable<unknown> => {
-      let preparedResponse = response;
-      if (response instanceof Function) {
-        preparedResponse = response(params);
-      }
-      return of(preparedResponse);
-    };
-
-    when(this.callAndSubscribe)
-      .calledWith(method as ApiCallAndSubscribeMethod)
-      .mockImplementation(mockedImplementation as jest.Mock);
+  /** Feeds `query`, `queryOne` (first row) and `queryCount` (row count) from one set of rows. */
+  mockQuery<M extends QueryMethod<D['call']>>(method: M, rows: QueryEntity<D['call'], M>[]): void {
+    this.client.mock.query(method, rows);
   }
 
-  mockCallOnce<M extends ApiCallMethod>(method: M, response: ApiCallResponse<M>): void {
-    when(this.call)
-      .calledWith(method, anyArgument as unknown as ApiCallParams<ApiCallMethod>)
-      .mockReturnValueOnce(of(response));
+  /** Answers a job with these updates in order; each is completed by the package's `fakeJob`. */
+  mockJob<M extends JobMethod<D>>(
+    method: M,
+    updates: JobUpdate<JobResult<D, M>> | JobUpdate<JobResult<D, M>>[],
+  ): void {
+    this.client.mock.job(method, updates);
   }
 
-  mockJob<M extends ApiJobMethod>(method: M, response: JobResponseOrFactory<M>): void {
-    this.mockJobs.set(method, response as JobResponseOrFactory<ApiJobMethod>);
+  /** Pushes a change to the subscribers of `event`, or of an event source with these same arguments. */
+  emitEvent<E extends EventName<D>>(event: E, change: EventUnion<D, E>): void;
+  // Not unifiable: the two overloads constrain `E` differently, as the client's own `events` does.
+  // eslint-disable-next-line @typescript-eslint/unified-signatures
+  emitEvent<E extends EventSourceName<D>>(event: E, change: EventUnion<D, E>, ...params: SubscriptionArgs<D, E>): void;
+  emitEvent(event: string, change: object, params?: unknown): void {
+    // Erased for the same reason as `LooseApi`: the client's overloads cannot be picked through `event`.
+    type LooseEmit = (event: string, change: object, params?: unknown) => void;
+    (this.client.mock.emit as LooseEmit)(event, change, params);
   }
 
-  emitSubscribeEvent(event: ApiEventTyped): void {
-    this.subscribeStream$.next(event);
+  ngOnDestroy(): void {
+    // Ordinary teardown: a fake holds no timer or socket, but closing is what
+    // a consumer of the real client does, and the double should not differ.
+    this.client.close();
   }
 
-  clearSubscriptions(): void {
-    this.clearSubscriptions$.next();
+  private get api(): LooseApi {
+    // The client's verbs are generic over the directory; this double takes
+    // loose arguments on purpose (see `LooseApi`), so the erasure is explicit.
+    return this.client.api as unknown as LooseApi;
   }
 }

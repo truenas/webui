@@ -3,10 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall, mockTypedUndeclaredCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall, mockUndeclaredCall } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceCredentialType, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { DirectoryServiceCredential } from 'app/interfaces/directoryservice-credentials.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CredentialConfigComponent } from 'app/pages/directory-service/components/directory-services-form/credential-config/credential-config.component';
 import { DirectoryServiceValidationService } from 'app/pages/directory-service/components/directory-services-form/services/directory-service-validation.service';
 
@@ -22,9 +22,9 @@ describe('CredentialConfigComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
-        mockTypedUndeclaredCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
+      mockApi([
+        mockCall('directoryservices.certificate_choices', { 1: 'truenas_default' }),
+        mockUndeclaredCall('kerberos.keytab.kerberos_principal_choices', mockKerberosPrincipals),
       ]),
       DirectoryServiceValidationService,
     ],
@@ -57,7 +57,7 @@ describe('CredentialConfigComponent', () => {
   });
 
   it('should fetch kerberos principals on init', () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     expect(api.callUndeclared).toHaveBeenCalledWith('kerberos.keytab.kerberos_principal_choices');
   });
 

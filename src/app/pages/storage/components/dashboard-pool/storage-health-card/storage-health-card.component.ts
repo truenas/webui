@@ -25,7 +25,7 @@ import { ScheduleDescriptionPipe } from 'app/modules/dates/pipes/schedule-descri
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ScrubFormComponent,
 } from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
@@ -76,7 +76,7 @@ interface StatusIconData {
   ],
 })
 export class StorageHealthCardComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);

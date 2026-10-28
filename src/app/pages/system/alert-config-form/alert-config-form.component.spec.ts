@@ -4,31 +4,31 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnMenuHarness, TnSelectHarness } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { AlertPolicy } from 'app/enums/alert-policy.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AlertConfigFormComponent } from 'app/pages/system/alert-config-form/alert-config-form.component';
 
 describe('AlertConfigFormComponent', () => {
   let spectator: Spectator<AlertConfigFormComponent>;
   let loader: HarnessLoader;
   let rootLoader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   const createComponent = createComponentFactory({
     component: AlertConfigFormComponent,
     imports: [
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('alert.list_categories', [
+      mockApi([
+        mockCall('alert.list_categories', [
           {
             id: 'APPLICATIONS',
             title: 'Applications',
@@ -62,7 +62,7 @@ describe('AlertConfigFormComponent', () => {
             ],
           },
         ] as CallResponse<WebUiApiDirectory, 'alert.list_categories'>),
-        mockTypedCall('alertclasses.config', {
+        mockCall('alertclasses.config', {
           id: 1,
           classes: {
             [AlertClassName.AppUpdate]: {
@@ -74,13 +74,13 @@ describe('AlertConfigFormComponent', () => {
             },
           },
         }),
-        mockTypedCall('alert.list_policies', [
+        mockCall('alert.list_policies', [
           AlertPolicy.Immediately,
           AlertPolicy.Never,
           AlertPolicy.Daily,
           AlertPolicy.Hourly,
         ]),
-        mockTypedCall('alertclasses.update', null),
+        mockCall('alertclasses.update', null),
       ]),
       mockProvider(LoaderService),
       mockProvider(DialogService),
@@ -93,7 +93,7 @@ describe('AlertConfigFormComponent', () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current config and shows values in the form', async () => {

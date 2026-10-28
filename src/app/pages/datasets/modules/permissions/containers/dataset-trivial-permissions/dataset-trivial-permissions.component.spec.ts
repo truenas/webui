@@ -5,10 +5,10 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  mockTypedApi, mockTypedJob, mockTypedQuery, settleTypedApi,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockJob, mockQuery, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetAclType } from 'app/enums/dataset.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,8 +17,8 @@ import {
   IxGroupComboboxHarness,
   IxUserComboboxHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
@@ -26,7 +26,7 @@ import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permission
 describe('DatasetTrivialPermissionsComponent', () => {
   let spectator: Spectator<DatasetTrivialPermissionsComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let saveButton: TnButtonHarness;
   const createComponent = createRoutingFactory({
     component: DatasetTrivialPermissionsComponent,
@@ -38,13 +38,13 @@ describe('DatasetTrivialPermissionsComponent', () => {
     },
     providers: [
       ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedQuery('pool.dataset.query', [{
+      mockApi([
+        mockQuery('pool.dataset.query', [{
           acltype: {
             value: DatasetAclType.Posix,
           },
         }] as unknown as WebUiQueryEntity<'pool.dataset.query'>[]),
-        mockTypedJob('filesystem.setperm', { state: JobState.Success }),
+        mockJob('filesystem.setperm', { state: JobState.Success }),
       ]),
       mockProvider(StorageService, {
         filesystemStat: jest.fn(() => of({
@@ -78,10 +78,10 @@ describe('DatasetTrivialPermissionsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     // The dataset query answers on a microtask. Hand the cleared loading flag to the progress bar before the
     // harness waits for stability, or the bar's grace timer starts an animation that never settles.
-    await settleTypedApi();
+    await settleApi();
     spectator.detectChanges();
     saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
   });

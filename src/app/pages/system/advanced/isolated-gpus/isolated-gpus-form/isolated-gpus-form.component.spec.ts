@@ -5,12 +5,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { IsolatedGpusFormComponent } from 'app/pages/system/advanced/isolated-gpus/isolated-gpus-form/isolated-gpus-form.component';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -20,7 +20,7 @@ import { selectAdvancedConfig } from 'app/store/system-config/system-config.sele
 describe('IsolatedGpusFormComponent', () => {
   let spectator: Spectator<IsolatedGpusFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
     TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -43,9 +43,9 @@ describe('IsolatedGpusFormComponent', () => {
           },
         ],
       }),
-      mockTypedApi([
-        mockTypedCall('system.advanced.update_gpu_pci_ids', null),
-        mockTypedCall('system.advanced.get_gpu_pci_choices', {
+      mockApi([
+        mockCall('system.advanced.update_gpu_pci_ids', null),
+        mockCall('system.advanced.get_gpu_pci_choices', {
           'Fake HD Graphics [0000:00:01.0]': {
             pci_slot: '0000:00:01.0',
             uses_system_critical_devices: false,
@@ -103,7 +103,7 @@ describe('IsolatedGpusFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads current settings and shows them', async () => {
@@ -146,7 +146,7 @@ describe('IsolatedGpusFormComponent', () => {
             },
           ],
         }),
-        mockTypedApi([mockTypedCall('system.advanced.update_gpu_pci_ids', null)]),
+        mockApi([mockCall('system.advanced.update_gpu_pci_ids', null)]),
         mockProvider(SystemGeneralService),
         mockProvider(DialogService),
         mockProvider(GpuService, {

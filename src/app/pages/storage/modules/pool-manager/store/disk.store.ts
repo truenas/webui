@@ -3,7 +3,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { sortBy } from 'lodash-es';
 import { map, Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse, toDiskDetails } from 'app/interfaces/disk.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -19,7 +19,7 @@ const initialState: DiskState = {
 
 @Injectable()
 export class DiskStore extends ComponentStore<DiskState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   private readonly unusedDisks$ = this.select((state) => state.unusedDisks);

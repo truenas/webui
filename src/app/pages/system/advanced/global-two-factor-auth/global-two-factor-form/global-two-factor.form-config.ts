@@ -8,7 +8,7 @@ import { GlobalTwoFactorConfig, GlobalTwoFactorConfigUpdate } from 'app/interfac
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface GlobalTwoFactorFormValues {
   enabled: boolean;
@@ -17,7 +17,7 @@ export interface GlobalTwoFactorFormValues {
 }
 
 export function getGlobalTwoFactorFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   dialogService: DialogService,
   authService: AuthService,

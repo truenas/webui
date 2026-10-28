@@ -2,11 +2,11 @@ import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/sp
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { filter, firstValueFrom, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { getDefaultWidgets } from 'app/pages/dashboard/services/get-default-widgets';
 import { WidgetGroupLayout } from 'app/pages/dashboard/types/widget-group.interface';
 import { WidgetType } from 'app/pages/dashboard/types/widget.interface';
@@ -48,9 +48,9 @@ describe('DashboardStore', () => {
           },
         ],
       }),
-      mockTypedApi([
-        mockTypedCall('auth.set_attribute', null),
-        mockTypedCall('auth.me', authMe({ dashState: initialGroups })),
+      mockApi([
+        mockCall('auth.set_attribute', null),
+        mockCall('auth.me', authMe({ dashState: initialGroups })),
       ]),
     ],
   });
@@ -102,7 +102,7 @@ describe('DashboardStore', () => {
     },
     ]).subscribe();
 
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     expect(api.call).toHaveBeenCalledWith('auth.set_attribute', [
       'dashState',
       [{
@@ -130,7 +130,7 @@ describe('DashboardStore', () => {
   });
 
   it('should load demoWidgets if user does not have dashState', async () => {
-    spectator.inject(MockTypedApiService).mockCall('auth.me', authMe({}));
+    spectator.inject(MockApiService).mockCall('auth.me', authMe({}));
 
     spectator.service.entered();
 
@@ -143,7 +143,7 @@ describe('DashboardStore', () => {
   it('reads the layout from the server on every entry, not the one cached at sign-in', async () => {
     spectator.service.entered();
     await loadedState();
-    spectator.inject(MockTypedApiService).mockCall('auth.me', authMe({
+    spectator.inject(MockApiService).mockCall('auth.me', authMe({
       dashState: [{ layout: WidgetGroupLayout.Full, slots: [{ type: WidgetType.Cpu }] }],
     }));
 

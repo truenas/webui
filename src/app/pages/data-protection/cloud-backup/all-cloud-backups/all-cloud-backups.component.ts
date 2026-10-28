@@ -14,7 +14,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SidePanelForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupDetailsComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-details.component';
 import { CloudBackupFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-form/cloud-backup-form.component';
 import { CloudBackupListComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-list/cloud-backup-list.component';
@@ -37,7 +37,7 @@ import { cloudBackupListElements } from 'app/pages/data-protection/cloud-backup/
   ],
 })
 export class AllCloudBackupsComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private route = inject(ActivatedRoute);

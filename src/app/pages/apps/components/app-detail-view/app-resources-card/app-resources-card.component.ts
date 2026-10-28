@@ -8,7 +8,7 @@ import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, map, throttleTime } from 'rxjs';
 import { MemoryUpdate } from 'app/interfaces/reporting.interface';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 
 @Component({
@@ -24,7 +24,7 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   ],
 })
 export class AppResourcesCardComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dockerStore = inject(DockerStore);
   private destroyRef = inject(DestroyRef);
 

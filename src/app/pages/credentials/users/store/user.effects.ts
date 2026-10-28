@@ -7,8 +7,8 @@ import {
   catchError, map, switchMap,
 } from 'rxjs/operators';
 import { toUser } from 'app/interfaces/user.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   userAdded,
   userChanged,
@@ -21,7 +21,7 @@ import {
 @Injectable()
 export class UserEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
 
   // Note: This effect loads users into NgRx store for use by user-form.component.ts

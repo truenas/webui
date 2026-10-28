@@ -13,7 +13,7 @@ import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
 import { helptextSystemCloudcredentials as helptext } from 'app/helptext/system/cloud-credentials';
 import { KeychainSshKeyPair } from 'app/interfaces/keychain-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   BaseProviderFormComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/provider-forms/base-provider-form';
@@ -37,7 +37,7 @@ const newOption = 'NEW';
 export class SftpProviderFormComponent extends BaseProviderFormComponent implements OnInit, AfterViewInit {
   protected readonly InputType = InputType;
 
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);

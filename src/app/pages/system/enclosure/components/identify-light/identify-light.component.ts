@@ -5,7 +5,7 @@ import { TnButtonComponent, TnIconComponent } from '@truenas/ui-components';
 import { EMPTY } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -21,7 +21,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class IdentifyLightComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private store = inject(EnclosureStore);
   private destroyRef = inject(DestroyRef);

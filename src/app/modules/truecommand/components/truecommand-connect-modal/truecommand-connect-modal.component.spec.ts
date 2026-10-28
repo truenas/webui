@@ -9,14 +9,14 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { TrueCommandStatus } from 'app/enums/true-command-status.enum';
 import { TrueCommandConfig } from 'app/interfaces/true-command-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { TruecommandConnectModalComponent, TruecommandSignupModalState } from 'app/modules/truecommand/components/truecommand-connect-modal/truecommand-connect-modal.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig {
   return {
@@ -34,7 +34,7 @@ function getFakeConfig(overrides: Partial<TrueCommandConfig>): TrueCommandConfig
 describe('TruecommandConnectModalComponent', () => {
   let spectator: Spectator<TruecommandConnectModalComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   function createComponentWithData(
     config: Partial<TrueCommandConfig>,
@@ -46,8 +46,8 @@ describe('TruecommandConnectModalComponent', () => {
         ReactiveFormsModule,
       ],
       providers: [
-        mockTypedApi([
-          mockTypedCall('truecommand.update', null),
+        mockApi([
+          mockCall('truecommand.update', null),
         ]),
         mockProvider(LoaderService),
         mockProvider(DialogService),
@@ -96,7 +96,7 @@ describe('TruecommandConnectModalComponent', () => {
       beforeEach(() => {
         spectator = createComponent();
         loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-        api = spectator.inject(TypedApiService);
+        api = spectator.inject(ApiService);
       });
 
       it(`it has title '${expectedTitle}'`, async () => {
@@ -138,7 +138,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('disables the submit button when the API key is empty while enabled', async () => {
@@ -214,7 +214,7 @@ describe('TruecommandConnectModalComponent', () => {
     beforeEach(() => {
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {
@@ -259,7 +259,7 @@ describe('TruecommandConnectModalComponent', () => {
       jest.spyOn(dialogServiceMock, 'generalDialog').mockReturnValue(of(true));
 
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      api = spectator.inject(TypedApiService);
+      api = spectator.inject(ApiService);
     });
 
     it('sends an update payload', async () => {

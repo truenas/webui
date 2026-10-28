@@ -8,9 +8,9 @@ import { Store, StoreModule } from '@ngrx/store';
 import { CallResponse } from '@truenas/api-client';
 import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
 import { Alert } from 'app/interfaces/alert.interface';
@@ -24,8 +24,8 @@ import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { EmailFormComponent } from 'app/pages/system/general-settings/email/email-form/email-form.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -76,7 +76,7 @@ const dismissedAlerts = [
 
 describe('AlertsPanelComponent', () => {
   let spectator: Spectator<AlertsPanelComponent>;
-  let api: TypedApiService;
+  let api: ApiService;
   let alertPanel: AlertsPanelPageObject;
 
   const createComponent = createComponentFactory({
@@ -111,10 +111,10 @@ describe('AlertsPanelComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('alert.list', [...unreadAlerts, ...dismissedAlerts] as unknown as AlertEntry[]),
-        mockTypedCall('alert.dismiss', null),
-        mockTypedCall('alert.restore', null),
+      mockApi([
+        mockCall('alert.list', [...unreadAlerts, ...dismissedAlerts] as unknown as AlertEntry[]),
+        mockCall('alert.dismiss', null),
+        mockCall('alert.restore', null),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(FormSidePanelService),
@@ -139,7 +139,7 @@ describe('AlertsPanelComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
 
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     alertPanel = new AlertsPanelPageObject(spectator);
 
     spectator.detectChanges();
@@ -367,7 +367,7 @@ describe('AlertsPanelComponent', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
     await spectator.fixture.whenStable();
 
-    const websocketMock = spectator.inject(MockTypedApiService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitEvent('alert.list', {
       msg: 'added',
       id: 1,
@@ -389,7 +389,7 @@ describe('AlertsPanelComponent', () => {
     spectator.inject(Store).dispatch(adminUiInitialized());
     await spectator.fixture.whenStable();
 
-    const websocketMock = spectator.inject(MockTypedApiService);
+    const websocketMock = spectator.inject(MockApiService);
     websocketMock.emitEvent('alert.list', {
       msg: 'changed',
       id: 1,

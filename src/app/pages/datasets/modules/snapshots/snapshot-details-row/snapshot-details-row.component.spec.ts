@@ -6,17 +6,17 @@ import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -25,7 +25,7 @@ import { fakeZfsSnapshot } from 'app/pages/datasets/modules/snapshots/testing/sn
 describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   /** What `pool.dataset.query` answers when asked which datasets have this snapshot as their origin. */
   let clonesOfSnapshot: WebUiQueryEntity<'pool.dataset.query'>[] = [];
   /** What `hasRole` answers for `SNAPSHOT_WRITE`. */
@@ -48,12 +48,12 @@ describe('SnapshotDetailsRowComponent', () => {
         confirm: jest.fn(() => of(true)),
         confirmDelete: jest.fn((options: ConfirmDeleteCallOptions) => options.call()),
       }),
-      mockTypedApi([
-        mockTypedQuery('pool.snapshot.query', [fakeZfsSnapshot as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
-        mockTypedQuery('pool.dataset.query', []),
-        mockTypedCall('pool.snapshot.hold', null),
-        mockTypedCall('pool.snapshot.release', null),
-        mockTypedCall('pool.snapshot.delete', null),
+      mockApi([
+        mockQuery('pool.snapshot.query', [fakeZfsSnapshot as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
+        mockQuery('pool.dataset.query', []),
+        mockCall('pool.snapshot.hold', null),
+        mockCall('pool.snapshot.release', null),
+        mockCall('pool.snapshot.delete', null),
       ]),
     ],
   });
@@ -65,11 +65,11 @@ describe('SnapshotDetailsRowComponent', () => {
       },
       detectChanges: false,
     });
-    spectator.inject(MockTypedApiService).mockQuery('pool.dataset.query', clonesOfSnapshot);
+    spectator.inject(MockApiService).mockQuery('pool.dataset.query', clonesOfSnapshot);
     spectator.inject(MockAuthService).hasRole.mockReturnValue(of(hasSnapshotWrite));
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('renders details rows', async () => {
@@ -187,6 +187,6 @@ describe('SnapshotDetailsRowComponent', () => {
       successMessage: 'Snapshot deleted.',
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
   });
 });

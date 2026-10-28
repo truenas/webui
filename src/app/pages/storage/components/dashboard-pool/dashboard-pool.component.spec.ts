@@ -7,15 +7,15 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DashboardPoolComponent } from 'app/pages/storage/components/dashboard-pool/dashboard-pool.component';
 import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-pool/disk-health-card/disk-health-card.component';
 import {
@@ -66,10 +66,10 @@ describe('DashboardPoolComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockTypedApi([
-        mockTypedQuery('disk.query', []),
-        mockTypedCall('pool.upgrade', null),
-        mockTypedJob('pool.expand', { state: JobState.Success }),
+      mockApi([
+        mockQuery('disk.query', []),
+        mockCall('pool.upgrade', null),
+        mockJob('pool.expand', { state: JobState.Success }),
       ]),
       mockAuth(),
     ],
@@ -113,7 +113,7 @@ describe('DashboardPoolComponent', () => {
       title: helptextVolumes.expandPoolDialog.title,
       message: helptextVolumes.expandPoolDialog.message,
     });
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.expand', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 
@@ -137,7 +137,7 @@ describe('DashboardPoolComponent', () => {
     await upgradeButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.upgrade', [pool.id]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
   });
 

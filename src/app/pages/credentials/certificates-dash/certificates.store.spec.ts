@@ -1,9 +1,9 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
-import { mockTypedApi, mockTypedQuery, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockQuery, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { Certificate } from 'app/interfaces/certificate.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { CertificatesStore } from 'app/pages/credentials/certificates-dash/certificates.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -30,8 +30,8 @@ describe('CertificatesStore', () => {
   const createService = createServiceFactory({
     service: CertificatesStore,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('certificate.query', allCertificates as unknown as WebUiQueryEntity<'certificate.query'>[]),
+      mockApi([
+        mockQuery('certificate.query', allCertificates as unknown as WebUiQueryEntity<'certificate.query'>[]),
       ]),
     ],
   });
@@ -51,19 +51,19 @@ describe('CertificatesStore', () => {
   it('should call certificate.query when loadCertificates is called', () => {
     spectator.service.loadCertificates();
 
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('certificate.query');
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('certificate.query');
   });
 
   it('should filter certificates where certificate !== null', async () => {
     spectator.service.loadCertificates();
-    await settleTypedApi();
+    await settleApi();
 
     expect(spectator.service.certificates()).toEqual(certificates);
   });
 
   it('should filter CSRs where CSR !== null', async () => {
     spectator.service.loadCertificates();
-    await settleTypedApi();
+    await settleApi();
 
     expect(spectator.service.csrs()).toEqual(csrs);
   });
@@ -71,7 +71,7 @@ describe('CertificatesStore', () => {
   describe('loading state', () => {
     it('should set isLoading to true while fetching', () => {
       const delayedResponse$ = new Subject<WebUiQueryEntity<'certificate.query'>[]>();
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(delayedResponse$);
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(delayedResponse$);
 
       spectator.service.loadCertificates();
 
@@ -85,7 +85,7 @@ describe('CertificatesStore', () => {
 
     it('should set isLoading to false after fetch completes', async () => {
       spectator.service.loadCertificates();
-      await settleTypedApi();
+      await settleApi();
 
       expect(spectator.service.isLoading()).toBe(false);
       expect(spectator.service.certificates()).toEqual(certificates);
@@ -95,7 +95,7 @@ describe('CertificatesStore', () => {
   describe('error handling', () => {
     it('should show error modal when API fails', () => {
       const error = new Error('Failed to load certificates');
-      jest.spyOn(spectator.inject(TypedApiService), 'query').mockReturnValue(
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(
         throwError(() => error),
       );
       const errorHandler = spectator.inject(ErrorHandlerService);

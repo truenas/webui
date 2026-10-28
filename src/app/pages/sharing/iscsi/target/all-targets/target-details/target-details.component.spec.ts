@@ -1,8 +1,8 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -20,7 +20,7 @@ import { TargetDetailsComponent } from './target-details.component';
 
 describe('TargetDetailsComponent', () => {
   let spectator: Spectator<TargetDetailsComponent>;
-  let mockApiService: MockTypedApiService;
+  let mockApiService: MockApiService;
 
   const mockPort = {
     id: 1,
@@ -40,14 +40,14 @@ describe('TargetDetailsComponent', () => {
       ),
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('fcport.query', [mockPort]),
-        mockTypedCall('fcport.status', []),
-        mockTypedQuery('iscsi.extent.query', []),
-        mockTypedQuery('iscsi.targetextent.query', []),
-        mockTypedQuery('iscsi.global.sessions', []),
-        mockTypedQuery('iscsi.target.query', []),
-        mockTypedQuery('iscsi.initiator.query', []),
+      mockApi([
+        mockQuery('fcport.query', [mockPort]),
+        mockCall('fcport.status', []),
+        mockQuery('iscsi.extent.query', []),
+        mockQuery('iscsi.targetextent.query', []),
+        mockQuery('iscsi.global.sessions', []),
+        mockQuery('iscsi.target.query', []),
+        mockQuery('iscsi.initiator.query', []),
       ]),
     ],
   });
@@ -63,7 +63,7 @@ describe('TargetDetailsComponent', () => {
       },
     });
 
-    mockApiService = spectator.inject(MockTypedApiService);
+    mockApiService = spectator.inject(MockApiService);
   });
 
   it('renders AuthorizedNetworksCardComponent if target has authorized networks', () => {

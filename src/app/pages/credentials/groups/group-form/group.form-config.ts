@@ -16,7 +16,7 @@ import { Privilege, PrivilegeUpdate, toPrivilege } from 'app/interfaces/privileg
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { forbiddenValues } from 'app/modules/forms/ix-forms/validators/forbidden-values-validation/forbidden-values-validation';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { groupAdded, groupChanged } from 'app/pages/credentials/groups/store/group.actions';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
@@ -49,7 +49,7 @@ export interface GroupFormValue {
  * `editingGroup` (the closure) rather than `event.isEdit`.
  */
 export function getGroupFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   store$: Store<AppState>,
   editingGroup: Group | undefined,
@@ -220,7 +220,7 @@ function groupNameInUseValidator(
 
 /** Adds the group to newly-selected privileges and removes it from de-selected ones. */
 function togglePrivilegesForGroup(
-  api: TypedApiService,
+  api: ApiService,
   privileges: Privilege[],
   initialPrivilegeIds: number[],
   groupId: number,

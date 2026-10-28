@@ -5,14 +5,14 @@ import {
   TnButtonHarness, TnIconButtonHarness, TnSlideToggleHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ConfirmDeleteCallOptions } from 'app/interfaces/dialog.interface';
 import { ReportingExporter, ReportingExporterKey } from 'app/interfaces/reporting-exporters.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReportingExportersFormComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-form/reporting-exporters-form.component';
 import { ReportingExporterListComponent } from 'app/pages/reports-dashboard/components/exporters/reporting-exporters-list/reporting-exporters-list.component';
 
@@ -38,10 +38,10 @@ describe('ReportingExportersListComponent', () => {
     component: ReportingExporterListComponent,
     imports: [],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('reporting.exporters.query', exporters),
-        mockTypedCall('reporting.exporters.delete', null),
-        mockTypedCall('reporting.exporters.update', null),
+      mockApi([
+        mockQuery('reporting.exporters.query', exporters),
+        mockCall('reporting.exporters.delete', null),
+        mockCall('reporting.exporters.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -94,14 +94,14 @@ describe('ReportingExportersListComponent', () => {
       call: expect.any(Function),
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.delete', [1]);
   });
 
   it('updates a reporting exporter when Enabled toggle is toggled', async () => {
     const toggle = await loader.getHarness(TnSlideToggleHarness);
     await toggle.toggle();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('reporting.exporters.update', [
       1,
       { enabled: false },
     ]);

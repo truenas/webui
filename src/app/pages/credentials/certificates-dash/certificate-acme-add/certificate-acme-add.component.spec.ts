@@ -6,15 +6,15 @@ import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CertificateCreateType } from 'app/enums/certificate-create-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   CertificateAcmeAddComponent,
 } from 'app/pages/credentials/certificates-dash/certificate-acme-add/certificate-acme-add.component';
@@ -54,12 +54,12 @@ describe('CertificateAcmeAddComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('certificate.acme_server_choices', {
+      mockApi([
+        mockCall('certificate.acme_server_choices', {
           'https://acme-staging-v02.api.letsencrypt.org/directory': "Let's Encrypt Staging Directory",
           'https://acme-v02.api.letsencrypt.org/directory': "Let's Encrypt Production Directory",
         }),
-        mockTypedQuery('acme.dns.authenticator.query', [
+        mockQuery('acme.dns.authenticator.query', [
           {
             id: 1,
             name: 'cloudflare',
@@ -69,8 +69,8 @@ describe('CertificateAcmeAddComponent', () => {
             name: 'route53',
           },
         ] as unknown as WebUiQueryEntity<'acme.dns.authenticator.query'>[]),
-        mockTypedJob('certificate.create', { state: JobState.Success }),
-        mockTypedCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
+        mockJob('certificate.create', { state: JobState.Success }),
+        mockCall('webui.crypto.get_certificate_domain_names', ['DNS:truenas.com', 'DNS:truenas.io']),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -94,7 +94,7 @@ describe('CertificateAcmeAddComponent', () => {
 
     expect(spectator.fixture.nativeElement.textContent).toContain('DNS:truenas.com');
     expect(spectator.fixture.nativeElement.textContent).toContain('DNS:truenas.io');
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.crypto.get_certificate_domain_names', [2]);
   });
 
   it('creates an ACME certificate when form is submitted', async () => {
@@ -109,7 +109,7 @@ describe('CertificateAcmeAddComponent', () => {
     await spectator.fixture.whenStable();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory',
@@ -141,7 +141,7 @@ describe('CertificateAcmeAddComponent', () => {
     await spectator.fixture.whenStable();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'certificate.create',
       [{
         acme_directory_uri: 'https://acme-staging-v02.api.letsencrypt.org/directory-custom',

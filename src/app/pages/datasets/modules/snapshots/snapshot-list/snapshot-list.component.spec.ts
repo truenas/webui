@@ -10,8 +10,8 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -46,9 +46,9 @@ describe('SnapshotListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('pool.snapshot.query', fakeZfsSnapshotDataSource as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
-        mockTypedCall('pool.snapshot.delete', null),
+      mockApi([
+        mockQuery('pool.snapshot.query', fakeZfsSnapshotDataSource as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
+        mockCall('pool.snapshot.delete', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -422,7 +422,7 @@ describe('SnapshotListComponent — paging', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([mockTypedQuery('pool.snapshot.query', manySnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[])]),
+      mockApi([mockQuery('pool.snapshot.query', manySnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[])]),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
       provideMockStore({
@@ -557,7 +557,7 @@ describe('SnapshotListComponent — paging on a dataset route', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([mockTypedQuery('pool.snapshot.query', childSnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[])]),
+      mockApi([mockQuery('pool.snapshot.query', childSnapshots as unknown as WebUiQueryEntity<'pool.snapshot.query'>[])]),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
       provideMockStore({

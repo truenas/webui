@@ -9,10 +9,10 @@ import {
 } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialogHarness, TnInputHarness, TnTableHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerRemote, ContainerType } from 'app/enums/container.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SelectImageDialog } from 'app/pages/containers/components/container-wizard/select-image-dialog/select-image-dialog.component';
 
 const imageChoices: CallResponse<WebUiApiDirectory, 'container.image.query_registry'> = [
@@ -34,7 +34,7 @@ describe('SelectImageDialogComponent', () => {
     component: SelectImageDialog,
     imports: [ReactiveFormsModule],
     providers: [
-      mockTypedApi([mockTypedCall('container.image.query_registry', imageChoices)]),
+      mockApi([mockCall('container.image.query_registry', imageChoices)]),
       mockProvider(DialogRef),
       {
         provide: DIALOG_DATA,
@@ -58,7 +58,7 @@ describe('SelectImageDialogComponent', () => {
     });
 
     it('loads image choices', () => {
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
         'container.image.query_registry',
         [],
       );

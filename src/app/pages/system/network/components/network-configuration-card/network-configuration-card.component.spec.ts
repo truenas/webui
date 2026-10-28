@@ -5,16 +5,16 @@ import {
 } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { NetworkActivityType } from 'app/enums/network-activity-type.enum';
 import { NetworkConfiguration } from 'app/interfaces/network-configuration.interface';
 import { NetworkSummary } from 'app/interfaces/network-summary.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { NetworkConfigurationComponent } from 'app/pages/system/network/components/network-configuration/network-configuration.component';
 import { NetworkConfigurationCardComponent } from 'app/pages/system/network/components/network-configuration-card/network-configuration-card.component';
 
@@ -47,9 +47,9 @@ describe('NetworkConfigurationCardComponent', () => {
       CastPipe,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('network.configuration.config', configuration as unknown as CallResponse<WebUiApiDirectory, 'network.configuration.config'>),
-        mockTypedCall('network.general.summary', {
+      mockApi([
+        mockCall('network.configuration.config', configuration as unknown as CallResponse<WebUiApiDirectory, 'network.configuration.config'>),
+        mockCall('network.general.summary', {
           default_routes: ['192.168.1.1', 'fe80::a00:27ff:fe09:c274'],
           nameservers: ['8.8.8.8', '8.8.4.4', '8.8.1.1'],
         } as NetworkSummary),
@@ -68,7 +68,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('loads network summary and config when component is initialized', () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
 
     expect(api.call).toHaveBeenCalledWith('network.general.summary');
     expect(api.call).toHaveBeenCalledWith('network.configuration.config');
@@ -134,7 +134,7 @@ describe('NetworkConfigurationCardComponent', () => {
   });
 
   it('correctly shows cases when only some outbound network activity is denied', async () => {
-    const mockedApi = spectator.inject(MockTypedApiService);
+    const mockedApi = spectator.inject(MockApiService);
     mockedApi.mockCall('network.configuration.config', {
       ...configuration,
       activity: {

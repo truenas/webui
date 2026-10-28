@@ -7,8 +7,8 @@ import {
   catchError, filter, map, switchMap,
 } from 'rxjs/operators';
 import { toGroup } from 'app/interfaces/group.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   groupPageEntered,
   groupRemoved,
@@ -22,7 +22,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
 @Injectable()
 export class GroupEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
 

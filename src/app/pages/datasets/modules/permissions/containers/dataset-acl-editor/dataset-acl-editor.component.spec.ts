@@ -12,9 +12,9 @@ import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { firstValueFrom, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclType } from 'app/enums/acl-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
@@ -74,7 +74,7 @@ class ValidatingNfsAceStubComponent implements OnChanges {
 
 describe('DatasetAclEditorComponent', () => {
   let spectator: SpectatorRouting<DatasetAclEditorComponent>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
   let tnDialog: TnDialog;
   let loader: HarnessLoader;
   const acl = {
@@ -110,13 +110,13 @@ describe('DatasetAclEditorComponent', () => {
     StorageService,
     DatasetAclEditorStore,
     mockProvider(DialogService),
-    mockTypedApi([
-      mockTypedCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
-      mockTypedCall('filesystem.stat', {
+    mockApi([
+      mockCall('filesystem.getacl', acl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
+      mockCall('filesystem.stat', {
         user: 'john',
         group: 'johns',
       } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
-      mockTypedJob('filesystem.setacl', { state: JobState.Success }),
+      mockJob('filesystem.setacl', { state: JobState.Success }),
     ]),
     mockProvider(UserService, {
       userQueryDsCache: () => of(),
@@ -160,7 +160,7 @@ describe('DatasetAclEditorComponent', () => {
   describe('empty return URL', () => {
     beforeEach(async () => {
       spectator = createComponent();
-      api = spectator.inject(MockTypedApiService);
+      api = spectator.inject(MockApiService);
       tnDialog = spectator.inject(TnDialog);
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);

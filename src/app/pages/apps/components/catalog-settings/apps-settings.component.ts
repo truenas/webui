@@ -28,7 +28,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { UrlValidationService } from 'app/modules/forms/ix-forms/validators/url-validation.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -80,7 +80,7 @@ type AppsSettingsFormValue = ReturnType<ReturnType<typeof createAppsSettingsForm
 })
 export class AppsSettingsComponent extends IxFormHostForm<boolean, AppsSettingsFormValue> implements OnInit {
   private dockerStore = inject(DockerStore);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);

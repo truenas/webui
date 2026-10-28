@@ -1,21 +1,21 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, DashboardEnclosureElements, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { DiskTemperatureService } from 'app/services/disk-temperature.service';
 
 describe('DiskTemperatureService', () => {
   let spectator: SpectatorService<DiskTemperatureService>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createService = createServiceFactory({
     service: DiskTemperatureService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('disk.temperatures', null),
-        mockTypedCall('webui.enclosure.dashboard', [
+      mockApi([
+        mockCall('disk.temperatures', null),
+        mockCall('webui.enclosure.dashboard', [
           {
             elements: {
               [EnclosureElementType.ArrayDeviceSlot]: {
@@ -32,7 +32,7 @@ describe('DiskTemperatureService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('checks if getTemperature made websocket calls"', async () => {

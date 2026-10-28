@@ -8,17 +8,17 @@ import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxPermissionsComponent } from 'app/modules/forms/controls/ix-permissions/ix-permissions.component';
 import {
   WithManageCertificatesLinkComponent,
 } from 'app/modules/forms/controls/with-manage-certificates-link/with-manage-certificates-link.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceFtpComponent } from 'app/pages/services/components/service-ftp/service-ftp.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
@@ -101,12 +101,12 @@ describe('ServiceFtpComponent', () => {
       WithManageCertificatesLinkComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('ftp.config', {
+      mockApi([
+        mockCall('ftp.config', {
           ...existingFtpConfig,
           id: 1,
         }),
-        mockTypedCall('ftp.update', {} as FtpConfig),
+        mockCall('ftp.update', {} as FtpConfig),
       ]),
       mockProvider(SystemGeneralService, {
         getCertificates: () => of([
@@ -136,7 +136,7 @@ describe('ServiceFtpComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    spectator.inject(MockTypedApiService).mockCallError('ftp.config');
+    spectator.inject(MockApiService).mockCallError('ftp.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
@@ -153,7 +153,7 @@ describe('ServiceFtpComponent', () => {
   });
 
   it('loads and shows current settings for FTP service', async () => {
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('ftp.config');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.config');
 
     expect(await (await getInput('port')).getValue()).toBe('21');
     expect(await (await getInput('clients')).getValue()).toBe('5');
@@ -223,7 +223,7 @@ describe('ServiceFtpComponent', () => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('ftp.update', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
       ...existingFtpConfig,
       tls_opt_ip_address_required: true,
       anonuserdlbw: 5,

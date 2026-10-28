@@ -5,16 +5,16 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { ConfirmDeleteJobOptions } from 'app/interfaces/dialog.interface';
 import { Tunable } from 'app/interfaces/tunable.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
 import { TunableCardComponent } from './tunable-card.component';
 
@@ -45,12 +45,12 @@ describe('TunableCardComponent', () => {
   const createComponent = createComponentFactory({
     component: TunableCardComponent,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('tunable.query', items as unknown as WebUiQueryEntity<'tunable.query'>[]),
-        mockTypedJob('tunable.delete', { state: JobState.Success }),
-        mockTypedJob('tunable.create', { state: JobState.Success }),
-        mockTypedJob('tunable.update', { state: JobState.Success }),
-        mockTypedCall('tunable.tunable_type_choices', {
+      mockApi([
+        mockQuery('tunable.query', items as unknown as WebUiQueryEntity<'tunable.query'>[]),
+        mockJob('tunable.delete', { state: JobState.Success }),
+        mockJob('tunable.create', { state: JobState.Success }),
+        mockJob('tunable.update', { state: JobState.Success }),
+        mockCall('tunable.tunable_type_choices', {
           SYSCTL: 'SYSCTL',
           UDEV: 'UDEV',
         } as unknown as CallResponse<WebUiApiDirectory, 'tunable.tunable_type_choices'>),
@@ -129,6 +129,6 @@ describe('TunableCardComponent', () => {
       successMessage: 'Variable deleted.',
     });
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('tunable.delete', [1]);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('tunable.delete', [1]);
   });
 });

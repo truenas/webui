@@ -5,12 +5,12 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SaveDebugButtonComponent } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.component';
 import { DownloadService } from 'app/services/download.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
@@ -20,8 +20,8 @@ describe('SaveDebugButtonComponent', () => {
   const createComponent = createComponentFactory({
     component: SaveDebugButtonComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('core.download', [45, 'http://localhost/download/url']),
+      mockApi([
+        mockCall('core.download', [45, 'http://localhost/download/url']),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -61,7 +61,7 @@ describe('SaveDebugButtonComponent', () => {
     await saveButton.click();
 
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).call)
+    expect(spectator.inject(ApiService).call)
       .toHaveBeenCalledWith('core.download', ['system.debug', [], expect.stringMatching(/^debug-truenas-\d{14}\.tgz$/), true]);
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(DownloadService).downloadUrl).toHaveBeenCalledWith(

@@ -15,8 +15,8 @@ import {
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AuditEntry } from 'app/interfaces/audit/audit.interface';
@@ -43,7 +43,7 @@ const auditEntryRows = auditEntries as unknown as CallResponse<WebUiApiDirectory
 describe('AuditComponent', () => {
   let spectator: Spectator<AuditComponent>;
   let loader: HarnessLoader;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   function getAuditQueryParams(): AuditQueryParams[] {
     return api.call.mock.calls
@@ -83,9 +83,9 @@ describe('AuditComponent', () => {
         parseUrlOptions: () => ({}),
         setUrlOptions: jest.fn(),
       }),
-      mockTypedApi([
-        mockTypedQuery('user.query', []),
-        mockTypedCall('audit.query', ([params]) => (params?.['query-options']?.count ? 2 : auditEntryRows)),
+      mockApi([
+        mockQuery('user.query', []),
+        mockCall('audit.query', ([params]) => (params?.['query-options']?.count ? 2 : auditEntryRows)),
       ]),
       provideMockStore({
         selectors: [
@@ -110,7 +110,7 @@ describe('AuditComponent', () => {
 
   beforeEach(async () => {
     spectator = createComponent();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     // The typed double answers on a microtask. Detect changes automatically, so the fake progress
     // bar sees the load finish and stops its timer; otherwise the fixture never settles.

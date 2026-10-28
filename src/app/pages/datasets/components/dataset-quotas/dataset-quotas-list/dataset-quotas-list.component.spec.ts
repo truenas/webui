@@ -5,11 +5,11 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
-  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockCall, mockQuery, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -20,8 +20,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
@@ -55,7 +55,7 @@ const fakeQuotas = [{
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
@@ -69,7 +69,7 @@ describe('DatasetQuotasListComponent', () => {
         withLoader: jest.fn(() => pipe()),
       }),
       mockProvider(FormErrorHandlerService),
-      mockProvider(TypedApiService),
+      mockProvider(ApiService),
       mockProvider(IxFormatterService, {
         convertBytesToHumanReadable: jest.fn(() => '500 KiB'),
       }),
@@ -91,10 +91,10 @@ describe('DatasetQuotasListComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockTypedApi([
+      mockApi([
         // Not a `.query` method, but it has an entity, so the fake answers it as one.
-        mockTypedQuery('pool.dataset.get_quota', fakeQuotas as unknown as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
-        mockTypedCall('pool.dataset.set_quota', null),
+        mockQuery('pool.dataset.get_quota', fakeQuotas as unknown as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
+        mockCall('pool.dataset.set_quota', null),
       ]),
       mockAuth(),
     ],
@@ -103,7 +103,7 @@ describe('DatasetQuotasListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     table = await loader.getHarness(TnTableHarness);
   });
 
@@ -179,12 +179,12 @@ describe('DatasetQuotasListComponent', () => {
 
     // After the removal middleware lists no invalid quota. The fake does not apply the filter,
     // so it is given no rows at all for the reload.
-    spectator.inject(MockTypedApiService).mockQuery('pool.dataset.get_quota', []);
+    spectator.inject(MockApiService).mockQuery('pool.dataset.get_quota', []);
     await removeButton.click();
     // Removal, the reload and the invalid-quota check are three answers, one after another.
-    await settleTypedApi();
-    await settleTypedApi();
-    await settleTypedApi();
+    await settleApi();
+    await settleApi();
+    await settleApi();
     spectator.detectChanges();
 
     expect(api.call).toHaveBeenCalledWith(

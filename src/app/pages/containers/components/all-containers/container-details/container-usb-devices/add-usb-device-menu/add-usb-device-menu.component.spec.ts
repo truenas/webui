@@ -4,12 +4,12 @@ import { signal } from '@angular/core';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerStatus, ContainerType } from 'app/enums/container.enum';
 import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddUsbDeviceMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-usb-devices/add-usb-device-menu/add-usb-device-menu.component';
@@ -66,9 +66,9 @@ describe('AddUsbDeviceMenuComponent', () => {
       component: AddUsbDeviceMenuComponent,
       providers: [
         mockAuth(),
-        mockTypedApi([
-          mockTypedCall('container.device.usb_choices', usbChoices),
-          mockTypedCall('container.device.create', null),
+        mockApi([
+          mockCall('container.device.usb_choices', usbChoices),
+          mockCall('container.device.create', null),
         ]),
         mockProvider(ContainersStore, {
           selectedContainer,
@@ -110,7 +110,7 @@ describe('AddUsbDeviceMenuComponent', () => {
       const submenu = await openSubmenu(spectator, loader, 'Card Reader');
       await submenu.clickItem({ label: 'By physical port' });
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 123,
         attributes: {
           dtype: ContainerDeviceType.Usb,
@@ -126,7 +126,7 @@ describe('AddUsbDeviceMenuComponent', () => {
       const submenu = await openSubmenu(spectator, loader, 'Card Reader');
       await submenu.clickItem({ label: 'By vendor and product ID' });
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 123,
         attributes: {
           dtype: ContainerDeviceType.Usb,
@@ -147,8 +147,8 @@ describe('AddUsbDeviceMenuComponent', () => {
       component: AddUsbDeviceMenuComponent,
       providers: [
         mockAuth(),
-        mockTypedApi([
-          mockTypedCall('container.device.usb_choices', usbChoices),
+        mockApi([
+          mockCall('container.device.usb_choices', usbChoices),
         ]),
         mockProvider(ContainersStore, {
           selectedContainer,
@@ -195,8 +195,8 @@ describe('AddUsbDeviceMenuComponent', () => {
         component: AddUsbDeviceMenuComponent,
         providers: [
           mockAuth(),
-          mockTypedApi([
-            mockTypedCall('container.device.usb_choices', {
+          mockApi([
+            mockCall('container.device.usb_choices', {
               usb_1_2: {
                 capability: { vendor_id: '0x0781', product_id: '0x0002', product: 'Card Reader' },
                 available: true,
@@ -233,8 +233,8 @@ describe('AddUsbDeviceMenuComponent', () => {
       component: AddUsbDeviceMenuComponent,
       providers: [
         mockAuth(),
-        mockTypedApi([
-          mockTypedCall('container.device.usb_choices', {}),
+        mockApi([
+          mockCall('container.device.usb_choices', {}),
         ]),
         mockProvider(ContainersStore, {
           selectedContainer,

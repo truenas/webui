@@ -3,8 +3,8 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { ReplaySubject } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { User } from 'app/interfaces/user.interface';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
@@ -19,7 +19,7 @@ describe('UserEffects', () => {
   const createService = createServiceFactory({
     service: UserEffects,
     providers: [
-      mockTypedApi([]),
+      mockApi([]),
       { provide: TranslateService, useValue: { instant: (key: string) => key } },
       provideMockActions(() => actions$),
     ],
@@ -36,7 +36,7 @@ describe('UserEffects', () => {
       spectator.service.subscribeToChanges$.subscribe((action) => dispatched.push(action));
       actions$.next(usersLoaded({ users: [] }));
 
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       const fields = { username: 'jane' } as WebUiQueryEntity<'user.query'>;
       api.emitEvent('user.query', {
         msg: 'added', id: 7, fields: { ...fields, password: 'secret' } as WebUiQueryEntity<'user.query'>,

@@ -16,7 +16,7 @@ import { SidePanelHostCloseable } from 'app/modules/slide-ins/side-panel-form.di
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
 import { SummarySection } from 'app/modules/summary/summary.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   CsrConstraintsComponent,
 } from 'app/pages/credentials/certificates-dash/csr-add/steps/csr-constraints/csr-constraints.component';
@@ -57,7 +57,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class CsrAddComponent implements SidePanelHostCloseable {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);

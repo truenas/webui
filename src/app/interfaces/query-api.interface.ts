@@ -34,7 +34,7 @@ export interface QueryOptions<T> {
    * The type cast `as unknown as Observable<T>` is required because TypeScript's
    * type system doesn't currently support conditional return types based on option values.
    *
-   * Future improvement: Consider adding method overloads to ApiService to eliminate
+   * Future improvement: Consider adding method overloads to the API service to eliminate
    * the need for type casting:
    * ```typescript
    * call<T>(method: string, params: [QueryFilter<T>[], { get: true }]): Observable<T>;

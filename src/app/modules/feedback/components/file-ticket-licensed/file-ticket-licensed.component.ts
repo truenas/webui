@@ -31,7 +31,7 @@ import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/for
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-file-ticket-licensed',
@@ -63,7 +63,7 @@ export class FileTicketLicensedComponent implements FeedbackForm {
   private imageValidator = inject(ImageValidatorService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private window = inject<Window>(WINDOW);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly dialogRef = input.required<DialogRef<unknown, FeedbackDialog>>();

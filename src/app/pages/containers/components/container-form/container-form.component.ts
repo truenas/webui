@@ -68,7 +68,7 @@ import {
 import {
   advancedModeFooterAction, SidePanelFooterAction,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SelectImageDialog,
   ContainerImageWithId,
@@ -107,7 +107,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   },
 })
 export class ContainerFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);

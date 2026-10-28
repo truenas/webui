@@ -4,14 +4,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnCardComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserPasswordCardComponent } from 'app/pages/credentials/users/all-users/user-details/user-password-card/user-password-card.component';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
 
@@ -31,7 +31,7 @@ const user = {
 describe('UserPasswordCardComponent', () => {
   let spectator: Spectator<UserPasswordCardComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const createComponent = createComponentFactory({
     component: UserPasswordCardComponent,
@@ -39,9 +39,9 @@ describe('UserPasswordCardComponent', () => {
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
       }),
-      mockTypedApi([
-        mockTypedCall('auth.generate_onetime_password', 'test-password'),
-        mockTypedCall('system.security.config', {
+      mockApi([
+        mockCall('auth.generate_onetime_password', 'test-password'),
+        mockCall('system.security.config', {
           enable_gpos_stig: false,
         } as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
       ]),
@@ -74,7 +74,7 @@ describe('UserPasswordCardComponent', () => {
       props: { user },
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('shows header', () => {

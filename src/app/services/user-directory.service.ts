@@ -10,8 +10,8 @@ import { Group } from 'app/interfaces/group.interface';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TypedQueryFilter, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserService } from 'app/services/user.service';
 
 /**
@@ -101,7 +101,7 @@ export const directoryPageSize = 50;
 @Injectable({ providedIn: 'root' })
 export class UserDirectoryService {
   private userService = inject(UserService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
 

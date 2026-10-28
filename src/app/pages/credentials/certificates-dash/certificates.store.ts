@@ -3,7 +3,7 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable, of, tap } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { Certificate, toCertificate } from 'app/interfaces/certificate.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface CertificatesState {
@@ -20,7 +20,7 @@ const initialState: CertificatesState = {
 
 @Injectable()
 export class CertificatesStore extends ComponentStore<CertificatesState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   readonly isLoading = computed(() => this.state().isLoading);

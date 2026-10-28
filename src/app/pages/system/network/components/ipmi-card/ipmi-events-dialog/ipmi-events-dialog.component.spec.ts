@@ -4,12 +4,12 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnEmptyHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { IpmiEvent } from 'app/interfaces/ipmi.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IpmiEventsDialog,
 } from 'app/pages/system/network/components/ipmi-card/ipmi-events-dialog/ipmi-events-dialog.component';
@@ -44,8 +44,8 @@ describe('IpmiEventsDialogComponent', () => {
     ],
     providers: [
       mockProvider(DialogRef),
-      mockTypedApi([
-        mockTypedJob('ipmi.sel.clear', { state: JobState.Success }),
+      mockApi([
+        mockJob('ipmi.sel.clear', { state: JobState.Success }),
       ]),
     ],
     detectChanges: false,
@@ -53,7 +53,7 @@ describe('IpmiEventsDialogComponent', () => {
 
   async function setupTest(listedEvents: IpmiEvent[]): Promise<void> {
     spectator = createComponent();
-    spectator.inject(MockTypedApiService).mockJob('ipmi.sel.elist', { state: JobState.Success, result: listedEvents });
+    spectator.inject(MockApiService).mockJob('ipmi.sel.elist', { state: JobState.Success, result: listedEvents });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     spectator.detectChanges();
     await spectator.fixture.whenStable();
@@ -66,7 +66,7 @@ describe('IpmiEventsDialogComponent', () => {
     });
 
     it('shows list of IPMI events', () => {
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('ipmi.sel.elist');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.elist');
 
       const events = spectator.queryAll('.event');
       expect(events).toHaveLength(2);
@@ -80,7 +80,7 @@ describe('IpmiEventsDialogComponent', () => {
       const clearButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clear' }));
       await clearButton.click();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('ipmi.sel.clear');
     });
   });
 

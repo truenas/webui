@@ -28,7 +28,7 @@ import {
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { isPasswordEncrypted, isEncryptionRoot } from 'app/pages/datasets/utils/dataset.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
@@ -77,7 +77,7 @@ interface EncryptionOptionsFormValue {
 })
 export class EncryptionOptionsDialog implements OnInit {
   private fb = inject(NonNullableFormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private dialog = inject(DialogService);

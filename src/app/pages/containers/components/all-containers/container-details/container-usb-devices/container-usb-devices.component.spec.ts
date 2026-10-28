@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { ContainerDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { AvailableUsb, ContainerDevice } from 'app/interfaces/container.interface';
 import {
@@ -56,8 +56,8 @@ describe('ContainerUsbDevicesComponent', () => {
       ),
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('container.device.usb_choices', {
+      mockApi([
+        mockCall('container.device.usb_choices', {
           usb_1_1: {
             capability: { vendor_id: '0x046d', product_id: '0x0825' },
             available: true,

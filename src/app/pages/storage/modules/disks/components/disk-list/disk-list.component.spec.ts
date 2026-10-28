@@ -11,10 +11,10 @@ import { MockComponent } from 'ng-mocks';
 import {
   NEVER, of, Subject, throwError,
 } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
@@ -29,8 +29,8 @@ import {
 import {
   TableDetailsRowComponent,
 } from 'app/modules/tn-table/components/table-details-row/table-details-row.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -152,9 +152,9 @@ describe('DiskListComponent', () => {
           },
         ],
       }),
-      mockTypedApi([
-        mockTypedQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
-        mockTypedCall('disk.details', { unused: [], used: fakeUsedDisks }),
+      mockApi([
+        mockQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
+        mockCall('disk.details', { unused: [], used: fakeUsedDisks }),
       ]),
     ],
   });
@@ -182,7 +182,7 @@ describe('DiskListComponent', () => {
   });
 
   it('leaves the SED status sweep to disk.details, so the drives are not probed twice at once', () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
 
     expect(api.call).toHaveBeenCalledWith('disk.details');
     expect(api.call).toHaveBeenCalledTimes(1);
@@ -199,7 +199,7 @@ describe('DiskListComponent', () => {
     const isProbe = (filters: unknown): boolean => Array.isArray(filters) && filters.length > 0;
 
     it('is probed only once the details sweep is done', async () => {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       const details$ = new Subject<DiskDetailsResponse>();
       const mockedCall = api.call.getMockImplementation()!;
       api.call.mockImplementation((method: string, params?: unknown) => {
@@ -222,7 +222,7 @@ describe('DiskListComponent', () => {
     });
 
     it('is probed too when disk.details returned it without a status', async () => {
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       api.mockQuery('disk.query', [...fakeDisks, missingDisk] as unknown as WebUiQueryEntity<'disk.query'>[]);
       api.mockCall('disk.details', {
         unused: [],
@@ -236,7 +236,7 @@ describe('DiskListComponent', () => {
 
     it('still lists every disk when the probe fails, and logs why', async () => {
       const consoleError = jest.spyOn(console, 'error').mockImplementation();
-      const api = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(MockApiService);
       api.query.mockImplementation((method: string, filters?: unknown) => (isProbe(filters)
         ? throwError(() => new Error('SP_BUSY'))
         : of([...fakeDisks, missingDisk])));
@@ -279,7 +279,7 @@ describe('DiskListComponent', () => {
   });
 
   it('keeps splitting letter-digit boundaries in row-action test ids, as lodash kebab-case did', async () => {
-    spectator.inject(MockTypedApiService).mockQuery(
+    spectator.inject(MockApiService).mockQuery(
       'disk.query',
       [{ ...fakeDisks[0], name: 'nvme0n1', devname: 'nvme0n1' }] as unknown as WebUiQueryEntity<'disk.query'>[],
     );
@@ -454,7 +454,7 @@ describe('DiskListComponent', () => {
     SedStatus.Uninitialized,
     SedStatus.Failed,
   ])('offers SED Reset but not Unlock for a %s SED disk', async (sedStatus) => {
-    spectator.inject(MockTypedApiService).mockCall('disk.details', {
+    spectator.inject(MockApiService).mockCall('disk.details', {
       unused: [],
       used: [{ name: 'sdc', devname: 'sdc', sed_status: sedStatus }] as DetailsDisk[],
     });
@@ -480,7 +480,7 @@ describe('DiskListComponent', () => {
   });
 
   it('reloads disks when edit form is saved', async () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     const formPanel = spectator.inject(FormSidePanelService);
 
     const mockUpd: DiskFormResponse = [{ identifier: 'identifier1', description: 'updated' }];
@@ -503,7 +503,7 @@ describe('DiskListComponent', () => {
   });
 
   it('reconciles the edited row immediately, without waiting for the reload', async () => {
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     const formPanel = spectator.inject(FormSidePanelService);
 
     const mockUpd: DiskFormResponse = [{ identifier: 'identifier1', pool: 'new-pool' }];
@@ -691,9 +691,9 @@ describe('DiskListComponent - without SED license', () => {
           },
         ],
       }),
-      mockTypedApi([
-        mockTypedQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
-        mockTypedCall('disk.details', { unused: [], used: [] }),
+      mockApi([
+        mockQuery('disk.query', fakeDisks as unknown as WebUiQueryEntity<'disk.query'>[]),
+        mockCall('disk.details', { unused: [], used: [] }),
       ]),
     ],
   });
@@ -712,7 +712,7 @@ describe('DiskListComponent - without SED license', () => {
   });
 
   it('offers no SED actions, even when disk.details reports a status', async () => {
-    const api = spectator.inject(MockTypedApiService);
+    const api = spectator.inject(MockApiService);
     api.mockQuery('disk.query', [{ ...fakeDisks[0], sed: true }] as unknown as WebUiQueryEntity<'disk.query'>[]);
     api.mockCall('disk.details', {
       unused: [],
@@ -728,7 +728,7 @@ describe('DiskListComponent - without SED license', () => {
   });
 
   it('does not probe a SED disk that disk.details left out', async () => {
-    const api = spectator.inject(MockTypedApiService);
+    const api = spectator.inject(MockApiService);
     api.mockQuery('disk.query', [{ ...fakeDisks[0], sed: true }] as unknown as WebUiQueryEntity<'disk.query'>[]);
     spectator = createComponent();
     await spectator.fixture.whenStable();
@@ -770,9 +770,9 @@ describe('DiskListComponent when the SED entitlement resolves late', () => {
           },
         ],
       }),
-      mockTypedApi([
-        mockTypedQuery('disk.query', []),
-        mockTypedCall('disk.details', { unused: [], used: [] }),
+      mockApi([
+        mockQuery('disk.query', []),
+        mockCall('disk.details', { unused: [], used: [] }),
       ]),
     ],
   });

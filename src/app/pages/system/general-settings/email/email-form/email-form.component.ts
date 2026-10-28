@@ -35,7 +35,7 @@ import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-vali
 import { portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { SidePanelFooterAction } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { selectProductType } from 'app/store/system-info/system-info.selectors';
@@ -62,7 +62,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class EmailFormComponent extends IxFormHostForm implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);

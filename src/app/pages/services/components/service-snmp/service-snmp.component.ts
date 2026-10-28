@@ -15,8 +15,8 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { emailValidator } from 'app/modules/forms/ix-forms/validators/email-validation/email-validation';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -76,7 +76,7 @@ type SnmpConfigUpdate = CallParams<WebUiApiDirectory, 'snmp.update'>[0];
 })
 export class ServiceSnmpComponent extends IxFormHostForm<boolean, SnmpFormValue> implements OnInit {
   private fb = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private validation = inject(IxValidatorsService);
   private translate = inject(TranslateService);
 

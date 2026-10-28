@@ -36,7 +36,7 @@ import {
   TableRelativeDateCellComponent,
 } from 'app/modules/tn-table-cells/relative-date-cell/table-relative-date-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudBackupRestoreFromSnapshotFormComponent } from 'app/pages/data-protection/cloud-backup/cloud-backup-details/cloud-backup-restore-form-snapshot-form/cloud-backup-restore-from-snapshot-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -62,7 +62,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class CloudBackupSnapshotsComponent implements OnChanges {
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialog = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);

@@ -17,7 +17,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { IxUserChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-chips.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-dataset-quota-add-form',
@@ -36,7 +36,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 })
 export class DatasetQuotaAddFormComponent extends IxFormHostForm {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
 
   /** Context supplied by the `<tn-side-panel>` host (via {@link FormSidePanelService}). */

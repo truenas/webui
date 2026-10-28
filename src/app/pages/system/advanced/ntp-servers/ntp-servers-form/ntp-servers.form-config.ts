@@ -6,10 +6,10 @@ import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-se
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { FormDefinition } from 'app/modules/forms/ix-forms/components/ix-form-renderer/form-definition.interface';
 import { greaterThanFg } from 'app/modules/forms/ix-forms/validators/validators';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export function getNtpServersFormConfig(
-  api: TypedApiService,
+  api: ApiService,
   translate: TranslateService,
   editingServer: NtpServer | undefined,
 ): FormDefinition<CreateNtpServer> {

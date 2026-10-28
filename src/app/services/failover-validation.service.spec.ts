@@ -3,14 +3,14 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   firstValueFrom, Observable, of, throwError,
 } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { FailoverDisabledReason } from 'app/enums/failover-disabled-reason.enum';
 import { FailoverStatus } from 'app/enums/failover-status.enum';
 import { JobState } from 'app/enums/job-state.enum';
-import { ApiEventTyped } from 'app/interfaces/api-message.interface';
+import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import {
@@ -19,7 +19,7 @@ import {
   FailoverValidationService,
 } from 'app/services/failover-validation.service';
 
-function vrrpMasterEvent(state: JobState): ApiEventTyped<'core.get_jobs'> {
+function vrrpMasterEvent(state: JobState): ApiEvent {
   return {
     id: 1,
     msg: CollectionChangeType.Changed,
@@ -35,15 +35,15 @@ function vrrpMasterEvent(state: JobState): ApiEventTyped<'core.get_jobs'> {
 
 describe('FailoverValidationService', () => {
   let spectator: SpectatorService<FailoverValidationService>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createService = createServiceFactory({
     service: FailoverValidationService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('failover.licensed', true),
-        mockTypedCall('failover.status', FailoverStatus.Master),
-        mockTypedCall('failover.disabled.reasons', []),
+      mockApi([
+        mockCall('failover.licensed', true),
+        mockCall('failover.status', FailoverStatus.Master),
+        mockCall('failover.disabled.reasons', []),
       ]),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
@@ -57,7 +57,7 @@ describe('FailoverValidationService', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
   afterEach(() => {
@@ -136,7 +136,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
 
       // Mock the job subscription
-      const mockJobEvent: ApiEventTyped<'core.get_jobs'> = {
+      const mockJobEvent: ApiEvent = {
         id: 1,
         msg: CollectionChangeType.Changed,
         collection: 'core.get_jobs',
@@ -163,7 +163,7 @@ describe('FailoverValidationService', () => {
       api.mockCall('failover.status', FailoverStatus.Master);
       api.mockCall('failover.disabled.reasons', [FailoverDisabledReason.LocFailoverOngoing]);
 
-      const mockFailedJobEvent: ApiEventTyped<'core.get_jobs'> = {
+      const mockFailedJobEvent: ApiEvent = {
         id: 1,
         msg: CollectionChangeType.Changed,
         collection: 'core.get_jobs',

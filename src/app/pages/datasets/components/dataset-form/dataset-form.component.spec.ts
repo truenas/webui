@@ -11,8 +11,8 @@ import { TnButtonHarness, TnIconTesting, TnMenuTesting } from '@truenas/ui-compo
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AclMode } from 'app/enums/acl-type.enum';
 import { DatasetPreset } from 'app/enums/dataset.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -27,8 +27,8 @@ import {
 } from 'app/modules/slide-ins/form-side-panel/form-side-panel-container.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
   EncryptionSectionComponent,
@@ -99,12 +99,12 @@ describe('DatasetFormComponent', () => {
       ),
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('sharing.smb.create', null),
-        mockTypedCall('sharing.nfs.create', null),
-        mockTypedCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockTypedCall('pool.dataset.update', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockTypedCall('filesystem.stat', { acl: true } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+      mockApi([
+        mockCall('sharing.smb.create', null),
+        mockCall('sharing.nfs.create', null),
+        mockCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
+        mockCall('pool.dataset.update', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
+        mockCall('filesystem.stat', { acl: true } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService, {
@@ -220,12 +220,12 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
       }]);
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/saved-id',
       }]);
 
@@ -243,7 +243,7 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
         purpose: SmbSharePurpose.MultiProtocolShare,
@@ -260,12 +260,12 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
         path: '/mnt/saved-id',
       }]);
 
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
         path: '/mnt/saved-id',
       }]);
 
@@ -279,7 +279,7 @@ describe('DatasetFormComponent', () => {
 
     it('maps a failed save onto the sections that own the fields', () => {
       const error = new Error('dataset already exists');
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(throwError(() => error));
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => error));
 
       save();
 
@@ -315,7 +315,7 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
         encryption: true,
         aclmode: AclMode.Passthrough,
@@ -328,7 +328,7 @@ describe('DatasetFormComponent', () => {
       toggleAdvanced();
       save();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         name: 'dataset',
         encryption: true,
         refquota: GiB,
@@ -343,7 +343,7 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/parent']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/parent']);
       expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(
         expect.objectContaining({
           title: helptextDatasetForm.afterSubmitDialog.title,
@@ -417,7 +417,7 @@ describe('DatasetFormComponent', () => {
     it('updates an existing child dataset when edit form is submitted', () => {
       save();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);
@@ -469,7 +469,7 @@ describe('DatasetFormComponent', () => {
 
       save();
 
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
     });
   });
 
@@ -492,7 +492,7 @@ describe('DatasetFormComponent', () => {
 
       save();
 
-      expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
     });
   });
 
@@ -520,7 +520,7 @@ describe('DatasetFormComponent', () => {
     it('updates an existing root dataset when edit form is submitted', () => {
       save();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
         name: 'dataset',
         aclmode: AclMode.Passthrough,
       }]);
@@ -542,9 +542,9 @@ describe('DatasetFormComponent hosted in the side panel', () => {
     TestBed.configureTestingModule({
       imports: [FormSidePanelContainerComponent, TranslateModule.forRoot()],
       providers: [
-        mockTypedApi([
-          mockTypedCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
-          mockTypedCall('filesystem.stat', { acl: false } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
+        mockApi([
+          mockCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
+          mockCall('filesystem.stat', { acl: false } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
         ]),
         ...ixFormTestingProviders(),
         mockProvider(DialogService, { confirm: jest.fn(() => of(false)) }),

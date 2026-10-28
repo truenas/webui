@@ -16,7 +16,7 @@ import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
 import {
   DeviceActionsMenuComponent,
@@ -52,7 +52,7 @@ export class ContainerNicDevicesComponent {
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
   private configStore = inject(ContainerConfigStore);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);

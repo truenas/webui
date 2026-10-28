@@ -12,7 +12,7 @@ import {
   CloudSyncOneDriveDrive,
 } from 'app/interfaces/cloudsync-credential.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   OauthProviderComponent,
 } from 'app/pages/credentials/backup-credentials/cloud-credentials-form/oauth-provider/oauth-provider.component';
@@ -41,7 +41,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
 
   private errorHandler = inject(ErrorHandlerService);
   private formBuilder = inject(NonNullableFormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 

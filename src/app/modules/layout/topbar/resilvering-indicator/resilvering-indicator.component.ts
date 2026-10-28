@@ -10,7 +10,7 @@ import { helptextTopbar } from 'app/helptext/topbar';
 import {
   ResilverProgressDialog,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-resilvering-indicator',
@@ -25,7 +25,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 })
 export class ResilveringIndicatorComponent {
   private tnDialog = inject(TnDialog);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   protected isResilvering$ = this.api.subscribe('pool.scan').pipe(
     map(poolScanFromEvent),

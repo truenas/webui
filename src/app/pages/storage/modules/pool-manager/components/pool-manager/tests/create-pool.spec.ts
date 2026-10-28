@@ -5,16 +5,16 @@ import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -39,9 +39,9 @@ describe('PoolManagerComponent – create pool', () => {
     ],
     providers: [
       ...commonProviders,
-      mockTypedApi([
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('pool.validate_name', true),
+        mockCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -141,9 +141,9 @@ describe('PoolManagerComponent – create pool', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockTypedQuery('enclosure2.query', []),
-        mockTypedQuery('pool.query', []),
-        mockTypedJob('pool.create', { state: JobState.Success }),
+        mockQuery('enclosure2.query', []),
+        mockQuery('pool.query', []),
+        mockJob('pool.create', { state: JobState.Success }),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -236,7 +236,7 @@ describe('PoolManagerComponent – create pool', () => {
     jest.spyOn(router, 'navigate').mockImplementation();
 
     await (await wizard.getCreatePoolButton()).click();
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
       'pool.create',
       [{
         name: 'pool1',
@@ -322,14 +322,14 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
       imports: [...commonImports],
       providers: [
         ...commonProvidersWithoutStore,
-        mockTypedApi([
-          mockTypedCall('pool.validate_name', true),
-          mockTypedCall('disk.details', { used: [], unused: sedDisks }),
-          mockTypedQuery('enclosure2.query', []),
-          mockTypedQuery('pool.query', []),
-          mockTypedCall('system.advanced.sed_global_password_is_set', false),
-          mockTypedCall('system.advanced.update', {} as CallResponse<WebUiApiDirectory, 'system.advanced.update'>),
-          mockTypedJob('pool.create', { state: JobState.Success }),
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: sedDisks }),
+          mockQuery('enclosure2.query', []),
+          mockQuery('pool.query', []),
+          mockCall('system.advanced.sed_global_password_is_set', false),
+          mockCall('system.advanced.update', {} as CallResponse<WebUiApiDirectory, 'system.advanced.update'>),
+          mockJob('pool.create', { state: JobState.Success }),
         ]),
         mockProvider(PoolWizardNameValidationService, {
           validatePoolName: () => of(null),
@@ -378,14 +378,14 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
       imports: [...commonImports],
       providers: [
         ...commonProvidersWithoutStore,
-        mockTypedApi([
-          mockTypedCall('pool.validate_name', true),
-          mockTypedCall('disk.details', { used: [], unused: sedDisks }),
-          mockTypedQuery('enclosure2.query', []),
-          mockTypedQuery('pool.query', []),
-          mockTypedCall('system.advanced.sed_global_password_is_set', true),
-          mockTypedCall('system.advanced.update', {} as CallResponse<WebUiApiDirectory, 'system.advanced.update'>),
-          mockTypedJob('pool.create', { state: JobState.Success }),
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: sedDisks }),
+          mockQuery('enclosure2.query', []),
+          mockQuery('pool.query', []),
+          mockCall('system.advanced.sed_global_password_is_set', true),
+          mockCall('system.advanced.update', {} as CallResponse<WebUiApiDirectory, 'system.advanced.update'>),
+          mockJob('pool.create', { state: JobState.Success }),
         ]),
         mockProvider(PoolWizardNameValidationService, {
           validatePoolName: () => of(null),
@@ -422,13 +422,13 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
       imports: [...commonImports],
       providers: [
         ...commonProvidersWithoutStore,
-        mockTypedApi([
-          mockTypedCall('pool.validate_name', true),
-          mockTypedCall('disk.details', { used: [], unused: sedDisks }),
-          mockTypedQuery('enclosure2.query', []),
-          mockTypedQuery('pool.query', []),
-          mockTypedCall('system.advanced.sed_global_password_is_set', false),
-          mockTypedJob('pool.create', { state: JobState.Success }),
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: sedDisks }),
+          mockQuery('enclosure2.query', []),
+          mockQuery('pool.query', []),
+          mockCall('system.advanced.sed_global_password_is_set', false),
+          mockJob('pool.create', { state: JobState.Success }),
         ]),
         mockProvider(PoolWizardNameValidationService, {
           validatePoolName: () => of(null),
@@ -484,13 +484,13 @@ describe('PoolManagerComponent – create pool with SED encryption', () => {
       imports: [...commonImports],
       providers: [
         ...commonProvidersWithoutStore,
-        mockTypedApi([
-          mockTypedCall('pool.validate_name', true),
-          mockTypedCall('disk.details', { used: [], unused: nonSedDisks }),
-          mockTypedQuery('enclosure2.query', []),
-          mockTypedQuery('pool.query', []),
-          mockTypedCall('system.advanced.sed_global_password_is_set', false),
-          mockTypedJob('pool.create', { state: JobState.Success }),
+        mockApi([
+          mockCall('pool.validate_name', true),
+          mockCall('disk.details', { used: [], unused: nonSedDisks }),
+          mockQuery('enclosure2.query', []),
+          mockQuery('pool.query', []),
+          mockCall('system.advanced.sed_global_password_is_set', false),
+          mockJob('pool.create', { state: JobState.Success }),
         ]),
         mockProvider(PoolWizardNameValidationService, {
           validatePoolName: () => of(null),

@@ -47,7 +47,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { accessCardElements } from 'app/pages/system/advanced/access/access-card/access-card.elements';
 import { getAccessFormConfig } from 'app/pages/system/advanced/access/access-form/access.form-config';
 import { EntitlementsService } from 'app/services/entitlements.service';
@@ -92,7 +92,7 @@ export class AccessCardComponent implements OnInit {
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private firstTimeWarning = inject(FirstTimeWarningService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);

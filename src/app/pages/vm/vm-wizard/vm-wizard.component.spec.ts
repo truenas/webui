@@ -13,15 +13,15 @@ import {
 import { MockComponent } from 'ng-mocks';
 import { NEVER, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import {
   VmBootloader, VmCpuMode, VmDeviceType, VmDiskMode, VmDisplayType, VmTime,
 } from 'app/enums/vm.enum';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { FreeSpaceValidatorService } from 'app/pages/vm/utils/free-space-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
 import { OsStepComponent } from 'app/pages/vm/vm-wizard/steps/1-os-step/os-step.component';
@@ -66,36 +66,36 @@ describe('VmWizardComponent', () => {
       mockProvider(GpuService),
       mockProvider(VmGpuService),
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('vm.create', { id: 4 } as CallResponse<WebUiApiDirectory, 'vm.create'>),
-        mockTypedQuery('vm.query', []),
-        mockTypedCall('vm.port_wizard', { port: 13669 } as CallResponse<WebUiApiDirectory, 'vm.port_wizard'>),
-        mockTypedCall('vm.device.create', null),
+      mockApi([
+        mockCall('vm.create', { id: 4 } as CallResponse<WebUiApiDirectory, 'vm.create'>),
+        mockQuery('vm.query', []),
+        mockCall('vm.port_wizard', { port: 13669 } as CallResponse<WebUiApiDirectory, 'vm.port_wizard'>),
+        mockCall('vm.device.create', null),
 
-        mockTypedCall('vm.bootloader_options', {
+        mockCall('vm.bootloader_options', {
           UEFI: 'UEFI',
         }),
-        mockTypedCall('vm.device.bind_choices', {
+        mockCall('vm.device.bind_choices', {
           '0.0.0.0': '0.0.0.0',
           '10.10.16.82': '10.10.16.82',
         }),
-        mockTypedCall('vm.cpu_model_choices', {
+        mockCall('vm.cpu_model_choices', {
           Pentium: 'Pentium',
         }),
-        mockTypedCall('vm.maximum_supported_vcpus', 27),
-        mockTypedCall('pool.filesystem_choices', [
+        mockCall('vm.maximum_supported_vcpus', 27),
+        mockCall('pool.filesystem_choices', [
           'poolio',
         ]),
-        mockTypedCall('vm.device.disk_choices', {
+        mockCall('vm.device.disk_choices', {
           '/dev/zvol/poolio/test-327brn': 'poolio/test-327brn',
         }),
-        mockTypedCall('vm.random_mac', '00:00:00:00:00:01'),
-        mockTypedCall('vm.device.nic_attach_choices', {
+        mockCall('vm.random_mac', '00:00:00:00:00:01'),
+        mockCall('vm.device.nic_attach_choices', {
           BRIDGE: ['eno2'],
           MACVLAN: [],
         }),
-        mockTypedCall('system.advanced.update_gpu_pci_ids', null),
-        mockTypedCall('system.advanced.get_gpu_pci_choices', {
+        mockCall('system.advanced.update_gpu_pci_ids', null),
+        mockCall('system.advanced.get_gpu_pci_choices', {
           'GeForce GTX 1080 [0000:03:00.0]': {
             pci_slot: '0000:03:00.0',
             uses_system_critical_devices: false,
@@ -295,7 +295,7 @@ describe('VmWizardComponent', () => {
     const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await submit.click();
 
-    const api = spectator.inject(TypedApiService);
+    const api = spectator.inject(ApiService);
     expect(api.call).toHaveBeenCalledWith('vm.create', [{
       autostart: true,
       bootloader: VmBootloader.Uefi,
@@ -375,7 +375,7 @@ describe('VmWizardComponent', () => {
     await fillWizard();
     expect(spectator.component.isBusy()).toBe(false);
 
-    jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(NEVER);
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(NEVER);
     const submit = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await submit.click();
 

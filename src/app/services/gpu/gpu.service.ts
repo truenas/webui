@@ -12,7 +12,7 @@ import { DeviceType } from 'app/enums/device-type.enum';
 import { Device } from 'app/interfaces/device.interface';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
 import { waitForAdvancedConfig } from 'app/store/system-config/system-config.selectors';
@@ -21,7 +21,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   providedIn: 'root',
 })
 export class GpuService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
   private allGpus$: Observable<Device[]>;

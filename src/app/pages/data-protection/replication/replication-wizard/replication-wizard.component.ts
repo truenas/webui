@@ -34,8 +34,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { crontabToSchedule } from 'app/modules/scheduler/utils/crontab-to-schedule.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationWizardData } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard-data.interface';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
@@ -60,7 +60,7 @@ type CreatedSnapshot = CallResponse<WebUiApiDirectory, 'pool.snapshot.create'>;
   ],
 })
 export class ReplicationWizardComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private replicationService = inject(ReplicationService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);

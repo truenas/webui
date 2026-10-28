@@ -8,16 +8,16 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { catchError, EMPTY, Observable, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSpnDialog,
 } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
@@ -27,7 +27,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 describe('ServiceNfsComponent', () => {
   let spectator: Spectator<ServiceNfsComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -50,8 +50,8 @@ describe('ServiceNfsComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedCall('nfs.config', {
+      mockApi([
+        mockCall('nfs.config', {
           allow_nonroot: false,
           servers: 3,
           bindip: ['192.168.1.117', '192.168.1.118'],
@@ -64,14 +64,14 @@ describe('ServiceNfsComponent', () => {
           userd_manage_gids: false,
           rdma: false,
         } as NfsConfig),
-        mockTypedCall('nfs.bindip_choices', {
+        mockCall('nfs.bindip_choices', {
           '192.168.1.117': '192.168.1.117',
           '192.168.1.118': '192.168.1.118',
           '192.168.1.119': '192.168.1.119',
         }),
-        mockTypedCall('nfs.update', {} as NfsConfig),
-        mockTypedCall('rdma.capable_protocols', () => rdmaCapableProtocols),
-        mockTypedCall('directoryservices.status', {
+        mockCall('nfs.update', {} as NfsConfig),
+        mockCall('rdma.capable_protocols', () => rdmaCapableProtocols),
+        mockCall('directoryservices.status', {
           status: DirectoryServiceStatus.Healthy,
           type: DirectoryServiceType.ActiveDirectory,
           status_msg: null,
@@ -100,7 +100,7 @@ describe('ServiceNfsComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     await spectator.fixture.whenStable();
   });
 
@@ -111,7 +111,7 @@ describe('ServiceNfsComponent', () => {
       .mockReturnValue(of(true));
     // Only `nfs.config` gates the form; the RDMA / directory-services enrichments fail soft (see
     // the test below).
-    spectator.inject(MockTypedApiService).mockCallError('nfs.config');
+    spectator.inject(MockApiService).mockCallError('nfs.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,
@@ -130,7 +130,7 @@ describe('ServiceNfsComponent', () => {
   it('keeps the form usable when only an enrichment call fails', async () => {
     // `directoryservices.status` only decides whether Add SPN is offered. Failing it must not
     // block Save over a form that holds the real configuration `nfs.config` returned.
-    spectator.inject(MockTypedApiService).mockCallError('directoryservices.status');
+    spectator.inject(MockApiService).mockCallError('directoryservices.status');
 
     const loaded = TestBed.createComponent(ServiceNfsComponent);
     loaded.detectChanges();
@@ -145,7 +145,7 @@ describe('ServiceNfsComponent', () => {
     // The choices reach the template through a `toSignal`, which latches an error and re-throws it
     // on every read — so a failure that isn't caught takes down the whole form render rather than
     // emptying one select. The addresses the config binds to still come from `nfs.config`.
-    spectator.inject(MockTypedApiService).mockCallError('nfs.bindip_choices');
+    spectator.inject(MockApiService).mockCallError('nfs.bindip_choices');
 
     const loaded = TestBed.createComponent(ServiceNfsComponent);
     loaded.detectChanges();

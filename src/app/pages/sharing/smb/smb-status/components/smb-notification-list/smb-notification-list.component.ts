@@ -20,7 +20,7 @@ import { TableColumnPickerComponent } from 'app/modules/tn-table/components/tabl
 import {
   convertStringToId, createTable, dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toDisplayedColumns,
 } from 'app/modules/tn-table/utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-smb-notification-list',
@@ -44,7 +44,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
   ],
 })
 export class SmbNotificationListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
   protected emptyService = inject(EmptyService);

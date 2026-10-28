@@ -18,7 +18,7 @@ import { AuthService } from 'app/modules/auth/auth.service';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { TerminalFontSizeComponent } from 'app/modules/terminal/components/font-size/terminal-font-size.component';
 import { XtermAttachAddon } from 'app/modules/terminal/xterm-attach-addon';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ShellService } from 'app/services/shell.service';
 import { AppState } from 'app/store';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -42,7 +42,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
   ],
 })
 export class TerminalComponent implements OnInit, OnDestroy {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private shellService = inject(ShellService);
   private store$ = inject<Store<AppState>>(Store);
   private authService = inject(AuthService);

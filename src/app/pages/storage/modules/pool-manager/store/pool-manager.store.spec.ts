@@ -5,13 +5,13 @@ import {
   BehaviorSubject, firstValueFrom, of,
 } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
-import { mockTypedApi, mockTypedQuery, settleTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockQuery, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
 import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
@@ -64,8 +64,8 @@ describe('PoolManagerStore', () => {
   const createService = createServiceFactory({
     service: PoolManagerStore,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('enclosure2.query', enclosures as unknown as WebUiQueryEntity<'enclosure2.query'>[]),
+      mockApi([
+        mockQuery('enclosure2.query', enclosures as unknown as WebUiQueryEntity<'enclosure2.query'>[]),
       ]),
       mockProvider(DiskStore, {
         loadDisks: () => of(disks),
@@ -132,9 +132,9 @@ describe('PoolManagerStore', () => {
   describe('initialize', () => {
     it('loads enclosures', async () => {
       spectator.service.initialize();
-      await settleTypedApi();
+      await settleApi();
 
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       expect(api.query).toHaveBeenCalledWith('enclosure2.query');
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
@@ -148,7 +148,7 @@ describe('PoolManagerStore', () => {
   describe('start over functionality', () => {
     it('reverts state to initial state', async () => {
       spectator.service.startOver();
-      await settleTypedApi();
+      await settleApi();
 
       expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
         ...initialState,

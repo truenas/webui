@@ -12,8 +12,8 @@ import {
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { EntitlementFacts } from 'app/interfaces/entitlement.interface';
 import { ContractType, License, SystemInfo } from 'app/interfaces/system-info.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { selectIsEnclosureMockActive } from 'app/modules/websocket-debug-panel/store/websocket-debug.selectors';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -63,13 +63,13 @@ function toSystemInfo(systemInfo: SystemInfoResult, license: License | null): Sy
 @Injectable()
 export class SystemInfoEffects {
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
   /**
-   * The debug panel's enclosure mock stands in for iX hardware on a dev box. Its mocks only
-   * intercept `ApiService` calls, so the typed `truenas.is_ix_hardware` answer is overridden here
-   * instead. The debug panel's state only exists when the panel is enabled (see `main.ts`).
+   * The debug panel's enclosure mock stands in for iX hardware on a dev box. It registers no
+   * `truenas.is_ix_hardware` mock, so the answer is overridden here instead. The debug panel's
+   * state only exists when the panel is enabled (see `main.ts`).
    */
   private isEnclosureMockEnabled$: Observable<boolean> = defer(() => {
     if (!environment.debugPanel?.enabled) {

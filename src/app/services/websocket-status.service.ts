@@ -31,7 +31,7 @@ export class WebSocketStatusService {
    * socket being up — a connection that is up says nothing about whether
    * anyone has signed in on it.
    *
-   * Pushed in by `TypedApiService` rather than read from the client here.
+   * Pushed in by `ApiService` rather than read from the client here.
    * Reading it here would make every consumer of connection status — which is
    * most of the app, and most of its specs — drag a real `@truenas/api-client`
    * behind it, since this service is `providedIn: 'root'` and rarely stubbed.
@@ -69,7 +69,7 @@ export class WebSocketStatusService {
     this.isLoggedIn$.next(isLoggedIn);
   }
 
-  /** Called by `TypedApiService` for every change in the typed session's state. */
+  /** Called by `ApiService` for every change in the typed session's state. */
   setSessionStatus(isSessionEstablished: boolean): void {
     this.sessionEstablished$.next(isSessionEstablished);
   }

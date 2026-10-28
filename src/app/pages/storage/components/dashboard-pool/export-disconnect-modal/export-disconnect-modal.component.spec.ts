@@ -12,8 +12,8 @@ import {
 } from '@truenas/ui-components';
 import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { FailoverConfig } from 'app/interfaces/failover.interface';
@@ -24,8 +24,8 @@ import { SystemDatasetConfig } from 'app/interfaces/system-dataset-config.interf
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import {
   ServicesToBeRestartedDialogComponent,
@@ -94,14 +94,14 @@ describe('ExportDisconnectModalComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('pool.attachments', fakeAttachments),
-        mockTypedCall('pool.processes', fakeProcesses),
-        mockTypedCall('systemdataset.config', fakeSystemConfig),
-        mockTypedQuery('pool.dataset.query', []),
-        mockTypedCall('failover.config', fakeFailoverConfigDisabled),
-        mockTypedJob('pool.export', { state: JobState.Success }),
-        mockTypedQuery('pool.query', poolRows(3)),
+      mockApi([
+        mockCall('pool.attachments', fakeAttachments),
+        mockCall('pool.processes', fakeProcesses),
+        mockCall('systemdataset.config', fakeSystemConfig),
+        mockQuery('pool.dataset.query', []),
+        mockCall('failover.config', fakeFailoverConfigDisabled),
+        mockJob('pool.export', { state: JobState.Success }),
+        mockQuery('pool.query', poolRows(3)),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -282,7 +282,7 @@ describe('ExportDisconnectModalComponent', () => {
     });
 
     it('should load failover config during initialization', () => {
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       expect(api.call).toHaveBeenCalledWith('failover.config');
     });
   });
@@ -593,7 +593,7 @@ describe('ExportDisconnectModalComponent', () => {
       await submitExportForm();
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been exported successfully.');
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.export', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
         fakePool.id,
         {
           cascade: true,
@@ -607,7 +607,7 @@ describe('ExportDisconnectModalComponent', () => {
       await submitDeleteForm();
 
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Pool «fakePool» has been deleted successfully. All data on that pool was destroyed.');
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.export', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.export', [
         fakePool.id,
         {
           cascade: true,
@@ -693,7 +693,7 @@ describe('ExportDisconnectModalComponent', () => {
 
         await submitExportForm();
 
-        expect(spectator.inject(TypedApiService).job).toHaveBeenLastCalledWith('pool.export', [
+        expect(spectator.inject(ApiService).job).toHaveBeenLastCalledWith('pool.export', [
           fakePool.id,
           {
             cascade: true,
@@ -712,13 +712,13 @@ describe('ExportDisconnectModalComponent', () => {
       component: ExportDisconnectModalComponent,
       imports: [ReactiveFormsModule],
       providers: [
-        mockTypedApi([
-          mockTypedCall('pool.attachments', []),
-          mockTypedCall('pool.processes', []),
-          mockTypedCall('systemdataset.config', { pool: 'fakePool' } as SystemDatasetConfig),
-          mockTypedCall('failover.config', fakeFailoverConfigDisabled),
-          mockTypedJob('pool.export', { state: JobState.Success }),
-          mockTypedQuery('pool.query', poolRows(1)),
+        mockApi([
+          mockCall('pool.attachments', []),
+          mockCall('pool.processes', []),
+          mockCall('systemdataset.config', { pool: 'fakePool' } as SystemDatasetConfig),
+          mockCall('failover.config', fakeFailoverConfigDisabled),
+          mockJob('pool.export', { state: JobState.Success }),
+          mockQuery('pool.query', poolRows(1)),
         ]),
         mockProvider(DialogService, {
           jobDialog: jest.fn(() => ({ afterClosed: () => of(null) })),
@@ -794,7 +794,7 @@ describe('ExportDisconnectModalComponent', () => {
 
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
   });
 
   it('does not export the last pool of an HA system even with the form fully valid', async () => {
@@ -816,6 +816,6 @@ describe('ExportDisconnectModalComponent', () => {
 
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('pool.export', expect.anything());
   });
 });

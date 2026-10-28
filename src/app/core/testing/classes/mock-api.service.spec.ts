@@ -1,13 +1,13 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { UnmockedCallError } from '@truenas/api-client/testing';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
-describe('MockTypedApiService', () => {
-  let spectator: SpectatorService<MockTypedApiService>;
+describe('MockApiService', () => {
+  let spectator: SpectatorService<MockApiService>;
 
-  const createService = createServiceFactory(MockTypedApiService);
+  const createService = createServiceFactory(MockApiService);
 
   beforeEach(() => {
     spectator = createService();

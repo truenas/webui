@@ -4,13 +4,13 @@ import { ComponentStore } from '@ngrx/component-store';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AppStats } from 'app/interfaces/app.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 type State = Record<string, AppStats>;
 
 @Injectable()
 export class AppsStatsService extends ComponentStore<State> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   constructor() {

@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { firstValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { ReportingGraphName } from 'app/enums/reporting.enum';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ReportType } from 'app/pages/reports-dashboard/interfaces/report-tab.interface';
@@ -10,21 +10,21 @@ import { ReportsService } from 'app/pages/reports-dashboard/reports.service';
 
 describe('ReportsService', () => {
   let spectator: SpectatorService<ReportsService>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createService = createServiceFactory({
     service: ReportsService,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('disk.query', [
+      mockApi([
+        mockQuery('disk.query', [
           { devname: 'sda' },
           { devname: 'sdb' },
         ] as WebUiQueryEntity<'disk.query'>[]),
-        mockTypedQuery('reporting.netdata_graphs', [
+        mockQuery('reporting.netdata_graphs', [
           { name: ReportingGraphName.Cpu },
           { name: ReportingGraphName.UpsTemp },
         ] as WebUiQueryEntity<'reporting.netdata_graphs'>[]),
-        mockTypedCall('reporting.netdata_get_data', [{
+        mockCall('reporting.netdata_get_data', [{
           name: 'cpu',
           identifier: 'cpu',
           legend: ['time', 'active'],
@@ -38,14 +38,14 @@ describe('ReportsService', () => {
           ],
           aggregations: { min: { active: 0 }, mean: { active: 5 }, max: { active: 10 } },
         }]),
-        mockTypedCall('disk.temperatures', {}),
+        mockCall('disk.temperatures', {}),
       ]),
     ],
   });
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
   describe('getDiskDevices', () => {

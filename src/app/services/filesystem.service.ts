@@ -13,7 +13,7 @@ import { FileRecord } from 'app/interfaces/file-record.interface';
 import { QueryFilter, QueryOptions } from 'app/interfaces/query-api.interface';
 import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 export interface ProviderOptions {
   directoriesOnly?: boolean;
@@ -26,7 +26,7 @@ export interface ProviderOptions {
 
 @Injectable({ providedIn: 'root' })
 export class FilesystemService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
 
   getTopLevelDatasetsNodes(): Observable<ExplorerNodeData[]> {

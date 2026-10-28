@@ -8,7 +8,7 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-resilver-progress',
@@ -27,7 +27,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
 export class ResilverProgressDialog implements OnInit {
   protected dialogRef = inject<DialogRef<string, ResilverProgressDialog>>(DialogRef);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 

@@ -48,7 +48,7 @@ import { NetworkSpeedPipe } from 'app/modules/pipes/network-speed/network-speed.
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppDeleteDialog } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.component';
 import { AppDeleteDialogInputData, AppDeleteDialogOutputData } from 'app/pages/apps/components/app-delete-dialog/app-delete-dialog.interface';
 import { AppActionRequiredBadgeComponent } from 'app/pages/apps/components/installed-apps/app-action-required-badge/app-action-required-badge.component';
@@ -106,7 +106,7 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
 })
 
 export class InstalledAppsListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private appService = inject(ApplicationsService);
   private cdr = inject(ChangeDetectorRef);
   private activatedRoute = inject(ActivatedRoute);

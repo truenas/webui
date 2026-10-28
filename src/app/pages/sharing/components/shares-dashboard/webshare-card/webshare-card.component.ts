@@ -49,7 +49,7 @@ import {
   TableActionsCellComponent,
 } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServiceWebshareComponent } from 'app/pages/services/components/service-webshare/service-webshare.component';
 import {
   ServiceActionsMenuService,
@@ -97,7 +97,7 @@ export class WebShareCardComponent implements OnInit {
   protected readonly requiredRoles = [Role.SharingWebshareWrite, Role.SharingWrite];
   protected readonly cardMenuPath = ['sharing', 'webshare'];
 
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formPanel = inject(FormSidePanelService);
   private router = inject(Router);
   private translate = inject(TranslateService);

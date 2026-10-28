@@ -6,7 +6,7 @@ import {
   TnButtonComponent, TnCardComponent, TnDividerComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { eulaElements } from 'app/pages/system/general-settings/support/eula/eula.elements';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,7 +26,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   ],
 })
 export class EulaComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);

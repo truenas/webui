@@ -6,7 +6,7 @@ import { map, take, tap } from 'rxjs/operators';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AppState } from 'app/store';
 
 interface CoreDownloadParams {
@@ -21,7 +21,7 @@ interface CoreDownloadParams {
 })
 export class DownloadService {
   protected http = inject(HttpClient);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
 
 

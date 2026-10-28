@@ -7,8 +7,8 @@ import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { NEVER, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
@@ -16,8 +16,8 @@ import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface'
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ImportPoolComponent } from './import-pool.component';
 
 type DiskDetailsCallResponse = CallResponse<WebUiApiDirectory, 'disk.details'>;
@@ -25,7 +25,7 @@ type DiskDetailsCallResponse = CallResponse<WebUiApiDirectory, 'disk.details'>;
 describe('ImportPoolComponent', () => {
   let spectator: Spectator<ImportPoolComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const mockPools: PoolFindResult[] = [{
     name: 'pool_name_1',
@@ -72,12 +72,12 @@ describe('ImportPoolComponent', () => {
     ],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedJob('pool.import_pool', { state: JobState.Success }),
-        mockTypedJob('pool.import_find', { state: JobState.Success, result: mockPools }),
-        mockTypedCall('disk.details', mockDiskDetailsNoLocked as unknown as DiskDetailsCallResponse),
-        mockTypedCall('system.advanced.sed_global_password', 'existingpassword'),
-        mockTypedQuery('pool.dataset.query', [{
+      mockApi([
+        mockJob('pool.import_pool', { state: JobState.Success }),
+        mockJob('pool.import_find', { state: JobState.Success, result: mockPools }),
+        mockCall('disk.details', mockDiskDetailsNoLocked as unknown as DiskDetailsCallResponse),
+        mockCall('system.advanced.sed_global_password', 'existingpassword'),
+        mockQuery('pool.dataset.query', [{
           id: '/mnt/pewl',
           locked: true,
           encryption_root: '/mnt/pewl',
@@ -97,7 +97,7 @@ describe('ImportPoolComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   function getPoolSelect(): Promise<TnSelectHarness> {
@@ -152,11 +152,11 @@ describe('ImportPoolComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockTypedApi([
-          mockTypedJob('pool.import_find', { state: JobState.Success, result: mockPools }),
+        mockApi([
+          mockJob('pool.import_find', { state: JobState.Success, result: mockPools }),
         ]),
         // `disk.details` never settles, so the component stays on the step it opens on.
-        mockProvider(TypedApiService, {
+        mockProvider(ApiService, {
           call: jest.fn((method: string) => (
             method === 'disk.details' ? NEVER : of('existingpassword')
           )),
@@ -183,13 +183,13 @@ describe('ImportPoolComponent', () => {
       imports: [ReactiveFormsModule],
       providers: [
         ...ixFormTestingProviders(),
-        mockTypedApi([
-          mockTypedJob('pool.import_pool', { state: JobState.Success }),
-          mockTypedJob('pool.import_find', { state: JobState.Success, result: mockPools }),
-          mockTypedCall('disk.details', mockDiskDetailsWithLocked as unknown as DiskDetailsCallResponse),
-          mockTypedCall('system.advanced.sed_global_password', 'existingpassword'),
-          mockTypedCall('disk.unlock_sed', null),
-          mockTypedQuery('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as WebUiQueryEntity<'pool.dataset.query'>]),
+        mockApi([
+          mockJob('pool.import_pool', { state: JobState.Success }),
+          mockJob('pool.import_find', { state: JobState.Success, result: mockPools }),
+          mockCall('disk.details', mockDiskDetailsWithLocked as unknown as DiskDetailsCallResponse),
+          mockCall('system.advanced.sed_global_password', 'existingpassword'),
+          mockCall('disk.unlock_sed', null),
+          mockQuery('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as WebUiQueryEntity<'pool.dataset.query'>]),
         ]),
         mockProvider(DialogService, {
           confirm: jest.fn(() => of(true)),
@@ -206,7 +206,7 @@ describe('ImportPoolComponent', () => {
       const lockedSpectator = createComponentWithLockedDisks();
       await lockedSpectator.fixture.whenStable();
       lockedSpectator.detectChanges();
-      const lockedApi = lockedSpectator.inject(TypedApiService);
+      const lockedApi = lockedSpectator.inject(ApiService);
 
       expect(lockedSpectator.fixture.nativeElement.textContent).toContain('Locked SED Disks Detected');
       expect(lockedSpectator.fixture.nativeElement.textContent).not.toContain('Pool');
@@ -217,7 +217,7 @@ describe('ImportPoolComponent', () => {
       const lockedSpectator = createComponentWithLockedDisks();
       await lockedSpectator.fixture.whenStable();
       const lockedLoader = TestbedHarnessEnvironment.loader(lockedSpectator.fixture);
-      const lockedApi = lockedSpectator.inject(TypedApiService);
+      const lockedApi = lockedSpectator.inject(ApiService);
 
       const skipButton = await lockedLoader.getHarness(TnButtonHarness.with({ label: 'Skip' }));
       await skipButton.click();

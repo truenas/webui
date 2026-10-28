@@ -7,7 +7,7 @@ import { TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent } from 
 import { Role } from 'app/enums/role.enum';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CriticalGpuPreventionService } from 'app/services/gpu/critical-gpu-prevention.service';
 import { GpuService } from 'app/services/gpu/gpu.service';
 import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-validator.service';
@@ -30,7 +30,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
   ],
 })
 export class IsolatedGpusFormComponent extends IxFormHostForm implements OnInit {
-  protected api = inject(TypedApiService);
+  protected api = inject(ApiService);
   private translate = inject(TranslateService);
   private store$ = inject<Store<AppState>>(Store);
   private gpuValidator = inject(IsolatedGpuValidatorService);

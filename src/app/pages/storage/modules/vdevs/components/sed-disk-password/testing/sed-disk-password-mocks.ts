@@ -1,6 +1,6 @@
 import { mockProvider } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
-import { MockTypedApiResponse, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiResponse, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { EntitlementsService } from 'app/services/entitlements.service';
 
@@ -19,11 +19,11 @@ export function mockSedDiskPasswordCalls(
     disks?: WebUiQueryEntity<'disk.query'>[];
     isGlobalPasswordSet?: boolean;
   } = {},
-): MockTypedApiResponse[] {
+): MockApiResponse[] {
   return [
-    mockTypedCall('system.advanced.sed_global_password_is_set', isGlobalPasswordSet),
-    mockTypedQuery('pool.query', [{ id: 4, all_sed: allSed } as WebUiQueryEntity<'pool.query'>]),
-    mockTypedQuery('disk.query', disks),
+    mockCall('system.advanced.sed_global_password_is_set', isGlobalPasswordSet),
+    mockQuery('pool.query', [{ id: 4, all_sed: allSed } as WebUiQueryEntity<'pool.query'>]),
+    mockQuery('disk.query', disks),
   ];
 }
 

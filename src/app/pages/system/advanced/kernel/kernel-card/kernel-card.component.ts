@@ -17,7 +17,7 @@ import { Role } from 'app/enums/role.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
 import { WithLoadingStateDirective } from 'app/modules/loader/directives/with-loading-state/with-loading-state.directive';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { kernelCardElements } from 'app/pages/system/advanced/kernel/kernel-card/kernel-card.elements';
 import { getKernelFormConfig } from 'app/pages/system/advanced/kernel/kernel-form/kernel.form-config';
 import { FirstTimeWarningService } from 'app/services/first-time-warning.service';
@@ -42,7 +42,7 @@ import { waitForAdvancedConfig } from 'app/store/system-config/system-config.sel
 })
 export class KernelCardComponent {
   private store$ = inject<Store<AppState>>(Store);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private firstTimeWarning = inject(FirstTimeWarningService);

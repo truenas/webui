@@ -38,7 +38,7 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import {
   dataProviderLoading, dataProviderRows, mapTnSortToTableSort, memoizedRowTag,
 } from 'app/modules/tn-table/utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { DeviceFormComponent } from 'app/pages/vm/devices/device-form/device-form.component';
 import {
   DeviceDeleteModalComponent,
@@ -75,7 +75,7 @@ import {
   ],
 })
 export class DeviceListComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private cdr = inject(ChangeDetectorRef);

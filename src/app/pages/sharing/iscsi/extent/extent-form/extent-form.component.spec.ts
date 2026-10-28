@@ -4,14 +4,14 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { KiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiExtentRpm, IscsiExtentType } from 'app/enums/iscsi.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { IscsiExtent } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ExtentFormComponent } from 'app/pages/sharing/iscsi/extent/extent-form/extent-form.component';
 import { StorageService } from 'app/services/storage.service';
 
@@ -58,14 +58,14 @@ describe('ExtentFormComponent', () => {
       mockAuth(),
       mockProvider(StorageService),
       mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('iscsi.extent.disk_choices', {
+      mockApi([
+        mockCall('iscsi.extent.disk_choices', {
           key_device_1: 'value_device_1',
           key_device_2: 'value_device_2',
           key_device_3: 'value_device_3',
         } as Choices),
-        mockTypedCall('iscsi.extent.create', null),
-        mockTypedCall('iscsi.extent.update', null),
+        mockCall('iscsi.extent.create', null),
+        mockCall('iscsi.extent.update', null),
       ]),
       ...ixFormTestingProviders(),
     ],
@@ -110,7 +110,7 @@ describe('ExtentFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('iscsi.extent.create', [{
         avail_threshold: null,
         blocksize: 1024,
         comment: 'new_comment',
@@ -169,7 +169,7 @@ describe('ExtentFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,
         {
           avail_threshold: 50,
@@ -203,7 +203,7 @@ describe('ExtentFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('iscsi.extent.update', [
         123,
         expect.objectContaining({
           product_id: null,

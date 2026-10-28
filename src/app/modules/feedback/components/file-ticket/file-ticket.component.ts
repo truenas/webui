@@ -21,7 +21,7 @@ import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface
 import { FeedbackService } from 'app/modules/feedback/services/feedback.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ImageValidatorService } from 'app/modules/forms/ix-forms/validators/image-validator/image-validator.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-file-ticket',
@@ -48,7 +48,7 @@ export class FileTicketComponent implements FeedbackForm {
   private feedbackService = inject(FeedbackService);
   private imageValidator = inject(ImageValidatorService);
   private formErrorHandler = inject(FormErrorHandlerService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
   readonly type = input.required<FeedbackType.Bug | FeedbackType.Suggestion>();

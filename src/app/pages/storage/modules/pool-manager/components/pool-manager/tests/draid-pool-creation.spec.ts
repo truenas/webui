@@ -3,14 +3,14 @@ import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedJob, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   PoolManagerComponent,
 } from 'app/pages/storage/modules/pool-manager/components/pool-manager/pool-manager.component';
@@ -33,9 +33,9 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
     ],
     providers: [
       ...commonProviders,
-      mockTypedApi([
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('pool.validate_name', true),
+        mockCall('disk.details', {
           used: [
             {
               devname: 'ada0',
@@ -114,9 +114,9 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
             },
           ] as DetailsDisk[],
         }),
-        mockTypedQuery('enclosure2.query', []),
-        mockTypedQuery('pool.query', []),
-        mockTypedJob('pool.create', { state: JobState.Success }),
+        mockQuery('enclosure2.query', []),
+        mockQuery('pool.query', []),
+        mockJob('pool.create', { state: JobState.Success }),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -167,7 +167,7 @@ describe('PoolManagerComponent – creating dRAID pool', () => {
     await wizard.clickCreatePoolButton();
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('pool.create', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.create', [{
       name: 'dRAID',
       allow_duplicate_serials: false,
       encryption: false,
@@ -195,9 +195,9 @@ describe('PoolManagerComponent – creating dRAID pool with a dedicated spare', 
     ],
     providers: [
       ...commonProviders,
-      mockTypedApi([
-        mockTypedCall('pool.validate_name', true),
-        mockTypedCall('disk.details', {
+      mockApi([
+        mockCall('pool.validate_name', true),
+        mockCall('disk.details', {
           used: [] as DetailsDisk[],
           // Six identical disks: five form the dRAID data vdev, leaving one
           // available to be added as a dedicated spare.
@@ -210,9 +210,9 @@ describe('PoolManagerComponent – creating dRAID pool with a dedicated spare', 
             { devname: 'sda5', size: 20 * GiB, type: DiskType.Hdd },
           ] as DetailsDisk[],
         }),
-        mockTypedQuery('enclosure2.query', []),
-        mockTypedQuery('pool.query', []),
-        mockTypedJob('pool.create', { state: JobState.Success }),
+        mockQuery('enclosure2.query', []),
+        mockQuery('pool.query', []),
+        mockJob('pool.create', { state: JobState.Success }),
       ]),
       mockProvider(PoolWizardNameValidationService, {
         validatePoolName: () => of(null),
@@ -266,7 +266,7 @@ describe('PoolManagerComponent – creating dRAID pool with a dedicated spare', 
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
 
-    const jobSpy = spectator.inject(TypedApiService).job as jest.Mock;
+    const jobSpy = spectator.inject(ApiService).job as jest.Mock;
     const createCall = jobSpy.mock.calls.find(([method]) => method === 'pool.create');
     expect(createCall).toBeDefined();
 

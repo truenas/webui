@@ -30,7 +30,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { TranslateOptionsPipe } from 'app/modules/translate/translate-options/translate-options.pipe';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   FcMpioInfoBannerComponent,
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
@@ -72,7 +72,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
   private translate = inject(TranslateService);
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fcService = inject(FibreChannelService);
   private entitlements = inject(EntitlementsService);
   private targetNameValidationService = inject(TargetNameValidationService);

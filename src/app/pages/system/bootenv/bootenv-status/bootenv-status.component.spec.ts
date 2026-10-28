@@ -6,9 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { CallResponse } from '@truenas/api-client';
 import { TnMenuHarness, TnMenuTesting, TnTreeHarness } from '@truenas/ui-components';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
@@ -58,7 +58,7 @@ const poolInstance = {
 describe('BootStatusListComponent', () => {
   let spectator: Spectator<BootStatusListComponent>;
   let loader: HarnessLoader;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createComponent = createComponentFactory({
     component: BootStatusListComponent,
@@ -71,9 +71,9 @@ describe('BootStatusListComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogRef),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedCall('boot.get_state', poolInstance as unknown as CallResponse<WebUiApiDirectory, 'boot.get_state'>),
-        mockTypedCall('boot.detach', null),
+      mockApi([
+        mockCall('boot.get_state', poolInstance as unknown as CallResponse<WebUiApiDirectory, 'boot.get_state'>),
+        mockCall('boot.detach', null),
       ]),
     ],
     declarations: [
@@ -86,7 +86,7 @@ describe('BootStatusListComponent', () => {
     jest.spyOn(console, 'warn').mockImplementation();
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
   });
 
   it('loads boot pool state and shows it when one disk', async () => {

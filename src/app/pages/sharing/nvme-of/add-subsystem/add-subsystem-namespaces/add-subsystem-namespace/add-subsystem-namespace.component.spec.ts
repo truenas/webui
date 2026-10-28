@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfNamespaceType } from 'app/enums/nvme-of.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddSubsystemNamespaceComponent,
 } from 'app/pages/sharing/nvme-of/add-subsystem/add-subsystem-namespaces/add-subsystem-namespace/add-subsystem-namespace.component';
@@ -23,7 +23,7 @@ describe('AddSubsystemNamespaceComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(FilesystemService),
-      mockProvider(TypedApiService),
+      mockProvider(ApiService),
     ],
   });
 
@@ -49,7 +49,7 @@ describe('AddSubsystemNamespaceComponent', () => {
       filesize: undefined,
     } as NamespaceChanges);
     // The wizard creates namespaces itself once the subsystem is created.
-    expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalled();
   });
 
   it('does not emit while the form is incomplete', () => {

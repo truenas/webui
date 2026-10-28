@@ -6,8 +6,8 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -17,8 +17,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { DiskFormComponent } from './disk-form.component';
 
@@ -49,8 +49,8 @@ describe('DiskFormComponent', () => {
       // minimum-feedback window before emitting `closed`.
       { provide: ixFormMinSubmitFeedbackMs, useValue: 0 },
       mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('disk.update', dataDisk as unknown as WebUiQueryEntity<'disk.query'>),
+      mockApi([
+        mockCall('disk.update', dataDisk as unknown as WebUiQueryEntity<'disk.query'>),
       ]),
       mockAuth(),
       provideMockStore({
@@ -128,7 +128,7 @@ describe('DiskFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
         description: 'New disk description',
         hddstandby: '10',
@@ -169,7 +169,7 @@ describe('DiskFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: null,
         description: 'New disk description',
         hddstandby: null,
@@ -232,7 +232,7 @@ describe('DiskFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '64',
         description: 'New disk description',
         hddstandby: '10',
@@ -252,7 +252,7 @@ describe('DiskFormComponent', () => {
 
       // `clear_pw` is a UI-only control: it must reach the API as an empty `passwd`
       // (and never as a field of its own).
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.update', ['{serial}VB9fbb6dfe-9cf26570', {
         advpowermgmt: '127',
         description: 'Some disk description',
         hddstandby: '10',

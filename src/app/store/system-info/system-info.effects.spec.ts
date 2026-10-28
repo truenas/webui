@@ -4,8 +4,8 @@ import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import { environment } from 'environments/environment';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { LicenseFeature } from 'app/enums/license-feature.enum';
 import { LicenseType } from 'app/enums/license-type.enum';
@@ -20,7 +20,7 @@ type LicenseInfo = CallResponse<WebUiApiDirectory, 'truenas.license.info'>;
 
 describe('SystemInfoEffects', () => {
   let spectator: SpectatorService<SystemInfoEffects>;
-  let api: MockTypedApiService;
+  let api: MockApiService;
   let actions$: ReplaySubject<unknown>;
 
   const baseSystemInfo = { hostname: 'test-host', license: null } as CallResponse<WebUiApiDirectory, 'system.info'>;
@@ -43,11 +43,11 @@ describe('SystemInfoEffects', () => {
     providers: [
       provideMockActions(() => actions$),
       provideMockStore(),
-      mockTypedApi([
-        mockTypedCall('system.info', baseSystemInfo),
-        mockTypedCall('truenas.license.info', baseLicense),
-        mockTypedCall('truenas.is_ix_hardware', true),
-        mockTypedCall('truenas.entitlements.facts', {
+      mockApi([
+        mockCall('system.info', baseSystemInfo),
+        mockCall('truenas.license.info', baseLicense),
+        mockCall('truenas.is_ix_hardware', true),
+        mockCall('truenas.entitlements.facts', {
           hardware_type: HardwareType.Truenas,
           license_type: LicenseType.EnterpriseSingle,
         }),
@@ -57,7 +57,7 @@ describe('SystemInfoEffects', () => {
 
   beforeEach(() => {
     spectator = createService();
-    api = spectator.inject(MockTypedApiService);
+    api = spectator.inject(MockApiService);
     actions$ = new ReplaySubject(1);
   });
 

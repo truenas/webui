@@ -4,15 +4,15 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CoreBulkQuery, CoreBulkResponse } from 'app/interfaces/core-bulk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BulkListItemComponent } from 'app/modules/lists/bulk-list-item/bulk-list-item.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { BootPoolDeleteDialog } from 'app/pages/system/bootenv/boot-pool-delete-dialog/boot-pool-delete-dialog.component';
 import { fakeBootEnvironmentsDataSource } from 'app/pages/system/bootenv/test/fake-boot-environments';
 
@@ -52,7 +52,7 @@ describe('BootPoolDeleteDialogComponent', () => {
       mockProvider(DialogRef),
       mockProvider(DialogService),
       // Each test scripts its own `core.bulk` outcome.
-      mockTypedApi(),
+      mockApi(),
     ],
   });
 
@@ -69,7 +69,7 @@ describe('BootPoolDeleteDialogComponent', () => {
         [{ id: '25.04.0-MASTER-20241105-224807' }],
       ],
     ];
-    spectator.inject(MockTypedApiService).mockJob('core.bulk', { state: JobState.Success, result: mockSuccessBulkResponse, arguments: jobArguments });
+    spectator.inject(MockApiService).mockJob('core.bulk', { state: JobState.Success, result: mockSuccessBulkResponse, arguments: jobArguments });
 
     expect(spectator.fixture.nativeElement).toHaveText('The following 2 boot environments will be deleted. Are you sure you want to proceed?');
 
@@ -79,7 +79,7 @@ describe('BootPoolDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('2 boot environments have been deleted.');
 
     const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
@@ -94,7 +94,7 @@ describe('BootPoolDeleteDialogComponent', () => {
         [{ id: '25.04.0-MASTER-20241105-224807' }],
       ],
     ];
-    spectator.inject(MockTypedApiService).mockJob('core.bulk', { state: JobState.Success, result: mockFailedBulkResponse, arguments: jobArguments });
+    spectator.inject(MockApiService).mockJob('core.bulk', { state: JobState.Success, result: mockFailedBulkResponse, arguments: jobArguments });
 
     const confirmCheckbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Confirm' }));
     await confirmCheckbox.check();
@@ -102,7 +102,7 @@ describe('BootPoolDeleteDialogComponent', () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('core.bulk', jobArguments);
     expect(spectator.fixture.nativeElement).toHaveText('Warning: 2 of 2 boot environments could not be deleted.');
 
     const closeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Close' }));
@@ -112,6 +112,6 @@ describe('BootPoolDeleteDialogComponent', () => {
   it('does not delete boot environments when the form is submitted natively while invalid', () => {
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(spectator.inject(TypedApiService).job).not.toHaveBeenCalledWith('core.bulk', expect.anything());
+    expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('core.bulk', expect.anything());
   });
 });

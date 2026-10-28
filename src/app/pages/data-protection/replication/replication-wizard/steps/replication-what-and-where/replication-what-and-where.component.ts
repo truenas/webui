@@ -45,7 +45,7 @@ import { regexValidator } from 'app/modules/forms/ix-forms/validators/regex-vali
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SummaryProvider, SummarySection } from 'app/modules/summary/summary.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ReplicationFormComponent } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -89,7 +89,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   private authService = inject(AuthService);
   private datasetService = inject(DatasetService);
   private dialogService = inject(DialogService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private cdr = inject(ChangeDetectorRef);
   private errorParser = inject(ErrorParserService);
   private errorHandler = inject(ErrorHandlerService);

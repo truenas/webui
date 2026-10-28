@@ -11,7 +11,7 @@ import {
   of,
 } from 'rxjs';
 import { Container, ContainerDevice, toContainerDeviceEntry } from 'app/interfaces/container.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { containerDeviceEntriesToDevices } from 'app/pages/containers/utils/container-device.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -32,7 +32,7 @@ const initialState: ContainerDeviceState = {
 
 @Injectable()
 export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private containersStore = inject(ContainersStore);
 

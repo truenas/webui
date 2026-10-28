@@ -3,7 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { MailSecurity } from 'app/enums/mail-security.enum';
 import { MailConfig, MailOauthConfig } from 'app/interfaces/mail-config.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -31,8 +31,8 @@ describe('EmailCardComponent with SMTP', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('mail.config', fakeEmailConfig as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),
+      mockApi([
+        mockCall('mail.config', fakeEmailConfig as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),
       ]),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -71,8 +71,8 @@ describe('EmailCardComponent with Gmail OAuth', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('mail.config', {
+      mockApi([
+        mockCall('mail.config', {
           ...fakeEmailConfig,
           oauth: { client_id: '123', provider: 'gmail' } as MailOauthConfig,
         } as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),
@@ -105,8 +105,8 @@ describe('EmailCardComponent with Outlook OAuth', () => {
   const createComponent = createComponentFactory({
     component: EmailCardComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('mail.config', {
+      mockApi([
+        mockCall('mail.config', {
           ...fakeEmailConfig,
           oauth: { client_id: '123', provider: 'outlook' } as MailOauthConfig,
         } as unknown as CallResponse<WebUiApiDirectory, 'mail.config'>),

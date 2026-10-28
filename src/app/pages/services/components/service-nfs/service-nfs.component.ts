@@ -31,8 +31,8 @@ import {
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
@@ -89,7 +89,7 @@ type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
   ],
 })
 export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private dialogService = inject(DialogService);

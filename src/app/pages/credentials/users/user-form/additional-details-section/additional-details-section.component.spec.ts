@@ -14,9 +14,9 @@ import {
 import { BehaviorSubject, map, throwError } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { Choices } from 'app/interfaces/choices.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -25,8 +25,8 @@ import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { IxGroupComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -106,13 +106,13 @@ describe('AdditionalDetailsSectionComponent', () => {
         }))),
       }),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedCall('user.shell_choices', {
+      mockApi([
+        mockCall('user.shell_choices', {
           '/usr/sbin/nologin': 'nologin',
           '/usr/bin/bash': 'bash',
           '/usr/bin/zsh': 'zsh',
         } as Choices),
-        mockTypedQuery('group.query', [
+        mockQuery('group.query', [
           {
             id: 101,
             group: 'test-group',
@@ -126,8 +126,8 @@ describe('AdditionalDetailsSectionComponent', () => {
             group: 'test-group-3',
           },
         ] as unknown as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('sharing.smb.query', []),
-        mockTypedCall('filesystem.stat', {
+        mockQuery('sharing.smb.query', []),
+        mockCall('filesystem.stat', {
           mode: 16889,
         } as unknown as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
       ]),
@@ -368,7 +368,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
 
     it('pre-populates home with SMB share path for new users when a home share exists', async () => {
-      const mockApiService = spectator.inject(MockTypedApiService);
+      const mockApiService = spectator.inject(MockApiService);
       mockApiService.mockQuery('sharing.smb.query', [{ path: '/mnt/tank/homes', enabled: true }] as never);
 
       spectator = createComponent();
@@ -439,7 +439,7 @@ describe('AdditionalDetailsSectionComponent', () => {
     });
 
     it('skips SMB home share query when editing a user to preserve existing home path', () => {
-      const smbQueries = jest.mocked(spectator.inject(TypedApiService).query).mock.calls
+      const smbQueries = jest.mocked(spectator.inject(ApiService).query).mock.calls
         .filter(([method]) => method === 'sharing.smb.query');
       expect(smbQueries).toHaveLength(0);
     });

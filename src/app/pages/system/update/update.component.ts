@@ -25,7 +25,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { extractVersion } from 'app/modules/global-search/helpers/extract-version';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   SaveConfigDialog,
   SaveConfigDialogMessages,
@@ -68,7 +68,7 @@ export class UpdateComponent implements OnInit {
   private router = inject(Router);
   private translate = inject(TranslateService);
   private tnDialog = inject(TnDialog);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private sysGenService = inject(SystemGeneralService);

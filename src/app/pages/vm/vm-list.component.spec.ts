@@ -9,9 +9,9 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { VmBootloader, VmDeviceType, VmDisplayType, VmState } from 'app/enums/vm.enum';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -110,8 +110,8 @@ describe('VmListComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('vm.query', virtualMachines as unknown as WebUiQueryEntity<'vm.query'>[]),
+      mockApi([
+        mockQuery('vm.query', virtualMachines as unknown as WebUiQueryEntity<'vm.query'>[]),
       ]),
       provideMockStore({
         initialState: {
@@ -152,7 +152,7 @@ describe('VmListComponent', () => {
    */
   function emitVmEvent(event: { msg: CollectionChangeType; id: number; fields?: Partial<VirtualMachine> }): void {
     // Fixtures read as the UI's `VirtualMachine`, partial updates included; the wire event is the same object.
-    spectator.inject(MockTypedApiService).emitEvent('vm.query', event as unknown as VmQueryEvent);
+    spectator.inject(MockApiService).emitEvent('vm.query', event as unknown as VmQueryEvent);
     spectator.detectChanges();
   }
 
@@ -463,7 +463,7 @@ describe('VmListComponent without virtualization support', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([mockTypedQuery('vm.query', [])]),
+      mockApi([mockQuery('vm.query', [])]),
       provideMockStore({
         initialState: {
           preferences: { preferences: { vmList: {} } },

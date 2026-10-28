@@ -5,7 +5,7 @@ import { VDevType, TopologyItemType, TopologyWarning } from 'app/enums/v-dev-typ
 import { Disk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
 import { TopologyDisk, VDevItem, VDev } from 'app/interfaces/storage.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { StorageService } from 'app/services/storage.service';
 
 describe('StorageService', () => {
@@ -15,7 +15,7 @@ describe('StorageService', () => {
     TestBed.configureTestingModule({
       providers: [
         StorageService,
-        mockProvider(TypedApiService),
+        mockProvider(ApiService),
       ],
     });
     storageService = TestBed.inject(StorageService);

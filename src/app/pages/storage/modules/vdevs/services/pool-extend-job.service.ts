@@ -2,13 +2,13 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { JobState } from 'app/enums/job-state.enum';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PoolExtendJobService {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   /**
    * Checks if there's an existing pool.attach job running or waiting for the specified pool.

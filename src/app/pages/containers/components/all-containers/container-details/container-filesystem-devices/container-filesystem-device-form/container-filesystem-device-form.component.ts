@@ -23,7 +23,7 @@ import {
 import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   containerPathValidator,
   poolPathValidator,
@@ -49,7 +49,7 @@ import { FilesystemService } from 'app/services/filesystem.service';
 })
 export class ContainerFilesystemDeviceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private filesystem = inject(FilesystemService);
 

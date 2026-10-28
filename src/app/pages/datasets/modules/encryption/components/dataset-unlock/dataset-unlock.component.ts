@@ -34,7 +34,7 @@ import {
   IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { exactLength } from 'app/modules/forms/ix-forms/validators/validators';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { UnlockSummaryDialog } from 'app/pages/datasets/modules/encryption/components/unlock-summary-dialog/unlock-summary-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { UploadService } from 'app/services/upload.service';
@@ -89,7 +89,7 @@ function requireAtLeastOneKeyOrPassphrase(message: string): ValidatorFn {
   ],
 })
 export class DatasetUnlockComponent implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private aroute = inject(ActivatedRoute);
   private dialogService = inject(DialogService);

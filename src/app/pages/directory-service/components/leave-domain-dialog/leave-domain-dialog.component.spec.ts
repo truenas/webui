@@ -5,13 +5,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { LeaveDomainDialog } from './leave-domain-dialog.component';
 
 describe('LeaveDomainDialogComponent', () => {
@@ -24,8 +24,8 @@ describe('LeaveDomainDialogComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedJob('directoryservices.leave', { state: JobState.Success }),
+      mockApi([
+        mockJob('directoryservices.leave', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -53,7 +53,7 @@ describe('LeaveDomainDialogComponent', () => {
     const leaveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Leave Domain' }));
     await leaveButton.click();
 
-    expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('directoryservices.leave', [{
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('directoryservices.leave', [{
       credential: {
         credential_type: DirectoryServiceCredentialType.KerberosUser,
         username: 'Administrator',

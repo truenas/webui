@@ -1,180 +1,101 @@
+import { ExistingProvider, FactoryProvider } from '@angular/core';
 import {
-  ExistingProvider, FactoryProvider, forwardRef, ValueProvider,
-} from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+  JobMethod, JobResult, QueryEntity, QueryMethod,
+} from '@truenas/api-client';
+import { FakeApiErrorOverrides, JobUpdate } from '@truenas/api-client/testing';
 import {
-  CallResponseOrFactory, JobResponseOrFactory,
-  MockApiCallResponse, MockApiJobResponse,
-  MockApiResponseType,
-} from 'app/core/testing/interfaces/mock-api-responses.interface';
-import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { ApiCallMethod } from 'app/interfaces/api/api-call-directory.interface';
-import { ApiJobDirectory, ApiJobMethod } from 'app/interfaces/api/api-job-directory.interface';
-import { Job } from 'app/interfaces/job.interface';
+  MockApiService, MockCallMethod, CallResponseOrFactory, RefusableMethod,
+} from 'app/core/testing/classes/mock-api.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { SubscriptionManagerService } from 'app/modules/websocket/subscription-manager.service';
-import { WebSocketHandlerService } from 'app/modules/websocket/websocket-handler.service';
-import { WebSocketStatusService } from 'app/services/websocket-status.service';
+import { UndeclaredCallDirectory, UndeclaredCallMethod, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+type D = WebUiApiDirectory;
+
+export type MockApiResponse = (api: MockApiService) => void;
 
 /**
- * This is a sugar syntax for creating simple api mocks.
+ * Sugar for mocking `ApiService`.
+ *
+ * Behind it is a real `@truenas/api-client` on the package's fake connection
+ * (`@truenas/api-client/testing`), so the real dispatch, job correlation and
+ * subscriptions run and only the answers are scripted. Fixtures are checked
+ * against the API directory; a call nothing scripted fails by name.
+ *
  * @example
  * providers: [
  *   mockApi([
- *     mockCall('filesystem.stat': { gid: 0 } as FileSystemStat),
- *     mockCall('filesystem.stat', () => ({ gid: 0 } as FileSystemStat)),
- *     mockJob('filesystem.setacl', fakeSuccessfulJob()),
- *     ...
- *   }),
+ *     mockCall('system.info', { version: 'x' } as SystemInfoResult),
+ *     mockCallError('user.delete', { errname: 'EINVAL', extra: [['user_delete.id', 'No such user', 22]] }),
+ *     mockQuery('user.query', [{ id: 1 } as UserEntry]),
+ *     mockJob('pool.dataset.export_key', [{ state: JobState.Success, result: 'key' }]),
+ *   ]),
  * ]
  *
- * It also makes available MockApiService, which allows customizing calls on the fly.
- *
- * If you need more customization, use ordinary mockProvider().
- * @example
- * providers: [
- *   mockProvider(ApiService, {
- *     call: jest.fn((method) => {
- *       if (method === 'filesystem.stat') {
- *         return of({ user: 'john' } as FileSystemStat);
- *       }
- *     })
- *   }),
- * ]
+ * `MockApiService` is also available for adjusting answers on the fly, and
+ * exposes the fake client for connection-level scenarios:
+ * `spectator.inject(MockApiService).client.connection.simulateClose()`.
  */
-
-export function mockApi(
-  mockResponses?: (MockApiCallResponse | MockApiJobResponse)[],
-): (FactoryProvider | ExistingProvider | ValueProvider)[] {
+export function mockApi(mocks: MockApiResponse[] = []): (FactoryProvider | ExistingProvider)[] {
   return [
-    {
-      provide: WebSocketStatusService,
-      useValue: ({
-        isConnected$: of(true),
-        isAuthenticated$: of(false),
-      } as WebSocketStatusService),
-    },
-    {
-      provide: WebSocketHandlerService,
-      useValue: ({ send: jest.fn(), responses$: of() } as unknown as WebSocketHandlerService),
-    },
-    {
-      provide: TranslateService,
-      useValue: (() => {
-        const mockInstant = (key: string, params?: Record<string, unknown>): string => {
-          // Handle ICU plural syntax - can be embedded in larger strings
-          let result = key;
-
-
-          // Match plural expressions - need to handle nested braces carefully
-          // This matches { n, plural, ... } with any content including nested {}
-          const pluralRegex = /\{\s*(\w+)\s*,\s*plural\s*,\s*((?:[^{}]|\{[^}]*\})+)\s*\}/g;
-
-          result = result.replace(pluralRegex, (match, paramName, pluralRules) => {
-            if (params?.[paramName] === undefined) {
-              return match;
-            }
-
-            const paramValue = Number(params[paramName]);
-
-            // Parse plural rules - handle spaces more flexibly
-            const rules = pluralRules.match(/(?:=\d+\s*\{[^}]+\}|\w+\s*\{[^}]+\})/g) || [];
-
-            for (const rule of rules) {
-              const exactMatch = rule.match(/[=](\d+)\s*\{([^}]+)\}/);
-              if (exactMatch && Number(exactMatch[1]) === paramValue) {
-                return exactMatch[2].replace(/#/g, String(paramValue));
-              }
-
-              const oneMatch = rule.match(/one\s*\{([^}]+)\}/);
-              if (oneMatch && paramValue === 1) {
-                return oneMatch[1].replace(/#/g, String(paramValue));
-              }
-
-              const otherMatch = rule.match(/other\s*\{([^}]+)\}/);
-              if (otherMatch && (paramValue === 0 || paramValue > 1)) {
-                return otherMatch[1].replace(/#/g, String(paramValue));
-              }
-            }
-
-            return match;
-          });
-
-
-          // Handle simple parameter interpolation
-          if (params && result.includes('{')) {
-            Object.entries(params).forEach(([paramKey, paramValue]) => {
-              result = result.replace(new RegExp(`\\{${paramKey}\\}`, 'g'), String(paramValue));
-            });
-          }
-
-          return result;
-        };
-
-        return {
-          instant: mockInstant,
-          get: (key: string, params?: Record<string, unknown>) => of(mockInstant(key, params)),
-          stream: (key: string, params?: Record<string, unknown>) => of(mockInstant(key, params)),
-          onLangChange: of({ lang: 'en' }),
-          onTranslationChange: of({}),
-          onDefaultLangChange: of({}),
-        };
-      })(),
-    },
-    {
-      provide: SubscriptionManagerService,
-      useValue: {
-        subscribe: jest.fn(() => of()),
-      },
-    },
     {
       provide: ApiService,
       useFactory: () => {
-        const mockApiService = new MockApiService();
-        (mockResponses || []).forEach((mockResponse) => {
-          if (mockResponse.type === MockApiResponseType.Call) {
-            mockApiService.mockCall(mockResponse.method, mockResponse.response);
-          } else if (mockResponse.type === MockApiResponseType.Job) {
-            mockApiService.mockJob(
-              mockResponse.method,
-              mockResponse.response as Job<ApiJobDirectory[ApiJobMethod]['response']>,
-            );
-          }
-        });
-        return mockApiService;
+        const api = new MockApiService();
+        mocks.forEach((apply) => apply(api));
+        return api;
       },
     },
     {
       provide: MockApiService,
-      useExisting: forwardRef(() => ApiService),
+      useExisting: ApiService,
     },
   ];
 }
 
-export function mockCall<M extends ApiCallMethod>(
+export function mockCall<M extends MockCallMethod>(
   method: M,
-  response: CallResponseOrFactory<M> = undefined,
-): MockApiCallResponse {
-  return {
-    response,
-    method,
-    type: MockApiResponseType.Call,
-  };
+  response: CallResponseOrFactory<M>,
+): MockApiResponse {
+  return (api) => api.mockCall(method, response);
+}
+
+export function mockUndeclaredCall<M extends UndeclaredCallMethod>(
+  method: M,
+  response: UndeclaredCallDirectory[M]['response'],
+): MockApiResponse {
+  return (api) => api.mockUndeclaredCall(method, response);
+}
+
+/** Answers `method` with a JSON-RPC error, thrown by `call` as an `ApiCallError`. */
+export function mockCallError(
+  method: RefusableMethod,
+  error: FakeApiErrorOverrides = {},
+): MockApiResponse {
+  return (api) => api.mockCallError(method, error);
+}
+
+export function mockQuery<M extends QueryMethod<D['call']>>(
+  method: M,
+  rows: QueryEntity<D['call'], M>[],
+): MockApiResponse {
+  return (api) => api.mockQuery(method, rows);
+}
+
+export function mockJob<M extends JobMethod<D>>(
+  method: M,
+  updates: JobUpdate<JobResult<D, M>> | JobUpdate<JobResult<D, M>>[],
+): MockApiResponse {
+  return (api) => api.mockJob(method, updates);
 }
 
 /**
- * Mocks immediate call() and job() responses and core.get_jobs when id is queried.
- * @see MockApiService.mockJob()
+ * Waits for the typed double to answer. It replies on a microtask, as a socket would, so a spec
+ * that asserts on the outcome of a call needs to let that reply land first. A component spec has
+ * `await spectator.fixture.whenStable()` for this; a service or store spec, with no fixture to
+ * wait on, awaits this instead. A macrotask runs after every microtask already queued.
  */
-export function mockJob<M extends ApiJobMethod>(
-  method: M,
-  response: JobResponseOrFactory<M> = fakeSuccessfulJob(),
-): MockApiJobResponse {
-  return {
-    response,
-    method,
-    type: MockApiResponseType.Job,
-  };
+export function settleApi(): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve);
+  });
 }

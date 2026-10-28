@@ -16,7 +16,7 @@ import { SedStatus } from 'app/enums/sed-status.enum';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 
 export enum SedPasswordSource {
@@ -57,7 +57,7 @@ interface SedDiskState {
   ],
 })
 export class SedDiskPasswordComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(FormBuilder);
   private translate = inject(TranslateService);
   private entitlements = inject(EntitlementsService);

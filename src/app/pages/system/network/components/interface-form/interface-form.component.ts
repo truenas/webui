@@ -49,7 +49,7 @@ import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-for
 import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialog,
 } from 'app/pages/system/network/components/default-gateway-dialog/default-gateway-dialog.component';
@@ -96,7 +96,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
 export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
   private cdr = inject(ChangeDetectorRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);

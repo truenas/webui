@@ -30,7 +30,7 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   IdMapping,
   ViewType,
@@ -70,7 +70,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class MapUserGroupIdsDialogComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   protected dialogRef = inject<DialogRef<unknown, MapUserGroupIdsDialogComponent>>(DialogRef);
   private translate = inject(TranslateService);

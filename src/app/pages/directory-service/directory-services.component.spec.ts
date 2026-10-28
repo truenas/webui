@@ -5,8 +5,8 @@ import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog, TnMenuHarness } from '@truenas/ui-components';
 import { of, throwError, NEVER } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { DirectoryServiceStatus, DirectoryServiceType, DirectoryServiceCredentialType } from 'app/enums/directory-services.enum';
 import { ActiveDirectoryConfig } from 'app/interfaces/active-directory-config.interface';
 import { LdapCredentialPlain } from 'app/interfaces/directoryservice-credentials.interface';
@@ -18,8 +18,8 @@ import { LdapConfig } from 'app/interfaces/ldap-config.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { LeaveDomainDialog } from 'app/pages/directory-service/components/leave-domain-dialog/leave-domain-dialog.component';
 import { SystemGeneralService } from 'app/services/system-general.service';
 import { DirectoryServicesComponent } from './directory-services.component';
@@ -64,9 +64,9 @@ describe('DirectoryServicesComponent', () => {
   const createComponent = createComponentFactory({
     component: DirectoryServicesComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('directoryservices.status', () => mockServicesStatus),
-        mockTypedCall(
+      mockApi([
+        mockCall('directoryservices.status', () => mockServicesStatus),
+        mockCall(
           'directoryservices.config',
           () => mockDirectoryServicesConfig as CallResponse<WebUiApiDirectory, 'directoryservices.config'>,
         ),
@@ -131,7 +131,7 @@ describe('DirectoryServicesComponent', () => {
   describe('Status events', () => {
     it('applies a changed status frame and refreshes the cards', async () => {
       await setup();
-      const api = spectator.inject(TypedApiService);
+      const api = spectator.inject(ApiService);
       jest.mocked(api.call).mockClear();
       const ldapFaulted: DirectoryServicesStatus = {
         type: DirectoryServiceType.Ldap,
@@ -141,7 +141,7 @@ describe('DirectoryServicesComponent', () => {
       // The refresh the frame triggers reads the same state back.
       mockServicesStatus = ldapFaulted;
 
-      spectator.inject(MockTypedApiService).emitEvent('directoryservices.status', {
+      spectator.inject(MockApiService).emitEvent('directoryservices.status', {
         msg: 'changed',
         fields: ldapFaulted,
       });
@@ -158,18 +158,18 @@ describe('DirectoryServicesComponent', () => {
       // as in 'should refresh cards after successful leave'.
       const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
       await setup();
-      const api = spectator.inject(TypedApiService);
-      const mockApi = spectator.inject(MockTypedApiService);
+      const api = spectator.inject(ApiService);
+      const apiMock = spectator.inject(MockApiService);
       jest.mocked(api.call).mockClear();
 
       // A removal carries no `fields`; reading them would end the subscription.
-      mockApi.emitEvent('directoryservices.status', { msg: 'removed', id: 1 });
+      apiMock.emitEvent('directoryservices.status', { msg: 'removed', id: 1 });
       await settle();
 
       expect(api.call).not.toHaveBeenCalled();
 
       mockServicesStatus = { ...mockServicesStatus, status: DirectoryServiceStatus.Faulted };
-      mockApi.emitEvent('directoryservices.status', { msg: 'changed', fields: mockServicesStatus });
+      apiMock.emitEvent('directoryservices.status', { msg: 'changed', fields: mockServicesStatus });
       await settle();
 
       expect((spectator.component as DirectoryServicesComponentWithProtected).directoryServicesStatus())
@@ -621,7 +621,7 @@ describe('DirectoryServicesComponent', () => {
         closed: of(true),
       };
       jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue(dialogRef as DialogRef);
-      const apiCallSpy = jest.spyOn(spectator.inject(TypedApiService), 'call');
+      const apiCallSpy = jest.spyOn(spectator.inject(ApiService), 'call');
 
       await settle();
 

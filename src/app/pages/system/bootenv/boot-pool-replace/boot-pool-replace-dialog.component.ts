@@ -13,7 +13,7 @@ import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unus
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -37,7 +37,7 @@ export class BootPoolReplaceDialog implements OnInit {
   pk = inject(DIALOG_DATA);
   private fb = inject(FormBuilder);
   private translate = inject(TranslateService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   protected dialogRef = inject<DialogRef<unknown, BootPoolReplaceDialog>>(DialogRef);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);

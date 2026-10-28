@@ -4,12 +4,12 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
 import { ContainerDevice, ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddNicMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
@@ -44,9 +44,9 @@ const defaultContainersStoreProvider = mockProvider(ContainersStore, {
   }),
 });
 
-const noPendingChangesProvider = mockTypedApi([
-  mockTypedCall('interface.has_pending_changes', false),
-  mockTypedCall('container.device.create', null),
+const noPendingChangesProvider = mockApi([
+  mockCall('interface.has_pending_changes', false),
+  mockCall('container.device.create', null),
 ]);
 
 describe('ContainerNicDevicesComponent', () => {
@@ -172,7 +172,7 @@ describe('ContainerNicDevicesComponent', () => {
       const button = await loader.getHarness(TnButtonHarness.with({ label: 'Add NIC on truenasbr0' }));
       await button.click();
 
-      expect(emptySpectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
+      expect(emptySpectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
         container: 5,
         attributes: { dtype: ContainerDeviceType.Nic },
       }]);

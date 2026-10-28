@@ -6,8 +6,8 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnInputHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
+import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedJob } from 'app/core/testing/utils/mock-typed-api.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { jsonToYaml } from 'app/helpers/json-to-yaml.helper';
@@ -17,7 +17,7 @@ import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor
 import { IxCodeEditorHarness } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { CustomAppFormComponent } from 'app/pages/apps/components/custom-app-form/custom-app-form.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -77,9 +77,9 @@ describe('CustomAppFormComponent', () => {
           afterClosed: jest.fn(() => of(true)),
         })),
       }),
-      mockTypedApi([
-        mockTypedJob('app.create', { state: JobState.Success }),
-        mockTypedJob('app.update', { state: JobState.Success }),
+      mockApi([
+        mockJob('app.create', { state: JobState.Success }),
+        mockJob('app.update', { state: JobState.Success }),
       ]),
       mockProvider(Router),
     ],
@@ -107,7 +107,7 @@ describe('CustomAppFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'app.create',
         [{
           custom_app: true,
@@ -137,7 +137,7 @@ describe('CustomAppFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('app.update', [
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('app.update', [
         'test-app-one',
         { custom_compose_config_string: jsonToYaml(fakeApp.config) },
       ]);

@@ -6,18 +6,18 @@ import {
   TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { ZfsTierConfig } from 'app/interfaces/zfs-tier.interface';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { TierConfigFormComponent } from 'app/pages/storage/components/tier-config-form/tier-config-form.component';
 
 describe('TierConfigFormComponent', () => {
   let spectator: Spectator<TierConfigFormComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const mockConfig = {
     enabled: true,
@@ -33,9 +33,9 @@ describe('TierConfigFormComponent', () => {
     imports: [ReactiveFormsModule],
     providers: [
       ...ixFormTestingProviders(),
-      mockTypedApi([
-        mockTypedCall('zfs.tier.config', mockConfig),
-        mockTypedCall('zfs.tier.update', mockConfig),
+      mockApi([
+        mockCall('zfs.tier.config', mockConfig),
+        mockCall('zfs.tier.update', mockConfig),
       ]),
       mockProvider(FormErrorHandlerService),
       mockAuth(),
@@ -45,7 +45,7 @@ describe('TierConfigFormComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   function getInput(formControlName: string): Promise<TnInputHarness> {

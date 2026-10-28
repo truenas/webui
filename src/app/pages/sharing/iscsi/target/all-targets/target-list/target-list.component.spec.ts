@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCardComponent, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IscsiTargetMode } from 'app/enums/iscsi.enum';
 import { IscsiTarget } from 'app/interfaces/iscsi.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -32,10 +32,10 @@ describe('TargetListComponent', () => {
     component: TargetListComponent,
     providers: [
       mockProvider(EmptyService),
-      mockTypedApi([
-        mockTypedQuery('iscsi.target.query', targets as WebUiQueryEntity<'iscsi.target.query'>[]),
-        mockTypedCall('iscsi.target.delete', null),
-        mockTypedQuery('iscsi.global.sessions', []),
+      mockApi([
+        mockQuery('iscsi.target.query', targets as WebUiQueryEntity<'iscsi.target.query'>[]),
+        mockCall('iscsi.target.delete', null),
+        mockQuery('iscsi.global.sessions', []),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

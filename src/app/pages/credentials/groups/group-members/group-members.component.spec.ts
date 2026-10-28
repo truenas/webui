@@ -5,8 +5,8 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, SpectatorRouting } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnIconButtonHarness } from '@truenas/ui-components';
 import { firstValueFrom, of, Subject } from 'rxjs';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { Group } from 'app/interfaces/group.interface';
 import { User } from 'app/interfaces/user.interface';
@@ -14,8 +14,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { DualListBoxComponent } from 'app/modules/lists/dual-listbox/dual-listbox.component';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { GroupMembersComponent } from 'app/pages/credentials/groups/group-members/group-members.component';
 
 const fakeGroupDataSource = [{
@@ -31,7 +31,7 @@ const fakeGroupDataSource = [{
 describe('GroupMembersComponent', () => {
   let spectator: SpectatorRouting<GroupMembersComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
   const createComponent = createRoutingFactory({
     component: GroupMembersComponent,
     imports: [
@@ -39,10 +39,10 @@ describe('GroupMembersComponent', () => {
       DualListBoxComponent,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('group.query', fakeGroupDataSource as unknown as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as unknown as WebUiQueryEntity<'user.query'>[]),
-        mockTypedCall('group.update', null),
+      mockApi([
+        mockQuery('group.query', fakeGroupDataSource as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockQuery('user.query', [{ id: 41, username: 'dummy-user' }, { id: 42, username: 'second-user' }] as unknown as WebUiQueryEntity<'user.query'>[]),
+        mockCall('group.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -65,11 +65,11 @@ describe('GroupMembersComponent', () => {
     spectator = createComponent();
     await spectator.fixture.whenStable();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('loads local users to show in available users', () => {
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('user.query', [['local', '=', true]]);
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('user.query', [['local', '=', true]]);
   });
 
   it('shows current group values when form is being edited', () => {
@@ -166,7 +166,7 @@ describe('GroupMembersComponent - initial loading', () => {
     component: GroupMembersComponent,
     imports: [ReactiveFormsModule, DualListBoxComponent],
     providers: [
-      mockProvider(TypedApiService, {
+      mockProvider(ApiService, {
         query: jest.fn((method: string) => (method === 'group.query' ? groupQuery$ : userQuery$)),
       }),
       mockProvider(DialogService),
@@ -214,14 +214,14 @@ describe('GroupMembersComponent - built-in users', () => {
     component: GroupMembersComponent,
     imports: [ReactiveFormsModule, DualListBoxComponent],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('group.query', fakeGroupDataSource as unknown as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('user.query', [
+      mockApi([
+        mockQuery('group.query', fakeGroupDataSource as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockQuery('user.query', [
           { id: 41, username: 'dummy-user', builtin: false },
           { id: 42, username: 'zoe', builtin: false },
           { id: 1, username: 'root', builtin: true },
         ] as unknown as WebUiQueryEntity<'user.query'>[]),
-        mockTypedCall('group.update', null),
+        mockCall('group.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -272,14 +272,14 @@ describe('GroupMembersComponent - built-in users already in the group', () => {
     component: GroupMembersComponent,
     imports: [ReactiveFormsModule, DualListBoxComponent],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('group.query', groupWithBuiltinMember as unknown as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('user.query', [
+      mockApi([
+        mockQuery('group.query', groupWithBuiltinMember as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockQuery('user.query', [
           { id: 41, username: 'dummy-user', builtin: false },
           { id: 1, username: 'root', builtin: true },
           { id: 2, username: 'daemon', builtin: true },
         ] as unknown as WebUiQueryEntity<'user.query'>[]),
-        mockTypedCall('group.update', null),
+        mockCall('group.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -347,16 +347,16 @@ describe('GroupMembersComponent - built-in users added during the session', () =
     component: GroupMembersComponent,
     imports: [ReactiveFormsModule, DualListBoxComponent],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('group.query', groupWithBuiltinMember as unknown as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('user.query', [
+      mockApi([
+        mockQuery('group.query', groupWithBuiltinMember as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockQuery('user.query', [
           { id: 41, username: 'dummy-user', builtin: false },
           { id: 1, username: 'root', builtin: true },
           { id: 2, username: 'daemon', builtin: true },
           // Stays out of the group, so the checkbox has something left to hide.
           { id: 3, username: 'bin', builtin: true },
         ] as unknown as WebUiQueryEntity<'user.query'>[]),
-        mockTypedCall('group.update', null),
+        mockCall('group.update', null),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
@@ -430,9 +430,9 @@ describe('GroupMembersComponent - directory service group', () => {
     component: GroupMembersComponent,
     imports: [ReactiveFormsModule, DualListBoxComponent],
     providers: [
-      mockTypedApi([
-        mockTypedQuery('group.query', nonLocalGroup as unknown as WebUiQueryEntity<'group.query'>[]),
-        mockTypedQuery('user.query', []),
+      mockApi([
+        mockQuery('group.query', nonLocalGroup as unknown as WebUiQueryEntity<'group.query'>[]),
+        mockQuery('user.query', []),
       ]),
       mockProvider(DialogService),
       mockProvider(SnackbarService),

@@ -2,9 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { SmbExtensionsWarningComponent } from './smb-extensions-warning.component';
 
 describe('SmbExtensionsWarningComponent', () => {
@@ -14,8 +14,8 @@ describe('SmbExtensionsWarningComponent', () => {
   const createComponent = createComponentFactory({
     component: SmbExtensionsWarningComponent,
     providers: [
-      mockTypedApi([
-        mockTypedCall('smb.update', null),
+      mockApi([
+        mockCall('smb.update', null),
       ]),
       mockProvider(SnackbarService),
     ],
@@ -44,7 +44,7 @@ describe('SmbExtensionsWarningComponent', () => {
 
     await enableButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('smb.update', [{ aapl_extensions: true }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('smb.update', [{ aapl_extensions: true }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
       'Apple SMB2/3 protocol extension support has been enabled.',
     );

@@ -5,7 +5,7 @@ import {
   catchError, map, switchMap, tap,
 } from 'rxjs/operators';
 import { toAcl } from 'app/interfaces/acl.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   PermissionsCardState,
 } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
@@ -19,7 +19,7 @@ const initialState: PermissionsCardState = {
 
 @Injectable()
 export class PermissionsCardStore extends ComponentStore<PermissionsCardState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
   constructor() {

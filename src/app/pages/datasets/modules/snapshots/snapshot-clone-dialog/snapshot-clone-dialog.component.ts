@@ -12,7 +12,7 @@ import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-snapshot-clone-dialog',
@@ -31,7 +31,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
   ],
 })
 export class SnapshotCloneDialog implements OnInit {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private loader = inject(LoaderService);
   protected dialogRef = inject<DialogRef<unknown, SnapshotCloneDialog>>(DialogRef);
   private fb = inject(FormBuilder);

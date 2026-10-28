@@ -3,8 +3,8 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { provideRouter } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EulaComponent } from 'app/pages/system/general-settings/support/eula/eula.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -16,8 +16,8 @@ describe('EulaComponent', () => {
     component: EulaComponent,
     providers: [
       provideRouter([]),
-      mockTypedApi([
-        mockTypedCall('truenas.get_eula', '<p>License terms</p>'),
+      mockApi([
+        mockCall('truenas.get_eula', '<p>License terms</p>'),
       ]),
       mockProvider(ErrorHandlerService, {
         withErrorHandler: () => (source$: unknown) => source$,
@@ -33,7 +33,7 @@ describe('EulaComponent', () => {
   it('loads the EULA and shows its text', () => {
     spectator.detectChanges();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('truenas.get_eula');
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('truenas.get_eula');
     expect(spectator.query('#eula')).toHaveText('License terms');
   });
 

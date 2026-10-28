@@ -48,7 +48,7 @@ import {
 import {
   TableToggleCellComponent,
 } from 'app/modules/tn-table-cells/toggle-cell/table-toggle-cell.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   ReplicationFormComponent,
 } from 'app/pages/data-protection/replication/replication-form/replication-form.component';
@@ -94,7 +94,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 export class ReplicationTaskCardComponent extends JobTaskCardBase<ReplicationTask> {
   private formPanel = inject(FormSidePanelService);
   private errorHandler = inject(ErrorHandlerService);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
   private tnDialog = inject(TnDialog);

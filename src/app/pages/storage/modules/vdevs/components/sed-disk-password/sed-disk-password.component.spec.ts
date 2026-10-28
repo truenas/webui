@@ -5,11 +5,11 @@ import {
   TnBannerHarness, TnInputHarness, TnRadioGroupHarness, TnRadioHarness,
 } from '@truenas/ui-components';
 import { firstValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
 import {
   mockSedDiskPasswordCalls, sedEntitledProvider,
@@ -22,7 +22,7 @@ function sedDisk(status: SedStatus): WebUiQueryEntity<'disk.query'> {
 describe('SedDiskPasswordComponent', () => {
   let spectator: SpectatorHost<SedDiskPasswordComponent>;
   let loader: HarnessLoader;
-  let api: MockTypedApiService;
+  let api: MockApiService;
 
   const createHost = createHostFactory({
     component: SedDiskPasswordComponent,
@@ -33,14 +33,14 @@ describe('SedDiskPasswordComponent', () => {
     spectator = createHost('<ix-sed-disk-password [poolId]="4" [disk]="\'sdi\'"></ix-sed-disk-password>', {
       // Spread: a per-host override takes a flat provider list.
       providers: [
-        ...mockTypedApi([
+        ...mockApi([
           ...mockSedDiskPasswordCalls(options),
-          mockTypedCall('disk.setup_sed', true),
-          mockTypedCall('disk.unlock_sed', true),
+          mockCall('disk.setup_sed', true),
+          mockCall('disk.unlock_sed', true),
         ]),
       ],
     });
-    api = spectator.inject(TypedApiService) as unknown as MockTypedApiService;
+    api = spectator.inject(ApiService) as unknown as MockApiService;
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     // The typed double answers on a microtask.
     spectator.fixture.autoDetectChanges();

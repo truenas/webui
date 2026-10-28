@@ -2,7 +2,7 @@ import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { AuditFormValues, getAuditFormConfig } from 'app/pages/system/advanced/audit/audit-form/audit.form-config';
 import { AppState } from 'app/store';
 import { advancedConfigUpdated } from 'app/store/system-config/system-config.actions';
@@ -16,7 +16,7 @@ describe('getAuditFormConfig', () => {
     quota_fill_critical: 94,
   } as AuditFormValues;
 
-  const api = { call: jest.fn(() => of(undefined)) } as unknown as TypedApiService;
+  const api = { call: jest.fn(() => of(undefined)) } as unknown as ApiService;
   const translate = { instant: (key: string) => key } as TranslateService;
   const store$ = { dispatch: jest.fn() } as unknown as Store<AppState>;
 

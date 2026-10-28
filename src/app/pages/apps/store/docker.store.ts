@@ -11,7 +11,7 @@ import {
 } from 'app/interfaces/docker-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface DockerConfigState {
@@ -34,7 +34,7 @@ const initialState: DockerConfigState = {
 
 @Injectable()
 export class DockerStore extends ComponentStore<DockerConfigState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);

@@ -13,7 +13,7 @@ import { CoreDownloadResponse } from 'app/interfaces/core-download.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { selectJob } from 'app/modules/jobs/store/job.selectors';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { saveDebugElement } from 'app/pages/system/general-settings/support/save-debug-button/save-debug-button.elements';
 import { DownloadService } from 'app/services/download.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -31,7 +31,7 @@ import { waitForSystemInfo } from 'app/store/system-info/system-info.selectors';
   ],
 })
 export class SaveDebugButtonComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private errorHandler = inject(ErrorHandlerService);
   private download = inject(DownloadService);

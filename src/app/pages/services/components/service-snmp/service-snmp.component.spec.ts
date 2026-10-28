@@ -8,13 +8,13 @@ import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceSnmpComponent } from './service-snmp.component';
 
@@ -22,7 +22,7 @@ type SnmpConfig = CallResponse<WebUiApiDirectory, 'snmp.config'>;
 
 describe('ServiceSnmpComponent', () => {
   let spectator: Spectator<ServiceSnmpComponent>;
-  let api: TypedApiService;
+  let api: ApiService;
   let loader: HarnessLoader;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
@@ -46,9 +46,9 @@ describe('ServiceSnmpComponent', () => {
     routes: [],
     providers: [
       mockProvider(DialogService),
-      mockTypedApi([
-        mockTypedCall('snmp.update', {} as SnmpConfig),
-        mockTypedCall('snmp.config', {
+      mockApi([
+        mockCall('snmp.update', {} as SnmpConfig),
+        mockCall('snmp.config', {
           location: 'My location',
           contact: 'test@truenas.org',
           community: 'gated',
@@ -69,7 +69,7 @@ describe('ServiceSnmpComponent', () => {
 
   beforeEach(() => {
     spectator = createComponent();
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -78,7 +78,7 @@ describe('ServiceSnmpComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    spectator.inject(MockTypedApiService).mockCallError('snmp.config');
+    spectator.inject(MockApiService).mockCallError('snmp.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,

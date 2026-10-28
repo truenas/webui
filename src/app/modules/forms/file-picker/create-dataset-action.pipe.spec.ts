@@ -3,14 +3,14 @@ import { CallResponse } from '@truenas/api-client';
 import { FilePickerCreateAction, FileSystemItem } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
 import { TreeNodeSource } from 'app/modules/forms/file-picker/tree-node-source';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 
 describe('CreateDatasetActionPipe', () => {
   let spectator: SpectatorService<CreateDatasetActionPipe>;
@@ -34,9 +34,9 @@ describe('CreateDatasetActionPipe', () => {
     service: CreateDatasetActionPipe,
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('pool.dataset.query', [parentDataset]),
-        mockTypedCall('pool.dataset.create', {
+      mockApi([
+        mockQuery('pool.dataset.query', [parentDataset]),
+        mockCall('pool.dataset.create', {
           mountpoint: '/mnt/tank/new',
         } as CallResponse<WebUiApiDirectory, 'pool.dataset.create'>),
       ]),
@@ -81,8 +81,8 @@ describe('CreateDatasetActionPipe', () => {
     it('creates the dataset under the browsed parent and resolves with its mountpoint', async () => {
       const created = await action.create!('/mnt/tank', 'new');
 
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'tank']]);
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'tank']]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
         comments: 'test',
         name: 'tank/new',
       }]);
@@ -92,7 +92,7 @@ describe('CreateDatasetActionPipe', () => {
     it('maps parent and result through a source with relative dataset names', async () => {
       const created = await spectator.service.transform(relativeSource).create!('/tank', 'new');
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.dataset.create', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [
         expect.objectContaining({ name: 'tank/new' }),
       ]);
       expect(created).toBe('/tank/new');
@@ -108,7 +108,7 @@ describe('CreateDatasetActionPipe', () => {
     });
 
     it('rejects when the parent dataset does not exist', async () => {
-      spectator.inject(MockTypedApiService).mockQuery('pool.dataset.query', []);
+      spectator.inject(MockApiService).mockQuery('pool.dataset.query', []);
 
       await expect(action.create!('/mnt/gone', 'new'))
         .rejects.toThrow('Parent dataset gone not found.');

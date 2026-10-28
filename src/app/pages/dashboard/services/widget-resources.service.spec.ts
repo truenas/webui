@@ -7,8 +7,8 @@ import { Store } from '@ngrx/store';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse, EventUnion } from '@truenas/api-client';
 import { firstValueFrom } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { AppStats } from 'app/interfaces/app.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -46,19 +46,19 @@ describe('WidgetResourcesService', () => {
   const createService = createServiceFactory({
     service: WidgetResourcesService,
     providers: [
-      mockTypedApi([
-        mockTypedQuery('app.query', apps),
-        mockTypedQuery('pool.query', pools),
-        mockTypedQuery('replication.query', []),
-        mockTypedQuery('rsynctask.query', []),
-        mockTypedQuery('cloudsync.query', []),
-        mockTypedQuery('interface.query', []),
-        mockTypedCall('update.status', {
+      mockApi([
+        mockQuery('app.query', apps),
+        mockQuery('pool.query', pools),
+        mockQuery('replication.query', []),
+        mockQuery('rsynctask.query', []),
+        mockQuery('cloudsync.query', []),
+        mockQuery('interface.query', []),
+        mockCall('update.status', {
           status: {
             new_version: {},
           },
         } as CallResponse<WebUiApiDirectory, 'update.status'>),
-        mockTypedCall('reporting.netdata_get_data', [interfaceEth0]),
+        mockCall('reporting.netdata_get_data', [interfaceEth0]),
       ]),
       mockProvider(Store, {
         dispatch: jest.fn(),
@@ -91,7 +91,7 @@ describe('WidgetResourcesService', () => {
       setTimeout(resolve);
     });
 
-    spectator.inject(MockTypedApiService).emitEvent('pool.query', {
+    spectator.inject(MockApiService).emitEvent('pool.query', {
       msg: 'changed',
       id: 2,
       fields: { ...pools[1], name: 'renamed' },
@@ -123,10 +123,10 @@ describe('WidgetResourcesService', () => {
       const update = { cpu: { cpu: { usage: 42, temp: 50 } } } as unknown as RealtimeUpdate;
       const received = firstValueFrom(spectator.service.realtimeUpdates$);
 
-      spectator.inject(MockTypedApiService).emitEvent('reporting.realtime', { msg: 'added', fields: update });
+      spectator.inject(MockApiService).emitEvent('reporting.realtime', { msg: 'added', fields: update });
 
       expect(await received).toEqual({ fields: update });
-      expect(spectator.inject(MockTypedApiService).subscribe).toHaveBeenCalledWith('reporting.realtime');
+      expect(spectator.inject(MockApiService).subscribe).toHaveBeenCalledWith('reporting.realtime');
     });
   });
 
@@ -137,9 +137,9 @@ describe('WidgetResourcesService', () => {
       const emissions: unknown[] = [];
       spectator.service.getAppStats('app_2').subscribe((state) => emissions.push(state));
 
-      spectator.inject(MockTypedApiService).emitEvent('app.stats', { msg: 'added', fields: [app1Stats, app2Stats] });
+      spectator.inject(MockApiService).emitEvent('app.stats', { msg: 'added', fields: [app1Stats, app2Stats] });
 
-      expect(spectator.inject(MockTypedApiService).subscribe).toHaveBeenCalledWith('app.stats');
+      expect(spectator.inject(MockApiService).subscribe).toHaveBeenCalledWith('app.stats');
       expect(emissions.at(-1)).toEqual({ isLoading: false, value: app2Stats });
     });
   });

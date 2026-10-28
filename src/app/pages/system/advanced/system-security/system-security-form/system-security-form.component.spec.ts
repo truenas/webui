@@ -24,8 +24,8 @@ import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-fo
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
 import { SystemSecurityFormComponent } from 'app/pages/system/advanced/system-security/system-security-form/system-security-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -77,7 +77,7 @@ interface StigRequirementsApiOverrides {
 }
 
 /**
- * Creates an ApiService mock with default "all requirements satisfied" values
+ * Creates an API mock with default "all requirements satisfied" values
  * that can be overridden for specific test scenarios.
  */
 function createStigRequirementsApiMock(overrides: StigRequirementsApiOverrides = {}): StigRequirementsApiMock {
@@ -149,7 +149,7 @@ async function setupStigRequirementTest(
 ): Promise<Spectator<SystemSecurityFormComponent>> {
   const validationSpectator = createValidationComponent({
     providers: [
-      mockProvider(TypedApiService, createStigRequirementsApiMock(apiOverrides)),
+      mockProvider(ApiService, createStigRequirementsApiMock(apiOverrides)),
     ],
   });
   const validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
@@ -222,7 +222,7 @@ describe('SystemSecurityFormComponent', () => {
         unsuppress: jest.fn(),
       }),
       mockAuth(),
-      mockProvider(TypedApiService, createStigRequirementsApiMock()),
+      mockProvider(ApiService, createStigRequirementsApiMock()),
     ],
   });
 
@@ -260,7 +260,7 @@ describe('SystemSecurityFormComponent', () => {
 
       saveForm();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('system.security.update', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
         min_password_age: 15,
@@ -301,7 +301,7 @@ describe('SystemSecurityFormComponent', () => {
 
       saveForm();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('system.security.update', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
         min_password_age: 15,
@@ -327,7 +327,7 @@ describe('SystemSecurityFormComponent', () => {
       saveForm();
 
       // undefined should be passed as is
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('system.security.update', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
         min_password_age: 15,
@@ -349,7 +349,7 @@ describe('SystemSecurityFormComponent', () => {
 
       saveForm();
 
-      expect(spectator.inject(TypedApiService).job).toHaveBeenCalledWith('system.security.update', [{
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
         min_password_age: 15,
@@ -667,7 +667,7 @@ describe('SystemSecurityFormComponent', () => {
   describe('2FA warning when enabling STIG', () => {
     let warningSpectator: Spectator<SystemSecurityFormComponent>;
     let warningLoader: HarnessLoader;
-    let apiService: TypedApiService;
+    let apiService: ApiService;
     let dialogService: DialogService;
 
     const setStigToggle = async (checked: boolean): Promise<void> => {
@@ -687,7 +687,7 @@ describe('SystemSecurityFormComponent', () => {
       warningLoader = TestbedHarnessEnvironment.loader(warningSpectator.fixture);
       warningSpectator.detectChanges();
       await warningSpectator.fixture.whenStable();
-      apiService = warningSpectator.inject(TypedApiService);
+      apiService = warningSpectator.inject(ApiService);
       dialogService = warningSpectator.inject(DialogService);
     });
 
@@ -891,7 +891,7 @@ describe('SystemSecurityFormComponent', () => {
       }
     };
 
-    // Minimal factory without pre-configured ApiService mocks
+    // Minimal factory without pre-configured API mocks
     const createValidationComponent = createComponentFactory({
       component: SystemSecurityFormComponent,
       imports: [ReactiveFormsModule],
@@ -904,8 +904,8 @@ describe('SystemSecurityFormComponent', () => {
           navigate: jest.fn(),
         }),
         mockAuth(),
-        // ApiService mock will be set up in each individual test
-        mockProvider(TypedApiService, {
+        // API mock will be set up in each individual test
+        mockProvider(ApiService, {
           call: jest.fn(() => of(null)),
           query: queryThroughCall(),
           job: jest.fn(() => fakeSuccessfulJob()),
@@ -917,7 +917,7 @@ describe('SystemSecurityFormComponent', () => {
       // Create component with all requirements NOT satisfied
       validationSpectator = createValidationComponent({
         providers: [
-          mockProvider(TypedApiService, createStigRequirementsApiMock({
+          mockProvider(ApiService, createStigRequirementsApiMock({
             twoFactorEnabled: false,
             twoFactorSshEnabled: false,
             dockerStatus: DockerStatus.Running,
@@ -984,7 +984,7 @@ describe('SystemSecurityFormComponent', () => {
       // Create component with all requirements satisfied (using defaults)
       validationSpectator = createValidationComponent({
         providers: [
-          mockProvider(TypedApiService, createStigRequirementsApiMock()),
+          mockProvider(ApiService, createStigRequirementsApiMock()),
         ],
       });
       validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
@@ -1042,7 +1042,7 @@ describe('SystemSecurityFormComponent', () => {
 
       validationSpectator = createValidationComponent({
         providers: [
-          mockProvider(TypedApiService, apiServiceMock),
+          mockProvider(ApiService, apiServiceMock),
         ],
       });
       validationLoader = TestbedHarnessEnvironment.loader(validationSpectator.fixture);
@@ -1170,7 +1170,7 @@ describe('SystemSecurityFormComponent', () => {
           navigate: jest.fn(() => Promise.resolve()),
         }),
         mockAuth(),
-        mockProvider(TypedApiService, createStigRequirementsApiMock({
+        mockProvider(ApiService, createStigRequirementsApiMock({
           twoFactorEnabled: false,
           twoFactorSshEnabled: false,
           rootPasswordDisabled: false,
@@ -1308,7 +1308,7 @@ describe('SystemSecurityFormComponent', () => {
 
       const reevaluationSpectator = createTwoFactorTestComponent({
         providers: [
-          mockProvider(TypedApiService, apiServiceMock),
+          mockProvider(ApiService, apiServiceMock),
         ],
       });
       reevaluationSpectator.detectChanges();
@@ -1389,7 +1389,7 @@ describe('SystemSecurityFormComponent', () => {
 
       const reevaluationSpectator = createTwoFactorTestComponent({
         providers: [
-          mockProvider(TypedApiService, apiServiceMock),
+          mockProvider(ApiService, apiServiceMock),
         ],
       });
       const formPanel = reevaluationSpectator.inject(FormSidePanelService);

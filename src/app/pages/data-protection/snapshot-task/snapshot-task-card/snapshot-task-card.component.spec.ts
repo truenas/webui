@@ -5,10 +5,10 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness, TnDialog, TnMenuHarness, TnSlideToggleHarness, TnTableHarness } from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { fakeDate, restoreDate } from 'app/core/testing/utils/mock-clock.utils';
-import { mockTypedApi, mockTypedCall, mockTypedQuery } from 'app/core/testing/utils/mock-typed-api.utils';
 import { helptextSnapshotForm } from 'app/helptext/data-protection/snapshot/snapshot-form';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -17,8 +17,8 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { openRowActionsMenu } from 'app/modules/tn-table/testing/table-row-actions.utils';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { SnapshotTaskCardComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-card/snapshot-task-card.component';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -83,11 +83,11 @@ describe('SnapshotTaskCardComponent', () => {
           },
         ],
       }),
-      mockTypedApi([
-        mockTypedCall('pool.snapshottask.delete_will_change_retention_for', {}),
-        mockTypedQuery('pool.snapshottask.query', snapshotTasks),
-        mockTypedCall('pool.snapshottask.delete', null),
-        mockTypedCall('pool.snapshottask.update', null),
+      mockApi([
+        mockCall('pool.snapshottask.delete_will_change_retention_for', {}),
+        mockQuery('pool.snapshottask.query', snapshotTasks),
+        mockCall('pool.snapshottask.delete', null),
+        mockCall('pool.snapshottask.update', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of({ confirmed: true, secondaryCheckbox: false })),
@@ -160,7 +160,7 @@ describe('SnapshotTaskCardComponent', () => {
       secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
     });
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
     expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
   });
 
@@ -171,7 +171,7 @@ describe('SnapshotTaskCardComponent', () => {
 
     await toggle.check();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'pool.snapshottask.update',
       [1, { enabled: true }],
     );
@@ -181,7 +181,7 @@ describe('SnapshotTaskCardComponent', () => {
     // A pending subject keeps the update in flight so the optimistic flip is observable
     // before the error is delivered.
     const update$ = new Subject<unknown>();
-    jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementationOnce(() => update$);
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementationOnce(() => update$);
 
     const toggle = await loader.getHarness(TnSlideToggleHarness.with({ ancestor: 'tn-table' }));
     expect(await toggle.isChecked()).toBe(false);
@@ -197,12 +197,12 @@ describe('SnapshotTaskCardComponent', () => {
   });
 
   it('subscribes to pool.snapshottask.query websocket events on init', () => {
-    expect(spectator.inject(TypedApiService).subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
+    expect(spectator.inject(ApiService).subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
   });
 
   it('refreshes data when pool.snapshottask.query websocket event is received', () => {
     const component = spectator.component;
-    const websocketMock = spectator.inject(MockTypedApiService);
+    const websocketMock = spectator.inject(MockApiService);
     const loadSpy = jest.spyOn(component.dataProvider, 'load');
 
     // Emit a websocket event
@@ -218,7 +218,7 @@ describe('SnapshotTaskCardComponent', () => {
 
   it('refreshes data when ADDED event is received', () => {
     const component = spectator.component;
-    const websocketMock = spectator.inject(MockTypedApiService);
+    const websocketMock = spectator.inject(MockApiService);
     const loadSpy = jest.spyOn(component.dataProvider, 'load');
 
     // Emit ADDED event

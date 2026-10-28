@@ -2,15 +2,15 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { CallResponse, EventUnion } from '@truenas/api-client';
 import { firstValueFrom } from 'rxjs';
 import { customApp } from 'app/constants/catalog.constants';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import {
-  mockTypedApi, mockTypedCall, mockTypedQuery, settleTypedApi,
-} from 'app/core/testing/utils/mock-typed-api.utils';
+  mockApi, mockCall, mockQuery, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import {
   AppQueryEvent, ApplicationsService, AppStartStopJobEvent,
 } from 'app/pages/apps/services/applications.service';
@@ -39,16 +39,16 @@ describe('ApplicationsService', () => {
   const createService = createServiceFactory({
     service: ApplicationsService,
     providers: [
-      mockTypedApi([
-        mockTypedCall('app.upgrade_summary', {} as CallResponse<WebUiApiDirectory, 'app.upgrade_summary'>),
-        mockTypedQuery('app.available', appsResponse),
-        mockTypedQuery('app.latest', appsResponse),
-        mockTypedQuery('pool.query', [{ name: 'pool1' }] as WebUiQueryEntity<'pool.query'>[]),
-        mockTypedQuery('app.query', [{ name: 'minio' }] as WebUiQueryEntity<'app.query'>[]),
-        mockTypedCall('catalog.get_app_details', {
+      mockApi([
+        mockCall('app.upgrade_summary', {} as CallResponse<WebUiApiDirectory, 'app.upgrade_summary'>),
+        mockQuery('app.available', appsResponse),
+        mockQuery('app.latest', appsResponse),
+        mockQuery('pool.query', [{ name: 'pool1' }] as WebUiQueryEntity<'pool.query'>[]),
+        mockQuery('app.query', [{ name: 'minio' }] as WebUiQueryEntity<'app.query'>[]),
+        mockCall('catalog.get_app_details', {
           name: 'minio',
         } as CallResponse<WebUiApiDirectory, 'catalog.get_app_details'>),
-        mockTypedCall('app.similar', [{ name: 'syncthing' }] as CallResponse<WebUiApiDirectory, 'app.similar'>),
+        mockCall('app.similar', [{ name: 'syncthing' }] as CallResponse<WebUiApiDirectory, 'app.similar'>),
       ]),
     ],
   });
@@ -65,7 +65,7 @@ describe('ApplicationsService', () => {
   describe('getAvailableApps', () => {
     it('loads available apps', async () => {
       const apps = await firstValueFrom(spectator.service.getAvailableApps(filters));
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith(
         'app.available',
         appsRequestFilters,
         appsRequestOptions,
@@ -77,7 +77,7 @@ describe('ApplicationsService', () => {
   describe('getAvailableApps without filters', () => {
     it('queries every available app when no filter is set', async () => {
       const apps = await firstValueFrom(spectator.service.getAvailableApps({ categories: [], sort: null }));
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('app.available');
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('app.available');
       expect(apps).toEqual(appsResponse.filter((app) => app.name !== customApp));
     });
   });
@@ -85,7 +85,7 @@ describe('ApplicationsService', () => {
   describe('getLatestApps', () => {
     it('loads latest apps', async () => {
       const apps = await firstValueFrom(spectator.service.getLatestApps(filters));
-      expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith(
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith(
         'app.latest',
         appsRequestFilters,
         appsRequestOptions,
@@ -96,12 +96,12 @@ describe('ApplicationsService', () => {
 
   it('loads pools', async () => {
     expect(await firstValueFrom(spectator.service.getPoolList())).toEqual([{ name: 'pool1' }]);
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('pool.query');
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.query');
   });
 
   it('loads catalog app details for a train', async () => {
     expect(await firstValueFrom(spectator.service.getCatalogAppDetails('minio', 'stable'))).toEqual({ name: 'minio' });
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith(
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith(
       'catalog.get_app_details',
       ['minio', { train: 'stable' }],
     );
@@ -112,19 +112,19 @@ describe('ApplicationsService', () => {
       spectator.service.getSimilarApps({ name: 'minio', train: 'stable' } as AvailableApp),
     );
     expect(apps).toEqual([{ name: 'syncthing' }]);
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('app.similar', ['minio', 'stable']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.similar', ['minio', 'stable']);
   });
 
   it('loads installed apps with their config', async () => {
     expect(await firstValueFrom(spectator.service.getAllApps())).toEqual([{ name: 'minio' }]);
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('app.query', [], {
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('app.query', [], {
       extra: { retrieve_config: true, host_ip: 'localhost' },
     });
   });
 
   it('loads one installed app with its schema', async () => {
     expect(await firstValueFrom(spectator.service.getApp('minio'))).toEqual([{ name: 'minio' }]);
-    expect(spectator.inject(TypedApiService).query).toHaveBeenCalledWith('app.query', [['name', '=', 'minio']], {
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('app.query', [['name', '=', 'minio']], {
       extra: { include_app_schema: true, retrieve_config: true, host_ip: 'localhost' },
     });
   });
@@ -132,9 +132,9 @@ describe('ApplicationsService', () => {
   it('passes installed app changes and removals through', async () => {
     const events: AppQueryEvent[] = [];
     spectator.service.getInstalledAppsUpdates().subscribe((event) => events.push(event));
-    await settleTypedApi();
+    await settleApi();
 
-    const mockedApi = spectator.inject(MockTypedApiService);
+    const mockedApi = spectator.inject(MockApiService);
     mockedApi.emitEvent('app.query', {
       msg: 'changed', id: 'minio', fields: { name: 'minio' } as WebUiQueryEntity<'app.query'>,
     });
@@ -149,9 +149,9 @@ describe('ApplicationsService', () => {
   it('only passes on start and stop jobs', async () => {
     const events: AppStartStopJobEvent[] = [];
     spectator.service.getInstalledAppsStatusUpdates().subscribe((event) => events.push(event));
-    await settleTypedApi();
+    await settleApi();
 
-    const mockedApi = spectator.inject(MockTypedApiService);
+    const mockedApi = spectator.inject(MockApiService);
     const job = (id: number, method: string): EventUnion<WebUiApiDirectory, 'core.get_jobs'> => ({
       msg: 'changed', id, fields: { id, method },
     } as EventUnion<WebUiApiDirectory, 'core.get_jobs'>);
@@ -166,11 +166,11 @@ describe('ApplicationsService', () => {
   describe('getAppUpgradeSummary', () => {
     it('loads summary without version', async () => {
       await firstValueFrom(spectator.service.getAppUpgradeSummary('test'));
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('app.upgrade_summary', ['test']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.upgrade_summary', ['test']);
     });
     it('loads summary with version', async () => {
       await firstValueFrom(spectator.service.getAppUpgradeSummary('test', '2.0'));
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('app.upgrade_summary', [
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('app.upgrade_summary', [
         'test', { app_version: '2.0' },
       ]);
     });

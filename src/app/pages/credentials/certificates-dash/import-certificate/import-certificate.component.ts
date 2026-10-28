@@ -18,7 +18,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { matchOthersFgValidator } from 'app/modules/forms/ix-forms/validators/password-validation/password-validation';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates-dash/utils/normalize-certificate.utils';
 
 @Component({
@@ -38,7 +38,7 @@ import { normalizeCertificateNewlines } from 'app/pages/credentials/certificates
   ],
 })
 export class ImportCertificateComponent extends IxFormHostForm {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
   private validators = inject(IxValidatorsService);

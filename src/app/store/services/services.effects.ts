@@ -10,7 +10,7 @@ import { filterAsync } from 'app/helpers/operators/filter-async.operator';
 import { Service } from 'app/interfaces/service.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ServicesService } from 'app/services/services.service';
 import { AppState } from 'app/store';
 import { adminUiInitialized } from 'app/store/admin-panel/admin.actions';
@@ -24,7 +24,7 @@ import { serviceEnabled } from './services.actions';
 export class ServicesEffects {
   private store$ = inject<Store<AppState>>(Store);
   private actions$ = inject(Actions);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private authService = inject(AuthService);
   private servicesService = inject(ServicesService);

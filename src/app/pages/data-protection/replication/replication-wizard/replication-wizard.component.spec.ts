@@ -12,8 +12,8 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
+import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedQuery, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { KeychainCredentialType } from 'app/enums/keychain-credential-type.enum';
@@ -26,8 +26,8 @@ import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { SummaryComponent } from 'app/modules/summary/summary.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ReplicationWizardComponent } from 'app/pages/data-protection/replication/replication-wizard/replication-wizard.component';
 import { ReplicationWhatAndWhereComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-what-and-where/replication-what-and-where.component';
 import { ReplicationWhenComponent } from 'app/pages/data-protection/replication/replication-wizard/steps/replication-when/replication-when.component';
@@ -78,15 +78,15 @@ describe('ReplicationWizardComponent', () => {
     ],
     providers: [
       mockAuth(),
-      mockTypedApi([
-        mockTypedQuery('keychaincredential.query', []),
-        mockTypedQuery('replication.query', []),
-        mockTypedCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
-        mockTypedCall('replication.target_unmatched_snapshots', {}),
-        mockTypedQuery('pool.snapshottask.query', []),
-        mockTypedCall('pool.snapshottask.create', { id: 33 } as PeriodicSnapshotTask),
-        mockTypedCall('pool.snapshot.create', null),
-        mockTypedCall('replication.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'replication.create'>),
+      mockApi([
+        mockQuery('keychaincredential.query', []),
+        mockQuery('replication.query', []),
+        mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
+        mockCall('replication.target_unmatched_snapshots', {}),
+        mockQuery('pool.snapshottask.query', []),
+        mockCall('pool.snapshottask.create', { id: 33 } as PeriodicSnapshotTask),
+        mockCall('pool.snapshot.create', null),
+        mockCall('replication.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'replication.create'>),
       ]),
       mockProvider(SnackbarService),
       mockProvider(LocaleService),
@@ -163,7 +163,7 @@ describe('ReplicationWizardComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool1/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Week,
@@ -175,7 +175,7 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool2/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Week,
@@ -187,19 +187,19 @@ describe('ReplicationWizardComponent', () => {
       },
     }]);
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.create', [{
       dataset: 'pool1/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshot.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.create', [{
       dataset: 'pool2/',
       naming_schema: 'auto-%Y-%m-%d_%H-%M',
       recursive: false,
     }]);
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('replication.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('replication.create', [{
       auto: true,
       direction: Direction.Push,
       encryption: false,
@@ -241,7 +241,7 @@ describe('ReplicationWizardComponent', () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();
 
-    expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.create', [{
       dataset: 'pool1/',
       enabled: true,
       lifetime_unit: LifetimeUnit.Hour,

@@ -2,7 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 
 @Component({
   selector: 'ix-true-command-status',
@@ -16,7 +16,7 @@ import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.servi
   ],
 })
 export class TrueCommandStatusComponent {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
 
   protected isManagedByTruecommand$ = this.api.callUnauthenticated('truenas.managed_by_truecommand');
 }

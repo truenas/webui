@@ -1,12 +1,12 @@
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, Observable, of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -33,8 +33,8 @@ describe('DiskStore', () => {
   const createService = createServiceFactory({
     service: DiskStore,
     providers: [
-      mockTypedApi([
-        mockTypedCall('disk.details', diskResponse as unknown as DiskDetailsCallResponse),
+      mockApi([
+        mockCall('disk.details', diskResponse as unknown as DiskDetailsCallResponse),
       ]),
       mockProvider(ErrorHandlerService, {
         withErrorHandler: jest.fn(() => <T>(source$: Observable<T>) => source$),
@@ -57,7 +57,7 @@ describe('DiskStore', () => {
     it('calls disk.details API', async () => {
       await firstValueFrom(spectator.service.loadDisks());
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('disk.details');
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.details');
     });
 
     it('updates state with unused and used disks', async () => {
@@ -117,7 +117,7 @@ describe('DiskStore', () => {
 
   describe('selectableDisks$ with different data', () => {
     it('handles empty unused and used disks', async () => {
-      spectator.inject(MockTypedApiService).mockCall('disk.details', { unused: [], used: [] } as DiskDetailsCallResponse);
+      spectator.inject(MockApiService).mockCall('disk.details', { unused: [], used: [] } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
       const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
@@ -126,7 +126,7 @@ describe('DiskStore', () => {
     });
 
     it('handles only unused disks', async () => {
-      spectator.inject(MockTypedApiService).mockCall('disk.details', { unused: unusedDisks, used: [] } as DiskDetailsCallResponse);
+      spectator.inject(MockApiService).mockCall('disk.details', { unused: unusedDisks, used: [] } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
       const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
@@ -140,7 +140,7 @@ describe('DiskStore', () => {
         { devname: 'sdf', imported_zpool: null },
       ] as DetailsDisk[];
 
-      spectator.inject(MockTypedApiService).mockCall('disk.details', { unused: [], used: usedWithoutZpool } as DiskDetailsCallResponse);
+      spectator.inject(MockApiService).mockCall('disk.details', { unused: [], used: usedWithoutZpool } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
       const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
@@ -154,7 +154,7 @@ describe('DiskStore', () => {
         { devname: 'sdf', imported_zpool: 'pool2' },
       ] as DetailsDisk[];
 
-      spectator.inject(MockTypedApiService).mockCall('disk.details', { unused: [], used: usedWithZpool } as DiskDetailsCallResponse);
+      spectator.inject(MockApiService).mockCall('disk.details', { unused: [], used: usedWithZpool } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
       const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
@@ -170,7 +170,7 @@ describe('DiskStore', () => {
         { devname: 'sdb' } as DetailsDisk,
       ];
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of({
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: disks,
         used: [],
       }));
@@ -186,7 +186,7 @@ describe('DiskStore', () => {
         { devname: 'sdb', sed_status: SedStatus.Unlocked } as DetailsDisk,
       ];
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of({
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: disks,
         used: [],
       }));
@@ -202,7 +202,7 @@ describe('DiskStore', () => {
         { devname: 'sdb' } as DetailsDisk,
       ];
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of({
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: disks,
         used: [],
       }));
@@ -213,7 +213,7 @@ describe('DiskStore', () => {
     });
 
     it('returns false when there are no disks', async () => {
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of({
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: [],
         used: [],
       }));
@@ -232,7 +232,7 @@ describe('DiskStore', () => {
         { devname: 'sdb', sed_status: SedStatus.Uninitialized, imported_zpool: null } as DetailsDisk,
       ];
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of({
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: unusedSedDisks,
         used: usedSedDisks,
       }));
@@ -250,7 +250,7 @@ describe('DiskStore', () => {
         { devname: 'sdd' } as DetailsDisk, // No sed_status
       ];
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockReturnValue(of({
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: disks,
         used: [],
       }));

@@ -10,7 +10,7 @@ import {
 } from '@truenas/ui-components';
 import { LicenseFingerprintValue } from 'app/interfaces/system-info.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { ClipboardService } from 'app/services/clipboard.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -103,7 +103,7 @@ export function buildFingerprintField(
 })
 export class LicenseFingerprintDialog implements OnInit {
   protected dialogRef = inject<DialogRef<unknown, LicenseFingerprintDialog>>(DialogRef);
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private snackbar = inject(SnackbarService);
   private translate = inject(TranslateService);

@@ -64,7 +64,6 @@ import { IcuMissingTranslationHandler } from 'app/modules/language/translations/
 import { createTranslateLoader } from 'app/modules/language/translations/icu-translations-loader';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ConnectionService } from 'app/modules/websocket/connection.service';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { provideWebSocketDebugState } from 'app/modules/websocket-debug-panel/providers/websocket-debug.providers';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { ServiceWorkerService } from 'app/services/service-worker.service';
@@ -175,7 +174,7 @@ bootstrapApplication(AppComponent, {
       // authenticated when the first typed consumer appears. Unconditional on
       // purpose: migrated pages run entirely on this socket, so there is no
       // build in which it can be left closed.
-      inject(TypedApiService);
+      inject(ApiService);
       // Publishes the socket's state from the first frame, before anything
       // that reads `WebSocketStatusService.isConnected$` has been created.
       inject(ConnectionService);
@@ -196,7 +195,6 @@ bootstrapApplication(AppComponent, {
         } catch { /* sessionStorage may be unavailable */ }
       });
     }),
-    ApiService,
     provideCharts(withDefaultRegisterables()),
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideRouter(

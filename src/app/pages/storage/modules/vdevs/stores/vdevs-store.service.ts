@@ -11,7 +11,7 @@ import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/devic
 import { Disk, toDisk } from 'app/interfaces/disk.interface';
 import { PoolTopology, toPool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -39,7 +39,7 @@ const initialState: VDevsState = {
   providedIn: 'root',
 })
 export class VDevsStore extends ComponentStore<VDevsState> {
-  private api = inject(TypedApiService);
+  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
 

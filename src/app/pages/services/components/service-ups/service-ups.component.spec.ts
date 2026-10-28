@@ -8,14 +8,14 @@ import {
   TnAutocompleteHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { MockTypedApiService } from 'app/core/testing/classes/mock-typed-api.service';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { UpsMode, UpsShutdownMode } from 'app/enums/ups-mode.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { ServiceUpsComponent } from 'app/pages/services/components/service-ups/service-ups.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -25,7 +25,7 @@ type UpsConfigUpdate = CallParams<WebUiApiDirectory, 'ups.update'>[0];
 describe('ServiceUpsComponent', () => {
   let spectator: Spectator<ServiceUpsComponent>;
   let loader: HarnessLoader;
-  let api: TypedApiService;
+  let api: ApiService;
 
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -43,8 +43,8 @@ describe('ServiceUpsComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      mockTypedApi([
-        mockTypedCall('ups.config', {
+      mockApi([
+        mockCall('ups.config', {
           complete_identifier: 'ups@localhost:3',
           driver: 'bcmxcp$PW9315',
           extrausers: '',
@@ -66,7 +66,7 @@ describe('ServiceUpsComponent', () => {
           shutdowncmd: '',
           shutdowntimer: 30,
         } as UpsConfig),
-        mockTypedCall('ups.driver_choices', {
+        mockCall('ups.driver_choices', {
           bcmxcp$PW9315: 'Powerware ups 5 PW9315 3-phase (bcmxcp)',
           'bcmxcp$Powerware 9130': 'Eaton ups 5 Powerware 9130 (bcmxcp)',
           'bcmxcp$Powerware 9140': 'Eaton ups 5 Powerware 9140 (bcmxcp)',
@@ -75,8 +75,8 @@ describe('ServiceUpsComponent', () => {
           'bcmxcp$R5500 XR': 'Compaq ups 4 R5500 XR (bcmxcp) / HP ups 4 R5500 XR (bcmxcp)',
           'bcmxcp$T750 G2': 'HP ups 3 T750 G2 Serial port (bcmxcp)',
         }),
-        mockTypedCall('ups.port_choices', ['/dev/uhid', 'auto']),
-        mockTypedCall('ups.update', {} as UpsConfig),
+        mockCall('ups.port_choices', ['/dev/uhid', 'auto']),
+        mockCall('ups.update', {} as UpsConfig),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
@@ -87,7 +87,7 @@ describe('ServiceUpsComponent', () => {
   beforeEach(() => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(TypedApiService);
+    api = spectator.inject(ApiService);
   });
 
   it('blocks Save when the initial config load fails', async () => {
@@ -95,7 +95,7 @@ describe('ServiceUpsComponent', () => {
 
     const showErrorModal = jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal')
       .mockReturnValue(of(true));
-    spectator.inject(MockTypedApiService).mockCallError('ups.config');
+    spectator.inject(MockApiService).mockCallError('ups.config');
 
     // A fresh instance rather than a second `ngOnInit()` on the one from `beforeEach`:
     // re-initialising an already-initialised form re-registers its valueChanges subscriptions,

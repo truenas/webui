@@ -8,8 +8,8 @@ import {
   TnCheckboxHarness, TnInputHarness, TnRadioHarness,
 } from '@truenas/ui-components';
 import { throwError } from 'rxjs';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Ipmi, IpmiChassis } from 'app/interfaces/ipmi.interface';
@@ -19,8 +19,8 @@ import {
   SidePanelFooterMenu,
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { IpmiFormComponent } from 'app/pages/system/network/components/ipmi-card/ipmi-form/ipmi-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { RedirectService } from 'app/services/redirect.service';
@@ -65,10 +65,10 @@ describe('IpmiFormComponent', () => {
       mockProvider(RedirectService),
       mockProvider(DialogService),
       mockProvider(SnackbarService),
-      mockTypedApi([
-        mockTypedCall('failover.licensed', true),
-        mockTypedCall('failover.node', 'A'),
-        mockTypedCall('ipmi.lan.update', {
+      mockApi([
+        mockCall('failover.licensed', true),
+        mockCall('failover.node', 'A'),
+        mockCall('ipmi.lan.update', {
           channel: 1,
           ip_address_source: IpmiIpAddressSource.Static,
           default_gateway_ip_address: '10.220.0.2',
@@ -76,11 +76,11 @@ describe('IpmiFormComponent', () => {
           ip_address: '10.220.15.115',
           subnet_mask: '255.255.240.0',
         } as Ipmi as unknown as CallResponse<WebUiApiDirectory, 'ipmi.lan.update'>),
-        mockTypedCall('ipmi.chassis.info', {
+        mockCall('ipmi.chassis.info', {
           chassis_identify_state: IpmiChassisIdentifyState.Off,
         } as IpmiChassis as unknown as CallResponse<WebUiApiDirectory, 'ipmi.chassis.info'>),
-        mockTypedCall('ipmi.chassis.identify', null),
-        mockTypedCall('ipmi.lan.query', (params) => {
+        mockCall('ipmi.chassis.identify', null),
+        mockCall('ipmi.lan.query', (params) => {
           if (params?.[0]?.['ipmi-options']?.['query-remote']) {
             return [{
               channel: 1,
@@ -178,7 +178,7 @@ describe('IpmiFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.114',
         gateway: '10.220.0.1',
@@ -204,7 +204,7 @@ describe('IpmiFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
@@ -231,7 +231,7 @@ describe('IpmiFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.lan.update', [1, {
         dhcp: false,
         ipaddress: '10.220.15.115',
         gateway: '10.220.0.2',
@@ -256,7 +256,7 @@ describe('IpmiFormComponent', () => {
     it('flashes IPMI light when Flash Identify Light is pressed', () => {
       flashItem()!.onClick();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
     });
 
     it('stops flashing IPMI light when Flash Identify Light is pressed again', async () => {
@@ -266,7 +266,7 @@ describe('IpmiFormComponent', () => {
 
       flashItem()!.onClick();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.Off }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.Off }]);
     });
 
     it('flashes IPMI light on remote controller when remote controller is selected', async () => {
@@ -277,7 +277,7 @@ describe('IpmiFormComponent', () => {
 
       flashItem()!.onClick();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'ipmi.chassis.identify',
         [{ verb: OnOff.On, apply_remote: true }],
       );
@@ -293,7 +293,7 @@ describe('IpmiFormComponent', () => {
       await spectator.fixture.whenStable();
       flashItem()!.onClick();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith(
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
         'ipmi.chassis.identify',
         [{ verb: OnOff.Off, apply_remote: true }],
       );
@@ -483,7 +483,7 @@ describe('IpmiFormComponent', () => {
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
         if (method === 'ipmi.chassis.identify') {
           return throwError(() => new Error('IPMI identify failed'));
         }
@@ -504,7 +504,7 @@ describe('IpmiFormComponent', () => {
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal').mockReturnValue(undefined);
 
-      jest.spyOn(spectator.inject(TypedApiService), 'call').mockImplementation((method) => {
+      jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
         if (method === 'ipmi.chassis.identify') {
           return throwError(() => new Error('IPMI identify failed'));
         }
@@ -535,7 +535,7 @@ describe('IpmiFormComponent', () => {
       const flashItem = spectator.component.footerMenu().items.find((item) => item.testId === 'toggle-identify-light');
       flashItem!.onClick();
 
-      expect(spectator.inject(TypedApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('ipmi.chassis.identify', [{ verb: OnOff.On }]);
     });
 
     it('opens the management window from the footer menu', () => {

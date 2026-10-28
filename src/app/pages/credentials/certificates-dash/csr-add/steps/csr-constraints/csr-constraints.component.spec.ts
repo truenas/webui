@@ -5,7 +5,7 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnCheckboxHarness, TnInputHarness, TnSelectHarness, TnStepperComponent,
 } from '@truenas/ui-components';
-import { mockTypedApi, mockTypedCall } from 'app/core/testing/utils/mock-typed-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { CertificateExtensions } from 'app/interfaces/certificate.interface';
 import {
   CsrConstraintsComponent,
@@ -36,8 +36,8 @@ describe('CsrConstraintsComponent', () => {
     ],
     providers: [
       mockProvider(TnStepperComponent),
-      mockTypedApi([
-        mockTypedCall('certificate.extended_key_usage_choices', {
+      mockApi([
+        mockCall('certificate.extended_key_usage_choices', {
           CLIENT_AUTH: 'CLIENT_AUTH',
           CODE_SIGNING: 'CODE_SIGNING',
         }),
