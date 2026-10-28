@@ -19,11 +19,7 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 type LxcConfig = CallResponse<E2eApiDirectory, 'lxc.config'>;
 type LxcUpdate = NonNullable<CallParams<E2eApiDirectory, 'lxc.update'>[0]>;
 type ContainerEntry = Extract<CallResponse<E2eApiDirectory, 'container.query'>, unknown[]>[number];
-/**
- * `default_network` is the bridge the container is always attached to, which the
- * NIC Devices card shows as `<bridge> (Default)` and its Add menu leaves out.
- */
-type ContainerRecord = ContainerEntry & { id: number; default_network?: string | null };
+type ContainerRecord = ContainerEntry & { id: number };
 
 /** Everything the Global Configuration form shows and saves. */
 export type ContainerSettings = Pick<LxcConfig, 'preferred_pool' | 'bridge' | 'v4_network' | 'v6_network'>;
@@ -288,18 +284,18 @@ export async function seedNicDevice(
 /**
  * The interfaces the NIC Devices card's Add menu offers a container with no NIC
  * devices, in its order: `container.device.nic_attach_choices` flattened across
- * its groups (`{ BRIDGE: [...], MACVLAN: [...] }`), each name once, without the
- * container's `defaultNetwork`. `add-nic-menu.component.ts` filters the same way.
+ * its groups (`{ BRIDGE: [...], MACVLAN: [...] }`), each name once.
+ * `add-nic-menu.component.ts` builds the same list.
  *
  * Interface names differ per appliance, which is why a test reads this rather
  * than naming one.
  */
-export async function findAddableNics(client: E2eApiClient, defaultNetwork: string | null): Promise<string[]> {
+export async function findAddableNics(client: E2eApiClient): Promise<string[]> {
   const choices = await firstValueFrom(
     client.api.call('container.device.nic_attach_choices').pipe(timeout(readTimeoutMs)),
   );
   const names = (Object.values(choices) as (string[] | null)[]).flatMap((group) => group ?? []);
-  return [...new Set(names)].filter((name) => name !== defaultNetwork);
+  return [...new Set(names)];
 }
 
 /**

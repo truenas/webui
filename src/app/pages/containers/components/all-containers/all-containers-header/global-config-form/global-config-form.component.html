@@ -18,7 +18,10 @@
   </tn-form-field>
 
   <tn-form-section [heading]="'Default Network' | translate">
-    <tn-form-field [label]="'Bridge' | translate">
+    <tn-form-field
+      [label]="'Bridge' | translate"
+      [tooltip]="'The bridge new NICs attach to when no bridge is chosen. Automatic uses truenasbr0, the TrueNAS-managed bridge with DHCP, DNS and NAT. Changing this does not move existing NICs.' | translate"
+    >
       <tn-select
         formControlName="bridge"
         [options]="(bridgeOptions$ | async) ?? []"

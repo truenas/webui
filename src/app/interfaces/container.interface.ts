@@ -49,7 +49,6 @@ export interface Container {
   idmap: ContainerIdmap | null;
   capabilities_policy: ContainerCapabilitiesPolicy;
   capabilities_state: Record<string, unknown>;
-  default_network: string | null;
   status: {
     state: ContainerStatus;
     pid: number | null;

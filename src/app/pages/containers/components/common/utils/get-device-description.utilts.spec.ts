@@ -44,7 +44,7 @@ describe('getDeviceDescription', () => {
       expect(result).toBe('ens1 (Default Mac Address)');
     });
 
-    it('should use "Unknown" when nic_attach is null', () => {
+    it('describes a NIC with no attachment as macvlan on the default route interface', () => {
       const device: ContainerDevice = {
         dtype: ContainerDeviceType.Nic,
         nic_attach: null,
@@ -54,7 +54,7 @@ describe('getDeviceDescription', () => {
       } as ContainerNicDevice;
 
       const result = getDeviceDescription(mockTranslate as TranslateService, device);
-      expect(result).toBe('Unknown (00:11:22:33:44:55)');
+      expect(result).toBe('Macvlan on the default route interface (00:11:22:33:44:55)');
     });
   });
 

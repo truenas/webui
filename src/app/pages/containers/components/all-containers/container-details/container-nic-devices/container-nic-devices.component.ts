@@ -1,24 +1,33 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnCardComponent, TnCardFooterActionsDirective, TnTooltipDirective,
+  TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnTooltipDirective,
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { catchError, of } from 'rxjs';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ContainerDeviceType } from 'app/enums/container.enum';
+import { Role } from 'app/enums/role.enum';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import { ContainerDevice, ContainerNicDevice } from 'app/interfaces/container.interface';
+import { LoaderService } from 'app/modules/loader/loader.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TypedApiService } from 'app/modules/websocket/typed-api/typed-api.service';
 import { AddNicMenuComponent } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
 import { getDeviceDescription } from 'app/pages/containers/components/common/utils/get-device-description.utils';
+import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
+import { defaultNicAttributes, getDefaultNicBridge } from 'app/pages/containers/utils/default-nic-bridge.utils';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-container-nic-devices',
@@ -33,22 +42,30 @@ import { isContainerActive } from 'app/pages/containers/utils/container-status.u
     NgxSkeletonLoaderModule,
     DeviceActionsMenuComponent,
     AddNicMenuComponent,
+    TnButtonComponent,
     TnTestIdDirective,
+    RequiresRolesDirective,
   ],
 })
 export class ContainerNicDevicesComponent {
   private devicesStore = inject(ContainerDevicesStore);
   private containersStore = inject(ContainersStore);
   private translate = inject(TranslateService);
+  private configStore = inject(ContainerConfigStore);
   private api = inject(TypedApiService);
+  private loader = inject(LoaderService);
+  private errorHandler = inject(ErrorHandlerService);
+  private snackbar = inject(SnackbarService);
+  private destroyRef = inject(DestroyRef);
+
+  protected readonly requiredRoles = [Role.ContainerDeviceWrite];
 
   protected readonly hasPendingInterfaceChanges = toSignal(
     this.api.call('interface.has_pending_changes').pipe(catchError(() => of(false))),
   );
 
-  protected readonly defaultBridge = computed(() => {
-    return this.containersStore.selectedContainer()?.default_network ?? null;
-  });
+  /** The bridge a NIC added without choosing one lands on. */
+  protected readonly defaultBridge = computed(() => getDefaultNicBridge(this.configStore.config()));
 
   protected readonly isLoadingDevices = this.devicesStore.isLoading;
 
@@ -66,13 +83,30 @@ export class ContainerNicDevicesComponent {
     });
   });
 
-  protected readonly showDefaultBridge = computed(() => {
-    const bridge = this.defaultBridge();
-    if (!bridge) return false;
-    return !this.shownDevices().some((device) => device.nic_attach === bridge);
-  });
-
   protected getDeviceDescription(device: ContainerDevice): string {
     return getDeviceDescription(this.translate, device);
+  }
+
+  /**
+   * A container without a NIC only has loopback, which is valid, so this is offered rather than
+   * forced. Sends no `nic_attach`: middleware attaches the NIC to the default bridge itself.
+   */
+  protected addDefaultNic(): void {
+    const containerId = this.containersStore.selectedContainer()?.id;
+    if (!containerId) {
+      return;
+    }
+
+    this.api.call('container.device.create', [{
+      container: containerId,
+      attributes: defaultNicAttributes,
+    }]).pipe(
+      this.loader.withLoader(),
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('NIC Device was added'));
+      this.devicesStore.reload();
+    });
   }
 }

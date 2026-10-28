@@ -20,7 +20,7 @@
  */
 import {
   type ContainerSettings, containerCreateTimeoutMs, containersDataset, containerSettingsBaseline,
-  countContainers, ensureContainerAbsent, findContainer, firstRegistryImage, readContainerConfig,
+  countContainers, ensureContainerAbsent, findContainer, findNicDevices, firstRegistryImage, readContainerConfig,
   seedContainer, setContainerConfig,
 } from '../fixtures/containers';
 import { ensureDatasetAbsent } from '../fixtures/storage';
@@ -143,6 +143,15 @@ test('an admin creates a container from a Debian image with a CPU set and an env
     initenv: { E2E_VAR: '1' },
     dataset,
   });
+
+  // "Connect to network" is ticked by default, so the form attaches a NIC to the
+  // default bridge: automatic in the baseline settings, so truenasbr0.
+  const created = await findContainer(api, containerName);
+  if (!created) {
+    throw new Error(`container ${containerName} was created and then not found`);
+  }
+  await expect.poll(() => findNicDevices(api, created.id), { timeout: slowCallTimeoutMs })
+    .toEqual([expect.objectContaining({ nic_attach: 'truenasbr0' })]);
 });
 
 test('an admin deletes a stopped container', async ({ page, api, pool }) => {

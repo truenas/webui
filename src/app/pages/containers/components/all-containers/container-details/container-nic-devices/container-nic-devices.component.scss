@@ -10,12 +10,22 @@
   font-size: 14px;
 }
 
-.default-device {
-  color: var(--fg2);
-  opacity: 0.8;
+.no-network {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 0;
+
+  p {
+    margin: 0;
+  }
 }
 
-.no-devices {
+.no-network-title {
+  font-weight: bold;
+}
+
+.no-network-message {
   color: var(--fg2);
-  padding: 16px 0;
 }

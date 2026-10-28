@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
-  TnBannerHarness, TnButtonHarness, TnCheckboxGroupHarness, TnCheckboxHarness, TnInputHarness,
+  TnBannerHarness, TnButtonHarness, TnCheckboxGroupHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness,
   TnSelectHarness, TnDialog,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -365,6 +365,38 @@ describe('ContainerFormComponent', () => {
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
 
+      // "Connect to network" is on by default: the NIC goes on the default bridge.
+      expect(spectator.inject(TypedApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 1,
+        attributes: { dtype: ContainerDeviceType.Nic },
+      }]);
+    });
+
+    it('explains which bridge the NIC is attached to', async () => {
+      const connect = await loader.getHarness(TnCheckboxHarness.with({ label: 'Connect to network' }));
+      expect(await connect.isChecked()).toBe(true);
+
+      const fields = await loader.getAllHarnesses(TnFormFieldHarness);
+      const tooltips = await Promise.all(fields.map((field) => field.getTooltip()));
+      expect(tooltips).toContainEqual(expect.stringContaining('NIC attached to the default bridge, lxdbr0'));
+    });
+
+    it('creates an isolated container without a NIC when Connect to network is unchecked', async () => {
+      const nameInput = await getInput('name');
+      await nameInput.setValue('isolated');
+
+      const connect = await loader.getHarness(TnCheckboxHarness.with({ label: 'Connect to network' }));
+      await connect.uncheck();
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        pool: 'pool1',
+        image: 'ubuntu:22.04',
+      });
+
+      await submit();
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(TypedApiService).call).not.toHaveBeenCalledWith('container.device.create', expect.anything());
     });
 

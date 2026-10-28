@@ -47,6 +47,7 @@ import { mapToOptions } from 'app/helpers/options.helper';
 import { containersHelptext } from 'app/helptext/containers/containers';
 import {
   Container,
+  ContainerDevice,
   ContainerEnvVariablesFormGroup,
   ContainerUsbDevice,
   CreateContainer,
@@ -75,6 +76,7 @@ import {
 import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { isContainerActive } from 'app/pages/containers/utils/container-status.utils';
+import { defaultNicAttributes, getDefaultNicBridge } from 'app/pages/containers/utils/default-nic-bridge.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -180,6 +182,9 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     return Boolean(config?.preferred_pool);
   });
 
+  /** The bridge `add_nic` attaches the new container's NIC to. */
+  protected readonly defaultBridge = computed(() => getDefaultNicBridge(this.containerConfigStore.config()));
+
   private config$ = toObservable(this.containerConfigStore.config);
 
   protected readonly helptext = containersHelptext;
@@ -229,6 +234,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     capabilities_policy: [ContainerCapabilitiesPolicy.Default],
     environment_variables: new FormArray<ContainerEnvVariablesFormGroup>([]),
     usb_devices: [[] as string[]],
+    add_nic: [true],
   });
 
   private hasSetupValidators = false;
@@ -312,6 +318,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
       idmap_slice: null,
       capabilities_policy: ContainerCapabilitiesPolicy.Default,
       usb_devices: [],
+      add_nic: true,
     });
   }
 
@@ -455,30 +462,33 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
           }
           return toContainer(job.result);
         }),
-        switchMap((container) => this.createUsbDevices(container)),
+        switchMap((container) => this.createDevices(container)),
       );
   }
 
   /**
-   * `container.create` does not accept devices, so USB devices selected in the form are
-   * attached with separate `container.device.create` calls once the container exists.
-   * Devices are recorded by physical port - the default identification method.
+   * `container.create` does not accept devices, so the NIC and the USB devices selected in the
+   * form are attached with separate `container.device.create` calls once the container exists.
+   * Without a NIC the container only has loopback, which is why the form offers one by default.
+   * USB devices are recorded by physical port - the default identification method.
    */
-  private createUsbDevices(container: Container): Observable<Container> {
-    const usbDevices = this.form.getRawValue().usb_devices;
-    if (!usbDevices.length) {
+  private createDevices(container: Container): Observable<Container> {
+    const { add_nic: addNic, usb_devices: usbDevices } = this.form.getRawValue();
+    const devices: ContainerDevice[] = usbDevices.map((devicePath) => ({
+      dtype: ContainerDeviceType.Usb,
+      device: devicePath,
+      usb: null,
+    } as ContainerUsbDevice));
+    if (addNic) {
+      devices.unshift(defaultNicAttributes);
+    }
+
+    if (!devices.length) {
       return of(container);
     }
 
-    return forkJoin(usbDevices.map((devicePath) => {
-      return this.api.call('container.device.create', [{
-        container: container.id,
-        attributes: {
-          dtype: ContainerDeviceType.Usb,
-          device: devicePath,
-          usb: null,
-        } as ContainerUsbDevice,
-      }]);
+    return forkJoin(devices.map((attributes) => {
+      return this.api.call('container.device.create', [{ container: container.id, attributes }]);
     })).pipe(
       map(() => container),
       catchError((error: unknown) => {

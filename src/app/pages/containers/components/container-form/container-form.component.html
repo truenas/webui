@@ -54,6 +54,12 @@
         <tn-select formControlName="pool" [options]="(poolOptions$ | async) ?? []"></tn-select>
       </tn-form-field>
     }
+
+    @if (!isEditMode()) {
+      <tn-form-field [tooltip]="helptext.network.addNicTooltip | translate: { bridge: defaultBridge() }">
+        <tn-checkbox formControlName="add_nic" [label]="helptext.network.addNicLabel | translate"></tn-checkbox>
+      </tn-form-field>
+    }
   </tn-form-section>
 
   @if (isAdvancedMode()) {
