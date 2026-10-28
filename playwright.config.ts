@@ -284,6 +284,16 @@ const haProjects = target.ha
           ...devices['Desktop Chrome'], haThroughVip: true, baseURL: target.ha.vipUiBaseUrl, trace: 'on' as const,
         },
       },
+      {
+        // What only an HA-licensed system offers, once the chain above has left
+        // the pair healthy. Its specs restore what they change, so unlike the
+        // chain they keep the usual retry.
+        name: 'ha-features',
+        testDir: './e2e/tests-ha',
+        testMatch: /ha-smb-stateful-failover\.e2e\.ts/,
+        dependencies: ['ha-failover'],
+        use: { ...devices['Desktop Chrome'], haThroughVip: true, baseURL: target.ha.vipUiBaseUrl },
+      },
     ]
   : [];
 

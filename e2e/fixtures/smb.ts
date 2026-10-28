@@ -1,8 +1,8 @@
 /**
  * SMB share preconditions and cleanup, over the API.
  *
- * Shares, and the two things about the service that are SMB's own: its name and
- * its Apple-extensions flag. Starting and stopping is `fixtures/services.ts`,
+ * Shares, and the things about the service that are SMB's own: its name, its
+ * Apple-extensions flag and Stateful Failover. Starting and stopping is `fixtures/services.ts`,
  * and the split matters more here than elsewhere: SMB service state is global,
  * so a test that starts it changes which dialog every later test is shown —
  * `CLAUDE.md` names that as the failure mode a passing suite hides.
@@ -24,6 +24,8 @@ export const smbServiceName = 'cifs';
  * from a query certainly has one.
  */
 type SmbShareEntry = Extract<CallResponse<E2eApiDirectory, 'sharing.smb.query'>, unknown[]>[number];
+
+type SmbConfig = CallResponse<E2eApiDirectory, 'smb.config'>;
 
 export type SmbShareRecord = SmbShareEntry & { id: number };
 
@@ -79,6 +81,27 @@ export async function ensureSmbSharePresent(
 
   await firstValueFrom(
     client.api.call('sharing.smb.create', [{ name, path, comment }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * Creates a Legacy-purpose share on an existing path, if absent.
+ *
+ * A precondition only: a Legacy share is one of the two kinds that rule SMB
+ * Stateful Failover out, and the form shows it locked while one exists.
+ */
+export async function ensureLegacySmbSharePresent(
+  client: E2eApiClient,
+  { name, path }: { name: string; path: string },
+): Promise<void> {
+  if (await findSmbShare(client, name)) {
+    return;
+  }
+
+  await firstValueFrom(
+    client.api.call('sharing.smb.create', [{
+      name, path, purpose: 'LEGACY_SHARE', options: { purpose: 'LEGACY_SHARE' },
+    }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 
@@ -161,6 +184,28 @@ export async function readSmbAppleExtensions(client: E2eApiClient): Promise<bool
 export async function setSmbAppleExtensions(client: E2eApiClient, enabled: boolean): Promise<void> {
   await firstValueFrom(
     client.api.call('smb.update', [{ aapl_extensions: enabled }]).pipe(timeout(slowCallTimeoutMs)),
+  );
+}
+
+/**
+ * The two `smb.config` fields Stateful Failover depends on: the setting itself,
+ * and the minimum protocol, since middleware refuses it alongside SMB1.
+ */
+export type SmbFailoverSettings = Pick<SmbConfig, 'stateful_failover' | 'minimum_protocol'>;
+
+export async function readSmbFailoverSettings(client: E2eApiClient): Promise<SmbFailoverSettings> {
+  const config = await firstValueFrom(client.api.call('smb.config').pipe(timeout(readTimeoutMs)));
+
+  return { stateful_failover: config.stateful_failover, minimum_protocol: config.minimum_protocol };
+}
+
+/** Writes both, for preconditions and teardown only; the change under test goes through the form. */
+export async function setSmbFailoverSettings(client: E2eApiClient, settings: SmbFailoverSettings): Promise<void> {
+  await firstValueFrom(
+    client.api.call('smb.update', [{
+      stateful_failover: settings.stateful_failover,
+      minimum_protocol: settings.minimum_protocol,
+    }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

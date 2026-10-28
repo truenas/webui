@@ -200,6 +200,11 @@ export const servicesLocators = {
     debug: '[data-test="checkbox-debug"]',
     syslog: '[data-test="checkbox-syslog"]',
     multichannel: '[data-test="checkbox-multichannel"]',
+    /**
+     * Rendered only on an HA-licensed system, and locked while the minimum
+     * protocol is SMB1 or a Legacy or Multi-protocol share exists.
+     */
+    statefulFailover: '[data-test="checkbox-stateful-failover"]',
     fileMask: '[data-test="input-filemask"]',
     dirMask: '[data-test="input-dirmask"]',
     /**
