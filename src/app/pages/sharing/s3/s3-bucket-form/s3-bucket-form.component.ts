@@ -3,7 +3,7 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import {
-  FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
+  AbstractControl, FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators,
 } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MatCard, MatCardContent } from '@angular/material/card';
@@ -49,15 +49,19 @@ import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fi
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { IxUserPickerComponent } from 'app/modules/forms/ix-forms/components/ix-user-picker/ix-user-picker.component';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ModalHeaderComponent } from 'app/modules/slide-ins/components/modal-header/modal-header.component';
+import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { S3BucketRecoverFormComponent } from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
 import { createS3GrantFormGroup, S3GrantFormGroup, toS3Grants } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3GrantsListComponent } from 'app/pages/sharing/s3/s3-grants-list/s3-grants-list.component';
+import { s3BucketNamePattern } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
 import {
   createS3UserPickerProvider, s3UserFormPreset,
 } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
@@ -67,11 +71,10 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 
-export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
-
 @Component({
   selector: 'ix-s3-bucket-form',
   templateUrl: './s3-bucket-form.component.html',
+  styleUrls: ['./s3-bucket-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -91,6 +94,7 @@ export const s3BucketNamePattern = /^[a-z0-9][a-z0-9.-]*[a-z0-9]$/;
     RequiresRolesDirective,
     MatButton,
     MatTooltip,
+    WarningComponent,
     TestDirective,
     TranslateModule,
   ],
@@ -108,6 +112,7 @@ export class S3BucketFormComponent implements OnInit {
   private store$ = inject(Store<AppState>);
   private entitlements = inject(EntitlementsService);
   private destroyRef = inject(DestroyRef);
+  private slideIn = inject(SlideIn);
   slideInRef = inject<SlideInRef<S3Bucket | undefined, boolean>>(SlideInRef);
 
   protected readonly requiredRoles = [Role.SharingS3Write, Role.SharingWrite];
@@ -152,6 +157,14 @@ export class S3BucketFormComponent implements OnInit {
    */
   private readonly existingDatasets = signal<string[]>([]);
 
+  /**
+   * Datasets holding a deleted bucket, which `sharing.s3.recoverable_buckets` finds by reading a backup off every
+   * dataset no bucket uses. Too much to do on every open, so it is asked only once a name lands on an existing
+   * dataset; null until then.
+   */
+  private readonly recoverableDatasets = signal<Set<string> | null>(null);
+  private isScanningForDeletedBuckets = false;
+
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
   protected readonly ownerProvider = createS3UserPickerProvider();
   protected readonly userFormPreset = s3UserFormPreset;
@@ -178,11 +191,17 @@ export class S3BucketFormComponent implements OnInit {
       Validators.minLength(3),
       Validators.maxLength(63),
       Validators.pattern(s3BucketNamePattern),
+      // Two messages for one clash: a deleted bucket's dataset is worth recovering rather than renaming around.
       this.validatorsService.customValidator(
-        (control) => !this.isNew || !this.existingDatasets().includes(
-          `${String(control.parent?.get('parent_dataset')?.value ?? '')}/${String(control.value ?? '')}`,
-        ),
+        (control) => {
+          const dataset = this.bucketDatasetOf(control);
+          return !this.isNew || !this.existingDatasets().includes(dataset) || this.isRecoverable(dataset);
+        },
         this.translate.instant('A dataset with this name already exists under the selected parent dataset.'),
+      ),
+      this.validatorsService.customValidator(
+        (control) => !this.isNew || !this.isRecoverable(this.bucketDatasetOf(control)),
+        this.translate.instant(helptextSharingS3.deletedBucketNameError),
       ),
     ]],
     // The explorer offers the /mnt root as a node. A dataset name never starts with a slash, so
@@ -240,6 +259,27 @@ export class S3BucketFormComponent implements OnInit {
     }
     return this.translate.instant('Bucket dataset: {dataset}', { dataset: `${parent}/${name}` });
   });
+
+  /** The dataset a new bucket would be created on, when it holds a deleted bucket that can be recovered instead. */
+  protected readonly deletedBucketDataset = computed(() => {
+    if (!this.isNew) {
+      return null;
+    }
+    const { parent_dataset: parent, name } = this.formValue();
+    const dataset = `${parent}/${name}`;
+    return parent && name && this.isRecoverable(dataset) ? dataset : null;
+  });
+
+  /**
+   * Opens the recover form over this one, scoped to that dataset. A recovery closes this form as a success, so the
+   * opener reloads its list as it would after a create; a cancel comes back here with what was typed.
+   */
+  protected recoverDeletedBucket(dataset: string): void {
+    this.slideIn.open(S3BucketRecoverFormComponent, { data: dataset }).pipe(
+      filter((response) => !!response.response),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.slideInRef.close({ response: true }));
+  }
 
   /**
    * Object lock is a primary option (backup targets), so it drives versioning rather than depending
@@ -366,12 +406,48 @@ export class S3BucketFormComponent implements OnInit {
     this.api.call('pool.filesystem_choices').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((datasets) => {
       this.existingDatasets.set(datasets);
       this.form.controls.name.updateValueAndValidity();
+      this.scanForDeletedBucketOnClash();
     });
 
     // The check spans two fields, so a parent change has to re-run the name's validators.
     this.form.controls.parent_dataset.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.form.controls.name.updateValueAndValidity();
     });
+
+    merge(
+      this.form.controls.name.valueChanges,
+      this.form.controls.parent_dataset.valueChanges,
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.scanForDeletedBucketOnClash());
+  }
+
+  /** Asks once, on the first clash. A failed scan only costs the offer, so it falls back to the plain message. */
+  private scanForDeletedBucketOnClash(): void {
+    if (this.recoverableDatasets() || this.isScanningForDeletedBuckets) {
+      return;
+    }
+    if (!this.existingDatasets().includes(this.bucketDatasetOf(this.form.controls.name))) {
+      return;
+    }
+
+    this.isScanningForDeletedBuckets = true;
+    this.api.call('sharing.s3.recoverable_buckets').pipe(
+      map((buckets) => new Set(buckets.map((bucket) => bucket.dataset))),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe({
+      next: (datasets) => {
+        this.recoverableDatasets.set(datasets);
+        this.form.controls.name.updateValueAndValidity();
+      },
+      error: () => this.recoverableDatasets.set(new Set()),
+    });
+  }
+
+  private bucketDatasetOf(nameControl: AbstractControl): string {
+    return `${String(nameControl.parent?.get('parent_dataset')?.value ?? '')}/${String(nameControl.value ?? '')}`;
+  }
+
+  private isRecoverable(dataset: string): boolean {
+    return !!this.recoverableDatasets()?.has(dataset);
   }
 
   protected toggleAdvancedMode(): void {

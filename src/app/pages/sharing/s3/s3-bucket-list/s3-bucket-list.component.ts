@@ -47,6 +47,7 @@ import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.se
 import { storageTierColumn } from 'app/pages/sharing/components/storage-tier-cell/storage-tier-cell.component';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { s3BucketListElements } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.elements';
+import { S3BucketRecoverFormComponent } from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
 import { bucketDataPath, bucketToShareRow } from 'app/pages/sharing/s3/utils/s3-bucket.utils';
 import {
   getFilesystemAclUnavailableReason, getUnavailableReason, isShareUnavailable,
@@ -242,6 +243,16 @@ export class S3BucketListComponent implements OnInit {
   protected doAdd(): void {
     this.slideIn.open(S3BucketFormComponent).pipe(
       filter((response) => !!response.response),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.refresh());
+  }
+
+  /**
+   * Reloads on any close, not only a success: a recovery that partly fails keeps the panel open on what failed,
+   * and the buckets that did come back are registered whether or not it is then closed with a cancel.
+   */
+  protected doRecover(): void {
+    this.slideIn.open(S3BucketRecoverFormComponent).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.refresh());
   }

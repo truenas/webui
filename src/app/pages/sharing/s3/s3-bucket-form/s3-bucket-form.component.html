@@ -24,6 +24,21 @@
             [nodeProvider]="treeNodeProvider"
             [required]="true"
           ></ix-explorer>
+
+          @if (deletedBucketDataset(); as dataset) {
+            <div class="deleted-bucket">
+              <ix-warning [message]="helptext.deletedBucketMessage"></ix-warning>
+              <button
+                *ixRequiresRoles="requiredRoles"
+                mat-button
+                type="button"
+                ixTest="recover-deleted-bucket"
+                (click)="recoverDeletedBucket(dataset)"
+              >
+                {{ 'Recover' | translate }}
+              </button>
+            </div>
+          }
         } @else {
           <ix-input
             [formControl]="datasetControl"
