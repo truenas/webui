@@ -67,6 +67,36 @@ export const s3BucketLocators = {
     delete: (bucket: string) => (
       `[data-test="button-${bucketListRowTag(bucket)}-more-action-mdi-delete-row-action"]`
     ),
+    /** "Recover", beside Add: `[testId]="'recover-s3-buckets'"`. The card has no counterpart. */
+    recover: '[data-test="button-recover-s3-buckets"]',
+  },
+
+  /**
+   * The Recover panel (`s3-bucket-recover-form.component.html`). It lists every bucket middleware can find a
+   * config backup for — every mounted dataset no bucket uses, not only the suite's — each keyed by its dataset
+   * through the library normalizer: `tank/e2e_s3/b` is `tank-e2e-s3-b`. Every row starts ticked.
+   *
+   * The tick box's id lands on its `<label>`, which Playwright resolves to the checkbox it labels, so
+   * `check()` / `isChecked()` work on it directly.
+   */
+  recover: {
+    /** Every row's tick box, for unticking what a test does not own. */
+    anyBucket: '[data-test^="checkbox-recover-bucket-"]',
+    bucket: (dataset: string) => `[data-test="checkbox-recover-bucket-${kebabTestSegment(dataset)}"]`,
+    /** The dataset line under the tick box. */
+    dataset: (dataset: string) => `[data-test="text-recover-bucket-dataset-${kebabTestSegment(dataset)}"]`,
+    /** Prefilled from the backup; rendered only while the row is ticked. */
+    name: (dataset: string) => `[data-test="input-recover-bucket-name-${kebabTestSegment(dataset)}"]`,
+    owner: (dataset: string) => `[data-test="autocomplete-recover-bucket-owner-${kebabTestSegment(dataset)}"]`,
+    ownerOption: (dataset: string, username: string) => (
+      `[data-test="option-recover-bucket-owner-${kebabTestSegment(dataset)}-${kebabTestSegment(username)}"]`
+    ),
+    /** Middleware's reason a row was not recovered, left on screen under it. */
+    error: (dataset: string) => `[data-test="banner-recover-bucket-error-${kebabTestSegment(dataset)}"]`,
+    /** "No recoverable buckets were found…", in place of the rows. */
+    empty: '[data-test="text-no-recoverable-buckets"]',
+    /** The side panel's footer button: labelled "Recover", still `testId="save"` in form-side-panel-container. */
+    submit: '[data-test="button-save"]',
   },
 
   form: {

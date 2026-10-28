@@ -75,7 +75,16 @@ export const helptextSharingS3 = {
  service. Other keys of the same account are not affected.'),
 
   deleteBucketMessage: T('The bucket\'s dataset and every object in it are left in place.\
- The S3 service simply stops serving them.'),
+ The S3 service simply stops serving them. Use Recover to register the bucket again later.'),
+
+  recoverWarning: T('A recovered bucket comes back exactly as it was configured, grants included. Stored\
+ object ACLs also take effect again, and the users and groups they name may since have been reused.'),
+  recoverNameTooltip: T('The name the bucket is registered under. Change it when another bucket has since\
+ taken the original name.'),
+  recoverOwnerTooltip: T('The account that owns the bucket. Change it when the original owner no longer\
+ exists on this system or now belongs to someone else.'),
+  recoverEmpty: T('No recoverable buckets were found. Only mounted datasets that held a bucket and are not\
+ used by another bucket are listed.'),
 
   forceDisableVersioningMessage: T('Every earlier version of every object in this bucket, and every delete\
  marker, is destroyed. Version history stops being served at once, and the S3 service reclaims the space in the\

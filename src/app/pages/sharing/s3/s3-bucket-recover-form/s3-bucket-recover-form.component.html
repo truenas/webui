@@ -1,0 +1,60 @@
+<!--
+  No `<form>` and no Recover button here — the tn-side-panel host renders the footer and calls submit() itself.
+-->
+@if (loadFailed()) {
+  <p class="message" tnTestId="recoverable-buckets-load-failed" tnTestIdType="text">
+    {{ 'Recoverable buckets could not be loaded.' | translate }}
+  </p>
+} @else if (rows().length) {
+  <tn-banner type="warning" [message]="helptext.recoverWarning | translate"></tn-banner>
+
+  @for (row of rows(); track row.bucket.dataset) {
+    <section class="bucket" [formGroup]="row.group" [attr.aria-label]="row.bucket.name">
+      <div class="heading">
+        <tn-form-field>
+          <tn-checkbox
+            formControlName="selected"
+            [testId]="['recover-bucket', row.bucket.dataset]"
+            [label]="row.bucket.name"
+          ></tn-checkbox>
+        </tn-form-field>
+        <p class="dataset" tnTestIdType="text" [tnTestId]="['recover-bucket-dataset', row.bucket.dataset]">
+          {{ row.bucket.dataset }}
+        </p>
+      </div>
+
+      @if (row.group.controls.selected.value) {
+        <tn-form-field
+          [label]="'Name' | translate"
+          [tooltip]="helptext.recoverNameTooltip | translate"
+          [required]="true"
+        >
+          <tn-input formControlName="name" [testId]="['recover-bucket-name', row.bucket.dataset]"></tn-input>
+        </tn-form-field>
+
+        <tn-form-field
+          [label]="'Owner' | translate"
+          [tooltip]="helptext.recoverOwnerTooltip | translate"
+          [required]="true"
+        >
+          <ix-user-combobox
+            formControlName="owner"
+            [testId]="['recover-bucket-owner', row.bucket.dataset]"
+            [directoryOptions]="ownerDirectoryOptions"
+            [createPreset]="userFormPreset"
+            [requireSelection]="true"
+            [allowCustomValue]="false"
+            [allowCreate]="true"
+            [validateExistence]="false"
+          ></ix-user-combobox>
+        </tn-form-field>
+      }
+
+      @if (row.error(); as error) {
+        <tn-banner type="error" [testId]="['recover-bucket-error', row.bucket.dataset]" [message]="error"></tn-banner>
+      }
+    </section>
+  }
+} @else if (!isLoading()) {
+  <p class="message" tnTestId="no-recoverable-buckets" tnTestIdType="text">{{ helptext.recoverEmpty | translate }}</p>
+}

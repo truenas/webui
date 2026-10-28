@@ -3196,6 +3196,32 @@
     "hierarchy": [
       "Shares",
       "S3",
+      "Recover S3 Buckets"
+    ],
+    "synonyms": [
+      "Restore S3 Bucket",
+      "Recover Bucket",
+      "Restore Bucket",
+      "Undelete Bucket"
+    ],
+    "requiredRoles": [
+      "SHARING_S3_WRITE",
+      "SHARING_WRITE"
+    ],
+    "visibleTokens": [],
+    "anchorRouterLink": [
+      "/sharing",
+      "s3"
+    ],
+    "routerLink": null,
+    "anchor": "recover-s3-buckets",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "Shares",
+      "S3",
       "Add S3 Bucket"
     ],
     "synonyms": [

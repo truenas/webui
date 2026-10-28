@@ -23,6 +23,9 @@ import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-clie
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
 import { S3BucketFormComponent } from 'app/pages/sharing/s3/s3-bucket-form/s3-bucket-form.component';
 import { S3BucketListComponent } from 'app/pages/sharing/s3/s3-bucket-list/s3-bucket-list.component';
+import {
+  S3BucketRecoverFormComponent,
+} from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectPreferences } from 'app/store/preferences/preferences.selectors';
 
@@ -107,6 +110,22 @@ describe('S3BucketListComponent', () => {
     expect(await table.getAllRowTexts()).toEqual([
       ['backups', 'tank/buckets/backups', 'bob', 'S3', 'Enabled', 'Yes', '', ''],
     ]);
+  });
+
+  it('opens the recover panel when Recover is pressed and reloads however it is closed', async () => {
+    const formPanel = spectator.inject(FormSidePanelService);
+    // A cancel: a recovery that partly failed is closed this way, with some buckets already back.
+    jest.spyOn(formPanel, 'open').mockReturnValue(SlideInResult.cancel());
+    const load = jest.spyOn(AsyncDataProvider.prototype, 'load');
+
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Recover' }))).click();
+
+    expect(formPanel.open).toHaveBeenCalledWith(S3BucketRecoverFormComponent, {
+      title: 'Recover S3 Buckets',
+      saveLabel: 'Recover',
+    });
+    expect(load).toHaveBeenCalled();
+    load.mockRestore();
   });
 
   it('opens the bucket form when Add is pressed', async () => {

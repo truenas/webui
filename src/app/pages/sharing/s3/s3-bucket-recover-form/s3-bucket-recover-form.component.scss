@@ -1,0 +1,31 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// Spaced like a tn-form-section body, so the fields read the same as in the bucket form.
+.bucket {
+  border-top: 1px solid var(--lines);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 16px;
+
+  &:first-of-type {
+    border-top: none;
+    padding-top: 0;
+  }
+}
+
+// Tucked under the checkbox label, lined up with its text rather than the box.
+.dataset {
+  color: var(--fg2);
+  font-size: 12px;
+  margin: 0 0 0 26px;
+  overflow-wrap: anywhere;
+}
+
+.message {
+  margin: 0;
+}

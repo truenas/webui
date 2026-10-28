@@ -27,6 +27,15 @@
 
       <tn-button
         *ixRequiresRoles="requiredRoles"
+        variant="outline"
+        [testId]="'recover-s3-buckets'"
+        [ixUiSearch]="searchableElements.elements.recoverS3Buckets"
+        [label]="'Recover' | translate"
+        (onClick)="doRecover()"
+      ></tn-button>
+
+      <tn-button
+        *ixRequiresRoles="requiredRoles"
         color="primary"
         [testId]="'add-s3-bucket'"
         [ixUiSearch]="searchableElements.elements.createS3Bucket"
