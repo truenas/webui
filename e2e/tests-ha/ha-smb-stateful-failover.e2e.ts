@@ -10,18 +10,26 @@
  * moves the two fields it touches to a known start and teardown puts back what
  * it found, with the service stopped throughout so a save only rewrites
  * configuration.
+ *
+ * The EULA's acceptance is kept per controller, and `ha-license` accepted it on
+ * controller 1 only. After `ha-failover`, controller 2 holds the VIP, so the app
+ * raises the EULA over the first page here. Whichever test opens the form first
+ * agrees to it, as an admin signing in there would; that is the one thing this
+ * spec does not undo.
  */
 import type { Page } from '@playwright/test';
-import { isHaLicensed, requireHa } from '../fixtures/ha';
+import { expectsEula, isHaLicensed, requireHa } from '../fixtures/ha';
 import { readSmbSettings } from '../fixtures/service-config';
 import {
   ensureLegacySmbSharePresent, ensureSmbServiceStopped, ensureSmbShareAbsent, readSmbFailoverSettings,
   setSmbFailoverSettings, type SmbFailoverSettings,
 } from '../fixtures/smb';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
+import { acceptEula } from '../flows/ha';
 import { openServiceForm, saveServiceForm } from '../flows/services';
 import { selectOption } from '../flows/storage';
 import { servicesLocators } from '../locators/services';
+import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
@@ -74,10 +82,16 @@ test.afterEach(async ({ api, pool }) => {
   ]);
 });
 
-/** Opens the SMB service form with its advanced options showing. */
-async function openSmbAdvancedOptions(page: Page, netbiosName: string): Promise<void> {
+/**
+ * Opens the SMB service form with its advanced options showing, agreeing first
+ * to the EULA when the app is going to put it in the way.
+ */
+async function openSmbAdvancedOptions(page: Page, api: E2eApiClient, netbiosName: string): Promise<void> {
   const form = servicesLocators.smbForm;
 
+  if (await expectsEula(api)) {
+    await acceptEula(page);
+  }
   await openServiceForm(page, 'cifs', form.netbiosName, netbiosName);
   await page.locator(form.advancedToggle).click();
   await expect(page.locator(form.statefulFailover)).toBeVisible();
@@ -87,14 +101,14 @@ test('an admin turns Stateful Failover on, then off again, and the appliance kee
   const form = servicesLocators.smbForm;
   const { netbiosname } = await readSmbSettings(api);
 
-  await openSmbAdvancedOptions(page, netbiosname);
+  await openSmbAdvancedOptions(page, api, netbiosname);
   await expect(page.locator(form.statefulFailover)).toBeEnabled();
   await page.locator(form.statefulFailover).click();
   await saveServiceForm(page);
 
   expect(await readSmbFailoverSettings(api)).toEqual({ ...startingSettings, stateful_failover: true });
 
-  await openSmbAdvancedOptions(page, netbiosname);
+  await openSmbAdvancedOptions(page, api, netbiosname);
   await expect(page.locator(form.statefulFailover)).toBeChecked();
   await page.locator(form.statefulFailover).click();
   await saveServiceForm(page);
@@ -105,7 +119,7 @@ test('an admin turns Stateful Failover on, then off again, and the appliance kee
 test('Stateful Failover is locked while SMB1 is the minimum protocol', async ({ page, api }) => {
   const form = servicesLocators.smbForm;
 
-  await openSmbAdvancedOptions(page, (await readSmbSettings(api)).netbiosname);
+  await openSmbAdvancedOptions(page, api, (await readSmbSettings(api)).netbiosname);
   await expect(page.locator(form.statefulFailover)).toBeEnabled();
 
   // Locked by SMB1 and by nothing else: picking SMB2 again frees it.
@@ -127,7 +141,7 @@ test('Stateful Failover is locked while a Legacy share exists', async ({ page, a
   await ensureDatasetPresent(api, dataset);
   await ensureLegacySmbSharePresent(api, { name: legacyShare, path: datasetMountPath(dataset) });
 
-  await openSmbAdvancedOptions(page, (await readSmbSettings(api)).netbiosname);
+  await openSmbAdvancedOptions(page, api, (await readSmbSettings(api)).netbiosname);
   await expect(page.locator(form.statefulFailover)).toBeDisabled();
 
   // A backstop, as above.
