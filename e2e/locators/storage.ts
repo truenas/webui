@@ -108,6 +108,11 @@ export const poolWizardLocators = {
    * select cannot be picked up by mistake.
    */
   diskSizeOptions: (type: VdevCategory) => `[data-test^="option-size-and-type-${type}-"]`,
+  /**
+   * "Treat Disk Size as Minimum", `[testId]="['treat-disk-size-as-minimum', type()]"` on a
+   * tn-checkbox. Rendered only while some unused disk is larger than the chosen size.
+   */
+  treatDiskSizeAsMinimum: (type: VdevCategory) => `[data-test="checkbox-treat-disk-size-as-minimum-${type}"]`,
 
   width: (type: VdevCategory) => `[data-test="select-width-${type}"]`,
   /** Number of disks in the vdev. Keys are the numbers themselves. */
@@ -241,6 +246,13 @@ export const manualDiskSelectionLocators = {
   /** "At least 2 disk(s) are required for Mirror vdevs". Rendered only while the vdev is short. */
   vdevError: (layout: string, position: number) => (
     `[data-test="text-vdev-error-${kebabTestSegment(layout)}-${position}"]`
+  ),
+  /**
+   * "Mixing disks of different sizes in a vdev is not recommended." Rendered only while the vdev
+   * holds disks more than 10 MiB apart in size.
+   */
+  vdevMixedSizes: (layout: string, position: number) => (
+    `[data-test="text-vdev-mixed-sizes-${kebabTestSegment(layout)}-${position}"]`
   ),
   /** "<size> Est. Usable Raw Capacity". Rendered only once the vdev has enough disks. */
   vdevCapacityEstimate: (layout: string, position: number) => (

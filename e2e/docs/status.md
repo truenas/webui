@@ -26,6 +26,12 @@ artifact of an E2E run. The narrative is in git history up to its removal.
 
 - **At least 9 identical unused disks.** Identical is load-bearing: the pool
   wizard groups by `(type, size)` and offers widths from one group at a time.
+  They must be the smallest unused disks, because the specs take the first
+  size the wizard offers.
+- **One unused disk larger than those, of the same type**, for
+  `tests/pool-wizard-disk-sizes.e2e.ts`, which covers what the wizard does with
+  more than one size. Without it that file skips. In CI the 32GB disk given to
+  `tests/boot-pool.e2e.ts` serves.
 - Disks with duplicate or blank serials, or carrying an exported pool, are
   filtered out by the wizard and do not count. Hypervisors hand out blank
   serials readily — set distinct ones.
