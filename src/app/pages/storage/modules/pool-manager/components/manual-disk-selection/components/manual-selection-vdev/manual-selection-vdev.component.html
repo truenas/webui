@@ -95,7 +95,7 @@
     }
 
     @if (mixesDisksOfDifferentSizes) {
-      <div class="error">
+      <div class="error" tnTestIdType="text" [tnTestId]="['vdev-mixed-sizes', layout(), position()]">
         {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}
       </div>
     }

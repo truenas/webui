@@ -63,7 +63,7 @@ interface DiskDetails {
  * a precondition has to ask is not "are there N unused disks" but "are there N
  * unused disks that are alike".
  */
-interface DiskBucket {
+export interface DiskBucket {
   type: string;
   size: number;
   count: number;
@@ -99,7 +99,8 @@ export async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDi
   ));
 }
 
-async function getUnusedDiskBuckets(client: E2eApiClient): Promise<DiskBucket[]> {
+/** The wizard's disk-size buckets, in the order its Disk Size select offers them. */
+export async function getUnusedDiskBuckets(client: E2eApiClient): Promise<DiskBucket[]> {
   const disks = await getSelectableDisks(client);
 
   const byKey = new Map<string, DiskBucket>();
@@ -179,6 +180,30 @@ export async function requireUnusedDisks(client: E2eApiClient, needed: number): 
     + 'help — the width options come from the selected size alone. Either a previous run leaked '
     + 'a pool, or the VM was provisioned with disks that are not all alike.',
   );
+}
+
+/** The first size the wizard offers, and the next larger size of the same type. */
+export interface TwoDiskSizes {
+  smaller: DiskBucket;
+  larger: DiskBucket;
+}
+
+/**
+ * The first bucket the Disk Size select offers, and the next larger bucket of the same type, or
+ * undefined when the appliance has no such pair.
+ *
+ * The same type because "Treat Disk Size as Minimum" widens the choice within the selected type
+ * only (`GroupedDisks.findSuitableDisks`). A larger disk of another type still makes the wizard
+ * show the checkbox, and ticking it then changes nothing.
+ *
+ * Undefined rather than a throw: the specs that need two sizes skip without them, and an
+ * appliance provisioned with identical disks is not a broken one.
+ */
+export async function findTwoDiskSizes(client: E2eApiClient): Promise<TwoDiskSizes | undefined> {
+  const [smaller, ...others] = await getUnusedDiskBuckets(client);
+  const larger = others.find((bucket) => bucket.type === smaller?.type && bucket.size > smaller.size);
+
+  return smaller && larger ? { smaller, larger } : undefined;
 }
 
 export async function findPool(client: E2eApiClient, name: string): Promise<NamedPool | undefined> {
