@@ -11,7 +11,8 @@
  *
  * Automated selection fills a vdev smallest disks first (`GenerateVdevsService.pickDisks`), so the
  * only width that takes exactly one larger disk is one more than the smaller group holds. On CI
- * that is an eleven-wide mirror of ten 10GB disks and the 32GB one.
+ * that is eleven wide: ten 10GB disks and the 32GB one. Middleware refuses a mirror wider than four
+ * (`VDEV_MAX_DISKS` in `pool_/pool.py`), so that vdev is a RAIDZ1, which takes up to fifteen.
  *
  * Both sizes in one vdev are also visible after the pool is made: the VDEVs card on the Storage
  * dashboard reads "Mixed Capacity" in place of a size. The Review step has no such warning; the
@@ -42,6 +43,9 @@ const pools = [optionsPool, minimumPool, manualPool];
 
 /** The `CreateVdevLayout` value the dialog keys its vdev ids by, and the type `pool.query` reports. */
 const mirror = 'MIRROR';
+
+/** The widest RAIDZ1 vdev middleware accepts on create. */
+const raidz1MaxWidth = 15;
 
 /** What the VDEVs card shows in place of a size while a vdev mixes disk sizes. */
 const mixedCapacity = 'Mixed Capacity';
@@ -117,9 +121,11 @@ test('Treat Disk Size as Minimum lets a larger disk into the vdev, and the pool 
   const atLeastSmaller = disks.filter((disk) => disk.type === smaller.type && disk.size >= smaller.size);
   // Every disk of the smaller size, and the first larger one.
   const width = smaller.count + 1;
+  // Skipped rather than failed: middleware would refuse the vdev, whatever the wizard did.
+  test.skip(width > raidz1MaxWidth, `${width} disks is wider than a RAIDZ1 vdev can be`);
 
   await openPoolWizard(page, minimumPool);
-  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption('Mirror'));
+  await selectOption(page, poolWizardLocators.layout, poolWizardLocators.layoutOption('RAIDZ1'));
   await page.locator(poolWizardLocators.diskSize('data')).click();
   await page.locator(poolWizardLocators.diskSizeOptions('data')).first().click();
 
@@ -134,7 +140,7 @@ test('Treat Disk Size as Minimum lets a larger disk into the vdev, and the pool 
   await goToReview(page, 'data');
   await submitPool(page);
   await expect(page.locator(poolCardLocators.dataVdevs(minimumPool)))
-    .toContainText(`1 x MIRROR | ${width} wide | ${mixedCapacity}`);
+    .toContainText(`1 x RAIDZ1 | ${width} wide | ${mixedCapacity}`);
 
   const topology = await readPoolTopology(api, minimumPool);
   expect(topology.data).toHaveLength(1);
