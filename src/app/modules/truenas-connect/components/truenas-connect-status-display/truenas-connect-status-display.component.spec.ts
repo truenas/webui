@@ -42,6 +42,34 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     expect(spectator.query('.failed-description')).toHaveText('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
   });
 
+  it('shows the middleware failure detail under the generic message when registration fails', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
+    spectator.setInput('statusReason', 'System limit exceeded');
+    spectator.detectChanges();
+
+    expect(spectator.query('.failed-description')).toContainText('Something went wrong!');
+    expect(spectator.query('.failure-detail')).toHaveExactTrimmedText('Details: System limit exceeded');
+  });
+
+  it('hides the failure detail while status_reason is the generic per-status text', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
+    spectator.setInput('statusReason', 'Registration finalization failed');
+    spectator.detectChanges();
+
+    expect(spectator.query('.failure-detail')).not.toExist();
+  });
+
+  it('does not show status_reason as a failure detail for other failed statuses', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.CertGenerationFailed);
+    spectator.setInput('statusReason', 'Certificate generation failed');
+    spectator.detectChanges();
+
+    expect(spectator.query('.failure-detail')).not.toExist();
+  });
+
   it('shows a timeout-specific message when the user did not finish authorization in time', () => {
     spectator.setInput('status', TncStatus.Failed);
     spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationTimeout);
