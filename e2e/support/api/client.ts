@@ -143,14 +143,21 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
   // whose directory is missing most of what the fixtures call. Continuing from
   // there buys a run that dies later on unknown methods with nothing naming the
   // cause, so this fails here instead.
+  //
+  // It also fails the other way: discovery takes the newest year the appliance
+  // advertises and the installed package implements, so bumping the package to a
+  // release with a newer directory, without moving the pins, lands here too.
   if (client.version.year !== expectedApiVersion.year) {
     client.close();
+    const hint = client.version.year > expectedApiVersion.year
+      ? 'The appliance and the installed @truenas/api-client both speak a newer API than the pin: '
+      + 'move the pins with the package, as "Version policy" in docs/devs/typed-api-client.md describes.'
+      : 'Version discovery falls back to the oldest supported API when it cannot reach '
+        + '/api/versions, so check for a certificate or network problem before assuming the appliance is old.';
     throw new Error(
       `Connected to middleware at ${config.middlewareHost} on API `
       + `${client.version.version}, but the suite is typed against `
-      + `${expectedApiVersion.label}. Version discovery falls back to the oldest supported API `
-      + 'when it cannot reach /api/versions, so check for a certificate or network problem '
-      + 'before assuming the appliance is old.',
+      + `${expectedApiVersion.label}. ${hint}`,
     );
   }
 
