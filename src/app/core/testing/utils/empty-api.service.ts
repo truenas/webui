@@ -14,6 +14,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
  */
 export class EmptyApiService {
   call = getMissingInjectionErrorFactory(ApiService.name);
+  callUndeclared = getMissingInjectionErrorFactory(ApiService.name);
   callUnauthenticated = getMissingInjectionErrorFactory(ApiService.name);
   query = getMissingInjectionErrorFactory(ApiService.name);
   queryOne = getMissingInjectionErrorFactory(ApiService.name);

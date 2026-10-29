@@ -35,9 +35,9 @@ const projectRestrictedSyntax = [
   },
 ];
 
-// Lifted out of the rule so the migrated-path override below can repeat them: `no-restricted-imports`
-// is replaced wholesale too, and an override that forgot these would let Angular Material and the
-// raw DatePipe back into exactly the areas that are otherwise the most closely guarded.
+// Named rather than inlined so any later override that sets `no-restricted-imports` can repeat them:
+// the rule is replaced wholesale too, and an override that forgot these would let Angular Material
+// and the raw DatePipe back into the files it covers.
 const restrictedImportPatterns = [
   {
     // `@angular/material` is gone from package.json entirely (NAS-141025), so a

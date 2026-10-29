@@ -4,17 +4,18 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 
 describe('ApiDataProvider', () => {
   let dataProvider: ApiDataProvider<'pool.query'>;
-  let api: { call: jest.Mock };
+  let api: { call: jest.Mock; queryCount: jest.Mock };
 
   beforeEach(() => {
-    api = { call: jest.fn(() => of([])) };
+    api = { call: jest.fn(() => of([])), queryCount: jest.fn(() => of(0)) };
     dataProvider = new ApiDataProvider(api as ApiDataProviderClient, 'pool.query');
   });
 
   it('resets pagination to page 1 when sorting changes', () => {
-    api.call.mockReturnValueOnce(of(3));
-    api.call.mockReturnValueOnce(of([]));
+    api.queryCount.mockReturnValueOnce(of(3));
     dataProvider.load();
+
+    expect(api.queryCount).toHaveBeenCalledWith('pool.query', []);
 
     dataProvider.setPagination({ pageNumber: 2, pageSize: 2 });
     dataProvider.setSorting({ active: 0, direction: SortDirection.Asc, propertyName: 'name' });

@@ -15,12 +15,13 @@ import {
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 /**
- * What a provider needs from an API client: `call`, with its generics erased so that
- * `ApiService` and spec doubles both fit. The provider types each response by its
- * method `T`.
+ * What a provider needs from an API client: `call` and `queryCount`, with their generics
+ * erased so that `ApiService` and spec doubles both fit. The provider types each response
+ * by its method `M`.
  */
 export interface ApiDataProviderClient {
   call(method: string, params?: unknown): Observable<unknown>;
+  queryCount(method: string, filters?: unknown): Observable<number>;
 }
 
 /** The row a query method returns; anything else has to name its row type itself. */
@@ -127,9 +128,7 @@ export class ApiDataProvider<
   }
 
   protected countRows(): Observable<number> {
-    const params = [this.params[0] || [], { count: true }] as CallParams<WebUiApiDirectory, M>;
-
-    return this.api.call(this.method, params) as unknown as Observable<number>;
+    return this.api.queryCount(this.method, this.params[0] || []);
   }
 
   protected prepareParams(params: QueryParams<Row>): CallParams<WebUiApiDirectory, M> {

@@ -60,5 +60,4 @@ export interface ApiEvent<T = unknown> {
   msg: CollectionChangeType.Changed
     | CollectionChangeType.Added
     | CollectionChangeType.Removed;
-  // TODO: | IncomingApiMessageType.NoSub
 }

@@ -2,23 +2,23 @@
 
 import { readFileSync } from 'fs';
 import { join } from 'path';
-import WebSocket from 'ws';
+import { createTrueNasClient, type AuthResponse } from '@truenas/api-client';
+import {
+  filter, firstValueFrom, take, timeout,
+} from 'rxjs';
 
 interface AuthCredentials {
   username?: string;
   password?: string;
 }
 
-interface WebSocketResponse {
-  id: string;
-  result?: string | { reconnect_token?: string };
-  error?: { message: string };
-}
-
 const defaultCredentials: AuthCredentials = {
   username: process.env.AUTH_USERNAME || 'root',
   password: process.env.AUTH_PASSWORD || 'testing',
 };
+
+const connectTimeoutMs = 30_000;
+const loginTimeoutMs = 30_000;
 
 // Read environment from file
 function getEnvironment(): { remote: string; port: number } {
@@ -34,88 +34,56 @@ function getEnvironment(): { remote: string; port: number } {
   };
 }
 
-async function createWebSocketConnection(url: string): Promise<WebSocket> {
-  const { default: webSocketConstructor } = await import('ws');
-  // eslint-disable-next-line new-cap
-  return new webSocketConstructor(url);
-}
-
-async function waitForWebSocketOpen(ws: WebSocket): Promise<void> {
-  return new Promise((resolve, reject) => {
-    if (ws.readyState === WebSocket.OPEN) {
-      resolve();
-      return;
-    }
-
-    ws.onopen = () => resolve();
-    ws.onerror = () => reject(new Error('WebSocket connection failed'));
-  });
-}
-
-function sendWebSocketMessage(ws: WebSocket, message: object): void {
-  ws.send(JSON.stringify(message));
-}
-
-async function waitForWebSocketMessage(ws: WebSocket, expectedId: string): Promise<WebSocketResponse['result']> {
-  return new Promise((resolve, reject) => {
-    ws.onmessage = (event) => {
-      try {
-        const response = JSON.parse(event.data.toString()) as WebSocketResponse;
-
-        if (response.id === expectedId) {
-          if (response.result) {
-            resolve(response.result);
-          } else {
-            reject(new Error(`Request failed: ${response.error?.message || 'Unknown error'}`));
-          }
-        }
-
-        if (response.error) {
-          reject(new Error(`WebSocket error: ${response.error.message}`));
-        }
-      } catch {
-        reject(new Error('Failed to parse WebSocket response'));
-      }
-    };
-
-    ws.onerror = () => reject(new Error('WebSocket connection failed'));
-  });
-}
-
+/**
+ * Signs in over `@truenas/api-client`, as the UI does, and returns the
+ * `reconnect_token` that login mints.
+ *
+ * That is the token the `?token=` URL param expects: the sign-in page spends it
+ * through `AuthService.loginWithToken`, i.e. `auth.login_ex` with `TOKEN_PLAIN`.
+ * It outlives this script's session, which is closed straight away.
+ *
+ * The connection is plain `ws://` (`protocol: 'http:'`), as the dev server's own
+ * page makes it: served from `http://localhost`, the UI connects to the remote
+ * over `ws://` too. That also keeps self-signed certificates out of the way.
+ *
+ * No version is pinned: the token is the same on every version that mints one
+ * (v27.0.0 and later), so discovery picks it and a version bump in the UI does
+ * not need this file edited.
+ */
 async function generateDevToken(credentials: AuthCredentials = {}): Promise<string> {
   const creds = { ...defaultCredentials, ...credentials };
   const { remote } = getEnvironment();
 
-  const wsUrl = `ws://${remote}/api/current`;
-  const ws = await createWebSocketConnection(wsUrl);
+  const client = await createTrueNasClient({
+    uuid: 'webui-auth-url',
+    hostnames: [remote],
+    enabled: true,
+    protocol: 'http:',
+  });
 
   try {
-    // Wait for connection to open
-    await waitForWebSocketOpen(ws);
+    await firstValueFrom(
+      client.connection.opened.pipe(filter(Boolean), take(1), timeout(connectTimeoutMs)),
+    );
 
-    // Send login request with reconnect_token option
-    sendWebSocketMessage(ws, {
-      jsonrpc: '2.0',
-      id: 'dev-login',
-      method: 'auth.login_ex',
-      params: [{
-        mechanism: 'PASSWORD_PLAIN',
-        username: creds.username,
-        password: creds.password,
-        login_options: { reconnect_token: true },
-      }],
-    });
+    const auth: AuthResponse = await firstValueFrom(
+      client.authenticator
+        .loginWithUserPass(creds.username || '', creds.password || '')
+        .pipe(timeout(loginTimeoutMs)),
+    );
 
-    // Wait for login response containing the reconnect token
-    const loginResult = await waitForWebSocketMessage(ws, 'dev-login');
+    // The client only throws on AUTH_ERR; OTP_REQUIRED and the like resolve.
+    if (String(auth.response_type) !== 'SUCCESS') {
+      throw new Error(`Login did not succeed: ${String(auth.response_type)}`);
+    }
 
-    if (typeof loginResult === 'object' && loginResult?.reconnect_token) {
-      return loginResult.reconnect_token;
+    if (auth.reconnect_token) {
+      return auth.reconnect_token;
     }
 
     throw new Error('Login response did not contain a reconnect token');
   } finally {
-    ws.close();
+    client.close();
   }
 }
 
