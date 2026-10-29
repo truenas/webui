@@ -10,6 +10,7 @@ import {
 } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
+import { getTncRegistrationFailureDetail } from 'app/modules/truenas-connect/truenas-connect-status.utils';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
 @Component({
@@ -31,6 +32,7 @@ export class TruenasConnectStatusDisplayComponent {
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
   rawStatus = input.required<TruenasConnectStatus>();
   tier = input<TruenasConnectTier | null>(null);
+  statusReason = input<string | null>(null);
 
   protected tierLabel = computed(() => {
     const tier = this.tier();
@@ -45,5 +47,9 @@ export class TruenasConnectStatusDisplayComponent {
   protected failedDescription = computed(() => {
     return TruenasConnectFailureDescription[this.rawStatus()]
       ?? T('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
+  });
+
+  protected failureDetail = computed(() => {
+    return getTncRegistrationFailureDetail({ status: this.rawStatus(), status_reason: this.statusReason() });
   });
 }
