@@ -1,4 +1,4 @@
-import { CallParams, CallResponse } from '@truenas/api-client';
+import { CallParams, CallResponse, v28_0_0 } from '@truenas/api-client';
 import { Direction } from 'app/enums/direction.enum';
 import { TransferMode } from 'app/enums/transfer-mode.enum';
 import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
@@ -7,15 +7,7 @@ import { Job } from 'app/interfaces/job.interface';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export interface BwLimit {
-  time: string;
-  bandwidth: number | null;
-}
-
-export interface BwLimitUpdate {
-  time: string;
-  bandwidth: number | null;
-}
+export type BwLimit = v28_0_0.CloudSyncBwlimit;
 
 export interface CloudSyncTask {
   args: string;
@@ -47,7 +39,7 @@ export interface CloudSyncTask {
 
 export interface CloudSyncTaskUpdate extends Omit<CloudSyncTask, 'id' | 'job' | 'locked' | 'credentials' | 'encryption_salt' | 'args' | 'filename_encryption' | 'bwlimit'> {
   credentials: number;
-  bwlimit: BwLimitUpdate[];
+  bwlimit: BwLimit[];
 }
 
 export interface CloudSyncTaskUi extends CloudSyncTask {

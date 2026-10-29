@@ -1,9 +1,3 @@
-export interface SystemRebootInfo {
-  boot_id: string;
-  reboot_required_reasons: RebootRequiredReasons[];
-}
+import { v28_0_0 } from '@truenas/api-client';
 
-export interface RebootRequiredReasons {
-  code: string;
-  reason: string;
-}
+export type SystemRebootInfo = v28_0_0.RebootInfo;

@@ -14,14 +14,6 @@ export interface FileSystemStat {
   user: string;
 }
 
-export type FilesystemPutParams = [
-  path: string,
-  options?: {
-    mode?: number;
-    append?: boolean;
-  },
-];
-
 export interface FilesystemSetPermParams {
   path: string;
   mode: string;

@@ -1,3 +1,4 @@
+import { v28_0_0 } from '@truenas/api-client';
 import { LinkState } from 'app/enums/network-interface.enum';
 import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 
@@ -33,13 +34,7 @@ export interface CpuUsageUpdate {
   temp: number;
 }
 
-export interface DisksUpdate {
-  busy: number;
-  read_bytes: number;
-  read_ops: number;
-  write_bytes: number;
-  write_ops: number;
-}
+export type DisksUpdate = v28_0_0.ReportingRealtimeEventSourceEventDisks;
 
 export type AllNetworkInterfacesUpdate = Record<string, NetworkInterfaceReport>;
 
@@ -50,13 +45,7 @@ export interface NetworkInterfaceReport {
   speed: number;
 }
 
-export interface MemoryUpdate {
-  arc_size: number;
-  arc_free_memory: number;
-  arc_available_memory: number;
-  physical_memory_total: number;
-  physical_memory_available: number;
-}
+export type MemoryUpdate = v28_0_0.ReportingRealtimeEventSourceEventMemory;
 
 export type ReportingAggregationKeys = 'min' | 'mean' | 'max';
 

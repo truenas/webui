@@ -36,7 +36,7 @@ describe('prepareBwlimit', () => {
     expect(result).toEqual([{ time: '00:00', bandwidth: null }]);
   });
 
-  it('should return an array of BwLimitUpdate objects', () => {
+  it('should return an array of BwLimit objects', () => {
     const bwlimit: string[] = ['00:00, 10MB/s', '12:00, 5GB/s'];
     const result = prepareBwlimit(bwlimit);
     expect(result).toEqual([

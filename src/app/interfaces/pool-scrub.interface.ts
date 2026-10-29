@@ -1,4 +1,3 @@
-import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { Schedule } from 'app/interfaces/schedule.interface';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -13,11 +12,6 @@ export interface ScrubTask {
 }
 
 export type CreateScrubTask = Omit<ScrubTask, 'id' | 'pool_name'>;
-
-export type PoolScrubTaskParams = [
-  poolId: number,
-  params: PoolScrubAction,
-];
 
 /**
  * Reads a `pool.scrub.query` row into `ScrubTask`. The generated entry leaves the fields middleware defaults optional

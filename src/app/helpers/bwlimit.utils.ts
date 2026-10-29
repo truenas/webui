@@ -2,7 +2,7 @@ import {
   TiB, GiB, MiB, KiB,
   PiB,
 } from 'app/constants/bytes.constant';
-import { BwLimitUpdate } from 'app/interfaces/cloud-sync-task.interface';
+import { BwLimit } from 'app/interfaces/cloud-sync-task.interface';
 
 const byteMap = {
   P: PiB,
@@ -39,7 +39,7 @@ function getByte(data: string): number {
 
 /**
  * takes a list of strings like '09:00,100M' or '23:30,off' and returns a list of
- * `BwLimitUpdate`. the return value has the following properties:
+ * `BwLimit`. the return value has the following properties:
  *   * `time` is a string like '09:00' or '23:30'. technically-invalid values like
  *     '36:00' are still returned from the function and **require further validation
  *     to avoid invalid times**.
@@ -51,8 +51,8 @@ function getByte(data: string): number {
  * in general, it is on the caller to handle invalid time/bandwidth specifications. this function *only*
  * creates a list for submission to the API and makes no promises about its validity.
  */
-export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
-  const bwlimtResult: BwLimitUpdate[] = [];
+export function prepareBwlimit(bwlimit: string[] | undefined): BwLimit[] {
+  const bwlimtResult: BwLimit[] = [];
 
   if (!bwlimit?.length) {
     return bwlimtResult;
@@ -81,7 +81,7 @@ export function prepareBwlimit(bwlimit: string[] | undefined): BwLimitUpdate[] {
       // don't slip by.
       parsedBandwidth = Number(sublimitArr[1]);
     }
-    const subLimit: BwLimitUpdate = {
+    const subLimit: BwLimit = {
       time: sublimitArr[0],
       bandwidth: parsedBandwidth,
     };

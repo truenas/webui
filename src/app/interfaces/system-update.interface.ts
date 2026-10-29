@@ -1,26 +1,12 @@
-import { CallResponse } from '@truenas/api-client';
+import { CallResponse, v28_0_0 } from '@truenas/api-client';
 import { UpdateCode } from 'app/enums/system-update.enum';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
-export interface UpdateParams {
-  reboot: boolean;
-  resume?: boolean;
-}
-
-export interface UpdateProfileChoice {
-  name: string;
-  footnote: string;
-  description: string;
-  available: boolean;
-}
+export type UpdateProfileChoice = v28_0_0.UpdateProfileChoice;
 
 export type UpdateProfileChoices = Record<string, UpdateProfileChoice>;
 
-export interface UpdateConfig {
-  id: number;
-  autocheck: boolean;
-  profile: string;
-}
+export type UpdateConfig = v28_0_0.UpdateEntry;
 
 export interface UpdateManifest {
   filename: string;
@@ -40,27 +26,16 @@ export interface NewVersion {
   release_notes?: string;
 }
 
-export interface UpdateStatusCurrentVersion {
-  train: string;
-  profile: string;
-  matches_profile: boolean;
-}
+export type UpdateStatusCurrentVersion = v28_0_0.UpdateStatusCurrentVersion;
 
 export interface UpdateStatusDetails {
   current_version: UpdateStatusCurrentVersion;
   new_version: NewVersion | null;
 }
 
-export interface UpdateDownloadProgress {
-  percent: number;
-  description: string;
-  version: string;
-}
+export type UpdateDownloadProgress = v28_0_0.UpdateDownloadProgress;
 
-export interface UpdateStatusError {
-  errname: string;
-  reason: string;
-}
+export type UpdateStatusError = v28_0_0.UpdateStatusError;
 
 export interface UpdateStatus {
   code: UpdateCode;

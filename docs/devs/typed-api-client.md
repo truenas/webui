@@ -258,6 +258,41 @@ Done (NAS-144009). `ApiService`, `WebSocketHandlerService`,
 `migratedApiOverrides` in `eslint.config.mjs`) and the spec codemod.
 `DuplicateCallTrackerService` stays: it is the debug panel's now.
 
+### Phase 4 — retire duplicated model types
+
+NAS-144010 cleaned up the model files the area tickets had not reached. A
+throwaway script compared each exported interface with every type the client
+generates; when the two were assignable both ways, the interface was replaced
+by an alias of the generated type (`export type FailoverConfig = v28_0_0.FailoverEntry`).
+That covered 41 interfaces, among them the update, reboot, failover, ZFS tier,
+iSCSI portal and initiator, SMB share option, NVMe-oF global, container stop
+and delete, app stats and realtime reporting shapes. Three more interfaces were
+looser than their generated type, which assigned to them but not the other way
+round: `SystemGeneralConfig`, `NetworkConfigurationState` and `AppUsedPort`.
+They became aliases as well, because every consumer still compiled. Two
+files, `core-options` and `export-params`, were deleted. So were about twenty
+exports that nothing read: params types the deleted legacy directory used to
+name, and the `login_ex` request shapes.
+
+What stays hand-written, on purpose:
+
+- **Enums.** The client exports its enum const objects as types only (gap 13),
+  so the UI's enums are still the only values code can write and compare
+  with. None of them is unused.
+- **Interfaces read through a `toX` adapter.** Each one differs from its
+  generated type in a way some consumer depends on. The UI uses its enums
+  where the wire sends literals, and reads `{ $date }` envelopes and loose
+  records as the shapes the pages expect. Each area's drift notes below list
+  these.
+- **Discriminated unions the generated model leaves flat.** For example,
+  `KeychainCredential` pairs `attributes` with `type`, and `SmbShare` pairs
+  `options` with `purpose`.
+
+When a spec fixture's partial object no longer casts to an aliased type, as
+happens when a non-empty tuple meets `['0.0.0.0']`, cast the field
+(`as SystemGeneralConfig['ui_address']`), not the whole object through
+`unknown`.
+
 ## Known gaps and library follow-ups
 
 Things the wrapper works around today, in the order they block the phases

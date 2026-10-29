@@ -13,5 +13,3 @@ export type SshConnectionManualSetup = v28_0_0.SetupSSHConnectionManual;
 export type SshConnectionSemiAutomaticSetup = v28_0_0.SetupSSHConnectionSemiautomatic;
 
 export type SshConnectionSetupPrivateKey = SshConnectionSetup['private_key'];
-
-export type RemoteSshScanParams = v28_0_0.KeychainCredentialRemoteSshHostKeyScanArgs;

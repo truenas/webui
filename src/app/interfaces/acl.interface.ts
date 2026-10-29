@@ -1,4 +1,4 @@
-import { CallResponse, JobParams } from '@truenas/api-client';
+import { CallResponse, JobParams, v28_0_0 } from '@truenas/api-client';
 import { AclType } from 'app/enums/acl-type.enum';
 import {
   NfsAclTag,
@@ -96,13 +96,7 @@ export interface Nfs41Flags {
   protected: boolean;
 }
 
-export interface SetAclOptions {
-  stripacl?: boolean;
-  recursive?: boolean;
-  traverse?: boolean;
-  canonicalize?: boolean;
-  validate_effective_acl?: boolean;
-}
+export type SetAclOptions = v28_0_0.FilesystemSetAclOptions;
 
 export interface SetAcl {
   path: string;

@@ -32,8 +32,6 @@ export interface KeychainSshCredentials extends KeychainCredentialBase {
 /** Either key may be absent: middleware derives the public key from the private one. */
 export type SshKeyPair = v28_0_0.SSHKeyPair;
 
-export type KeychainCredentialCreate = CallParams<D, 'keychaincredential.create'>[0];
-
 export type KeychainCredentialUpdate = CallParams<D, 'keychaincredential.update'>[1];
 
 export type KeychainCredentialDeleteOptions = v28_0_0.KeychainCredentialDeleteOptions;
