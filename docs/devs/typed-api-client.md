@@ -308,10 +308,13 @@ above. Each is a change for `truenas/api-client-ts`.
    on the legacy path, and every verb that needs a session ends it on
    `ENOTAUTHENTICATED`. `dispatchTypedCall`, the hand-rolled round trip
    `call` used to work around this, is gone. A job that starts and then
-   fails still throws `FailedJobError` from its `FAILED` state. It no longer
-   carries `apiErrorDetails`, though. The legacy client copied the job call's
-   error reply into it, nothing sets it now, and `ErrorParserService` still
-   reads it. That regression is tracked separately.
+   fails throws `FailedJobError` from its `FAILED` state. Middleware also
+   answers the job's request with an error frame once the job has failed (the
+   client opts out of `legacy_jobs`), but the client stops listening once the
+   job has started. So `ApiService.job` listens instead (`attachJobErrorReply`,
+   NAS-144961) and attaches the frame's data as `apiErrorDetails`, which the
+   failure dialog shows. A job refused with `ENOTAUTHENTICATED` never settles:
+   completing it would read as success.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.

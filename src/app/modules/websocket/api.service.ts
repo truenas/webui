@@ -22,6 +22,7 @@ import {
   filter,
   map,
   MonoTypeOperatorFunction,
+  NEVER,
   Observable,
   pipe,
   switchMap,
@@ -31,6 +32,7 @@ import {
 import { ApiErrorName } from 'app/enums/api.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Job } from 'app/interfaces/job.interface';
+import { attachJobErrorReply } from 'app/modules/websocket/typed-api/attach-job-error-reply';
 import { followCollection } from 'app/modules/websocket/typed-api/follow-collection';
 import { rethrowAsApiCallError } from 'app/modules/websocket/typed-api/rethrow-as-api-call-error';
 import {
@@ -79,7 +81,8 @@ type ClientApi = WebUiApiClient['api'];
  *
  * Every verb throws a refusal as `ApiCallError` carrying the full JSON-RPC
  * error, which `ErrorHandlerService` and form validation read. The verbs that
- * need a session also end it on `ENOTAUTHENTICATED`.
+ * need a session also end it on `ENOTAUTHENTICATED`: a call or query then
+ * completes without a value, and a job never settles (see `handleRefusal`).
  */
 @Injectable({
   providedIn: 'root',
@@ -212,9 +215,10 @@ export class ApiService {
    * Start a job and follow it to completion.
    *
    * Emits every update, completes on success and throws `FailedJobError` on
-   * failure, the contract `observeJob`-based consumers rely on. A method
-   * refused before it starts a job (validation, a missing role) throws
-   * `ApiCallError` instead.
+   * failure, the contract `observeJob`-based consumers rely on. The error
+   * carries middleware's error reply to the request as `apiErrorDetails`,
+   * which the job failure dialog shows. A method refused before it starts a
+   * job (validation, a missing role) throws `ApiCallError` instead.
    */
   job<M extends JobMethod<D>>(
     method: M,
@@ -222,14 +226,16 @@ export class ApiService {
   ): Observable<Job<JobResult<D, M>>> {
     this.duplicates.trackCall(method, params[0]);
     return this.ready$.pipe(
-      switchMap((client) => client.api.job(method, ...params)),
-      this.handleRefusal(),
-      // The client's Job and the UI's Job describe the same wire object; the
-      // client is merely honest about a few fields being null before the job
-      // starts. Narrowing to the UI's shape keeps the existing operators and
-      // error classes usable until the UI adopts the client's type.
-      map((job) => job as unknown as Job<JobResult<D, M>>),
-      observeJob(),
+      switchMap((client) => client.api.job(method, ...params).pipe(
+        this.handleRefusal(NEVER),
+        // The client's Job and the UI's Job describe the same wire object; the
+        // client is merely honest about a few fields being null before the job
+        // starts. Narrowing to the UI's shape keeps the existing operators and
+        // error classes usable until the UI adopts the client's type.
+        map((job) => job as unknown as Job<JobResult<D, M>>),
+        observeJob(),
+        attachJobErrorReply(client.connection.messages()),
+      )),
     );
   }
 
@@ -242,7 +248,7 @@ export class ApiService {
     this.duplicates.trackCall(method, params[0]);
     return this.ready$.pipe(
       switchMap((client) => client.api.callAndGetJobId(method, ...params)),
-      this.handleRefusal(),
+      this.handleRefusal(NEVER),
     );
   }
 
@@ -325,14 +331,21 @@ export class ApiService {
    * middleware refused for want of one: swallow the error, drop the session, and let the app
    * fall back to the sign-in page, which logs straight back in when the stored
    * token is still good.
+   *
+   * What the refused request does then is `afterSessionLost`. A call or query completes
+   * without a value. The job verbs pass `NEVER`, because a job that completes is a job
+   * that succeeded: `JobProgressDialog` and `observeJob` consumers would report success for
+   * a job that never started. Losing the session closes every dialog and leaves the page,
+   * which is what tears those subscriptions down — as the legacy client, whose jobs waited
+   * on the jobs store, also left them.
    */
-  private handleRefusal<T>(): MonoTypeOperatorFunction<T> {
+  private handleRefusal<T>(afterSessionLost: Observable<never> = EMPTY): MonoTypeOperatorFunction<T> {
     return pipe(
       rethrowAsApiCallError<T>(),
       catchError((error: unknown) => {
         if (error instanceof ApiCallError && error.error?.data?.errname === ApiErrorName.NotAuthenticated) {
           this.wsStatus.setLoginStatus(false);
-          return EMPTY;
+          return afterSessionLost;
         }
 
         return throwError(() => error);

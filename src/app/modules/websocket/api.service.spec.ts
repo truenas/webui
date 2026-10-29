@@ -6,6 +6,7 @@ import {
 import { defaultIfEmpty, firstValueFrom, lastValueFrom, of } from 'rxjs';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { jobErrorReplyGraceMs } from 'app/modules/websocket/typed-api/attach-job-error-reply';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { ApiCallError, FailedJobError } from 'app/services/errors/error.classes';
@@ -224,16 +225,23 @@ describe('ApiService', () => {
       expect(job).toMatchObject({ state: JobState.Success, result: 'done' });
     });
 
-    it('throws a FailedJobError when the job fails', async () => {
+    it('throws a FailedJobError when the job fails, without details when no error reply comes', async () => {
       await bringSessionUp();
+      jest.useFakeTimers();
       client.mock.job('pool.dataset.export_key', fakeJob({
         state: JobState.Failed,
         error: 'boom',
         time_finished: { $date: 1 },
       }));
 
-      await expect(lastValueFrom(spectator.service.job('pool.dataset.export_key', ['tank/enc'])))
-        .rejects.toBeInstanceOf(FailedJobError);
+      const error = lastValueFrom(spectator.service.job('pool.dataset.export_key', ['tank/enc']))
+        .catch((caught: unknown) => caught);
+      // The fake does not answer the request the way middleware does, so the wait for it runs out.
+      await jest.advanceTimersByTimeAsync(jobErrorReplyGraceMs);
+
+      expect(await error).toBeInstanceOf(FailedJobError);
+      expect(await error).not.toHaveProperty('apiErrorDetails');
+      jest.useRealTimers();
     });
 
     it('throws an ApiCallError when the method is refused before a job starts', async () => {
@@ -249,6 +257,62 @@ describe('ApiService', () => {
       await expect(result).rejects.toMatchObject({
         error: { data: { extra: [['pool.dataset.export_key.id', 'Dataset does not exist', 22]] } },
       });
+    });
+
+    it('attaches middleware\'s error reply to the request as apiErrorDetails when the job fails', async () => {
+      await bringSessionUp();
+      const jobId = client.mock.job('pool.dataset.export_key', { state: JobState.Running });
+      const result = lastValueFrom(spectator.service.job('pool.dataset.export_key', ['tank/enc']));
+      await settle();
+      const requestId = String(client.connection.sent.find((frame) => frame.method === 'pool.dataset.export_key')?.id);
+
+      // Middleware fails the job, then answers the request it was started by.
+      client.connection.receive({
+        jsonrpc: '2.0',
+        method: 'collection_update',
+        params: {
+          collection: 'core.get_jobs',
+          msg: 'changed',
+          id: jobId,
+          fields: fakeJob({
+            id: jobId,
+            state: JobState.Failed,
+            error: 'boom',
+            message_ids: [requestId],
+            time_finished: { $date: 1 },
+          }),
+        },
+      });
+      client.connection.receive({
+        jsonrpc: '2.0',
+        id: requestId,
+        error: fakeApiError({
+          errname: 'EFAULT', reason: 'boom', trace: { class: 'CallError', formatted: 'Traceback…', repr: 'CallError()' },
+        }),
+      });
+
+      await expect(result).rejects.toBeInstanceOf(FailedJobError);
+      await expect(result).rejects.toMatchObject({
+        apiErrorDetails: { errname: 'EFAULT', reason: 'boom', trace: { class: 'CallError' } },
+      });
+    });
+
+    it('ends the app session and never settles when a job is refused for want of one', async () => {
+      await bringSessionUp();
+      const settled = jest.fn();
+      spectator.service.job('pool.dataset.export_key', ['tank/enc']).subscribe({
+        next: settled, error: settled, complete: settled,
+      });
+      spectator.service.startJob('pool.dataset.export_key', ['tank/enc']).subscribe({
+        next: settled, error: settled, complete: settled,
+      });
+
+      client.connection.replyError('pool.dataset.export_key', fakeApiError({ errname: ApiErrorName.NotAuthenticated }));
+      client.connection.replyError('pool.dataset.export_key', fakeApiError({ errname: ApiErrorName.NotAuthenticated }));
+      await settle();
+
+      expect(wsStatus.setLoginStatus).toHaveBeenCalledWith(false);
+      expect(settled).not.toHaveBeenCalled();
     });
 
     it('throws an ApiCallError from startJob when the method is refused', async () => {
