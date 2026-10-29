@@ -182,10 +182,7 @@ jobs:
   test-ux-team:
     name: Run tests (UX Team - Self-hosted)
     needs: [install, check-ux-team]
-    # TEMP: the ARM builder is down, so every PR runs "Run tests (Standard)" on
-    # GitHub runners instead. Restore the condition below once it is back:
-    # if: needs.check-ux-team.outputs.is_member == 'true'
-    if: false
+    if: needs.check-ux-team.outputs.is_member == 'true'
     strategy:
       fail-fast: false
     # Named labels rather than a bare `self-hosted`, which matches whichever
@@ -217,9 +214,8 @@ jobs:
     needs: [install, check-ux-team]
     if: |
       always() &&
-      needs.install.result == 'success'
-    # TEMP: runs for the UX team too while the ARM builder is down. Restore with:
-    #   && (github.event_name != 'pull_request' || needs.check-ux-team.outputs.is_member != 'true')
+      needs.install.result == 'success' &&
+      (github.event_name != 'pull_request' || needs.check-ux-team.outputs.is_member != 'true')
     strategy:
       fail-fast: false
     runs-on: ubuntu-latest
