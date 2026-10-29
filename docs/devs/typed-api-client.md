@@ -240,7 +240,7 @@ Once most call sites are typed, move what still depends on the legacy socket:
   pages, the GUI form and the forced password change read it instead of the
   handler, which is now only the legacy call queue.
 - **Debug panel and mocks.** Done (NAS-144008), on the connection seam rather
-  than a client hook — see gap 7 for the one path it cannot reach. The
+  than a client hook — see gap 7. The
   duplicate-call warning moved there too: `DuplicateCallTrackerService` lives in
   the debug panel, and every `TypedApiService` request verb reports itself to it
   as it is called, before waiting for the session. That keeps the warning's
@@ -604,9 +604,9 @@ above. Each is a change for `truenas/api-client-ts`.
     - `docker.status` and `docker.state` declare `MIGRATING` and `MIGRATION_FAILED`, which
       `DockerStatus` does not have. `toDockerStatusData` reads the status as the enum, so those two
       show no label, as before.
-    - `docker.update` declares `pool?: string`, while choosing no pool for apps has always sent
-      `pool: null`. The request is unchanged and asserted to the generated input in
-      `DockerStore.setDockerPool`; worth a box check before changing it.
+    - `docker.update` declared `pool?: string`, while choosing no pool for apps has always sent
+      `pool: null`. v28.0.0 declares `pool?: string | null`, so `DockerStore.setDockerPool` builds
+      the generated input without a cast.
     - `core.bulk` answers each call as `{ job_id, error, result }`, in the order given, so the
       image delete dialog reads its rows by index from the arguments it sent, rather than from the
       job's echoed `arguments`.

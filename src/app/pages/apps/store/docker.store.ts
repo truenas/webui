@@ -82,11 +82,9 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   }
 
   setDockerPool(poolName: string | null, migrateApps?: boolean): Observable<Job<DockerConfig>> {
-    // Unsetting the pool sends `pool: null`, which middleware accepts and the generated input
-    // (`pool?: string`) does not declare; the request is unchanged.
-    const payload = {
+    const payload: DockerConfigUpdate = {
       pool: poolName,
-    } as DockerConfigUpdate;
+    };
 
     if (migrateApps) {
       payload.migrate_applications = migrateApps;

@@ -22,7 +22,8 @@ export type QueryFilter<T> = [PropertyPath<T>, QueryComparator, unknown];
 
 export interface QueryOptions<T> {
   /**
-   * Get the number of results returned.
+   * Get the number of results returned. For a query method, use `api.queryCount` instead,
+   * which is typed to answer a number.
    */
   count?: boolean;
 
@@ -30,21 +31,9 @@ export interface QueryOptions<T> {
    * Get a single object instead of an array. Returns the first match or throws an error if not found.
    * Has the advantage of inserting into the directory services cache on positive result.
    *
-   * IMPORTANT: When get: true, the return type changes from T[] to T.
-   * The type cast `as unknown as Observable<T>` is required because TypeScript's
-   * type system doesn't currently support conditional return types based on option values.
-   *
-   * Future improvement: Consider adding method overloads to the API service to eliminate
-   * the need for type casting:
+   * For a query method, use `api.queryOne` instead, which is typed to answer one entry:
    * ```typescript
-   * call<T>(method: string, params: [QueryFilter<T>[], { get: true }]): Observable<T>;
-   * call<T>(method: string, params: [QueryFilter<T>[], QueryOptions<T>?]): Observable<T[]>;
-   * ```
-   *
-   * @example
-   * ```typescript
-   * // Returns Observable<User> instead of Observable<User[]>
-   * return this.api.call('user.query', [filters, { get: true }]) as unknown as Observable<User>;
+   * return this.api.queryOne('user.query', filters);
    * ```
    */
   get?: boolean;

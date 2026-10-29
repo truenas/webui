@@ -104,19 +104,26 @@ runs:
         url="https://localhost:${https}/ui/"
         httpUrl="http://localhost:${http}/ui/"
         # Fail here, not steps later inside a test, if the UI or its proxy
-        # is not answering. The proxy check asks for the WebSocket endpoint
-        # over plain GET. A 5xx is nginx unable to reach the upstream — the
-        # sed above removes the inherited `error_page` handler, whose 50x
-        # page does not exist in this image and would otherwise turn that 502
-        # into a 404. A 404 is excluded too, since nginx can produce one on
-        # its own; anything else in 1xx–4xx had to come from the upstream.
+        # is not answering. The proxy check asks for the versioned WebSocket
+        # endpoint the UI opens, read from the one place the UI names it, over
+        # plain GET; middleware refuses a GET without an Upgrade header with a
+        # 400. A 5xx is nginx unable to reach the upstream — the sed above
+        # removes the inherited `error_page` handler, whose 50x page does not
+        # exist in this image and would otherwise turn that 502 into a 404. A
+        # 3xx is nginx's own `location /` redirect, i.e. the versioned regex
+        # block did not match. A 404 is excluded too: nginx can produce one on
+        # its own, and middleware answers one for a version it does not serve.
+        # Anything else in 1xx or 4xx had to come from the upstream.
+        apiVersion=$(grep -oE "version: 'v[0-9]+\.[0-9]+\.[0-9]+'" \
+          src/app/modules/websocket/typed-api/typed-api-client.token.ts | grep -oE 'v[0-9.]+' || true)
+        [ -n "$apiVersion" ] || { echo "::error::could not read the API version from typed-api-client.token.ts"; exit 1; }
         ready= ui= uiHttp= proxy=
         for _ in $(seq 1 30); do
           ui=$(curl -sk -o /dev/null -w '%{http_code}' "$url" || true)
           uiHttp=$(curl -s -o /dev/null -w '%{http_code}' "$httpUrl" || true)
-          proxy=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${https}/api/current" || true)
+          proxy=$(curl -sk -o /dev/null -w '%{http_code}' "https://localhost:${https}/api/${apiVersion}" || true)
           if [ "$ui" = 200 ] && [ "$uiHttp" = 200 ] \
-              && { [ "$CHECK_UPSTREAM" != true ] || { [[ "$proxy" =~ ^[1-4] ]] && [ "$proxy" != 404 ]; }; }; then
+              && { [ "$CHECK_UPSTREAM" != true ] || { [[ "$proxy" =~ ^[14] ]] && [ "$proxy" != 404 ]; }; }; then
             ready=1
             break
           fi

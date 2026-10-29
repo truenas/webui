@@ -69,7 +69,8 @@ export type TypedQueryFilter<E>
 /**
  * The `@truenas/api-client` instance behind {@link ApiService}.
  *
- * It owns the tab's only WebSocket, and its session is the app's session.
+ * It owns the tab's only API socket (the shell's terminal socket is separate),
+ * and its session is the app's session.
  *
  * Injected as an observable because the factory is asynchronous. It resolves
  * once and replays. The socket opens as soon as the client exists

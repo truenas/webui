@@ -36,6 +36,8 @@ export class QueryFiltersAndOptionsApiDataProvider<
       'query-options': { count: true },
     }];
 
+    // Not `queryCount`: it sends filters and `{ count: true }` as two positional params, and
+    // these methods take both in one object. `call` types the answer as rows, hence the cast.
     return this.api.call(this.method, params) as unknown as Observable<number>;
   }
 
