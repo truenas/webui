@@ -9,7 +9,10 @@ export function getDeviceDescription(translate: TranslateService, device: Contai
       const nicMac = device.mac
         ? device.mac
         : translate.instant(containersHelptext.deviceDescriptions.defaultMacAddress);
-      const nicAttach = device.nic_attach || translate.instant(containersHelptext.deviceDescriptions.unknown);
+      // NICs stored before middleware recorded the attachment have none, and run as macvlan
+      // on the interface carrying the default route.
+      const nicAttach = device.nic_attach
+        || translate.instant(containersHelptext.deviceDescriptions.defaultRouteMacvlan);
       return `${nicAttach} (${nicMac})`;
     }
 
