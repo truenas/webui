@@ -419,7 +419,7 @@ either.
 
 ## Talking to middleware
 
-Everything goes through `@truenas/api-client` 5.x, which types the whole
+Everything goes through `@truenas/api-client` (9.x), which types the whole
 generated API per version. There is no escape hatch and none is needed.
 
 - **`client.api.query(method, filters)`** for collections.
@@ -437,9 +437,11 @@ generated API per version. There is no escape hatch and none is needed.
   early, so a job is seen finished a round trip after it ends rather than up to
   a whole poll interval later.
 - **Which API surface?** `E2eApiClient` in `support/api/client.ts` pins it to
-  **v27**. Raising it needs the appliance to advertise the version *and* the
-  client to implement it. Unparameterised it defaults to v25.10.0, and most
-  methods look unavailable.
+  **v28**, the same version as the app. Raising it needs the appliance to
+  advertise the version *and* the client to implement it, and it moves with the
+  app's pin and the package bump in one PR — see "Version policy" in
+  `docs/devs/typed-api-client.md`. Unparameterised it defaults to v25.10.0, and
+  most methods look unavailable.
 
 Do not infer a job's success from its side effects. Two revisions of this
 fixture did, and both could report a clean teardown for a failed export: the

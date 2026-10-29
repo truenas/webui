@@ -40,8 +40,10 @@ export type UndeclaredCallMethod = keyof UndeclaredCallDirectory;
  * The API surface the UI is written against.
  *
  * Every typed call, job and event in the UI resolves its method names, params
- * and responses from this directory. Bumping it is a one-line change here and
- * a compile pass everywhere else.
+ * and responses from this directory. It moves together with the `version`
+ * literal below, `E2eApiDirectory` in the e2e suite and the
+ * `@truenas/api-client` release that adds the new directory — who bumps it,
+ * when, and the steps are under "Version policy" in docs/devs/typed-api-client.md.
  */
 export type WebUiApiDirectory = ApiDirectoryV28_0_0;
 

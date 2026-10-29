@@ -302,14 +302,16 @@ above. Each is a change for `truenas/api-client-ts`.
    carries api-client-ts #68 (TNC-2582). The client now
    throws `TrueNasApiError` with the whole JSON-RPC error from `call`, the
    query verbs, and a job method refused before it starts a job (which used
-   to hang forever). Every `TypedApiService` verb rethrows it as `ApiCallError`
+   to hang forever). Every `ApiService` verb rethrows it as `ApiCallError`
    through `rethrowAsApiCallError`, shared with the spec double, so
    `ErrorParserService` renders `errname`, `extra` and the trace exactly as
    on the legacy path, and every verb that needs a session ends it on
    `ENOTAUTHENTICATED`. `dispatchTypedCall`, the hand-rolled round trip
    `call` used to work around this, is gone. A job that starts and then
-   fails is unaffected: it still throws `FailedJobError` from its `FAILED`
-   state.
+   fails still throws `FailedJobError` from its `FAILED` state. It no longer
+   carries `apiErrorDetails`, though. The legacy client copied the job call's
+   error reply into it, nothing sets it now, and `ErrorParserService` still
+   reads it. That regression is tracked separately.
 2. **Token sessions are the caller's to re-login.** Since 3.0.5 (commit
    `8f7d6e0`, "add token re-authentication and reconnect tokens") the client
    has `loginWithToken` and asks for a `reconnect_token` on every v26+ login.
@@ -328,18 +330,18 @@ above. Each is a change for `truenas/api-client-ts`.
    `Denied` reach no UI from `loginWithToken`, only from the interactive login,
    which is unaffected because a password login throws on `AUTH_ERR` alone), so
    this is a fidelity gap rather than a broken flow. A `response` on the error,
-   or a non-throwing variant, would close it. Still so in 8.0.0.
+   or a non-throwing variant, would close it. Still so in 9.0.1.
 4. **A password login is cached in the authenticator.** `loginWithUserPass`
    keeps the plaintext password on the authenticator and replays it on every
    reconnect. The UI never wanted that — it keeps a single-use token instead —
    and there is no way to decline it. Worth closing in the library; until then
    a password session re-logs itself in on reconnect, racing the sign-in
    page's token login, which the authenticator's epoch guard resolves. Still so
-   in 7.0.1.
+   in 9.0.1.
 5. ~~**Parameterised subscriptions.**~~ Resolved by NAS-144006, on 9.0.1, which
    carries api-client-ts #69 (TNC-2583).
    `events()` takes an event source's arguments after its name, typed from the
-   entry's `subscriptionParams`, and `TypedApiService.subscribe` forwards them:
+   entry's `subscriptionParams`, and `ApiService.subscribe` forwards them:
    `subscribe('filesystem.file_tail_follow', { path })`. The client builds the
    `name:<json>` string itself, with sorted keys. A source middleware ends
    completes the stream, and one whose arguments it rejects throws an
@@ -358,11 +360,11 @@ above. Each is a change for `truenas/api-client-ts`.
    through `Parameters<>` rather than declaring them; `TrueNasMessage` and
    `TrueNasConnection` are absent from the main entry too, so
    `ConnectionService` names the connection as
-   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 8.0.0.
+   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 9.0.1.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
-   from the main entry, where 6.x had them only under `testing`. The wrapper's
-   own dispatch still types the frame by hand, but for a different reason now —
+   from the main entry, where 6.x had them only under `testing`.
+   `rethrowAsApiCallError` still casts the frame, but for a different reason now —
    `TrueNasErrorFrame` extends the *client's* `JsonRpcError` and carries
    `TrueNasErrorData`, while `ApiCallError` takes the UI's `JsonRpcError` with
    `ApiErrorDetails`. Converging those two is what would retire the cast.
@@ -372,21 +374,21 @@ above. Each is a change for `truenas/api-client-ts`.
    client writes is logged and checked against the mock configs, and mocked
    answers are mixed into `messages()` on a later tick (the client's verbs send
    before they listen, so an answer inside `send` would be lost). It is installed
-   after the gate, so a mocked call takes no place in flight. One path stays out
-   of reach: `TrueNasApi` builds its `jobEvents` stream from `messages()` in a
-   field initializer, before anything can wrap it, so a mocked job's synthetic
-   `core.get_jobs` events reach the jobs store (its `subscribe` takes a fresh
-   `messages()` stream) but not a typed `job()`.
-   Library ask: read `messages()` lazily there (`defer`), or take a message
-   interceptor in `createTrueNasClient`. Frames the client writes straight to
-   the socket (the keepalive `core.ping`) are not seen either.
+   after the gate, so a mocked call takes no place in flight. A typed `job()`
+   used to be out of reach, because `TrueNasApi` built its `jobEvents` stream
+   from `messages()` before anything could wrap it. Since 9.0.1 it builds that
+   stream with `defer` (api-client-ts #70), so a mocked job's synthetic
+   `core.get_jobs` events reach `job()` too. Still open: frames the client
+   writes straight to the socket, such as the keepalive `core.ping`, are not
+   seen, and a message interceptor in `createTrueNasClient` would retire the
+   `send` patch.
 8. **Job type drift.** The client's `Job` is honest about `result` and
    `time_started` being `null` before a job starts; the UI's is not. The
    wrapper narrows for now; the UI should adopt the client's type.
 9. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,
-   #59). webui's `MockTypedApiService` and `typed-api.service.spec.ts` run
+   #59). webui's `MockApiService` and `api.service.spec.ts` run
    on it. The 6.0.2 release had the base connection's 20-second ping timer
    pending for every fake, which inside Angular's zone stopped fixtures from
    ever settling; 6.0.3 derives that timer from the socket stream
@@ -409,7 +411,7 @@ above. Each is a change for `truenas/api-client-ts`.
     the schema for those fields (a `bool | str` coercion, most likely) is
     being emitted as an intersection rather than a union. Harmless until a
     form tries to write those fields through the typed client. Still so in
-    7.0.1, which regenerated the types.
+    9.0.1.
 13. **Version namespaces are type-only and partial.** Generated model types
     are reachable as `v28_0_0.Name`, and that is how the UI's interface files
     now alias them (`keychain-credential.interface.ts` is the pattern). Two
@@ -419,18 +421,23 @@ above. Each is a change for `truenas/api-client-ts`.
     version namespace, and a later namespace carries only the types that
     changed in that version, so `SSHKeyPairEntry` and
     `CredentialsVerifyResult` exist under `v25_10_0` but not `v28_0_0`. Until
-    fixed (still so in 7.0.1): keep the UI's enums as value holders, and
+    fixed (still so in 9.0.1): keep the UI's enums as value holders, and
     derive a missing type from the directory
     (`CallResponse<D, 'keychaincredential.create'>`) rather than importing it
-    from an older version's namespace.
+    from an older version's namespace. Checked again in 9.0.1 for NAS-144011:
+    the second limit is really renames. `v27_0_0` still exports
+    `SSHKeyPairEntry`, `v28_0_0` calls it `SSHKeyPair`, and `v27_0_0` exports
+    53 of the 54 names the UI takes from `v28_0_0`. A namespace is the whole
+    model of its version, which is what the bump procedure under "Version
+    policy" relies on.
 
 14. **Methods missing from the dump.** `interface.lag_supported_protocols`,
     `kerberos.keytab.kerberos_principal_choices` and `nfs.add_principal` are in no
     generated directory, most likely because middleware marks them private.
     `UndeclaredCallDirectory` in `typed-api-client.token.ts` declares them by hand,
     and `NetworkService`, the directory services form's credential step and the
-    NFS Add SPN dialog reach them through `TypedApiService.callUndeclared`
-    (`mockTypedUndeclaredCall` in specs). A separate verb rather than a widened
+    NFS Add SPN dialog reach them through `ApiService.callUndeclared`
+    (`mockUndeclaredCall` in specs). A separate verb rather than a widened
     `WebUiApiDirectory`, which would stop the client and its fake from being the
     directory's own type. Nothing checks those three entries against middleware;
     drop each one once the generated directory carries it.
@@ -534,8 +541,9 @@ above. Each is a change for `truenas/api-client-ts`.
     - The task entries (`cloud_backup`, `cloudsync`, `pool.snapshottask`, `replication`,
       `rsynctask`, `vmware`) are read into the UI interfaces through a `toX` adapter per
       interface, as `toVirtualMachine` does, rather than retyping every consumer.
-    - `selectJobsByMethod` keys on the legacy `ApiJobMethod`, so `cloud_backup.sync` and
-      `rsynctask.run` stay in the job directory until the jobs store moves.
+    - `selectJobsByMethod` keyed on the legacy `ApiJobMethod`, so `cloud_backup.sync` and
+      `rsynctask.run` stayed in the job directory until the jobs store moved. It takes
+      `JobMethod<WebUiApiDirectory>` now.
 
 22. **Drift found moving datasets.** Handled at one site each:
     - `pool.dataset.query` rows type every ZFS property as a loose record and declare neither
@@ -556,8 +564,8 @@ above. Each is a change for `truenas/api-client-ts`.
     - `pool.snapshot.query` types each property's `parsed` as `unknown` and `retention.datetime` as a
       string (gap 15); `toZfsSnapshot` reads rows and change events alike.
     - `pool.dataset.encryption_summary` and `pool.dataset.unlock` stay in the job directory:
-      `UploadService.uploadAsJob` takes the legacy `ApiJobMethod`, and the unlock dialog starts both
-      through it when a key file is uploaded.
+      `UploadService.uploadAsJob` took the legacy `ApiJobMethod`, and the unlock dialog starts both
+      through it when a key file is uploaded. It takes `JobMethod<WebUiApiDirectory>` now.
 
 23. **Drift found moving storage.** Handled at one site each:
     - The query rows are read into the UI interfaces through a `toX` adapter per interface: `toPool`
@@ -622,7 +630,8 @@ above. Each is a change for `truenas/api-client-ts`.
       `null` (`toApiKeyCreateArgs`, `toS3AccessKeyCreateArgs` and their update twins).
     - `audit.query` declares one response for every `query-options`, a count and a single entry included;
       `toAuditEntries` reads the rows of a plain query, for the user details' last action.
-    - `ApiDataProvider` is still typed by the legacy directory, so `user.query`, `privilege.query` and
+    - `ApiDataProvider` was still typed by the legacy directory (it takes `CallMethod<WebUiApiDirectory>`
+      since NAS-144009), so `user.query`, `privilege.query` and
       `api_key.query` keep their entries as types, not call sites: the users, privileges and API keys lists
       hand it `TypedApiService` as its structural client, and the fake answers the query frames it sends
       through `call` from `mockTypedQuery` rows, counts included. `group.query`, `sharing.smb.query`,
@@ -724,9 +733,114 @@ above. Each is a change for `truenas/api-client-ts`.
 
 ## Version policy
 
-`WebUiApiDirectory` pins `v28.0.0`. The literal must stay at the
-`createTrueNasClient` call site — forwarding it through a variable widens the
-derived surface to the oldest supported version without a compile error.
-Bumping the version is a one-line change followed by a compile pass; methods
-that moved between call and job directories, or changed shape, surface as
-errors at their call sites.
+### What is pinned, and where
+
+The UI is written against one API version, `v28.0.0`, and says so in three places
+that must agree:
+
+| Pin | Where | What it decides |
+|---|---|---|
+| `WebUiApiDirectory = ApiDirectoryV28_0_0` | `typed-api-client.token.ts` | Every method name, param and response the app compiles against |
+| `version: 'v28.0.0'` | the `createTrueNasClient` call in the same file | The socket the app opens, `/api/v28.0.0` |
+| `E2eApiDirectory` and `expectedApiVersion` | `e2e/support/api/client.ts` | The surface the E2E fixtures compile against, and the version they insist on at runtime |
+
+The `version` literal must stay at the `createTrueNasClient` call site. The
+client derives its typed surface from the literal, so forwarding it through a
+variable or a wrapper widens the surface to the oldest supported version without
+a compile error.
+
+### What the pin means at runtime
+
+The app names its version, so the client skips discovery and opens
+`/api/v28.0.0` whatever the appliance's newest version is. Before the typed
+client the UI opened `/api/current`, which followed the appliance. That is
+still how `stable/27` works. `master` is the first branch with a pin, and
+`stable/28` will be the first release to ship one.
+
+- **An appliance newer than the pin** keeps working for as long as it still
+  serves `v28.0.0`, that is, while `/api/versions` still lists it next to the
+  newer versions. What the UI loses is everything middleware adds
+  only to the newer surface. On `master`, that is every new method and field
+  from the day the next version opens.
+- **An appliance that no longer serves the pin** refuses the socket. The client
+  retries forever, and the UI sits on the connecting screen with no error that
+  names the version.
+- **An appliance older than the pin**, such as a 27 box under `yarn ui remote`,
+  has no `/api/v28.0.0`, and fails the same way. A master UI needs a master
+  appliance.
+
+E2E is different: it runs discovery and takes the newest version that the
+appliance advertises *and* the installed `@truenas/api-client` implements. It
+then fails at connect when the year it got is not `expectedApiVersion.year`.
+So a package release that adds a newer directory changes what E2E negotiates
+against a master appliance, even though nothing in the suite changed.
+
+### When to bump, and who does it
+
+**When:** as soon as both of these are true. Middleware `master` advertises a
+newer year in `/api/versions`, and a `@truenas/api-client` release ships that
+year's directory (`SUPPORTED_API_VERSIONS` and `MAX_SUPPORTED_VERSION` name it).
+The first usually happens when `master` moves to the next release, the same move
+that changes the version segment in PR titles (`28.0.0-BETA.1` → `29.0.0-…`).
+The `v27` → `v28` renumber in api-client 9.0.0 (NAS-144342) was the same kind of
+event, and took the same procedure.
+
+Don't wait for a feature that needs the new surface. Once the next version
+opens, master middleware changes go into it and no longer into `v28.0.0`, so
+the gap only grows.
+
+**Who:** the webui developer who bumps `@truenas/api-client` to the release
+that adds the directory. The dependency bump and the pin move in **one PR**:
+
+- A package bump without the pin makes E2E negotiate the new year and fail the
+  year check on every run.
+- A pin without the package bump does not compile, because the directory does
+  not exist yet.
+
+So no package bump that adds a version directory is complete without the pin,
+and a reviewer can hold the PR to it. If a client release ships a new year and
+nobody picks it up, file it as a webui ticket against the current release
+rather than letting it ride.
+
+**Stable branches never move their pin.** `stable/28` stays on `v28.0.0` for
+its whole life. Its appliances also advertise point versions (`v28.0.1`, …, as
+`v25.10.1` to `v25.10.5` were), and the UI keeps ignoring them. Move the pin to
+a point version only when a backported fix needs something that exists only
+there. Make that decision on the backport PR, and say so in it.
+
+### The bump, step by step
+
+Take `v28.0.0` → `v29.0.0` as the example.
+
+1. `yarn add @truenas/api-client@<release>`, and check that its
+   `SUPPORTED_API_VERSIONS` lists `v29.0.0`.
+2. In `typed-api-client.token.ts`, change `ApiDirectoryV28_0_0` to
+   `ApiDirectoryV29_0_0`, and `version: 'v28.0.0'` to `version: 'v29.0.0'`.
+   Change the year in the doc comment as well.
+3. In `e2e/support/api/client.ts`, change `E2eApiDirectory` and
+   `expectedApiVersion` (`year` and `label`) together.
+4. Change the version-named fakes in specs:
+   `grep -rln "createFakeClient({ version: 'v28" src`.
+5. Run `tsc -p tsconfig.json` and fix what it reports. Methods that moved
+   between the call and job directories, renamed fields, and changed params all
+   surface at their call sites. Compare against the spec-only error baseline
+   (see Phase 4), not against zero.
+6. Move every model alias to the new namespace, all at once:
+   `v28_0_0.` → `v29_0_0.` across `src` (29 interface files and a few services
+   at the time of writing). Each version's namespace exports that version's
+   whole model, not only what changed. Of the 54 names the UI takes from
+   `v28_0_0`, `v27_0_0` exports 53, and the one it lacks was renamed
+   (`VMVirtualizationDetails`). So the rename is safe, and a name the new
+   namespace no longer exports fails to compile, which is the signal to look up
+   what it became. Don't leave aliases on the old namespace to save a step.
+   They keep compiling and keep the old shape, and they drift away from the
+   directory without an error. Re-run `tsc` afterwards.
+7. Check `UndeclaredCallDirectory` against the new directory. Delete any entry
+   the generated directory now declares, together with its `callUndeclared`
+   call sites.
+8. Update the version mentions in this document ("What is in place", the
+   socket path), in `docker/nginx.conf`'s comment and in `e2e/CLAUDE.md`. Leave
+   the version names in the history sections as they are.
+9. Run lint and the specs `yarn test:changed` picks up. Then run the full E2E
+   suite against a master appliance that advertises the new year, and record
+   the appliance build in the PR. NAS-144342's PR is the model.
