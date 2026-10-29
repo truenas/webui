@@ -20,6 +20,7 @@ import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/i
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { TooltipHarness } from 'app/modules/tooltip/tooltip.harness';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
@@ -361,6 +362,40 @@ describe('ContainerFormComponent', () => {
       expect(containersStore.reload).toHaveBeenCalled();
       expect(router.navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
 
+      // "Connect to network" is on by default: the NIC goes on the default bridge.
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 1,
+        attributes: { dtype: ContainerDeviceType.Nic },
+      }]);
+    });
+
+    it('explains which bridge the NIC is attached to', async () => {
+      const connect = await loader.getHarness(IxCheckboxHarness.with({ label: 'Connect to network' }));
+      expect(await connect.getValue()).toBe(true);
+
+      const tooltipHarnesses = await loader.getAllHarnesses(TooltipHarness);
+      const tooltips = await Promise.all(tooltipHarnesses.map((tooltip) => tooltip.getMessage()));
+      expect(tooltips).toContainEqual(expect.stringContaining('NIC attached to the default bridge, lxdbr0'));
+    });
+
+    it('creates an isolated container without a NIC when Connect to network is unchecked', async () => {
+      const nameInput = await loader.getHarness(IxInputHarness.with({ label: 'Name' }));
+      await nameInput.setValue('isolated');
+
+      const connect = await loader.getHarness(IxCheckboxHarness.with({ label: 'Connect to network' }));
+      await connect.setValue(false);
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({
+        pool: 'pool1',
+        image: 'ubuntu:22.04',
+      });
+      spectator.detectChanges();
+
+      const submitButton = await loader.getHarness(MatButtonHarness.with({ text: 'Create' }));
+      await submitButton.click();
+
+      expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('container.device.create', expect.anything());
     });
 
