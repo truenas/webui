@@ -20,7 +20,7 @@
  */
 import {
   type ContainerSettings, containerCreateTimeoutMs, containersDataset, containerSettingsBaseline,
-  countContainers, ensureContainerAbsent, findContainer, firstRegistryImage, readContainerConfig,
+  countContainers, ensureContainerAbsent, findContainer, findNicDevices, firstRegistryImage, readContainerConfig,
   seedContainer, setContainerConfig,
 } from '../fixtures/containers';
 import { ensureDatasetAbsent } from '../fixtures/storage';
@@ -143,6 +143,17 @@ test('an admin creates a container from a Debian image with a CPU set and an env
     initenv: { E2E_VAR: '1' },
     dataset,
   });
+
+  // "Connect to network" is ticked by default, so the form adds one NIC, sent
+  // with no `nic_attach`. Which interface it lands on is middleware's call (the
+  // default bridge, recorded on newer middleware; left blank on older), so the
+  // claim is the one device.
+  const created = await findContainer(api, containerName);
+  if (!created) {
+    throw new Error(`container ${containerName} was created and then not found`);
+  }
+  await expect.poll(async () => (await findNicDevices(api, created.id)).length, { timeout: slowCallTimeoutMs })
+    .toBe(1);
 });
 
 test('an admin deletes a stopped container', async ({ page, api, pool }) => {

@@ -4,7 +4,7 @@
 >
   @if (!hasPendingInterfaceChanges()) {
     <ng-template tnCardFooterActions>
-      <ix-add-nic-menu [defaultBridge]="defaultBridge()"></ix-add-nic-menu>
+      <ix-add-nic-menu></ix-add-nic-menu>
     </ng-template>
   }
 
@@ -17,16 +17,6 @@
   @if (isLoadingDevices()) {
     <ngx-skeleton-loader></ngx-skeleton-loader>
   } @else {
-    @if (showDefaultBridge()) {
-      <div
-        class="device default-device"
-        [tnTooltip]="'Default network interface, always active' | translate"
-      >
-        <span class="device-description" tnTestId="default-nic-device" tnTestIdType="text">
-          {{ defaultBridge() }} ({{ 'Default' | translate }})
-        </span>
-      </div>
-    }
     @for (device of shownDevices(); track device.id) {
       <div class="device">
         <span class="device-description" tnTestIdType="text" [tnTestId]="['nic-device', device.id]">{{ getDeviceDescription(device) }}</span>
@@ -41,9 +31,24 @@
         }
       </div>
     } @empty {
-      @if (!showDefaultBridge()) {
-        <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
-      }
+      <div class="no-network">
+        <p class="no-network-title" tnTestId="no-network" tnTestIdType="text">
+          {{ helptext.network.noNicTitle | translate }}
+        </p>
+        <p class="no-network-message">{{ helptext.network.noNicMessage | translate }}</p>
+
+        @if (!hasPendingInterfaceChanges()) {
+          <tn-button
+            *ixRequiresRoles="requiredRoles"
+            variant="outline"
+            testId="add-default-nic"
+            [label]="helptext.network.addDefaultNicLabel | translate: { bridge: defaultBridge() }"
+            [disabled]="isContainerActive()"
+            [tnTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
+            (onClick)="addDefaultNic()"
+          ></tn-button>
+        }
+      </div>
     }
   }
 </tn-card>

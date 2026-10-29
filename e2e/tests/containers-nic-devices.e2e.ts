@@ -1,14 +1,19 @@
 /**
  * Stories: an admin attaches a NIC to a stopped container from its NIC Devices
- * card, changes its adapter type and MAC address, removes it, and is refused a
- * MAC address that is not colon-separated.
+ * card, either with one click on the default bridge or by picking an interface,
+ * changes its adapter type and MAC address, removes it, and is refused a MAC
+ * address that is not colon-separated.
+ *
+ * A container only has network through a NIC device, and `container.create`
+ * adds none, so the seeded container starts with loopback only and the card
+ * says so.
  *
  * ## Which NIC
  *
  * Interface names differ per appliance, so each test reads the one it uses:
  * the first interface the card's Add menu offers, which is
- * `container.device.nic_attach_choices` without the container's own default
- * bridge (`findAddableNics`). Nothing here creates a bridge or a VLAN to make
+ * `container.device.nic_attach_choices` (`findAddableNics`). Nothing here
+ * creates a bridge or a VLAN to make
  * one, since on a single-NIC appliance that touches the management link; with
  * nothing to offer, `beforeEach` fails and says so.
  *
@@ -63,10 +68,10 @@ let found: ContainerSettings | undefined;
 let image: { name: string; version: string } | undefined;
 /** The seeded container's id, which its devices are keyed by. */
 let containerId: number;
-/** The bridge the container is always on, which the card lists as `<bridge> (Default)`. */
-let defaultNetwork: string | null;
 /** The first interface the Add menu offers, which every test attaches. */
 let nic: string;
+/** The next one, if the appliance has one: proof the menu opened when `nic` is absent from it. */
+let otherNic: string | undefined;
 
 test.beforeAll(async ({ api }) => {
   found = await readContainerConfig(api);
@@ -87,16 +92,16 @@ test.beforeEach(async ({ api, pool }) => {
     throw new Error(`container ${containerName} was seeded and then not found`);
   }
   containerId = container.id;
-  defaultNetwork = container.default_network ?? null;
 
-  const [first] = await findAddableNics(api, defaultNetwork);
+  const [first, second] = await findAddableNics(api);
   if (!first) {
     throw new Error(
-      `container.device.nic_attach_choices offers nothing beside the default network ${defaultNetwork}, `
+      'container.device.nic_attach_choices offers nothing, '
       + 'so the card shows "No NIC devices available" and there is no NIC to attach',
     );
   }
   nic = first;
+  otherNic = second;
 });
 
 test.afterEach(async ({ api }) => {
@@ -125,9 +130,27 @@ test.afterAll(async ({ api, pool }) => {
   await ensureDatasetAbsent(api, containersDataset(pool));
 });
 
+test('an admin adds a NIC from the no network notice without choosing an interface', async ({ page, api }) => {
+  await openContainerDetails(page, containerName);
+  await expect(page.locator(card.noNetwork)).toHaveText('No network access');
+
+  await page.locator(card.addDefaultNic).click();
+
+  await expect.poll(() => findNicDevices(api, containerId), { timeout: slowCallTimeoutMs }).toHaveLength(1);
+  const [device] = await findNicDevices(api, containerId);
+  if (!device) {
+    throw new Error('the add was accepted and no NIC device is on the container');
+  }
+  // The button sends no `nic_attach`. Where the NIC lands is middleware's call
+  // (the default bridge, recorded on newer middleware; left blank on older), so
+  // the claim is the one device, not which interface middleware gave it.
+  await expect(page.locator(card.device(device.id))).toBeVisible();
+  await expect(page.locator(card.noNetwork)).toBeHidden();
+});
+
 test('an admin adds a NIC with the default MAC, and the menu stops offering it', async ({ page, api }) => {
   await openContainerDetails(page, containerName);
-  await expect(page.locator(card.defaultDevice)).toHaveText(`${defaultNetwork} (Default)`);
+  await expect(page.locator(card.noNetwork)).toBeVisible();
 
   await page.locator(card.add).click();
   await page.locator(card.addNic(nic)).click();
@@ -145,20 +168,18 @@ test('an admin adds a NIC with the default MAC, and the menu stops offering it',
   expect(device).toMatchObject({ nic_attach: nic, type: 'VIRTIO' });
   await expect(page.locator(card.device(device.id))).toContainText(`${nic} (`);
 
-  // A NIC device replaces the default network: middleware reports
-  // `default_network: null` once the container has one (`extend` in
-  // `plugins/container/crud.py`), so the card drops the "(Default)" row and the
-  // menu offers that bridge, which `nic_attach_choices` always lists.
-  await expect(page.locator(card.defaultDevice)).toBeHidden();
-  expect((await findContainer(api, containerName))?.default_network ?? null).toBeNull();
-  if (!defaultNetwork) {
-    throw new Error('the container was seeded with no default network, so there is no bridge to offer');
+  await expect(page.locator(card.noNetwork)).toBeHidden();
+
+  if (!otherNic) {
+    // Nothing left to attach: the card swaps Add for "No NIC devices available".
+    await expect(page.locator(card.add)).toBeHidden();
+    return;
   }
 
-  // Proven on the bridge the menu now offers, so the absence below is the
+  // Proven on an interface the menu still offers, so the absence below is the
   // filter's and not a menu that never opened.
   await page.locator(card.add).click();
-  await expect(page.locator(card.addNic(defaultNetwork))).toBeVisible();
+  await expect(page.locator(card.addNic(otherNic))).toBeVisible();
   await expect(page.locator(card.addNic(nic))).toBeHidden();
   await page.keyboard.press('Escape');
 });
@@ -203,7 +224,7 @@ test('an admin deletes a NIC, and the NIC is offered again', async ({ page, api 
   await confirmDestructiveAction(page);
 
   await expect(page.locator(card.device(seeded.id))).toBeHidden({ timeout: slowCallTimeoutMs });
-  await expect(page.locator(card.defaultDevice)).toHaveText(`${defaultNetwork} (Default)`);
+  await expect(page.locator(card.noNetwork)).toBeVisible();
   await page.locator(card.add).click();
   await expect(page.locator(card.addNic(nic))).toBeVisible();
   await page.keyboard.press('Escape');
