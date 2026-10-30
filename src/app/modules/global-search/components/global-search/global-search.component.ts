@@ -56,7 +56,7 @@ export class GlobalSearchComponent implements OnInit, AfterViewInit, OnDestroy {
   searchControl = new FormControl<string>('', { nonNullable: true });
   searchResults: UiSearchableElement[];
   isLoading = false;
-  systemVersion: string;
+  private systemVersion: string;
   detachOverlay: () => void; // passed from global-search-trigger
 
   // CdkTrapFocus restores focus to the previously-focused element on destroy

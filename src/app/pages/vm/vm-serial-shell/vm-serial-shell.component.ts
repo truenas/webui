@@ -16,7 +16,7 @@ export class VmSerialShellComponent implements TerminalConfiguration {
   private aroute = inject(ActivatedRoute);
   private destroyRef = inject(DestroyRef);
 
-  protected pk: string;
+  private pk: string;
 
   get connectionData(): TerminalConnectionData {
     return {

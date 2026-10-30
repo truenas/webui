@@ -108,8 +108,7 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
   private fcHosts = signal<{ id: number; alias: string }[]>([]);
   protected availableFcPorts = signal<string[]>([]);
 
-  // Public: the spec seeds this directly to exercise the rollback path.
-  createdZvol: Dataset | undefined;
+  private createdZvol: Dataset | undefined;
   private createdExtent: IscsiExtent | undefined;
   private createdPortal: IscsiPortal | undefined;
   private createdInitiator: IscsiInitiatorGroup | undefined;

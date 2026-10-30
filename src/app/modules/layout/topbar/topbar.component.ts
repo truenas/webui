@@ -196,6 +196,7 @@ export class TopbarComponent implements OnInit {
         ).subscribe(() => {
           this.updateIsRunning = false;
           this.updateIsDone.unsubscribe();
+          this.cdr.markForCheck();
         });
       }
       if (

@@ -1,5 +1,5 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, inject } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -44,6 +44,7 @@ export class ManageDiskSedDialog implements OnInit {
   private translate = inject(TranslateService);
   private diskName = inject(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
@@ -80,6 +81,7 @@ export class ManageDiskSedDialog implements OnInit {
       .subscribe((disks) => {
         this.disk = disks[0];
         this.passwordControl.setValue(this.disk.passwd || '');
+        this.cdr.markForCheck();
       });
   }
 

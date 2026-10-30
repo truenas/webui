@@ -1,6 +1,6 @@
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { NgClass, AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -77,6 +77,7 @@ export class ManualSelectionDisksComponent implements OnInit {
   protected store$ = inject(ManualDiskSelectionStore);
   protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   readonly enclosures = input.required<Enclosure[]>();
   readonly isSedEncryption = input<boolean>(false);
@@ -129,6 +130,7 @@ export class ManualSelectionDisksComponent implements OnInit {
           : disksInEnclosures;
 
         this.dataSource = new TnNestedTreeDataSource(nodes);
+        this.cdr.markForCheck();
       });
   }
 
