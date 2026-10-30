@@ -44,12 +44,16 @@ export class TruenasConnectStatusDisplayComponent {
     return tier ? tierDisplayConfig[tier].background : null;
   });
 
-  protected failedDescription = computed(() => {
-    return TruenasConnectFailureDescription[this.rawStatus()]
-      ?? T('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
-  });
-
   protected failureDetail = computed(() => {
     return getTncRegistrationFailureDetail({ status: this.rawStatus(), status_reason: this.statusReason() });
+  });
+
+  protected failedDescription = computed(() => {
+    // TrueNAS Connect answered with a reason, so the network hint would be misleading.
+    if (this.failureDetail()) {
+      return T('TrueNAS Connect could not complete the registration. Resolve the issue below, then click Retry Connection.');
+    }
+    return TruenasConnectFailureDescription[this.rawStatus()]
+      ?? T('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
   });
 }
