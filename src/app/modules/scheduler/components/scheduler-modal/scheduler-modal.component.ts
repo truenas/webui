@@ -1,7 +1,7 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -53,6 +53,7 @@ export class SchedulerModalComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   config = inject<SchedulerModalConfig>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected form = this.formBuilder.group({
     preset: [''],
@@ -153,6 +154,7 @@ export class SchedulerModalComponent implements OnInit {
         this.timezone = timezone;
       }
       this.crontab = this.getCrontabFromForm();
+      this.cdr.markForCheck();
     });
   }
 

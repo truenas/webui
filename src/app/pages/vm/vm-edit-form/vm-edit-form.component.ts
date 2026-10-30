@@ -131,7 +131,7 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   );
 
   readonly helptext = helptextVmWizard;
-  previouslySetGpuPciIds: string[] = [];
+  private previouslySetGpuPciIds: string[] = [];
   criticalGpus = new Map<string, string>(); // Maps pci_slot to critical_reason
 
   protected existingVm: VirtualMachine;

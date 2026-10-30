@@ -101,7 +101,7 @@ export class MyComponent {
 
 **Dynamic Components**: Use `inputBinding('prop', () => value)` with `createComponent` instead of `componentRef.setInput()`.
 
-**Zoneless**: The app runs without zone.js (`provideZonelessChangeDetection()`), so nothing re-renders just because a timer, promise or event fired. State a template reads must be a signal, or the code that writes it must call `cdr.markForCheck()` — this matters for plain fields written from `subscribe`, `setTimeout`, promises, `document`/`window` listeners and third-party callbacks. Nothing lints for it. Don't add `NgZone` (`run`/`runOutsideAngular` are no-ops).
+**Zoneless**: The app runs without zone.js (`provideZonelessChangeDetection()`), so nothing re-renders just because a timer, promise or event fired. State a template reads must be a signal, or the code that writes it must call `cdr.markForCheck()` — this matters for plain fields written from `subscribe`, `setTimeout`, promises, `document`/`window` listeners and third-party callbacks. `webui/no-unmarked-async-field-write` (`eslint-rules/`) flags a non-`private` component field written from such a callback that neither marks for check nor sets a signal; it cannot see writes made inside helper methods, inherited fields or third-party callbacks it does not know, so keep fields the template does not read `private`. Don't add `NgZone` (`run`/`runOutsideAngular` are no-ops).
 
 ## Testing Guidelines
 - Cover main happy paths.

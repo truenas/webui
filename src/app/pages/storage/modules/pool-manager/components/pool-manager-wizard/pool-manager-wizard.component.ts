@@ -216,6 +216,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.store.startOver$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.stepper().selectedIndex.set(0);
       this.activatedSteps = {};
+      this.cdr.markForCheck();
     });
   }
 
@@ -231,12 +232,14 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((warnings) => {
       this.topLevelWarningsForEachStep = warnings;
+      this.cdr.markForCheck();
     });
 
     this.poolManagerValidation.getTopLevelErrorsForEachStep().pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((warnings) => {
       this.topLevelErrorsForEachStep = warnings;
+      this.cdr.markForCheck();
     });
   }
 
