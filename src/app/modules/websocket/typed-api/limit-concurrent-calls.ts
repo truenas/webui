@@ -1,9 +1,13 @@
 import { environment } from 'environments/environment';
-import { distinctUntilChanged, filter, Observable, Subscription } from 'rxjs';
+import {
+  distinctUntilChanged, filter, merge, Observable, Subject, Subscription,
+} from 'rxjs';
+import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import type { WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type Connection = WebUiApiClient['connection'];
 type Message = Parameters<Connection['send']>[0];
+type IncomingMessage = Connection extends { messages(): Observable<infer T> } ? T : never;
 
 /**
  * How many calls middleware will hold for one connection: it runs ten and lets
@@ -61,8 +65,11 @@ interface WaitingCall {
  * for good.
  *
  * They are only kept for the session they were made in. A sign-in other than
- * the token reconnect drops them, since the tab is on the sign-in page by then
- * and whoever signs in may not be the user who made them.
+ * the token reconnect ends them, since the tab is on the sign-in page by then
+ * and whoever signs in may not be the user who made them. Each is answered here
+ * with the refusal middleware would have given it, `ENOTAUTHENTICATED`, read on
+ * `messages()` as if the appliance had sent it, so its caller hears that the
+ * session it was made in has ended instead of waiting for good.
  */
 export function limitConcurrentCalls(
   connection: Connection,
@@ -70,6 +77,10 @@ export function limitConcurrentCalls(
   limit = maxGatedCalls,
 ): void {
   const send = connection.send.bind(connection);
+  const appliance$ = connection.messages();
+  /** Refusals given here, to calls this ends without sending. */
+  const refusals$ = new Subject<IncomingMessage>();
+  connection.messages = () => merge(appliance$, refusals$);
   /**
    * Each call awaiting an answer, with the handle the connection gave for it.
    * That handle closes once the frame is written: until then the connection is
@@ -150,7 +161,7 @@ export function limitConcurrentCalls(
     startWaiting();
   });
 
-  connection.messages().subscribe((message) => {
+  appliance$.subscribe((message) => {
     if ((message.error as { code?: number } | undefined)?.code === tooManyConcurrentCallsCode) {
       console.error(
         `Middleware refused a call for exceeding ${maxConcurrentCalls} concurrent calls, which the limit of `
@@ -168,7 +179,7 @@ export function limitConcurrentCalls(
     }
 
     if (isHeld && isSignInAsAnyone(message)) {
-      waiting.length = 0;
+      waiting.splice(0).forEach(({ id }) => refusals$.next(sessionEndedRefusal(id)));
     }
 
     const call: WaitingCall = { id: String(message.id), message, handle: new Subscription() };
@@ -202,4 +213,19 @@ function isSignInAsAnyone(message: Message): boolean {
   }
   const [options] = (message.params ?? []) as [{ mechanism?: string }?];
   return options?.mechanism !== tokenMechanism;
+}
+
+function sessionEndedRefusal(id: string): IncomingMessage {
+  return {
+    jsonrpc: '2.0',
+    id,
+    error: {
+      code: JsonRpcErrorCode.CallError,
+      message: 'Not authenticated',
+      data: {
+        errname: ApiErrorName.NotAuthenticated,
+        reason: 'The session this call was made in ended before it could be sent.',
+      },
+    },
+  } as IncomingMessage;
 }

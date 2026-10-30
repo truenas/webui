@@ -144,7 +144,9 @@ describe('limitConcurrentCalls', () => {
     expect(sentIds()).toEqual(['a', 'b', 'login', 'c']);
   });
 
-  it('drops held calls when someone signs in with a password, who may be another user', () => {
+  it('refuses held calls when someone signs in with a password, who may be another user', () => {
+    const answers: unknown[] = [];
+    connection.messages().subscribe((message) => answers.push(message));
     call('a');
     call('b');
     call('c');
@@ -156,6 +158,9 @@ describe('limitConcurrentCalls', () => {
     authenticated$.next(true);
 
     expect(sentIds()).toEqual(['a', 'b', 'login']);
+    expect(answers).toEqual([
+      expect.objectContaining({ id: 'c', error: expect.objectContaining({ data: expect.objectContaining({ errname: 'ENOTAUTHENTICATED' }) }) }),
+    ]);
   });
 
   it('drops a held call whose caller gives up before the session is back', () => {
@@ -262,6 +267,23 @@ describe('limitConcurrentCalls', () => {
     client.connection.reply('core.ping', 'pong');
     expect(client.connection.sent.slice(sentBefore).map((frame) => frame.method)).toEqual(['core.ping', 'system.info']);
 
+    client.close();
+  });
+
+  it('fails a client call it refuses at a password sign-in, so its caller is not left waiting', () => {
+    const client = createFakeClient({ version: 'v28.0.0', authenticated: true, opened: true });
+    limitConcurrentCalls(client.connection, client.authenticator.authenticated$, 1);
+    client.api.call('core.ping').subscribe();
+    let failure: unknown;
+    client.api.call('system.info').subscribe({ error: (error: unknown) => failure = error });
+
+    client.connection.simulateClose();
+    client.connection.simulateOpen();
+    client.connection.send({
+      jsonrpc: '2.0', id: 'login', method: 'auth.login_ex', params: [{ mechanism: 'PASSWORD_PLAIN' }],
+    });
+
+    expect(failure).toMatchObject({ data: { errname: 'ENOTAUTHENTICATED' } });
     client.close();
   });
 

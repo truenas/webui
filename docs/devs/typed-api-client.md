@@ -548,7 +548,10 @@ above. Each is a change for `truenas/api-client-ts`.
     for good. It is not sent sooner because the new socket starts signed out,
     and an `ENOTAUTHENTICATED` refusal ends the app's session. Only the
     reconnect token's sign-in releases them: a password or API key sign-in
-    drops them first, as whoever signs in may not be the user who made them.
+    refuses them first, as whoever signs in may not be the user who made them.
+    Each gets an `ENOTAUTHENTICATED` error reply, given on `messages()` the way
+    the debug panel gives its mocked answers, so its caller fails rather than
+    waits.
 
 21. **Drift found moving data protection.** Handled at one site each:
     - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare
