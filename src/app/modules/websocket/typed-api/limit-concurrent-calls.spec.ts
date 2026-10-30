@@ -11,6 +11,9 @@ describe('limitConcurrentCalls', () => {
   const call = (id: string): Subscription => connection.send({
     jsonrpc: '2.0', id, method: 'core.ping', params: [],
   });
+  const signIn = (id: string, mechanism: string): Subscription => connection.send({
+    jsonrpc: '2.0', id, method: 'auth.login_ex', params: [{ mechanism }],
+  });
   const answer = (id: string): void => connection.receive({ jsonrpc: '2.0', id, result: 'pong' });
   const sentIds = (): string[] => connection.sent.map((frame) => String(frame.id));
 
@@ -125,6 +128,34 @@ describe('limitConcurrentCalls', () => {
 
     authenticated$.next(true);
     expect(sentIds()).toEqual(['a', 'b', 'login', 'c']);
+  });
+
+  it('sends a held call when the session comes back through the reconnect token', () => {
+    call('a');
+    call('b');
+    call('c');
+
+    connection.simulateClose();
+    authenticated$.next(false);
+    connection.simulateOpen();
+    signIn('login', 'TOKEN_PLAIN');
+    authenticated$.next(true);
+
+    expect(sentIds()).toEqual(['a', 'b', 'login', 'c']);
+  });
+
+  it('drops held calls when someone signs in with a password, who may be another user', () => {
+    call('a');
+    call('b');
+    call('c');
+
+    connection.simulateClose();
+    authenticated$.next(false);
+    connection.simulateOpen();
+    signIn('login', 'PASSWORD_PLAIN');
+    authenticated$.next(true);
+
+    expect(sentIds()).toEqual(['a', 'b', 'login']);
   });
 
   it('drops a held call whose caller gives up before the session is back', () => {

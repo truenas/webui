@@ -25,6 +25,12 @@ export const maxGatedCalls = maxConcurrentCalls - 1;
  */
 const tooManyConcurrentCallsCode = -32000;
 
+/**
+ * The one sign-in that keeps the session's user: the reconnect token the app was given.
+ * Any other `auth.login_ex` (a password or an API key) may be someone else signing in.
+ */
+const tokenMechanism = 'TOKEN_PLAIN';
+
 /** How many calls may wait here before it is worth saying so, in a development build. */
 const longQueue = maxConcurrentCalls * 2;
 
@@ -53,6 +59,10 @@ interface WaitingCall {
  * app's session. Its caller is still listening, since the answer is matched by
  * id on whichever socket is current, so dropping it left the caller waiting
  * for good.
+ *
+ * They are only kept for the session they were made in. A sign-in other than
+ * the token reconnect drops them, since the tab is on the sign-in page by then
+ * and whoever signs in may not be the user who made them.
  */
 export function limitConcurrentCalls(
   connection: Connection,
@@ -157,6 +167,10 @@ export function limitConcurrentCalls(
       return send(message);
     }
 
+    if (isHeld && isSignInAsAnyone(message)) {
+      waiting.length = 0;
+    }
+
     const call: WaitingCall = { id: String(message.id), message, handle: new Subscription() };
     // Not held back by `isHeld`: the frames that sign the new socket in come
     // through here, and the calls waiting on them are exactly what is held.
@@ -180,4 +194,12 @@ export function limitConcurrentCalls(
     });
     return call.handle;
   };
+}
+
+function isSignInAsAnyone(message: Message): boolean {
+  if (message.method !== 'auth.login_ex') {
+    return false;
+  }
+  const [options] = (message.params ?? []) as [{ mechanism?: string }?];
+  return options?.mechanism !== tokenMechanism;
 }

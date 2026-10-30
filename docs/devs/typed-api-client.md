@@ -546,7 +546,9 @@ above. Each is a change for `truenas/api-client-ts`.
     the socket is lost is kept, and sent once the session is authenticated
     again (NAS-144963). It used to be dropped, which left its caller waiting
     for good. It is not sent sooner because the new socket starts signed out,
-    and an `ENOTAUTHENTICATED` refusal ends the app's session.
+    and an `ENOTAUTHENTICATED` refusal ends the app's session. Only the
+    reconnect token's sign-in releases them: a password or API key sign-in
+    drops them first, as whoever signs in may not be the user who made them.
 
 21. **Drift found moving data protection.** Handled at one site each:
     - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare
