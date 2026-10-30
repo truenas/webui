@@ -22,6 +22,7 @@ export class UiSearchDirective implements OnInit, OnDestroy {
   // and never reassigned, but caching makes the contract explicit and prevents
   // a registry leak if that assumption ever breaks.
   private cachedId = '';
+  private isRegistered = false;
 
   get id(): string {
     return this.cachedId || getSearchableElementId(this.config());
@@ -50,9 +51,16 @@ export class UiSearchDirective implements OnInit, OnDestroy {
       this.renderer.setAttribute(this.elementRef.nativeElement, 'aria-label', this.ariaLabel);
     }
     this.searchDirectives.register(this);
+    this.isRegistered = true;
   }
 
   ngOnDestroy(): void {
+    // When an earlier binding in the view throws on the first update pass, this directive is
+    // destroyed without its input ever being set. Reading it would throw NG0950, which hides
+    // the original error and fails the navigation that tears the view down.
+    if (!this.isRegistered) {
+      return;
+    }
     this.searchDirectives.unregister(this);
   }
 
