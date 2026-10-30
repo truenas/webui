@@ -42,13 +42,15 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     expect(spectator.query('.failed-description')).toHaveText('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
   });
 
-  it('shows the middleware failure detail under the generic message when registration fails', () => {
+  it('replaces the network hint with the middleware failure detail when registration fails', () => {
     spectator.setInput('status', TncStatus.Failed);
     spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
     spectator.setInput('statusReason', 'System limit exceeded');
     spectator.detectChanges();
 
-    expect(spectator.query('.failed-description')).toContainText('Something went wrong!');
+    expect(spectator.query('.failed-description')).toHaveExactTrimmedText(
+      'TrueNAS Connect could not complete the registration. Resolve the issue below, then click Retry Connection.',
+    );
     expect(spectator.query('.failure-detail')).toHaveExactTrimmedText('Details: System limit exceeded');
   });
 
