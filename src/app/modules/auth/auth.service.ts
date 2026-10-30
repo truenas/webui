@@ -33,7 +33,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { asLoginExResponse } from 'app/modules/auth/typed-login-response';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TYPED_API_CLIENT, WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -195,9 +195,9 @@ export class AuthService implements OnDestroy {
     const loginCall$ = this.client$.pipe(
       switchMap((client) => (otp
         ? client.authenticator.loginWithOtp(otp)
-        : client.authenticator.loginWithUserPass(username, password).pipe(
-            tap(() => this.forgetPassword(client)),
-          ))),
+        // The UI keeps the single-use reconnect token, never the password: without this the
+        // authenticator would replay it on every reconnect, even into a terminated session.
+        : client.authenticator.loginWithUserPass(username, password, { rememberPassword: false }))),
       asLoginExResponse(),
     );
 
@@ -338,19 +338,6 @@ export class AuthService implements OnDestroy {
         return undefined;
       }),
     );
-  }
-
-  /**
-   * Empties the credentials `loginWithUserPass` keeps on the authenticator.
-   *
-   * It keeps the plaintext password to replay on every reconnect, and offers no way to
-   * decline (gap 4 in docs/devs/typed-api-client.md). The UI never held the password past
-   * the login frame: a reconnect spends the single-use `reconnect_token` through
-   * `loginWithToken` instead. Run after the authenticator stored them, so nothing is left
-   * for it to replay.
-   */
-  private forgetPassword(client: WebUiApiClient): void {
-    client.authenticator.credentials = { username: '', password: '', key: '' };
   }
 
   /** Drops everything this tab knows about the session it was signed in on. */

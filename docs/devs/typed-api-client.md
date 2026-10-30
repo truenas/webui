@@ -23,7 +23,7 @@ of the time.
 
 | Piece | Where |
 |---|---|
-| `@truenas/api-client` as a runtime dependency (9.0.1 at the time of writing) | `package.json` |
+| `@truenas/api-client` as a runtime dependency (9.0.2 at the time of writing) | `package.json` |
 | The client instance, typed against `v28.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `ApiService`, what the app injects | `src/app/modules/websocket/api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
@@ -343,18 +343,17 @@ above. Each is a change for `truenas/api-client-ts`.
    message the sign-in page shows differs today (`LoginResult.Redirect` and
    `Denied` reach no UI from `loginWithToken`, only from the interactive login,
    which is unaffected because a password login throws on `AUTH_ERR` alone), so
-   this is a fidelity gap rather than a broken flow. A `response` on the error,
-   or a non-throwing variant, would close it. Still so in 9.0.1.
-4. **A password login is cached in the authenticator.** `loginWithUserPass`
-   keeps the plaintext password on the authenticator and replays it on every
-   reconnect, and there is no option to decline it. The UI never wanted that,
-   since it keeps a single-use token instead. Worked around by NAS-144963:
-   `AuthService.login` empties `authenticator.credentials` as soon as the
-   login lands, so the password leaves tab memory with the login frame and a
-   reconnect goes through the token alone. A reconnect across a `middlewared`
-   restart, which voids the token, lands on the password prompt, as it did
-   before the migration. An option on the client would retire the workaround.
-   Still so in 9.0.1.
+   this is a fidelity gap rather than a broken flow. Since 9.0.2 the error
+   carries `response`, so `recoverLoginFailure` can map it; not done yet.
+4. ~~**A password login is cached in the authenticator.**~~ Resolved on 9.0.2,
+   which carries api-client-ts #72 (TNC-2643). `loginWithUserPass` keeps the
+   plaintext password and replays it on every reconnect unless the caller
+   passes `{ rememberPassword: false }`. `AuthService.login` passes it, so the
+   password leaves tab memory with the login frame and a reconnect goes
+   through the single-use token alone (NAS-144963 had cleared
+   `authenticator.credentials` by hand until then). A reconnect across a
+   `middlewared` restart or an `auth.terminate_session`, which voids the
+   token, lands on the password prompt, as it did before the migration.
 5. ~~**Parameterised subscriptions.**~~ Resolved by NAS-144006, on 9.0.1, which
    carries api-client-ts #69 (TNC-2583).
    `events()` takes an event source's arguments after its name, typed from the
