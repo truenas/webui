@@ -185,7 +185,7 @@ export class AuthService implements OnDestroy {
    * The authenticator speaks `auth.login_ex` and owns the reconnect-token
    * chain, so a password login mints the token the next reconnect spends. It
    * reports a refused credential by throwing rather than by answering, which
-   * `asLoginExResponse` puts back as the `AUTH_ERR` the UI already handles.
+   * `asLoginExResponse` puts back as the response middleware refused it with.
    */
   login(
     username: string,

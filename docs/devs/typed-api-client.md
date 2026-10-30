@@ -335,16 +335,15 @@ above. Each is a change for `truenas/api-client-ts`.
    returns, and the sign-in page spends it after a reconnect. Middleware holds
    tokens in memory for 600s and a `middlewared` restart voids them, so a
    reconnect across a restart lands back on the password prompt.
-3. **`AuthError` does not carry the response it came from.** `loginWithToken`
-   throws on every non-success, with the `response_type` interpolated into the
-   message and nowhere else. `recoverLoginFailure` therefore has to read all of
-   them back as `AUTH_ERR`, which collapses `EXPIRED`, `DENIED` and `REDIRECT`
-   into one outcome on the token path — the path every reconnect takes. Only the
-   message the sign-in page shows differs today (`LoginResult.Redirect` and
-   `Denied` reach no UI from `loginWithToken`, only from the interactive login,
-   which is unaffected because a password login throws on `AUTH_ERR` alone), so
-   this is a fidelity gap rather than a broken flow. Since 9.0.2 the error
-   carries `response`, so `recoverLoginFailure` can map it; not done yet.
+3. ~~**`AuthError` does not carry the response it came from.**~~ Resolved on
+   9.0.2, which carries api-client-ts #72 (TNC-2643). `loginWithToken` throws on
+   every non-success, and the error now carries the refusing answer as
+   `response`. `recoverLoginFailure` (NAS-144963) reads it back, so a token
+   login keeps `EXPIRED`, `DENIED` and `REDIRECT` apart instead of collapsing
+   them into `AUTH_ERR`. Only `EXPIRED` (read as `IncorrectDetails`) shows the
+   "session expired" message after a reconnect now. A refusal without an
+   answer, which middleware never sends on these paths, is still read as
+   `AUTH_ERR`.
 4. ~~**A password login is cached in the authenticator.**~~ Resolved on 9.0.2,
    which carries api-client-ts #72 (TNC-2643). `loginWithUserPass` keeps the
    plaintext password and replays it on every reconnect unless the caller

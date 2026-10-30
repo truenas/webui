@@ -37,11 +37,11 @@ export function toLoginExResponse(response: AuthResponse): LoginExResponse {
  * response they came from.
  *
  * The authenticator throws on `AUTH_ERR` for password and OTP logins, and on
- * every non-success for a token login. The UI answers all of those the same
- * way — "wrong username or password", "incorrect or expired OTP", "your
- * session expired" — so `AUTH_ERR` is what they are read back as. A token
- * login loses the distinction between `EXPIRED` and `DENIED` doing it, which
- * the client does not carry on the error; both already led here.
+ * every non-success for a token login. Since 9.0.2 the error carries the
+ * answer middleware refused the login with, so a token login keeps telling
+ * `EXPIRED`, `DENIED` and `REDIRECT` apart, and `processLoginResult` maps each
+ * as it does for an interactive login. A refusal without an answer is read as
+ * `AUTH_ERR`, which the UI answers the same way as before.
  *
  * Anything else — a transport failure, a login superseded by a later one — is
  * a genuine error and is left to propagate.
@@ -49,7 +49,7 @@ export function toLoginExResponse(response: AuthResponse): LoginExResponse {
 export function recoverLoginFailure(): OperatorFunction<LoginExResponse, LoginExResponse> {
   return catchError((error: unknown): Observable<LoginExResponse> => {
     if (error instanceof AuthError && refusedCredentialCodes.includes(error.code)) {
-      return of({ response_type: LoginExResponseType.AuthErr });
+      return of(error.response ? toLoginExResponse(error.response) : { response_type: LoginExResponseType.AuthErr });
     }
 
     return throwError(() => error);

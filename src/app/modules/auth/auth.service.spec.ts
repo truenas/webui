@@ -252,6 +252,17 @@ describe('AuthService', () => {
       expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
     });
 
+    it('tells a denied token apart from an expired one', async () => {
+      spectator.service.setQueryToken('DUMMY_TOKEN');
+      // DENIED is a response_type middleware sends and the client's enum does not list.
+      client.authenticator.failNextLogin(LoginExResponseType.Denied as unknown as AuthResponseType);
+
+      const result = await firstValueFrom(spectator.service.loginWithToken());
+
+      expect(result).toBe(LoginResult.Denied);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    });
+
     it('emits correct isLocalUser$', async () => {
       armLogin();
       const loginResult = await firstValueFrom(spectator.service.login('dummy', 'secret'));
