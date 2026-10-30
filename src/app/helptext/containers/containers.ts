@@ -36,6 +36,16 @@ export const containersHelptext = {
     unknown: T('Unknown'),
     unknownSource: T('Unknown source'),
     unknownTarget: T('Unknown target'),
+    defaultRouteMacvlan: T('Macvlan on the default route interface'),
+  },
+
+  network: {
+    addNicLabel: T('Connect to network'),
+    addNicTooltip: T('Adds a NIC attached to the default bridge, {bridge}. Uncheck to create an isolated\
+ container with only a loopback interface. NICs can be added or removed later on the container details page.'),
+    noNicTitle: T('No network access'),
+    noNicMessage: T('This container has no NIC, so it only has a loopback interface. Add a NIC to give it network access.'),
+    addDefaultNicLabel: T('Add NIC on {bridge}'),
   },
 
   proxiesLabel: T('Proxies'),
@@ -48,13 +58,6 @@ export const containersHelptext = {
   instanceProtocolTooltip: T('Select the protocol for the container\'s network connection.'),
   instancePortLabel: T('Container Port'),
 
-  networkTooltip: T('Use the default network settings to connect the default bridge to the host.</br>\
-<br />\
-<b>Bridged NIC</b> uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the container.<br />\
-<br />\
-<b>Macvlan NIC</b> sets up a new network device based on an existing network device, but using a different MAC address.'),
-
-  networkUseDefaultLabel: T('Use default network settings'),
   networkBridgedNicsLabel: T('Bridged NICs'),
   networkMacVlanNicsLabel: T('Macvlan NICs'),
 

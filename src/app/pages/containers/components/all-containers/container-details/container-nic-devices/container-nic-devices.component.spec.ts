@@ -1,9 +1,15 @@
+import { HarnessLoader } from '@angular/cdk/testing';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerDeviceType, ContainerNicDeviceType, ContainerStatus } from 'app/enums/container.enum';
-import { ContainerDevice } from 'app/interfaces/container.interface';
+import { ContainerDevice, ContainerGlobalConfig } from 'app/interfaces/container.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AddNicMenuComponent,
 } from 'app/pages/containers/components/all-containers/container-details/container-nic-devices/add-nic-menu/add-nic-menu.component';
@@ -13,6 +19,7 @@ import {
 import {
   DeviceActionsMenuComponent,
 } from 'app/pages/containers/components/common/device-actions-menu/device-actions-menu.component';
+import { ContainerConfigStore } from 'app/pages/containers/stores/container-config.store';
 import { ContainerDevicesStore } from 'app/pages/containers/stores/container-devices.store';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
 
@@ -22,15 +29,24 @@ const sharedImports = [
   MockComponent(DeviceActionsMenuComponent),
 ];
 
+const sharedProviders = [
+  mockAuth(),
+  mockProvider(SnackbarService),
+  mockProvider(ContainerConfigStore, {
+    config: () => ({ bridge: null } as ContainerGlobalConfig),
+  }),
+];
+
 const defaultContainersStoreProvider = mockProvider(ContainersStore, {
   selectedContainer: () => ({
-    default_network: 'truenasbr0',
+    id: 5,
     status: { state: ContainerStatus.Stopped },
   }),
 });
 
 const noPendingChangesProvider = mockApi([
   mockCall('interface.has_pending_changes', false),
+  mockCall('container.device.create', null),
 ]);
 
 describe('ContainerNicDevicesComponent', () => {
@@ -54,6 +70,7 @@ describe('ContainerNicDevicesComponent', () => {
     component: ContainerNicDevicesComponent,
     imports: sharedImports,
     providers: [
+      ...sharedProviders,
       mockProvider(ContainerDevicesStore, {
         isLoading: () => false,
         devices: () => devices,
@@ -70,10 +87,13 @@ describe('ContainerNicDevicesComponent', () => {
   it('displays NIC devices when available', () => {
     const deviceRows = spectator.queryAll('.device');
 
-    expect(deviceRows).toHaveLength(3);
-    expect(deviceRows[0]).toHaveText('truenasbr0 (Default)');
-    expect(deviceRows[1]).toHaveText('br0 (Default Mac Address)');
-    expect(deviceRows[2]).toHaveText('br1 (Default Mac Address)');
+    expect(deviceRows).toHaveLength(2);
+    expect(deviceRows[0]).toHaveText('br0 (Default Mac Address)');
+    expect(deviceRows[1]).toHaveText('br1 (Default Mac Address)');
+  });
+
+  it('does not show the no network notice', () => {
+    expect(spectator.query('.no-network')).not.toExist();
   });
 
   it('renders a menu to delete or manage the device', () => {
@@ -95,13 +115,13 @@ describe('ContainerNicDevicesComponent', () => {
       component: ContainerNicDevicesComponent,
       imports: sharedImports,
       providers: [
+        ...sharedProviders,
         mockProvider(ContainerDevicesStore, {
           isLoading: () => false,
           devices: () => devices,
         }),
         mockProvider(ContainersStore, {
           selectedContainer: () => ({
-            default_network: 'truenasbr0',
             status: { state },
           }),
         }),
@@ -119,79 +139,96 @@ describe('ContainerNicDevicesComponent', () => {
     });
   });
 
-  describe('when no NIC devices are configured', () => {
+  describe('when the container has no NIC', () => {
+    let loader: HarnessLoader;
+    let emptySpectator: Spectator<ContainerNicDevicesComponent>;
+
     const createEmptyComponent = createComponentFactory({
       component: ContainerNicDevicesComponent,
       imports: sharedImports,
       providers: [
+        ...sharedProviders,
         mockProvider(ContainerDevicesStore, {
           isLoading: () => false,
           devices: (): ContainerDevice[] => [],
+          reload: jest.fn(),
         }),
         defaultContainersStoreProvider,
         noPendingChangesProvider,
       ],
     });
 
-    it('shows default bridge when no NIC devices are added', () => {
-      const emptySpectator = createEmptyComponent();
-      expect(emptySpectator.query('.default-device')).toHaveText('truenasbr0 (Default)');
+    beforeEach(() => {
+      emptySpectator = createEmptyComponent();
+      loader = TestbedHarnessEnvironment.loader(emptySpectator.fixture);
+    });
+
+    it('explains that the container has no network access', () => {
+      expect(emptySpectator.query('.no-network-title')).toHaveText('No network access');
+      expect(emptySpectator.query('.no-network-message')).toHaveText('only has a loopback interface');
+    });
+
+    it('adds a NIC on the default bridge without asking where to attach it', async () => {
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add NIC on truenasbr0' }));
+      await button.click();
+
+      expect(emptySpectator.inject(ApiService).call).toHaveBeenCalledWith('container.device.create', [{
+        container: 5,
+        attributes: { dtype: ContainerDeviceType.Nic },
+      }]);
+      expect(emptySpectator.inject(SnackbarService).success).toHaveBeenCalledWith('NIC Device was added');
+      expect(emptySpectator.inject(ContainerDevicesStore).reload).toHaveBeenCalled();
     });
   });
 
-  describe('when default_network is null', () => {
-    const createNullNetworkComponent = createComponentFactory({
+  describe('when the container has no NIC and is running', () => {
+    const createRunningEmptyComponent = createComponentFactory({
       component: ContainerNicDevicesComponent,
       imports: sharedImports,
       providers: [
+        ...sharedProviders,
         mockProvider(ContainerDevicesStore, {
           isLoading: () => false,
           devices: (): ContainerDevice[] => [],
         }),
         mockProvider(ContainersStore, {
-          selectedContainer: () => ({
-            default_network: null,
-            status: { state: ContainerStatus.Stopped },
-          }),
+          selectedContainer: () => ({ id: 5, status: { state: ContainerStatus.Running } }),
         }),
         noPendingChangesProvider,
       ],
     });
 
-    it('does not show default bridge row', () => {
-      const nullSpectator = createNullNetworkComponent();
-      expect(nullSpectator.query('.default-device')).not.toExist();
-    });
-
-    it('shows empty state message', () => {
-      const nullSpectator = createNullNetworkComponent();
-      expect(nullSpectator.query('.no-devices')).toHaveText('No NIC devices added.');
+    it('disables the quick add button', async () => {
+      const runningSpectator = createRunningEmptyComponent();
+      const loader = TestbedHarnessEnvironment.loader(runningSpectator.fixture);
+      const button = await loader.getHarness(MatButtonHarness.with({ text: 'Add NIC on truenasbr0' }));
+      expect(await button.isDisabled()).toBe(true);
     });
   });
 
-  describe('when default bridge matches an existing NIC device', () => {
-    const createMatchingBridgeComponent = createComponentFactory({
+  describe('when a custom default bridge is configured', () => {
+    const createCustomBridgeComponent = createComponentFactory({
       component: ContainerNicDevicesComponent,
       imports: sharedImports,
       providers: [
+        mockAuth(),
+        mockProvider(SnackbarService),
+        mockProvider(ContainerConfigStore, {
+          config: () => ({ bridge: 'br5' } as ContainerGlobalConfig),
+        }),
         mockProvider(ContainerDevicesStore, {
           isLoading: () => false,
-          devices: (): ContainerDevice[] => [
-            {
-              id: 1,
-              dtype: ContainerDeviceType.Nic,
-              nic_attach: 'truenasbr0',
-            } as ContainerDevice,
-          ],
+          devices: (): ContainerDevice[] => [],
         }),
         defaultContainersStoreProvider,
         noPendingChangesProvider,
       ],
     });
 
-    it('does not show default bridge row when a NIC device already uses the same bridge', () => {
-      const matchSpectator = createMatchingBridgeComponent();
-      expect(matchSpectator.query('.default-device')).not.toExist();
+    it('names that bridge on the quick add button', async () => {
+      const customSpectator = createCustomBridgeComponent();
+      const loader = TestbedHarnessEnvironment.loader(customSpectator.fixture);
+      expect(await loader.getHarnessOrNull(MatButtonHarness.with({ text: 'Add NIC on br5' }))).not.toBeNull();
     });
   });
 });
