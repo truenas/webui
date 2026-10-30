@@ -5,6 +5,7 @@ import { TruenasConnectStatus, TruenasConnectStatusReason } from 'app/enums/true
 import { helptextTopbar } from 'app/helptext/topbar';
 import { StatusBadge, StatusBadgeComponent } from 'app/modules/layout/topbar/status-badge/status-badge.component';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { getTncRegistrationFailureDetail } from 'app/modules/truenas-connect/truenas-connect-status.utils';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
 type StatusKind = 'success' | 'failure' | 'in-progress' | 'idle';
@@ -83,6 +84,10 @@ export class TruenasConnectButtonComponent {
     if (tier && config.status === TruenasConnectStatus.Configured) {
       const name = this.translate.instant(tierDisplayConfig[tier].label);
       return `${base}\n${this.translate.instant('Tier: {tier}', { tier: name })}`;
+    }
+    const failureDetail = getTncRegistrationFailureDetail(config);
+    if (failureDetail) {
+      return `${base}\n${failureDetail}`;
     }
     return base;
   });
