@@ -43,7 +43,10 @@ connection, so `limitConcurrentCalls` holds the whole tab to 19 on the
 connection's `send`, one short of the ceiling to leave room for the keepalive
 ping (see gap 20). Connection state — open, closed, refused, shutting down — is
 `ConnectionService`'s (NAS-143990). The client retries the connection on its
-own, sends `core.set_options` on open and pings every 20s.
+own, sends `core.set_options` on open and pings every 20s. Nothing checks that
+a ping is answered, so `ConnectionService` replaces an open socket that has
+delivered no frame at all for 90s (`silentSocketTimeoutMs`, NAS-144963): a
+half-open socket otherwise reads as open until the browser's TCP timeout.
 
 ### One session
 
@@ -63,6 +66,14 @@ stored token and navigates back to `redirectUrl`.
 Call sites never authenticate. Every request is held until the session is
 authenticated, so a call made before sign-in or across a reconnect waits
 instead of being refused by middleware.
+
+`auth.logout` leaves the socket open, but middleware ends every subscription
+on it: each event source gets a `notify_unsubscribed`, and the client
+completes its stream. Nothing reaches a signed-out tab, and the next login on
+the same socket does not double anything (checked on 28.0.0 for NAS-144963,
+with `reporting.realtime` and `core.get_jobs`). A completed stream stays
+completed, so something that must outlive a logout has to subscribe again
+after the next login. The store effects do, on `adminUiInitialized`.
 
 ## Calling the API
 
@@ -336,11 +347,14 @@ above. Each is a change for `truenas/api-client-ts`.
    or a non-throwing variant, would close it. Still so in 9.0.1.
 4. **A password login is cached in the authenticator.** `loginWithUserPass`
    keeps the plaintext password on the authenticator and replays it on every
-   reconnect. The UI never wanted that — it keeps a single-use token instead —
-   and there is no way to decline it. Worth closing in the library; until then
-   a password session re-logs itself in on reconnect, racing the sign-in
-   page's token login, which the authenticator's epoch guard resolves. Still so
-   in 9.0.1.
+   reconnect, and there is no option to decline it. The UI never wanted that,
+   since it keeps a single-use token instead. Worked around by NAS-144963:
+   `AuthService.login` empties `authenticator.credentials` as soon as the
+   login lands, so the password leaves tab memory with the login frame and a
+   reconnect goes through the token alone. A reconnect across a `middlewared`
+   restart, which voids the token, lands on the password prompt, as it did
+   before the migration. An option on the client would retire the workaround.
+   Still so in 9.0.1.
 5. ~~**Parameterised subscriptions.**~~ Resolved by NAS-144006, on 9.0.1, which
    carries api-client-ts #69 (TNC-2583).
    `events()` takes an event source's arguments after its name, typed from the
@@ -528,7 +542,11 @@ above. Each is a change for `truenas/api-client-ts`.
     frames do not: `core.set_options` on open, answered before anything else is
     sent, and the 20-second `core.ping`, which is why the gate stops at 19. A
     `maxConcurrentCalls` option on the client, counting its own ping, would
-    retire the patch and the spare slot.
+    retire the patch and the spare slot. A call still waiting at the gate when
+    the socket is lost is kept, and sent once the session is authenticated
+    again (NAS-144963). It used to be dropped, which left its caller waiting
+    for good. It is not sent sooner because the new socket starts signed out,
+    and an `ENOTAUTHENTICATED` refusal ends the app's session.
 
 21. **Drift found moving data protection.** Handled at one site each:
     - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare

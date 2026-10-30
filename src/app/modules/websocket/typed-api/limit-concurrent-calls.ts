@@ -1,5 +1,5 @@
 import { environment } from 'environments/environment';
-import { Subscription } from 'rxjs';
+import { distinctUntilChanged, filter, Observable, Subscription } from 'rxjs';
 import type { WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type Connection = WebUiApiClient['connection'];
@@ -46,8 +46,19 @@ interface WaitingCall {
  * Only requests count: a frame with both an `id` and a `method`. A request is
  * finished when a frame with its id comes back, whether or not its caller is
  * still listening, since the appliance is busy with it either way.
+ *
+ * A call still waiting when the socket is lost is kept, and sent once
+ * `authenticated$` is next `true`: the new socket starts signed out, and
+ * middleware would refuse it there with `ENOTAUTHENTICATED`, which ends the
+ * app's session. Its caller is still listening, since the answer is matched by
+ * id on whichever socket is current, so dropping it left the caller waiting
+ * for good.
  */
-export function limitConcurrentCalls(connection: Connection, limit = maxGatedCalls): void {
+export function limitConcurrentCalls(
+  connection: Connection,
+  authenticated$: Observable<boolean>,
+  limit = maxGatedCalls,
+): void {
   const send = connection.send.bind(connection);
   /**
    * Each call awaiting an answer, with the handle the connection gave for it.
@@ -58,6 +69,8 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
   const inFlight = new Map<string, Subscription>();
   const waiting: WaitingCall[] = [];
   let wasOpen = false;
+  /** Set by a lost socket, until the session is back: what waits stays waiting. */
+  let isHeld = false;
 
   // The three below call each other in a ring, hence declarations: they hoist.
   function start({ id, message, handle }: WaitingCall): void {
@@ -89,7 +102,7 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
   }
 
   function startWaiting(): void {
-    while (inFlight.size < limit) {
+    while (!isHeld && inFlight.size < limit) {
       const next = waiting.shift();
       if (!next) {
         return;
@@ -111,15 +124,20 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
       return;
     }
 
-    // What was written on the socket is lost with it, answers included, and what
-    // was waiting here goes the same way. A frame the connection has not written
-    // yet is still its to send on the next socket, so that one stays counted.
+    // What was written on the socket is lost with it, answers included. A frame
+    // the connection has not written yet is still its to send on the next
+    // socket, so that one stays counted.
     inFlight.forEach((sending, id) => {
       if (sending.closed) {
         inFlight.delete(id);
       }
     });
-    waiting.length = 0;
+    isHeld = waiting.length > 0;
+  });
+
+  authenticated$.pipe(distinctUntilChanged(), filter(Boolean)).subscribe(() => {
+    isHeld = false;
+    startWaiting();
   });
 
   connection.messages().subscribe((message) => {
@@ -140,6 +158,8 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
     }
 
     const call: WaitingCall = { id: String(message.id), message, handle: new Subscription() };
+    // Not held back by `isHeld`: the frames that sign the new socket in come
+    // through here, and the calls waiting on them are exactly what is held.
     if (inFlight.size < limit) {
       start(call);
       return call.handle;

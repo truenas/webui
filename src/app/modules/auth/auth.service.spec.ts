@@ -196,6 +196,14 @@ describe('AuthService', () => {
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('auth.me');
     });
 
+    it('does not leave the password on the authenticator for it to replay on reconnect', async () => {
+      armLogin({ reconnect_token: 'DUMMY_TOKEN' });
+
+      await firstValueFrom(spectator.service.login('dummy', 'secret'));
+
+      expect(client.authenticator.credentials).toEqual({ username: '', password: '', key: '' });
+    });
+
     it('signs in on the typed client with a stored token', async () => {
       spectator.service.setQueryToken('DUMMY_TOKEN');
       armLogin({ reconnect_token: 'NEXT_TOKEN' });

@@ -33,7 +33,7 @@ import { GlobalTwoFactorConfig } from 'app/interfaces/two-factor-config.interfac
 import { PendingTwoFactorService } from 'app/modules/auth/pending-two-factor.service';
 import { asLoginExResponse } from 'app/modules/auth/typed-login-response';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { TYPED_API_CLIENT } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { TYPED_API_CLIENT, WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { TokenLastUsedService } from 'app/services/token-last-used.service';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -193,16 +193,11 @@ export class AuthService implements OnDestroy {
     otp: string | null = null,
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
     const loginCall$ = this.client$.pipe(
-      // `loginWithUserPass` keeps the plaintext password on the authenticator and
-      // replays it on every reconnect, and offers no way to decline. That is new
-      // for this app, not just for the library: until the session moved here the
-      // UI never held the password past the login frame, only the single-use
-      // `reconnect_token` below. A password-backed session now carries the
-      // credential in tab memory for its whole life. See the known-gaps list in
-      // `docs/devs/typed-api-client.md`.
       switchMap((client) => (otp
         ? client.authenticator.loginWithOtp(otp)
-        : client.authenticator.loginWithUserPass(username, password))),
+        : client.authenticator.loginWithUserPass(username, password).pipe(
+            tap(() => this.forgetPassword(client)),
+          ))),
       asLoginExResponse(),
     );
 
@@ -345,12 +340,26 @@ export class AuthService implements OnDestroy {
     );
   }
 
+  /**
+   * Empties the credentials `loginWithUserPass` keeps on the authenticator.
+   *
+   * It keeps the plaintext password to replay on every reconnect, and offers no way to
+   * decline (gap 4 in docs/devs/typed-api-client.md). The UI never held the password past
+   * the login frame: a reconnect spends the single-use `reconnect_token` through
+   * `loginWithToken` instead. Run after the authenticator stored them, so nothing is left
+   * for it to replay.
+   */
+  private forgetPassword(client: WebUiApiClient): void {
+    client.authenticator.credentials = { username: '', password: '', key: '' };
+  }
+
   /** Drops everything this tab knows about the session it was signed in on. */
   private endLocalSession(): void {
     this.clearAuthToken();
     this.hasPasswordChangedSinceLastLogin$.next(false);
-    // No subscriptions to clear: the client drops every event subscription when the session ends
-    // and sends `core.subscribe` again for the ones still held once the next login lands.
+    // No subscriptions to clear: middleware ends every one of the socket's subscriptions on
+    // `auth.logout` (with `notify_unsubscribed`), the client completes those streams, and the
+    // effects that hold them subscribe again once the next login initializes the admin UI.
     this.wsStatus.setLoginStatus(false);
     this.sessionInitialized = false;
     this.pendingAuthData = null;
