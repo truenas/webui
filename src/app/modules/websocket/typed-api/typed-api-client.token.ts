@@ -8,6 +8,7 @@ import {
   QueryEntity,
   QueryMethod,
   TrueNasApiClient,
+  v28_0_0,
 } from '@truenas/api-client';
 import { environment } from 'environments/environment';
 import {
@@ -15,7 +16,6 @@ import {
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AddNfsPrincipal } from 'app/interfaces/nfs-config.interface';
-import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
@@ -58,13 +58,10 @@ export type WebUiQueryEntity<M extends WebUiQueryMethod> = QueryEntity<WebUiApiD
 
 /**
  * One filter for a query verb, for filters built up before the call rather than
- * written inline. Mirrors the client's own `QueryFilter`, which it does not
- * export yet (gap 6 in docs/devs/typed-api-client.md); the two are structurally
- * identical, so a list of these is accepted wherever the client takes filters.
+ * written inline. The client's own `QueryFilter`, from the version namespace the
+ * UI is pinned to, so a list of these is exactly what the query verbs take.
  */
-export type TypedQueryFilter<E>
-  = | [field: (keyof E & string) | `${string}.${string}`, operator: QueryComparator, value: unknown]
-    | ['OR', TypedQueryFilter<E>[][]];
+export type TypedQueryFilter<E> = v28_0_0.QueryFilter<E>;
 
 /**
  * The `@truenas/api-client` instance behind {@link ApiService}.
