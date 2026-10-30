@@ -35,6 +35,8 @@ const asyncFunctionNames = new Set([
 
 const rerenderCalls = new Set(['markForCheck', 'detectChanges']);
 const signalWriteCalls = new Set(['set', 'update']);
+const signalFactories = new Set(['signal', 'model', 'linkedSignal']);
+const signalTypes = new Set(['WritableSignal', 'ModelSignal']);
 
 function calleeName(callee) {
   if (callee.type === 'Identifier') return callee.name;
@@ -76,8 +78,9 @@ function isValueChangesSubscription(call) {
 
 /**
  * The async callback `node` sits in, as the functions that run for the same event: the callback
- * itself, plus its `next`/`error`/`complete` siblings when it is part of a `subscribe({ ... })`
- * observer (`complete` runs straight after the last `next`). Null when `node` is not in one.
+ * itself, plus — for an observer's `next` or `complete` — the other one of the two, since
+ * `complete` runs straight after the last `next`. `error` never follows a successful `next`, so it
+ * stands alone. Null when `node` is not in an async callback.
  */
 function findAsyncCallback(node) {
   for (let current = node.parent; current; current = current.parent) {
@@ -89,10 +92,12 @@ function findAsyncCallback(node) {
     let handlers = [current];
     // `subscribe({ next: (value) => ... })`
     if (call?.type === 'Property' && call.parent?.type === 'ObjectExpression') {
+      const pairedName = { next: 'complete', complete: 'next' }[propertyName(call)];
+      const paired = call.parent.properties.find((property) => {
+        return property.type === 'Property' && propertyName(property) === pairedName && isFunction(property.value);
+      });
+      if (paired) handlers = [current, paired.value];
       argument = call.parent;
-      handlers = call.parent.properties
-        .filter((property) => property.type === 'Property' && isFunction(property.value))
-        .map((property) => property.value);
       call = call.parent.parent;
     }
     if (call?.type === 'CallExpression' && call.arguments.includes(argument) && isAsyncCall(call)) {
@@ -104,15 +109,35 @@ function findAsyncCallback(node) {
   return null;
 }
 
-/** `markForCheck()`/`detectChanges()`, or `this.<member>.set()`/`.update()` — a signal write re-renders the view. */
-function isRerenderCall(call) {
+function propertyName(property) {
+  if (property.computed) return null;
+  if (property.key.type === 'Identifier') return property.key.name;
+  return property.key.type === 'Literal' ? String(property.key.value) : null;
+}
+
+/** A class field holding a writable signal: `signal(...)`/`model(...)`/`linkedSignal(...)`, or typed as one. */
+function isSignalField(member) {
+  const { value } = member;
+  if (value?.type === 'CallExpression' && value.callee.type === 'Identifier' && signalFactories.has(value.callee.name)) {
+    return true;
+  }
+  const type = member.typeAnnotation?.typeAnnotation;
+  return type?.type === 'TSTypeReference' && type.typeName.type === 'Identifier' && signalTypes.has(type.typeName.name);
+}
+
+/**
+ * `markForCheck()`/`detectChanges()`, or `this.<signal>.set()`/`.update()` on a signal field of the
+ * class — a signal write re-renders the view. A `Map`/`Set` field's `.set()` does not count.
+ */
+function isRerenderCall(call, signals) {
   const name = calleeName(call.callee);
   if (rerenderCalls.has(name)) return true;
   const { callee } = call;
   return signalWriteCalls.has(name)
     && callee.type === 'MemberExpression'
     && callee.object.type === 'MemberExpression'
-    && callee.object.object.type === 'ThisExpression';
+    && callee.object.object.type === 'ThisExpression'
+    && signals.has(calleeName(callee.object));
 }
 
 /** `this.<name>(...)` — a call to a member of the same class. */
@@ -130,19 +155,19 @@ function thisMethodName(call) {
  * Whether `fn` re-renders the view, directly or through a method of the same class it calls
  * (`this.handleError(error)` where `handleError` calls `markForCheck()`).
  */
-function callsRerender(fn, methods, visited = new Set()) {
+function callsRerender(fn, members, visited = new Set()) {
   let found = false;
   const visit = (node) => {
     if (found || !node || typeof node.type !== 'string') return;
     if (node.type === 'CallExpression') {
-      if (isRerenderCall(node)) {
+      if (isRerenderCall(node, members.signals)) {
         found = true;
         return;
       }
-      const method = methods.get(thisMethodName(node));
+      const method = members.methods.get(thisMethodName(node));
       if (method && !visited.has(method)) {
         visited.add(method);
-        if (callsRerender(method, methods, visited)) {
+        if (callsRerender(method, members, visited)) {
           found = true;
           return;
         }
@@ -187,6 +212,7 @@ export default {
       ClassDeclaration(node) {
         const fields = new Set();
         const methods = new Map();
+        const signals = new Set();
         if (isComponentClass(node)) {
           for (const member of node.body.body) {
             if (member.static || member.key.type !== 'Identifier') continue;
@@ -195,17 +221,19 @@ export default {
             } else if (member.type === 'PropertyDefinition') {
               // `private handleError = (error) => { ... }`
               if (member.value && isFunction(member.value)) methods.set(member.key.name, member.value);
+              if (isSignalField(member)) signals.add(member.key.name);
               if (member.accessibility !== 'private') fields.add(member.key.name);
             }
           }
         }
-        classes.push({ fields, methods });
+        classes.push({ fields, methods, signals });
       },
       'ClassDeclaration:exit'() {
         classes.pop();
       },
       AssignmentExpression(node) {
-        const { fields, methods } = classes.at(-1) ?? {};
+        const members = classes.at(-1);
+        const fields = members?.fields;
         if (!fields?.size) return;
 
         const { left } = node;
@@ -220,7 +248,7 @@ export default {
         }
 
         const handlers = findAsyncCallback(node);
-        if (!handlers || handlers.some((handler) => callsRerender(handler, methods))) return;
+        if (!handlers || handlers.some((handler) => callsRerender(handler, members))) return;
 
         context.report({ node, messageId: 'unmarkedWrite', data: { field: left.property.name } });
       },

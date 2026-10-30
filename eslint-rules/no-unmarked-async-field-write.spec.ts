@@ -31,6 +31,7 @@ ruleTester.run('no-unmarked-async-field-write', rule, {
     // A signal write re-renders the view too.
     component(`
       protected value = '';
+      protected isLoading = signal(true);
       load(): void {
         this.api.call('x').subscribe((value) => {
           this.value = value;
@@ -45,6 +46,17 @@ ruleTester.run('no-unmarked-async-field-write', rule, {
         this.api.call('x').subscribe({
           next: (value) => { this.value = value; },
           complete: () => this.cdr.markForCheck(),
+        });
+      }
+    `),
+    // A field typed as a writable signal counts as a signal.
+    component(`
+      protected value = '';
+      protected isLoading: WritableSignal<boolean>;
+      load(): void {
+        this.api.call('x').subscribe((value) => {
+          this.value = value;
+          this.isLoading.set(false);
         });
       }
     `),
@@ -88,6 +100,33 @@ ruleTester.run('no-unmarked-async-field-write', rule, {
     '@Injectable()\nclass TestService {\n  value = 0;\n  load(): void { this.api.call(method).subscribe((v) => { this.value = v; }); }\n}',
   ],
   invalid: [
+    {
+      // `error` never runs after a successful `next`, so marking there does not cover `next`.
+      code: component(`
+        protected value = '';
+        load(): void {
+          this.api.call('x').subscribe({
+            next: (value) => { this.value = value; },
+            error: () => this.cdr.markForCheck(),
+          });
+        }
+      `),
+      errors: [{ messageId: 'unmarkedWrite', data: { field: 'value' } }],
+    },
+    {
+      // `.set()` on a Map is not a signal write.
+      code: component(`
+        protected value = '';
+        private cache = new Map();
+        load(): void {
+          this.api.call('x').subscribe((value) => {
+            this.value = value;
+            this.cache.set('x', value);
+          });
+        }
+      `),
+      errors: [{ messageId: 'unmarkedWrite', data: { field: 'value' } }],
+    },
     {
       code: component(`
         protected value = '';
