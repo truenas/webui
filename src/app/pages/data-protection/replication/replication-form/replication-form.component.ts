@@ -102,7 +102,7 @@ export class ReplicationFormComponent extends IxFormHostForm implements OnInit {
 
   eligibleSnapshotsMessage = '';
   isEligibleSnapshotsMessageRed = false;
-  isSudoDialogShown = false;
+  private isSudoDialogShown = false;
   sshCredentials: KeychainSshCredentials[] = [];
 
   readonly requiredRoles = [Role.ReplicationTaskWrite, Role.ReplicationTaskWritePull];

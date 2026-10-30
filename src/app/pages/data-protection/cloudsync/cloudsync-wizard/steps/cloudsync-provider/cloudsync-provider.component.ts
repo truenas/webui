@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, output, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, Type, output, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -53,7 +53,7 @@ export class CloudSyncProviderComponent implements OnInit {
     exist_credential: [null as number | typeof newOption | null],
   });
 
-  protected isLoading: boolean;
+  private isLoading = signal(false);
 
   private credentials: CloudSyncCredential[] = [];
   private existingCredential: CloudSyncCredential;
@@ -61,7 +61,7 @@ export class CloudSyncProviderComponent implements OnInit {
   readonly helptext = helptext;
 
   get areActionsDisabled(): boolean {
-    return this.isLoading || this.form.invalid || !this.form.controls.exist_credential.value;
+    return this.isLoading() || this.form.invalid || !this.form.controls.exist_credential.value;
   }
 
   isDirty(): boolean {
@@ -96,7 +96,7 @@ export class CloudSyncProviderComponent implements OnInit {
   }
 
   private subToLoading(): void {
-    this.loading.subscribe((isLoading) => this.isLoading = isLoading);
+    this.loading.subscribe((isLoading) => this.isLoading.set(isLoading));
   }
 
   onSubmit(): void {

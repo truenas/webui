@@ -108,7 +108,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
   updateReport$ = new BehaviorSubject<IxSimpleChanges<this> | null>(null);
   fetchReport$ = new BehaviorSubject<FetchReportParams | null>(null);
   autoRefreshTimer: Subscription;
-  autoRefreshEnabled: boolean;
+  private autoRefreshEnabled: boolean;
   private resizeSubscription: Subscription;
   isReady = false;
   data: ReportingData | undefined;
@@ -182,6 +182,7 @@ export class ReportComponent implements OnInit, OnChanges, OnDestroy {
       const rrdOptions = this.convertTimeSpan(this.currentZoomLevel);
       this.currentStartDate = rrdOptions.start;
       this.currentEndDate = rrdOptions.end;
+      this.cdr.markForCheck();
 
       const identifier = this.report().identifiers ? this.report().identifiers[0] : undefined;
       this.fetchReport$.next({ rrdOptions, identifier, report: this.report() });

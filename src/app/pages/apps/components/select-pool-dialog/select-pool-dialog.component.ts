@@ -1,7 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -56,6 +56,7 @@ export class SelectPoolDialog implements OnInit {
   private snackbar = inject(SnackbarService);
   private dockerStore = inject(DockerStore);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected readonly requiredRoles = [Role.AppsWrite];
 
@@ -112,6 +113,7 @@ export class SelectPoolDialog implements OnInit {
             value: pool.name,
           }));
           this.pools$ = of(poolOptions);
+          this.cdr.markForCheck();
 
           if (!pools.length) {
             this.showNoPoolsWarning();

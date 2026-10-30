@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
   private destroyRef = inject(DestroyRef);
 
-  isAuthenticated = false;
+  private isAuthenticated = false;
   debugPanelEnabled = environment.debugPanel?.enabled || false;
 
   constructor() {

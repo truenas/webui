@@ -452,7 +452,8 @@ describe('IscsiWizardComponent', () => {
     });
 
     it('returns ro=false when creating a new zvol', () => {
-      spectator.component.createdZvol = { id: 'tank/new-zvol' } as Dataset;
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['createdZvol'] = { id: 'tank/new-zvol' } as Dataset;
       const extentGroup = spectator.component.form.controls.extent;
       extentGroup.controls.name.setValue('test-extent');
       extentGroup.controls.type.setValue(IscsiExtentType.Disk);
