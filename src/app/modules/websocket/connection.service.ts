@@ -178,13 +178,11 @@ export class ConnectionService {
               switchMap(() => timer(silentSocketTimeoutMs)),
             )
           : EMPTY)),
-        map(() => connection),
       )),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe((connection) => {
+    ).subscribe(() => {
       console.warn(`No frame from the appliance in ${silentSocketTimeoutMs / 1000} s; reconnecting.`);
-      connection.setEnabled(false);
-      connection.setEnabled(true);
+      this.reconnect();
     });
   }
 
