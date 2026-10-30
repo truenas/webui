@@ -3,6 +3,9 @@
     <div class="waiting-state-text" tnTestId="tnc-status-reason" tnTestIdType="text">
       {{ "Power Up your TrueNAS Experience! Link your system with TrueNAS Connect now for additional security, alerting, and other features." | translate }}
     </div>
+    <div class="logout-notice" tnTestId="tnc-logout-notice" tnTestIdType="text">
+      {{ logoutNotice | translate }}
+    </div>
   </div>
 } @else if (status() === TncStatus.Failed) {
   <div class="status-header">
@@ -31,6 +34,9 @@
     <div class="connecting-header" tnTestId="tnc-status" tnTestIdType="text">{{ "Setting up TrueNAS Connect" | translate }}</div>
     <div class="connecting-description" tnTestId="tnc-status-reason" tnTestIdType="text">
       {{ "Your system is setting up with TrueNAS Connect; this may take a few moments." | translate }}
+    </div>
+    <div class="logout-notice" tnTestId="tnc-logout-notice" tnTestIdType="text">
+      {{ logoutNotice | translate }}
     </div>
   </div>
 } @else {
