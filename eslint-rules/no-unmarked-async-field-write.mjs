@@ -4,18 +4,26 @@
  * must either make that field a signal or call `markForCheck()`; otherwise the template keeps
  * showing the old value until something unrelated happens to trigger change detection.
  *
- * What this checks: inside a `@Component` class, an assignment to `this.<field>` where
+ * What this checks: inside a `@Component` class, a write to `this.<field>` (`=`, `+=`, `++`, …) where
  * - `<field>` is declared in the same class and is not `private` (the repo convention is that
  *   `private` members are never read by the template; `protected`/public ones may be),
- * - the assignment sits inside a callback passed to one of the async APIs below,
- * - and that callback never calls `markForCheck()` or `detectChanges()`.
+ * - the write sits inside a callback passed to one of the async APIs below,
+ * - and nothing re-renders for that event: no `markForCheck()`/`detectChanges()` and no write to a
+ *   signal field of the class, in the callback, in an observer's paired `next`/`complete`, or in a
+ *   method of the same class the callback calls (`this.handleError(error)`).
  *
- * A `markForCheck()` (or signal write) reached through a method of the same class the callback
- * calls (`this.handleError(error)`) counts too.
+ * What it does not check, so it stays convention (see "Zoneless" in CLAUDE.md):
+ * - whether the template really reads the field, and fields inherited from a base class;
+ * - writes made inside a helper method the callback calls, and re-renders reached through another
+ *   service, class or Subject;
+ * - writes inside RxJS operator callbacks (`tap`, `map`, `finalize`, …). Whether those need a
+ *   re-render depends on what consumes the stream (a later `subscribe` or data provider usually
+ *   re-renders already), which the rule cannot see; listing them flagged 10 such pipelines;
+ * - a `markForCheck()` in `complete` is taken to cover `next`, which only holds for sources that
+ *   complete (`api.call`, `forkJoin`). For a long-lived stream, mark in `next` itself.
  *
- * What it does not check: whether the template really reads the field, fields inherited from a
- * base class, writes made inside a helper method the callback calls, and re-renders reached
- * through another service or class. Those stay convention (see "Zoneless" in CLAUDE.md).
+ * In the other direction, a write to a signal declared in a base class is not recognised as a
+ * re-render, so it is reported; call `markForCheck()` there instead.
  */
 
 const asyncMethodNames = new Set([
@@ -231,18 +239,19 @@ export default {
       'ClassDeclaration:exit'() {
         classes.pop();
       },
-      AssignmentExpression(node) {
+      'AssignmentExpression, UpdateExpression'(node) {
         const members = classes.at(-1);
         const fields = members?.fields;
         if (!fields?.size) return;
 
-        const { left } = node;
+        // `this.x = ...` / `this.x += ...`, or `this.x++` / `this.x--`.
+        const target = node.type === 'AssignmentExpression' ? node.left : node.argument;
         if (
-          left.type !== 'MemberExpression'
-          || left.object.type !== 'ThisExpression'
-          || left.computed
-          || left.property.type !== 'Identifier'
-          || !fields.has(left.property.name)
+          target.type !== 'MemberExpression'
+          || target.object.type !== 'ThisExpression'
+          || target.computed
+          || target.property.type !== 'Identifier'
+          || !fields.has(target.property.name)
         ) {
           return;
         }
@@ -250,7 +259,7 @@ export default {
         const handlers = findAsyncCallback(node);
         if (!handlers || handlers.some((handler) => callsRerender(handler, members))) return;
 
-        context.report({ node, messageId: 'unmarkedWrite', data: { field: left.property.name } });
+        context.report({ node, messageId: 'unmarkedWrite', data: { field: target.property.name } });
       },
     };
   },

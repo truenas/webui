@@ -114,6 +114,15 @@ ruleTester.run('no-unmarked-async-field-write', rule, {
       errors: [{ messageId: 'unmarkedWrite', data: { field: 'value' } }],
     },
     {
+      code: component(`
+        protected count = 0;
+        listen(): void {
+          this.events$.subscribe(() => { this.count++; });
+        }
+      `),
+      errors: [{ messageId: 'unmarkedWrite', data: { field: 'count' } }],
+    },
+    {
       // `.set()` on a Map is not a signal write.
       code: component(`
         protected value = '';
