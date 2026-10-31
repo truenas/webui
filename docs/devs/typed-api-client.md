@@ -97,7 +97,7 @@ What to know, much of it learned moving off the hand-written directories:
   verb picks the result type, so there is nothing to narrow.
 - **Filters built before the call** are typed
   `TypedQueryFilter<WebUiQueryEntity<'user.query'>>[]`, both from the token
-  file, since the client does not export its own `QueryFilters` yet (gap 6).
+  file. `TypedQueryFilter` is the client's own `v28_0_0.QueryFilter`.
   An `OR` takes a list of filter *lists*, `['OR', [[a], [b]]]`, where
   `ParamsBuilder` writes `['OR', [a, b]]`.
 - **Events are a discriminated union** on `msg`. A removal carries an `id`
@@ -370,12 +370,18 @@ above. Each is a change for `truenas/api-client-ts`.
    `changed`, and `zfs.tier.rewrite_job_query` sends all three kinds (gap 16).
    The timer-driven sources (`reporting.realtime`, `app.stats`, `container.metrics`)
    moved once gap 17 was closed; see there.
-6. **Query, message and connection types are not exported.** `QueryFilters`
-   and `QueryProjection` are internal, so the wrapper forwards the query verbs
-   through `Parameters<>` rather than declaring them; `TrueNasMessage` and
-   `TrueNasConnection` are absent from the main entry too, so
-   `ConnectionService` names the connection as
-   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 9.0.1.
+6. **Message and connection types are not exported.** The query grammar is:
+   every version namespace re-exports `QueryFilter`, `QueryFilters`,
+   `QueryOptions` and `QueryProjection`, so `TypedQueryFilter` in the token file
+   is `v28_0_0.QueryFilter` rather than a hand-kept mirror. (This gap used to
+   say they were internal; they have been reachable that way all along.) The
+   wrapper still forwards the query verbs through `Parameters<>`, but by choice:
+   it keeps their signatures the client's own. `TrueNasMessage` and
+   `TrueNasConnection` are absent from the main entry, on purpose (the barrel
+   keeps connection internals out of the semver contract), so
+   `ConnectionService` names the connection as `WebUiApiClient['connection']`
+   (`TypedConnection`) and `limitConcurrentCalls` derives the frame type from its
+   `send`. Both work; nothing here is blocked. Still so in 9.0.1.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
    from the main entry, where 6.x had them only under `testing`.
@@ -446,6 +452,15 @@ above. Each is a change for `truenas/api-client-ts`.
     model of its version, which is what the bump procedure under "Version
     policy" relies on.
 
+    The first limit is not in the generated source, which exports the enum
+    consts as values (`export { Aclmode, … }` in each `vNN/index.ts`), nor in
+    the runtime bundle, which carries them. It is in the bundled `.d.ts`:
+    `rollup-plugin-dts`, which tsup uses, turns every member of an
+    `export * as vNN` namespace into a `type` alias and drops the `declare
+    const` beside it. Its latest release (6.5.1) does the same, so a dependency
+    bump does not fix it; the client would have to stop bundling its
+    declarations, or export the enums outside the namespaces.
+
 14. **Methods missing from the dump.** `interface.lag_supported_protocols`,
     `kerberos.keytab.kerberos_principal_choices` and `nfs.add_principal` are in no
     generated directory, most likely because middleware marks them private.
@@ -473,8 +488,10 @@ above. Each is a change for `truenas/api-client-ts`.
     readers take `event.fields.scan` and work). The client forwards the frame
     untouched, so the generated type names properties that are not there.
     `poolScanFromEvent` in `app/helpers/pool-scan-event.helper.ts` reads the
-    wire shape once for every consumer. Fix: wrap event payloads in the
-    generator, or correct the model in middleware.
+    wire shape once for every consumer. The generator emits the model exactly as
+    middleware's dump declares it (`PoolScanChangedEvent` is `{ name, scan }` in
+    every version), so the fix is the model in middleware; a generator rule
+    would have to guess which sources send `fields` and which do not.
 
     The storage tier's event sources go wrong the other way.
     `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status` declare a

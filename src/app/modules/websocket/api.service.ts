@@ -173,11 +173,11 @@ export class ApiService {
    * Use `satisfies` rather than an annotation when building options into a
    * variable, or the result widens to `Partial<E>[]`.
    *
-   * The query verbs are forwarded rather than declared because the types
-   * their signatures need (`QueryFilters`, `QueryProjection`) are not
-   * exported by the client yet. The cast restores the client's own generic
-   * signature over the forwarding arrow; the arguments and return value are
-   * exactly the client's, so nothing is widened at the call site.
+   * The query verbs are forwarded rather than declared, so their signatures
+   * stay the client's own instead of a copy of them to keep in step. The cast
+   * restores the client's generic signature over the forwarding arrow; the
+   * arguments and return value are exactly the client's, so nothing is widened
+   * at the call site.
    */
   readonly query = ((
     ...args: Parameters<ClientApi['query']>
