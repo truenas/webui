@@ -1,19 +1,26 @@
 import { createFakeClient, FakeConnection } from '@truenas/api-client/testing';
-import { config as rxjsConfig, Subject, Subscription } from 'rxjs';
+import {
+  BehaviorSubject, config as rxjsConfig, Subject, Subscription,
+} from 'rxjs';
 import { limitConcurrentCalls, maxGatedCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 
 describe('limitConcurrentCalls', () => {
   let connection: FakeConnection;
+  let authenticated$: BehaviorSubject<boolean>;
 
   const call = (id: string): Subscription => connection.send({
     jsonrpc: '2.0', id, method: 'core.ping', params: [],
+  });
+  const signIn = (id: string, mechanism: string): Subscription => connection.send({
+    jsonrpc: '2.0', id, method: 'auth.login_ex', params: [{ mechanism }],
   });
   const answer = (id: string): void => connection.receive({ jsonrpc: '2.0', id, result: 'pong' });
   const sentIds = (): string[] => connection.sent.map((frame) => String(frame.id));
 
   beforeEach(() => {
     connection = new FakeConnection({ opened: true });
-    limitConcurrentCalls(connection, 2);
+    authenticated$ = new BehaviorSubject(true);
+    limitConcurrentCalls(connection, authenticated$, 2);
   });
 
   afterEach(() => {
@@ -98,7 +105,6 @@ describe('limitConcurrentCalls', () => {
   it('starts from nothing in flight after the socket is lost', () => {
     call('a');
     call('b');
-    call('c');
 
     connection.simulateClose();
     connection.simulateOpen();
@@ -106,16 +112,76 @@ describe('limitConcurrentCalls', () => {
     call('e');
 
     expect(sentIds()).toEqual(['a', 'b', 'd', 'e']);
+  });
 
-    // `c` was waiting when the socket went and is dropped with it, not sent late.
-    answer('d');
-    expect(sentIds()).toEqual(['a', 'b', 'd', 'e']);
+  it('keeps a call that was waiting when the socket was lost, and sends it once signed in again', () => {
+    call('a');
+    call('b');
+    call('c');
+
+    connection.simulateClose();
+    authenticated$.next(false);
+    connection.simulateOpen();
+    // The frame that signs the new socket in is not held behind `c`.
+    call('login');
+    expect(sentIds()).toEqual(['a', 'b', 'login']);
+
+    authenticated$.next(true);
+    expect(sentIds()).toEqual(['a', 'b', 'login', 'c']);
+  });
+
+  it('sends a held call when the session comes back through the reconnect token', () => {
+    call('a');
+    call('b');
+    call('c');
+
+    connection.simulateClose();
+    authenticated$.next(false);
+    connection.simulateOpen();
+    signIn('login', 'TOKEN_PLAIN');
+    authenticated$.next(true);
+
+    expect(sentIds()).toEqual(['a', 'b', 'login', 'c']);
+  });
+
+  it('refuses held calls when someone signs in with a password, who may be another user', () => {
+    const answers: unknown[] = [];
+    connection.messages().subscribe((message) => answers.push(message));
+    call('a');
+    call('b');
+    call('c');
+
+    connection.simulateClose();
+    authenticated$.next(false);
+    connection.simulateOpen();
+    signIn('login', 'PASSWORD_PLAIN');
+    authenticated$.next(true);
+
+    expect(sentIds()).toEqual(['a', 'b', 'login']);
+    expect(answers).toEqual([
+      expect.objectContaining({ id: 'c', error: expect.objectContaining({ data: expect.objectContaining({ errname: 'ENOTAUTHENTICATED' }) }) }),
+    ]);
+  });
+
+  it('drops a held call whose caller gives up before the session is back', () => {
+    call('a');
+    call('b');
+    const abandoned = call('c');
+    call('d');
+
+    connection.simulateClose();
+    authenticated$.next(false);
+    connection.simulateOpen();
+    abandoned.unsubscribe();
+    authenticated$.next(true);
+
+    expect(sentIds()).toEqual(['a', 'b', 'd']);
   });
 
   it('keeps every call made before the first socket, and still holds them to the limit', () => {
     connection.close();
     connection = new FakeConnection({ opened: false });
-    limitConcurrentCalls(connection, 2);
+    limitConcurrentCalls(connection, authenticated$, 2);
     call('a');
     call('b');
     call('c');
@@ -132,7 +198,7 @@ describe('limitConcurrentCalls', () => {
     connection = new FakeConnection({ opened: false });
     const opened$ = new Subject<boolean>();
     connection.opened$ = opened$;
-    limitConcurrentCalls(connection, 2);
+    limitConcurrentCalls(connection, authenticated$, 2);
 
     // Sent as the loss is being reported, by something that heard of it first:
     // there is no socket, so the connection holds the frame for the next one.
@@ -151,7 +217,7 @@ describe('limitConcurrentCalls', () => {
     connection = new FakeConnection({ opened: false });
     const opened$ = new Subject<boolean>();
     connection.opened$ = opened$;
-    limitConcurrentCalls(connection, 2);
+    limitConcurrentCalls(connection, authenticated$, 2);
     call('a');
     call('b');
     call('c');
@@ -179,7 +245,7 @@ describe('limitConcurrentCalls', () => {
   it('leaves one of middleware\'s twenty places free unless told otherwise', () => {
     connection.close();
     connection = new FakeConnection({ opened: true });
-    limitConcurrentCalls(connection);
+    limitConcurrentCalls(connection, authenticated$);
 
     for (let index = 0; index < 25; index++) {
       call(`call-${index}`);
@@ -191,7 +257,7 @@ describe('limitConcurrentCalls', () => {
 
   it('holds back the calls the client makes through its own verbs', () => {
     const client = createFakeClient({ version: 'v28.0.0', authenticated: true, opened: true });
-    limitConcurrentCalls(client.connection, 1);
+    limitConcurrentCalls(client.connection, client.authenticator.authenticated$, 1);
     const sentBefore = client.connection.sent.length;
 
     client.api.call('core.ping').subscribe();
@@ -201,6 +267,23 @@ describe('limitConcurrentCalls', () => {
     client.connection.reply('core.ping', 'pong');
     expect(client.connection.sent.slice(sentBefore).map((frame) => frame.method)).toEqual(['core.ping', 'system.info']);
 
+    client.close();
+  });
+
+  it('fails a client call it refuses at a password sign-in, so its caller is not left waiting', () => {
+    const client = createFakeClient({ version: 'v28.0.0', authenticated: true, opened: true });
+    limitConcurrentCalls(client.connection, client.authenticator.authenticated$, 1);
+    client.api.call('core.ping').subscribe();
+    let failure: unknown;
+    client.api.call('system.info').subscribe({ error: (error: unknown) => failure = error });
+
+    client.connection.simulateClose();
+    client.connection.simulateOpen();
+    client.connection.send({
+      jsonrpc: '2.0', id: 'login', method: 'auth.login_ex', params: [{ mechanism: 'PASSWORD_PLAIN' }],
+    });
+
+    expect(failure).toMatchObject({ data: { errname: 'ENOTAUTHENTICATED' } });
     client.close();
   });
 
@@ -214,7 +297,7 @@ describe('limitConcurrentCalls', () => {
       }
       return send(message);
     };
-    limitConcurrentCalls(connection, 1);
+    limitConcurrentCalls(connection, authenticated$, 1);
     // `broken` is started by the answer to `a`, so that is where it throws: inside
     // the gate's own subscriber, which RxJS reports rather than rethrows.
     const reported = jest.fn();

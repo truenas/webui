@@ -1,7 +1,7 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { createFakeClient, FakeTrueNasClient } from '@truenas/api-client/testing';
 import { firstValueFrom, of } from 'rxjs';
-import { ConnectionService } from 'app/modules/websocket/connection.service';
+import { ConnectionService, silentSocketTimeoutMs } from 'app/modules/websocket/connection.service';
 import { TYPED_API_CLIENT, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
@@ -122,6 +122,53 @@ describe('ConnectionService', () => {
     expect(setEndpoint).toHaveBeenCalledWith({
       hostnames: ['truenas.local:444'],
       protocol: 'https:',
+    });
+  });
+
+  describe('a socket that has gone quiet', () => {
+    beforeEach(() => {
+      jest.useFakeTimers();
+      jest.spyOn(console, 'warn').mockImplementation();
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    async function openSocket(): Promise<jest.SpyInstance> {
+      client.connection.simulateOpen();
+      await jest.advanceTimersByTimeAsync(0);
+      return jest.spyOn(client.connection, 'setEnabled');
+    }
+
+    it('is replaced once nothing has arrived on it for the timeout', async () => {
+      const setEnabled = await openSocket();
+
+      await jest.advanceTimersByTimeAsync(silentSocketTimeoutMs - 1);
+      expect(setEnabled).not.toHaveBeenCalled();
+
+      await jest.advanceTimersByTimeAsync(1);
+      expect(setEnabled.mock.calls).toEqual([[false], [true]]);
+    });
+
+    it('is kept while frames keep arriving', async () => {
+      const setEnabled = await openSocket();
+
+      for (let tick = 0; tick < 5; tick++) {
+        await jest.advanceTimersByTimeAsync(silentSocketTimeoutMs / 2);
+        client.connection.receive({ jsonrpc: '2.0', id: `ping-${tick}`, result: 'pong' });
+      }
+
+      expect(setEnabled).not.toHaveBeenCalled();
+    });
+
+    it('is not watched once it has closed', async () => {
+      const setEnabled = await openSocket();
+
+      client.connection.simulateClose();
+      await jest.advanceTimersByTimeAsync(silentSocketTimeoutMs * 2);
+
+      expect(setEnabled).not.toHaveBeenCalled();
     });
   });
 });

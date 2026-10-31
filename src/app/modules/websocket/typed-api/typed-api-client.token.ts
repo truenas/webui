@@ -107,7 +107,7 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
         logger: environment.production ? noopLogger : consoleLogger,
       })).pipe(
         // Before anything else holds the client, so every call it sends is counted.
-        tap((client) => limitConcurrentCalls(client.connection)),
+        tap((client) => limitConcurrentCalls(client.connection, client.authenticator.authenticated$)),
         // After the gate, so a mocked call is answered without taking a place in it.
         tap((client) => {
           if (debugPanel) {

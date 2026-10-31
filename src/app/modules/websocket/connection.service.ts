@@ -3,12 +3,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   BehaviorSubject,
   distinctUntilChanged,
+  EMPTY,
   filter,
   map,
   Observable,
   shareReplay,
+  startWith,
   switchMap,
   take,
+  timer,
 } from 'rxjs';
 import { TYPED_API_CLIENT, WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { WebSocketStatusService } from 'app/services/websocket-status.service';
@@ -21,6 +24,14 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
  * `docs/devs/typed-api-client.md`.
  */
 export type TypedConnection = WebUiApiClient['connection'];
+
+/**
+ * How long an open socket may go without a single frame from the appliance before it is
+ * taken for dead and replaced. The client pings every 20 s and middleware answers each
+ * one, so a live socket is never quiet this long. Over a minute on purpose: a background
+ * tab has its timers, the ping's included, held to one a minute.
+ */
+export const silentSocketTimeoutMs = 90_000;
 
 /**
  * The app's view of the tab's one connection: the typed client's.
@@ -81,6 +92,7 @@ export class ConnectionService {
   constructor() {
     performance.mark('WS Init');
     this.trackConnection();
+    this.replaceSilentSockets();
   }
 
   /**
@@ -145,6 +157,32 @@ export class ConnectionService {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.isRefused$.next(true);
+    });
+  }
+
+  /**
+   * Reconnects when the open socket has gone quiet.
+   *
+   * A half-open socket, one whose far end is gone without a close reaching the browser
+   * (a dropped VPN, a suspended laptop, a NAT entry expired), still reads as open: calls
+   * are written into it and never answered, until the browser's own TCP timeout closes
+   * it, which can take many minutes. The client's keepalive pings do not help on their
+   * own, since nothing checks that they are answered; this does, by watching for any frame.
+   */
+  private replaceSilentSockets(): void {
+    this.connection$.pipe(
+      switchMap((connection) => connection.opened$.pipe(
+        switchMap((isOpen) => (isOpen
+          ? connection.messages().pipe(
+              startWith(null),
+              switchMap(() => timer(silentSocketTimeoutMs)),
+            )
+          : EMPTY)),
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      console.warn(`No frame from the appliance in ${silentSocketTimeoutMs / 1000} s; reconnecting.`);
+      this.reconnect();
     });
   }
 

@@ -23,7 +23,7 @@ of the time.
 
 | Piece | Where |
 |---|---|
-| `@truenas/api-client` as a runtime dependency (9.0.1 at the time of writing) | `package.json` |
+| `@truenas/api-client` as a runtime dependency (9.0.2 at the time of writing) | `package.json` |
 | The client instance, typed against `v28.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `ApiService`, what the app injects | `src/app/modules/websocket/api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
@@ -43,7 +43,10 @@ connection, so `limitConcurrentCalls` holds the whole tab to 19 on the
 connection's `send`, one short of the ceiling to leave room for the keepalive
 ping (see gap 20). Connection state — open, closed, refused, shutting down — is
 `ConnectionService`'s (NAS-143990). The client retries the connection on its
-own, sends `core.set_options` on open and pings every 20s.
+own, sends `core.set_options` on open and pings every 20s. Nothing checks that
+a ping is answered, so `ConnectionService` replaces an open socket that has
+delivered no frame at all for 90s (`silentSocketTimeoutMs`, NAS-144963): a
+half-open socket otherwise reads as open until the browser's TCP timeout.
 
 ### One session
 
@@ -63,6 +66,14 @@ stored token and navigates back to `redirectUrl`.
 Call sites never authenticate. Every request is held until the session is
 authenticated, so a call made before sign-in or across a reconnect waits
 instead of being refused by middleware.
+
+`auth.logout` leaves the socket open, but middleware ends every subscription
+on it: each event source gets a `notify_unsubscribed`, and the client
+completes its stream. Nothing reaches a signed-out tab, and the next login on
+the same socket does not double anything (checked on 28.0.0 for NAS-144963,
+with `reporting.realtime` and `core.get_jobs`). A completed stream stays
+completed, so something that must outlive a logout has to subscribe again
+after the next login. The store effects do, on `adminUiInitialized`.
 
 ## Calling the API
 
@@ -324,23 +335,24 @@ above. Each is a change for `truenas/api-client-ts`.
    returns, and the sign-in page spends it after a reconnect. Middleware holds
    tokens in memory for 600s and a `middlewared` restart voids them, so a
    reconnect across a restart lands back on the password prompt.
-3. **`AuthError` does not carry the response it came from.** `loginWithToken`
-   throws on every non-success, with the `response_type` interpolated into the
-   message and nowhere else. `recoverLoginFailure` therefore has to read all of
-   them back as `AUTH_ERR`, which collapses `EXPIRED`, `DENIED` and `REDIRECT`
-   into one outcome on the token path — the path every reconnect takes. Only the
-   message the sign-in page shows differs today (`LoginResult.Redirect` and
-   `Denied` reach no UI from `loginWithToken`, only from the interactive login,
-   which is unaffected because a password login throws on `AUTH_ERR` alone), so
-   this is a fidelity gap rather than a broken flow. A `response` on the error,
-   or a non-throwing variant, would close it. Still so in 9.0.1.
-4. **A password login is cached in the authenticator.** `loginWithUserPass`
-   keeps the plaintext password on the authenticator and replays it on every
-   reconnect. The UI never wanted that — it keeps a single-use token instead —
-   and there is no way to decline it. Worth closing in the library; until then
-   a password session re-logs itself in on reconnect, racing the sign-in
-   page's token login, which the authenticator's epoch guard resolves. Still so
-   in 9.0.1.
+3. ~~**`AuthError` does not carry the response it came from.**~~ Resolved on
+   9.0.2, which carries api-client-ts #72 (TNC-2643). `loginWithToken` throws on
+   every non-success, and the error now carries the refusing answer as
+   `response`. `recoverLoginFailure` (NAS-144963) reads it back, so a token
+   login keeps `EXPIRED`, `DENIED` and `REDIRECT` apart instead of collapsing
+   them into `AUTH_ERR`. Only `EXPIRED` (read as `IncorrectDetails`) shows the
+   "session expired" message after a reconnect now. A refusal without an
+   answer, which middleware never sends on these paths, is still read as
+   `AUTH_ERR`.
+4. ~~**A password login is cached in the authenticator.**~~ Resolved on 9.0.2,
+   which carries api-client-ts #72 (TNC-2643). `loginWithUserPass` keeps the
+   plaintext password and replays it on every reconnect unless the caller
+   passes `{ rememberPassword: false }`. `AuthService.login` passes it, so the
+   password leaves tab memory with the login frame and a reconnect goes
+   through the single-use token alone (NAS-144963 had cleared
+   `authenticator.credentials` by hand until then). A reconnect across a
+   `middlewared` restart or an `auth.terminate_session`, which voids the
+   token, lands on the password prompt, as it did before the migration.
 5. ~~**Parameterised subscriptions.**~~ Resolved by NAS-144006, on 9.0.1, which
    carries api-client-ts #69 (TNC-2583).
    `events()` takes an event source's arguments after its name, typed from the
@@ -528,7 +540,16 @@ above. Each is a change for `truenas/api-client-ts`.
     frames do not: `core.set_options` on open, answered before anything else is
     sent, and the 20-second `core.ping`, which is why the gate stops at 19. A
     `maxConcurrentCalls` option on the client, counting its own ping, would
-    retire the patch and the spare slot.
+    retire the patch and the spare slot. A call still waiting at the gate when
+    the socket is lost is kept, and sent once the session is authenticated
+    again (NAS-144963). It used to be dropped, which left its caller waiting
+    for good. It is not sent sooner because the new socket starts signed out,
+    and an `ENOTAUTHENTICATED` refusal ends the app's session. Only the
+    reconnect token's sign-in releases them: a password or API key sign-in
+    refuses them first, as whoever signs in may not be the user who made them.
+    Each gets an `ENOTAUTHENTICATED` error reply, given on `messages()` the way
+    the debug panel gives its mocked answers, so its caller fails rather than
+    waits.
 
 21. **Drift found moving data protection.** Handled at one site each:
     - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare
