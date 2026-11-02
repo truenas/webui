@@ -1,11 +1,12 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, OnChanges, signal,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, input, signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import { catchError, EMPTY, switchMap, tap } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 import { AppCardComponent } from 'app/pages/apps/components/available-apps/app-card/app-card.component';
@@ -24,7 +25,7 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
     TnTestIdDirective,
   ],
 })
-export class AppDetailsSimilarComponent implements OnChanges {
+export class AppDetailsSimilarComponent {
   protected router = inject(Router);
   private appService = inject(ApplicationsService);
   private destroyRef = inject(DestroyRef);
@@ -48,22 +49,32 @@ export class AppDetailsSimilarComponent implements OnChanges {
     testId: normalizeTestIdParts(['open', app.train, app.name]),
   })));
 
-  ngOnChanges(): void {
+  constructor() {
     this.loadSimilarApps();
   }
 
+  /**
+   * Reloads whenever the app changes. `switchMap` drops the previous app's request, so a slow answer
+   * for an app the user already moved away from can no longer replace the current app's list.
+   */
   private loadSimilarApps(): void {
-    this.isLoading.set(true);
-    this.appService.getSimilarApps(this.app()).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (apps) => {
-        this.isLoading.set(false);
-        this.similarApps.set(apps.slice(0, this.maxSimilarApps));
-      },
-      error: (error: unknown) => {
-        this.isLoading.set(false);
-        console.error(error);
-        this.loadingError.set(error);
-      },
+    toObservable(this.app).pipe(
+      tap(() => {
+        this.isLoading.set(true);
+        this.loadingError.set(null);
+      }),
+      switchMap((app) => this.appService.getSimilarApps(app).pipe(
+        catchError((error: unknown) => {
+          console.error(error);
+          this.loadingError.set(error);
+          this.isLoading.set(false);
+          return EMPTY;
+        }),
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((apps) => {
+      this.isLoading.set(false);
+      this.similarApps.set(apps.slice(0, this.maxSimilarApps));
     });
   }
 

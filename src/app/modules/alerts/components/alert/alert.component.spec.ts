@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnTooltipDirective } from '@truenas/ui-components';
 import { ngMocks } from 'ng-mocks';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -95,6 +95,17 @@ describe('AlertComponent', () => {
   it('shows an alert icon', () => {
     const iconName = alert.getIconName();
     expect(iconName).toBe('mdi-alert-circle');
+  });
+
+  it('drops the "Dismissed" icon tooltip once a dismissed alert is reopened', () => {
+    const iconTooltip = (): unknown => spectator.query(TnTooltipDirective, { parentSelector: '.alert-icon' })!.message();
+
+    spectator.setInput('alert', { ...dummyAlert, dismissed: true });
+    expect(iconTooltip()).toBe('Dismissed');
+
+    spectator.setInput('alert', { ...dummyAlert, dismissed: false });
+    expect(iconTooltip()).toBeFalsy();
+    expect(alert.getIconName()).toBe('mdi-alert-circle');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {

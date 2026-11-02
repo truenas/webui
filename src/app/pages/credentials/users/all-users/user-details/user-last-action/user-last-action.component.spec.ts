@@ -54,6 +54,21 @@ describe('UserLastActionComponent', () => {
     expect(spectator.query(IxDateComponent, { parentSelector: '.value' }).date).toBe(1749822469 * 1000);
   });
 
+  it('only queries the user that is left selected when switching users quickly', async () => {
+    spectator = createComponent({ props: { username: 'john' } });
+
+    await jest.advanceTimersByTimeAsync(100);
+    spectator.setInput('username', 'mary');
+    await jest.advanceTimersByTimeAsync(500);
+
+    const api = spectator.inject(ApiService);
+    expect(api.call).toHaveBeenCalledTimes(1);
+    expect(api.call).toHaveBeenCalledWith('audit.query', [{
+      'query-filters': [['username', '=', 'mary']],
+      'query-options': { limit: 1, order_by: ['-message_timestamp'] },
+    }]);
+  });
+
   it('has a Search Logs link that takes user to the audit page', async () => {
     spectator = createComponent({ props: { username: 'john' } });
 

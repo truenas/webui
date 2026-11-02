@@ -1,5 +1,7 @@
 import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject,
+} from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnIconButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { keyBy } from 'lodash-es';
@@ -41,7 +43,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
     KeyValuePipe,
   ],
 })
-export class ManualSelectionVdevComponent implements OnChanges {
+export class ManualSelectionVdevComponent {
   private cdr = inject(ChangeDetectorRef);
   protected store$ = inject(ManualDiskSelectionStore);
   private translate = inject(TranslateService);
@@ -68,26 +70,60 @@ export class ManualSelectionVdevComponent implements OnChanges {
     return keyBy(this.enclosures(), 'id') as Record<string, Enclosure>;
   });
 
-  protected sizeEstimation = 0;
-
-  protected vdevErrorMessage = '';
-  protected mixesDisksOfDifferentSizes = false;
-
-  protected enclosuresDisks = new Map<string, ManualSelectionDisk[]>();
-  protected nonEnclosureDisks: ManualSelectionDisk[] = [];
   protected minDisks = minDisksPerLayout;
 
-  get spansEnclosures(): boolean {
-    return !!this.enclosuresDisks.size
-      && (this.enclosuresDisks.size > 1
-        || !!this.nonEnclosureDisks.length);
-  }
+  protected readonly sizeEstimation = computed(() => {
+    return vdevCapacity({
+      vdev: this.vdev().disks,
+      layout: this.layout(),
+    });
+  });
 
-  ngOnChanges(): void {
-    this.validateVdev();
-    this.groupDisksByEnclosure();
-    this.estimateSize(this.vdev());
-  }
+  protected readonly vdevErrorMessage = computed(() => {
+    const layout = this.layout();
+    if (this.vdev().disks?.length < this.minDisks[layout]) {
+      const typeKey = Object.entries(CreateVdevLayout).filter(
+        ([, value]) => value === layout,
+      ).map(([key]) => key)[0];
+      return this.translate.instant(
+        'At least {min} disk(s) are required for {vdevType} vdevs',
+        { min: this.minDisks[layout], vdevType: typeKey },
+      );
+    }
+    return '';
+  });
+
+  protected readonly mixesDisksOfDifferentSizes = computed(() => {
+    const disks = this.vdev().disks;
+    const firstDisk = disks[0];
+    const threshold = 10 * MiB;
+    return disks.some((disk) => {
+      return disk.size >= firstDisk.size + threshold || disk.size <= firstDisk.size - threshold;
+    });
+  });
+
+  private readonly disksByEnclosure = computed(() => {
+    const enclosuresDisks = new Map<string, ManualSelectionDisk[]>();
+    const nonEnclosureDisks: ManualSelectionDisk[] = [];
+
+    for (const disk of this.vdev()?.disks || []) {
+      if (disk.enclosure?.id) {
+        enclosuresDisks.set(disk.enclosure.id, [...(enclosuresDisks.get(disk.enclosure.id) || []), disk]);
+      } else {
+        nonEnclosureDisks.push(disk);
+      }
+    }
+
+    return { enclosuresDisks, nonEnclosureDisks };
+  });
+
+  protected readonly enclosuresDisks = computed(() => this.disksByEnclosure().enclosuresDisks);
+  protected readonly nonEnclosureDisks = computed(() => this.disksByEnclosure().nonEnclosureDisks);
+
+  protected readonly spansEnclosures = computed(() => {
+    return !!this.enclosuresDisks().size
+      && (this.enclosuresDisks().size > 1 || !!this.nonEnclosureDisks().length);
+  });
 
   getMovableDisk(disk: ManualSelectionDisk): ManualSelectionDisk {
     return {
@@ -123,58 +159,5 @@ export class ManualSelectionVdevComponent implements OnChanges {
     this.store$.addDiskToVdev({ disk, vdev: this.vdev() });
     this.dragToggleStore$.toggleActivateDrag(false);
     this.cdr.markForCheck();
-  }
-
-  private estimateSize(vdev: ManualSelectionVdev): void {
-    this.sizeEstimation = vdevCapacity({
-      vdev: vdev.disks,
-      layout: this.layout(),
-    });
-  }
-
-  private groupDisksByEnclosure(): void {
-    this.enclosuresDisks = new Map();
-    this.nonEnclosureDisks = [];
-    const disks = this.vdev()?.disks;
-    if (!disks) {
-      return;
-    }
-
-    for (const disk of disks) {
-      if (disk.enclosure?.id) {
-        let enclosureDisks = this.enclosuresDisks.get(disk.enclosure.id);
-        if (!enclosureDisks) {
-          enclosureDisks = [];
-        }
-        this.enclosuresDisks.set(disk.enclosure.id, [...enclosureDisks, disk]);
-      } else {
-        this.nonEnclosureDisks.push(disk);
-      }
-    }
-  }
-
-  private validateVdev(): void {
-    let vdevErrorMsg = '';
-    if (this.vdev().disks?.length < this.minDisks[this.layout()]) {
-      const typeKey = Object.entries(CreateVdevLayout).filter(
-        ([, value]) => value === this.layout(),
-      ).map(([key]) => key)[0];
-      vdevErrorMsg = this.translate.instant(
-        'At least {min} disk(s) are required for {vdevType} vdevs',
-        { min: this.minDisks[this.layout()], vdevType: typeKey },
-      );
-    }
-    this.vdevErrorMessage = vdevErrorMsg;
-
-    this.mixesDisksOfDifferentSizes = false;
-    const firstDisk = this.vdev().disks[0];
-    for (const disk of this.vdev().disks) {
-      const threshold = 10 * MiB;
-      if (disk.size < firstDisk.size + threshold && disk.size > firstDisk.size - threshold) {
-        continue;
-      }
-
-      this.mixesDisksOfDifferentSizes = true;
-    }
   }
 }

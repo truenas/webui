@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, HostBinding, input, OnChanges, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -52,8 +52,11 @@ enum AlertLevelColor {
     AsyncPipe,
     RequiresRolesDirective,
   ],
+  host: {
+    '[class.dismissed]': 'alert().dismissed',
+  },
 })
-export class AlertComponent implements OnChanges {
+export class AlertComponent {
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private smartAlertService = inject(SmartAlertService);
@@ -115,22 +118,41 @@ export class AlertComponent implements OnChanges {
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly closeIcon = alertIcons.close;
 
-  alertLevelColor: AlertLevelColor | undefined;
-  icon: string;
-  iconTooltip: string;
-
   timezone$ = this.store$.select(selectTimezone);
-
-  @HostBinding('class.dismissed')
-  get isDismissed(): boolean {
-    return this.alert().dismissed;
-  }
 
   readonly levelLabel = computed(() => {
     this.langChange();
     const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;
     return this.translate.instant(levelLabel);
   });
+
+  private readonly styles = computed<{ color?: AlertLevelColor; icon: string; tooltip?: string }>(() => {
+    this.langChange();
+    const alert = this.alert();
+    switch (true) {
+      case alert.dismissed:
+        return { icon: alertIcons.checkCircle, tooltip: this.translate.instant('Dismissed') };
+      case [AlertLevel.Error, AlertLevel.Critical].includes(alert.level):
+        return { color: AlertLevelColor.Error, icon: alertIcons.error };
+      case alert.level === AlertLevel.Warning:
+        return { color: AlertLevelColor.Warn, icon: alertIcons.warning };
+      case alert.one_shot:
+        return {
+          color: AlertLevelColor.Primary,
+          icon: alertIcons.notificationsActive,
+          tooltip: this.translate.instant(
+            "This is a ONE-SHOT {alertLevel} alert; it won't be dismissed automatically",
+            { alertLevel: this.levelLabel() },
+          ),
+        };
+      default:
+        return { color: AlertLevelColor.Primary, icon: alertIcons.info };
+    }
+  });
+
+  protected readonly alertLevelColor = computed(() => this.styles().color);
+  protected readonly icon = computed(() => this.styles().icon);
+  protected readonly iconTooltip = computed(() => this.styles().tooltip);
 
   readonly enhancedAlert = computed<Alert & EnhancedAlert>(() => {
     return this.smartAlertService.enhanceAlert(this.alert(), { isConsolidated: this.hasMultipleObjects() });
@@ -157,10 +179,6 @@ export class AlertComponent implements OnChanges {
     return this.translate.instant('{count} instances of this alert', { count: this.duplicateCount() });
   });
 
-  ngOnChanges(): void {
-    this.setStyles();
-  }
-
   toggleCollapse(): void {
     this.isCollapsed.set(!this.isCollapsed());
   }
@@ -181,35 +199,6 @@ export class AlertComponent implements OnChanges {
     if (handler) {
       handler();
       this.store$.dispatch(alertPanelClosed());
-    }
-  }
-
-  private setStyles(): void {
-    switch (true) {
-      case this.alert().dismissed:
-        this.alertLevelColor = undefined;
-        this.icon = alertIcons.checkCircle;
-        this.iconTooltip = this.translate.instant('Dismissed');
-        break;
-      case [AlertLevel.Error, AlertLevel.Critical].includes(this.alert().level):
-        this.alertLevelColor = AlertLevelColor.Error;
-        this.icon = alertIcons.error;
-        break;
-      case this.alert().level === AlertLevel.Warning:
-        this.alertLevelColor = AlertLevelColor.Warn;
-        this.icon = alertIcons.warning;
-        break;
-      case this.alert().one_shot:
-        this.icon = alertIcons.notificationsActive;
-        this.iconTooltip = this.translate.instant(
-          "This is a ONE-SHOT {alertLevel} alert; it won't be dismissed automatically",
-          { alertLevel: this.levelLabel() },
-        );
-        this.alertLevelColor = AlertLevelColor.Primary;
-        break;
-      default:
-        this.alertLevelColor = AlertLevelColor.Primary;
-        this.icon = alertIcons.info;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { CdkAccordion, CdkAccordionItem } from '@angular/cdk/accordion';
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import {
@@ -37,27 +37,18 @@ interface PermissionDetails {
     TranslateModule,
   ],
 })
-export class ViewNfsPermissionsComponent implements OnChanges {
+export class ViewNfsPermissionsComponent {
   private translate = inject(TranslateService);
 
   readonly acl = input.required<NfsAcl>();
 
-  permissionItems: PermissionItem[] = [];
-  permissionDetails: PermissionDetails[] = [];
+  protected readonly permissionItems = computed<PermissionItem[]>(() => {
+    return this.acl().acl.map((ace) => nfsAceToPermissionItem(this.translate, ace));
+  });
 
-  ngOnChanges(): void {
-    this.transformAcl();
-  }
-
-  private transformAcl(): void {
-    this.permissionItems = [];
-    this.permissionDetails = [];
-
-    this.acl().acl.forEach((ace) => {
-      this.permissionItems.push(nfsAceToPermissionItem(this.translate, ace));
-      this.permissionDetails.push(this.aceToPermissionDetails(ace));
-    });
-  }
+  protected readonly permissionDetails = computed<PermissionDetails[]>(() => {
+    return this.acl().acl.map((ace) => this.aceToPermissionDetails(ace));
+  });
 
   private aceToPermissionDetails(ace: NfsAclItem): PermissionDetails {
     // Permissions

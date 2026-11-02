@@ -25,7 +25,7 @@
 
   <div class="card-content">
     <div class="content-container">
-      @if (topologyState.data.assigned) {
+      @if (topologyState().data.assigned) {
         <div class="vdev-line">
           <b>
             {{ 'Data VDEVs' | translate }}
@@ -34,10 +34,10 @@
             }
           </b>
           <div class="vdev-stats">
-            @if (!!topologyWarningsState.data && !isPoolOffline()) {
+            @if (!!topologyWarningsState().data && !isPoolOffline()) {
               <span
                 class="warning"
-                [tnTooltip]="topologyWarningsState.data"
+                [tnTooltip]="topologyWarningsState().data"
               >
                 <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
               </span>
@@ -48,14 +48,14 @@
               </span>
               <span class="offline-data-vdevs">{{ 'Offline VDEVs' | translate }}</span>
             } @else {
-              <span class="vdev-value" tnTestIdType="text" [tnTestId]="[poolState().name, 'data-vdevs']">{{ topologyState.data.text }}</span>
+              <span class="vdev-value" tnTestIdType="text" [tnTestId]="[poolState().name, 'data-vdevs']">{{ topologyState().data.text }}</span>
             }
           </div>
         </div>
       }
 
       @for (row of otherVdevRows; track row.key) {
-        @if (topologyState[row.key].assigned && !isPoolOffline() && !(row.hidden && row.hidden())) {
+        @if (topologyState()[row.key].assigned && !isPoolOffline() && !(row.hidden && row.hidden())) {
           <div class="vdev-line">
             <b>
               {{ row.titleKey | translate }}
@@ -64,12 +64,12 @@
               }
             </b>
             <div class="vdev-stats">
-              @if (!!topologyWarningsState[row.key]) {
-                <span class="warning" [tnTooltip]="topologyWarningsState[row.key]">
+              @if (!!topologyWarningsState()[row.key]) {
+                <span class="warning" [tnTooltip]="topologyWarningsState()[row.key]">
                   <tn-icon name="alert-circle" library="mdi" class="pool-icon icon-warning"></tn-icon>
                 </span>
               }
-              <span class="vdev-value" tnTestIdType="text" [tnTestId]="[poolState().name, row.key, 'vdevs']">{{ topologyState[row.key].text }}</span>
+              <span class="vdev-value" tnTestIdType="text" [tnTestId]="[poolState().name, row.key, 'vdevs']">{{ topologyState()[row.key].text }}</span>
             </div>
           </div>
         }

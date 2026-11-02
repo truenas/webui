@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, output, TrackByFunction, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, input, linkedSignal, output, TrackByFunction, inject,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
@@ -6,7 +8,6 @@ import { findIndex, isEqual } from 'lodash-es';
 import { stripQueryAndFragment } from 'app/helpers/url.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { Option } from 'app/interfaces/option.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { GlobalSearchSection } from 'app/modules/global-search/enums/global-search-section.enum';
 import { processHierarchy } from 'app/modules/global-search/helpers/process-hierarchy';
@@ -25,7 +26,7 @@ import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.s
     TranslateModule,
   ],
 })
-export class GlobalSearchResultsComponent implements OnChanges {
+export class GlobalSearchResultsComponent {
   protected authService = inject(AuthService);
   private searchProvider = inject(UiSearchProvider);
   private globalSearchSectionsProvider = inject(GlobalSearchSectionsProvider);
@@ -49,7 +50,11 @@ export class GlobalSearchResultsComponent implements OnChanges {
     Object.values(GlobalSearchSection).map((section) => [section, false]),
   ) as Record<GlobalSearchSection, boolean>;
 
-  showAll = { ...this.initialShowAll };
+  /** Which sections show every result instead of the first few. Collapses again on each new search term. */
+  protected readonly showAll = linkedSignal<string, Record<GlobalSearchSection, boolean>>({
+    source: this.searchTerm,
+    computation: () => ({ ...this.initialShowAll }),
+  });
 
   get availableSections(): Option<GlobalSearchSection>[] {
     const uniqueSectionValues = new Set(this.results().map((result) => result.section));
@@ -69,12 +74,6 @@ export class GlobalSearchResultsComponent implements OnChanges {
 
   get firstAvailableSearchResult(): UiSearchableElement | null {
     return this.availableSections.flatMap((section) => this.getLimitedSectionResults(section.value))[0];
-  }
-
-  ngOnChanges(changes: IxSimpleChanges<this>): void {
-    if (changes.searchTerm) {
-      this.showAll = { ...this.initialShowAll };
-    }
   }
 
   selectElement(element: UiSearchableElement): void {
@@ -119,13 +118,13 @@ export class GlobalSearchResultsComponent implements OnChanges {
   }
 
   toggleShowAll(section: GlobalSearchSection): void {
-    this.showAll[section] = !this.showAll[section];
+    this.showAll.update((showAll) => ({ ...showAll, [section]: !showAll[section] }));
   }
 
   getLimitedSectionResults(section: GlobalSearchSection): UiSearchableElement[] {
     const sectionResults = this.results().filter((element) => element.section === section);
 
-    if (this.showAll[section] || sectionResults.length <= this.initialResultsLimit) {
+    if (this.showAll()[section] || sectionResults.length <= this.initialResultsLimit) {
       return sectionResults;
     }
 

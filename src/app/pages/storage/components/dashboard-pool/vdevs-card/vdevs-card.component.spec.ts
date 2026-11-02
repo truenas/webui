@@ -2428,6 +2428,21 @@ describe('VDevsCardComponent', () => {
 
       expect(spectator.query('.empty-vdev-state')).not.toExist();
     });
+
+    it('hides the "Pool configuration complete" message once the pool gains an optional VDEV', () => {
+      spectator = createComponent({
+        props: {
+          poolState: buildPool({}),
+          disks: [],
+        },
+      });
+      expect(spectator.query('.empty-vdev-state')).toExist();
+
+      spectator.setInput('poolState', buildPool({ log: [disk('sdb')] }));
+
+      expect(spectator.query('.empty-vdev-state')).not.toExist();
+      expect(spectator.queryAll('.vdev-line b').map((caption) => caption.textContent!.trim())).toContain('Log VDEVs');
+    });
   });
 
   describe('tier labels', () => {

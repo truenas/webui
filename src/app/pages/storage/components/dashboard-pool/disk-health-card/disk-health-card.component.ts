@@ -1,5 +1,5 @@
 import { DecimalPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, OnChanges, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -41,7 +41,7 @@ interface DiskState {
     DecimalPipe,
   ],
 })
-export class DiskHealthCardComponent implements OnInit, OnChanges {
+export class DiskHealthCardComponent {
   private translate = inject(TranslateService);
 
   readonly poolState = input.required<Pool>();
@@ -57,83 +57,68 @@ export class DiskHealthCardComponent implements OnInit, OnChanges {
     return this.isHighestTempReady || this.isLowestTempReady || this.isAverageTempReady;
   }
 
-  diskState: DiskState = {
-    highestTemperature: null,
-    lowestTemperature: null,
-    averageTemperature: null,
-    alerts: 0,
-    unit: TemperatureUnit.Celsius,
-  };
-
-  ngOnChanges(): void {
-    this.ngOnInit();
-  }
-
-  ngOnInit(): void {
-    if (this.disks()) {
-      this.diskState.alerts = this.disks().reduce((total, current) => total + current.alerts.length, 0);
-      this.loadTemperatures();
-    }
-  }
-
-  get isAverageTempReady(): boolean {
-    return this.diskState.averageTemperature !== null && !Number.isNaN(this.diskState.averageTemperature);
-  }
-
-  get isHighestTempReady(): boolean {
-    return this.diskState.highestTemperature !== null && !Number.isNaN(this.diskState.highestTemperature);
-  }
-
-  get isLowestTempReady(): boolean {
-    return this.diskState.lowestTemperature !== null && !Number.isNaN(this.diskState.lowestTemperature);
-  }
-
-  get iconType(): PoolCardIconType {
-    if (this.diskState.alerts) {
-      return PoolCardIconType.Warn;
-    }
-    return PoolCardIconType.Safe;
-  }
-
-  get iconTooltip(): string {
-    if (this.diskState.alerts) {
-      return this.translate.instant('Pool Disks have {alerts} alerts.', {
-        alerts: this.diskState.alerts,
-      });
-    }
-    return this.translate.instant('Everything is fine');
-  }
-
-  private loadTemperatures(): void {
-    this.diskState.highestTemperature = null;
-    this.diskState.lowestTemperature = null;
+  protected readonly diskState = computed<DiskState>(() => {
+    const disks = this.disks() || [];
+    let highestTemperature: number | null = null;
+    let lowestTemperature: number | null = null;
     let avgSum = 0;
     let avgCounter = 0;
-    this.disks().forEach((disk) => {
+
+    for (const disk of disks) {
       if (!disk.tempAggregates) {
-        return;
+        continue;
       }
 
       const { min, max, avg } = disk.tempAggregates;
 
       if (max != null) {
-        this.diskState.highestTemperature = this.diskState.highestTemperature === null
-          ? max
-          : Math.max(this.diskState.highestTemperature, max);
+        highestTemperature = highestTemperature === null ? max : Math.max(highestTemperature, max);
       }
 
       if (min != null) {
-        this.diskState.lowestTemperature = this.diskState.lowestTemperature === null
-          ? min
-          : Math.min(this.diskState.lowestTemperature, min);
+        lowestTemperature = lowestTemperature === null ? min : Math.min(lowestTemperature, min);
       }
 
       if (avg != null) {
         avgSum += avg;
         avgCounter++;
       }
-    });
+    }
 
-    this.diskState.averageTemperature = avgCounter ? avgSum / avgCounter : null;
+    return {
+      highestTemperature,
+      lowestTemperature,
+      averageTemperature: avgCounter ? avgSum / avgCounter : null,
+      alerts: disks.reduce((total, current) => total + current.alerts.length, 0),
+      unit: TemperatureUnit.Celsius,
+    };
+  });
+
+  get isAverageTempReady(): boolean {
+    return this.diskState().averageTemperature !== null && !Number.isNaN(this.diskState().averageTemperature);
+  }
+
+  get isHighestTempReady(): boolean {
+    return this.diskState().highestTemperature !== null && !Number.isNaN(this.diskState().highestTemperature);
+  }
+
+  get isLowestTempReady(): boolean {
+    return this.diskState().lowestTemperature !== null && !Number.isNaN(this.diskState().lowestTemperature);
+  }
+
+  get iconType(): PoolCardIconType {
+    if (this.diskState().alerts) {
+      return PoolCardIconType.Warn;
+    }
+    return PoolCardIconType.Safe;
+  }
+
+  get iconTooltip(): string {
+    if (this.diskState().alerts) {
+      return this.translate.instant('Pool Disks have {alerts} alerts.', {
+        alerts: this.diskState().alerts,
+      });
+    }
+    return this.translate.instant('Everything is fine');
   }
 }
