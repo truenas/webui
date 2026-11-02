@@ -100,6 +100,9 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
         hostnames: [environment.remote],
         enabled: true,
         version: 'v28.0.0',
+        // The version types the client; the socket still follows the appliance's newest
+        // version, as the UI always has. See "Version policy" in docs/devs/typed-api-client.md.
+        websocketPath: '/api/current',
         protocol,
         logger: environment.production ? noopLogger : consoleLogger,
       })).pipe(
