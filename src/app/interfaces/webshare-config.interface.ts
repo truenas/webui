@@ -4,6 +4,10 @@ export interface WebShareConfig {
   id: number;
   search: boolean;
   passkey: WebSharePasskey;
+  groups: string[];
+  mcp_enabled: boolean;
+  mcp_allowed_groups: string[];
+  mcp_allow_write: boolean;
 }
 
 export interface WebShareConfigUpdate {
@@ -11,6 +15,9 @@ export interface WebShareConfigUpdate {
   passkey?: WebSharePasskey;
   bindip?: string[];
   groups?: number[];
+  mcp_enabled?: boolean;
+  mcp_allowed_groups?: string[];
+  mcp_allow_write?: boolean;
 }
 
 export interface WebShare {
