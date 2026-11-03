@@ -22,5 +22,4 @@ import { DisableFocusableElementsDirective } from 'app/directives/disable-focusa
 })
 export class MissingAccessWrapperComponent {
   readonly template = input.required<TemplateRef<HTMLElement>>();
-  readonly class = input<string>();
 }

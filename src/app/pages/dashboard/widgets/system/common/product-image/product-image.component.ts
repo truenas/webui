@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, computed, HostBinding, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective, TnTestIdDirective } from '@truenas/ui-components';
@@ -23,7 +23,6 @@ import { getProductEnclosure, getProductImageSrc, getServerProduct } from 'app/p
 export class ProductImageComponent {
   private router = inject(Router);
 
-  @HostBinding('class.truenas')
   isEnterprise = input.required<boolean>();
 
   systemProduct = input.required<string>();

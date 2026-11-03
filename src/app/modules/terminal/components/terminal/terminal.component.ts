@@ -1,6 +1,6 @@
 import { NgStyle, NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, ElementRef, HostListener,
+  ChangeDetectionStrategy, Component, DestroyRef, ElementRef,
   inject, input, OnDestroy, OnInit, Signal, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -40,6 +40,9 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     TerminalFontSizeComponent,
     TnIconComponent,
   ],
+  host: {
+    '(window:resize)': 'onWindowResized()',
+  },
 })
 export class TerminalComponent implements OnInit, OnDestroy {
   private api = inject(ApiService);
@@ -122,7 +125,6 @@ export class TerminalComponent implements OnInit, OnDestroy {
     });
   }
 
-  @HostListener('window:resize')
   onWindowResized(): void {
     if (this.shellConnected()) {
       this.scheduleResize();

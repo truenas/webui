@@ -1,5 +1,5 @@
 import {
-  ComponentRef, Directive, Input, TemplateRef, ViewContainerRef, inject, inputBinding,
+  Directive, effect, input, TemplateRef, untracked, ViewContainerRef, inject, inputBinding,
 } from '@angular/core';
 import { type TnTestIdValue } from '@truenas/ui-components';
 import {
@@ -32,44 +32,42 @@ export class PremiumFeatureDirective {
   private templateRef = inject<TemplateRef<HTMLElement>>(TemplateRef);
   private viewContainerRef = inject(ViewContainerRef);
 
-  private wrapper: ComponentRef<PremiumFeatureWrapperComponent> | undefined;
   private rendered: boolean | null = null;
-
-  private testId: TnTestIdValue;
 
   /**
    * Whether the appliance is entitled to what this wraps. `undefined` while
    * the entitlement map loads, and treated as entitled — see the class note.
    */
-  // eslint-disable-next-line @angular-eslint/prefer-signals
-  @Input()
-  set ixPremiumFeature(entitled: boolean | undefined) {
-    const locked = entitled === false;
+  readonly ixPremiumFeature = input<boolean | undefined>();
+
+  /** Distinguishes this badge from the others on the same screen. */
+  readonly ixPremiumFeatureTestId = input<TnTestIdValue>();
+
+  constructor() {
+    effect(() => {
+      const locked = this.ixPremiumFeature() === false;
+      untracked(() => this.render(locked));
+    });
+  }
+
+  private render(locked: boolean): void {
     if (this.rendered === locked) {
       return;
     }
     this.rendered = locked;
 
     this.viewContainerRef.clear();
-    this.wrapper = undefined;
 
     if (!locked) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
       return;
     }
 
-    this.wrapper = this.viewContainerRef.createComponent(PremiumFeatureWrapperComponent, {
+    this.viewContainerRef.createComponent(PremiumFeatureWrapperComponent, {
       bindings: [
         inputBinding('template', () => this.templateRef),
-        inputBinding('testId', () => this.testId),
+        inputBinding('testId', () => this.ixPremiumFeatureTestId()),
       ],
     });
-  }
-
-  /** Distinguishes this badge from the others on the same screen. */
-  // eslint-disable-next-line @angular-eslint/prefer-signals
-  @Input()
-  set ixPremiumFeatureTestId(testId: TnTestIdValue) {
-    this.testId = testId;
   }
 }
