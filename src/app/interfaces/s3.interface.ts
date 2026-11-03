@@ -3,6 +3,7 @@ import {
   S3Access,
   S3AccessKeyStatus,
   S3AuditOverflow,
+  S3BucketLayout,
   S3MultipartEtag,
   S3ObjectLockMode,
   S3ObjectOwnership,
@@ -49,6 +50,10 @@ export interface S3Bucket {
    * ZFS dataset name, e.g. `tank/buckets/photos`.
    */
   dataset: string;
+  /**
+   * Set at creation and fixed after. Not in `@truenas/api-client` 9.0.3's generated types yet (NAS-144823).
+   */
+  layout: S3BucketLayout;
   enabled: boolean;
   owner: string;
   owner_uid: number;
@@ -74,14 +79,15 @@ export interface S3Bucket {
 export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid' | 'grants' | 'locked' | 'tier'>> {
   name: string;
   /**
-   * Omitted, the dataset is created under the service's `managed_root_dataset` and named after the bucket.
+   * With the `BUCKET` layout, a dataset that must not exist yet; omitted, it is created under the service's
+   * `managed_root_dataset` and named after the bucket. With the `DATASET` layout, a required existing dataset.
    */
   dataset?: string;
   owner: string;
   grants?: S3Grant[];
 }
 
-export type S3BucketUpdate = Partial<Omit<S3BucketCreate, 'dataset'>>;
+export type S3BucketUpdate = Partial<Omit<S3BucketCreate, 'dataset' | 'layout'>>;
 
 /**
  * Reads a `sharing.s3.query` row, or the bucket `sharing.s3.create` / `update` return, into the UI's `S3Bucket`.

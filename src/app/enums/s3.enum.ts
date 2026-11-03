@@ -41,6 +41,22 @@ export const s3PermissionsModelLabels = new Map<S3PermissionsModel, string>([
 ]);
 
 /**
+ * Where a bucket's objects live, chosen when it is created and fixed after.
+ * `Bucket`: the bucket gets a new dataset and keeps its objects in its `s3data` directory.
+ * `Dataset`: an existing dataset is served as it is, read-only over S3. Typically one that SMB or NFS
+ * shares read-write.
+ */
+export enum S3BucketLayout {
+  Bucket = 'BUCKET',
+  Dataset = 'DATASET',
+}
+
+export const s3BucketLayoutLabels = new Map<S3BucketLayout, string>([
+  [S3BucketLayout.Bucket, T('New Dataset')],
+  [S3BucketLayout.Dataset, T('Existing Dataset (Read-only)')],
+]);
+
+/**
  * S3 Object Ownership: who owns an uploaded object and whether the bucket supports S3 ACLs.
  * A Multiprotocol bucket is always `ObjectWriter`; middleware folds it so.
  */
