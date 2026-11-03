@@ -95,9 +95,25 @@ export const s3BucketLocators = {
   },
 
   form: {
+    /**
+     * The Storage radios at the top of a new bucket's form, "New Dataset" or "Existing Dataset (Read-only)"
+     * (`s3BucketLayoutLabels`). `<tn-radio-group testId="layout">` scopes each option's id by its label, and
+     * the id lands on the option's `<label>`, so clicking it picks the option.
+     */
+    layoutOption: (label: string) => `[data-test="radio-button-layout-${kebabTestSegment(label)}"]`,
     name: '[data-test="input-name"]',
     /** Typable; a dataset name such as `tank/parent`, not a `/mnt` path. */
     parentDataset: '[data-test="input-parent-dataset"]',
+    /**
+     * The dataset an "Existing Dataset (Read-only)" bucket serves — a `tn-file-picker` bound to `dataset`,
+     * typable like {@link parentDataset}, and rendered in its place.
+     */
+    existingDataset: '[data-test="input-dataset"]',
+    /**
+     * `<tn-form-field testId="dataset">` around an existing bucket's read-only Dataset, which holds the
+     * "Served read-only over S3." hint on a bucket serving an existing dataset.
+     */
+    datasetField: '[data-test="form-field-dataset"]',
     owner: '[data-test="autocomplete-owner"]',
     /** A row of the owner autocomplete, keyed by the username it shows. */
     ownerOption: (username: string) => `[data-test="option-owner-${kebabTestSegment(username)}"]`,
@@ -122,6 +138,8 @@ export const s3BucketLocators = {
     defaultRetentionDays: '[data-test="input-object-lock-default-days"]',
     /** The side panel's Save, `[testId]="'save'"` in form-side-panel-container. */
     save: '[data-test="button-save"]',
+    /** The side panel's close button, for leaving the editor without saving. */
+    closePanel: '[data-test="button-close-side-panel"]',
     /** The Advanced/Basic toggle the side panel renders from the form's `footerActions`. */
     advancedOptions: '[data-test="button-toggle-advanced-options"]',
 
@@ -197,6 +215,10 @@ export const s3BucketLocators = {
     menu: (bucket: string) => `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action"]`,
     edit: (bucket: string) => (
       `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action-mdi-pencil-row-action"]`
+    ),
+    /** Edit Filesystem ACL. Its icon is `security`. Opens the dataset ACL editor on the bucket's objects. */
+    filesystemAcl: (bucket: string) => (
+      `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action-mdi-security-row-action"]`
     ),
     delete: (bucket: string) => (
       `[data-test="button-card-s3-bucket-${kebabTestSegment(bucket)}-more-action-mdi-delete-row-action"]`

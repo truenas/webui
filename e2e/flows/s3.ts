@@ -5,6 +5,7 @@ import { expect, type Page } from '@playwright/test';
 import { goToS3AccessKeys, goToShares } from './navigation';
 import { confirmDestructiveAction, selectOption } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
+import { permissionsLocators } from '../locators/permissions';
 import { s3AccessKeyLocators, s3BucketLocators, s3ServiceLocators } from '../locators/s3';
 
 /** Saving a bucket creates its dataset and reconfigures the service; not instant. */
@@ -122,6 +123,74 @@ async function openBucketCreator(page: Page): Promise<void> {
   await goToShares(page);
   await page.locator(s3BucketLocators.addFromDashboard).click();
   await expect(page.locator(s3BucketLocators.form.name)).toBeVisible();
+}
+
+/** The Type radios' labels, as `s3BucketLayoutLabels` in `app/enums/s3.enum.ts` shows them. */
+const bucketLayoutLabels = { BUCKET: 'New Dataset', DATASET: 'Existing Dataset (Read-only)' } as const;
+
+export interface NewExistingDatasetBucket {
+  name: string;
+  /** An existing dataset, `pool/name`, served as it is. */
+  dataset: string;
+  owner: string;
+}
+
+/**
+ * Opens the bucket creator from the Shares dashboard and picks "Existing Dataset (Read-only)".
+ *
+ * The Parent Dataset picker giving way to a Dataset picker is the readback that the choice took, rather than
+ * clicking blind. Left open for the test to look at the form before {@link saveExistingDatasetBucket}.
+ */
+export async function openExistingDatasetBucketCreator(page: Page): Promise<void> {
+  const { form } = s3BucketLocators;
+  await openBucketCreator(page);
+  await page.locator(form.layoutOption(bucketLayoutLabels.DATASET)).click();
+  await expect(page.locator(form.existingDataset)).toBeVisible();
+  await expect(page.locator(form.parentDataset)).toBeHidden();
+}
+
+/**
+ * Fills and saves the creator {@link openExistingDatasetBucketCreator} left open.
+ *
+ * Declines the "Start S3 Service" prompt the save raises on a stopped service: what the bucket was saved as is
+ * the journey, and serving it is middleware's. The "No" is asserted, as in {@link saveBucketEditor}, so a flow
+ * change fails here rather than leaving a dialog over the next step.
+ */
+export async function saveExistingDatasetBucket(page: Page, bucket: NewExistingDatasetBucket): Promise<void> {
+  const { form } = s3BucketLocators;
+  await page.locator(form.name).fill(bucket.name);
+  // Committed on `change`, which fires on blur, as for the parent dataset in `createS3Bucket`.
+  await page.locator(form.existingDataset).fill(bucket.dataset);
+  await page.locator(form.existingDataset).blur();
+  await pickUser(page, form.owner, form.ownerOption(bucket.owner), bucket.owner);
+
+  await page.locator(form.save).click();
+  const doNotStart = page.locator(s3BucketLocators.doNotStartService);
+  await expect(doNotStart).toBeVisible({ timeout: saveTimeoutMs });
+  await doNotStart.click();
+  await expect(page.locator(form.save)).toBeHidden({ timeout: saveTimeoutMs });
+
+  await expect(page.locator(s3BucketLocators.dashboardRowName(bucket.name))).toBeVisible({
+    timeout: saveTimeoutMs,
+  });
+}
+
+/** Closes the open bucket editor without saving. Nothing was changed, so no unsaved-changes prompt is expected. */
+export async function closeBucketEditor(page: Page): Promise<void> {
+  await page.locator(s3BucketLocators.form.closePanel).click();
+  await expect(page.locator(s3BucketLocators.form.name)).toBeHidden();
+}
+
+/**
+ * Opens the ACL editor from Edit Filesystem ACL in a bucket's row menu on the dashboard card.
+ *
+ * Waits for the editor to show a path, without checking which one. The test checks that.
+ */
+export async function openBucketFilesystemAcl(page: Page, bucket: string): Promise<void> {
+  await goToShares(page);
+  await page.locator(s3BucketLocators.dashboardRow.menu(bucket)).click();
+  await page.locator(s3BucketLocators.dashboardRow.filesystemAcl(bucket)).click();
+  await expect(page.locator(permissionsLocators.aclEditor.path)).toBeVisible({ timeout: saveTimeoutMs });
 }
 
 

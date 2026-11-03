@@ -14,8 +14,10 @@ import {
   TnFormFieldHarness,
   TnFormListHarness,
   TnInputHarness,
+  TnRadioGroupHarness,
   TnSelectHarness,
   TnTooltipDirective,
+  TnFilePickerComponent,
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -24,7 +26,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
-  S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3BucketLayout, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType,
+  S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { S3Bucket, S3RecoverableBucket } from 'app/interfaces/s3.interface';
@@ -43,7 +46,6 @@ import {
   S3BucketRecoverFormComponent,
 } from 'app/pages/sharing/s3/s3-bucket-recover-form/s3-bucket-recover-form.component';
 import { s3UserFormPreset } from 'app/pages/sharing/s3/utils/s3-user-picker.utils';
-import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { entitlementsLoadFailed } from 'app/store/entitlements/entitlements.actions';
@@ -70,6 +72,7 @@ describe('S3BucketFormComponent', () => {
     id: 7,
     name: 'photos',
     dataset: 'tank/buckets/photos',
+    layout: S3BucketLayout.Bucket,
     owner: 'alice',
     enabled: true,
     permissions_model: S3PermissionsModel.S3,
@@ -94,6 +97,18 @@ describe('S3BucketFormComponent', () => {
   const getParentDatasetExplorer = (): Promise<TnFilePickerHarness> => loader.getHarness(
     TnFilePickerHarness.with({ selector: '[formControlName="parent_dataset"]' }),
   );
+  const getExistingDatasetExplorer = (): Promise<TnFilePickerHarness> => loader.getHarness(
+    TnFilePickerHarness.with({ selector: '[formControlName="dataset"]' }),
+  );
+  const getLayout = (): Promise<TnRadioGroupHarness> => loader.getHarness(TnRadioGroupHarness);
+  /** What a picker lists when opened, and when the first thing listed is opened in turn. */
+  const browsePicker = async (controlName: string): Promise<{ opened: string[]; inside: string[] }> => {
+    const picker = spectator.query(`[formControlName="${controlName}"]`, { read: TnFilePickerComponent });
+    const source = picker.source();
+    const opened = await source.callbacks.getChildren(source.startPath);
+    const inside = await source.callbacks.getChildren(opened[0].path);
+    return { opened: opened.map((item) => item.path), inside: inside.map((item) => item.path) };
+  };
   const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
     TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
   );
@@ -144,9 +159,6 @@ describe('S3BucketFormComponent', () => {
       mockAuth(),
       mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockEntitlements(),
-      mockProvider(DatasetService, {
-        getDatasetNodeProvider: () => () => of([]),
-      }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({ closed: of(true) })),
       }),
@@ -324,6 +336,10 @@ describe('S3BucketFormComponent', () => {
       })]);
     });
 
+    it('lets the parent dataset picker open a pool onto its child datasets', async () => {
+      expect(await browsePicker('parent_dataset')).toEqual({ opened: ['/tank'], inside: ['/tank/buckets'] });
+    });
+
     it('rejects the /mnt root as a parent dataset', async () => {
       await (await getInput('name')).setValue('photos');
       await (await getParentDatasetExplorer()).setValue('/mnt');
@@ -384,6 +400,7 @@ describe('S3BucketFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [{
         name: 'videos',
+        layout: S3BucketLayout.Bucket,
         dataset: 'tank/buckets/videos',
         owner: 'alice',
         enabled: true,
@@ -425,6 +442,117 @@ describe('S3BucketFormComponent', () => {
         dataset: 'tank/shared',
         grants: [{ principal_type: S3PrincipalType.Everyone, xid: null, access: S3Access.ReadOnly }],
       })]);
+    });
+
+    describe('serving an existing dataset read-only', () => {
+      const chooseExistingDataset = async (): Promise<void> => {
+        await (await getLayout()).select('Existing Dataset (Read-only)');
+        await spectator.fixture.whenStable();
+      };
+
+      it('offers New Dataset and Existing Dataset, with New Dataset picked', async () => {
+        const layout = await getLayout();
+        expect(await layout.getOptionLabels()).toEqual(['New Dataset', 'Existing Dataset (Read-only)']);
+        expect(await layout.getCheckedLabel()).toBe('New Dataset');
+      });
+
+      it('lets the dataset picker open a pool onto its child datasets', async () => {
+        await chooseExistingDataset();
+
+        expect(await browsePicker('dataset')).toEqual({ opened: ['/tank'], inside: ['/tank/buckets'] });
+      });
+
+      it('asks for the dataset to serve rather than a parent, and hides object lock', async () => {
+        await chooseExistingDataset();
+
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Dataset' }))).toBe(true);
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Parent Dataset' }))).toBe(false);
+        expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(false);
+      });
+
+      it('hides versioning and ZFS snapshots in advanced mode and defaults to Multiprotocol', async () => {
+        await chooseExistingDataset();
+        await clickAdvancedOptions();
+
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(false);
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Snapshot Versions' }))).toBe(false);
+        expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('Multiprotocol');
+        expect(await (await getSelect('object_ownership')).getDisplayText()).toBe('Object Writer');
+      });
+
+      it('creates a bucket on the chosen dataset with the DATASET layout', async () => {
+        await chooseExistingDataset();
+        await (await getInput('name')).setValue('media');
+        await (await getExistingDatasetExplorer()).setValue('tank/buckets/photos');
+        await setOwner('alice');
+
+        spectator.component.submit();
+        await spectator.fixture.whenStable();
+
+        expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+          name: 'media',
+          layout: S3BucketLayout.Dataset,
+          dataset: 'tank/buckets/photos',
+          permissions_model: S3PermissionsModel.Multiprotocol,
+          object_ownership: S3ObjectOwnership.ObjectWriter,
+          versioning: S3Versioning.Off,
+          snapshot_versions: [],
+          object_lock: false,
+        })]);
+      });
+
+      it('does not hold the bucket name to the datasets a new bucket would clash with', async () => {
+        await chooseExistingDataset();
+        await (await getInput('name')).setValue('archive');
+        await (await getExistingDatasetExplorer()).setValue('tank/buckets/archive');
+        await setOwner('alice');
+        await spectator.fixture.whenStable();
+
+        expect(spectator.component.form.controls.name.errors).toBeNull();
+        expect(spectator.component.canSubmit()).toBe(true);
+        expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
+      });
+
+      it('requires the dataset', async () => {
+        await chooseExistingDataset();
+        await (await getInput('name')).setValue('media');
+        await setOwner('alice');
+
+        expect(spectator.component.canSubmit()).toBe(false);
+      });
+
+      it('drops object lock, versioning and snapshot versions picked before switching', async () => {
+        await clickAdvancedOptions();
+        await (await loader.getHarness(
+          TnChipInputHarness.with({ testId: 'chip-input-snapshot-versions' }),
+        )).addChip('auto-*');
+        await (await getCheckbox('object_lock')).check();
+
+        await chooseExistingDataset();
+        await (await getInput('name')).setValue('media');
+        await (await getExistingDatasetExplorer()).setValue('tank/buckets/photos');
+        await setOwner('alice');
+
+        spectator.component.submit();
+        await spectator.fixture.whenStable();
+
+        expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+          layout: S3BucketLayout.Dataset,
+          versioning: S3Versioning.Off,
+          snapshot_versions: [],
+          object_lock: false,
+        })]);
+      });
+
+      it('puts the parent picker and the permissions model back when switching to New Dataset', async () => {
+        await chooseExistingDataset();
+        await (await getLayout()).select('New Dataset');
+        await clickAdvancedOptions();
+
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Parent Dataset' }))).toBe(true);
+        expect(await (await getSelect('permissions_model')).getDisplayText()).toBe('S3');
+        expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(true);
+      });
     });
   });
 
@@ -930,6 +1058,46 @@ describe('S3BucketFormComponent', () => {
         object_lock_default_days: null,
       }]);
       expect(closed).toHaveBeenCalledWith(true);
+    });
+    describe('of an existing dataset', () => {
+      beforeEach(() => {
+        spectator = createComponent({
+          props: {
+            bucket: {
+              ...existingBucket,
+              dataset: 'tank/shares/media',
+              layout: S3BucketLayout.Dataset,
+              permissions_model: S3PermissionsModel.Multiprotocol,
+              object_ownership: S3ObjectOwnership.ObjectWriter,
+              versioning: S3Versioning.Off,
+              snapshot_versions: [],
+            },
+          },
+        });
+        loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+        api = spectator.inject(ApiService);
+      });
+
+      it('says the dataset is read-only and offers neither the layout nor what it rules out', async () => {
+        await clickAdvancedOptions();
+
+        expect(await loader.hasHarness(TnRadioGroupHarness)).toBe(false);
+        const datasetField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Dataset' }));
+        expect(await datasetField.getHint()).toBe('Served read-only over S3.');
+        expect(await loader.hasHarness(TnCheckboxHarness.with({ label: 'Enable Object Lock' }))).toBe(false);
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Versioning' }))).toBe(false);
+        expect(await loader.hasHarness(TnFormFieldHarness.with({ label: 'Snapshot Versions' }))).toBe(false);
+      });
+
+      it('updates the bucket without sending the dataset or the layout', async () => {
+        spectator.component.submit();
+        await spectator.fixture.whenStable();
+
+        const [, [, update]] = (api.call as jest.Mock).mock.calls
+          .find(([method]) => method === 'sharing.s3.update') as [string, [number, Record<string, unknown>]];
+        expect(update).not.toHaveProperty('dataset');
+        expect(update).not.toHaveProperty('layout');
+      });
     });
   });
 });
