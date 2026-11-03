@@ -150,7 +150,8 @@ export class AlertComponent {
     }
   });
 
-  protected readonly alertLevelColor = computed(() => this.styles().color);
+  // `[class]` stringifies an `undefined` entry into a literal `undefined` class, so no colour is ''.
+  protected readonly alertLevelColor = computed(() => this.styles().color ?? '');
   protected readonly icon = computed(() => this.styles().icon);
   protected readonly iconTooltip = computed(() => this.styles().tooltip);
 

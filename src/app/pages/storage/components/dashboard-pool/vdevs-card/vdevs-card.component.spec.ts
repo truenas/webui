@@ -2429,6 +2429,18 @@ describe('VDevsCardComponent', () => {
       expect(spectator.query('.empty-vdev-state')).not.toExist();
     });
 
+    it('renders no VDEV rows for a pool without a topology', () => {
+      spectator = createComponent({
+        props: {
+          poolState: { ...buildPool({}), topology: null } as unknown as Pool,
+          disks: [],
+        },
+      });
+
+      expect(spectator.queryAll('.vdev-line')).toHaveLength(0);
+      expect(spectator.query('.empty-vdev-state')).toExist();
+    });
+
     it('hides the "Pool configuration complete" message once the pool gains an optional VDEV', () => {
       spectator = createComponent({
         props: {

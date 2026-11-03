@@ -1,7 +1,7 @@
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import {
   AppDetailsSimilarComponent,
@@ -51,5 +51,47 @@ describe('AppDetailsSimilarComponent', () => {
     expect(appCards).toHaveLength(2);
     expect(appCards[0].app).toEqual(similarApps[0]);
     expect(appCards[1].app).toEqual(similarApps[1]);
+  });
+
+  it('reloads similar apps when the app changes', () => {
+    const otherApp = { name: 'minio' } as AvailableApp;
+    const appService = spectator.inject(ApplicationsService);
+    jest.spyOn(appService, 'getSimilarApps').mockReturnValueOnce(of([{ name: 'Syncthing' }] as AvailableApp[]));
+
+    spectator.setInput('app', otherApp);
+
+    expect(appService.getSimilarApps).toHaveBeenLastCalledWith(otherApp);
+    expect(spectator.queryAll(AppCardComponent).map((card) => card.app.name)).toEqual(['Syncthing']);
+  });
+
+  it('ignores a late answer for an app the user already moved away from', () => {
+    const slowAnswer$ = new Subject<AvailableApp[]>();
+    const appService = spectator.inject(ApplicationsService);
+    jest.spyOn(appService, 'getSimilarApps')
+      .mockReturnValueOnce(slowAnswer$)
+      .mockReturnValueOnce(of([{ name: 'Syncthing' }] as AvailableApp[]));
+
+    spectator.setInput('app', { name: 'slow' } as AvailableApp);
+    spectator.setInput('app', { name: 'fast' } as AvailableApp);
+    slowAnswer$.next([{ name: 'Stale' }] as AvailableApp[]);
+    spectator.detectChanges();
+
+    expect(spectator.queryAll(AppCardComponent).map((card) => card.app.name)).toEqual(['Syncthing']);
+  });
+
+  it('shows an error when similar apps cannot be loaded, and recovers on the next app', () => {
+    jest.spyOn(console, 'error').mockImplementation();
+    const appService = spectator.inject(ApplicationsService);
+    jest.spyOn(appService, 'getSimilarApps').mockReturnValueOnce(throwError(() => new Error('Boom')));
+
+    spectator.setInput('app', { name: 'broken' } as AvailableApp);
+
+    expect(spectator.query('.no-similar')).toHaveText('Error when loading similar apps.');
+    expect(console.error).toHaveBeenCalledWith(new Error('Boom'));
+
+    spectator.setInput('app', { name: 'minio' } as AvailableApp);
+
+    expect(spectator.query('.no-similar')).not.toExist();
+    expect(spectator.queryAll(AppCardComponent)).toHaveLength(2);
   });
 });
