@@ -11,6 +11,9 @@ import { ApiCallError } from 'app/services/errors/error.classes';
  * carries field-level validation errors and `trace` is what the error dialog
  * shows. `ErrorHandlerService` and form validation read it from there.
  *
+ * The cast narrows only `code` and `errname`, which the client types as a number and a string
+ * and the UI reads as its `JsonRpcErrorCode` and `ApiErrorName` enums.
+ *
  * Any other error, such as a connection failure or `FailedJobError`, passes
  * through untouched.
  *
@@ -20,7 +23,7 @@ import { ApiCallError } from 'app/services/errors/error.classes';
 export function rethrowAsApiCallError<T>(): MonoTypeOperatorFunction<T> {
   return catchError((error: unknown) => {
     if (error instanceof TrueNasApiError) {
-      return throwError(() => new ApiCallError(error.frame as unknown as JsonRpcError));
+      return throwError(() => new ApiCallError(error.frame as JsonRpcError));
     }
 
     return throwError(() => error);

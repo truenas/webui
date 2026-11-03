@@ -384,11 +384,18 @@ above. Each is a change for `truenas/api-client-ts`.
    `send`. Both work; nothing here is blocked. Still so in 9.0.1.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
-   from the main entry, where 6.x had them only under `testing`.
-   `rethrowAsApiCallError` still casts the frame, but for a different reason now —
-   `TrueNasErrorFrame` extends the *client's* `JsonRpcError` and carries
-   `TrueNasErrorData`, while `ApiCallError` takes the UI's `JsonRpcError` with
-   `ApiErrorDetails`. Converging those two is what would retire the cast.
+   from the main entry, where 6.x had them only under `testing`. The UI's
+   `ApiErrorDetails` now has the client's shape: `trace` is
+   `{ class, formatted, repr } | null` (the `frames` list went with the legacy
+   protocol, and the debug panel's mock trace follows), and `extra` is `unknown`,
+   wider than the client's `unknown[] | null`, because a `CallError` raised with a
+   dict is sent with that dict (`rpc.py` passes `e.extra` through; cloud sync's
+   `excerpt` reads it). `rethrowAsApiCallError` casts the frame once, without
+   `unknown`: what is left is `code` and `errname`, a number and a string in the
+   client and the `JsonRpcErrorCode` and `ApiErrorName` enums in the UI. Typing
+   them as plain values would put every enum comparison under
+   `no-unsafe-enum-comparison`, so the cast stays until the UI takes its enums from
+   the client (gap 13).
 7. **No message hook.** The client has no interception seam, so
    `interceptConnection` (NAS-144008) wraps the connection's `send` and
    `messages()` the way `limitConcurrentCalls` wraps `send`: every frame either
@@ -403,9 +410,18 @@ above. Each is a change for `truenas/api-client-ts`.
    writes straight to the socket, such as the keepalive `core.ping`, are not
    seen, and a message interceptor in `createTrueNasClient` would retire the
    `send` patch.
-8. **Job type drift.** The client's `Job` is honest about `result` and
-   `time_started` being `null` before a job starts; the UI's is not. The
-   wrapper narrows for now; the UI should adopt the client's type.
+8. **Job type drift.** The UI's `Job` now says what the client's does about
+   `result`, which is `null` while a job runs and after it fails, and its
+   `removed` is optional, being a flag the jobs store sets rather than a field
+   middleware sends. The client is wrong the other way about `time_started`:
+   middleware sets it when it builds the job (`job.py`, `self.time_started =
+   utc_now()`), so it is never `null`, and the UI keeps it required. Three casts
+   remain, all typing: `ApiService.job` (the UI's `state` and `exc_info.type` are
+   its own enums, and `arguments` are the caller's params), and the
+   `core.get_jobs` subscriptions in `JobEffects` and `WidgetResourcesService`,
+   whose rows are the generated entry rather than the client's `Job` (`state`
+   and the timestamps as strings, gap 15; no `removed` kind).
+
 9. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,

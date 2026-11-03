@@ -30,11 +30,11 @@ export interface Job<R = unknown, A = unknown[]> {
   logs_path: string;
   method: JobMethod<WebUiApiDirectory> | InternalJobMethod;
   progress: JobProgress;
-  result: R;
+  result: R | null;
   state: JobState;
   time_finished: ApiTimestamp | null;
   time_started: ApiTimestamp;
-  removed: boolean;
+  removed?: boolean;
   message_ids: string[];
 }
 

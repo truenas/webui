@@ -891,7 +891,7 @@ describe('DeviceFormComponent', () => {
         error: 400,
         extra: [['something', 'Path must exist when "exists" is set', 0]],
         reason: 'something',
-        trace: { class: 'something', formatted: 'something', frames: [] },
+        trace: { class: 'something', formatted: 'something', repr: '' },
         message: null,
       };
       const otherErrorDetails = { ...errorDetails, extra: [['something', 'other message', 0]] };

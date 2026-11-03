@@ -160,14 +160,7 @@ describe('MockConfigFormComponent', () => {
               trace: {
                 class: 'ValidationError',
                 formatted: 'Mock traceback',
-                frames: [{
-                  argspec: ['self'],
-                  filename: 'test.py',
-                  line: 'test line',
-                  lineno: 1,
-                  locals: {},
-                  method: 'test',
-                }],
+                repr: 'ValidationError()',
               },
             },
           },
@@ -190,7 +183,7 @@ describe('MockConfigFormComponent', () => {
         callErrorCode: 22,
         callErrorReason: 'Invalid input provided',
         callErrorExtra: '{\n  "field": "test_field",\n  "error": "required"\n}',
-        callErrorTrace: '{\n  "class": "ValidationError",\n  "formatted": "Mock traceback",\n  "frames": [\n    {\n      "argspec": [\n        "self"\n      ],\n      "filename": "test.py",\n      "line": "test line",\n      "lineno": 1,\n      "locals": {},\n      "method": "test"\n    }\n  ]\n}',
+        callErrorTrace: '{\n  "class": "ValidationError",\n  "formatted": "Mock traceback",\n  "repr": "ValidationError()"\n}',
         responseDelay: 0,
         events: [],
       });
@@ -355,9 +348,7 @@ describe('MockConfigFormComponent', () => {
       expect(trace).toBeDefined();
       expect(trace.class).toBe('CallError');
       expect(trace.formatted).toBeDefined();
-      expect(trace.frames).toBeDefined();
-      expect(Array.isArray(trace.frames)).toBe(true);
-      expect(trace.frames.length).toBeGreaterThan(0);
+      expect(trace.repr).toBeTruthy();
     });
 
     it('should set isCallError when error code is -32001', () => {
@@ -637,7 +628,7 @@ describe('MockConfigFormComponent', () => {
                 trace: {
                   class: 'CallError',
                   formatted: 'No stack trace available',
-                  frames: [],
+                  repr: 'CallError()',
                 },
               }),
             }),
@@ -653,7 +644,7 @@ describe('MockConfigFormComponent', () => {
       const validTrace = {
         class: 'CallError',
         formatted: 'Test trace',
-        frames: [{ method: 'test' }],
+        repr: 'CallError()',
       };
 
       spectator.component['form'].patchValue({
