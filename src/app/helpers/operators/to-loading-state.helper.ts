@@ -13,11 +13,17 @@ export interface LoadingState<T> {
  * Usage:
  * myData$ = this.api.call('my.method').pipe(toLoadingState());
  *
- * <ng-container *ngIf="myData$ | async as data">
- *   <my-loading-spinner *ngIf="data.isLoading"></my-loading-spinner>
- *   <my-error-component *ngIf="data.error" [error]="data.error"></my-error-component>
- *   <my-data-component *ngIf="data.value" [data]="data.value"></my-data-component>
- * </ng-container>
+ * @if (myData$ | async; as data) {
+ *   @if (data.isLoading) {
+ *     <my-loading-spinner></my-loading-spinner>
+ *   }
+ *   @if (data.error) {
+ *     <my-error-component [error]="data.error"></my-error-component>
+ *   }
+ *   @if (data.value) {
+ *     <my-data-component [data]="data.value"></my-data-component>
+ *   }
+ * }
  *
  * If you need to use your observable in multiple places, don't forget to use shareReplay.
  */

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, HostListener, input, output, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
 import { DetectBrowserService } from 'app/services/detect-browser.service';
 
 /**
@@ -10,6 +10,9 @@ import { DetectBrowserService } from 'app/services/detect-browser.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./keyboard-shortcut.component.scss'],
   template: '{{ shortcutString() }}',
+  host: {
+    '(window:keydown)': 'globalShortcut($event)',
+  },
 })
 export class KeyboardShortcutComponent {
   private detectBrowser = inject(DetectBrowserService);
@@ -22,7 +25,6 @@ export class KeyboardShortcutComponent {
     return `${commandKey} + ${this.key().toLocaleUpperCase()}`;
   });
 
-  @HostListener('window:keydown', ['$event'])
   globalShortcut(event: KeyboardEvent): void {
     const wasCommandKeyPressed = this.detectBrowser.isMacOs() ? event.metaKey : event.ctrlKey;
     if (event.key === this.key() && wasCommandKeyPressed) {

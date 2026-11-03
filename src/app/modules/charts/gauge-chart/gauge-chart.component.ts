@@ -1,4 +1,4 @@
-import { Component, HostBinding, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, inject } from '@angular/core';
 import { TinyColor } from '@ctrl/tinycolor';
 import { TnTestIdDirective } from '@truenas/ui-components';
 import { ChartOptions } from 'chart.js';
@@ -27,6 +27,10 @@ export interface GaugeSegment {
     TnTestIdDirective,
     BaseChartDirective,
   ],
+  host: {
+    '[style.height.px]': 'height()',
+    '[style.width.px]': 'width()',
+  },
 })
 export class GaugeChartComponent {
   themeService = inject(ThemeService);
@@ -61,9 +65,6 @@ export class GaugeChartComponent {
 
   readonly height = input(defaultHeight);
   readonly width = input(defaultWidth);
-
-  @HostBinding('style.height.px') get heightStyle(): number { return this.height(); }
-  @HostBinding('style.width.px') get widthStyle(): number { return this.width(); }
 
   chartOptions: ChartOptions<'doughnut'> = {
     responsive: true,

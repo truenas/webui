@@ -75,6 +75,14 @@ const projectOverrides = {
       'error',
       { patterns: restrictedImportPatterns, paths: restrictedImportPaths },
     ],
+    // The decorator APIs are at zero; these keep them there. The base config sets
+    // `preferQuerySignals: false`, which let `@ViewChild` & co. through.
+    '@angular-eslint/prefer-signals': ['error', {
+      preferQuerySignals: true,
+      preferReadonlySignalProperties: false,
+    }],
+    '@angular-eslint/prefer-host-metadata-property': 'error',
+    '@angular-eslint/prefer-output-emitter-ref': 'error',
   },
 };
 

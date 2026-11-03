@@ -4,7 +4,6 @@ import {
   Component,
   computed,
   EnvironmentInjector,
-  HostBinding,
   inject,
   input,
   runInInjectionContext,
@@ -29,16 +28,14 @@ type OutletParams = {
   styleUrls: ['./widget-group.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgComponentOutlet, AsyncPipe],
+  host: {
+    '[class]': 'group().layout',
+  },
 })
 export class WidgetGroupComponent {
   private translate = inject(TranslateService);
 
   group = input.required<WidgetGroup>();
-
-  @HostBinding('class')
-  protected get layout(): string {
-    return this.group().layout;
-  }
 
   protected slotSizes = computed(() => {
     return layoutToSlotSizes[this.group().layout];

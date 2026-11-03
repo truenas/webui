@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, output, ViewChild, viewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, output, viewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -85,8 +85,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  @ViewChild('generalStep') generalStep: GeneralWizardStepComponent;
-  @ViewChild('enclosureStep') enclosureStep: EnclosureWizardStepComponent;
+  private generalStep = viewChild<GeneralWizardStepComponent>('generalStep');
+  private enclosureStep = viewChild<EnclosureWizardStepComponent>('enclosureStep');
 
   protected existingPool: Pool | null = null;
 
@@ -112,7 +112,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   }
 
   get isFormDirty(): boolean {
-    return this.generalStep?.form?.dirty || this.enclosureStep?.form?.dirty;
+    return this.generalStep()?.form?.dirty || this.enclosureStep()?.form?.dirty;
   }
 
   ngOnInit(): void {
@@ -188,8 +188,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
-      this.generalStep?.form?.markAsPristine();
-      this.enclosureStep?.form?.markAsPristine();
+      this.generalStep()?.form?.markAsPristine();
+      this.enclosureStep()?.form?.markAsPristine();
       this.snackbar.success(this.translate.instant('Pool created successfully'));
       this.router.navigate(['/storage']);
     });

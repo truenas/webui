@@ -1,6 +1,6 @@
 import { JsonPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ViewChild, ElementRef, inject, DestroyRef,
+  ChangeDetectionStrategy, Component, AfterViewInit, ChangeDetectorRef, ElementRef, inject, DestroyRef, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -58,7 +58,7 @@ export class MessageListComponent implements AfterViewInit {
   private translate = inject(TranslateService);
   private clipboard = inject(ClipboardService);
 
-  @ViewChild('messageViewport', { read: ElementRef }) protected messageViewport?: ElementRef<HTMLDivElement>;
+  protected messageViewport = viewChild<ElementRef<HTMLDivElement>>('messageViewport');
   protected readonly MessageDirection = MessageDirection;
   protected messages$: Observable<WebSocketDebugMessage[]> = this.store$.select(selectMessages);
   protected readonly duplicateNotificationsEnabled = toSignal(
@@ -91,10 +91,10 @@ export class MessageListComponent implements AfterViewInit {
       this.formattedMessagesArray = messages;
       this.applyFilter();
       // Auto-scroll logic
-      if (this.autoScroll && messages.length > 0 && this.messageViewport) {
+      if (this.autoScroll && messages.length > 0 && this.messageViewport()) {
         // Use setTimeout to ensure the DOM has updated
         setTimeout(() => {
-          const element = this.messageViewport?.nativeElement;
+          const element = this.messageViewport()?.nativeElement;
           if (element) {
             element.scrollTop = element.scrollHeight;
           }

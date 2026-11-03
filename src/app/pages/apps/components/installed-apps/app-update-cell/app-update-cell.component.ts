@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, computed, input, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
 import { App } from 'app/interfaces/app.interface';
@@ -11,6 +11,9 @@ import { resolveAppVersion } from 'app/pages/apps/utils/version-formatting.utils
   styleUrls: ['./app-update-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslateModule, TnIconComponent, TnTooltipDirective],
+  host: {
+    '[class]': 'hostClasses()',
+  },
 })
 export class AppUpdateCellComponent {
   private translate = inject(TranslateService);
@@ -46,9 +49,7 @@ export class AppUpdateCellComponent {
     return lines.join('\n');
   });
 
-  @HostBinding('class') get hostClasses(): string[] {
-    return ['update', this.showIcon() ? 'has-icon' : 'has-cell'];
-  }
+  protected readonly hostClasses = computed(() => ['update', this.showIcon() ? 'has-icon' : 'has-cell']);
 
   protected getUpdateMessage(): string {
     const change = this.versionChange();
