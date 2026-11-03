@@ -7,7 +7,7 @@
       {{ 'The list is empty.' | translate }}
     </div>
   } @else {
-    @for (ace of aces; track ace; let i = $index) {
+    @for (ace of aces(); track ace; let i = $index) {
       <div
         class="ace"
         tnTestIdType="row"
@@ -16,10 +16,10 @@
         [tnTestId]="['ace', i]"
         (click)="onAceSelected(i)"
       >
-        @if (permissionItems[i]) {
+        @if (permissionItems()[i]) {
           <ix-permissions-item
             class="permission-item"
-            [item]="permissionItems[i]"
+            [item]="permissionItems()[i]"
           ></ix-permissions-item>
         }
         @if (acesWithError().includes(i)) {

@@ -11,17 +11,17 @@
     >
       <ix-permissions-item
         class="accordion-item-header"
-        [item]="permissionItems[i]"
-        [tnTestId]="['acl-item', permissionItems[i].name]"
+        [item]="permissionItems()[i]"
+        [tnTestId]="['acl-item', permissionItems()[i].name]"
         (click)="accordionItem.toggle()"
       ></ix-permissions-item>
-      @if (permissionDetails[i]; as details) {
+      @if (permissionDetails()[i]; as details) {
         <div class="permission-details">
           <div class="details-section">
             <div
               class="details-title"
               tnTestIdType="text"
-              [tnTestId]="['acl-item', permissionItems[i].name, 'permissions-type']"
+              [tnTestId]="['acl-item', permissionItems()[i].name, 'permissions-type']"
             >
               {{
                 details.arePermissionsBasic
@@ -45,7 +45,7 @@
               <div
                 class="details-title"
                 tnTestIdType="text"
-                [tnTestId]="['acl-item', permissionItems[i].name, 'flags-type']"
+                [tnTestId]="['acl-item', permissionItems()[i].name, 'flags-type']"
               >
                 {{
                   details.areFlagsBasic

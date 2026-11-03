@@ -1,11 +1,13 @@
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnChanges, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, signal, inject } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import { finalize, timer } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { timer } from 'rxjs';
+import {
+  defaultIfEmpty, map, switchMap, tap,
+} from 'rxjs/operators';
 import { AuditEntry, toAuditEntries } from 'app/interfaces/audit/audit.interface';
 import { IxDateComponent } from 'app/modules/dates/pipes/ix-date/ix-date.component';
 import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
@@ -26,7 +28,7 @@ import { UrlOptionsService } from 'app/services/url-options.service';
     IxDateComponent,
   ],
 })
-export class UserLastActionComponent implements OnChanges {
+export class UserLastActionComponent {
   private api = inject(ApiService);
   private urlOptions = inject(UrlOptionsService);
   private errorHandler = inject(ErrorHandlerService);
@@ -53,23 +55,33 @@ export class UserLastActionComponent implements OnChanges {
     });
   });
 
-  ngOnChanges(): void {
-    this.isLoading.set(true);
-    // The delay is here to make sure we are not spamming the API if user is quickly switching between users.
-    timer(300)
-      .pipe(
+  constructor() {
+    this.loadLastAction();
+  }
+
+  /**
+   * `switchMap` restarts the delay on every username change, so quickly switching between users sends
+   * one request for the user that is left selected, and an older answer cannot replace a newer one.
+   */
+  private loadLastAction(): void {
+    toObservable(this.username).pipe(
+      tap(() => this.isLoading.set(true)),
+      // The delay is here to make sure we are not spamming the API if user is quickly switching between users.
+      switchMap((username) => timer(300).pipe(
         switchMap(() => {
           return this.api.call('audit.query', [{
-            'query-filters': [['username', '=', this.username()]],
+            'query-filters': [['username', '=', username]],
             'query-options': { limit: 1, order_by: ['-message_timestamp'] },
           }]).pipe(map(toAuditEntries));
         }),
-        finalize(() => this.isLoading.set(false)),
         this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((entries: AuditEntry[]) => {
-        this.lastAction.set(entries[0]);
-      });
+        // A failed lookup still has to end the loading state, and must not leave the previous user's action up.
+        defaultIfEmpty([] as AuditEntry[]),
+      )),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((entries) => {
+      this.isLoading.set(false);
+      this.lastAction.set(entries[0]);
+    });
   }
 }

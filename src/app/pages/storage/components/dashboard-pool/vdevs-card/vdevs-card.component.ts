@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, input, OnChanges, OnInit, inject,
+  ChangeDetectionStrategy, Component, computed, input, inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -19,7 +19,7 @@ import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
-import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import {
   EnclosureAndSlot,
   TopologyDisk,
@@ -84,7 +84,7 @@ export type EmptyDiskObject = Record<
     TranslateModule,
   ],
 })
-export class VDevsCardComponent implements OnInit, OnChanges {
+export class VDevsCardComponent {
   protected router = inject(Router);
   private translate = inject(TranslateService);
   private storageService = inject(StorageService);
@@ -104,23 +104,47 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   private readonly notAssignedDev = this.translate.instant('VDEVs not assigned');
   private readonly emptyVdevState: VdevTypeState = { assigned: false, text: this.notAssignedDev };
 
-  topologyState: TopologyState = {
-    data: this.emptyVdevState,
-    special: this.emptyVdevState,
-    log: this.emptyVdevState,
-    cache: this.emptyVdevState,
-    spare: this.emptyVdevState,
-    dedup: this.emptyVdevState,
-  };
+  protected readonly topologyWarningsState = computed<TopologyWarningState>(() => {
+    const topology = this.poolState().topology;
+    if (!topology) {
+      return {
+        data: '', special: '', log: '', cache: '', spare: '', dedup: '',
+      };
+    }
 
-  topologyWarningsState: TopologyWarningState = {
-    data: '',
-    special: '',
-    log: '',
-    cache: '',
-    spare: '',
-    dedup: '',
-  };
+    return {
+      data: this.parseDevsWarnings(topology.data, VDevType.Data),
+      log: this.parseDevsWarnings(topology.log, VDevType.Log),
+      cache: this.parseDevsWarnings(topology.cache, VDevType.Cache),
+      spare: this.parseDevsWarnings(topology.spare, VDevType.Spare),
+      special: this.parseDevsWarnings(topology.special, VDevType.Special),
+      dedup: this.parseDevsWarnings(topology.dedup, VDevType.Dedup),
+    };
+  });
+
+  protected readonly topologyState = computed<TopologyState>(() => {
+    const topology = this.poolState().topology;
+    if (!topology) {
+      return {
+        data: this.emptyVdevState,
+        special: this.emptyVdevState,
+        log: this.emptyVdevState,
+        cache: this.emptyVdevState,
+        spare: this.emptyVdevState,
+        dedup: this.emptyVdevState,
+      };
+    }
+
+    const warnings = this.topologyWarningsState();
+    return {
+      data: this.parseDevs(topology.data, VDevType.Data, warnings.data),
+      log: this.parseDevs(topology.log, VDevType.Log, warnings.log),
+      cache: this.parseDevs(topology.cache, VDevType.Cache, warnings.cache),
+      spare: this.parseDevs(topology.spare, VDevType.Spare, warnings.spare),
+      special: this.parseDevs(topology.special, VDevType.Special, warnings.special),
+      dedup: this.parseDevs(topology.dedup, VDevType.Dedup, warnings.dedup),
+    };
+  });
 
   /**
    * Layout for the non-data VDEV rows. `data` is rendered separately because
@@ -135,7 +159,7 @@ export class VDevsCardComponent implements OnInit, OnChanges {
     { key: VDevType.Special, titleKey: T('Special VDEVs'), tierLabelKey: T('Performance Tier') },
     { key: VDevType.Log, titleKey: T('Log VDEVs') },
     { key: VDevType.Cache, titleKey: T('Cache VDEVs') },
-    { key: VDevType.Spare, titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs },
+    { key: VDevType.Spare, titleKey: T('Spare VDEVs'), hidden: () => this.isDraidLayoutDataVdevs() },
     { key: VDevType.Dedup, titleKey: T('Dedup VDEVs') },
   ];
 
@@ -160,52 +184,13 @@ export class VDevsCardComponent implements OnInit, OnChanges {
   });
 
   readonly noOtherVdevTypes = computed(() => {
-    const nonDataVdevs = [
-      this.topologyState.special,
-      this.topologyState.log,
-      this.topologyState.cache,
-      this.topologyState.spare,
-      this.topologyState.dedup,
-    ];
+    const state = this.topologyState();
+    const nonDataVdevs = [state.special, state.log, state.cache, state.spare, state.dedup];
 
     return nonDataVdevs.every((vdevType) => !vdevType.assigned);
   });
 
-  get isDraidLayoutDataVdevs(): boolean {
-    return /\bDRAID\b/.test(this.topologyState.data.text);
-  }
-
-  ngOnChanges(): void {
-    this.parseTopology(this.poolState().topology);
-  }
-
-  ngOnInit(): void {
-    this.parseTopology(this.poolState().topology);
-  }
-
-  parseTopology(topology: PoolTopology): void {
-    if (!topology) {
-      return;
-    }
-
-    this.topologyWarningsState.data = this.parseDevsWarnings(topology.data, VDevType.Data);
-    this.topologyWarningsState.log = this.parseDevsWarnings(topology.log, VDevType.Log);
-    this.topologyWarningsState.cache = this.parseDevsWarnings(topology.cache, VDevType.Cache);
-    this.topologyWarningsState.spare = this.parseDevsWarnings(topology.spare, VDevType.Spare);
-    this.topologyWarningsState.special = this.parseDevsWarnings(topology.special, VDevType.Special);
-    this.topologyWarningsState.dedup = this.parseDevsWarnings(topology.dedup, VDevType.Dedup);
-
-    this.topologyState.data = this.parseDevs(topology.data, VDevType.Data, this.topologyWarningsState.data);
-    this.topologyState.log = this.parseDevs(topology.log, VDevType.Log, this.topologyWarningsState.log);
-    this.topologyState.cache = this.parseDevs(topology.cache, VDevType.Cache, this.topologyWarningsState.cache);
-    this.topologyState.spare = this.parseDevs(topology.spare, VDevType.Spare, this.topologyWarningsState.spare);
-    this.topologyState.special = this.parseDevs(
-      topology.special,
-      VDevType.Special,
-      this.topologyWarningsState.special,
-    );
-    this.topologyState.dedup = this.parseDevs(topology.dedup, VDevType.Dedup, this.topologyWarningsState.dedup);
-  }
+  protected readonly isDraidLayoutDataVdevs = computed(() => /\bDRAID\b/.test(this.topologyState().data.text));
 
   private parseDevs(vdevs: VDevItem[], category: VDevType, warning?: string): VdevTypeState {
     if (!vdevs.length) {

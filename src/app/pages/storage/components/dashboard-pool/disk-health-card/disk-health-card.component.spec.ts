@@ -9,6 +9,7 @@ import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
+import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -75,6 +76,22 @@ describe('DiskHealthCardComponent', () => {
     expect(await (await manageDisksButton.host()).getAttribute('data-test')).toBe('link-view-disks');
   });
 
+  it('reports the disk alert count and switches to a warning icon', () => {
+    const icon = spectator.query(PoolCardIconComponent)!;
+    expect(icon.type()).toBe(PoolCardIconType.Safe);
+    expect(icon.tooltip()).toBe('Everything is fine');
+
+    spectator.setInput('disks', [
+      { ...disks[0], alerts: [{}, {}] },
+      { ...disks[0], name: 'sde', alerts: [{}] },
+    ] as StorageDashboardDisk[]);
+
+    const detailsItem = spectator.query(byText('Disk temperature-related alerts:'))!.parentElement!;
+    expect(detailsItem.querySelector('.value')).toHaveText('3');
+    expect(icon.type()).toBe(PoolCardIconType.Warn);
+    expect(icon.tooltip()).toBe('Pool Disks have 3 alerts.');
+  });
+
   describe('Temperatures', () => {
     it('shows disks temperature related alerts', () => {
       const detailsItem = spectator.query(byText('Disk temperature-related alerts:'))!.parentElement!;
@@ -114,6 +131,13 @@ describe('DiskHealthCardComponent', () => {
       expect(spectator.query(byText('Average Disk Temperature:'))!.parentElement!.querySelector('.value'))
         .toHaveText('30 °C');
       expect(spectator.query(byText('No disk temperature is available.'))).toBeNull();
+    });
+
+    it('reports no temperature when no disk has temperature data', () => {
+      spectator.setInput('disks', [{ ...disks[0], tempAggregates: undefined }] as StorageDashboardDisk[]);
+
+      expect(spectator.query(byText('No disk temperature is available.'))).toExist();
+      expect(spectator.query(byText('Highest Temperature:'))).toBeNull();
     });
 
     it('recomputes extremes without retaining stale values when disks input changes', () => {

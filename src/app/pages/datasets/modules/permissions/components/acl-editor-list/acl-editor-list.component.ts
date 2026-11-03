@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnTooltipDirective, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -26,7 +26,7 @@ import {
     TranslateModule,
   ],
 })
-export class AclEditorListComponent implements OnChanges {
+export class AclEditorListComponent {
   private store = inject(DatasetAclEditorStore);
   private translate = inject(TranslateService);
 
@@ -36,13 +36,12 @@ export class AclEditorListComponent implements OnChanges {
   readonly owner = input.required<string>();
   readonly ownerGroup = input.required<string>();
 
-  permissionItems: PermissionItem[] = [];
-  aces: (NfsAclItem | PosixAclItem)[] = [];
+  protected readonly aces = computed<(NfsAclItem | PosixAclItem)[]>(() => this.acl().acl);
 
-  ngOnChanges(): void {
-    this.aces = this.acl().acl;
-    if (this.acl().acltype === AclType.Nfs4) {
-      this.permissionItems = this.acl().acl.map((ace) => {
+  protected readonly permissionItems = computed<PermissionItem[]>(() => {
+    const acl = this.acl();
+    if (acl.acltype === AclType.Nfs4) {
+      return acl.acl.map((ace) => {
         if (ace.tag === NfsAclTag.Owner) {
           return nfsAceToPermissionItem(this.translate, { ...ace, who: this.owner() });
         }
@@ -52,19 +51,19 @@ export class AclEditorListComponent implements OnChanges {
 
         return nfsAceToPermissionItem(this.translate, ace as NfsAclItem);
       });
-    } else {
-      this.permissionItems = this.acl().acl.map((ace) => {
-        if (ace.tag === PosixAclTag.UserObject) {
-          return posixAceToPermissionItem(this.translate, { ...ace, who: this.owner() });
-        }
-        if (ace.tag === PosixAclTag.GroupObject) {
-          return posixAceToPermissionItem(this.translate, { ...ace, who: this.ownerGroup() });
-        }
-
-        return posixAceToPermissionItem(this.translate, ace as PosixAclItem);
-      });
     }
-  }
+
+    return acl.acl.map((ace) => {
+      if (ace.tag === PosixAclTag.UserObject) {
+        return posixAceToPermissionItem(this.translate, { ...ace, who: this.owner() });
+      }
+      if (ace.tag === PosixAclTag.GroupObject) {
+        return posixAceToPermissionItem(this.translate, { ...ace, who: this.ownerGroup() });
+      }
+
+      return posixAceToPermissionItem(this.translate, ace as PosixAclItem);
+    });
+  });
 
   /**
    * POSIX acl must have at least one of each: USER_OBJ, GROUP_OBJ and OTHER.

@@ -1,5 +1,5 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, input, OnChanges, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { cloneDeep } from 'lodash-es';
@@ -9,7 +9,6 @@ import {
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolTopology } from 'app/interfaces/pool.interface';
-import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
@@ -46,9 +45,7 @@ const defaultCategory: PoolManagerTopologyCategory = {
     TopologyCategoryDescriptionPipe,
   ],
 })
-export class ExistingConfigurationPreviewComponent implements OnChanges {
-  private cdr = inject(ChangeDetectorRef);
-
+export class ExistingConfigurationPreviewComponent {
   readonly name = input.required<string>();
   readonly topology = input.required<PoolTopology>();
   readonly size = input<number>();
@@ -57,15 +54,12 @@ export class ExistingConfigurationPreviewComponent implements OnChanges {
   protected readonly vDevType = VDevType;
 
   protected readonly vdevTypeLabels = vdevTypeLabels;
-  protected poolTopology: PoolManagerTopology;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
-  ngOnChanges(simpleChanges: IxSimpleChanges<ExistingConfigurationPreviewComponent>): void {
-    if (simpleChanges.topology.currentValue) {
-      this.poolTopology = this.parseTopology(this.topology());
-      this.cdr.markForCheck();
-    }
-  }
+  protected readonly poolTopology = computed(() => {
+    const topology = this.topology();
+    return topology ? this.parseTopology(topology) : null;
+  });
 
   // TODO: Messy. Refactor.
   parseTopology(topology: PoolTopology): PoolManagerTopology {
