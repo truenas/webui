@@ -249,6 +249,26 @@ describe('CloudSyncFormComponent', () => {
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
     });
+
+    it('sends the bucket root as the folder when a push task is saved with an empty Folder', async () => {
+      spectator.component.form.patchValue({
+        description: 'New Cloud Sync Task',
+        credentials: 1,
+        direction: Direction.Push,
+      });
+
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
+        expect.objectContaining({
+          direction: Direction.Push,
+          attributes: { folder: '/' },
+        }),
+      ]);
+    });
   });
 
   describe('edits a new cloudsync', () => {

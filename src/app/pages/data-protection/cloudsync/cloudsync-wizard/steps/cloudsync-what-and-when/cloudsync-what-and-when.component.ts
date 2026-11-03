@@ -247,9 +247,11 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         attributes.folder = directory.slice(0, directory.length - 1).join('/');
       }
     } else {
-      attributes.folder = isArray(formValue.folder_destination)
+      const folder = isArray(formValue.folder_destination)
         ? formValue.folder_destination[0]
         : formValue.folder_destination;
+      // An empty Folder means the bucket root. The middleware requires the field, so it must be sent.
+      attributes.folder = folder || '/';
 
       if (!formValue.path_source?.length || !isArray(formValue.path_source)) {
         value.path = '/';
