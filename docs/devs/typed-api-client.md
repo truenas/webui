@@ -541,13 +541,14 @@ above. Each is a change for `truenas/api-client-ts`.
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well
-    as at the top level; the directory services form has only ever sent the
-    top-level one, and middleware has accepted that. The migration keeps the
-    request unchanged, so `toDirectoryServicesUpdateArgs` asserts the generated
-    shape over a payload without the inner field. Sending it is a one-line
-    change in `transformFormDataToApiPayload`, but it changes the request, so
-    it wants a box check of all three service types first, or a correction to
-    the model in middleware if the inner field is not meant to be required.
+    as at the top level; the directory services form sends only the top-level
+    one, and that is the intended request. `DirectoryServicesUpdateArgs`'s
+    `parse_configuration` copies the top-level `service_type` into
+    `configuration` before validation, so the union can tell the three service
+    types apart, and the inner field is `exclude=True`. It reads as required only
+    because pydantic requires the discriminant on each member of the union.
+    `toDirectoryServicesUpdateArgs` asserts the generated shape over the payload
+    and stays.
 
 19. **Drift found moving VMs and containers.** Four places where the generated directory and
     what middleware or the UI actually does disagree, each handled at one site:
@@ -556,8 +557,10 @@ above. Each is a change for `truenas/api-client-ts`.
       `ContainersStore` reads the event as that wire shape (`ContainerQueryEvent`) rather than the
       generated one, and keeps its name-matching workaround.
     - `lxc.update` declares `v4_network` and `v6_network` as optional strings, while the global
-      settings form has always cleared a network by sending `null`. The request is unchanged and
-      asserted to the generated input at the submit; worth a box check before dropping the `null`.
+      settings form cleared a network by sending `null`. Middleware refuses that ("data.v6_network:
+      Input should be a valid string", checked on a 28.0.0 box): `LXCConfigEntry` makes both
+      required CIDR strings, and its column is not nullable. The form now requires both under the
+      automatic bridge and sends them as typed, without a cast.
     - `lxc.config` is not an event source in any version's event directory, so the containers
       config store's subscription to it could never have fired. It is gone; the header reloads
       the config after the settings form saves, which is what kept it current.
