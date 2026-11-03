@@ -12,7 +12,8 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
-  S3Access, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType, S3Versioning,
+  S3Access, S3BucketLayout, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType,
+  S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -21,6 +22,7 @@ import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxListHarness } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.harness';
+import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -48,6 +50,7 @@ describe('S3BucketFormComponent', () => {
     id: 7,
     name: 'photos',
     dataset: 'tank/buckets/photos',
+    layout: S3BucketLayout.Bucket,
     owner: 'alice',
     enabled: true,
     permissions_model: S3PermissionsModel.S3,
@@ -149,7 +152,7 @@ describe('S3BucketFormComponent', () => {
 
     it('shows object lock with the basic fields and the rest only after Advanced Options is pressed', async () => {
       const labels = await form.getLabels();
-      expect(labels).toEqual(['Name', 'Parent Dataset', 'Owner', 'Enabled', 'Enable Object Lock']);
+      expect(labels).toEqual(['Storage', 'Name', 'Parent Dataset', 'Owner', 'Enabled', 'Enable Object Lock']);
 
       await clickAdvancedOptions();
 
@@ -411,6 +414,7 @@ describe('S3BucketFormComponent', () => {
 
       expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [{
         name: 'videos',
+        layout: S3BucketLayout.Bucket,
         dataset: 'tank/buckets/videos',
         owner: 'alice',
         enabled: true,
@@ -431,6 +435,112 @@ describe('S3BucketFormComponent', () => {
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
       // Only a name landing on an existing dataset is worth the scan for deleted buckets.
       expect(api.call).not.toHaveBeenCalledWith('sharing.s3.recoverable_buckets');
+    });
+
+    describe('serving an existing dataset read-only', () => {
+      const chooseExistingDataset = async (): Promise<void> => {
+        await form.fillForm({ Storage: 'Existing Dataset (Read-only)' });
+      };
+
+      it('offers New Dataset and Existing Dataset, with New Dataset picked', async () => {
+        const storage = await form.getControl('Storage') as IxRadioGroupHarness;
+        expect(await storage.getOptionLabels()).toEqual(['New Dataset', 'Existing Dataset (Read-only)']);
+        expect(await storage.getValue()).toBe('New Dataset');
+      });
+
+      it('asks for the dataset to serve rather than a parent, and hides object lock', async () => {
+        await chooseExistingDataset();
+
+        expect(await form.getLabels()).toEqual(['Storage', 'Name', 'Dataset', 'Owner', 'Enabled']);
+      });
+
+      it('hides versioning and ZFS snapshots in advanced mode and defaults to Multiprotocol', async () => {
+        await chooseExistingDataset();
+        await clickAdvancedOptions();
+
+        const labels = await form.getLabels();
+        expect(labels).not.toContain('Versioning');
+        expect(labels).not.toContain('Snapshot Versions');
+        expect(await (await getSelect('Permissions Model')).getValue()).toBe('Multiprotocol');
+        expect(await (await getSelect('Object Ownership')).getValue()).toBe('Object Writer');
+      });
+
+      it('creates a bucket on the chosen dataset with the DATASET layout', async () => {
+        await chooseExistingDataset();
+        await form.fillForm({
+          Name: 'media',
+          Dataset: 'tank/buckets/photos',
+          Owner: 'alice',
+        });
+
+        await (await getSaveButton()).click();
+
+        expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+          name: 'media',
+          layout: S3BucketLayout.Dataset,
+          dataset: 'tank/buckets/photos',
+          permissions_model: S3PermissionsModel.Multiprotocol,
+          object_ownership: S3ObjectOwnership.ObjectWriter,
+          versioning: S3Versioning.Off,
+          snapshot_versions: [],
+          object_lock: false,
+        })]);
+      });
+
+      it('does not hold the bucket name to the datasets a new bucket would clash with', async () => {
+        await chooseExistingDataset();
+        await form.fillForm({
+          Name: 'archive',
+          Dataset: 'tank/buckets/archive',
+          Owner: 'alice',
+        });
+
+        expect(spectator.component.form.controls.name.errors).toBeNull();
+        expect(await (await getSaveButton()).isDisabled()).toBe(false);
+        expect(await loader.hasHarness(MatButtonHarness.with({ text: 'Recover' }))).toBe(false);
+      });
+
+      it('requires the dataset', async () => {
+        await chooseExistingDataset();
+        await form.fillForm({ Name: 'media', Owner: 'alice' });
+
+        expect(await (await getSaveButton()).isDisabled()).toBe(true);
+      });
+
+      it('drops object lock, versioning and snapshot versions picked before switching', async () => {
+        await clickAdvancedOptions();
+        await form.fillForm({
+          'Snapshot Versions': ['auto-*'],
+          'Enable Object Lock': true,
+        });
+
+        await chooseExistingDataset();
+        await form.fillForm({
+          Name: 'media',
+          Dataset: 'tank/buckets/photos',
+          Owner: 'alice',
+        });
+
+        await (await getSaveButton()).click();
+
+        expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+          layout: S3BucketLayout.Dataset,
+          versioning: S3Versioning.Off,
+          snapshot_versions: [],
+          object_lock: false,
+        })]);
+      });
+
+      it('puts the parent picker and the permissions model back when switching to New Dataset', async () => {
+        await chooseExistingDataset();
+        await form.fillForm({ Storage: 'New Dataset' });
+        await clickAdvancedOptions();
+
+        const labels = await form.getLabels();
+        expect(labels).toContain('Parent Dataset');
+        expect(labels).toContain('Enable Object Lock');
+        expect(await (await getSelect('Permissions Model')).getValue()).toBe('S3');
+      });
     });
 
     it('adds grants in advanced mode', async () => {
@@ -677,6 +787,50 @@ describe('S3BucketFormComponent', () => {
         audit_overflow: null,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    });
+  });
+
+  describe('editing a bucket that serves an existing dataset', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              ...existingBucket,
+              dataset: 'tank/shares/media',
+              layout: S3BucketLayout.Dataset,
+              permissions_model: S3PermissionsModel.Multiprotocol,
+              object_ownership: S3ObjectOwnership.ObjectWriter,
+              versioning: S3Versioning.Off,
+              snapshot_versions: [] as string[],
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('says the dataset is read-only and offers neither the layout nor what it rules out', async () => {
+      await clickAdvancedOptions();
+
+      const labels = await form.getLabels();
+      expect(labels).not.toContain('Storage');
+      expect(labels).not.toContain('Enable Object Lock');
+      expect(labels).not.toContain('Versioning');
+      expect(labels).not.toContain('Snapshot Versions');
+      expect(sectionText('Bucket')).toContain('Served read-only over S3.');
+    });
+
+    it('updates the bucket without sending the dataset or the layout', async () => {
+      await (await getSaveButton()).click();
+
+      const [, [, update]] = (api.call as jest.Mock).mock.calls
+        .find(([method]) => method === 'sharing.s3.update') as [string, [number, Record<string, unknown>]];
+      expect(update).not.toHaveProperty('dataset');
+      expect(update).not.toHaveProperty('layout');
     });
   });
 

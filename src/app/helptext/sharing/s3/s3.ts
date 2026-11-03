@@ -5,6 +5,12 @@ export const helptextSharingS3 = {
  hyphens, starting and ending with a letter or digit.'),
   parentDatasetTooltip: T('The bucket gets a new dataset of its own under this dataset, named after the bucket. \
  Objects live in the <i>s3data</i> directory under it.'),
+  layoutTooltip: T('<b>New Dataset</b>: the bucket gets a new dataset of its own and is read-write over S3.<br>\
+ <b>Existing Dataset (Read-only)</b>: an existing dataset is served as it is, read-only over S3, while SMB or NFS\
+ can keep sharing it read-write. Versioning, object lock and snapshot versions are not available.'),
+  existingDatasetTooltip: T('The dataset to serve. Its whole contents are listed as objects, and S3 clients can\
+ only read them.'),
+  existingDatasetHint: T('Served read-only over S3.'),
   ownerTooltip: T('Account that owns the bucket. The owner bypasses the grants and owns the <i>s3data</i> \
  directory when the S3 service creates it.'),
   enabledTooltip: T('Whether the bucket is served. Toggling restarts the S3 service.'),
