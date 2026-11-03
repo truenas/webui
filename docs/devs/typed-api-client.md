@@ -30,7 +30,7 @@ of the time.
 | `mockApi()` and `MockApiService`, the spec double | `src/app/core/testing/utils/mock-api.utils.ts`, `src/app/core/testing/classes/mock-api.service.ts` |
 | `EmptyApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-api.service.ts`, registered in `src/setup-jest.ts` |
 
-The typed client owns **the** WebSocket — one per tab, on `/api/v28.0.0`. It
+The typed client owns **the** WebSocket — one per tab, on `/api/current`. It
 is opened at startup by an app initializer in `main.ts`, unconditionally on
 purpose: migrated pages run entirely on it, so there is no build in which it
 can be left closed.
@@ -782,7 +782,7 @@ that must agree:
 | Pin | Where | What it decides |
 |---|---|---|
 | `WebUiApiDirectory = ApiDirectoryV28_0_0` | `typed-api-client.token.ts` | Every method name, param and response the app compiles against |
-| `version: 'v28.0.0'` | the `createTrueNasClient` call in the same file | The socket the app opens, `/api/v28.0.0` |
+| `version: 'v28.0.0'` | the `createTrueNasClient` call in the same file | The client class and its typed surface. Not the socket: `websocketPath: '/api/current'` beside it keeps that on the appliance's newest version |
 | `E2eApiDirectory` and `expectedApiVersion` | `e2e/support/api/client.ts` | The surface the E2E fixtures compile against, and the version they insist on at runtime |
 
 The `version` literal must stay at the `createTrueNasClient` call site. The
@@ -792,23 +792,23 @@ a compile error.
 
 ### What the pin means at runtime
 
-The app names its version, so the client skips discovery and opens
-`/api/v28.0.0` whatever the appliance's newest version is. Before the typed
-client the UI opened `/api/current`, which followed the appliance. That is
-still how `stable/27` works. `master` is the first branch with a pin, and
-`stable/28` will be the first release to ship one.
+It types the UI; it does not choose the socket. Next to `version` the client
+gets `websocketPath: '/api/current'`, so the socket goes to whatever the
+appliance's newest version is. That is how the UI has always connected, and
+how `stable/27` still does. For a while after the migration the UI opened
+`/api/v28.0.0` instead, so a master UI could not run against an appliance that
+did not serve `v28.0.0`, a 27 box included.
 
-- **An appliance newer than the pin** keeps working for as long as it still
-  serves `v28.0.0`, that is, while `/api/versions` still lists it next to the
-  newer versions. What the UI loses is everything middleware adds
-  only to the newer surface. On `master`, that is every new method and field
-  from the day the next version opens.
-- **An appliance that no longer serves the pin** refuses the socket. The client
-  retries forever, and the UI sits on the connecting screen with no error that
-  names the version.
 - **An appliance older than the pin**, such as a 27 box under `yarn ui remote`,
-  has no `/api/v28.0.0`, and fails the same way. A master UI needs a master
-  appliance.
+  works. Calls go out under its own version's semantics, so a method or field
+  it lacks fails at the call, not at sign-in. A newer UI is expected to be
+  tried against an older release.
+- **An appliance newer than the pin** works the same way in the other
+  direction: the UI talks to its newest version with calls typed against
+  `v28.0.0`. Anything middleware renamed or reshaped since fails at the call,
+  and `tsc` only says so once the pin is bumped (below).
+- What the pin still decides is what the UI *compiles* against, and the client
+  class it builds (and so what it assumes, such as reconnect tokens).
 
 E2E is different: it runs discovery and takes the newest version that the
 appliance advertises *and* the installed `@truenas/api-client` implements. It
@@ -879,8 +879,8 @@ Take `v28.0.0` → `v29.0.0` as the example.
 7. Check `UndeclaredCallDirectory` against the new directory. Delete any entry
    the generated directory now declares, together with its `callUndeclared`
    call sites.
-8. Update the version mentions in this document ("What is in place", the
-   socket path), in `docker/nginx.conf`'s comment and in `e2e/CLAUDE.md`. Leave
+8. Update the version mentions in this document ("What is in place") and in
+   `e2e/CLAUDE.md`. The socket path is `/api/current` and does not change. Leave
    the version names in the history sections as they are.
 9. Run lint and the specs `yarn test:changed` picks up. Then run the full E2E
    suite against a master appliance that advertises the new year, and record
