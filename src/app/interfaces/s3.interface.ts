@@ -2,6 +2,7 @@ import {
   S3Access,
   S3AccessKeyStatus,
   S3AuditOverflow,
+  S3BucketLayout,
   S3LogLevel,
   S3MultipartEtag,
   S3ObjectLockMode,
@@ -68,6 +69,10 @@ export interface S3Bucket {
    * ZFS dataset name, e.g. `tank/buckets/photos`.
    */
   dataset: string;
+  /**
+   * Set at creation and fixed after.
+   */
+  layout: S3BucketLayout;
   enabled: boolean;
   owner: string;
   owner_uid: number;
@@ -93,14 +98,15 @@ export interface S3Bucket {
 export interface S3BucketCreate extends Partial<Omit<S3Bucket, 'id' | 'owner_uid' | 'grants' | 'locked' | 'tier'>> {
   name: string;
   /**
-   * Omitted, the dataset is created under the service's `managed_root_dataset` and named after the bucket.
+   * With the `BUCKET` layout, a dataset that must not exist yet; omitted, it is created under the service's
+   * `managed_root_dataset` and named after the bucket. With the `DATASET` layout, a required existing dataset.
    */
   dataset?: string;
   owner: string;
   grants?: S3Grant[];
 }
 
-export type S3BucketUpdate = Partial<Omit<S3BucketCreate, 'dataset'>>;
+export type S3BucketUpdate = Partial<Omit<S3BucketCreate, 'dataset' | 'layout'>>;
 
 /**
  * A bucket no longer registered whose dataset still holds it, as `sharing.s3.recoverable_buckets` reads it from
