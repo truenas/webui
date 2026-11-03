@@ -461,16 +461,20 @@ above. Each is a change for `truenas/api-client-ts`.
     bump does not fix it; the client would have to stop bundling its
     declarations, or export the enums outside the namespaces.
 
-14. **Methods missing from the dump.** `interface.lag_supported_protocols`,
-    `kerberos.keytab.kerberos_principal_choices` and `nfs.add_principal` are in no
-    generated directory, most likely because middleware marks them private.
-    `UndeclaredCallDirectory` in `typed-api-client.token.ts` declares them by hand,
-    and `NetworkService`, the directory services form's credential step and the
-    NFS Add SPN dialog reach them through `ApiService.callUndeclared`
-    (`mockUndeclaredCall` in specs). A separate verb rather than a widened
-    `WebUiApiDirectory`, which would stop the client and its fake from being the
-    directory's own type. Nothing checks those three entries against middleware;
-    drop each one once the generated directory carries it.
+14. **Methods missing from the dump.** `interface.lag_supported_protocols` and
+    `kerberos.keytab.kerberos_principal_choices` are in no generated directory,
+    because middleware marks them private. `UndeclaredCallDirectory` in
+    `typed-api-client.token.ts` declares them by hand, and `NetworkService` and the
+    directory services form's credential step reach them through
+    `ApiService.callUndeclared` (`mockUndeclaredCall` in specs). A separate verb
+    rather than a widened `WebUiApiDirectory`, which would stop the client and its
+    fake from being the directory's own type. Nothing checks those entries against
+    middleware; drop each one once the generated directory carries it.
+
+    A third, `nfs.add_principal`, behind the NFS service's Add SPN dialog, was not
+    private but gone: middleware removed it in 2024 (its test went in
+    middleware #14040), and a 28.0.0 box answers it with "Method does not exist".
+    The dialog and its entry are deleted.
 
 15. **Dates are typed as strings.** Middleware sends a `datetime` as an
     `{ $date: <ms> }` envelope and a `date` as `{ $type: 'date', $value }`, and

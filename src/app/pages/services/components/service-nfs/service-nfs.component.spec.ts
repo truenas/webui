@@ -5,22 +5,17 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnDialog, TnInputHarness, TnSelectHarness,
+  TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { catchError, EMPTY, Observable, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol } from 'app/enums/nfs-protocol.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { NfsConfig } from 'app/interfaces/nfs-config.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  AddSpnDialog,
-} from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ServiceNfsComponent } from 'app/pages/services/components/service-nfs/service-nfs.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -71,22 +66,9 @@ describe('ServiceNfsComponent', () => {
         }),
         mockCall('nfs.update', {} as NfsConfig),
         mockCall('rdma.capable_protocols', () => rdmaCapableProtocols),
-        mockCall('directoryservices.status', {
-          status: DirectoryServiceStatus.Healthy,
-          type: DirectoryServiceType.ActiveDirectory,
-          status_msg: null,
-        }),
       ]),
       provideMockStore(),
       ...ixFormTestingProviders(),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
-      mockProvider(TnDialog, {
-        open: jest.fn(() => ({
-          closed: of(),
-        })),
-      }),
       mockAuth(),
       // `mockAuth()` stubs `withErrorHandler` as a pass-through, which would let an erroring
       // enrichment call leak as an unhandled RxJS error. Restore the real shape: report, swallow.
@@ -128,15 +110,15 @@ describe('ServiceNfsComponent', () => {
   });
 
   it('keeps the form usable when only an enrichment call fails', async () => {
-    // `directoryservices.status` only decides whether Add SPN is offered. Failing it must not
+    // `rdma.capable_protocols` only decides whether RDMA can be turned on. Failing it must not
     // block Save over a form that holds the real configuration `nfs.config` returned.
-    spectator.inject(MockApiService).mockCallError('directoryservices.status');
+    spectator.inject(MockApiService).mockCallError('rdma.capable_protocols');
 
     const loaded = TestBed.createComponent(ServiceNfsComponent);
     loaded.detectChanges();
     await loaded.whenStable();
 
-    expect(api.call).toHaveBeenCalledWith('directoryservices.status');
+    expect(api.call).toHaveBeenCalledWith('rdma.capable_protocols');
     expect(loaded.componentInstance.hasLoadFailed()).toBe(false);
     expect(loaded.componentInstance.canSubmit()).toBe(true);
   });
@@ -219,16 +201,6 @@ describe('ServiceNfsComponent', () => {
 
     expect(await (await getInput('v4_domain')).isDisabled()).toBe(true);
     expect(await (await getCheckbox('v4_krb')).isDisabled()).toBe(true);
-  });
-
-  it('should open dialog form when add SPN button is pressed', async () => {
-    const addSpnButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add SPN' }));
-    await addSpnButton.click();
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
-    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AddSpnDialog);
-    // Add SPN sits inside `<ix-form>`'s content, i.e. inside the `<form>` that binds `ngSubmit`.
-    // `tn-button` renders `type="button"` by default, so the click must not also save the form.
-    expect(api.call).not.toHaveBeenCalledWith('nfs.update', expect.anything());
   });
 
   it('enables the RDMA field when NFS is an RDMA capable protocol', async () => {

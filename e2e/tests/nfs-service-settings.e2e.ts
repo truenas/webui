@@ -3,8 +3,8 @@
  * System > Services opens, and the form refuses a port out of range.
  *
  * Enabled Protocols is covered by `nfs-access.e2e.ts` and left alone here. Bind
- * IP Addresses depends on the appliance's own addresses, RDMA on a NIC CI does
- * not have, and Add SPN on a directory service, so none of them is touched.
+ * IP Addresses depends on the appliance's own addresses and RDMA on a NIC CI
+ * does not have, so neither is touched.
  *
  * The page has no readout of these settings, so each save is asserted through
  * `nfs.config`. Every field is read back, not only the ones a test edits: the
