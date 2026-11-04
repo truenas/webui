@@ -33,6 +33,14 @@
         {{ container.cpuset || ('All Host CPUs' | translate) }}
       </p>
       <p>
+        <span class="label">{{ 'Memory Limit' | translate }}:</span>
+        @if (container.memory) {
+          {{ container.memory }} {{ 'MiB' | translate }}
+        } @else {
+          {{ helptext.noMemoryLimit | translate }}
+        }
+      </p>
+      <p>
         <span class="label">{{ 'Container Time' | translate }}:</span>
         {{ container.time | mapValue: containerTimeLabels | translate }}
       </p>

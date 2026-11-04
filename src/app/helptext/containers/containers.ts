@@ -3,7 +3,7 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const containersHelptext = {
   cpuHint: T('Leave empty to allow all host CPUs to be used.'),
   nameHint: T('Name cannot be changed after container is created'),
-  memoryHint: T('Leave empty to not limit container memory.'),
+  memoryHint: T('Leave empty for no limit.'),
   vncHint: T('VNC connection is currently insecure. Secure the connection in other ways.'),
 
   namePlaceholderLabel: T('Name'),
@@ -16,8 +16,11 @@ export const containersHelptext = {
   cpuLabel: T('CPU Configuration'),
   cpuTooltip: T('Enter number of cores or multiple values or ranges to set CPU topology. Example: 1-2,5,9-11'),
 
-  memoryLabel: T('Memory Size'),
-  memoryTooltip: T('Specify RAM allocation for the container. You can use units such as GB, MB.'),
+  memoryLabel: T('Memory Limit (MiB)'),
+  memoryTooltip: T('Hard memory limit for the container in mebibytes (MiB), also reported as its total memory.\
+ Processes are killed if they exceed it. Leave empty for no limit: the container sees the host\'s physical memory.\
+ Changes take effect the next time the container starts.'),
+  noMemoryLimit: T('No Limit'),
 
   envLabel: T('Environment Variables'),
   envNameLabel: T('Name'),

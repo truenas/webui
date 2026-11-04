@@ -87,6 +87,16 @@
           ></ix-input>
         </ix-fieldset>
 
+        <ix-fieldset [title]="'Memory Configuration' | translate">
+          <ix-input
+            formControlName="memory"
+            type="number"
+            [label]="helptext.memoryLabel | translate"
+            [hint]="helptext.memoryHint | translate"
+            [tooltip]="helptext.memoryTooltip | translate"
+          ></ix-input>
+        </ix-fieldset>
+
         <ix-fieldset [title]="'Time Configuration' | translate">
           <ix-select
             formControlName="time"

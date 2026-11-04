@@ -6,23 +6,29 @@ import { MatCheckboxHarness } from '@angular/material/checkbox/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import { when } from 'jest-when';
+import { Observable, of, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import {
   ContainerCapabilitiesPolicy, ContainerDeviceType, ContainerIdmapType, ContainerStatus,
 } from 'app/enums/container.enum';
+import { ApiTraceFrame } from 'app/interfaces/api-error.interface';
 import { AvailableUsb, Container } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('ContainerFormComponent', () => {
   let spectator: Spectator<ContainerFormComponent>;
@@ -43,6 +49,7 @@ describe('ContainerFormComponent', () => {
     name: 'test-container',
     description: 'Test description',
     cpuset: '0-1',
+    memory: 512,
     autostart: true,
     time: 'local',
     shutdown_timeout: 30,
@@ -396,6 +403,35 @@ describe('ContainerFormComponent', () => {
     });
   });
 
+  describe('memory limit on create', () => {
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      await (await loader.getHarness(IxInputHarness.with({ label: 'Name' }))).setValue('limited');
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({ pool: 'pool1', image: 'ubuntu:22.04' });
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }))).click();
+    });
+
+    it('sends the memory limit in MiB', async () => {
+      await (await loader.getHarness(IxInputHarness.with({ label: 'Memory Limit (MiB)' }))).setValue('1024');
+
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Create' }))).click();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({ memory: 1024 }),
+      ]);
+    });
+
+    it('leaves the memory limit out when the field is empty, so the container has no limit', async () => {
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Create' }))).click();
+
+      const [[, [payload]]] = (spectator.inject(ApiService).job as jest.Mock).mock.calls;
+      expect(payload).not.toHaveProperty('memory');
+    });
+  });
+
   describe('updating a container', () => {
     const createEditComponent = createComponentFactory({
       component: ContainerFormComponent,
@@ -470,6 +506,102 @@ describe('ContainerFormComponent', () => {
       expect(containersStore.containerUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container' }),
       );
+    });
+  });
+
+  describe('memory limit on edit', () => {
+    const createEditComponent = createComponentFactory({
+      component: ContainerFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('container.pool_choices', { pool1: 'pool1' }),
+          mockCall('lxc.config', {
+            bridge: 'lxdbr0',
+            v4_network: null,
+            v6_network: null,
+            preferred_pool: 'pool1',
+          }),
+          mockCall('container.update', existingContainer),
+          mockCall('container.get_instance', existingContainer),
+          mockCall('container.query', []),
+        ]),
+        mockProvider(SlideInRef, {
+          getData: jest.fn(() => existingContainer as Container | undefined),
+          close: jest.fn(),
+          requireConfirmationWhen: jest.fn(),
+        }),
+        mockProvider(ContainersStore),
+        mockProvider(MatDialog),
+        mockProvider(DialogService),
+        mockProvider(Router),
+        mockProvider(SnackbarService),
+        // Real handler, so the API's validation error reaches the field.
+        FormErrorHandlerService,
+        mockProvider(ErrorHandlerService, {
+          withErrorHandler: jest.fn(() => <T>(source$: Observable<T>) => source$),
+        }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createEditComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }))).click();
+    });
+
+    async function getMemoryInput(): Promise<IxInputHarness> {
+      return loader.getHarness(IxInputHarness.with({ label: 'Memory Limit (MiB)' }));
+    }
+
+    async function save(): Promise<void> {
+      await (await loader.getHarness(MatButtonHarness.with({ text: 'Save' }))).click();
+    }
+
+    it('shows the configured memory limit', async () => {
+      expect(await (await getMemoryInput()).getValue()).toBe('512');
+    });
+
+    it('sends null when the memory limit is cleared', async () => {
+      await (await getMemoryInput()).setValue('');
+
+      await save();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.update', [1, { memory: null }]);
+    });
+
+    it('does not send the memory limit when it is unchanged', async () => {
+      await (await loader.getHarness(IxInputHarness.with({ label: 'Description' }))).setValue('Changed');
+
+      await save();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.update', [
+        1,
+        { description: 'Changed' },
+      ]);
+    });
+
+    it('shows the API validation error on the field for a value below 20 MiB', async () => {
+      const api = spectator.inject(ApiService);
+      when(api.call).calledWith('container.update', expect.anything()).mockReturnValue(throwError(() => new ApiCallError({
+        code: JsonRpcErrorCode.CallError,
+        message: 'Validation error',
+        data: {
+          error: 11,
+          errname: ApiErrorName.Validation,
+          extra: [['container_update.memory', 'Input should be greater than or equal to 20', 22]],
+          trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+          reason: 'Validation error',
+        },
+      })));
+      await (await getMemoryInput()).setValue('10');
+
+      await save();
+
+      expect(api.call).toHaveBeenCalledWith('container.update', [1, { memory: 10 }]);
+      expect(spectator.query('ix-input[formControlName="memory"] .manual-message'))
+        .toHaveText('Input should be greater than or equal to 20');
     });
   });
 
