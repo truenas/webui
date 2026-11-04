@@ -13,14 +13,21 @@ import {
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
 import { CloudSyncCredentialEntry } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
+import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+
+const storjCreds = {
+  id: 2,
+  name: 'Storj',
+  provider: { type: CloudSyncProviderName.Storj },
+} as CloudSyncCredentialEntry;
 
 describe('CloudSyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
@@ -36,8 +43,9 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       mockProvider(FormSidePanelService),
       mockAuth(),
       mockApi([
-        mockQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry]),
-        mockCall('cloudsync.providers', [googlePhotosProvider]),
+        mockQuery('cloudsync.credentials.query', [googlePhotosCreds as CloudSyncCredentialEntry, storjCreds]),
+        mockCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
+        mockCall('cloudsync.list_buckets', [{ Name: 'my-bucket', Path: 'my-bucket', Enabled: true }]),
         mockCall('cloudsync.create', null),
         mockCall('cloudsync.update', null),
       ]),
@@ -179,5 +187,27 @@ describe('CloudSyncWhatAndWhenComponent', () => {
         bucket: 'test-bucket',
       }),
     }));
+  });
+
+  it('keeps Folder disabled until a bucket is selected for a provider with buckets', async () => {
+    spectator.setInput('credentialId', storjCreds.id);
+    await spectator.fixture.whenStable();
+
+    const directionSelect = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="direction"]' }),
+    );
+    await directionSelect.selectOption('PUSH');
+
+    const folderPicker = await loader.getHarness(
+      TnFilePickerHarness.with({ selector: '[formControlName="folder_destination"]' }),
+    );
+    expect(await folderPicker.isDisabled()).toBe(true);
+
+    const bucketSelect = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="bucket"]' }),
+    );
+    await bucketSelect.selectOption('my-bucket');
+
+    expect(await folderPicker.isDisabled()).toBe(false);
   });
 });

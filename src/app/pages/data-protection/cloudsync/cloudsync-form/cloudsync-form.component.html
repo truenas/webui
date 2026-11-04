@@ -140,7 +140,7 @@
           ></tn-input>
         </tn-form-field>
       }
-      @if (form.controls.folder_destination.enabled) {
+      @if (form.controls.credentials.value && form.controls.direction.value === Direction.Push) {
         <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
@@ -154,7 +154,7 @@
           ></tn-file-picker>
         </tn-form-field>
       }
-      @if (form.controls.folder_source.enabled) {
+      @if (form.controls.credentials.value && form.controls.direction.value === Direction.Pull) {
         <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"

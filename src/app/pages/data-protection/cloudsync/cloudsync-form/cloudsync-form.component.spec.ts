@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
-import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnFilePickerHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -171,6 +171,11 @@ describe('CloudSyncFormComponent', () => {
               pass: 'password',
             },
           },
+          {
+            id: 3,
+            name: 'test3',
+            provider: { type: CloudSyncProviderName.AmazonS3 },
+          },
         ] as CloudSyncCredentialEntry[]),
         mockCall('cloudsync.providers', [{
           name: CloudSyncProviderName.Http,
@@ -189,7 +194,17 @@ describe('CloudSyncFormComponent', () => {
           task_schema: [],
           credentials_schema: [],
           credentials_oauth: null,
+        },
+        {
+          name: CloudSyncProviderName.AmazonS3,
+          title: 'Amazon S3',
+          buckets: true,
+          bucket_title: 'Bucket',
+          task_schema: [],
+          credentials_schema: [],
+          credentials_oauth: null,
         }] as CloudSyncProvider[]),
+        mockCall('cloudsync.list_buckets', [{ Name: 'my-bucket', Path: 'my-bucket', Enabled: true }]),
         mockCall('cloudsync.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.create'>),
         mockCall('cloudsync.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.update'>),
       ]),
@@ -272,6 +287,30 @@ describe('CloudSyncFormComponent', () => {
           attributes: { folder: '/' },
         }),
       ]);
+    });
+
+    it('keeps Folder disabled until a bucket is selected for a provider with buckets', async () => {
+      const credentialsSelect = await loader.getHarness(
+        TnSelectHarness.with({ ancestor: 'ix-cloud-credentials-select' }),
+      );
+      await credentialsSelect.selectOption('test3 (Amazon S3)');
+      const directionSelect = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="direction"]' }),
+      );
+      await directionSelect.selectOption('PUSH');
+      await spectator.fixture.whenStable();
+
+      const folderPicker = await loader.getHarness(
+        TnFilePickerHarness.with({ selector: '[formControlName="folder_destination"]' }),
+      );
+      expect(await folderPicker.isDisabled()).toBe(true);
+
+      const bucketSelect = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="bucket"]' }),
+      );
+      await bucketSelect.selectOption('my-bucket');
+
+      expect(await folderPicker.isDisabled()).toBe(false);
     });
   });
 
