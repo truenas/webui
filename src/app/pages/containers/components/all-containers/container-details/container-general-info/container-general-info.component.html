@@ -36,6 +36,14 @@
       <span class="label">{{ 'CPU Set' | translate }}:</span>
       {{ container.cpuset || ('All Host CPUs' | translate) }}
     </p>
+    <p tnTestIdType="text" [tnTestId]="'memory-limit'">
+      <span class="label">{{ 'Memory Limit' | translate }}:</span>
+      @if (container.memory) {
+        {{ container.memory }} {{ 'MiB' | translate }}
+      } @else {
+        {{ helptext.noMemoryLimit | translate }}
+      }
+    </p>
     <p>
       <span class="label">{{ 'Container Time' | translate }}:</span>
       {{ container.time | mapValue: containerTimeLabels | translate }}

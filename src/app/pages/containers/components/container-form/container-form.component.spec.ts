@@ -8,7 +8,11 @@ import {
   TnSelectHarness, TnDialog,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import {
+  mockApi, mockCall, mockJob, mockQuery,
+} from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   ContainerCapabilitiesPolicy, ContainerDeviceType, ContainerIdmapType, ContainerStatus,
@@ -18,12 +22,15 @@ import {
   AvailableUsb, ContainerGlobalConfig, toContainer,
 } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ContainerFormComponent } from 'app/pages/containers/components/container-form/container-form.component';
 import { ContainersStore } from 'app/pages/containers/stores/containers.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 type ContainerEntry = WebUiQueryEntity<'container.query'>;
 
@@ -37,6 +44,7 @@ describe('ContainerFormComponent', () => {
     name: 'test-container',
     description: 'Test description',
     cpuset: '0-1',
+    memory: 512,
     autostart: true,
     time: 'LOCAL',
     shutdown_timeout: 30,
@@ -429,6 +437,41 @@ describe('ContainerFormComponent', () => {
     });
   });
 
+  describe('memory limit on create', () => {
+    beforeEach(() => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    const fillRequiredFields = async (): Promise<void> => {
+      await (await getInput('name')).setValue('limited');
+
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['form'].patchValue({ pool: 'pool1', image: 'ubuntu:22.04' });
+      await toggleAdvanced();
+    };
+
+    it('sends the memory limit in MiB', async () => {
+      await fillRequiredFields();
+      await (await getInput('memory')).setValue('1024');
+
+      await submit();
+
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('container.create', [
+        expect.objectContaining({ memory: 1024 }),
+      ]);
+    });
+
+    it('leaves the memory limit out when the field is empty, so the container has no limit', async () => {
+      await fillRequiredFields();
+
+      await submit();
+
+      const [[, [payload]]] = (spectator.inject(ApiService).job as jest.Mock).mock.calls;
+      expect(payload).not.toHaveProperty('memory');
+    });
+  });
+
   describe('updating a container', () => {
     const createEditComponent = createComponentFactory({
       component: ContainerFormComponent,
@@ -502,6 +545,79 @@ describe('ContainerFormComponent', () => {
       expect(containersStore.containerUpdated).toHaveBeenCalledWith(
         expect.objectContaining({ name: 'updated-container' }),
       );
+    });
+  });
+
+  describe('memory limit on edit', () => {
+    const createEditComponent = createComponentFactory({
+      component: ContainerFormComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockAuth(),
+        mockApi([
+          mockCall('container.pool_choices', { pool1: 'pool1' }),
+          mockCall('lxc.config', { bridge: 'lxdbr0', preferred_pool: 'pool1' } as ContainerGlobalConfig),
+          mockCall('container.update', existingContainerEntry),
+          mockCall('container.get_instance', existingContainerEntry),
+          mockQuery('container.query', []),
+        ]),
+        mockProvider(ContainersStore),
+        mockProvider(TnDialog),
+        mockProvider(DialogService),
+        mockProvider(Router),
+        ...ixFormTestingProviders(),
+        // Real handler, so the API's validation error reaches the field.
+        FormErrorHandlerService,
+        mockProvider(ErrorHandlerService),
+        provideTnFormFieldErrors(),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createEditComponent({ props: { editContainer: existingContainer } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+      await toggleAdvanced();
+    });
+
+    it('shows the configured memory limit', async () => {
+      expect(await (await getInput('memory')).getValue()).toBe('512');
+    });
+
+    it('sends null when the memory limit is cleared', async () => {
+      const memoryField = await loader.getHarness(TnFormControlHarness.with({ label: 'Memory Limit (MiB)' }));
+      await memoryField.setValue('');
+
+      await submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.update', [1, { memory: null }]);
+    });
+
+    it('does not send the memory limit when it is unchanged', async () => {
+      await (await getInput('description')).setValue('Changed');
+
+      await submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.update', [
+        1,
+        { description: 'Changed' },
+      ]);
+    });
+
+    it('shows the API validation error on the field for a value below 20 MiB', async () => {
+      spectator.inject(MockApiService).mockCallError('container.update', {
+        errname: 'EINVAL',
+        extra: [['container_update.memory', 'Input should be greater than or equal to 20', 22]],
+        trace: { class: 'ValidationErrors', formatted: '', frames: [] },
+      });
+      await (await getInput('memory')).setValue('10');
+
+      await submit();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('container.update', [1, { memory: 10 }]);
+      const memoryField = await loader.getHarness(TnFormFieldHarness.with({ label: 'Memory Limit (MiB)' }));
+      expect(await memoryField.getErrorMessage()).toBe('Input should be greater than or equal to 20');
     });
   });
 
