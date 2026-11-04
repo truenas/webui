@@ -102,6 +102,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   readonly save = output();
 
   protected readonly slashRootNode = slashRootNode;
+  protected readonly Direction = Direction;
 
   form = this.formBuilder.nonNullable.group({
     description: ['' as string, Validators.required],
@@ -153,6 +154,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
   bucketInputPlaceholder: string = helptextCloudSync.bucketLabel;
   bucketInputTooltip: string = helptextCloudSync.bucketInputTooltip;
   googleDriveProviderIds: number[] = [];
+  private providerHasBuckets = false;
   bucketOptions$: Observable<Option[]>;
 
   fileNodeProvider: TreeNodeProvider;
@@ -358,15 +360,7 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       } else {
         this.form.controls.snapshot.enable();
       }
-      if (this.form.controls.credentials.value) {
-        if (direction === Direction.Pull) {
-          this.form.controls.folder_source.enable();
-          this.form.controls.folder_destination.disable();
-        } else {
-          this.form.controls.folder_source.disable();
-          this.form.controls.folder_destination.enable();
-        }
-      }
+      this.updateFolderControls();
       if (direction === Direction.Pull) {
         this.form.controls.path_destination.enable();
         this.form.controls.path_source.disable();
@@ -413,10 +407,13 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
       this.form.controls.folder_source.reset([]);
       this.credentialsDependentControls.forEach((control) => control.disable());
 
+      this.providerHasBuckets = false;
+
       if (credential) {
-        this.enableRemoteExplorer();
         const targetCredentials = find(this.credentials, { id: credential });
         const targetProvider = find(this.providers, { name: targetCredentials?.provider?.type });
+        this.providerHasBuckets = Boolean(targetCredentials && targetProvider?.buckets);
+        this.enableRemoteExplorer();
         if (targetCredentials && targetProvider?.buckets) {
           if (
             [
@@ -474,7 +471,13 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
         this.form.controls.bucket_input.disable();
         this.form.controls.bucket.enable();
       }
+      this.updateFolderControls();
     });
+
+    merge(
+      this.form.controls.bucket.valueChanges,
+      this.form.controls.bucket_input.valueChanges,
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => this.updateFolderControls());
 
     this.form.controls.bucket.valueChanges.pipe(
       filter((selectedOption) => selectedOption === newOption),
@@ -601,13 +604,43 @@ export class CloudSyncWhatAndWhenComponent implements OnInit, OnChanges {
 
   private enableRemoteExplorer(): void {
     this.setBucketNodeProvider();
+    this.updateFolderControls();
+  }
 
-    if (this.form.controls.direction.value === Direction.Pull) {
-      this.form.controls.folder_source.enable();
-      this.form.controls.folder_destination.disable();
+  /**
+   * Folder browses inside a bucket, so for providers with buckets it stays disabled until one is chosen:
+   * listing without a bucket fails with `[EINVAL] cloud_sync.attributes.bucket: Field required`.
+   */
+  private updateFolderControls(): void {
+    const { folder_source: folderSource, folder_destination: folderDestination } = this.form.controls;
+    const canBrowse = Boolean(this.form.controls.credentials.value) && !this.isBucketMissing();
+    const isPull = this.form.controls.direction.value === Direction.Pull;
+
+    this.setControlEnabled(folderSource, canBrowse && isPull);
+    this.setControlEnabled(folderDestination, canBrowse && !isPull);
+    this.cdr.markForCheck();
+  }
+
+  private isBucketMissing(): boolean {
+    if (!this.providerHasBuckets) {
+      return false;
+    }
+
+    const { bucket, bucket_input: bucketInput } = this.form.controls;
+    if (bucket.enabled) {
+      return !bucket.value || bucket.value === newOption;
+    }
+    return !bucketInput.enabled || !bucketInput.value;
+  }
+
+  private setControlEnabled(control: FormControl, isEnabled: boolean): void {
+    if (isEnabled === control.enabled) {
+      return;
+    }
+    if (isEnabled) {
+      control.enable();
     } else {
-      this.form.controls.folder_source.disable();
-      this.form.controls.folder_destination.enable();
+      control.disable();
     }
   }
 
