@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   CloudCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/cloud-credentials-select/cloud-credentials-select.component';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
@@ -178,6 +179,11 @@ describe('CloudSyncFormComponent', () => {
               pass: 'password',
             },
           },
+          {
+            id: 3,
+            name: 'test3',
+            provider: { type: CloudSyncProviderName.AmazonS3 },
+          },
         ]),
         mockCall('cloudsync.providers', [{
           name: CloudSyncProviderName.Http,
@@ -196,7 +202,17 @@ describe('CloudSyncFormComponent', () => {
           task_schema: [],
           credentials_schema: [],
           credentials_oauth: null,
+        },
+        {
+          name: CloudSyncProviderName.AmazonS3,
+          title: 'Amazon S3',
+          buckets: true,
+          bucket_title: 'Bucket',
+          task_schema: [],
+          credentials_schema: [],
+          credentials_oauth: null,
         }]),
+        mockCall('cloudsync.list_buckets', [{ Name: 'my-bucket', Path: 'my-bucket', Enabled: true }]),
       ]),
       mockProvider(SlideIn, {
         open: jest.fn(() => of()),
@@ -248,6 +264,39 @@ describe('CloudSyncFormComponent', () => {
         transfers: 4,
       }]);
       expect(slideInRef.close).toHaveBeenCalledWith({ response: existingTask });
+    });
+
+    it('keeps Folder disabled until a bucket is selected for a provider with buckets', async () => {
+      const credentialsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Credential' }));
+      await credentialsSelect.setValue('test3 (Amazon S3)');
+      const directionSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Direction' }));
+      await directionSelect.setValue('PUSH');
+
+      const folderExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Folder' }));
+      expect(await folderExplorer.isDisabled()).toBe(true);
+
+      const bucketSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Bucket' }));
+      await bucketSelect.setValue('my-bucket');
+
+      expect(await folderExplorer.isDisabled()).toBe(false);
+    });
+
+    it('sends the bucket root as the folder when a pull task with no bucket is saved', async () => {
+      const credentialsSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Credential' }));
+      await credentialsSelect.setValue('test3 (Amazon S3)');
+      const descriptionInput = await loader.getHarness(IxInputHarness.with({ label: 'Description' }));
+      await descriptionInput.setValue('New Cloud Sync Task');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
+        expect.objectContaining({
+          credentials: 3,
+          direction: Direction.Pull,
+          attributes: { folder: '/' },
+        }),
+      ]);
     });
 
     it('sends the bucket root as the folder when a push task is saved with an empty Folder', async () => {

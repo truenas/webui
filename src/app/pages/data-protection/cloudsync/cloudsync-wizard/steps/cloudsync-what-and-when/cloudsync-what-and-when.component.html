@@ -23,6 +23,22 @@
         [mode]="form.controls.transfer_mode.value"
       ></ix-transfer-mode-explanation>
     </div>
+    @if (form.controls.bucket.enabled) {
+      <ix-select
+        formControlName="bucket"
+        [label]="bucketPlaceholder | translate"
+        [tooltip]="bucketTooltip | translate"
+        [options]="bucketOptions$"
+      ></ix-select>
+    }
+    @if (form.controls.bucket_input.enabled) {
+      <ix-input
+        formControlName="bucket_input"
+        [label]="helptext.bucketLabel | translate"
+        [tooltip]="helptext.bucketInputTooltip | translate"
+        [required]="true"
+      ></ix-input>
+    }
     <div class="cloudsync">
       @if (form.controls.path_destination.enabled) {
         <ix-explorer
@@ -43,7 +59,7 @@
           [nodeProvider]="fileNodeProvider"
         ></ix-explorer>
       }
-      @if (form.controls.folder_destination.enabled) {
+      @if (form.controls.credentials.value && form.controls.direction.value === Direction.Push) {
         <ix-explorer
           formControlName="folder_destination"
           [rootNodes]="[slashRootNode]"
@@ -52,7 +68,7 @@
           [nodeProvider]="bucketNodeProvider"
         ></ix-explorer>
       }
-      @if (form.controls.folder_source.enabled) {
+      @if (form.controls.credentials.value && form.controls.direction.value === Direction.Pull) {
         <ix-explorer
           formControlName="folder_source"
           [rootNodes]="[slashRootNode]"
@@ -67,22 +83,6 @@
       <ix-input
         formControlName="description"
         [label]="helptext.descriptionLabel | translate"
-        [required]="true"
-      ></ix-input>
-    }
-    @if (form.controls.bucket.enabled) {
-      <ix-select
-        formControlName="bucket"
-        [label]="bucketPlaceholder | translate"
-        [tooltip]="bucketTooltip | translate"
-        [options]="bucketOptions$"
-      ></ix-select>
-    }
-    @if (form.controls.bucket_input.enabled) {
-      <ix-input
-        formControlName="bucket_input"
-        [label]="helptext.bucketLabel | translate"
-        [tooltip]="helptext.bucketInputTooltip | translate"
         [required]="true"
       ></ix-input>
     }

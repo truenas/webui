@@ -8,17 +8,26 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { of } from 'rxjs';
 import { mockCall, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { CloudSyncProviderName } from 'app/enums/cloudsync-provider.enum';
+import { CloudSyncCredential } from 'app/interfaces/cloudsync-credential.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxExplorerHarness } from 'app/modules/forms/ix-forms/components/ix-explorer/ix-explorer.harness';
 import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { CloudSyncFormComponent } from 'app/pages/data-protection/cloudsync/cloudsync-form/cloudsync-form.component';
-import { googlePhotosCreds, googlePhotosProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
+import { googlePhotosCreds, googlePhotosProvider, storjProvider } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/cloudsync-wizard.testing.utils';
 import { CloudSyncWhatAndWhenComponent } from 'app/pages/data-protection/cloudsync/cloudsync-wizard/steps/cloudsync-what-and-when/cloudsync-what-and-when.component';
 import { TransferModeExplanationComponent } from 'app/pages/data-protection/cloudsync/transfer-mode-explanation/transfer-mode-explanation.component';
 import { DatasetService } from 'app/services/dataset/dataset.service';
+
+const storjCreds = {
+  id: 2,
+  name: 'Storj',
+  provider: { type: CloudSyncProviderName.Storj },
+} as CloudSyncCredential;
 
 describe('CloudSyncWhatAndWhenComponent', () => {
   let spectator: Spectator<CloudSyncWhatAndWhenComponent>;
@@ -44,8 +53,9 @@ describe('CloudSyncWhatAndWhenComponent', () => {
       mockApi([
         mockCall('cloudsync.create'),
         mockCall('cloudsync.update'),
-        mockCall('cloudsync.credentials.query', [googlePhotosCreds]),
-        mockCall('cloudsync.providers', [googlePhotosProvider]),
+        mockCall('cloudsync.credentials.query', [googlePhotosCreds, storjCreds]),
+        mockCall('cloudsync.providers', [googlePhotosProvider, storjProvider]),
+        mockCall('cloudsync.list_buckets', [{ Name: 'my-bucket', Path: 'my-bucket', Enabled: true }]),
       ]),
       mockProvider(SlideIn),
       mockProvider(DatasetService),
@@ -164,5 +174,21 @@ describe('CloudSyncWhatAndWhenComponent', () => {
         bucket: 'test-bucket',
       }),
     }));
+  });
+
+  it('keeps Folder disabled until a bucket is selected for a provider with buckets', async () => {
+    spectator.setInput('credentialId', storjCreds.id);
+    await spectator.fixture.whenStable();
+
+    const directionSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Direction' }));
+    await directionSelect.setValue('PUSH');
+
+    const folderExplorer = await loader.getHarness(IxExplorerHarness.with({ label: 'Folder' }));
+    expect(await folderExplorer.isDisabled()).toBe(true);
+
+    const bucketSelect = await loader.getHarness(IxSelectHarness.with({ label: 'Bucket' }));
+    await bucketSelect.setValue('my-bucket');
+
+    expect(await folderExplorer.isDisabled()).toBe(false);
   });
 });

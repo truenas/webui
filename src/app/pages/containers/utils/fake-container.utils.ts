@@ -8,6 +8,7 @@ export function fakeContainer(overrides: Partial<Container> = {}): Container {
     name: 'test-container',
     description: '',
     cpuset: null,
+    memory: null,
     autostart: false,
     time: 'local',
     shutdown_timeout: 30,
