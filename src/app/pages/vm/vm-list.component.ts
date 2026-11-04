@@ -131,21 +131,10 @@ export class VmListComponent implements OnInit {
   protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
 
   /**
-   * Column model retained purely to drive `<ix-table-column-picker>` (visibility
-   * + saved `vmList` prefs) and the hidden-column readout in the expanded detail row.
-   * tn-table renders the visible cells from the template and derives its
-   * `displayedColumns` from these via `toDisplayedColumns`, so every column carries the
-   * `propertyName` that names its `tnColumnDef`.
-   *
-   * The two toggle columns are declared as text columns here on purpose: the interactive
-   * switch is rendered by `<ix-table-toggle-cell>` in the template, so this model only carries
-   * the readable Yes/No the detail row shows once the user hides the column. That readout is
-   * therefore text where it used to be a live toggle — deliberately, since the detail row
-   * already offers Start/Stop/Power Off buttons, so no action is actually lost with the column.
-   *
-   * Every derived value goes through one of the `*Label()` / `is*()` helpers below, which the
-   * template cells call too, so the value a hidden column renders in the detail row can't
-   * drift from the one its visible counterpart renders.
+   * Drives `<ix-table-column-picker>`, the saved `vmList` prefs and the detail row's readout of
+   * hidden columns; tn-table renders visible cells from the template, matched by `propertyName`.
+   * The toggle columns are plain Yes/No text here: the detail row has its own Start/Stop buttons.
+   * Values go through the `*Label()` / `is*()` helpers the template also calls, so they can't drift.
    */
   protected readonly columns = signal(createTable<VirtualMachine>([
     column({
