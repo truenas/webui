@@ -298,6 +298,24 @@ describe('CloudSyncFormComponent', () => {
         }),
       ]);
     });
+
+    it('sends the bucket root as the folder when a push task is saved with an empty Folder', async () => {
+      spectator.component.form.patchValue({
+        description: 'New Cloud Sync Task',
+        credentials: 1,
+        direction: Direction.Push,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
+        expect.objectContaining({
+          direction: Direction.Push,
+          attributes: { folder: '/' },
+        }),
+      ]);
+    });
   });
 
   describe('edits a new cloudsync', () => {
