@@ -101,6 +101,18 @@ describe('CloudSyncWhatAndWhenComponent', () => {
     });
   });
 
+  it('sends the bucket root as the folder for a push task with an empty Folder', async () => {
+    const directionSelect = await loader.getHarness(
+      TnSelectHarness.with({ selector: '[formControlName="direction"]' }),
+    );
+    await directionSelect.selectOption('PUSH');
+
+    expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
+      direction: 'PUSH',
+      attributes: { folder: '/' },
+    }));
+  });
+
   it('when an required field is empty, the "Save" button is disabled', async () => {
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
 
