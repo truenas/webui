@@ -103,10 +103,7 @@ describe('CloudSyncWhatAndWhenComponent', () => {
   });
 
   it('sends the bucket root as the folder for a push task with an empty Folder', async () => {
-    const directionSelect = await loader.getHarness(
-      TnSelectHarness.with({ selector: '[formControlName="direction"]' }),
-    );
-    await directionSelect.selectOption('PUSH');
+    await form.fillForm({ Direction: 'PUSH' });
 
     expect(spectator.component.getPayload()).toEqual(expect.objectContaining({
       direction: 'PUSH',

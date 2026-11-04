@@ -257,10 +257,8 @@ describe('CloudSyncFormComponent', () => {
         direction: Direction.Push,
       });
 
-      await spectator.fixture.whenStable();
-      spectator.detectChanges();
-      spectator.component.submit();
-      await spectator.fixture.whenStable();
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
 
       expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
         expect.objectContaining({
