@@ -755,7 +755,7 @@ export class CloudSyncFormComponent implements OnInit {
     if (formValue.direction === Direction.Pull) {
       value.path = isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
 
-      if (!formValue.folder_source.length || !isArray(formValue.folder_source)) {
+      if (!formValue.folder_source?.length || !isArray(formValue.folder_source)) {
         attributes.folder = '/';
       } else if (formValue.folder_source.length === 1) {
         attributes.folder = formValue.folder_source[0];

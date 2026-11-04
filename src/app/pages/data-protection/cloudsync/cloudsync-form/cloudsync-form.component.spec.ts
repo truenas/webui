@@ -312,6 +312,29 @@ describe('CloudSyncFormComponent', () => {
 
       expect(await folderPicker.isDisabled()).toBe(false);
     });
+
+    it('sends the bucket root as the folder when a pull task with no bucket is saved', async () => {
+      const credentialsSelect = await loader.getHarness(
+        TnSelectHarness.with({ ancestor: 'ix-cloud-credentials-select' }),
+      );
+      await credentialsSelect.selectOption('test3 (Amazon S3)');
+      const descriptionInput = await loader.getHarness(
+        TnInputHarness.with({ selector: '[formControlName="description"]' }),
+      );
+      await descriptionInput.setValue('New Cloud Sync Task');
+      await spectator.fixture.whenStable();
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
+        expect.objectContaining({
+          credentials: 3,
+          direction: Direction.Pull,
+          attributes: { folder: '/' },
+        }),
+      ]);
+    });
   });
 
   describe('edits a new cloudsync', () => {
