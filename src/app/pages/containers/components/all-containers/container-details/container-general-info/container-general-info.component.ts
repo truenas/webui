@@ -12,6 +12,7 @@ import { filter, switchMap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { Container, ContainerDeleteOptions } from 'app/interfaces/container.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormatterService } from 'app/modules/forms/ix-forms/services/ix-formatter.service';
@@ -66,6 +67,7 @@ export class ContainerGeneralInfoComponent {
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
   protected readonly containerIdmapTypeLabels = containerIdmapTypeLabels;
   protected readonly containerTimeLabels = containerTimeLabels;
+  protected readonly helptext = containersHelptext;
 
   editContainer(): void {
     this.slideIn

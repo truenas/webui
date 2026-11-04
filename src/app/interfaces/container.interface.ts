@@ -36,6 +36,8 @@ export interface Container {
   name: string;
   description: string;
   cpuset: string | null;
+  /** Hard memory limit in MiB, also reported as the container's total memory. `null` means no limit. */
+  memory: number | null;
   autostart: boolean;
   time: string;
   shutdown_timeout: number;
@@ -72,6 +74,7 @@ export type UpdateContainer = Partial<Pick<Container,
   | 'name'
   | 'description'
   | 'cpuset'
+  | 'memory'
   | 'autostart'
   | 'time'
   | 'shutdown_timeout'
