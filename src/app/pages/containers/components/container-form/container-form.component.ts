@@ -223,6 +223,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     autostart: [true],
     image: [''],
     cpuset: [''],
+    memory: [null as number | null],
     time: [ContainerTime.Local],
     shutdown_timeout: [30, [Validators.min(5), Validators.max(300)]],
     init: [null as string | null],
@@ -308,6 +309,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     this.form.reset({
       autostart: true,
       use_preferred_pool: true,
+      memory: null,
       time: ContainerTime.Local,
       shutdown_timeout: 30,
       init: null,
@@ -363,6 +365,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
       description: container.description || '',
       autostart: container.autostart,
       cpuset: container.cpuset || '',
+      memory: container.memory ?? null,
       time: container.time as ContainerTime,
       shutdown_timeout: container.shutdown_timeout,
       init: container.init,
@@ -519,6 +522,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     if (form.description) payload.description = form.description;
 
     if (form.cpuset) payload.cpuset = form.cpuset;
+    if (form.memory !== null) payload.memory = form.memory;
 
     if (form.time) payload.time = form.time;
     if (form.shutdown_timeout) payload.shutdown_timeout = form.shutdown_timeout;
@@ -549,6 +553,7 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     if (form.autostart !== this.editingContainer.autostart) payload.autostart = form.autostart;
 
     if (form.cpuset !== (this.editingContainer.cpuset || '')) payload.cpuset = form.cpuset || null;
+    if (form.memory !== (this.editingContainer.memory ?? null)) payload.memory = form.memory;
 
     if (form.time !== (this.editingContainer.time as ContainerTime)) payload.time = form.time;
     if (form.shutdown_timeout !== this.editingContainer.shutdown_timeout) {
