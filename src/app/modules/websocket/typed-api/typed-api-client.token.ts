@@ -15,7 +15,6 @@ import {
   from, Observable, shareReplay, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AddNfsPrincipal } from 'app/interfaces/nfs-config.interface';
 import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
@@ -30,7 +29,6 @@ import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/int
 export interface UndeclaredCallDirectory {
   'interface.lag_supported_protocols': { params: []; response: string[] };
   'kerberos.keytab.kerberos_principal_choices': { params: []; response: string[] };
-  'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
 }
 
 /** A method of {@link UndeclaredCallDirectory}. */
