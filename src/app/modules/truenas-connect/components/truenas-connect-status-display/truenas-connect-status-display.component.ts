@@ -28,6 +28,12 @@ export class TruenasConnectStatusDisplayComponent {
   readonly TncStatus = TncStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
 
+  // Finishing setup installs the TrueNAS Connect certificate as the UI certificate, which restarts
+  // the web interface and ends the current session. Warn before it happens, not after.
+  protected readonly logoutNotice = T(
+    'When setup finishes, the web interface restarts to apply the TrueNAS Connect certificate and you will need to log in again.',
+  );
+
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
   rawStatus = input.required<TruenasConnectStatus>();
   tier = input<TruenasConnectTier | null>(null);

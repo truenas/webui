@@ -71,6 +71,36 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     expect(spectator.query('.connecting-description')).toHaveText('Your system is setting up with TrueNAS Connect; this may take a few moments.');
   });
 
+  describe('logout notice', () => {
+    const notice = 'When setup finishes, the web interface restarts to apply the TrueNAS Connect certificate'
+      + ' and you will need to log in again.';
+
+    it('warns before setup starts that the admin will be logged out', () => {
+      spectator.setInput('status', TncStatus.Waiting);
+      spectator.detectChanges();
+
+      expect(spectator.query('.logout-notice')).toHaveText(notice);
+    });
+
+    it('warns while setup is in progress that the admin will be logged out', () => {
+      spectator.setInput('status', TncStatus.Connecting);
+      spectator.detectChanges();
+
+      expect(spectator.query('.logout-notice')).toHaveText(notice);
+    });
+
+    it('does not show the notice once connected or after a failure', () => {
+      spectator.setInput('status', TncStatus.Active);
+      spectator.detectChanges();
+      expect(spectator.query('.logout-notice')).not.toExist();
+
+      spectator.setInput('status', TncStatus.Failed);
+      spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
+      spectator.detectChanges();
+      expect(spectator.query('.logout-notice')).not.toExist();
+    });
+  });
+
   it('should display disabled state correctly', () => {
     spectator.setInput('status', TncStatus.Disabled);
     spectator.setInput('rawStatus', TruenasConnectStatus.Disabled);
