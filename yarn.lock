@@ -3498,6 +3498,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ngrx/signals@npm:~22.0.1":
+  version: 22.0.1
+  resolution: "@ngrx/signals@npm:22.0.1"
+  dependencies:
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    "@angular/core": ^22.0.0
+    rxjs: ^6.5.3 || ^7.4.0
+  peerDependenciesMeta:
+    rxjs:
+      optional: true
+  checksum: 10/ced8c21e12d220a9b54761eb099c0431450fe936e8249536a82118099662ba5e973ef074f4a4bdfd46acc4e85d0a9cb7d065df9af4bd6cb9b4069f6a0e1723dc
+  languageName: node
+  linkType: hard
+
 "@ngrx/store-devtools@npm:~22.0.1":
   version: 22.0.1
   resolution: "@ngrx/store-devtools@npm:22.0.1"
@@ -15508,6 +15523,7 @@ __metadata:
     "@ngrx/entity": "npm:~22.0.1"
     "@ngrx/operators": "npm:~22.0.1"
     "@ngrx/router-store": "npm:~22.0.1"
+    "@ngrx/signals": "npm:~22.0.1"
     "@ngrx/store": "npm:~22.0.1"
     "@ngrx/store-devtools": "npm:~22.0.1"
     "@ngx-translate/core": "npm:~15.0.0"

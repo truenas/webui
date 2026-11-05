@@ -1,4 +1,4 @@
-import { NgClass, AsyncPipe, KeyValuePipe } from '@angular/common';
+import { NgClass, KeyValuePipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, inject,
 } from '@angular/core';
@@ -39,7 +39,6 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
     TnTestIdDirective,
     TranslateModule,
     FileSizePipe,
-    AsyncPipe,
     KeyValuePipe,
   ],
 })
@@ -47,7 +46,7 @@ export class ManualSelectionVdevComponent {
   private cdr = inject(ChangeDetectorRef);
   protected store$ = inject(ManualDiskSelectionStore);
   private translate = inject(TranslateService);
-  protected dragToggleStore$ = inject(ManualDiskSelectionDragToggleStore);
+  protected dragToggleStore = inject(ManualDiskSelectionDragToggleStore);
 
   readonly vdev = input.required<ManualSelectionVdev>();
   readonly layout = input.required<CreateVdevLayout>();
@@ -133,15 +132,15 @@ export class ManualSelectionVdevComponent {
   }
 
   onDragStart(): void {
-    this.dragToggleStore$.toggleActivateDrag(true);
+    this.dragToggleStore.toggleActivateDrag(true);
   }
 
   onDragEnd(): void {
-    this.dragToggleStore$.toggleActivateDrag(false);
+    this.dragToggleStore.toggleActivateDrag(false);
   }
 
   onDragCanceled(): void {
-    this.dragToggleStore$.toggleActivateDrag(false);
+    this.dragToggleStore.toggleActivateDrag(false);
   }
 
   deleteVdev(): void {
@@ -157,7 +156,7 @@ export class ManualSelectionVdevComponent {
       this.store$.removeDiskFromVdev(disk);
     }
     this.store$.addDiskToVdev({ disk, vdev: this.vdev() });
-    this.dragToggleStore$.toggleActivateDrag(false);
+    this.dragToggleStore.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }
 }

@@ -1,5 +1,5 @@
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { NgClass, AsyncPipe } from '@angular/common';
+import { NgClass } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -65,7 +65,6 @@ const noEnclosureId = 'no-enclosure';
     TnTestIdDirective,
     TnTooltipDirective,
     TranslateModule,
-    AsyncPipe,
     CdkTreeModule,
     TnTreeComponent,
     TnNestedTreeNodeComponent,
@@ -75,7 +74,7 @@ const noEnclosureId = 'no-enclosure';
 export class ManualSelectionDisksComponent implements OnInit {
   private translate = inject(TranslateService);
   protected store$ = inject(ManualDiskSelectionStore);
-  protected dragToggleStore$ = inject(ManualDiskDragToggleStore);
+  protected dragToggleStore = inject(ManualDiskDragToggleStore);
   private destroyRef = inject(DestroyRef);
 
   readonly enclosures = input.required<Enclosure[]>();
@@ -191,19 +190,19 @@ export class ManualSelectionDisksComponent implements OnInit {
 
   onDrop(event: DndDropEvent): void {
     const disk = event.data as ManualSelectionDisk;
-    this.dragToggleStore$.toggleActivateDrag(false);
+    this.dragToggleStore.toggleActivateDrag(false);
     this.store$.removeDiskFromVdev(disk);
   }
 
   onDragStart(): void {
-    this.dragToggleStore$.toggleActivateDrag(true);
+    this.dragToggleStore.toggleActivateDrag(true);
   }
 
   onDragEnd(): void {
-    this.dragToggleStore$.toggleActivateDrag(false);
+    this.dragToggleStore.toggleActivateDrag(false);
   }
 
   onDragCanceled(): void {
-    this.dragToggleStore$.toggleActivateDrag(false);
+    this.dragToggleStore.toggleActivateDrag(false);
   }
 }

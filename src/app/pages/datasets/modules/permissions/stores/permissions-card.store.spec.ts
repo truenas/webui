@@ -7,6 +7,7 @@ import { Acl } from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { PermissionsCardState } from 'app/pages/datasets/modules/permissions/interfaces/permissions-sidebar-state.interface';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -42,8 +43,15 @@ describe('PermissionsCardStore', () => {
     spectator = createService();
   });
 
+  /** Everything the store exposes, read in one go. */
+  const state = (): PermissionsCardState => ({
+    isLoading: spectator.service.isLoading(),
+    stat: spectator.service.stat(),
+    acl: spectator.service.acl(),
+  });
+
   it('should have default initial state', () => {
-    expect(spectator.service.state()).toEqual({
+    expect(state()).toEqual({
       isLoading: false,
       acl: null,
       stat: null,
@@ -62,41 +70,35 @@ describe('PermissionsCardStore', () => {
         return delayedAcl$;
       });
 
-      const mountpoint$ = new Subject<string>();
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
 
-      mountpoint$.next('/mnt/pool/dataset');
-
-      expect(spectator.service.state().isLoading).toBe(true);
+      expect(state().isLoading).toBe(true);
 
       delayedStat$.next(mockStat);
       delayedStat$.complete();
       delayedAcl$.next(mockAcl);
       delayedAcl$.complete();
 
-      expect(spectator.service.state().isLoading).toBe(false);
+      expect(state().isLoading).toBe(false);
     });
 
     it('calls filesystem.stat with mountpoint', () => {
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
     });
 
     it('calls filesystem.getacl with mountpoint and parameters', () => {
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
     });
 
     it('updates state with stat and acl after successful load', async () => {
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
       await settleApi();
 
-      expect(spectator.service.state()).toEqual({
+      expect(state()).toEqual({
         isLoading: false,
         stat: mockStat,
         acl: mockAcl,
@@ -104,16 +106,13 @@ describe('PermissionsCardStore', () => {
     });
 
     it('sets isLoading to false after loading completes', async () => {
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
       await settleApi();
 
-      expect(spectator.service.state().isLoading).toBe(false);
+      expect(state().isLoading).toBe(false);
     });
 
     it('handles multiple mountpoint emissions', () => {
-      const mountpoint$ = new Subject<string>();
-
       const newStat = { user: 'user1' } as FileSystemStat;
       const newAcl = {
         acltype: AclType.Posix1e,
@@ -141,23 +140,18 @@ describe('PermissionsCardStore', () => {
         return of(newAcl);
       });
 
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
+      expect(state().stat).toEqual(mockStat);
 
-      mountpoint$.next('/mnt/pool/dataset');
-      expect(spectator.service.state().stat).toEqual(mockStat);
-
-      mountpoint$.next('/mnt/pool/other');
-      expect(spectator.service.state().stat).toEqual(newStat);
-      expect(spectator.service.state().acl).toEqual(newAcl);
+      spectator.service.loadPermissions('/mnt/pool/other');
+      expect(state().stat).toEqual(newStat);
+      expect(state().acl).toEqual(newAcl);
     });
 
     it('resets state to initial before loading new mountpoint', async () => {
-      const mountpoint$ = new Subject<string>();
-      spectator.service.loadPermissions(mountpoint$);
-
-      mountpoint$.next('/mnt/pool/dataset');
+      spectator.service.loadPermissions('/mnt/pool/dataset');
       await settleApi();
-      expect(spectator.service.state()).toEqual({
+      expect(state()).toEqual({
         isLoading: false,
         stat: mockStat,
         acl: mockAcl,
@@ -172,10 +166,10 @@ describe('PermissionsCardStore', () => {
         return delayedAcl$;
       });
 
-      mountpoint$.next('/mnt/pool/other');
+      spectator.service.loadPermissions('/mnt/pool/other');
 
       // State should be reset with only isLoading true
-      expect(spectator.service.state()).toEqual({
+      expect(state()).toEqual({
         isLoading: true,
         stat: null,
         acl: null,
@@ -192,8 +186,7 @@ describe('PermissionsCardStore', () => {
       const errorHandler = spectator.inject(ErrorHandlerService);
       jest.spyOn(errorHandler, 'showErrorModal');
 
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
@@ -203,10 +196,9 @@ describe('PermissionsCardStore', () => {
         throwError(() => new Error('API error')),
       );
 
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
 
-      expect(spectator.service.state().isLoading).toBe(false);
+      expect(state().isLoading).toBe(false);
     });
 
     it('does not update stat and acl on error', () => {
@@ -214,11 +206,19 @@ describe('PermissionsCardStore', () => {
         throwError(() => new Error('API error')),
       );
 
-      const mountpoint$ = of('/mnt/pool/dataset');
-      spectator.service.loadPermissions(mountpoint$);
+      spectator.service.loadPermissions('/mnt/pool/dataset');
 
-      expect(spectator.service.state().stat).toBeNull();
-      expect(spectator.service.state().acl).toBeNull();
+      expect(state().stat).toBeNull();
+      expect(state().acl).toBeNull();
     });
+  });
+
+  it('reset() clears what was loaded', async () => {
+    spectator.service.loadPermissions('/mnt/pool/dataset');
+    await settleApi();
+
+    spectator.service.reset();
+
+    expect(state()).toEqual({ isLoading: false, stat: null, acl: null });
   });
 });

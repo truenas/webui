@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { patchState, signalState } from '@ngrx/signals';
 
 export interface ManualDiskDragToggleState {
   dragActive: boolean;
@@ -10,16 +10,12 @@ const initialState: ManualDiskDragToggleState = {
 };
 
 @Injectable()
-export class ManualDiskDragToggleStore extends ComponentStore<ManualDiskDragToggleState> {
-  readonly dragActive$ = this.select((state) => state.dragActive);
+export class ManualDiskDragToggleStore {
+  private readonly state = signalState(initialState);
 
-  constructor() {
-    super(initialState);
+  readonly dragActive = this.state.dragActive;
+
+  toggleActivateDrag(dragActive: boolean): void {
+    patchState(this.state, { dragActive });
   }
-
-  toggleActivateDrag = this.updater((state: ManualDiskDragToggleState, activateDrag: boolean) => {
-    return {
-      dragActive: activateDrag,
-    };
-  });
 }

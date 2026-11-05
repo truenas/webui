@@ -110,6 +110,7 @@
     "@ngrx/entity": "~22.0.1",
     "@ngrx/operators": "~22.0.1",
     "@ngrx/router-store": "~22.0.1",
+    "@ngrx/signals": "~22.0.1",
     "@ngrx/store": "~22.0.1",
     "@ngrx/store-devtools": "~22.0.1",
     "@ngx-translate/core": "~15.0.0",

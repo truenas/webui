@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
@@ -46,7 +47,9 @@ describe('ManualSelectionDisksComponent', () => {
       ),
     ],
     providers: [
-      mockProvider(ManualDiskDragToggleStore),
+      mockProvider(ManualDiskDragToggleStore, {
+        dragActive: signal(false),
+      }),
       mockProvider(ManualDiskSelectionStore, {
         inventory$: of([
           {

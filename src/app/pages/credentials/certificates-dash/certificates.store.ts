@@ -1,7 +1,9 @@
-import { computed, Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
-import { Observable, of, tap } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe, switchMap, tap } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Certificate, toCertificate } from 'app/interfaces/certificate.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -19,47 +21,35 @@ const initialState: CertificatesState = {
 };
 
 @Injectable()
-export class CertificatesStore extends ComponentStore<CertificatesState> {
+export class CertificatesStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
-  readonly isLoading = computed(() => this.state().isLoading);
-  readonly certificates = computed(() => this.state().certificates);
-  readonly csrs = computed(() => this.state().csrs);
+  private readonly state = signalState(initialState);
 
-  constructor() {
-    super(initialState);
-  }
+  readonly isLoading = this.state.isLoading;
+  readonly certificates = this.state.certificates;
+  readonly csrs = this.state.csrs;
 
-  readonly loadCertificates = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      tap(() => {
-        this.patchState({
-          isLoading: true,
-        });
-      }),
-      switchMap(() => {
-        return this.api.query('certificate.query').pipe(
-          map((entries) => entries.map(toCertificate)),
-          tap((allCertificates) => {
-            const certificates = allCertificates.filter((cert) => cert.certificate !== null);
-            const csrs = allCertificates.filter((cert) => cert.CSR !== null);
-
-            this.patchState({
+  readonly loadCertificates = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, { isLoading: true })),
+    switchMap(() => {
+      return this.api.query('certificate.query').pipe(
+        map((entries) => entries.map(toCertificate)),
+        tapResponse({
+          next: (allCertificates) => {
+            patchState(this.state, {
               isLoading: false,
-              certificates,
-              csrs,
+              certificates: allCertificates.filter((cert) => cert.certificate !== null),
+              csrs: allCertificates.filter((cert) => cert.CSR !== null),
             });
-          }),
-          catchError((error: unknown) => {
-            this.patchState({
-              isLoading: false,
-            });
+          },
+          error: (error: unknown) => {
+            patchState(this.state, { isLoading: false });
             this.errorHandler.showErrorModal(error);
-            return of(null);
-          }),
-        );
-      }),
-    );
-  });
+          },
+        }),
+      );
+    }),
+  ));
 }

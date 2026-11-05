@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnChanges, OnInit, input, computed, signal, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, OnChanges, input, computed, signal, inject,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -9,19 +10,15 @@ import {
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
-import { NfsAclTag } from 'app/enums/nfs-acl.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
-import { Acl } from 'app/interfaces/acl.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
-import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { ViewNfsPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-nfs-permissions/view-nfs-permissions.component';
 import { ViewPosixPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-posix-permissions/view-posix-permissions.component';
 import { ViewTrivialPermissionsComponent } from 'app/pages/datasets/modules/permissions/components/view-trivial-permissions/view-trivial-permissions.component';
 import { PermissionsCardStore } from 'app/pages/datasets/modules/permissions/stores/permissions-card.store';
 import { isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-permissions-card',
@@ -46,22 +43,20 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     PermissionsCardStore,
   ],
 })
-export class PermissionsCardComponent implements OnInit, OnChanges {
+export class PermissionsCardComponent implements OnChanges {
   private store = inject(PermissionsCardStore);
-  private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private translate = inject(TranslateService);
-  private destroyRef = inject(DestroyRef);
 
   readonly dataset = input.required<DatasetDetails>();
 
   protected readonly requiredRoles = [Role.DatasetWrite];
 
-  protected readonly isLoading = signal(false);
+  protected readonly isLoading = this.store.isLoading;
   protected readonly isMissingMountpoint = signal(false);
   protected readonly isNotMounted = signal(false);
-  protected readonly stat = signal<FileSystemStat | null>(null);
-  protected readonly acl = signal<Acl | null>(null);
+  protected readonly stat = this.store.stat;
+  protected readonly acl = this.store.acl;
 
   readonly AclType = AclType;
 
@@ -121,38 +116,8 @@ export class PermissionsCardComponent implements OnInit, OnChanges {
     this.loadPermissions();
   }
 
-  ngOnInit(): void {
-    this.store.state$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (state) => {
-          this.isLoading.set(state.isLoading);
-          this.acl.set(state.acl);
-          this.stat.set(state.stat);
-
-          // TODO: Move elsewhere
-          const acl = this.acl();
-          if (acl?.acl && acl.acltype === AclType.Nfs4) {
-            for (const entry of acl.acl) {
-              if (entry.tag === NfsAclTag.Owner && entry.who === null) {
-                entry.who = acl.uid.toString();
-              }
-              if ((entry.tag === NfsAclTag.Group || entry.tag === NfsAclTag.UserGroup) && entry.who === null) {
-                entry.who = acl.gid.toString();
-              }
-            }
-          }
-        },
-        error: (error: unknown) => {
-          this.isLoading.set(false);
-          this.errorHandler.showErrorModal(error);
-        },
-      });
-  }
-
   private loadPermissions(): void {
-    this.acl.set(null);
-    this.stat.set(null);
+    this.store.reset();
 
     if (this.isLocked()) {
       return;

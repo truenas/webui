@@ -66,7 +66,10 @@ describe('PermissionsCardComponent', () => {
    * What the card's own store loaded. The fake client answers with a copy of each fixture, so the views are checked
    * for receiving this object as is, rather than the fixture itself.
    */
-  const cardState = (): PermissionsCardState => spectator.inject(PermissionsCardStore, true).state();
+  const cardState = (): Pick<PermissionsCardState, 'stat' | 'acl'> => {
+    const store = spectator.inject(PermissionsCardStore, true);
+    return { stat: store.stat(), acl: store.acl() };
+  };
   let loader: HarnessLoader;
   const createComponent = createComponentFactory({
     component: PermissionsCardComponent,
