@@ -23,14 +23,14 @@ of the time.
 
 | Piece | Where |
 |---|---|
-| `@truenas/api-client` as a runtime dependency (9.0.1 at the time of writing) | `package.json` |
+| `@truenas/api-client` as a runtime dependency (9.0.2 at the time of writing) | `package.json` |
 | The client instance, typed against `v28.0.0` | `src/app/modules/websocket/typed-api/typed-api-client.token.ts` |
 | `ApiService`, what the app injects | `src/app/modules/websocket/api.service.ts` |
 | The version the UI is written against | `WebUiApiDirectory` in the token file |
 | `mockApi()` and `MockApiService`, the spec double | `src/app/core/testing/utils/mock-api.utils.ts`, `src/app/core/testing/classes/mock-api.service.ts` |
 | `EmptyApiService`, the global guard against unmocked specs | `src/app/core/testing/utils/empty-api.service.ts`, registered in `src/setup-jest.ts` |
 
-The typed client owns **the** WebSocket — one per tab, on `/api/v28.0.0`. It
+The typed client owns **the** WebSocket — one per tab, on `/api/current`. It
 is opened at startup by an app initializer in `main.ts`, unconditionally on
 purpose: migrated pages run entirely on it, so there is no build in which it
 can be left closed.
@@ -43,7 +43,10 @@ connection, so `limitConcurrentCalls` holds the whole tab to 19 on the
 connection's `send`, one short of the ceiling to leave room for the keepalive
 ping (see gap 20). Connection state — open, closed, refused, shutting down — is
 `ConnectionService`'s (NAS-143990). The client retries the connection on its
-own, sends `core.set_options` on open and pings every 20s.
+own, sends `core.set_options` on open and pings every 20s. Nothing checks that
+a ping is answered, so `ConnectionService` replaces an open socket that has
+delivered no frame at all for 90s (`silentSocketTimeoutMs`, NAS-144963): a
+half-open socket otherwise reads as open until the browser's TCP timeout.
 
 ### One session
 
@@ -63,6 +66,14 @@ stored token and navigates back to `redirectUrl`.
 Call sites never authenticate. Every request is held until the session is
 authenticated, so a call made before sign-in or across a reconnect waits
 instead of being refused by middleware.
+
+`auth.logout` leaves the socket open, but middleware ends every subscription
+on it: each event source gets a `notify_unsubscribed`, and the client
+completes its stream. Nothing reaches a signed-out tab, and the next login on
+the same socket does not double anything (checked on 28.0.0 for NAS-144963,
+with `reporting.realtime` and `core.get_jobs`). A completed stream stays
+completed, so something that must outlive a logout has to subscribe again
+after the next login. The store effects do, on `adminUiInitialized`.
 
 ## Calling the API
 
@@ -86,7 +97,7 @@ What to know, much of it learned moving off the hand-written directories:
   verb picks the result type, so there is nothing to narrow.
 - **Filters built before the call** are typed
   `TypedQueryFilter<WebUiQueryEntity<'user.query'>>[]`, both from the token
-  file, since the client does not export its own `QueryFilters` yet (gap 6).
+  file. `TypedQueryFilter` is the client's own `v28_0_0.QueryFilter`.
   An `OR` takes a list of filter *lists*, `['OR', [[a], [b]]]`, where
   `ParamsBuilder` writes `['OR', [a, b]]`.
 - **Events are a discriminated union** on `msg`. A removal carries an `id`
@@ -324,23 +335,24 @@ above. Each is a change for `truenas/api-client-ts`.
    returns, and the sign-in page spends it after a reconnect. Middleware holds
    tokens in memory for 600s and a `middlewared` restart voids them, so a
    reconnect across a restart lands back on the password prompt.
-3. **`AuthError` does not carry the response it came from.** `loginWithToken`
-   throws on every non-success, with the `response_type` interpolated into the
-   message and nowhere else. `recoverLoginFailure` therefore has to read all of
-   them back as `AUTH_ERR`, which collapses `EXPIRED`, `DENIED` and `REDIRECT`
-   into one outcome on the token path — the path every reconnect takes. Only the
-   message the sign-in page shows differs today (`LoginResult.Redirect` and
-   `Denied` reach no UI from `loginWithToken`, only from the interactive login,
-   which is unaffected because a password login throws on `AUTH_ERR` alone), so
-   this is a fidelity gap rather than a broken flow. A `response` on the error,
-   or a non-throwing variant, would close it. Still so in 9.0.1.
-4. **A password login is cached in the authenticator.** `loginWithUserPass`
-   keeps the plaintext password on the authenticator and replays it on every
-   reconnect. The UI never wanted that — it keeps a single-use token instead —
-   and there is no way to decline it. Worth closing in the library; until then
-   a password session re-logs itself in on reconnect, racing the sign-in
-   page's token login, which the authenticator's epoch guard resolves. Still so
-   in 9.0.1.
+3. ~~**`AuthError` does not carry the response it came from.**~~ Resolved on
+   9.0.2, which carries api-client-ts #72 (TNC-2643). `loginWithToken` throws on
+   every non-success, and the error now carries the refusing answer as
+   `response`. `recoverLoginFailure` (NAS-144963) reads it back, so a token
+   login keeps `EXPIRED`, `DENIED` and `REDIRECT` apart instead of collapsing
+   them into `AUTH_ERR`. Only `EXPIRED` (read as `IncorrectDetails`) shows the
+   "session expired" message after a reconnect now. A refusal without an
+   answer, which middleware never sends on these paths, is still read as
+   `AUTH_ERR`.
+4. ~~**A password login is cached in the authenticator.**~~ Resolved on 9.0.2,
+   which carries api-client-ts #72 (TNC-2643). `loginWithUserPass` keeps the
+   plaintext password and replays it on every reconnect unless the caller
+   passes `{ rememberPassword: false }`. `AuthService.login` passes it, so the
+   password leaves tab memory with the login frame and a reconnect goes
+   through the single-use token alone (NAS-144963 had cleared
+   `authenticator.credentials` by hand until then). A reconnect across a
+   `middlewared` restart or an `auth.terminate_session`, which voids the
+   token, lands on the password prompt, as it did before the migration.
 5. ~~**Parameterised subscriptions.**~~ Resolved by NAS-144006, on 9.0.1, which
    carries api-client-ts #69 (TNC-2583).
    `events()` takes an event source's arguments after its name, typed from the
@@ -358,19 +370,32 @@ above. Each is a change for `truenas/api-client-ts`.
    `changed`, and `zfs.tier.rewrite_job_query` sends all three kinds (gap 16).
    The timer-driven sources (`reporting.realtime`, `app.stats`, `container.metrics`)
    moved once gap 17 was closed; see there.
-6. **Query, message and connection types are not exported.** `QueryFilters`
-   and `QueryProjection` are internal, so the wrapper forwards the query verbs
-   through `Parameters<>` rather than declaring them; `TrueNasMessage` and
-   `TrueNasConnection` are absent from the main entry too, so
-   `ConnectionService` names the connection as
-   `WebUiApiClient['connection']` (`TypedConnection`). Still so in 9.0.1.
+6. **Message and connection types are not exported.** The query grammar is:
+   every version namespace re-exports `QueryFilter`, `QueryFilters`,
+   `QueryOptions` and `QueryProjection`, so `TypedQueryFilter` in the token file
+   is `v28_0_0.QueryFilter` rather than a hand-kept mirror. (This gap used to
+   say they were internal; they have been reachable that way all along.) The
+   wrapper still forwards the query verbs through `Parameters<>`, but by choice:
+   it keeps their signatures the client's own. `TrueNasMessage` and
+   `TrueNasConnection` are absent from the main entry, on purpose (the barrel
+   keeps connection internals out of the semver contract), so
+   `ConnectionService` names the connection as `WebUiApiClient['connection']`
+   (`TypedConnection`) and `limitConcurrentCalls` derives the frame type from its
+   `send`. Both work; nothing here is blocked. Still so in 9.0.1.
 
    Partly closed there: 7.0.1 exports `TrueNasErrorFrame` and `TrueNasErrorData`
-   from the main entry, where 6.x had them only under `testing`.
-   `rethrowAsApiCallError` still casts the frame, but for a different reason now —
-   `TrueNasErrorFrame` extends the *client's* `JsonRpcError` and carries
-   `TrueNasErrorData`, while `ApiCallError` takes the UI's `JsonRpcError` with
-   `ApiErrorDetails`. Converging those two is what would retire the cast.
+   from the main entry, where 6.x had them only under `testing`. The UI's
+   `ApiErrorDetails` now has the client's shape: `trace` is
+   `{ class, formatted, repr } | null` (the `frames` list went with the legacy
+   protocol, and the debug panel's mock trace follows), and `extra` is `unknown`,
+   wider than the client's `unknown[] | null`, because a `CallError` raised with a
+   dict is sent with that dict (`rpc.py` passes `e.extra` through; cloud sync's
+   `excerpt` reads it). `rethrowAsApiCallError` casts the frame once, without
+   `unknown`: what is left is `code` and `errname`, a number and a string in the
+   client and the `JsonRpcErrorCode` and `ApiErrorName` enums in the UI. Typing
+   them as plain values would put every enum comparison under
+   `no-unsafe-enum-comparison`, so the cast stays until the UI takes its enums from
+   the client (gap 13).
 7. **No message hook.** The client has no interception seam, so
    `interceptConnection` (NAS-144008) wraps the connection's `send` and
    `messages()` the way `limitConcurrentCalls` wraps `send`: every frame either
@@ -385,9 +410,18 @@ above. Each is a change for `truenas/api-client-ts`.
    writes straight to the socket, such as the keepalive `core.ping`, are not
    seen, and a message interceptor in `createTrueNasClient` would retire the
    `send` patch.
-8. **Job type drift.** The client's `Job` is honest about `result` and
-   `time_started` being `null` before a job starts; the UI's is not. The
-   wrapper narrows for now; the UI should adopt the client's type.
+8. **Job type drift.** The UI's `Job` now says what the client's does about
+   `result`, which is `null` while a job runs and after it fails, and its
+   `removed` is optional, being a flag the jobs store sets rather than a field
+   middleware sends. The client is wrong the other way about `time_started`:
+   middleware sets it when it builds the job (`job.py`, `self.time_started =
+   utc_now()`), so it is never `null`, and the UI keeps it required. Three casts
+   remain, all typing: `ApiService.job` (the UI's `state` and `exc_info.type` are
+   its own enums, and `arguments` are the caller's params), and the
+   `core.get_jobs` subscriptions in `JobEffects` and `WidgetResourcesService`,
+   whose rows are the generated entry rather than the client's `Job` (`state`
+   and the timestamps as strings, gap 15; no `removed` kind).
+
 9. **Test double** — shipped in 6.0 as `@truenas/api-client/testing`
    (`createFakeClient`, `mock.call` / `query` / `job` / `emit`, `withSpies`,
    `UnmockedCallError`, fixture builders; `truenas/api-client-ts` #54, #56,
@@ -434,16 +468,29 @@ above. Each is a change for `truenas/api-client-ts`.
     model of its version, which is what the bump procedure under "Version
     policy" relies on.
 
-14. **Methods missing from the dump.** `interface.lag_supported_protocols`,
-    `kerberos.keytab.kerberos_principal_choices` and `nfs.add_principal` are in no
-    generated directory, most likely because middleware marks them private.
-    `UndeclaredCallDirectory` in `typed-api-client.token.ts` declares them by hand,
-    and `NetworkService`, the directory services form's credential step and the
-    NFS Add SPN dialog reach them through `ApiService.callUndeclared`
-    (`mockUndeclaredCall` in specs). A separate verb rather than a widened
-    `WebUiApiDirectory`, which would stop the client and its fake from being the
-    directory's own type. Nothing checks those three entries against middleware;
-    drop each one once the generated directory carries it.
+    The first limit is not in the generated source, which exports the enum
+    consts as values (`export { Aclmode, … }` in each `vNN/index.ts`), nor in
+    the runtime bundle, which carries them. It is in the bundled `.d.ts`:
+    `rollup-plugin-dts`, which tsup uses, turns every member of an
+    `export * as vNN` namespace into a `type` alias and drops the `declare
+    const` beside it. Its latest release (6.5.1) does the same, so a dependency
+    bump does not fix it; the client would have to stop bundling its
+    declarations, or export the enums outside the namespaces.
+
+14. **Methods missing from the dump.** `interface.lag_supported_protocols` and
+    `kerberos.keytab.kerberos_principal_choices` are in no generated directory,
+    because middleware marks them private. `UndeclaredCallDirectory` in
+    `typed-api-client.token.ts` declares them by hand, and `NetworkService` and the
+    directory services form's credential step reach them through
+    `ApiService.callUndeclared` (`mockUndeclaredCall` in specs). A separate verb
+    rather than a widened `WebUiApiDirectory`, which would stop the client and its
+    fake from being the directory's own type. Nothing checks those entries against
+    middleware; drop each one once the generated directory carries it.
+
+    A third, `nfs.add_principal`, behind the NFS service's Add SPN dialog, was not
+    private but gone: middleware removed it in 2024 (its test went in
+    middleware #14040), and a 28.0.0 box answers it with "Method does not exist".
+    The dialog and its entry are deleted.
 
 15. **Dates are typed as strings.** Middleware sends a `datetime` as an
     `{ $date: <ms> }` envelope and a `date` as `{ $type: 'date', $value }`, and
@@ -461,8 +508,10 @@ above. Each is a change for `truenas/api-client-ts`.
     readers take `event.fields.scan` and work). The client forwards the frame
     untouched, so the generated type names properties that are not there.
     `poolScanFromEvent` in `app/helpers/pool-scan-event.helper.ts` reads the
-    wire shape once for every consumer. Fix: wrap event payloads in the
-    generator, or correct the model in middleware.
+    wire shape once for every consumer. The generator emits the model exactly as
+    middleware's dump declares it (`PoolScanChangedEvent` is `{ name, scan }` in
+    every version), so the fix is the model in middleware; a generator rule
+    would have to guess which sources send `fields` and which do not.
 
     The storage tier's event sources go wrong the other way.
     `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status` declare a
@@ -492,13 +541,14 @@ above. Each is a change for `truenas/api-client-ts`.
 
 18. **`directoryservices.update` asks for a discriminant the form never sends.**
     The generated input requires `service_type` inside `configuration` as well
-    as at the top level; the directory services form has only ever sent the
-    top-level one, and middleware has accepted that. The migration keeps the
-    request unchanged, so `toDirectoryServicesUpdateArgs` asserts the generated
-    shape over a payload without the inner field. Sending it is a one-line
-    change in `transformFormDataToApiPayload`, but it changes the request, so
-    it wants a box check of all three service types first, or a correction to
-    the model in middleware if the inner field is not meant to be required.
+    as at the top level; the directory services form sends only the top-level
+    one, and that is the intended request. `DirectoryServicesUpdateArgs`'s
+    `parse_configuration` copies the top-level `service_type` into
+    `configuration` before validation, so the union can tell the three service
+    types apart, and the inner field is `exclude=True`. It reads as required only
+    because pydantic requires the discriminant on each member of the union.
+    `toDirectoryServicesUpdateArgs` asserts the generated shape over the payload
+    and stays.
 
 19. **Drift found moving VMs and containers.** Four places where the generated directory and
     what middleware or the UI actually does disagree, each handled at one site:
@@ -507,8 +557,10 @@ above. Each is a change for `truenas/api-client-ts`.
       `ContainersStore` reads the event as that wire shape (`ContainerQueryEvent`) rather than the
       generated one, and keeps its name-matching workaround.
     - `lxc.update` declares `v4_network` and `v6_network` as optional strings, while the global
-      settings form has always cleared a network by sending `null`. The request is unchanged and
-      asserted to the generated input at the submit; worth a box check before dropping the `null`.
+      settings form cleared a network by sending `null`. Middleware refuses that ("data.v6_network:
+      Input should be a valid string", checked on a 28.0.0 box): `LXCConfigEntry` makes both
+      required CIDR strings, and its column is not nullable. The form now requires both under the
+      automatic bridge and sends them as typed, without a cast.
     - `lxc.config` is not an event source in any version's event directory, so the containers
       config store's subscription to it could never have fired. It is gone; the header reloads
       the config after the settings form saves, which is what kept it current.
@@ -528,7 +580,16 @@ above. Each is a change for `truenas/api-client-ts`.
     frames do not: `core.set_options` on open, answered before anything else is
     sent, and the 20-second `core.ping`, which is why the gate stops at 19. A
     `maxConcurrentCalls` option on the client, counting its own ping, would
-    retire the patch and the spare slot.
+    retire the patch and the spare slot. A call still waiting at the gate when
+    the socket is lost is kept, and sent once the session is authenticated
+    again (NAS-144963). It used to be dropped, which left its caller waiting
+    for good. It is not sent sooner because the new socket starts signed out,
+    and an `ENOTAUTHENTICATED` refusal ends the app's session. Only the
+    reconnect token's sign-in releases them: a password or API key sign-in
+    refuses them first, as whoever signs in may not be the user who made them.
+    Each gets an `ENOTAUTHENTICATED` error reply, given on `messages()` the way
+    the debug panel gives its mocked answers, so its caller fails rather than
+    waits.
 
 21. **Drift found moving data protection.** Handled at one site each:
     - `replication.create` / `update` and `replication.count_eligible_manual_snapshots` declare
@@ -744,7 +805,7 @@ that must agree:
 | Pin | Where | What it decides |
 |---|---|---|
 | `WebUiApiDirectory = ApiDirectoryV28_0_0` | `typed-api-client.token.ts` | Every method name, param and response the app compiles against |
-| `version: 'v28.0.0'` | the `createTrueNasClient` call in the same file | The socket the app opens, `/api/v28.0.0` |
+| `version: 'v28.0.0'` | the `createTrueNasClient` call in the same file | The client class and its typed surface. Not the socket: `websocketPath: '/api/current'` beside it keeps that on the appliance's newest version |
 | `E2eApiDirectory` and `expectedApiVersion` | `e2e/support/api/client.ts` | The surface the E2E fixtures compile against, and the version they insist on at runtime |
 
 The `version` literal must stay at the `createTrueNasClient` call site. The
@@ -754,23 +815,23 @@ a compile error.
 
 ### What the pin means at runtime
 
-The app names its version, so the client skips discovery and opens
-`/api/v28.0.0` whatever the appliance's newest version is. Before the typed
-client the UI opened `/api/current`, which followed the appliance. That is
-still how `stable/27` works. `master` is the first branch with a pin, and
-`stable/28` will be the first release to ship one.
+It types the UI; it does not choose the socket. Next to `version` the client
+gets `websocketPath: '/api/current'`, so the socket goes to whatever the
+appliance's newest version is. That is how the UI has always connected, and
+how `stable/27` still does. For a while after the migration the UI opened
+`/api/v28.0.0` instead, so a master UI could not run against an appliance that
+did not serve `v28.0.0`, a 27 box included.
 
-- **An appliance newer than the pin** keeps working for as long as it still
-  serves `v28.0.0`, that is, while `/api/versions` still lists it next to the
-  newer versions. What the UI loses is everything middleware adds
-  only to the newer surface. On `master`, that is every new method and field
-  from the day the next version opens.
-- **An appliance that no longer serves the pin** refuses the socket. The client
-  retries forever, and the UI sits on the connecting screen with no error that
-  names the version.
 - **An appliance older than the pin**, such as a 27 box under `yarn ui remote`,
-  has no `/api/v28.0.0`, and fails the same way. A master UI needs a master
-  appliance.
+  works. Calls go out under its own version's semantics, so a method or field
+  it lacks fails at the call, not at sign-in. A newer UI is expected to be
+  tried against an older release.
+- **An appliance newer than the pin** works the same way in the other
+  direction: the UI talks to its newest version with calls typed against
+  `v28.0.0`. Anything middleware renamed or reshaped since fails at the call,
+  and `tsc` only says so once the pin is bumped (below).
+- What the pin still decides is what the UI *compiles* against, and the client
+  class it builds (and so what it assumes, such as reconnect tokens).
 
 E2E is different: it runs discovery and takes the newest version that the
 appliance advertises *and* the installed `@truenas/api-client` implements. It
@@ -841,8 +902,8 @@ Take `v28.0.0` → `v29.0.0` as the example.
 7. Check `UndeclaredCallDirectory` against the new directory. Delete any entry
    the generated directory now declares, together with its `callUndeclared`
    call sites.
-8. Update the version mentions in this document ("What is in place", the
-   socket path), in `docker/nginx.conf`'s comment and in `e2e/CLAUDE.md`. Leave
+8. Update the version mentions in this document ("What is in place") and in
+   `e2e/CLAUDE.md`. The socket path is `/api/current` and does not change. Leave
    the version names in the history sections as they are.
 9. Run lint and the specs `yarn test:changed` picks up. Then run the full E2E
    suite against a master appliance that advertises the new year, and record

@@ -1,16 +1,16 @@
-<div [class]="['alert-icon', alertLevelColor]">
+<div [class]="['alert-icon', alertLevelColor()]">
   <tn-icon
     library="mdi"
     size="md"
-    [name]="icon"
-    [tnTooltip]="iconTooltip"
+    [name]="icon()"
+    [tnTooltip]="iconTooltip()"
   ></tn-icon>
 </div>
 
 <div class="alert-body">
   @if (!alert().dismissed) {
     <div class="alert-header">
-      <h3 tnTestIdType="text" [class]="['alert-level', alertLevelColor]" [tnTestId]="[alert().key, 'level']">
+      <h3 tnTestIdType="text" [class]="['alert-level', alertLevelColor()]" [tnTestId]="[alert().key, 'level']">
         {{ levelLabel() }}
       </h3>
       @if (hasDuplicates()) {

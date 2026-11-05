@@ -16,12 +16,12 @@
         <h3 tnTestIdType="text" [tnTestId]="['vdev-layout', layout(), position()]">{{ layout() }}</h3>
         @if (minDisks[layout()] <= vdev()?.disks?.length) {
           <p tnTestIdType="text" [tnTestId]="['vdev-capacity-estimate', layout(), position()]">
-            {{ '{size} Est. Usable Raw Capacity' | translate: { size: sizeEstimation | ixFileSize } }}
+            {{ '{size} Est. Usable Raw Capacity' | translate: { size: sizeEstimation() | ixFileSize } }}
           </p>
         } @else {
           <p>{{ 'Add the required no. of disks to get a vdev size estimate' | translate }}</p>
         }
-        @if (spansEnclosures) {
+        @if (spansEnclosures()) {
           <ix-warning
             tnTestIdType="text"
             [message]="'VDEVs span enclosures' | translate"
@@ -30,7 +30,7 @@
         }
       </div>
       <div class="vdev-container">
-        @for (enclosureDisks of enclosuresDisks | keyvalue; track enclosureDisks) {
+        @for (enclosureDisks of enclosuresDisks() | keyvalue; track enclosureDisks) {
           <ix-enclosure-wrapper
             [enclosure]="enclosureById()[enclosureDisks.key]"
           >
@@ -55,7 +55,7 @@
           </ix-enclosure-wrapper>
         }
         <div class="disk-icons no-enclosure">
-          @for (disk of nonEnclosureDisks; track disk) {
+          @for (disk of nonEnclosureDisks(); track disk) {
             <ix-disk-icon
               class="disk-icon"
               [tnTestId]="['drag-vdev-disk', disk.name]"
@@ -88,13 +88,13 @@
       <p class="drag-hint">{{ 'Drag & drop disks to add or remove them' | translate }}</p>
     }
 
-    @if (vdevErrorMessage) {
+    @if (vdevErrorMessage()) {
       <div class="error" tnTestIdType="text" [tnTestId]="['vdev-error', layout(), position()]">
-        {{ vdevErrorMessage | translate }}
+        {{ vdevErrorMessage() | translate }}
       </div>
     }
 
-    @if (mixesDisksOfDifferentSizes) {
+    @if (mixesDisksOfDifferentSizes()) {
       <div class="error" tnTestIdType="text" [tnTestId]="['vdev-mixed-sizes', layout(), position()]">
         {{ 'Mixing disks of different sizes in a vdev is not recommended.' | translate }}
       </div>

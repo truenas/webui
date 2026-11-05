@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, viewChild } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -45,7 +45,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
-  @ViewChild(OauthProviderComponent, { static: true }) oauthComponent: OauthProviderComponent;
+  private readonly oauthComponent = viewChild.required(OauthProviderComponent);
 
   form = this.formBuilder.group({
     token: ['', Validators.required],
@@ -81,7 +81,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   ngAfterViewInit(): void {
     this.formPatcher$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((values) => {
       this.form.patchValue(values);
-      this.oauthComponent.form.patchValue(values);
+      this.oauthComponent().form.patchValue(values);
     });
   }
 
@@ -93,7 +93,7 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
   override getSubmitAttributes(): OauthProviderComponent['form']['value'] & this['form']['value'] {
     const { drives, ...oneDriveValues } = this.form.value;
     return {
-      ...this.oauthComponent?.form?.value,
+      ...this.oauthComponent()?.form?.value,
       ...oneDriveValues,
     };
   }
@@ -117,8 +117,8 @@ export class OneDriveProviderFormComponent extends BaseProviderFormComponent imp
     this.drives$ = of();
 
     this.api.call('cloudsync.onedrive_list_drives', [{
-      client_id: this.oauthComponent.form.getRawValue().client_id,
-      client_secret: this.oauthComponent.form.getRawValue().client_secret,
+      client_id: this.oauthComponent().form.getRawValue().client_id,
+      client_secret: this.oauthComponent().form.getRawValue().client_secret,
       token: this.form.getRawValue().token,
     }])
       .pipe(

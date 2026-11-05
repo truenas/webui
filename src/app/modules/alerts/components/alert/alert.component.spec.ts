@@ -2,7 +2,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
-import { TnIconButtonHarness } from '@truenas/ui-components';
+import { TnIconButtonHarness, TnTooltipDirective } from '@truenas/ui-components';
 import { ngMocks } from 'ng-mocks';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -95,6 +95,46 @@ describe('AlertComponent', () => {
   it('shows an alert icon', () => {
     const iconName = alert.getIconName();
     expect(iconName).toBe('mdi-alert-circle');
+  });
+
+  it('drops the "Dismissed" icon tooltip once a dismissed alert is reopened', () => {
+    const iconTooltip = (): unknown => spectator.query(TnTooltipDirective, { parentSelector: '.alert-icon' })!.message();
+
+    spectator.setInput('alert', { ...dummyAlert, dismissed: true });
+    expect(iconTooltip()).toBe('Dismissed');
+
+    spectator.setInput('alert', { ...dummyAlert, dismissed: false });
+    expect(iconTooltip()).toBeFalsy();
+    expect(alert.getIconName()).toBe('mdi-alert-circle');
+  });
+
+  it.each([
+    [AlertLevel.Error, 'mdi-alert-circle', 'error'],
+    [AlertLevel.Warning, 'mdi-alert', 'warn'],
+    [AlertLevel.Info, 'mdi-information', 'primary'],
+  ])('styles a %s alert with its own icon and colour', (level, iconName, colorClass) => {
+    spectator.setInput('alert', { ...dummyAlert, level });
+
+    expect(alert.getIconName()).toBe(iconName);
+    expect(spectator.query('.alert-icon')).toHaveClass(colorClass);
+    expect(spectator.query('.alert-level')).toHaveClass(colorClass);
+  });
+
+  it('marks a one-shot alert and explains that it is not dismissed automatically', () => {
+    spectator.setInput('alert', { ...dummyAlert, level: AlertLevel.Notice, one_shot: true });
+
+    expect(alert.getIconName()).toBe('mdi-bell-ring');
+    expect(spectator.query('.alert-icon')).toHaveClass('primary');
+    expect(spectator.query(TnTooltipDirective, { parentSelector: '.alert-icon' })!.message())
+      .toBe("This is a ONE-SHOT Notice alert; it won't be dismissed automatically");
+  });
+
+  it('shows a dismissed alert with a check icon and no level colour', () => {
+    spectator.setInput('alert', { ...dummyAlert, dismissed: true });
+
+    expect(alert.getIconName()).toBe('mdi-check-circle');
+    expect(spectator.query('.alert-icon')!.className.trim()).toBe('alert-icon');
+    expect(spectator.element).toHaveClass('dismissed');
   });
 
   it('shows alert datetime (formatted according to system settings) and system timezone', () => {

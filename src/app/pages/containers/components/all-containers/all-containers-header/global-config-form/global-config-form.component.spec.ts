@@ -38,7 +38,7 @@ describe('GlobalConfigFormComponent', () => {
         mockCall('lxc.config', {
           bridge: 'bridge1',
           v4_network: '1.2.3.4/24',
-          v6_network: null,
+          v6_network: 'fd42::/64',
           preferred_pool: 'tank',
         } as ContainerGlobalConfig),
         mockCall('lxc.bridge_choices', {
@@ -95,7 +95,7 @@ describe('GlobalConfigFormComponent', () => {
     const v4NetworkInput = await form.getControl('IPv4 Network');
     expect(v4NetworkInput).toBeTruthy();
 
-    // Submittable because v4_network already has a value from initial config
+    // Submittable because both networks already have values from the initial config
     expect(spectator.component.canSubmit()).toBe(true);
 
     await submit();
@@ -103,7 +103,7 @@ describe('GlobalConfigFormComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: '',
       v4_network: '1.2.3.4/24',
-      v6_network: null,
+      v6_network: 'fd42::/64',
       preferred_pool: 'tank',
     }]);
     expect(closedSpy).toHaveBeenCalledWith(true);
@@ -117,16 +117,15 @@ describe('GlobalConfigFormComponent', () => {
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: 'bridge1',
       v4_network: '1.2.3.4/24',
-      v6_network: null,
+      v6_network: 'fd42::/64',
       preferred_pool: 'pool2',
     }]);
   });
 
-  it('validates at least one network is required when bridge is automatic', async () => {
+  it('requires both networks when bridge is automatic', async () => {
     await selectOption('bridge1', 'Automatic');
 
     await form.fillForm({
-      'IPv4 Network': '',
       'IPv6 Network': '',
     });
     spectator.detectChanges();
@@ -135,23 +134,21 @@ describe('GlobalConfigFormComponent', () => {
     expect(spectator.component.canSubmit()).toBe(false);
   });
 
-  it('allows submitting with only IPv6 network when bridge is automatic', async () => {
+  it('sends the networks as entered when bridge is automatic', async () => {
     await selectOption('bridge1', 'Automatic');
 
     await form.fillForm({
-      'IPv4 Network': '',
+      'IPv4 Network': '10.10.0.0/24',
       'IPv6 Network': 'fd00::/64',
     });
     spectator.detectChanges();
     await spectator.fixture.whenStable();
 
-    expect(spectator.component.canSubmit()).toBe(true);
-
     await submit();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.update', [{
       bridge: '',
-      v4_network: null,
+      v4_network: '10.10.0.0/24',
       v6_network: 'fd00::/64',
       preferred_pool: 'tank',
     }]);
@@ -174,26 +171,6 @@ describe('GlobalConfigFormComponent', () => {
     await selectOption('Automatic', 'bridge1');
 
     expect(spectator.component.canSubmit()).toBe(true);
-  });
-
-  it('shows hint text when automatic bridge is selected', async () => {
-    await selectOption('bridge1', 'Automatic');
-
-    const hintText = spectator.query('.hint');
-    expect(hintText).toBeTruthy();
-    expect(hintText?.textContent).toContain('At least one network (IPv4 or IPv6) must be specified');
-  });
-
-  it('hides hint text when switching away from automatic bridge', async () => {
-    await selectOption('bridge1', 'Automatic');
-
-    let hintText = spectator.query('.hint');
-    expect(hintText).toBeTruthy();
-
-    await selectOption('Automatic', 'bridge1');
-
-    hintText = spectator.query('.hint');
-    expect(hintText).toBeFalsy();
   });
 });
 

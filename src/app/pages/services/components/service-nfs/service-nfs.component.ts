@@ -7,36 +7,30 @@ import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angula
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { CallResponse } from '@truenas/api-client';
 import {
-  InputType, TnButtonComponent, TnCheckboxComponent, TnDialog, TnFormFieldComponent, TnFormSectionComponent,
+  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  catchError, forkJoin, Observable, of, tap,
+  catchError, Observable, of,
 } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { DirectoryServiceStatus, DirectoryServiceType } from 'app/enums/directory-services.enum';
 import { NfsProtocol, nfsProtocolLabels } from 'app/enums/nfs-protocol.enum';
 import { Role } from 'app/enums/role.enum';
 import { RdmaProtocolName } from 'app/enums/service-name.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceNfs } from 'app/helptext/services/components/service-nfs';
-import { DirectoryServicesStatus, toDirectoryServicesStatus } from 'app/interfaces/directoryservices-status.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
-import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   serviceConfigSavedMessage,
 } from 'app/pages/services/components/service-config-forms.constants';
-import { AddSpnDialog } from 'app/pages/services/components/service-nfs/add-spn-dialog/add-spn-dialog.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // Built here rather than inline in the component, and left with an inferred return type — see
@@ -82,9 +76,6 @@ type NfsFormValue = ReturnType<ReturnType<typeof createNfsForm>['getRawValue']>;
     TnCheckboxComponent,
     TnInputComponent,
     IxFormComponent,
-    RequiresRolesDirective,
-    TnButtonComponent,
-    TooltipComponent,
     TranslateModule,
   ],
 })
@@ -92,33 +83,13 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   private api = inject(ApiService);
   private fb = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private dialogService = inject(DialogService);
-  private tnDialog = inject(TnDialog);
   private validatorsService = inject(IxValidatorsService);
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
   protected readonly InputType = InputType;
-  protected readonly isAddSpnDisabled = signal(true);
-  protected readonly hasNfsStatus = signal(false);
-  protected activeDirectoryState = signal<DirectoryServiceStatus | null>(null);
 
   protected readonly form = createNfsForm(this.fb, this.validatorsService);
-
-  private readonly isKerberosRequired = toSignal(this.form.controls.v4_krb.valueChanges, {
-    initialValue: this.form.controls.v4_krb.value,
-  });
-
-  /**
-   * Add SPN only applies to a Kerberos-secured NFSv4 server that doesn't already have an SPN, and
-   * only once Active Directory is healthy. Declarative rather than a getter reading
-   * `form.getRawValue()`, so it recomputes when its inputs change instead of on every CD pass.
-   */
-  protected readonly isAddSpnVisible = computed(() => {
-    return !this.hasNfsStatus()
-      && this.isKerberosRequired()
-      && this.activeDirectoryState() === DirectoryServiceStatus.Healthy;
-  });
 
   readonly tooltips = {
     allow_nonroot: helptextServiceNfs.allowNonrootTooltip,
@@ -146,7 +117,7 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     this.api.call('nfs.bindip_choices').pipe(
       choicesToOptions(),
       map((options) => options.map((option) => String(option.value))),
-      // Fails soft, like the other enrichments: `toSignal` latches an error and re-throws it on
+      // Fails soft, like the RDMA check: `toSignal` latches an error and re-throws it on
       // every read, and this one is read from `ipChoices()` during template evaluation — so an
       // uncaught failure would take down the whole form render instead of emptying one select.
       // The configured addresses still reach the options through `configuredBindIps`.
@@ -172,15 +143,13 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     this.setFieldDependencies();
 
     // Only `nfs.config` gates the form: it is what populates the controls, so its failure is what
-    // leaves them on defaults the user must not save. The other two calls merely enrich the UI
-    // (RDMA availability, Add SPN visibility) and fail soft below — folding them into the same
-    // load would let a `directoryservices.status` hiccup disable Save over a form that actually
-    // holds the real configuration.
+    // leaves them on defaults the user must not save. RDMA availability merely enriches the UI and
+    // fails soft below — folding it into the same load would let an `rdma.capable_protocols`
+    // hiccup disable Save over a form that actually holds the real configuration.
     this.loadFormConfig(this.api.call('nfs.config'), (config) => this.applyConfig(config));
 
-    forkJoin([this.checkForRdmaSupport(), this.loadActiveDirectoryState()]).pipe(
-      // Both enrichments already default to the conservative option (RDMA disabled, Add SPN
-      // hidden), so a failure just leaves them there.
+    this.checkForRdmaSupport().pipe(
+      // RDMA already defaults to disabled, so a failure just leaves it there.
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
@@ -202,8 +171,6 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
    * Idempotent, as {@link loadFormConfig} requires: every write is a plain (re-runnable) patch.
    */
   private applyConfig(config: CallResponse<WebUiApiDirectory, 'nfs.config'>): void {
-    this.isAddSpnDisabled.set(!config.v4_krb);
-    this.hasNfsStatus.set(config.keytab_has_nfs_spn);
     const bindIps = config.bindip ?? [];
     this.configuredBindIps.set(bindIps);
 
@@ -237,19 +204,6 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
     );
   }
 
-  private loadActiveDirectoryState(): Observable<DirectoryServicesStatus> {
-    return this.api.call('directoryservices.status').pipe(
-      map(toDirectoryServicesStatus),
-      tap((dsStatus) => {
-        if (dsStatus.type === DirectoryServiceType.ActiveDirectory) {
-          this.activeDirectoryState.set(dsStatus.status);
-        } else {
-          this.activeDirectoryState.set(DirectoryServiceStatus.Disabled);
-        }
-      }),
-    );
-  }
-
   private setFieldDependencies(): void {
     this.form.controls.protocols.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((protocols) => {
       const nfs4Enabled = protocols.includes(NfsProtocol.V4);
@@ -266,21 +220,6 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
           this.form.controls[field].disable();
         }
       });
-    });
-  }
-
-  protected addSpn(): void {
-    this.dialogService.confirm({
-      title: this.translate.instant('Add Kerberos SPN Entry'),
-      message: this.translate.instant('Would you like to add a Service Principal Name (SPN) now?'),
-      hideCheckbox: true,
-      buttonText: this.translate.instant('Yes'),
-      cancelText: this.translate.instant('No'),
-    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((confirmed) => {
-      if (!confirmed) {
-        return;
-      }
-      this.tnDialog.open(AddSpnDialog);
     });
   }
 }

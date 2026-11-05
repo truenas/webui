@@ -1,9 +1,13 @@
 import { environment } from 'environments/environment';
-import { Subscription } from 'rxjs';
+import {
+  distinctUntilChanged, filter, merge, Observable, Subject, Subscription,
+} from 'rxjs';
+import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import type { WebUiApiClient } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type Connection = WebUiApiClient['connection'];
 type Message = Parameters<Connection['send']>[0];
+type IncomingMessage = Connection extends { messages(): Observable<infer T> } ? T : never;
 
 /**
  * How many calls middleware will hold for one connection: it runs ten and lets
@@ -24,6 +28,12 @@ export const maxGatedCalls = maxConcurrentCalls - 1;
  * reached the appliance uncounted: this gate only sees what passes `send`.
  */
 const tooManyConcurrentCallsCode = -32000;
+
+/**
+ * The one sign-in that keeps the session's user: the reconnect token the app was given.
+ * Any other `auth.login_ex` (a password or an API key) may be someone else signing in.
+ */
+const tokenMechanism = 'TOKEN_PLAIN';
 
 /** How many calls may wait here before it is worth saying so, in a development build. */
 const longQueue = maxConcurrentCalls * 2;
@@ -46,9 +56,31 @@ interface WaitingCall {
  * Only requests count: a frame with both an `id` and a `method`. A request is
  * finished when a frame with its id comes back, whether or not its caller is
  * still listening, since the appliance is busy with it either way.
+ *
+ * A call still waiting when the socket is lost is kept, and sent once
+ * `authenticated$` is next `true`: the new socket starts signed out, and
+ * middleware would refuse it there with `ENOTAUTHENTICATED`, which ends the
+ * app's session. Its caller is still listening, since the answer is matched by
+ * id on whichever socket is current, so dropping it left the caller waiting
+ * for good.
+ *
+ * They are only kept for the session they were made in. A sign-in other than
+ * the token reconnect ends them, since the tab is on the sign-in page by then
+ * and whoever signs in may not be the user who made them. Each is answered here
+ * with the refusal middleware would have given it, `ENOTAUTHENTICATED`, read on
+ * `messages()` as if the appliance had sent it, so its caller hears that the
+ * session it was made in has ended instead of waiting for good.
  */
-export function limitConcurrentCalls(connection: Connection, limit = maxGatedCalls): void {
+export function limitConcurrentCalls(
+  connection: Connection,
+  authenticated$: Observable<boolean>,
+  limit = maxGatedCalls,
+): void {
   const send = connection.send.bind(connection);
+  const appliance$ = connection.messages();
+  /** Refusals given here, to calls this ends without sending. */
+  const refusals$ = new Subject<IncomingMessage>();
+  connection.messages = () => merge(appliance$, refusals$);
   /**
    * Each call awaiting an answer, with the handle the connection gave for it.
    * That handle closes once the frame is written: until then the connection is
@@ -58,6 +90,8 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
   const inFlight = new Map<string, Subscription>();
   const waiting: WaitingCall[] = [];
   let wasOpen = false;
+  /** Set by a lost socket, until the session is back: what waits stays waiting. */
+  let isHeld = false;
 
   // The three below call each other in a ring, hence declarations: they hoist.
   function start({ id, message, handle }: WaitingCall): void {
@@ -89,7 +123,7 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
   }
 
   function startWaiting(): void {
-    while (inFlight.size < limit) {
+    while (!isHeld && inFlight.size < limit) {
       const next = waiting.shift();
       if (!next) {
         return;
@@ -111,18 +145,23 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
       return;
     }
 
-    // What was written on the socket is lost with it, answers included, and what
-    // was waiting here goes the same way. A frame the connection has not written
-    // yet is still its to send on the next socket, so that one stays counted.
+    // What was written on the socket is lost with it, answers included. A frame
+    // the connection has not written yet is still its to send on the next
+    // socket, so that one stays counted.
     inFlight.forEach((sending, id) => {
       if (sending.closed) {
         inFlight.delete(id);
       }
     });
-    waiting.length = 0;
+    isHeld = waiting.length > 0;
   });
 
-  connection.messages().subscribe((message) => {
+  authenticated$.pipe(distinctUntilChanged(), filter(Boolean)).subscribe(() => {
+    isHeld = false;
+    startWaiting();
+  });
+
+  appliance$.subscribe((message) => {
     if ((message.error as { code?: number } | undefined)?.code === tooManyConcurrentCallsCode) {
       console.error(
         `Middleware refused a call for exceeding ${maxConcurrentCalls} concurrent calls, which the limit of `
@@ -139,7 +178,13 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
       return send(message);
     }
 
+    if (isHeld && isSignInAsAnyone(message)) {
+      waiting.splice(0).forEach(({ id }) => refusals$.next(sessionEndedRefusal(id)));
+    }
+
     const call: WaitingCall = { id: String(message.id), message, handle: new Subscription() };
+    // Not held back by `isHeld`: the frames that sign the new socket in come
+    // through here, and the calls waiting on them are exactly what is held.
     if (inFlight.size < limit) {
       start(call);
       return call.handle;
@@ -160,4 +205,27 @@ export function limitConcurrentCalls(connection: Connection, limit = maxGatedCal
     });
     return call.handle;
   };
+}
+
+function isSignInAsAnyone(message: Message): boolean {
+  if (message.method !== 'auth.login_ex') {
+    return false;
+  }
+  const [options] = (message.params ?? []) as [{ mechanism?: string }?];
+  return options?.mechanism !== tokenMechanism;
+}
+
+function sessionEndedRefusal(id: string): IncomingMessage {
+  return {
+    jsonrpc: '2.0',
+    id,
+    error: {
+      code: JsonRpcErrorCode.CallError,
+      message: 'Not authenticated',
+      data: {
+        errname: ApiErrorName.NotAuthenticated,
+        reason: 'The session this call was made in ended before it could be sent.',
+      },
+    },
+  } as IncomingMessage;
 }

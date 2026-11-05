@@ -185,7 +185,7 @@ export class AuthService implements OnDestroy {
    * The authenticator speaks `auth.login_ex` and owns the reconnect-token
    * chain, so a password login mints the token the next reconnect spends. It
    * reports a refused credential by throwing rather than by answering, which
-   * `asLoginExResponse` puts back as the `AUTH_ERR` the UI already handles.
+   * `asLoginExResponse` puts back as the response middleware refused it with.
    */
   login(
     username: string,
@@ -193,16 +193,11 @@ export class AuthService implements OnDestroy {
     otp: string | null = null,
   ): Observable<{ loginResult: LoginResult; loginResponse: LoginExResponse }> {
     const loginCall$ = this.client$.pipe(
-      // `loginWithUserPass` keeps the plaintext password on the authenticator and
-      // replays it on every reconnect, and offers no way to decline. That is new
-      // for this app, not just for the library: until the session moved here the
-      // UI never held the password past the login frame, only the single-use
-      // `reconnect_token` below. A password-backed session now carries the
-      // credential in tab memory for its whole life. See the known-gaps list in
-      // `docs/devs/typed-api-client.md`.
       switchMap((client) => (otp
         ? client.authenticator.loginWithOtp(otp)
-        : client.authenticator.loginWithUserPass(username, password))),
+        // The UI keeps the single-use reconnect token, never the password: without this the
+        // authenticator would replay it on every reconnect, even into a terminated session.
+        : client.authenticator.loginWithUserPass(username, password, { rememberPassword: false }))),
       asLoginExResponse(),
     );
 
@@ -349,8 +344,9 @@ export class AuthService implements OnDestroy {
   private endLocalSession(): void {
     this.clearAuthToken();
     this.hasPasswordChangedSinceLastLogin$.next(false);
-    // No subscriptions to clear: the client drops every event subscription when the session ends
-    // and sends `core.subscribe` again for the ones still held once the next login lands.
+    // No subscriptions to clear: middleware ends every one of the socket's subscriptions on
+    // `auth.logout` (with `notify_unsubscribed`), the client completes those streams, and the
+    // effects that hold them subscribe again once the next login initializes the admin UI.
     this.wsStatus.setLoginStatus(false);
     this.sessionInitialized = false;
     this.pendingAuthData = null;

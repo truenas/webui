@@ -4,7 +4,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
-import { TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
+import { TnFilePickerHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -171,6 +171,11 @@ describe('CloudSyncFormComponent', () => {
               pass: 'password',
             },
           },
+          {
+            id: 3,
+            name: 'test3',
+            provider: { type: CloudSyncProviderName.AmazonS3 },
+          },
         ] as CloudSyncCredentialEntry[]),
         mockCall('cloudsync.providers', [{
           name: CloudSyncProviderName.Http,
@@ -189,7 +194,17 @@ describe('CloudSyncFormComponent', () => {
           task_schema: [],
           credentials_schema: [],
           credentials_oauth: null,
+        },
+        {
+          name: CloudSyncProviderName.AmazonS3,
+          title: 'Amazon S3',
+          buckets: true,
+          bucket_title: 'Bucket',
+          task_schema: [],
+          credentials_schema: [],
+          credentials_oauth: null,
         }] as CloudSyncProvider[]),
+        mockCall('cloudsync.list_buckets', [{ Name: 'my-bucket', Path: 'my-bucket', Enabled: true }]),
         mockCall('cloudsync.create', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.create'>),
         mockCall('cloudsync.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'cloudsync.update'>),
       ]),
@@ -252,6 +267,73 @@ describe('CloudSyncFormComponent', () => {
         transfers: 4,
       }]);
       expect(closedSpy).toHaveBeenCalledWith(true);
+    });
+
+    it('sends the bucket root as the folder when a push task is saved with an empty Folder', async () => {
+      spectator.component.form.patchValue({
+        description: 'New Cloud Sync Task',
+        credentials: 1,
+        direction: Direction.Push,
+      });
+
+      await spectator.fixture.whenStable();
+      spectator.detectChanges();
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
+        expect.objectContaining({
+          direction: Direction.Push,
+          attributes: { folder: '/' },
+        }),
+      ]);
+    });
+
+    it('keeps Folder disabled until a bucket is selected for a provider with buckets', async () => {
+      const credentialsSelect = await loader.getHarness(
+        TnSelectHarness.with({ ancestor: 'ix-cloud-credentials-select' }),
+      );
+      await credentialsSelect.selectOption('test3 (Amazon S3)');
+      const directionSelect = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="direction"]' }),
+      );
+      await directionSelect.selectOption('PUSH');
+      await spectator.fixture.whenStable();
+
+      const folderPicker = await loader.getHarness(
+        TnFilePickerHarness.with({ selector: '[formControlName="folder_destination"]' }),
+      );
+      expect(await folderPicker.isDisabled()).toBe(true);
+
+      const bucketSelect = await loader.getHarness(
+        TnSelectHarness.with({ selector: '[formControlName="bucket"]' }),
+      );
+      await bucketSelect.selectOption('my-bucket');
+
+      expect(await folderPicker.isDisabled()).toBe(false);
+    });
+
+    it('sends the bucket root as the folder when a pull task with no bucket is saved', async () => {
+      const credentialsSelect = await loader.getHarness(
+        TnSelectHarness.with({ ancestor: 'ix-cloud-credentials-select' }),
+      );
+      await credentialsSelect.selectOption('test3 (Amazon S3)');
+      const descriptionInput = await loader.getHarness(
+        TnInputHarness.with({ selector: '[formControlName="description"]' }),
+      );
+      await descriptionInput.setValue('New Cloud Sync Task');
+      await spectator.fixture.whenStable();
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('cloudsync.create', [
+        expect.objectContaining({
+          credentials: 3,
+          direction: Direction.Pull,
+          attributes: { folder: '/' },
+        }),
+      ]);
     });
   });
 

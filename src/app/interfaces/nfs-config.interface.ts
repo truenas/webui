@@ -19,8 +19,3 @@ export interface NfsConfig {
   managed_nfsd: boolean;
   rdma: boolean;
 }
-
-export interface AddNfsPrincipal {
-  username: string;
-  password: string;
-}

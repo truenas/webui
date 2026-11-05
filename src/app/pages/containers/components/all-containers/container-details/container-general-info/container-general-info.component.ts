@@ -11,6 +11,7 @@ import {
 import { filter, switchMap } from 'rxjs';
 import { containerCapabilitiesPolicyLabels, containerIdmapTypeLabels, containerTimeLabels } from 'app/enums/container.enum';
 import { Role } from 'app/enums/role.enum';
+import { containersHelptext } from 'app/helptext/containers/containers';
 import { Container, ContainerDeleteOptions } from 'app/interfaces/container.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -63,6 +64,7 @@ export class ContainerGeneralInfoComponent {
   protected readonly containerCapabilitiesPolicyLabels = containerCapabilitiesPolicyLabels;
   protected readonly containerIdmapTypeLabels = containerIdmapTypeLabels;
   protected readonly containerTimeLabels = containerTimeLabels;
+  protected readonly helptext = containersHelptext;
 
   protected readonly canModify = toSignal(
     this.authService.hasRole([Role.ContainerWrite]),

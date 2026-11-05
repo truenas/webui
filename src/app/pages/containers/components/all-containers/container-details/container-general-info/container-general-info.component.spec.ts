@@ -105,6 +105,16 @@ describe('ContainerGeneralInfoComponent', () => {
     expect(cardContent).toContainText('CPU Set: All Host CPUs');
   });
 
+  it('shows the memory limit in MiB', () => {
+    spectator.setInput('container', fakeContainer({ memory: 512 }));
+
+    expect(spectator.query('tn-card')).toContainText('Memory Limit: 512 MiB');
+  });
+
+  it('shows that there is no memory limit when none is configured', () => {
+    expect(spectator.query('tn-card')).toContainText('Memory Limit: No Limit');
+  });
+
   it('deletes container as a job with the options from the dialog and redirects to list root', async () => {
     const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
     await deleteButton.click();

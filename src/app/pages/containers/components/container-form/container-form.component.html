@@ -90,6 +90,16 @@
       </tn-form-field>
     </tn-form-section>
 
+    <tn-form-section [heading]="'Memory Configuration' | translate">
+      <tn-form-field
+        [label]="helptext.memoryLabel | translate"
+        [hint]="helptext.memoryHint | translate"
+        [tooltip]="helptext.memoryTooltip | translate"
+      >
+        <tn-input formControlName="memory" [inputType]="InputType.Number"></tn-input>
+      </tn-form-field>
+    </tn-form-section>
+
     <tn-form-section [heading]="'Time Configuration' | translate">
       <tn-form-field
         [label]="'Container Time' | translate"

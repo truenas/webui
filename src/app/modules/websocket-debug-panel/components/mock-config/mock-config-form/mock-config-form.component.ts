@@ -285,7 +285,7 @@ export class MockConfigFormComponent implements OnInit {
           trace = {
             class: 'CallError',
             formatted: 'No stack trace available',
-            frames: [],
+            repr: 'CallError()',
           };
         }
 
@@ -395,7 +395,7 @@ export class MockConfigFormComponent implements OnInit {
   }
 
   private generateDefaultTrace(): string {
-    // Generate a default mock trace for CallError with correct ApiTraceFrame structure
+    // Generate a default mock trace for CallError, shaped like middleware's `truenas_error_traceback`
     const defaultTrace = {
       class: 'CallError',
       formatted: `Traceback (most recent call last):
@@ -410,44 +410,7 @@ export class MockConfigFormComponent implements OnInit {
   File "/usr/local/lib/python3/middlewared/service.py", line 198, in create
     raise CallError('Invalid argument provided', errno.EINVAL)
 middlewared.service_exception.CallError: [EINVAL] Invalid argument provided`,
-      frames: [
-        {
-          argspec: ['self', 'message'],
-          filename: '/usr/local/lib/python3/middlewared/main.py',
-          line: '    result = await self.middleware.call_method(self, message)',
-          lineno: 176,
-          locals: {
-            self: '<WebSocketApplication object>',
-            message: '{"method": "pool.create", "params": [{"name": "tank", "vdevs": [...]}]}',
-          },
-          method: 'call_method',
-        },
-        {
-          argspec: ['self', 'message', 'serviceobj', 'methodobj', 'params', 'app'],
-          filename: '/usr/local/lib/python3/middlewared/main.py',
-          line: '    return await methodobj(*prepared_call.args)',
-          lineno: 1285,
-          locals: {
-            self: '<Middleware object>',
-            methodobj: '<bound method PoolService.create>',
-            params: '[{"name": "tank", "vdevs": [...]}]',
-            app: 'None',
-          },
-          method: '_call',
-        },
-        {
-          argspec: ['self', 'data'],
-          filename: '/usr/local/lib/python3/middlewared/service.py',
-          line: "    raise CallError('Invalid argument provided', errno.EINVAL)",
-          lineno: 198,
-          locals: {
-            self: '<PoolService object>',
-            data: '{"name": "tank", "vdevs": [...]}',
-            verrors: '<ValidationErrors object>',
-          },
-          method: 'create',
-        },
-      ],
+      repr: "CallError('Invalid argument provided', 22)",
     };
     return JSON.stringify(defaultTrace, null, 2);
   }

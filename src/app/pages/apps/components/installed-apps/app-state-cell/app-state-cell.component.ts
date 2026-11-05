@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component, HostBinding,
+  Component,
   computed,
   input,
 } from '@angular/core';
@@ -17,21 +17,22 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
   styleUrls: ['./app-state-cell.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TranslateModule, MapValuePipe, TnTooltipDirective, TnIconComponent],
+  host: {
+    '[class]': 'hostClasses()',
+  },
 })
 export class AppStateCellComponent {
   app = input.required<App>();
   job = input<Job<unknown, AppStartQueryParams>>();
   showIcon = input<boolean>(false);
 
-  @HostBinding('class') get hostClasses(): string[] {
-    return [
-      'state',
-      this.state()?.toLowerCase(),
-      this.showIcon() ? 'has-icon' : 'has-cell',
-    ];
-  }
-
   state = computed(() => this.app().state);
+
+  protected readonly hostClasses = computed(() => [
+    'state',
+    this.state()?.toLowerCase(),
+    this.showIcon() ? 'has-icon' : 'has-cell',
+  ]);
 
   protected stateIcons = appStateIcons;
   protected stateLabels = appStateLabels;

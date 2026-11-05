@@ -54,6 +54,15 @@ describe('typed login response', () => {
       expect(await firstValueFrom(refused$)).toEqual({ response_type: LoginExResponseType.AuthErr });
     });
 
+    it('keeps the answer a refused token login came with', async () => {
+      // DENIED is a response_type middleware sends and the client's enum does not list.
+      const denied = { response_type: LoginExResponseType.Denied } as unknown as AuthResponse;
+      const refused$ = throwError(() => new AuthError(AuthErrorCode.TokenAuthFailed, 'refused', denied))
+        .pipe(asLoginExResponse());
+
+      expect(await firstValueFrom(refused$)).toEqual({ response_type: LoginExResponseType.Denied });
+    });
+
     it('covers every refused-credential code the library declares', () => {
       // A code added to the library that belongs on the list but is not on it
       // would silently turn a refused credential back into an error modal, so

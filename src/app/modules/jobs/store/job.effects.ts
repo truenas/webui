@@ -85,7 +85,8 @@ export class JobEffects {
 
   /**
    * Both effects above read the same subscription: the client shares one stream per event name.
-   * The client's job is honest about the fields that stay null until the job starts (gap 8).
+   * The generated entry types `state` and the timestamps as strings (gap 15); the UI's `Job` reads them as
+   * its enum and `ApiTimestamp`.
    */
   private jobEvents(): Observable<JobEvent> {
     return this.api.subscribe('core.get_jobs') as unknown as Observable<JobEvent>;

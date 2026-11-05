@@ -5,7 +5,7 @@ import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/sp
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { JobExceptionType } from 'app/enums/response-error-type.enum';
-import { ApiErrorDetails, ApiTraceFrame } from 'app/interfaces/api-error.interface';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { ErrorReport } from 'app/interfaces/error-report.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -34,7 +34,7 @@ const callError = new ApiCallError({
         22,
       ],
     ],
-    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
     reason: 'Test reason',
   },
 });
@@ -52,7 +52,7 @@ const arrayFieldError = new ApiCallError({
         22,
       ],
     ],
-    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
     reason: 'Test reason',
   },
 });
@@ -70,7 +70,7 @@ const unreachableAddressError = new ApiCallError({
         22,
       ],
     ],
-    trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+    trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
     reason: 'Test reason',
   },
 });
@@ -268,7 +268,7 @@ describe('FormErrorHandlerService', () => {
               22,
             ],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -343,7 +343,7 @@ describe('FormErrorHandlerService', () => {
           error: 11,
           errname: ApiErrorName.Validation,
           extra: [['ntp_server_create.server.address', 'Server could not be reached.', 22]],
-          trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: '', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -370,7 +370,7 @@ describe('FormErrorHandlerService', () => {
           ['ntp_server_create.address', 'Server could not be reached.', 22],
           ['ntp_server_create.description', 'Description is already taken.', 22],
         ],
-        trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+        trace: { class: 'ValidationErrors', formatted: '', repr: '' },
         reason: 'Test reason',
       },
     });
@@ -506,7 +506,7 @@ describe('FormErrorHandlerService', () => {
           extra: [
             ['test.missing_field', 'Error message', 22],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -649,7 +649,7 @@ describe('FormErrorHandlerService', () => {
             ['config.array.0.item', 'Array item error', 22],
             ['simple_field', 'Simple field error', 22],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -694,7 +694,7 @@ describe('FormErrorHandlerService', () => {
           extra: [
             ['test.nonexistent_field', 'Error for nonexistent field', 22],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -718,7 +718,7 @@ describe('FormErrorHandlerService', () => {
           extra: [
             ['some.valid.path', 'Valid error message', 22],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -738,7 +738,7 @@ describe('FormErrorHandlerService', () => {
         data: {
           error: 22,
           errname: 'OTHER_ERROR' as ApiErrorName,
-          trace: { class: 'SomeError', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'SomeError', formatted: 'Formatted string', repr: '' },
           reason: 'Not a validation error',
           extra: undefined,
         },
@@ -795,7 +795,7 @@ describe('FormErrorHandlerService', () => {
           extra: [
             ['valid.field', 'Valid message', 22],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });
@@ -830,7 +830,7 @@ describe('FormErrorHandlerService', () => {
           extra: [
             ['test.test_array', 'Array validation error', 22],
           ],
-          trace: { class: 'ValidationErrors', formatted: 'Formatted string', frames: [] as ApiTraceFrame[] },
+          trace: { class: 'ValidationErrors', formatted: 'Formatted string', repr: '' },
           reason: 'Test reason',
         },
       });

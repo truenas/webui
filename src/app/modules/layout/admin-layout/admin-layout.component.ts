@@ -1,7 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, Component, computed, DestroyRef,
-  ElementRef, OnDestroy, OnInit, ViewChild, inject, viewChild,
+  ElementRef, OnDestroy, OnInit, inject, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
@@ -77,8 +77,8 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   private destroyRef = inject(DestroyRef);
 
   private sideNav = viewChild.required(TnDrawerComponent);
-  @ViewChild('alertPanel', { static: true }) private alertPanel: ElementRef<HTMLElement>;
-  @ViewChild(TopbarComponent) private topbar: TopbarComponent;
+  private alertPanel = viewChild.required<ElementRef<HTMLElement>>('alertPanel');
+  private topbar = viewChild(TopbarComponent);
 
   readonly isAlertPanelOpen$ = this.store$.select(selectIsAlertPanelOpen);
   readonly hasConsoleFooter$ = this.store$.select(selectHasConsoleFooter);
@@ -220,7 +220,7 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
   onAlertPanelKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Tab') return;
 
-    const container = this.alertPanel.nativeElement as HTMLElement;
+    const container = this.alertPanel().nativeElement;
     const focusable = this.focusService.getFocusableElements(container);
     if (!focusable.length) return;
 
@@ -247,9 +247,9 @@ export class AdminLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([prev, curr]) => {
       if (!prev && curr) {
-        setTimeout(() => this.alertPanel.nativeElement.focus());
+        setTimeout(() => this.alertPanel().nativeElement.focus());
       } else if (prev && !curr) {
-        this.topbar?.focusAlertIndicator();
+        this.topbar()?.focusAlertIndicator();
       }
     });
   }

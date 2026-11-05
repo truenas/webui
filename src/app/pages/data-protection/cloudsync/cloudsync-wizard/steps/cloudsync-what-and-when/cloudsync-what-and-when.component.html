@@ -31,6 +31,32 @@
         [mode]="form.controls.transfer_mode.value"
       ></ix-transfer-mode-explanation>
     </div>
+    @if (form.controls.bucket.enabled) {
+      <tn-form-field
+        [label]="bucketPlaceholder | translate"
+        [tooltip]="bucketTooltip | translate"
+      >
+        <tn-select
+          testId="bucket"
+          formControlName="bucket"
+          [options]="(bucketOptions$ | async) ?? []"
+        ></tn-select>
+      </tn-form-field>
+    }
+    @if (form.controls.bucket_input.enabled) {
+      <tn-form-field
+        [label]="helptext.bucketLabel | translate"
+        [tooltip]="helptext.bucketInputTooltip | translate"
+        [required]="true"
+      >
+        <tn-input
+          name="bucket_input"
+          testId="bucket-input"
+          formControlName="bucket_input"
+          [required]="true"
+        ></tn-input>
+      </tn-form-field>
+    }
     <div class="cloudsync">
       @if (form.controls.path_destination.enabled) {
         <tn-form-field
@@ -61,7 +87,7 @@
           ></tn-file-picker>
         </tn-form-field>
       }
-      @if (form.controls.folder_destination.enabled) {
+      @if (form.controls.credentials.value && form.controls.direction.value === Direction.Push) {
         <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
@@ -74,7 +100,7 @@
           ></tn-file-picker>
         </tn-form-field>
       }
-      @if (form.controls.folder_source.enabled) {
+      @if (form.controls.credentials.value && form.controls.direction.value === Direction.Pull) {
         <tn-form-field
           [label]="helptext.folderLabel | translate"
           [tooltip]="helptext.folderTooltip | translate"
@@ -95,32 +121,6 @@
           name="description"
           testId="description"
           formControlName="description"
-          [required]="true"
-        ></tn-input>
-      </tn-form-field>
-    }
-    @if (form.controls.bucket.enabled) {
-      <tn-form-field
-        [label]="bucketPlaceholder | translate"
-        [tooltip]="bucketTooltip | translate"
-      >
-        <tn-select
-          testId="bucket"
-          formControlName="bucket"
-          [options]="(bucketOptions$ | async) ?? []"
-        ></tn-select>
-      </tn-form-field>
-    }
-    @if (form.controls.bucket_input.enabled) {
-      <tn-form-field
-        [label]="helptext.bucketLabel | translate"
-        [tooltip]="helptext.bucketInputTooltip | translate"
-        [required]="true"
-      >
-        <tn-input
-          name="bucket_input"
-          testId="bucket-input"
-          formControlName="bucket_input"
           [required]="true"
         ></tn-input>
       </tn-form-field>

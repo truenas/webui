@@ -10,13 +10,14 @@ import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnBannerActionDirective, TnBannerComponent, TnButtonComponent, TnCheckboxComponent, TnChipInputComponent,
-  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
-  TnTooltipDirective,
+  TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioGroupComponent, TnSelectComponent,
+  TnTestIdDirective, TnTooltipDirective,
   type TnSelectOption, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import {
   filter, map, merge, Observable, startWith, switchMap,
 } from 'rxjs';
+import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
   PremiumFeatureDirective,
 } from 'app/directives/premium-feature/premium-feature.directive';
@@ -26,6 +27,7 @@ import { Role } from 'app/enums/role.enum';
 import {
   S3AuditMode,
   S3AuditOverflow,
+  S3BucketLayout,
   S3MultipartEtag,
   S3ObjectLockMode,
   S3ObjectOwnership,
@@ -34,6 +36,7 @@ import {
   s3AuditAll,
   s3AuditModeLabels,
   s3AuditOverflowLabels,
+  s3BucketLayoutLabels,
   s3MultipartEtagLabels,
   s3ObjectLockModeLabels,
   s3ObjectOwnershipLabels,
@@ -91,6 +94,7 @@ import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
+    TnRadioGroupComponent,
     TnCheckboxComponent,
     TnChipInputComponent,
     TnSelectComponent,
@@ -149,8 +153,15 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   private isScanningForDeletedBuckets = false;
 
   readonly treeNodeProvider = this.datasetService.getDatasetNodeProvider();
+  /**
+   * `pool.filesystem_choices` names datasets relative to no root (`tank/child`), so the pickers browse from an
+   * empty root rather than /mnt: under /mnt the picker clamps `tank` to /mnt and never opens a pool.
+   */
+  protected readonly rootNodes = [emptyRootNode];
   protected readonly ownerDirectoryOptions = s3UserDirectoryOptions;
   protected readonly userFormPreset = s3UserFormPreset;
+
+  protected readonly layoutOptions = mapToOptions(s3BucketLayoutLabels, this.translate);
 
   private readonly permissionsModelBaseOptions = mapToOptions(s3PermissionsModelLabels, this.translate);
   protected readonly objectOwnershipOptions = mapToOptions(s3ObjectOwnershipLabels, this.translate);
@@ -174,34 +185,45 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   protected readonly S3AuditMode = S3AuditMode;
 
+  /**
+   * The explorer offers the /mnt root as a node. A dataset name never starts with a slash, so that is the one
+   * selection to refuse.
+   */
+  private readonly datasetPickerValidators = [
+    Validators.required,
+    this.validatorsService.customValidator(
+      (control) => !String(control.value ?? '').startsWith('/'),
+      this.translate.instant('Select a pool or dataset. The /mnt directory itself is not a dataset.'),
+    ),
+  ];
+
   form = this.fb.group({
+    // Create-time only: middleware refuses to change it later.
+    layout: [S3BucketLayout.Bucket],
     name: ['', [
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(63),
       Validators.pattern(s3BucketNamePattern),
       // Two messages for one clash: a deleted bucket's dataset is worth recovering rather than renaming around.
+      // Both are about the dataset a new bucket creates, so an existing dataset's bucket name is free of them.
       this.validatorsService.customValidator(
         (control) => {
           const dataset = this.bucketDatasetOf(control);
-          return !this.isNew() || !this.existingDatasets().includes(dataset) || this.isRecoverable(dataset);
+          return !this.createsDataset(control)
+            || !this.existingDatasets().includes(dataset)
+            || this.isRecoverable(dataset);
         },
         this.translate.instant('A dataset with this name already exists under the selected parent dataset.'),
       ),
       this.validatorsService.customValidator(
-        (control) => !this.isNew() || !this.isRecoverable(this.bucketDatasetOf(control)),
+        (control) => !this.createsDataset(control) || !this.isRecoverable(this.bucketDatasetOf(control)),
         this.translate.instant(helptextSharingS3.deletedBucketNameError),
       ),
     ]],
-    // The explorer offers the /mnt root as a node. A dataset name never starts with a slash, so
-    // that is the one selection to refuse.
-    parent_dataset: ['', [
-      Validators.required,
-      this.validatorsService.customValidator(
-        (control) => !String(control.value ?? '').startsWith('/'),
-        this.translate.instant('Select a pool or dataset. The /mnt directory itself is not a dataset.'),
-      ),
-    ]],
+    // Exactly one of these two is enabled while adding, by layout: a disabled control is not validated.
+    parent_dataset: ['', this.datasetPickerValidators],
+    dataset: [{ value: '', disabled: true }, this.datasetPickerValidators],
     owner: ['', Validators.required],
     enabled: [true],
     // The middleware defaults: S3 with Bucket Owner Enforced ownership, the pairing under which
@@ -252,6 +274,13 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     this.form.valueChanges.pipe(map(() => this.form.getRawValue())),
     { initialValue: this.form.getRawValue() },
   );
+
+  /**
+   * Serving an existing dataset read-only rather than creating a bucket dataset. Picked when adding and fixed
+   * after; an edited bucket reads it from its stored layout. Rules out versioning, object lock and snapshot
+   * versions, which middleware refuses on such a bucket.
+   */
+  protected readonly isExistingDataset = computed(() => this.formValue().layout === S3BucketLayout.Dataset);
 
   protected readonly datasetHint = computed(() => {
     if (!this.isNew()) {
@@ -479,6 +508,9 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     }
     this.setupObjectLockDependency();
     this.setupObjectOwnershipDependency();
+    if (!bucket) {
+      this.setupLayoutDependency();
+    }
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
@@ -487,7 +519,7 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
     let request$: Observable<S3Bucket>;
     if (bucket) {
-      const { dataset, ...update } = payload;
+      const { dataset, layout, ...update } = payload;
       request$ = this.api.call('sharing.s3.update', [bucket.id, toS3BucketUpdateArgs(update)]).pipe(map(toS3Bucket));
     } else {
       request$ = this.api.call('sharing.s3.create', [toS3BucketCreateArgs(payload)]).pipe(map(toS3Bucket));
@@ -527,7 +559,8 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
     if (this.recoverableDatasets() || this.isScanningForDeletedBuckets) {
       return;
     }
-    if (!this.existingDatasets().includes(this.bucketDatasetOf(this.form.controls.name))) {
+    const nameControl = this.form.controls.name;
+    if (!this.createsDataset(nameControl) || !this.existingDatasets().includes(this.bucketDatasetOf(nameControl))) {
       return;
     }
 
@@ -550,6 +583,46 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
   private isRecoverable(dataset: string): boolean {
     return !!this.recoverableDatasets()?.has(dataset);
+  }
+
+  /**
+   * Whether submitting creates the bucket's dataset from the parent and the name, which is what the name's
+   * clash checks are about. Read off the sibling control rather than `isExistingDataset()`: validators run while
+   * the value is changing, before the signal has caught up.
+   */
+  private createsDataset(nameControl: AbstractControl): boolean {
+    return this.isNew() && nameControl.parent?.get('layout')?.value !== S3BucketLayout.Dataset;
+  }
+
+  /** What the permissions model was before an existing dataset switched it, restored when switching back. */
+  private permissionsModelBeforeExistingDataset: S3PermissionsModel | null = null;
+
+  /**
+   * Swaps the dataset picker for the layout, and steers the fields middleware treats differently on an existing
+   * dataset. Multiprotocol is middleware's own default there, since SMB or NFS users own the filesystem
+   * permissions; it also clears object lock, through `syncObjectLockAvailability`. Versioning and snapshot
+   * versions are cleared outright: middleware refuses them on such a bucket, and their sections are hidden.
+   */
+  private setupLayoutDependency(): void {
+    this.form.controls.layout.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((layout) => {
+      const controls = this.form.controls;
+      if (layout === S3BucketLayout.Dataset) {
+        controls.parent_dataset.disable();
+        controls.dataset.enable();
+        this.permissionsModelBeforeExistingDataset = controls.permissions_model.value;
+        controls.permissions_model.setValue(S3PermissionsModel.Multiprotocol);
+        controls.versioning.setValue(S3Versioning.Off);
+        controls.snapshot_versions.setValue([]);
+      } else {
+        controls.dataset.disable();
+        controls.parent_dataset.enable();
+        if (this.permissionsModelBeforeExistingDataset !== null) {
+          controls.permissions_model.setValue(this.permissionsModelBeforeExistingDataset);
+          this.permissionsModelBeforeExistingDataset = null;
+        }
+      }
+      controls.name.updateValueAndValidity();
+    });
   }
 
   private setBucketForEdit(bucket: S3Bucket): void {
@@ -678,7 +751,10 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
 
     const payload: S3BucketCreate = {
       name: values.name,
-      dataset: `${values.parent_dataset}/${values.name}`,
+      layout: values.layout,
+      dataset: values.layout === S3BucketLayout.Dataset
+        ? values.dataset
+        : `${values.parent_dataset}/${values.name}`,
       owner: values.owner,
       enabled: values.enabled,
       permissions_model: values.permissions_model,

@@ -8,14 +8,13 @@ import {
   QueryEntity,
   QueryMethod,
   TrueNasApiClient,
+  v28_0_0,
 } from '@truenas/api-client';
 import { environment } from 'environments/environment';
 import {
   from, Observable, shareReplay, tap,
 } from 'rxjs';
 import { WINDOW } from 'app/helpers/window.helper';
-import { AddNfsPrincipal } from 'app/interfaces/nfs-config.interface';
-import { QueryComparator } from 'app/interfaces/query-api.interface';
 import { limitConcurrentCalls } from 'app/modules/websocket/typed-api/limit-concurrent-calls';
 import { MockResponseService } from 'app/modules/websocket-debug-panel/services/mock-response.service';
 import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/services/websocket-debug.service';
@@ -30,7 +29,6 @@ import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/int
 export interface UndeclaredCallDirectory {
   'interface.lag_supported_protocols': { params: []; response: string[] };
   'kerberos.keytab.kerberos_principal_choices': { params: []; response: string[] };
-  'nfs.add_principal': { params: [AddNfsPrincipal]; response: boolean };
 }
 
 /** A method of {@link UndeclaredCallDirectory}. */
@@ -58,13 +56,10 @@ export type WebUiQueryEntity<M extends WebUiQueryMethod> = QueryEntity<WebUiApiD
 
 /**
  * One filter for a query verb, for filters built up before the call rather than
- * written inline. Mirrors the client's own `QueryFilter`, which it does not
- * export yet (gap 6 in docs/devs/typed-api-client.md); the two are structurally
- * identical, so a list of these is accepted wherever the client takes filters.
+ * written inline. The client's own `QueryFilter`, from the version namespace the
+ * UI is pinned to, so a list of these is exactly what the query verbs take.
  */
-export type TypedQueryFilter<E>
-  = | [field: (keyof E & string) | `${string}.${string}`, operator: QueryComparator, value: unknown]
-    | ['OR', TypedQueryFilter<E>[][]];
+export type TypedQueryFilter<E> = v28_0_0.QueryFilter<E>;
 
 /**
  * The `@truenas/api-client` instance behind {@link ApiService}.
@@ -103,11 +98,14 @@ export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(
         hostnames: [environment.remote],
         enabled: true,
         version: 'v28.0.0',
+        // The version types the client; the socket still follows the appliance's newest
+        // version, as the UI always has. See "Version policy" in docs/devs/typed-api-client.md.
+        websocketPath: '/api/current',
         protocol,
         logger: environment.production ? noopLogger : consoleLogger,
       })).pipe(
         // Before anything else holds the client, so every call it sends is counted.
-        tap((client) => limitConcurrentCalls(client.connection)),
+        tap((client) => limitConcurrentCalls(client.connection, client.authenticator.authenticated$)),
         // After the gate, so a mocked call is answered without taking a place in it.
         tap((client) => {
           if (debugPanel) {

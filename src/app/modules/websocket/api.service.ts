@@ -173,11 +173,11 @@ export class ApiService {
    * Use `satisfies` rather than an annotation when building options into a
    * variable, or the result widens to `Partial<E>[]`.
    *
-   * The query verbs are forwarded rather than declared because the types
-   * their signatures need (`QueryFilters`, `QueryProjection`) are not
-   * exported by the client yet. The cast restores the client's own generic
-   * signature over the forwarding arrow; the arguments and return value are
-   * exactly the client's, so nothing is widened at the call site.
+   * The query verbs are forwarded rather than declared, so their signatures
+   * stay the client's own instead of a copy of them to keep in step. The cast
+   * restores the client's generic signature over the forwarding arrow; the
+   * arguments and return value are exactly the client's, so nothing is widened
+   * at the call site.
    */
   readonly query = ((
     ...args: Parameters<ClientApi['query']>
@@ -228,10 +228,10 @@ export class ApiService {
     return this.ready$.pipe(
       switchMap((client) => client.api.job(method, ...params).pipe(
         this.handleRefusal(NEVER),
-        // The client's Job and the UI's Job describe the same wire object; the
-        // client is merely honest about a few fields being null before the job
-        // starts. Narrowing to the UI's shape keeps the existing operators and
-        // error classes usable until the UI adopts the client's type.
+        // The client's Job and the UI's Job describe the same wire object, null
+        // `result` and `time_started` included. What still differs is typing
+        // only: the UI's `state` and `exc_info.type` are its own enums rather
+        // than the client's, and its `arguments` are the caller's params.
         map((job) => job as unknown as Job<JobResult<D, M>>),
         observeJob(),
         attachJobErrorReply(client.connection.messages()),

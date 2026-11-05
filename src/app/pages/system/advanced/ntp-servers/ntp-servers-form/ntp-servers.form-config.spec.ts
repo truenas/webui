@@ -8,7 +8,6 @@ import { throwError } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
-import { ApiTraceFrame } from 'app/interfaces/api-error.interface';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
 import { FormSubmitEvent } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxFormRendererComponent } from 'app/modules/forms/ix-forms/components/ix-form-renderer/ix-form-renderer.component';
@@ -62,7 +61,7 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
         'Server could not be reached. Check "Force" to continue regardless.',
         22,
       ]],
-      trace: { class: 'ValidationErrors', formatted: '', frames: [] as ApiTraceFrame[] },
+      trace: { class: 'ValidationErrors', formatted: '', repr: '' },
       reason: 'Test reason',
     },
   });

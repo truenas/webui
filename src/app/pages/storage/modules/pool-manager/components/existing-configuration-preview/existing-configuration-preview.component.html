@@ -3,7 +3,7 @@
     <span class="label">{{ 'Name' | translate }}:</span>
     <span class="value" tnTestId="existing-config-name" tnTestIdType="text">{{ name() }}</span>
   </div>
-  @for (category of poolTopology | keyvalue; track category) {
+  @for (category of poolTopology() | keyvalue; track category.key) {
     <div class="details-item">
       <span class="label" tnTestIdType="text" [tnTestId]="['existing-config', category.key, 'label']">
         {{ category.key | mapValue: vdevTypeLabels | translate }}:

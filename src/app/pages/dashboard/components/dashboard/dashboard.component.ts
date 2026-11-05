@@ -2,7 +2,7 @@ import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, HostListener, OnInit, computed, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -56,6 +56,9 @@ import { WidgetGroupControlsComponent } from './widget-group-controls/widget-gro
     WidgetResourcesService,
     DashboardStore,
   ],
+  host: {
+    '(document:keydown.escape)': 'onCancelConfigure()',
+  },
 })
 export class DashboardComponent implements OnInit {
   private dashboardStore = inject(DashboardStore);
@@ -94,7 +97,6 @@ export class DashboardComponent implements OnInit {
     this.isEditing.set(true);
   }
 
-  @HostListener('document:keydown.escape')
   protected onCancelConfigure(): void {
     if (this.editorOpen()) {
       // The card editor side panel owns Escape while it is open.

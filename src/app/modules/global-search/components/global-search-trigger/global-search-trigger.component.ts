@@ -1,6 +1,6 @@
 import { Overlay, OverlayConfig, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, HostListener, ViewContainerRef, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ViewContainerRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
@@ -22,6 +22,9 @@ import { FocusService } from 'app/services/focus.service';
     KeyboardShortcutComponent,
     TranslateModule,
   ],
+  host: {
+    '(document:keydown.escape)': 'detachOverlayAndFocusMainContent($event)',
+  },
 })
 export class GlobalSearchTriggerComponent implements AfterViewInit {
   private cdr = inject(ChangeDetectorRef);
@@ -72,7 +75,6 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
       .subscribe(() => this.detachOverlay());
   }
 
-  @HostListener('document:keydown.escape', ['$event'])
   protected detachOverlayAndFocusMainContent(event?: Event): void {
     if (!this.overlayRef?.hasAttached()) {
       return;

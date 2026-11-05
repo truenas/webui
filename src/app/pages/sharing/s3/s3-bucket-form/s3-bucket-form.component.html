@@ -6,6 +6,17 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="'Bucket' | translate">
+    @if (isNew()) {
+      <tn-form-field [label]="'Storage' | translate" [tooltip]="helptext.layoutTooltip | translate">
+        <tn-radio-group
+          formControlName="layout"
+          testId="layout"
+          [options]="layoutOptions"
+          [inline]="true"
+        ></tn-radio-group>
+      </tn-form-field>
+    }
+
     <tn-form-field
       [label]="'Name' | translate"
       [tooltip]="helptext.nameTooltip | translate"
@@ -14,7 +25,20 @@
       <tn-input formControlName="name"></tn-input>
     </tn-form-field>
 
-    @if (isNew()) {
+    @if (isNew() && isExistingDataset()) {
+      <tn-form-field
+        [label]="'Dataset' | translate"
+        [tooltip]="helptext.existingDatasetTooltip | translate"
+        [required]="true"
+      >
+        <tn-file-picker
+          formControlName="dataset"
+          [source]="treeNodeProvider | filePickerSource : rootNodes"
+          [openOnClick]="true"
+          [allowFreeText]="true"
+        ></tn-file-picker>
+      </tn-form-field>
+    } @else if (isNew()) {
       <tn-form-field
         [label]="'Parent Dataset' | translate"
         [tooltip]="helptext.parentDatasetTooltip | translate"
@@ -22,7 +46,7 @@
       >
         <tn-file-picker
           formControlName="parent_dataset"
-          [source]="treeNodeProvider | filePickerSource"
+          [source]="treeNodeProvider | filePickerSource : rootNodes"
           [openOnClick]="true"
           [allowFreeText]="true"
         ></tn-file-picker>
@@ -47,7 +71,11 @@
         </tn-banner>
       }
     } @else {
-      <tn-form-field [label]="'Dataset' | translate">
+      <tn-form-field
+        testId="dataset"
+        [label]="'Dataset' | translate"
+        [hint]="isExistingDataset() ? (helptext.existingDatasetHint | translate) : ''"
+      >
         <tn-input testId="dataset" name="dataset" [formControl]="datasetControl"></tn-input>
       </tn-form-field>
     }
@@ -73,112 +101,116 @@
     </tn-form-field>
   </tn-form-section>
 
-  <tn-form-section
-    *ixPremiumFeature="hasVersioning(); testId: 's3-object-lock'"
-    [heading]="'Object Lock' | translate"
-  >
-    <tn-form-field [tooltip]="helptext.objectLockTooltip | translate" [hint]="objectLockHint()">
-      <tn-checkbox formControlName="object_lock" [label]="'Enable Object Lock' | translate"></tn-checkbox>
-    </tn-form-field>
-
-    @if (form.controls.object_lock.value) {
-      <tn-form-field
-        [label]="'Default Retention Mode' | translate"
-        [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
-      >
-        <!-- tn-select shows its placeholder for a null value, even with a null option, so the placeholder names it. -->
-        <tn-select
-          formControlName="object_lock_default_mode"
-          [options]="objectLockModeOptions"
-          [placeholder]="'No default rule' | translate"
-        ></tn-select>
+  @if (!isExistingDataset()) {
+    <tn-form-section
+      *ixPremiumFeature="hasVersioning(); testId: 's3-object-lock'"
+      [heading]="'Object Lock' | translate"
+    >
+      <tn-form-field [tooltip]="helptext.objectLockTooltip | translate" [hint]="objectLockHint()">
+        <tn-checkbox formControlName="object_lock" [label]="'Enable Object Lock' | translate"></tn-checkbox>
       </tn-form-field>
 
-      @if (form.controls.object_lock_default_mode.value) {
+      @if (form.controls.object_lock.value) {
         <tn-form-field
-          [label]="'Default Retention Days' | translate"
-          [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
-          [required]="true"
+          [label]="'Default Retention Mode' | translate"
+          [tooltip]="helptext.objectLockDefaultModeTooltip | translate"
         >
-          <tn-input
-            formControlName="object_lock_default_days"
-            [inputType]="InputType.Number"
-            [allowDecimals]="false"
-          ></tn-input>
+          <!-- tn-select shows its placeholder for a null value, even with a null option, so the placeholder names it. -->
+          <tn-select
+            formControlName="object_lock_default_mode"
+            [options]="objectLockModeOptions"
+            [placeholder]="'No default rule' | translate"
+          ></tn-select>
         </tn-form-field>
+
+        @if (form.controls.object_lock_default_mode.value) {
+          <tn-form-field
+            [label]="'Default Retention Days' | translate"
+            [tooltip]="helptext.objectLockDefaultDaysTooltip | translate"
+            [required]="true"
+          >
+            <tn-input
+              formControlName="object_lock_default_days"
+              [inputType]="InputType.Number"
+              [allowDecimals]="false"
+            ></tn-input>
+          </tn-form-field>
+        }
       }
-    }
-  </tn-form-section>
+    </tn-form-section>
+  }
 
   @if (isAdvancedMode()) {
-    <tn-form-section
-      *ixPremiumFeature="hasVersioning(); testId: 's3-versioning'"
-      [heading]="'Versioning' | translate"
-    >
-      <tn-form-field
-        testId="versioning"
-        [label]="'Versioning' | translate"
-        [tooltip]="helptext.versioningTooltip | translate"
-        [hint]="versioningHint()"
-        [required]="true"
+    @if (!isExistingDataset()) {
+      <tn-form-section
+        *ixPremiumFeature="hasVersioning(); testId: 's3-versioning'"
+        [heading]="'Versioning' | translate"
       >
-        <tn-select formControlName="versioning" [options]="versioningOptions()"></tn-select>
-      </tn-form-field>
-
-      @if (canForceDisableVersioning()) {
-        <!-- The reason hangs on a wrapper: a disabled button emits no pointer events of its own, so a
-          tooltip on the button itself would never see the hover that should explain it. -->
-        <span
-          class="force-disable-versioning"
-          [tnTooltip]="helptext.forceDisableVersioningObjectLock | translate"
-          [tnTooltipDisabled]="!objectLockIsLatched()"
-        >
-          <tn-button
-            *ixRequiresRoles="requiredRoles"
-            variant="outline"
-            color="warn"
-            testId="force-disable-versioning"
-            [label]="'Force Disable Versioning' | translate"
-            [disabled]="objectLockIsLatched()"
-            (onClick)="forceDisableVersioning()"
-          ></tn-button>
-        </span>
-      }
-
-    </tn-form-section>
-
-    <!--
-      Its own section, outside the Premium gate above: serving ZFS snapshots as read-only versions is a
-      TrueNAS feature, independent of S3 protocol versioning and of the S3_VERSIONING entitlement, and it
-      composes with every versioning state — Off included.
-    -->
-    <tn-form-section [heading]="'ZFS Snapshots' | translate">
-      <tn-form-field
-        [label]="'Snapshot Versions' | translate"
-        [tooltip]="helptext.snapshotVersionsTooltip | translate"
-      >
-        <tn-chip-input
-          testId="snapshot-versions"
-          formControlName="snapshot_versions"
-          [allowCustomValue]="true"
-          [addOnBlur]="true"
-        ></tn-chip-input>
-      </tn-form-field>
-
-      @if (hasSnapshotVersions()) {
         <tn-form-field
-          [label]="'Snapshot Versions Listed' | translate"
-          [tooltip]="helptext.snapshotVersionsMaxTooltip | translate"
+          testId="versioning"
+          [label]="'Versioning' | translate"
+          [tooltip]="helptext.versioningTooltip | translate"
+          [hint]="versioningHint()"
           [required]="true"
         >
-          <tn-input
-            formControlName="snapshot_versions_max"
-            [inputType]="InputType.Number"
-            [allowDecimals]="false"
-          ></tn-input>
+          <tn-select formControlName="versioning" [options]="versioningOptions()"></tn-select>
         </tn-form-field>
-      }
-    </tn-form-section>
+
+        @if (canForceDisableVersioning()) {
+          <!-- The reason hangs on a wrapper: a disabled button emits no pointer events of its own, so a
+            tooltip on the button itself would never see the hover that should explain it. -->
+          <span
+            class="force-disable-versioning"
+            [tnTooltip]="helptext.forceDisableVersioningObjectLock | translate"
+            [tnTooltipDisabled]="!objectLockIsLatched()"
+          >
+            <tn-button
+              *ixRequiresRoles="requiredRoles"
+              variant="outline"
+              color="warn"
+              testId="force-disable-versioning"
+              [label]="'Force Disable Versioning' | translate"
+              [disabled]="objectLockIsLatched()"
+              (onClick)="forceDisableVersioning()"
+            ></tn-button>
+          </span>
+        }
+
+      </tn-form-section>
+
+      <!--
+        Its own section, outside the Premium gate above: serving ZFS snapshots as read-only versions is a
+        TrueNAS feature, independent of S3 protocol versioning and of the S3_VERSIONING entitlement, and it
+        composes with every versioning state — Off included.
+      -->
+      <tn-form-section [heading]="'ZFS Snapshots' | translate">
+        <tn-form-field
+          [label]="'Snapshot Versions' | translate"
+          [tooltip]="helptext.snapshotVersionsTooltip | translate"
+        >
+          <tn-chip-input
+            testId="snapshot-versions"
+            formControlName="snapshot_versions"
+            [allowCustomValue]="true"
+            [addOnBlur]="true"
+          ></tn-chip-input>
+        </tn-form-field>
+
+        @if (hasSnapshotVersions()) {
+          <tn-form-field
+            [label]="'Snapshot Versions Listed' | translate"
+            [tooltip]="helptext.snapshotVersionsMaxTooltip | translate"
+            [required]="true"
+          >
+            <tn-input
+              formControlName="snapshot_versions_max"
+              [inputType]="InputType.Number"
+              [allowDecimals]="false"
+            ></tn-input>
+          </tn-form-field>
+        }
+      </tn-form-section>
+    }
 
     <tn-form-section [heading]="'Access' | translate">
       <tn-form-field

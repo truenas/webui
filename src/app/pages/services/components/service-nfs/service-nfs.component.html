@@ -110,32 +110,4 @@
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
-
-  <!--
-    Deliberately in the form body rather than a `footerActions` entry: the action is inseparable
-    from the help icon that explains WHY it is disabled, and a footer action has no tooltip slot
-    (a tooltip on the button itself would not fire — tn-button renders a native `disabled`, which
-    swallows pointer events). Keeping the pair together beats a disabled footer button with no
-    explanation.
-  -->
-  @if (isAddSpnVisible()) {
-    <!-- The role check gates the whole block, not just the button: a read-only user would
-         otherwise get an empty (or tooltip-only) container plus its top margin — a stray gap
-         at the end of the form. -->
-    <div *ixRequiresRoles="requiredRoles" class="add-spn-container">
-      @if (isAddSpnDisabled()) {
-        <ix-tooltip
-          [header]="'Add SPN' | translate"
-          [message]="'Save the \'Require Kerberos for NFSv4\' value before adding SPN' | translate"
-        ></ix-tooltip>
-      }
-      <tn-button
-        color="primary"
-        [testId]="'add-spn'"
-        [label]="'Add SPN' | translate"
-        [disabled]="isAddSpnDisabled()"
-        (onClick)="addSpn()"
-      ></tn-button>
-    </div>
-  }
 </ix-form>
