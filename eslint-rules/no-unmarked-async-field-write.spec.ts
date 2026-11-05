@@ -96,6 +96,18 @@ ruleTester.run('no-unmarked-async-field-write', rule, {
         this.value = 'x';
       }
     `),
+    // Index signatures and static blocks have no key; the rule must skip them, not crash.
+    component(`
+      [key: string]: unknown;
+      static { TestComponent.count = 0; }
+      protected value = '';
+      load(): void {
+        this.api.call('x').subscribe((value) => {
+          this.value = value;
+          this.cdr.markForCheck();
+        });
+      }
+    `),
     // Not a component.
     '@Injectable()\nclass TestService {\n  value = 0;\n  load(): void { this.api.call(method).subscribe((v) => { this.value = v; }); }\n}',
   ],

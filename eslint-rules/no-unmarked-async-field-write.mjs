@@ -223,7 +223,7 @@ export default {
         const signals = new Set();
         if (isComponentClass(node)) {
           for (const member of node.body.body) {
-            if (member.static || member.key.type !== 'Identifier') continue;
+            if (member.static || member.key?.type !== 'Identifier') continue;
             if (member.type === 'MethodDefinition') {
               methods.set(member.key.name, member.value);
             } else if (member.type === 'PropertyDefinition') {
