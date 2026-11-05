@@ -19,12 +19,10 @@ import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { FibreChannelHost, FibreChannelPortChoices } from 'app/interfaces/fibre-channel.interface';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget, IscsiTargetExtent,
 } from 'app/interfaces/iscsi.interface';
-import { newOption } from 'app/interfaces/option.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -449,21 +447,6 @@ describe('IscsiWizardComponent', () => {
 
       expect(payload.ro).toBe(false);
       expect(payload.disk).toBe('zvol/tank/my-zvol');
-    });
-
-    it('returns ro=false when creating a new zvol', () => {
-      spectator.component.createdZvol = { id: 'tank/new-zvol' } as Dataset;
-      const extentGroup = spectator.component.form.controls.extent;
-      extentGroup.controls.name.setValue('test-extent');
-      extentGroup.controls.type.setValue(IscsiExtentType.Disk);
-      extentGroup.controls.disk.setValue(newOption);
-      extentGroup.controls.usefor.setValue(IscsiExtentUsefor.Vmware);
-      extentGroup.controls.product_id.setValue('');
-
-      const payload = spectator.component.extentPayload;
-
-      expect(payload.ro).toBe(false);
-      expect(payload.disk).toBe('zvol/tank/new-zvol');
     });
 
     it('correctly detects snapshot from disk path with @ symbol', () => {

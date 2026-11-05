@@ -125,6 +125,7 @@ export class ReviewWizardStepComponent implements OnInit {
     this.poolManagerValidation.getPoolCreationErrors().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((errors) => {
       this.poolCreationErrors = errors;
       this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
+      this.cdr.markForCheck();
     });
 
     this.forceTopologyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {

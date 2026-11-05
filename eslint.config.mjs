@@ -1,4 +1,5 @@
 import baseConfig from '@truenas/common-typescript/eslint.config';
+import noUnmarkedAsyncFieldWrite from './eslint-rules/no-unmarked-async-field-write.mjs';
 
 // ESLint replaces a rule's options wholesale rather than merging them, so the base
 // config's `no-restricted-syntax` entries have to be carried over explicitly. Read them
@@ -134,6 +135,22 @@ const commentCapOverrides = {
 };
 
 /**
+ * The app runs zoneless (see "Zoneless" in CLAUDE.md): a plain field written from an async
+ * callback does not re-render the template. The rule's header comment says what it can and
+ * cannot see. Specs are left out — they set fields directly to drive a component.
+ */
+const zonelessOverrides = {
+  files: ['src/**/*.ts'],
+  ignores: ['src/**/*.spec.ts'],
+  plugins: {
+    webui: { rules: { 'no-unmarked-async-field-write': noUnmarkedAsyncFieldWrite } },
+  },
+  rules: {
+    'webui/no-unmarked-async-field-write': 'error',
+  },
+};
+
+/**
  * The Playwright suite is plain Node TypeScript, not Angular, so the base
  * config's Angular expectations do not apply to it.
  *
@@ -233,6 +250,7 @@ export default [
   projectOverrides,
   templateOverrides,
   specOverrides,
+  zonelessOverrides,
   e2eOverrides,
   commentCapOverrides,
 ];

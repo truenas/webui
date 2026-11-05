@@ -1,5 +1,5 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, ReactiveFormsModule, NonNullableFormBuilder, FormControl, FormGroup,
@@ -83,6 +83,7 @@ export class ManualUpdateFormComponent implements OnInit {
   private upload = inject(UploadService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected readonly requiredRoles = [Role.SystemUpdateWrite];
   protected readonly searchableElements = systemManualUpdateFormElements;
@@ -127,6 +128,7 @@ export class ManualUpdateFormComponent implements OnInit {
   private getVersionNoFromSysInfo(): void {
     this.store$.pipe(waitForSystemInfo, takeUntilDestroyed(this.destroyRef)).subscribe((sysInfo) => {
       this.currentVersion = sysInfo.version;
+      this.cdr.markForCheck();
     });
   }
 
@@ -143,6 +145,7 @@ export class ManualUpdateFormComponent implements OnInit {
         });
       });
       this.fileLocationOptions$ = of(options);
+      this.cdr.markForCheck();
     });
   }
 
@@ -155,6 +158,7 @@ export class ManualUpdateFormComponent implements OnInit {
       if (this.isHaLicensed) {
         this.form.removeControl('filelocation');
       }
+      this.cdr.markForCheck();
     });
   }
 
