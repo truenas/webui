@@ -1,8 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
@@ -107,5 +106,6 @@ export class DeleteVmDialogComponent implements OnInit {
       this.translate.instant('Enter vm name to continue.'),
     );
     this.form.controls.confirmName.setValidators(validator);
+    this.form.controls.confirmName.updateValueAndValidity();
   }
 }

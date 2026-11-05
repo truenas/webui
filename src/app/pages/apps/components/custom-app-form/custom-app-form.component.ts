@@ -1,9 +1,8 @@
 import {
   ChangeDetectionStrategy, Component, inject, input, OnInit,
 } from '@angular/core';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,

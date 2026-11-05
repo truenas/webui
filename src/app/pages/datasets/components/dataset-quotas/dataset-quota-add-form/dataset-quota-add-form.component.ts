@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
 import { Observable } from 'rxjs';

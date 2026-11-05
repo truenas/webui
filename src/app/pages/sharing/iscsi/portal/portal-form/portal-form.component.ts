@@ -2,8 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, OnInit, inject, input,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,

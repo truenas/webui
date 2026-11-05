@@ -1,10 +1,11 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Injector, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import {
+  AbstractControl, Validators, ReactiveFormsModule, FormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -29,8 +30,10 @@ import {
 } from 'app/enums/network-interface.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
+import { revalidateAfterRender } from 'app/helpers/revalidate-after-render.helper';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import { Choices } from 'app/interfaces/choices.interface';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import {
   NetworkConfigToBeRemoved,
   NetworkInterface,
@@ -105,6 +108,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
   private store$ = inject<Store<AppState>>(Store);
 
   /** Interface to edit, supplied by the `<tn-side-panel>` host (`FormSidePanelService.open`). */
@@ -161,7 +165,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     fec_mode: new FormControl(null as string | null),
 
     // Aliases
-    aliases: this.formBuilder.array<NetworkInterfaceFormAlias>([]),
+    aliases: this.formBuilder.array<FormGroup<ControlsOf<NetworkInterfaceFormAlias>>>([]),
   });
 
   // Editing interfaces is disallowed while HA is enabled, so the host's Save must be gated on it
@@ -417,7 +421,8 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     ]);
 
     const activeControls = (type && requiredControlsByType.get(type)) || [];
-    [...requiredControlsByType.values()].flat().forEach((control) => {
+    const typeControls = [...requiredControlsByType.values()].flat();
+    typeControls.forEach((control) => {
       if (activeControls.includes(control)) {
         control.addValidators(Validators.required);
       } else {
@@ -425,6 +430,8 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
       }
       control.updateValueAndValidity({ emitEvent: false });
     });
+    // The other types' fields are hidden by `@if`, and their template `[required]` outlives the above.
+    revalidateAfterRender(this.injector, typeControls);
   }
 
   private setOptionsForEdit(nic: NetworkInterface): void {

@@ -1,6 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Validators } from '@angular/forms';
-import { FormControl, FormGroup } from '@ngneat/reactive-forms';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';

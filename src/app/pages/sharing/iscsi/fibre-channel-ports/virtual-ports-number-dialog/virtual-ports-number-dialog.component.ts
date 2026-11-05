@@ -1,8 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { FormGroup, ReactiveFormsModule, Validators, FormControl } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,

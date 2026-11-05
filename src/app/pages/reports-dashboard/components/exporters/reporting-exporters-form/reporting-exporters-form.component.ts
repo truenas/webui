@@ -3,9 +3,8 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  UntypedFormGroup, Validators, ReactiveFormsModule,
+  AbstractControl, UntypedFormGroup, Validators, ReactiveFormsModule, FormControl, FormGroup,
 } from '@angular/forms';
-import { FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCheckboxComponent,
@@ -79,7 +78,7 @@ export class ReportingExportersFormComponent extends IxFormHostForm implements O
     name: new FormControl(null as string | null, Validators.required),
     enabled: new FormControl(true),
     type: new FormControl(null as string | null, Validators.required),
-    attributes: new FormGroup<Record<string, unknown>>({}),
+    attributes: new FormGroup<Record<string, AbstractControl>>({}),
   });
 
   get formGroup(): UntypedFormGroup {

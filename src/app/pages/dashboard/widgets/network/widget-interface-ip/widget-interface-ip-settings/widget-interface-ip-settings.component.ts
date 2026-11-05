@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, effect, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { filter, map, startWith } from 'rxjs';

@@ -1,9 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { AfterViewInit, Component, OnInit, ChangeDetectionStrategy, DestroyRef, input, computed, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
-import { FormControl } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -17,7 +16,7 @@ import {
   combineLatest,
   distinctUntilChanged,
   filter,
-  map, Observable, of, ReplaySubject, shareReplay, skip, switchMap, take,
+  map, Observable, of, ReplaySubject, shareReplay, skip, startWith, switchMap, take,
 } from 'rxjs';
 import {
   AuditEvent, AuditService, auditServiceLabels,
@@ -216,7 +215,11 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
     ]).pipe(
       switchMap(([params]) => {
         this.applyInitialUrlOptions(params.options as string);
-        return this.serviceControl.value$.pipe(distinctUntilChanged(), skip(1));
+        return this.serviceControl.valueChanges.pipe(
+          startWith(this.serviceControl.value),
+          distinctUntilChanged(),
+          skip(1),
+        );
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((service) => {

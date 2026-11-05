@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, signal, Signal, viewChild } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import {
+  AbstractControl, ReactiveFormsModule, ValidationErrors, Validators, FormBuilder, FormControl,
+} from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
@@ -510,10 +511,23 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     this.resolveGroupNames(ids);
   }
 
+  private disableWhileChecked(control: AbstractControl, checkbox: FormControl<boolean | null>): void {
+    checkbox.valueChanges.pipe(
+      startWith(checkbox.value),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe((isChecked) => {
+      if (isChecked) {
+        control.disable();
+      } else {
+        control.enable();
+      }
+    });
+  }
+
   private listenValueChanges(): void {
-    this.form.controls.group.disabledWhile(this.form.controls.group_create.value$);
-    this.form.controls.sudo_commands.disabledWhile(this.form.controls.sudo_commands_all.value$);
-    this.form.controls.sudo_commands_nopasswd.disabledWhile(this.form.controls.sudo_commands_nopasswd_all.value$);
+    this.disableWhileChecked(this.form.controls.group, this.form.controls.group_create);
+    this.disableWhileChecked(this.form.controls.sudo_commands, this.form.controls.sudo_commands_all);
+    this.disableWhileChecked(this.form.controls.sudo_commands_nopasswd, this.form.controls.sudo_commands_nopasswd_all);
 
     this.form.controls.group.valueChanges
       .pipe(distinctUntilChanged(), takeUntilDestroyed(this.destroyRef))

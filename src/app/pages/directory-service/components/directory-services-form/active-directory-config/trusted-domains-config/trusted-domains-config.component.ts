@@ -1,12 +1,8 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl,
-  FormArray,
-  ReactiveFormsModule,
-  Validators,
+  FormArray, ReactiveFormsModule, Validators, FormBuilder, FormControl, FormGroup,
 } from '@angular/forms';
-import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType,
@@ -20,12 +16,9 @@ import { helptextLdap } from 'app/helptext/directory-service/ldap';
 import {
   ActiveDirectoryIdmap, DomainIdmap, domainIdmapTypeOptions, LdapIdmap, Rfc2307Idmap, RidIdmap,
 } from 'app/interfaces/active-directory-config.interface';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { translateOptions } from 'app/modules/translate/translate.helper';
-
-type Controls<T> = {
-  [K in keyof T]: FormControl<T[K]>;
-};
 
 interface AllTrustedDomainsIdmapFieldsInterface {
   name: string | null;
@@ -91,7 +84,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
 
   protected readonly form = this.fb.group({
     enable_trusted_domains: [false],
-    trustedDomains: this.fb.array<AllTrustedDomainsIdmapFieldsInterface>([]),
+    trustedDomains: this.fb.array<FormGroup<ControlsOf<AllTrustedDomainsIdmapFieldsInterface>>>([]),
   });
 
   protected readonly trustedDomainIdmapOptions = translateOptions(this.translate, domainIdmapTypeOptions);
@@ -202,8 +195,8 @@ export class TrustedDomainsConfigComponent implements OnInit {
   }
 
   protected addTrustedDomain(existingDomain?: DomainIdmap): void {
-    const trustedDomainFg = this.fb.group({
-      idmap_backend: this.fb.control(existingDomain?.idmap_backend ?? null, Validators.required),
+    const trustedDomainFg: FormGroup<ControlsOf<AllTrustedDomainsIdmapFieldsInterface>> = this.fb.group({
+      idmap_backend: this.fb.control<IdmapBackend>(existingDomain?.idmap_backend ?? null, Validators.required),
       name: this.fb.control(existingDomain?.name ?? null as string, Validators.required),
       range_high: this.fb.control<number>(existingDomain?.range_high ?? null, Validators.required),
       range_low: this.fb.control<number>(existingDomain?.range_low ?? null, Validators.required),
@@ -258,7 +251,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
   }
 
   private setupBackendValidators(
-    formGroup: FormGroup<Controls<AllTrustedDomainsIdmapFieldsInterface>>,
+    formGroup: FormGroup<ControlsOf<AllTrustedDomainsIdmapFieldsInterface>>,
     backend: IdmapBackend | null | undefined,
   ): void {
     const controls = formGroup.controls;
@@ -291,7 +284,7 @@ export class TrustedDomainsConfigComponent implements OnInit {
   }
 
   private watchBackendChanges(
-    formGroup: FormGroup<Controls<AllTrustedDomainsIdmapFieldsInterface>>,
+    formGroup: FormGroup<ControlsOf<AllTrustedDomainsIdmapFieldsInterface>>,
   ): void {
     formGroup.controls.idmap_backend.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -305,8 +298,6 @@ export class TrustedDomainsConfigComponent implements OnInit {
   }
 
   protected getIdmapTypeForItem(index: number): IdmapBackend {
-    return (
-      this.form.controls.trustedDomains.at(index) as FormGroup<Record<string, AbstractControl>>
-    ).controls.idmap_backend.value as IdmapBackend;
+    return this.form.controls.trustedDomains.at(index).controls.idmap_backend.value;
   }
 }

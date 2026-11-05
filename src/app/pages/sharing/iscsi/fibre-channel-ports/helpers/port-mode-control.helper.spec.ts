@@ -1,4 +1,4 @@
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@angular/forms';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 import { configurePortControlsForMode, PortModeControls } from './port-mode-control.helper';
 

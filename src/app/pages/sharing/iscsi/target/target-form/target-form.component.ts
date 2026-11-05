@@ -3,8 +3,9 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import {
+  ReactiveFormsModule, Validators, FormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent, TnInputComponent,
@@ -19,6 +20,7 @@ import { Role } from 'app/enums/role.enum';
 import { createFormArraySnapshot } from 'app/helpers/form-array-snapshot.helper';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextIscsi } from 'app/helptext/sharing';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import { IscsiTarget, IscsiTargetGroup, toIscsiTarget } from 'app/interfaces/iscsi.interface';
 import { Option } from 'app/interfaces/option.interface';
 import {
@@ -160,12 +162,12 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     ],
     alias: [''],
     mode: [IscsiTargetMode.Iscsi],
-    groups: this.formBuilder.array<IscsiTargetGroup>([]),
+    groups: this.formBuilder.array<FormGroup<ControlsOf<IscsiTargetGroup>>>([]),
     auth_networks: this.formBuilder.array<string>([]),
-    fcPorts: this.formBuilder.array<{
+    fcPorts: this.formBuilder.array<FormGroup<{
       port: FormControl<string | null>;
       host_id: FormControl<number | null>;
-    }>([]),
+    }>>([]),
   });
 
   // Reactive snapshot of FC ports form array for use in computed signals
@@ -189,6 +191,7 @@ export class TargetFormComponent extends IxFormHostForm implements OnInit {
     this.form.controls.name.setAsyncValidators(
       [this.targetNameValidationService.validateTargetName(String(this.editingTarget?.name))],
     );
+    this.form.controls.name.updateValueAndValidity();
 
     // Load FC hosts for validation
     this.api.query('fc.fc_host.query').pipe(

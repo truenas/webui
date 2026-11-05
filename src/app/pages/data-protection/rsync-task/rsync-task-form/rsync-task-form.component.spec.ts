@@ -196,6 +196,20 @@ describe('RsyncTaskFormComponent', () => {
       }]);
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
+
+    it('does not leave hidden required fields invalid when switching modes', async () => {
+      const controls = spectator.component.form.controls;
+      expect(controls.remotemodule.hasError('required')).toBe(true);
+
+      await (await getSelect('mode')).selectOption('SSH');
+      expect(controls.remotemodule.valid).toBe(true);
+
+      await (await getSelect('sshconnectmode')).selectOption('SSH connection from the keychain');
+      expect(controls.remotehost.valid).toBe(true);
+
+      await (await getSelect('sshconnectmode')).selectOption('SSH private key stored in user\'s home directory');
+      expect(controls.ssh_credentials.valid).toBe(true);
+    });
   });
 
   describe('edits rsync task', () => {

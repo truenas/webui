@@ -1,11 +1,10 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject, input,
+  ChangeDetectionStrategy, Component, DestroyRef, Injector, OnInit, computed, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -17,6 +16,7 @@ import { map, switchMap, tap } from 'rxjs/operators';
 import { IpmiChassisIdentifyState, IpmiIpAddressSource } from 'app/enums/ipmi.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
+import { revalidateAfterRender } from 'app/helpers/revalidate-after-render.helper';
 import { helptextIpmi } from 'app/helptext/network/ipmi/ipmi';
 import { Ipmi, IpmiQueryParams, IpmiUpdate, toIpmiChannels, toIpmiUpdateArgs } from 'app/interfaces/ipmi.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
@@ -63,6 +63,7 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
   private systemGeneralService = inject(SystemGeneralService);
   private store$ = inject<Store<AppState>>(Store);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   /** IPMI channel id to edit, supplied by the `<tn-side-panel>` host (`FormSidePanelService.open`). */
   readonly editIpmiId = input<number | undefined>(undefined);
@@ -282,10 +283,15 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
   };
 
   private setFormRelations(): void {
-    const stateDhcp$ = this.form.controls.dhcp.valueChanges;
-    this.form.controls.ipaddress.disabledWhile(stateDhcp$);
-    this.form.controls.gateway.disabledWhile(stateDhcp$);
-    this.form.controls.netmask.disabledWhile(stateDhcp$);
+    this.form.controls.dhcp.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isDhcp) => {
+      [this.form.controls.ipaddress, this.form.controls.gateway, this.form.controls.netmask].forEach((control) => {
+        if (isDhcp) {
+          control.disable();
+        } else {
+          control.enable();
+        }
+      });
+    });
 
     // Make vlan_id required only when vlan_id_enable is true
     this.form.controls.vlan_id_enable.valueChanges
@@ -298,6 +304,8 @@ export class IpmiFormComponent extends IxFormHostForm implements OnInit {
           this.form.controls.vlan_id.setValue(null);
         }
         this.form.controls.vlan_id.updateValueAndValidity();
+        // Unchecking hides VLAN ID, whose template `[required]` outlives this re-validation.
+        revalidateAfterRender(this.injector, [this.form.controls.vlan_id]);
       });
 
     // Listen to both DHCP and IP address changes to update manage button state

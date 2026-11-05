@@ -3,8 +3,9 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import {
+  ReactiveFormsModule, FormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnFormSectionComponent,
@@ -20,6 +21,7 @@ import { Role } from 'app/enums/role.enum';
 import { SmbSharesecPermission, SmbSharesecType } from 'app/enums/smb-sharesec.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import { Group, toGroup } from 'app/interfaces/group.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { SmbSharesecAce } from 'app/interfaces/smb-share.interface';
@@ -81,7 +83,7 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
   readonly shareName = input<string | undefined>(undefined);
 
   form = this.formBuilder.group({
-    entries: this.formBuilder.array<FormAclEntry>([]),
+    entries: this.formBuilder.array<FormGroup<ControlsOf<FormAclEntry>>>([]),
   });
 
   protected isLoading = signal(false);
@@ -152,10 +154,10 @@ export class SmbAclComponent extends IxFormHostForm implements OnInit {
     this.form.controls.entries.push(
       this.formBuilder.group({
         ae_who_sid: [''],
-        ae_who: [null as never],
-        both: [null as never],
-        user: [null as never],
-        group: [null as never],
+        ae_who: new FormControl(null as FormAclEntry['ae_who']),
+        both: new FormControl(null as NameOrId),
+        user: new FormControl(null as NameOrId),
+        group: new FormControl(null as NameOrId),
         ae_perm: new FormControl(null as SmbSharesecPermission | null),
         ae_type: new FormControl(null as SmbSharesecType | null),
       }),

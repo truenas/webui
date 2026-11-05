@@ -1,16 +1,15 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, input, output, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import {
-  FormControl, FormGroup, ReactiveFormsModule, Validators,
-} from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { of, tap } from 'rxjs';
+import {
+  map, of, startWith, tap,
+} from 'rxjs';
 import { ActiveDirectorySchemaMode, IdmapBackend } from 'app/enums/directory-services.enum';
 import { helptextIdmap } from 'app/helptext/directory-service/idmap';
 import { helptextLdap } from 'app/helptext/directory-service/ldap';
@@ -71,7 +70,12 @@ export class IdmapConfigComponent implements OnInit {
     }),
   });
 
-  protected readonly idmapType = toSignal(this.form.controls.idmap_domain.controls.idmap_backend.value$);
+  protected readonly idmapType = toSignal(
+    this.form.controls.idmap_domain.controls.idmap_backend.valueChanges.pipe(
+      startWith(this.form.controls.idmap_domain.controls.idmap_backend.value),
+    ),
+  );
+
   protected IdmapBackend = IdmapBackend;
   protected readonly InputType = InputType;
 
@@ -85,7 +89,9 @@ export class IdmapConfigComponent implements OnInit {
   ngOnInit(): void {
     this.listenToTypeChanges();
     this.fillFormWithIdmapConfig();
-    this.form.value$.pipe(
+    this.form.valueChanges.pipe(
+      startWith(null),
+      map(() => this.form.getRawValue()),
       tap((value: PrimaryDomainIdmap & { use_default_idmap: boolean }) => {
         this.isValid.emit(this.form.controls.use_default_idmap.value || this.form.valid);
 
@@ -109,7 +115,9 @@ export class IdmapConfigComponent implements OnInit {
   }
 
   private listenToTypeChanges(): void {
-    this.form.controls.idmap_domain.controls.idmap_backend.value$.pipe(
+    const backendControl = this.form.controls.idmap_domain.controls.idmap_backend;
+    backendControl.valueChanges.pipe(
+      startWith(backendControl.value),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (type: IdmapBackend) => {
