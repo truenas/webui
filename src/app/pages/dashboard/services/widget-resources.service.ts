@@ -207,7 +207,7 @@ export class WidgetResourcesService {
       filter((event) => event.msg === 'added' || event.msg === 'changed'),
       map((event) => event.fields),
       filter((job) => ['app.start', 'app.stop'].includes(job.method) && job.arguments[0] === appName),
-      // The client's job is honest about the fields that stay null until the job starts (gap 8).
+      // The generated entry types `state` and the timestamps as strings (gap 15), and `arguments` loosely.
       map((job) => job as unknown as Job<void, AppStartQueryParams>),
       shareReplay({ bufferSize: 1, refCount: true }),
     );

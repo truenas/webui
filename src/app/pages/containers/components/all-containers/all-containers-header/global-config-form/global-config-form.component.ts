@@ -1,9 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, ValidatorFn } from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CallParams } from '@truenas/api-client';
 import {
   TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent,
 } from '@truenas/ui-components';
@@ -18,7 +17,6 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ipv4or6cidrValidator } from 'app/modules/forms/ix-forms/validators/ip-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 @Component({
   selector: 'ix-global-config-form',
@@ -51,50 +49,10 @@ export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit 
 
   protected readonly form = this.formBuilder.nonNullable.group({
     bridge: [this.autoBridge],
-    v4_network: [null as string | null],
-    v6_network: [null as string | null],
+    v4_network: [''],
+    v6_network: [''],
     preferred_pool: [null as string | null],
-  }, {
-    validators: [],
   });
-
-  /**
-   * Wrapper for IP/CIDR validator that properly handles null values.
-   *
-   * Note: The upstream ipv4or6cidrValidator() only checks for empty string ('') and undefined,
-   * but not null. Since our form fields use null as the initial value, we need this wrapper
-   * to treat null as valid (field is optional). This ensures that an untouched field with
-   * null value doesn't trigger validation errors.
-   *
-   * Returns a new validator instance on each call to avoid shared state issues between
-   * multiple form controls (ipv4or6cidrValidator uses internal state via thisControl).
-   */
-  private ipCidrValidatorWrapper(): ValidatorFn {
-    return (control) => {
-      // If value is null, empty string, or undefined, it's valid (field is optional)
-      if (control.value == null || control.value === '') {
-        return null;
-      }
-      // Otherwise, validate the IP/CIDR format using the upstream validator
-      return ipv4or6cidrValidator()(control);
-    };
-  }
-
-  private readonly atLeastOneNetworkValidator: ValidatorFn = (formGroup) => {
-    if (!formGroup) {
-      return null;
-    }
-    const v4 = formGroup.get('v4_network')?.value;
-    const v6 = formGroup.get('v6_network')?.value;
-
-    // Check if either field has a non-empty value
-    const hasV4 = v4 != null && String(v4).trim() !== '';
-    const hasV6 = v6 != null && String(v6).trim() !== '';
-
-    return hasV4 || hasV6
-      ? null
-      : { atLeastOneNetworkRequired: true };
-  };
 
   protected bridgeOptions$ = this.api.call('lxc.bridge_choices').pipe(
     choicesToOptions(),
@@ -130,55 +88,29 @@ export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit 
   }
 
   private setUpValidatorWiring(): void {
-    // Update network field validators when bridge changes
     this.form.controls.bridge.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.updateNetworkValidators();
     });
-
-    // When either network field changes, re-validate form (for "at least one" validation)
-    this.form.controls.v4_network.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      if (this.isAutoBridge) {
-        // Update form validation without emitEvent to trigger validator check
-        this.form.updateValueAndValidity();
-      }
-    });
-
-    this.form.controls.v6_network.valueChanges.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      if (this.isAutoBridge) {
-        // Update form validation without emitEvent to trigger validator check
-        this.form.updateValueAndValidity();
-      }
-    });
   }
 
+  /**
+   * The automatic bridge is built from both networks. `lxc.update` takes each as a CIDR string and
+   * refuses `null`, so neither can be cleared. Another bridge does not use them, and they are sent
+   * back as loaded.
+   */
   private updateNetworkValidators(): void {
-    const v4Control = this.form.controls.v4_network;
-    const v6Control = this.form.controls.v6_network;
+    const networkControls = [this.form.controls.v4_network, this.form.controls.v6_network];
 
-    // Always clear validators first to avoid duplicates
-    v4Control.clearValidators();
-    v6Control.clearValidators();
-    this.form.removeValidators(this.atLeastOneNetworkValidator);
-
-    if (this.isAutoBridge) {
-      // When bridge is automatic, at least one network (v4 or v6) must be specified
-      // Add IP/CIDR format validation to both fields using wrapper that handles null values
-      // These validators validate format only when a value is present (not null/empty)
-      // Call wrapper function each time to get fresh validator instances (avoids shared state)
-      v4Control.addValidators(this.ipCidrValidatorWrapper());
-      v6Control.addValidators(this.ipCidrValidatorWrapper());
-      // Add form-level "at least one" validation
-      this.form.addValidators(this.atLeastOneNetworkValidator);
-    }
-
-    v4Control.updateValueAndValidity({ emitEvent: false });
-    v6Control.updateValueAndValidity({ emitEvent: false });
+    networkControls.forEach((control) => {
+      control.clearValidators();
+      if (this.isAutoBridge) {
+        // A fresh instance per control: the validator keeps the control it first sees.
+        control.addValidators([Validators.required, ipv4or6cidrValidator()]);
+      }
+      control.updateValueAndValidity({ emitEvent: false });
+    });
     this.form.updateValueAndValidity({ emitEvent: false });
   }
 
@@ -187,16 +119,13 @@ export class GlobalConfigFormComponent extends IxFormHostForm implements OnInit 
     const values = {
       // Transform [AUTO] back to empty string for the API
       bridge: controls.bridge.value === this.autoBridge ? '' : controls.bridge.value,
-      // Convert empty strings to null for optional network fields
-      v4_network: controls.v4_network.value?.trim() || null,
-      v6_network: controls.v6_network.value?.trim() || null,
+      v4_network: controls.v4_network.value.trim(),
+      v6_network: controls.v6_network.value.trim(),
       preferred_pool: controls.preferred_pool.value,
     };
 
     return {
-      // The form clears a network with `null`, as it always has; the generated `lxc.update` input
-      // types both networks as optional strings without it.
-      request$: this.api.call('lxc.update', [values as CallParams<WebUiApiDirectory, 'lxc.update'>[0]]),
+      request$: this.api.call('lxc.update', [values]),
       successMessage: this.translate.instant('Container settings updated'),
     };
   };

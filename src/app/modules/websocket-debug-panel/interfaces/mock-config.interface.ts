@@ -36,15 +36,8 @@ export interface CallErrorData {
   trace?: {
     class: string;
     formatted: string;
-    frames: {
-      argspec: string[];
-      filename: string;
-      line: string;
-      lineno: number;
-      locals: Record<string, string>;
-      method: string;
-    }[];
-  };
+    repr: string;
+  } | null;
   message?: string | null;
 }
 
