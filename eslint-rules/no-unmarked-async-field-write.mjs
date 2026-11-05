@@ -19,6 +19,9 @@
  * - writes inside RxJS operator callbacks (`tap`, `map`, `finalize`, …). Whether those need a
  *   re-render depends on what consumes the stream (a later `subscribe` or data provider usually
  *   re-renders already), which the rule cannot see; listing them flagged 10 such pipelines;
+ * - a `valueChanges` subscription is taken to be marked by the template event that changed the
+ *   control, unless its pipe holds a time-shifting operator (`debounceTime`, `switchMap`, …). So a
+ *   `setValue()` made from async code, or a time-shifting operator hidden in a custom one, is missed;
  * - a `markForCheck()` in `complete` is taken to cover `next`, which only holds for sources that
  *   complete (`api.call`, `forkJoin`). For a long-lived stream, mark in `next` itself.
  *
@@ -39,6 +42,21 @@ const asyncFunctionNames = new Set([
   'setInterval',
   'requestAnimationFrame',
   'queueMicrotask',
+]);
+
+const timeShiftingOperators = new Set([
+  'debounceTime',
+  'debounce',
+  'throttleTime',
+  'throttle',
+  'auditTime',
+  'audit',
+  'delay',
+  'delayWhen',
+  'switchMap',
+  'mergeMap',
+  'concatMap',
+  'exhaustMap',
 ]);
 
 const rerenderCalls = new Set(['markForCheck', 'detectChanges']);
@@ -69,13 +87,24 @@ function isFunction(node) {
   return node.type === 'ArrowFunctionExpression' || node.type === 'FunctionExpression';
 }
 
-/** `source$.pipe(...).subscribe(...)` where the chain starts at a form control's `valueChanges`. */
+/** A `.pipe(...)` call with an operator that moves emissions to a later turn (a timer or an inner source). */
+function isTimeShiftingPipe(call) {
+  return calleeName(call.callee) === 'pipe' && call.arguments.some((argument) => {
+    return argument.type === 'CallExpression' && timeShiftingOperators.has(calleeName(argument.callee));
+  });
+}
+
+/**
+ * `source$.pipe(...).subscribe(...)` where the chain starts at a form control's `valueChanges` and
+ * no operator in it delays the emission past the template event that marked the view.
+ */
 function isValueChangesSubscription(call) {
   for (let node = call.callee; node;) {
     if (node.type === 'MemberExpression') {
       if (!node.computed && node.property.type === 'Identifier' && node.property.name === 'valueChanges') return true;
       node = node.object;
     } else if (node.type === 'CallExpression') {
+      if (isTimeShiftingPipe(node)) return false;
       node = node.callee;
     } else {
       return false;

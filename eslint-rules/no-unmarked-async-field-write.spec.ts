@@ -113,6 +113,21 @@ ruleTester.run('no-unmarked-async-field-write', rule, {
   ],
   invalid: [
     {
+      // A debounce or an API call moves the write past the template event that marked the view.
+      code: component(`
+        protected results = [];
+        listen(): void {
+          this.form.controls.search.valueChanges.pipe(
+            debounceTime(300),
+            switchMap((query) => this.api.call('x', [query])),
+          ).subscribe((results) => {
+            this.results = results;
+          });
+        }
+      `),
+      errors: [{ messageId: 'unmarkedWrite', data: { field: 'results' } }],
+    },
+    {
       // `error` never runs after a successful `next`, so marking there does not cover `next`.
       code: component(`
         protected value = '';
