@@ -83,6 +83,53 @@ const projectOverrides = {
     }],
     '@angular-eslint/prefer-host-metadata-property': 'error',
     '@angular-eslint/prefer-output-emitter-ref': 'error',
+    // Enforced per directory below instead of as a repo-wide warning.
+    'truenas/max-comment-lines': 'off',
+  },
+};
+
+// Directories already trimmed to the cap. Clean up one more, then add it here.
+// Once every directory is listed, replace this with `**/*.ts`.
+const commentCappedPaths = [
+  'src/app/classes',
+  'src/app/helptext',
+  'src/app/modules/buttons',
+  'src/app/modules/card-expand-collapse',
+  'src/app/modules/charts',
+  'src/app/modules/disk-icon',
+  'src/app/modules/feedback',
+  'src/app/modules/interface-status-icon',
+  'src/app/modules/jobs',
+  'src/app/modules/keyboard-shortcut',
+  'src/app/modules/layout',
+  'src/app/modules/loader',
+  'src/app/modules/master-detail-view',
+  'src/app/modules/page-header',
+  'src/app/modules/summary',
+  'src/app/modules/terminal',
+  'src/app/modules/tooltip',
+  'src/app/modules/translate',
+  'src/app/modules/truecommand',
+  'src/app/modules/truenas-connect',
+  'src/app/modules/unsaved-changes',
+  'src/app/modules/use-enterprise-marketing-link',
+  'src/app/modules/warning',
+  'src/app/pages/dashboard',
+  'src/app/pages/directory-service',
+  'src/app/pages/reports-dashboard',
+  'src/app/pages/services',
+  'src/app/pages/shell',
+  'src/app/pages/signin',
+  'src/app/pages/system',
+  'src/app/pages/vm',
+  'src/app/store',
+  'src/app/types',
+];
+
+const commentCapOverrides = {
+  files: commentCappedPaths.map((path) => `${path}/**/*.ts`),
+  rules: {
+    'truenas/max-comment-lines': ['error', { max: 6, skipBlankLines: true }],
   },
 };
 
@@ -187,4 +234,5 @@ export default [
   templateOverrides,
   specOverrides,
   e2eOverrides,
+  commentCapOverrides,
 ];

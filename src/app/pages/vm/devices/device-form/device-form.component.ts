@@ -242,13 +242,10 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   });
 
   /**
-   * The single group the inner `<ix-form>` owns. There is no natural root here — the three
-   * standalone controls are bound with `[formControl]` (keeping their explicit test ids, which a
-   * `formControlName` would have re-derived) and the type-specific fields live in one of seven
-   * separate groups. Registering those same instances under one root is what lets the wrapper see
-   * the whole submission: its Save gate and its unsaved-changes guard both read this group, so
-   * neither has to re-enumerate the parts. {@link handleDeviceTypeChange} keeps `typeSpecific`
-   * pointing at whichever group is on screen.
+   * One root over the standalone controls and whichever type-specific group is on screen, so the
+   * inner `<ix-form>`'s Save gate and unsaved-changes guard see the whole submission.
+   * {@link handleDeviceTypeChange} swaps `typeSpecific`. The standalone controls bind with
+   * `[formControl]` because `formControlName` would re-derive their explicit test ids.
    */
   protected readonly form = new FormGroup({
     dtype: this.typeControl,
@@ -599,15 +596,8 @@ export class DeviceFormComponent extends IxFormHostForm implements OnInit {
   }
 
   /**
-   * Determines whether to include the 'exists' field in the raw file device attributes.
-   *
-   * Logic:
-   * 1. Editing existing device: always include exists: true
-   * 2. File selected from explorer: include exists: true
-   * 3. Creating new file (size specified): omit exists (backend will create file)
-   * 4. Manual path without size: assume existing file, include exists: true
-   *
-   * @returns true if exists field should be included in the API call
+   * Whether to send `exists: true` for a raw file device. It is left out only when a new device
+   * gives a size for a path not picked from the tree, so the backend creates the file.
    */
   private shouldIncludeExistsField(): boolean {
     // If editing an existing device, always include exists: true

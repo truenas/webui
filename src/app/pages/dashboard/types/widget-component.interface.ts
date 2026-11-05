@@ -49,19 +49,7 @@ export interface WidgetDefinition<
 
 /**
  * If your widget defines custom settings, supply settings in first generic argument.
- * ```
- * export const ipv4AddressWidget = dashboardWidget<WidgetInterfaceIpSettings>({
- *   name: T('IPv4 Datapoint'),
- *   component: WidgetInterfaceIpComponent,
- *   category: WidgetCategory.Network,
- *   settingsComponent: WidgetInterfaceIpSettingsComponent,
- *   supportedSizes: [SlotSize.Full, SlotSize.Half, SlotSize.Quarter],
- *   visibility: {
- *     deps: [Store],
- *     isVisible$: (deps) => deps.get(Store).select(selectIsHaLicensed),
- *   },
- * });
- * ```
+ * See `widget-interface-ip.definition.ts` for an example with settings and visibility.
  */
 export function dashboardWidget<
   Settings extends SomeWidgetSettings | null = null,
