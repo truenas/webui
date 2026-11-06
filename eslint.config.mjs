@@ -143,6 +143,7 @@ const commentCappedPaths = [
   'src/app/modules/websocket-debug-panel',
   'src/app/pages/apps',
   'src/app/pages/audit',
+  'src/app/pages/containers',
   'src/app/pages/credentials',
   'src/app/pages/dashboard',
   'src/app/pages/data-protection',

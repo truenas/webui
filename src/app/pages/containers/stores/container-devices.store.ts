@@ -106,16 +106,8 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
   }
 
   /**
-   * Optimistically removes a device from the local state after successful deletion.
-   *
-   * IMPORTANT: This method should ONLY be called after confirming successful deletion
-   * from the API (e.g., within a successful tap() operator). It does not perform any
-   * API calls or error handling - it simply updates the local state.
-   *
-   * If called prematurely or without API confirmation, it will cause UI inconsistency
-   * with the backend state.
-   *
-   * @param deviceId The ID of the device that was successfully deleted via API
+   * Removes a device from local state. Call only after the API confirmed the deletion: it makes no call
+   * and handles no errors, so calling it early desyncs the UI from the backend.
    */
   deviceDeleted(deviceId: number): void {
     const devices = this.devices().filter((device) => device.id !== deviceId);
