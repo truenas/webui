@@ -5,17 +5,9 @@ import type { E2eApiClient } from '../../../../../e2e/support/api/client';
 import { runJob } from '../../../../../e2e/support/jobs';
 
 /**
- * Behavioural guard for the E2E suite's job runner.
- *
- * `runJob` decides whether appliance teardown succeeded, and every distinction
- * it draws is one that reads as reasonable and fails silently when inverted: an
- * unanswered query is not an empty answer, a job's terminal state is not a side
- * effect, and a lost job id is not a failed job. Nothing else in the repository
- * can execute it — `e2e/**` is outside Jest's roots and Playwright matches only
- * `*.e2e.ts` — so these cases are what stop the next edit reversing one.
- *
- * Lives under `src/` for the same reason as the `kebabTestSegment` parity spec:
- * it is the only tree Jest compiles.
+ * Guards the E2E suite's `runJob`, which decides whether teardown succeeded. Each distinction it draws
+ * fails silently when inverted: an unanswered query isn't an empty answer, and a lost job id isn't a
+ * failed job. Nothing else runs it (`e2e/**` is outside Jest's roots), so it lives under `src/`.
  */
 describe('e2e runJob', () => {
   const budget = { timeoutMs: 400, whatItCosts: 'The work did not happen.' };

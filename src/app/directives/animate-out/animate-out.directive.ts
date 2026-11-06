@@ -2,17 +2,9 @@ import { Directive, ElementRef, input, OnChanges, OnDestroy, output, Renderer2, 
 import { Timeout } from 'app/interfaces/timeout.interface';
 
 /**
- * Directive that handles CSS animation-based removal of elements from the DOM.
- * Similar to the proposed Angular animate.out helper.
- *
- * Usage:
- * <div
- *   [animateOut]="shouldRemove"
- *   animateOutClass="fade-out"
- *   (animateOutComplete)="onRemoved()">
- * </div>
- *
- * TODO: May not be necessary in the future: https://github.com/angular/angular/discussions/62212
+ * Removes an element after its CSS exit animation, like Angular's proposed animate.out:
+ * `[animateOut]="shouldRemove" animateOutClass="fade-out" (animateOutComplete)="onRemoved()"`.
+ * TODO: may become unnecessary: https://github.com/angular/angular/discussions/62212
  */
 @Directive({
   selector: '[animateOut]',

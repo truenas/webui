@@ -58,15 +58,8 @@ export function extractApiErrorDetails(someError: unknown): ApiErrorDetails | un
 }
 
 /**
- * transforms an `ApiCallError` into a new error by replacing an error message `msg` with
- * the string `replace`. the `ApiCallError` is expected to have the property `error.error.data.extra`
- * with type `Array<[string, string, number?]>`. `msg` should be in the 2nd string in the tuple.
- *
- * @param error - the `ApiCallError` to transform
- * @param msg - the message string to search for and replace
- * @param replace - the replacement message string
- * @returns a new `ApiCallError` with the transformed message *or* the original error if the message is not found
- *          or if the `extra` property is not an array.
+ * Returns a copy of `error` with `msg` replaced by `replace` in its `extra` tuples
+ * (`[field, message, errno?]`), or the original error when `extra` isn't an array or lacks `msg`.
  */
 export function transformApiCallErrorMessage(error: ApiCallError, msg: string, replace: string): ApiCallError {
   if (!error.error.data || !Array.isArray(error.error.data.extra)) {

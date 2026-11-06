@@ -51,15 +51,9 @@ export interface TableColumn<T> {
   formatValue?: (row: T) => string;
 
   /**
-   * Test-id suffix a details row gives this column's printed value, matching what the column's
-   * own cell resolves while it is visible. Defaults to `row-text`, so only a column whose cell is
-   * not a plain text cell needs to say anything — but any titled column can be hidden by the
-   * picker, so declare it on every such column rather than only the ones that start hidden.
-   *
-   * The suffix is the whole of what a details row can match: it prints text, so the id it
-   * resolves is always prefixed `text`. That is the cell's own prefix for a text or relative-date
-   * cell, and byte-identical there; a state pill or a toggle carries its own element prefix,
-   * which a printed value cannot reproduce.
+   * Test-id suffix a details row gives this column's printed value, matching its visible cell.
+   * Defaults to `row-text`. Declare it on every titled column whose cell isn't plain text, since the
+   * picker can hide any of them. A details row prints text, so its id is always `text`-prefixed.
    */
   testIdSuffix?: TableCellTestIdSuffix;
 }

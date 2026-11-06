@@ -24,17 +24,9 @@ export class WebSocketStatusService {
   private readonly isLoggedIn$ = new BehaviorSubject<boolean>(false);
 
   /**
-   * Whether the app's session is authenticated.
-   *
-   * There is one session and one socket, both the typed client's, so this is
-   * projected from `authenticator.authenticated$` rather than derived from a
-   * socket being up — a connection that is up says nothing about whether
-   * anyone has signed in on it.
-   *
-   * Pushed in by `ApiService` rather than read from the client here.
-   * Reading it here would make every consumer of connection status — which is
-   * most of the app, and most of its specs — drag a real `@truenas/api-client`
-   * behind it, since this service is `providedIn: 'root'` and rarely stubbed.
+   * Whether the app's session is authenticated, projected from the typed client's
+   * `authenticator.authenticated$`, since an open socket says nothing about a sign-in. `ApiService`
+   * pushes it in, so this root service's many consumers and specs don't drag in a real client.
    */
   private readonly sessionEstablished$ = new BehaviorSubject<boolean>(false);
   readonly isSessionEstablished$ = this.sessionEstablished$.asObservable();

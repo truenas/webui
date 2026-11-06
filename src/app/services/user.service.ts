@@ -84,17 +84,8 @@ export class UserService {
   }
 
   /**
-   * Gets a group by exact name match using the cached query API with request deduplication.
-   *
-   * This method inserts the result into the middleware directory services cache,
-   * reducing subsequent lookups across the UI. The cache is middleware-managed and
-   * persists for the duration of the middleware session.
-   *
-   * Request deduplication ensures that multiple simultaneous calls for the same group
-   * (e.g., from autocomplete and validation) share a single API request.
-   *
-   * @param groupname - Exact group name to look up
-   * @returns Observable of the group object
+   * Gets a group by exact name via the cached query API, which also fills middleware's directory-services
+   * cache for later lookups. Simultaneous calls for the same name share one request.
    */
   getGroupByNameCached(groupname: string): Observable<Group> {
     // Check if there's already an in-flight request for this group
@@ -149,17 +140,9 @@ export class UserService {
   }
 
   /**
-   * Gets a user by exact name match using the cached query API with request deduplication.
-   *
-   * This method inserts the result into the middleware directory services cache,
-   * reducing subsequent lookups across the UI. The cache is middleware-managed and
-   * persists for the duration of the middleware session.
-   *
-   * Request deduplication ensures that multiple simultaneous calls for the same user
-   * (e.g., from autocomplete and validation) share a single API request.
-   *
-   * @param username - Exact username to look up
-   * @returns Observable of the user object
+   * Gets a user by exact name via the cached query API, which also fills middleware's directory-services
+   * cache for later lookups. Simultaneous calls for the same name (e.g. autocomplete and validation)
+   * share one request.
    */
   getUserByNameCached(username: string): Observable<User> {
     // Check if there's already an in-flight request for this user

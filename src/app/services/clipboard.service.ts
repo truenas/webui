@@ -2,22 +2,10 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { inject, Injectable } from '@angular/core';
 
 /**
- * Copies text to the clipboard, including over plain HTTP.
- *
- * `navigator.clipboard` is gated on a *secure context*, so on an appliance
- * reached as `http://<address>/` it is not merely restricted — it is
- * `undefined`. Reading `.writeText` off it throws `TypeError: Cannot read
- * properties of undefined`, and it throws *synchronously*, before any promise
- * exists, so a caller's `.then(onSuccess, onError)` never runs and the user
- * gets an unhandled error instead of the failure message written for them.
- *
- * That is not a rare configuration: TrueNAS serves port 80 without
- * redirecting, and `localhost` counts as a secure context, so the modern API
- * works all through development and fails the moment the UI is opened by IP.
- *
- * So: prefer the real API, and fall back to the CDK's `Clipboard`, which is
- * built on `document.execCommand('copy')` — deprecated, but it predates
- * secure-context gating and still works without one.
+ * Copies text to the clipboard, including over plain HTTP. `navigator.clipboard` is `undefined` outside a
+ * secure context, and reading `.writeText` off it throws before any promise exists, so callers' error
+ * handlers never run. That's common: TrueNAS serves port 80 without redirecting, while `localhost`
+ * counts as secure in development. The fallback is the CDK `Clipboard`, built on `execCommand('copy')`.
  */
 @Injectable({ providedIn: 'root' })
 export class ClipboardService {
@@ -31,23 +19,10 @@ export class ClipboardService {
   private fallback = inject(Clipboard);
 
   /**
-   * Resolves once the text is on the clipboard, and rejects if it is not.
-   *
-   * Never throws at the caller. A missing API surfaces as a *rejection*, which
-   * is the half the old call sites silently lost: reading `.writeText` off an
-   * undefined `navigator.clipboard` threw before any promise existed, so their
-   * `.then(onSuccess, onError)` never ran.
-   *
-   * Deliberately not `async`. On the secure path this hands back the Clipboard
-   * API's own promise, so it settles on exactly the tick it always did —
-   * `async` would insert a microtask and move every caller's snackbar one tick
-   * later, which is a behaviour change nobody asked for in the working case.
-   *
-   * The fallback is reached only when the API is *absent*, not when a write
-   * rejects. A rejection in a secure context means the document was not
-   * focused or the permission was refused, and `execCommand` is subject to the
-   * same conditions — retrying through it would mostly convert a reported
-   * failure into a silent one.
+   * Resolves once the text is copied and rejects otherwise, never throwing synchronously. Not `async`,
+   * so the secure path settles on the same tick as the Clipboard API's own promise. The fallback runs
+   * only when the API is absent: a rejected write means no focus or no permission, which `execCommand`
+   * would hit too, turning a reported failure into a silent one.
    */
   copy(text: string): Promise<void> {
     try {

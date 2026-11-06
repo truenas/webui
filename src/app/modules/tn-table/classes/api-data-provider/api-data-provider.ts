@@ -28,15 +28,9 @@ export interface ApiDataProviderClient {
 type DefaultRow<M> = M extends WebUiQueryMethod ? WebUiQueryEntity<M> : unknown;
 
 /**
- * Pages a list method server side.
- *
- * `M` is usually a query method, whose rows default to its generated entity. Rows are typed
- * separately (`Row`) because most tables render the UI's own interface for an entity (`User`,
- * `Privilege`, …) rather than the generated one, and because a few methods page with another
- * params shape (`audit.query`, see `QueryFiltersAndOptionsApiDataProvider`) and are not query methods.
- *
- * `params` are what the table edits — filters and options over `Row`. `prepareParams` turns
- * them into the method's wire params.
+ * Pages a list method server side. `Row` is typed apart from `M` because most tables render the UI's
+ * own interface for an entity, and a few methods (`audit.query`) aren't query methods. `params` are
+ * the filters and options the table edits; `prepareParams` turns them into wire params.
  */
 export class ApiDataProvider<
   M extends CallMethod<WebUiApiDirectory>,

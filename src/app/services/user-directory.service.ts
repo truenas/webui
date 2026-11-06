@@ -37,15 +37,8 @@ type UserEntity = WebUiQueryEntity<'user.query'>;
 type UserOptionSource = Pick<User, 'username' | UserValueField>;
 
 /**
- * How an `ix-user-*` / `ix-group-*` field narrows the list. Bound with
- * `[directoryOptions]`, and interpreted only here.
- *
- * @example
- * ```html
- * <ix-group-combobox
- *   formControlName="group"
- *   [directoryOptions]="{ localOnly: true, valueField: 'id' }" />
- * ```
+ * How an `ix-user-*` / `ix-group-*` field narrows the list, bound as
+ * `[directoryOptions]="{ localOnly: true, valueField: 'id' }"` and interpreted only here.
  */
 export interface DirectoryQueryOptions {
   /**
@@ -86,17 +79,10 @@ export interface DirectoryQueryOptions {
 export const directoryPageSize = 50;
 
 /**
- * The query-shaping layer behind the `ix-user-*` / `ix-group-*` fields.
- *
- * The fields own searching, paging, validation and the create flow — all of it
- * generic, and all of it built on `tn-autocomplete` / `tn-chip-input`.
- * Everything here is the part that is genuinely about TrueNAS: which endpoint
- * answers a lookup, how a query is narrowed, which record field is the value,
- * and what "create a user" means.
- *
- * It stays in webui rather than in `@truenas/ui-components` on purpose — a
- * `user.query` filter, an SMB flag and an immutable built-in group are product
- * concepts, not component-library ones.
+ * The TrueNAS-specific layer behind the `ix-user-*` / `ix-group-*` fields: which endpoint answers, how
+ * a query is narrowed, which record field is the value, and what "create a user" means. The fields own
+ * the generic searching, paging and validation. It stays out of `@truenas/ui-components` because these
+ * are product concepts.
  */
 @Injectable({ providedIn: 'root' })
 export class UserDirectoryService {
@@ -167,26 +153,11 @@ export class UserDirectoryService {
   }
 
   /**
-   * Whether a username resolves. Both caches are consulted first — the fields
-   * call this on every validation pass, and a directory-service lookup is slow
-   * enough that repeating it per keystroke is felt.
-   *
-   * The fields fail open on a transport error: a lookup that errors, or
-   * completes without emitting, is read as "cannot say" and the name is left
-   * unflagged. Only an emitted `false` marks a name as missing.
-   *
-   * That contract is why this queries rather than calling
-   * `UserService.getUserByNameCached`, which asks with `{ get: true }` and so
-   * ERRORS for a name that does not exist — indistinguishably from a dropped
-   * websocket. Both used to become `false`, and worse, both were remembered as
-   * non-existent: one connection blip while someone typed into Run As User
-   * left the field reading `User "root" does not exist`, Save disabled, and the
-   * wrong verdict cached for the rest of the session. An empty result set says
-   * "no such user" and nothing else does.
-   *
-   * The cost is that a name confirmed here is not added to the middleware's
-   * directory-services cache the way `getUserByNameCached` would. It is a
-   * debounced check behind two caches, so that is one query per name per form.
+   * Whether a username resolves, checking both caches first since fields call this on every validation
+   * pass. Only an emitted `false` marks a name missing; an error or empty completion means "can't say".
+   * Hence a query rather than `getUserByNameCached`, whose `{ get: true }` errors for a missing name just
+   * as for a dropped socket, so a blip would wrongly flag the name. The cost: the result doesn't warm
+   * middleware's directory cache.
    */
   userExists(username: string): Observable<boolean> {
     if (this.userService.isUserInAutocompleteCache(username)) {
@@ -235,15 +206,9 @@ export class UserDirectoryService {
   }
 
   /**
-   * Opens the user form in a side panel, resolving to the created user — or to
-   * null when it was dismissed.
-   *
-   * `preset` is what the calling field wants the form to start as, for a flow
-   * whose new account is not a general-purpose one — see {@link UserFormPreset}.
-   *
-   * Imported dynamically: this service is provided at the root, and a static
-   * import would pull a page component (and its dependency tree) into the
-   * initial bundle for every screen that never opens a user picker.
+   * Opens the user form in a side panel, resolving to the new user or null if dismissed; `preset` sets
+   * up a special-purpose account (see {@link UserFormPreset}). The form is imported dynamically so this
+   * root service doesn't pull a page component into the initial bundle.
    */
   createUser(options: DirectoryQueryOptions, preset?: UserFormPreset): Observable<PrincipalOption | null> {
     const valueField = resolveValueField(options.valueField, userValueFields, 'username');

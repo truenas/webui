@@ -122,18 +122,10 @@ export class InitiatorFormComponent implements OnInit, CanComponentDeactivate {
   );
 
   /**
-   * Card footer actions. Returning `undefined` for Save is what gates it on the write role: the
-   * declarative config has no structural-directive hook, so this replaces `*ixRequiresRoles` —
-   * but not like for like. `*ixRequiresRoles` rendered the button inside
-   * `MissingAccessWrapperComponent`, which kept Save visible-but-disabled with a tooltip saying
-   * why; a read-only user now gets a footer with only Cancel and no explanation. The trade is
-   * deliberate, and `group-members.component.ts` makes the same one.
-   *
-   * `translated()`, not `computed()`: these read `translate.instant()`, which resolves against
-   * whatever catalog is loaded when the signal is first read. Language changes are live here
-   * (`LanguageService.setLanguage()` calls `translate.use()` with no reload), so a plain
-   * `computed` would leave the footer in the previous language — `secondaryAction` has no other
-   * dependency at all and would never recompute.
+   * Footer actions. Save is `undefined` without the write role, since the declarative config can't use
+   * `*ixRequiresRoles`; unlike it, read-only users see no disabled Save or tooltip, as in
+   * `group-members.component.ts`. `translated()`, not `computed()`, because languages switch without a
+   * reload and these call `translate.instant()`.
    */
   protected readonly primaryAction = translated<TnCardAction | undefined>((translate) => {
     if (!this.hasInitiatorWrite()) {

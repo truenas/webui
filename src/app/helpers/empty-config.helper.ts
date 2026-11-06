@@ -22,16 +22,9 @@ export interface EmptyStateIcon {
 const largeEmptyIconSize = '56px';
 
 /**
- * Splits a `tnIconMarker` string back into the bare icon name and its library.
- *
- * The empty-state catalog stores icons as markers (`mdi-cloud-outline`,
- * `app-replication`, `mat-security`) because the marker call doubles as the
- * build-time signal that pulls the icon into the sprite. `tn-empty` instead
- * takes the bare name plus a separate `iconLibrary`, so without this a migrated
- * template has to hand-copy both halves and can drift from the catalog silently.
- *
- * An unprefixed name is left alone and reported as `mdi`, matching `tn-empty`'s
- * own default for `iconLibrary`.
+ * Splits a `tnIconMarker` string (`mdi-cloud-outline`, `app-replication`) into the bare name and
+ * library that `tn-empty` takes. The catalog stores markers because they pull icons into the sprite;
+ * this keeps templates from copying both halves by hand. Unprefixed names report `mdi`, `tn-empty`'s default.
  */
 export function splitIconMarker(marker: string | undefined): { name: string | undefined; library: IconLibraryType } {
   if (marker?.startsWith('app-')) {

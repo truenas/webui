@@ -9,14 +9,9 @@ import {
 } from 'app/pages/sharing/nvme-of/namespaces/base-namespace-form/base-namespace-form.component';
 
 /**
- * Finds one of the namespace form's device-type toggles.
- *
- * A checked toggle's label text is prefixed with the tn-button-toggle "✓" marker, so the option
- * can't be matched by exact string. Only the prefix varies, so the pattern is anchored at the tail:
- * without the `$` a label that is a substring of another ("File" vs "Existing File") would silently
- * resolve to the wrong toggle. The label is escaped first — device-type labels are plain today, but
- * an unescaped `(`, `+` or `.` would broaden the pattern or throw. Shared by every spec that renders
- * `BaseNamespaceFormComponent` so the workaround lives in one place if the label format changes.
+ * Finds a namespace device-type toggle by label. A checked toggle's label gets a "✓" prefix, so the
+ * pattern is anchored at the end; the `$` stops "File" matching "Existing File". The label is
+ * regex-escaped first.
  */
 export function getNamespaceTypeToggle(loader: HarnessLoader, label: string): Promise<TnButtonToggleHarness> {
   return loader.getHarness(TnButtonToggleHarness.with({ label: new RegExp(`${escapeRegExp(label)}$`) }));

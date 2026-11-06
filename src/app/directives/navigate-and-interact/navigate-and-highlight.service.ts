@@ -35,14 +35,8 @@ const tnMenuItemClass = 'tn-menu-item';
 export interface WaitForElementOptions {
   block?: ScrollLogicalPosition;
   /**
-   * When true, draws the highlight outline inset (negative outline-offset)
-   * so it isn't clipped by the viewport edge or an overflow container.
-   *
-   * Caveat: `<tr>` rows are special-cased in `_globals.scss` and
-   * always render an outset pulse regardless of this flag — outlines on
-   * table rows interact poorly with `border-collapse`. If a future caller
-   * sets `inset: true` on a row and expects an inset outline, update the
-   * CSS (or move the decision into this service) before relying on it.
+   * Draws the outline inset so the viewport or an overflow container doesn't clip it. `<tr>` rows
+   * always get an outset pulse from `_globals.scss`, since outlines fight `border-collapse`.
    */
   inset?: boolean;
 }
@@ -66,33 +60,15 @@ export class NavigateAndHighlightService {
   private listenerAbortController: AbortController | null = null;
   private pendingTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private lateFocusTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  // Bumped exactly once per public entry (navigateAndHighlight /
-  // waitForElement / highlightResolved). Two invariants depend on it:
-  //   1. The router promise's .then() in navigateAndHighlight captures the
-  //      token at call time and bails if a newer call has bumped it —
-  //      otherwise a stale router resolution would start a fresh poll for
-  //      the previous hash.
-  //   2. Direct callers of waitForElement / highlightResolved (e.g.
-  //      UiSearchDirective) bump the token so any in-flight navigateAndHighlight
-  //      whose router promise hasn't resolved yet gets cancelled before it
-  //      can start polling for an outdated target.
-  // Internal callers (e.g. navigateAndHighlight → pollForElement) MUST go
-  // through the private path to avoid re-bumping mid-flight.
+  // Bumped once per public entry (navigateAndHighlight / waitForElement / highlightResolved), so a
+  // stale router resolution bails instead of polling for the previous target, and direct callers
+  // cancel an in-flight navigation. Internal callers must use the private path to avoid re-bumping.
   private currentNavigationToken = 0;
 
   constructor() {
-    // Cancel any pending poll on route changes the user (or any other code
-    // path) initiates. Otherwise a poll started for page A can resolve on
-    // page B and highlight whatever element happens to share the id.
-    // navigateAndHighlight's own navigations are safe: they bump the token
-    // BEFORE calling router.navigate(), so the NavigationStart fires while
-    // pendingTimeoutId is still null — the cancel is a no-op for them, and
-    // polling kicks off later from the router promise's `.then()`.
-    //
-    // Optional chain: many existing tests `mockProvider(Router, { navigate })`
-    // without supplying `events`. The real router always has it; treating a
-    // missing `events` as a no-op keeps those tests working without forcing
-    // every consumer's spec to grow a Subject for the events stream.
+    // Cancel a pending poll on any route change, or a poll started on page A can highlight a
+    // same-id element on page B. Our own navigations bump the token before `router.navigate()`,
+    // so the cancel is a no-op for them. `events?.` because many specs mock Router without it.
     this.router.events?.pipe(
       filter((event): event is NavigationStart => event instanceof NavigationStart),
       takeUntilDestroyed(this.destroyRef),
@@ -146,13 +122,9 @@ export class NavigateAndHighlightService {
   }
 
   /**
-   * Public cancellation entry. Bumps the navigation token and clears any
-   * pending poll timeout without starting new work — used by other services
-   * (e.g. UiSearchDirectivesService.requestHighlight) so a fresh selection
-   * can pre-empt an in-flight poll initiated elsewhere before scheduling its
-   * own. Does NOT tear down an already-painted highlight; the next
-   * `highlightResolved`/`waitForElement` call will do that via
-   * `cleanupPreviousHighlight`.
+   * Bumps the navigation token and clears a pending poll without starting new work, so another
+   * service (e.g. UiSearchDirectivesService) can pre-empt an in-flight poll. An already-painted
+   * highlight stays until the next `highlightResolved`/`waitForElement` cleans it up.
    */
   cancelPendingHighlight(): void {
     this.cancelPendingTimeout();
@@ -228,14 +200,9 @@ export class NavigateAndHighlightService {
     this.window.document.addEventListener(
       'keydown',
       (event: KeyboardEvent) => {
-        // Menu items rely on the browser's default Enter→click. Inside a
-        // menu, that default can fail to reach the focused row in some
-        // menu/keymanager states, so we hijack Enter at the capture phase
-        // for the focused item inside the same menu panel as the highlight
-        // target and click it explicitly. Outside of menus, the browser's
-        // native Enter handling on focusable elements is sufficient and we
-        // must NOT pre-empt it (would double-fire or stomp on bespoke
-        // Enter handlers on the host). Verified against @angular/cdk 21.x.
+        // Inside a menu, the browser's default Enter→click can miss the focused row in some key
+        // manager states, so Enter is captured and the focused item clicked explicitly. Outside menus
+        // the native handling must stay, or Enter would double-fire. Verified against @angular/cdk 21.x.
         if (event.key === 'Enter') {
           const targetMenuPanel = targetElement.closest(tnMenuPanelSelector);
           if (targetMenuPanel) {
@@ -260,29 +227,18 @@ export class NavigateAndHighlightService {
   }
 
   private focusTarget(target: HTMLElement): void {
-    // `tn-menu` renders its panel as a `<div class="tn-menu" cdkMenu>`, and CdkMenu
-    // owns a FocusKeyManager that tracks `_activeItem` independently of the actual
-    // focused DOM element. If we just focus `target` programmatically, the
-    // KeyManager's _activeItem stays as the menu's first item — so subsequent arrow
-    // keys / Enter act on the wrong row. Walk the KeyManager forward via synthetic
-    // ArrowDown events until its _activeItem matches our target (each ArrowDown
-    // advances _activeItem AND focuses the new item, so when the loop ends focus is
-    // on `target` AND the keymanager is in sync). The panel div is also the element
-    // carrying CdkMenu's keydown host listener, so it is the right dispatch target.
+    // CdkMenu's FocusKeyManager tracks `_activeItem` apart from DOM focus, so focusing `target`
+    // directly would leave arrows and Enter acting on the first item. Synthetic ArrowDowns on the
+    // panel (which holds CdkMenu's keydown listener) walk both focus and the manager to the target.
     // Verified against @angular/cdk 21.x.
     const menuPanel = target.closest<HTMLElement>(tnMenuPanelSelector);
     if (menuPanel) {
       const items = Array.from(menuPanel.querySelectorAll<HTMLElement>(`.${tnMenuItemClass}`));
       const targetIndex = items.indexOf(target);
       for (let i = 0; i < targetIndex; i++) {
-        // Angular CDK's FocusKeyManager still reads `event.keyCode` (deprecated
-        // but live in the lib). The KeyboardEvent constructor ignores keyCode,
-        // so we patch it after construction — otherwise the synthetic event is
-        // a no-op for the manager and _activeItem stays at the menu's first
-        // item, leaving the user's keyboard nav broken after the highlight.
-        // TODO: Revisit when @angular/cdk drops keyCode in favour of `key`
-        // (tracked >=22.x). Once CDK reads `event.key`, the keyCode/which
-        // patches below can be removed.
+        // CDK's FocusKeyManager still reads the deprecated `keyCode`, which the KeyboardEvent
+        // constructor ignores, so it's patched on afterwards or the manager ignores the event.
+        // TODO: drop the keyCode/which patches once @angular/cdk reads `event.key` (>=22.x).
         const event = new KeyboardEvent('keydown', {
           key: 'ArrowDown',
           bubbles: true,

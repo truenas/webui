@@ -45,31 +45,11 @@ interface WaitingCall {
 }
 
 /**
- * Holds requests back so that no more than `limit` are awaiting an answer on
- * `connection` at once. The rest wait their turn, in the order they were sent.
- *
- * Done on the connection's own `send` because that is where requests meet:
- * `ApiService` and the client's own verbs and authenticator all write
- * through it. A limit kept by any one of them counts only its own calls, and
- * the tab's total is what middleware refuses.
- *
- * Only requests count: a frame with both an `id` and a `method`. A request is
- * finished when a frame with its id comes back, whether or not its caller is
- * still listening, since the appliance is busy with it either way.
- *
- * A call still waiting when the socket is lost is kept, and sent once
- * `authenticated$` is next `true`: the new socket starts signed out, and
- * middleware would refuse it there with `ENOTAUTHENTICATED`, which ends the
- * app's session. Its caller is still listening, since the answer is matched by
- * id on whichever socket is current, so dropping it left the caller waiting
- * for good.
- *
- * They are only kept for the session they were made in. A sign-in other than
- * the token reconnect ends them, since the tab is on the sign-in page by then
- * and whoever signs in may not be the user who made them. Each is answered here
- * with the refusal middleware would have given it, `ENOTAUTHENTICATED`, read on
- * `messages()` as if the appliance had sent it, so its caller hears that the
- * session it was made in has ended instead of waiting for good.
+ * Keeps at most `limit` requests awaiting an answer on `connection`; the rest wait in order. It wraps
+ * `send` because every caller writes through it, and middleware limits the tab's total. A request is
+ * done when a frame with its id returns. Calls waiting when the socket drops are sent once
+ * `authenticated$` is next true, since the new socket starts signed out; a sign-in other than the
+ * token reconnect answers them with `ENOTAUTHENTICATED` instead, as the session they belong to is over.
  */
 export function limitConcurrentCalls(
   connection: Connection,

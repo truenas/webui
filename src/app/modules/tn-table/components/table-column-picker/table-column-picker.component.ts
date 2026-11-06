@@ -13,25 +13,11 @@ import { preferredColumnsUpdated } from 'app/store/preferences/preferences.actio
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
 
 /**
- * tn-select (multiselect) based column picker — the one control a tn-table list
- * uses to let users choose which columns are visible. `columns` in,
- * `columnsChange` out, `columnPreferencesKey` for persistence; a list pairs it
- * with the `toDisplayedColumns` bridge to feed `tn-table`'s `displayedColumns`.
- *
- * Only columns with a `title` are user-toggleable (an actions column has none);
- * at least one titled column always stays visible. Visibility is persisted per
- * `columnPreferencesKey` via `preferredColumnsUpdated`, keyed by column title so
- * preferences saved by earlier releases keep loading. A title is a translated
- * string, so a saved preference can stop resolving (locale switch, renamed
- * column); such a preference is treated as stale and the defaults are restored.
- *
- * A key therefore owns exactly one set of column titles: two pickers over
- * different columns must not share one (the store keeps a single entry per key,
- * so each would read the other's titles as stale and reset to defaults).
- *
- * The input columns are never mutated: `columnsChange` emits copies with
- * updated `hidden` flags, and the host is expected to feed them back into
- * `[columns]` (the usual `columns` signal + `set` pattern).
+ * The tn-select picker for which columns a tn-table list shows; pair it with `toDisplayedColumns`.
+ * Only titled columns toggle, and one always stays visible. Visibility persists per
+ * `columnPreferencesKey`, keyed by title; a translated title can stop matching, which restores the
+ * defaults, so two pickers over different columns must not share a key. Inputs aren't mutated:
+ * `columnsChange` emits copies for the host to feed back into `[columns]`.
  */
 @Component({
   selector: 'ix-table-column-picker',

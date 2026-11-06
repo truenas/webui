@@ -12,18 +12,10 @@ export const s3UserDirectoryOptions: DirectoryQueryOptions = {
 };
 
 /**
- * What "Add New" on an S3 user picker opens the user form as.
- *
- * An account created here exists to own a bucket or sign a key rather than to
- * log in anywhere, so it starts with no password and without SMB access. Both
- * are starting points, not rules — nothing here is locked, and an admin who
- * does want an SMB account for the same person can just tick it, which turns
- * the password back on, because SMB authenticates with one.
- *
- * SMB has to be the one that starts off, though: the form holds "Disable
- * Password" off and untouchable for as long as SMB access is on, so the two
- * only land the way this asks for them in that order. The form applies them
- * in it; see {@link UserFormPreset}.
+ * The preset "Add New" on an S3 user picker opens the user form with. Such an account owns a bucket
+ * or signs a key rather than logging in, so it starts without a password or SMB access; neither is
+ * locked. SMB must be turned off first, since the form holds "Disable Password" off while SMB is on;
+ * the form applies them in that order (see {@link UserFormPreset}).
  */
 export const s3UserFormPreset: UserFormPreset = {
   values: { smb: false, password_disabled: true },

@@ -1,13 +1,5 @@
 /**
- * Prefer injecting window token instead of using window directly.
- * This will make mocking easier when writing tests.
- *
- * @example
- * ```
- * constructor(
- *   @Inject(WINDOW) private window: Window
- * )
- * ```
+ * Inject `WINDOW` instead of using `window` directly, so tests can mock it.
  */
 import { InjectionToken } from '@angular/core';
 

@@ -24,15 +24,10 @@ export const jobErrorReplyGraceMs = 2_000;
 const heldErrorReplies = 20;
 
 /**
- * Attaches middleware's error reply to a `FailedJobError` as `apiErrorDetails`.
- *
- * Middleware answers a job's request when the job finishes (the client opts out of
- * `legacy_jobs`), and a failed job's answer is an error frame carrying the errname, trace and
- * extra that the job's own `error` and `exc_info` summarise. The client stops listening for that
- * answer once the job has started, so this listens instead: every error frame from the moment the
- * job is sent is held, and a failure is matched to its frame by the job's `message_ids`.
- *
- * Apply it after `observeJob`, which is what turns a failed job into `FailedJobError`.
+ * Attaches middleware's error reply to a `FailedJobError` as `apiErrorDetails`. A failed job's request
+ * is answered with an error frame (errname, trace, extra) when it finishes, but the client stops
+ * listening once the job starts, so error frames are held here and matched by the job's `message_ids`.
+ * Apply after `observeJob`.
  */
 export function attachJobErrorReply<T>(
   messages$: Observable<Message>,

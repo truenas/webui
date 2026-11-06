@@ -149,13 +149,9 @@ export class ServiceActionsMenuService {
   }
 
   /**
-   * Compose the card-header menu with the `Config Service` item replaced by a
-   * card-local action (so the card can open the config form inside its own
-   * `tn-side-panel` viewChild rather than the global slide-in). The service
-   * on/off toggle is intentionally NOT included here — cards project it as a
-   * `tn-slide-toggle` header action (see {@link isServiceRunning} /
-   * {@link toggleServiceState}). The remaining items (sessions, logs) are sourced
-   * from the shared builders so test IDs and labels stay identical across cards.
+   * The card-header menu, with `Config Service` swapped for a card-local action that opens the form in
+   * the card's own `tn-side-panel`. The on/off toggle is a separate header action (see
+   * {@link isServiceRunning}); the rest come from the shared builders so ids and labels match across cards.
    */
   buildServiceCardMenu(
     service: Service | undefined,
@@ -180,13 +176,9 @@ export class ServiceActionsMenuService {
   }
 
   /**
-   * Card-header service on/off helpers. Each card projects the toggle as a
-   * `tn-slide-toggle` inside a `<ng-template tnCardHeaderActions>` wrapped in
-   * `*ixRequiresRoles`, so read-only admins see it disabled with the standard
-   * missing-permissions tooltip rather than the control vanishing. These helpers
-   * keep the checked state, test ID, and toggle handler identical across all five
-   * service cards (the label is empty — the adjacent colored status badge is the
-   * visual indicator — and `tn-slide-toggle` still announces an accessible name).
+   * Shared state, test ID and handler for the service toggle each card projects in its header under
+   * `*ixRequiresRoles`, so read-only admins see it disabled with a tooltip. Its label is empty because
+   * the status badge beside it is the visual cue; `tn-slide-toggle` still has an accessible name.
    */
   isServiceRunning(service: Service): boolean {
     return service.state === ServiceStatus.Running;

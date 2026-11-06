@@ -44,18 +44,10 @@ const typeOptions: Option[] = [
 ];
 
 /**
- * Renders the namespace controls into a form group its host owns — it neither builds the group nor
- * submits it. Both side-panel wrappers (one saving through `<ix-form>`, one collecting changes in
- * memory for the Add Subsystem wizard) build the group with `createNamespaceForm` and drive
- * submission themselves.
- *
- * The group arrives as the {@link group} input and is bound to a `[formGroup]` in this component's
- * own template, rather than inherited from the host's `ControlContainer` through projection — which
- * would put an invisible contract on every host (re-provide the container here, and keep a
- * `FormGroupDirective` on the host element).
- *
- * Renders no `<form>` element of its own, so it composes inside either host without nesting a
- * second form.
+ * Renders the namespace controls into a group its host builds with `createNamespaceForm` and submits
+ * itself. The group comes in as the {@link group} input rather than through the host's
+ * `ControlContainer`, which would impose an invisible contract on every host. It renders no `<form>`,
+ * so it nests in either host.
  */
 @Component({
   selector: 'ix-base-namespace-form',

@@ -22,13 +22,9 @@ export interface SidePanelHostCloseable<R = boolean> {
 }
 
 /**
- * Adds the Save-footer surface (validity gate + submission) to {@link SidePanelHostCloseable}, for
- * forms the panel renders its own footer Save for. Two shapes satisfy it — the self-contained
- * {@link SidePanelForm} (where `canSubmit` is a `Signal`) and the `<ix-form>`-delegating
- * `IxFormHostForm` (where `canSubmit` is a method); `canSubmit` is typed as a plain callable so
- * either fits. Forms declare this at their own definition (via the base they extend), so a dropped
- * or misnamed `canSubmit`/`submit` fails there — restoring the compile-time check the old
- * `as unknown as Type<…>` casts defeated.
+ * Adds the Save-footer surface (validity gate + submission) to {@link SidePanelHostCloseable}.
+ * `canSubmit` is a plain callable so both {@link SidePanelForm} (a `Signal`) and `IxFormHostForm`
+ * (a method) fit. Forms declare it via their base, so a missing or misnamed member fails to compile.
  */
 export interface SidePanelHostForm<R = boolean> extends SidePanelHostCloseable<R> {
   /** Whether the form may currently be submitted (drives the host-owned Save button). */
@@ -38,22 +34,11 @@ export interface SidePanelHostForm<R = boolean> extends SidePanelHostCloseable<R
 }
 
 /**
- * Base class for any form hosted in a `<tn-side-panel>` (via the {@link closed} output and
- * host-driven `submit()` / `hasUnsavedChanges()` calls).
- *
- * Centralizes the unsaved-changes confirmation and close plumbing that is otherwise
- * duplicated across every side-panel form. Subclasses provide the {@link form} and
- * {@link onSubmit} implementation, and call {@link trackCanSubmit} to expose `canSubmit`.
- *
- * The type parameter `R` is the success payload handed back to the opener: it defaults to
- * `boolean` (a plain "saved" signal, all most forms need). Forms that create a record the
- * caller needs — e.g. a picker's "Add New" — parameterize it (`SidePanelForm<User>`) and
- * emit the record through {@link closed}; `FormSidePanelService.open` then resolves with it.
- *
- * Note: forms built on the clean `<ix-form>` renderer (`IxFormRendererComponent`) already expose
- * `isBusy`/`isSubmitting` by delegating to its separate loading/submitting signals. The
- * {@link submitTriggered} latch below exists only for hand-rolled forms whose single loading signal
- * conflates initial data load and submit, so a load can't be told apart from a save without it.
+ * Base class for forms hosted in a `<tn-side-panel>`: owns the unsaved-changes confirmation and close
+ * plumbing. Subclasses provide {@link form} and {@link onSubmit} and call {@link trackCanSubmit}.
+ * `R` is the success payload, `boolean` by default; a form creating a record the opener needs emits
+ * it via {@link closed}. The {@link submitTriggered} latch is for hand-rolled forms whose one loading
+ * signal covers both load and submit; `<ix-form>`-based forms expose separate signals already.
  */
 @Directive()
 export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R> {
@@ -94,27 +79,18 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
   private readonly submitTriggered = signal(false);
 
   /**
-   * Whether the form is busy — a `<tn-side-panel>` host reads this to show its progress bar and to
-   * keep Save disabled. In side-panel mode the inner `<ix-form>` renders no loader (its chrome is
-   * SlideIn-only), so without this a save shows no progress feedback. Defaults to the loading signal
-   * handed to {@link trackCanSubmit} — typically a submit-in-flight flag, though for forms whose
-   * loading signal also covers initial data load this will read busy during that load too. Forms
-   * that build `canSubmit` without `trackCanSubmit` should `override` this to return their own
-   * loading signal. The progress bar during a load is harmless; the "Saving…" label is driven by
-   * {@link isSubmitting} (not this) so a load never mislabels Save as saving.
+   * Drives the host's progress bar and keeps Save disabled; the inner `<ix-form>` renders no loader in
+   * side-panel mode. Defaults to the signal given to {@link trackCanSubmit}, which may also cover the
+   * initial load; forms that skip `trackCanSubmit` should override it. "Saving…" follows {@link isSubmitting}.
    */
   isBusy(): boolean {
     return this.submitLoading();
   }
 
   /**
-   * Whether a save is actually in flight — distinct from {@link isBusy}, which for some forms also
-   * covers an initial data load. The `<tn-side-panel>` host reads this (not `isBusy`) to switch Save
-   * to "Saving…", so a form merely loading its initial config doesn't show a misleading "Saving…".
-   * True only while busy work that {@link submit} kicked off is still running, because
-   * {@link submitTriggered} only latches on that work's rising edge and clears on its falling edge
-   * (see constructor); so an initial load (before any submit) reads false, and so does a later
-   * non-submit busy toggle.
+   * Whether a save is in flight, unlike {@link isBusy}, which can also cover the initial load. The host
+   * reads this to show "Saving…". {@link submitTriggered} latches only on busy work that
+   * {@link submit} started, so a load before any submit, or a later non-submit busy toggle, reads false.
    */
   readonly isSubmitting = computed(() => this.submitTriggered() && this.isBusy());
 
@@ -180,14 +156,9 @@ export abstract class SidePanelForm<R = boolean> implements SidePanelHostForm<R>
   }
 
   /**
-   * Builds the `canSubmit` signal from the form's validity and the given loading signal.
-   * Call from a field initializer after {@link form} is assigned, e.g.
-   * `protected readonly canSubmit = this.trackCanSubmit(this.isFormLoading);`
-   *
-   * Blocks only on `INVALID`, not `PENDING`: an async validator briefly parks the form at
-   * `PENDING`, and gating on strict `VALID` would disable Save through that window. Kept in
-   * lock-step with {@link IxFormComponent.canSubmit} so both hosting bases enable Save under
-   * the same condition.
+   * Builds `canSubmit` from validity and `isLoading`; call from a field initializer after {@link form}.
+   * Blocks only on `INVALID`, not `PENDING`, so an async validator doesn't flicker Save off. Keep it
+   * in step with {@link IxFormComponent.canSubmit} so both hosting bases enable Save alike.
    */
   protected trackCanSubmit(isLoading: Signal<boolean>): Signal<boolean> {
     // Surface the same loading signal as isBusy so the side-panel host can show its loader.

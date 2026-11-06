@@ -53,21 +53,10 @@ export function createNamespaceForm(formBuilder: NonNullableFormBuilder): Namesp
 }
 
 /**
- * Puts `filename` / `filesize` in step with the selected device type: validated and editable on the
- * New File branch (the only branch that renders them), inert everywhere else.
- *
- * Owning the validators here — rather than declaring them once in {@link createNamespaceForm} — is
- * what makes the group self-consistent: no state has a control carrying `required` that no visible
- * input can satisfy, while the branch that does render them still gets the `*` that `tn-form-field`
- * infers from the validator.
- *
- * `filesize` carries a floor on top of `required`, because `required` only rejects null/empty — it
- * lets a typed `0` through, and a zero-byte file is not a namespace the API can serve.
- *
- * Leaving the branch also CLEARS them, mirroring the `device_path` reset the caller does on every
- * device-type change: {@link toNamespaceChanges} reads `getRawValue()`, so without the reset a
- * disabled leftover stays in the payload and New File → Zvol → New File silently resurrects values
- * the user last saw two branches ago.
+ * Validates and enables `filename` / `filesize` only on the New File branch, the only one that renders
+ * them, so no state has a `required` control with no visible input. `filesize` also has a floor, since
+ * `required` lets `0` through. Leaving the branch clears them: {@link toNamespaceChanges} reads
+ * `getRawValue()`, so stale values would otherwise come back after New File → Zvol → New File.
  */
 export function syncNewFileControls(form: NamespaceFormGroup, type: FormNamespaceType): void {
   const { filename, filesize } = form.controls;

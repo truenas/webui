@@ -566,16 +566,9 @@ export class AppSchemaService {
   }
 
   /**
-   * Determines which items should be populated in a list control.
-   * Handles three scenarios:
-   * 1. Edit mode with existing config data - populates items from the provided config object
-   * 2. Create mode with schema defaults (primitives only) - populates from schema.default array
-   * 3. Nested lists where config is provided
-   * but path doesn't resolve to list data - populates from schema.default array
-   *
-   * Object defaults (e.g., [{key: 'value'}]) are intentionally skipped here because
-   * the list control handles them directly through user interaction (clicking "Add" button).
-   * Only primitive defaults (e.g., ['string1', 'string2']) are populated automatically.
+   * The items to populate a list control with: the config's items when editing, else the schema's
+   * primitive defaults (also when a nested path doesn't resolve to list data). Object defaults are
+   * skipped; the list control adds those when the user clicks "Add".
    */
   private getItemsToPopulate(
     schema: ChartSchemaNodeConf,

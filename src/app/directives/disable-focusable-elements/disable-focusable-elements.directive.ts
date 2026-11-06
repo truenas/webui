@@ -54,22 +54,10 @@ export class DisableFocusableElementsDirective implements OnChanges {
   }
 
   /**
-   * Re-sweeps whatever the region renders after the first pass.
-   *
-   * The sweep below is a one-off walk of the DOM as it stands, so a control revealed later — a
-   * section expanded, a field a sibling's value brings into view — would keep its place in the tab
-   * order inside a region the user is not meant to operate.
-   *
-   * Only while disabled, and childList only, both on purpose. The enabled direction writes
-   * `tabindex="0"` and removes `disabled`, so running it on every DOM change would strip the
-   * attribute off controls something else disabled for its own reasons — `getFocusableElements`
-   * skips `button[disabled]`, but not a disabled input, textarea or select. Attribute mutations
-   * are not watched because the sweep writes attributes itself, which would set it running
-   * against its own output.
-   *
-   * The callback filters to batches that actually added an element. Every existing caller gets
-   * this observer too — `*ixHasAccess` binds a constant `true` — and a batch that only removed
-   * nodes or changed text has nothing new to take out of the tab order.
+   * Re-sweeps content rendered after the first pass, so a control revealed later doesn't keep its
+   * tab stop in a disabled region. Only while disabled: the enabled sweep strips `disabled`, which
+   * would undo other code's disabling. Only childList, because the sweep writes attributes itself.
+   * Batches that added no element are skipped, since `*ixHasAccess` gives every caller this observer.
    */
   private watchForLateContent(): void {
     if (typeof MutationObserver === 'undefined') {
