@@ -16,13 +16,10 @@ const saveTimeoutMs = 60_000;
 export const sshKeypairCardPageSize = 5;
 
 /**
- * Presses View All on a freshly loaded card when the appliance holds more
- * keypairs than it lists, so every row is in the DOM.
+ * Presses View All on a freshly loaded card when the appliance holds more keypairs than it lists.
  *
- * The caller passes the count, read over the API, because whether View All
- * renders at all depends on it, and probing the page for the button would race
- * the card's load. Fresh, because once the card has reloaded after a save, View
- * All sizes the list by whatever count it held at the click — see the generate
+ * The caller passes the count, read over the API, since probing for the button would race the card's load.
+ * Fresh, because after a save View All sizes the list by the count it held at the click; see the generate
  * test for why that one does not expand.
  */
 async function showAllSshKeypairs(page: Page, total: number): Promise<void> {
@@ -75,14 +72,11 @@ export async function saveSshKeypairForm(page: Page): Promise<void> {
 }
 
 /**
- * Deletes a keypair from its row menu, starting from the sidebar, and waits for
- * its row to go. `total` is how many keypairs the appliance holds, the target
- * included — see {@link showAllSshKeypairs}.
+ * Deletes a keypair from its row menu, starting from the sidebar, and waits for its row to go. `total` is how
+ * many keypairs the appliance holds, the target included; see {@link showAllSshKeypairs}.
  *
- * The card asks `keychaincredential.used_by` first and then raises webui's shared
- * confirm without `hideCheckbox`, so Delete stays **disabled** until the box is
- * ticked — asserted on the way, so a dialog that lost its gate fails here rather
- * than passing a test that never needed it.
+ * After `keychaincredential.used_by`, the confirm has no `hideCheckbox`, so Delete stays **disabled** until
+ * the box is ticked; asserted, so a dialog that lost its gate fails here.
  */
 export async function deleteSshKeypair(page: Page, name: string, total: number): Promise<void> {
   await goToBackupCredentials(page);

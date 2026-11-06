@@ -39,13 +39,9 @@ const httpProbeTimeoutMs = 10_000;
 /**
  * Signs in through the form and waits for the admin shell.
  *
- * Waits on the shell rather than a URL change: the redirect happens before the
- * app is usable, so asserting on it would let the next action race the render.
- *
- * Races the shell against the middleware error dialog. Without that, a failed
- * login spends the full timeout and then reports `ix-admin-layout` missing —
- * true, but useless, while a dialog naming the real cause sits on screen. The
- * rate limit (see below) is the common case and reads as a total non-sequitur.
+ * Waits on the shell, not a URL change: the redirect happens before the app is usable. Races the shell
+ * against the middleware error dialog, so a failed login (usually the rate limit, see below) reports the
+ * dialog's cause instead of spending the full timeout and saying `ix-admin-layout` is missing.
  */
 export async function signIn(page: Page, username: string, password: string): Promise<void> {
   await page.goto('./signin');
@@ -56,12 +52,9 @@ export async function signIn(page: Page, username: string, password: string): Pr
 /**
  * Fills the sign-in form already on screen, and submits it.
  *
- * Split from {@link signIn} for journeys that must not navigate: a visitor the
- * auth guard bounced here is already on the page, and the deep link it stored is
- * the thing under test; and a sign-in straight after {@link signOut}, whose form
- * is already on screen, where loading the page again would spend its startup
- * calls from the rate limit a second time. Waits for the field to be *enabled* — the
- * form is disabled until the websocket connects (`canLogin$` in signin.store).
+ * For journeys that must not navigate: a visitor the auth guard bounced here (the stored deep link is under
+ * test), or a sign-in straight after {@link signOut}, where reloading would spend startup calls from the rate
+ * limit again. Waits for the field to be *enabled*: the form is disabled until the websocket connects.
  */
 export async function submitSignIn(page: Page, username: string, password: string): Promise<void> {
   const usernameField = page.locator(signinLocators.username);
@@ -177,15 +170,10 @@ export async function expectSignInRefused(page: Page, message: string | RegExp):
 /**
  * Waits for a session that a one-time password opened, and signs it out again.
  *
- * Such a session can land in either of two places, and which one is middleware's
- * call rather than the app's: the admin shell, or — when middleware marks the
- * account `PASSWORD_CHANGE_REQUIRED` — the full-screen "Password Change
- * Required" dialog the admin layout's guard raises *instead* of the shell, until
- * a new password is set. Either one means the password was accepted; the sign-in
- * form refusing it is the only failure. The guard holds the navigation while its
- * dialog is open, so the two are never on screen together.
- *
- * Signs out from whichever it was, and waits for the sign-in form either way.
+ * Middleware decides where it lands: the admin shell, or, for a `PASSWORD_CHANGE_REQUIRED` account, the
+ * full-screen "Password Change Required" dialog the layout's guard raises instead of the shell. Either means
+ * the password was accepted; only the sign-in form refusing it is a failure. Signs out from whichever it
+ * was and waits for the sign-in form.
  */
 export async function expectOneTimePasswordSession(page: Page, username: string): Promise<void> {
   const shell = page.locator(adminLayout);

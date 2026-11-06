@@ -53,18 +53,12 @@ export interface CreateBucketOptions {
 }
 
 /**
- * Creates a bucket from the Shares dashboard — with object lock unless `objectLock` says
- * otherwise — and starts the S3 service when the app offers to.
+ * Creates a bucket from the Shares dashboard, with object lock unless `objectLock` says otherwise, and
+ * starts the S3 service when the app offers to.
  *
- * Object lock is the basic-mode option the form leads with, because backup
- * targets are what S3 on a NAS is mostly for. Checking it turns versioning on
- * behind the basic-mode form and offers a default retention rule, which starts
- * at none, as middleware's does; this picks Compliance and a period. The API
- * check in the test is what confirms versioning, since it is not visible in
- * basic mode.
- *
- * Starting the service matters for the same reason as SMB: a bucket on a
- * stopped service is configuration that serves nothing.
+ * Object lock turns versioning on behind the basic-mode form (the test's API check confirms it) and offers a
+ * retention rule starting at none; this picks Compliance and a period. Starting the service matters as for
+ * SMB: a bucket on a stopped service serves nothing.
  */
 export async function createS3Bucket(
   page: Page,
@@ -239,15 +233,10 @@ export interface ShownS3Credentials {
 }
 
 /**
- * Creates a non-expiring access key under Credentials and reads the credential
- * pair off the one-time dialog.
+ * Creates a non-expiring access key under Credentials and reads the credential pair off the one-time dialog.
  *
- * Non-expiring is opt-in: the form asks for a date by default. Ticking the box
- * is checked by the date input disappearing, so a default that flips would
- * fail here rather than quietly producing a key with a date nobody chose.
- *
- * The secret is shown exactly once, which is why it is read here rather than
- * looked up afterwards — nothing on the appliance will show it again.
+ * Non-expiring is opt-in; ticking it is checked by the date input disappearing, so a flipped default fails
+ * here. The secret is shown exactly once, which is why it is read here.
  */
 export async function createS3AccessKey(page: Page, key: NewS3AccessKey): Promise<ShownS3Credentials> {
   await fillAccessKeyForm(page, key);
@@ -392,13 +381,9 @@ export async function showAdvancedBucketOptions(page: Page): Promise<void> {
 /**
  * Adds one grant to the open bucket editor, which must be in Advanced Options.
  *
- * Row controls fall back to their control names and so repeat per row — every
- * interaction here targets the last row, which is the one just added. That is
- * only true once the row exists: the list renders the new row a tick after
- * Add pushes it, and a `.last()` resolved in between lands on the previous
- * row (CI run 34267037987 did exactly that — switched the first grant to Group
- * and typed the group name into the new row's User field). So Add is followed
- * by waiting for the row count to grow.
+ * Row controls repeat per row, so everything targets the last row. The new row renders a tick after Add, and
+ * a `.last()` resolved before that hits the previous row (CI run 34267037987), so Add is followed by waiting
+ * for the row count to grow.
  */
 export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<void> {
   const { grants } = s3BucketLocators.form;
@@ -408,14 +393,9 @@ export async function addBucketGrant(page: Page, grant: NewS3Grant): Promise<voi
   await page.locator(grants.add).click();
   await expect(rows).toHaveCount(rowsBefore + 1);
 
-  // A new row starts as a User grant. Choosing Group swaps the picker for a
-  // different component (`@switch` on the principal type in the grants list),
-  // and the swap lands a moment after the option click — text typed into the
-  // picker in between goes into the old one, which is then destroyed (CI runs
-  // 34267037987 and 34268513306 showed exactly that: an empty Group field and
-  // no option to click). So the old picker is held and the flow waits for it
-  // to leave the DOM before typing. For a User grant there is no swap to wait
-  // for, and waiting would time out — hence the branch.
+  // Choosing Group swaps the picker component (`@switch` on principal type) a moment after the click, and text
+  // typed in between goes into the old, then-destroyed picker (CI runs 34267037987, 34268513306). So the old
+  // picker is held and awaited out of the DOM first. User grants have no swap, and waiting would time out.
   if (grant.principalType !== 'USER') {
     const previousPicker = await page.locator(grants.principal).last().elementHandle();
     await rows.last().click();
@@ -468,14 +448,12 @@ export interface S3VersioningOptions {
 }
 
 /**
- * Turns versioning on in the open bucket editor (Advanced Options), then fills
- * the ZFS snapshot versions and the ETag choice from "Other Options".
+ * Turns versioning on in the open bucket editor (Advanced Options), then fills the ZFS snapshot versions and
+ * the ETag choice from "Other Options".
  *
- * The snapshot controls live in their own section and render whatever the
- * versioning state (NAS-143800), so their visibility says only that Advanced
- * Options is open. Each pattern is typed and committed with Enter; the chip
- * input accepts free text (`allowCustomValue`). The listing limit renders once
- * the first pattern is committed.
+ * The snapshot controls render whatever the versioning state (NAS-143800), so their visibility says only that
+ * Advanced Options is open. Patterns are committed with Enter (`allowCustomValue`); the listing limit renders
+ * once the first is committed.
  */
 export async function setBucketVersioningOptions(page: Page, options: S3VersioningOptions): Promise<void> {
   const { form } = s3BucketLocators;
@@ -707,19 +685,12 @@ export interface S3ServiceSettings {
 }
 
 /**
- * Configures the S3 service from the dashboard card's header menu: one
- * listener, the server count, the region and the log level.
+ * Configures the S3 service from the card's header menu: one listener, server count, region and log level.
  *
- * The certificate is left on "Use UI certificate" deliberately — that is the
- * default a TLS listener is meant to work with, and it is the choice that has
- * no picker option id of its own (its value is `null`).
- *
- * Opening is not enough to type into it — see `openS3ServiceConfig` for what
- * readiness costs here. The listener row's controls fall back to their control
- * names and so would match every row; the
- * fixture clears the listeners beforehand, and this still scopes to the last
- * row — the one just added — so a leftover row breaks the assertion, not the
- * locator.
+ * The certificate is left on "Use UI certificate": the default a TLS listener should work with, and the
+ * choice with no picker option id (its value is `null`). See `openS3ServiceConfig` for readiness. Listener
+ * row controls match every row; the fixture clears listeners and this scopes to the last row, so a leftover
+ * row breaks the assertion, not the locator.
  */
 export async function configureS3Service(page: Page, serviceId: number, settings: S3ServiceSettings): Promise<void> {
   await openS3ServiceConfig(page, serviceId);
