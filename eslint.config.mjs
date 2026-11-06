@@ -144,6 +144,7 @@ const commentCappedPaths = [
   'src/app/pages/audit',
   'src/app/pages/dashboard',
   'src/app/pages/data-protection',
+  'src/app/pages/datasets',
   'src/app/pages/directory-service',
   'src/app/pages/jobs',
   'src/app/pages/reports-dashboard',

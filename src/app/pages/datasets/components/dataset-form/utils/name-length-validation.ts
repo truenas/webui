@@ -10,14 +10,9 @@ export function datasetNameTooLong(parentPath: string, translate: TranslateServi
       return null;
     }
 
-    // What the name may still spend of the `<parent>/<name>` budget: the parent path and
-    // the separator are already gone, and the whole thing has to stay under maxDatasetPath
-    // (the same `>=` boundary the two other path-length checks use).
-    //
-    // This number is quoted back to the user in the maxlength message, so it has to be the
-    // limit that is actually enforced. Reporting `maxDatasetPath - parentPath.length`
-    // promised two characters more than the check allowed: with a 198-character parent the
-    // field said "no more than 2" and then rejected a one-character name.
+    // The name's share of the `<parent>/<name>` budget after the parent and separator, under the same
+    // `>=` boundary as the other path checks. It's quoted in the maxlength message, so it must match
+    // what's enforced (`maxDatasetPath - parentPath.length` overstated it by two).
     const maxNameLength = Math.max(0, maxDatasetPath - parentPath.length - 2);
 
     if (control.value.length <= maxNameLength) {
@@ -25,14 +20,8 @@ export function datasetNameTooLong(parentPath: string, translate: TranslateServi
     }
 
     if (maxNameLength === 0) {
-      // "no more than 0" is not a length anyone can aim for: the parent path has spent the
-      // whole budget, and nothing will fit under it. Say that instead — a custom `message`
-      // takes precedence over the generic maxlength wording in both error renderers.
-      //
-      // The limit quoted here is the longest path that passes, which is one less than
-      // `maxDatasetPath`: the check rejects at `>=`, so `<parent>/<name>` may reach 199
-      // characters, not 200. Don't claim the parent "fills" that limit either — this
-      // branch fires from 198 characters up, before the parent has reached it.
+      // With no budget left, say so instead of "no more than 0"; a custom `message` overrides the
+      // generic wording. The quoted limit is `maxDatasetPath - 1`, the longest path that passes `>=`.
       return {
         [DefaultValidationError.MaxLength]: {
           requiredLength: 0,

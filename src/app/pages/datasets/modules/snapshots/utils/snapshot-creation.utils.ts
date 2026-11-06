@@ -23,17 +23,9 @@ export function getFiniteNumber(value: unknown): number | undefined {
 }
 
 /**
- * Middleware returns `creation.parsed` as unix-seconds; UI date pipes work in
- * milliseconds. The `typeof` guard defends against pre-rebase servers that
- * still return the legacy `{ $date }` object — those would format as "Invalid Date".
- * Anything other than a positive finite number triggers a warning so a
- * UI/middleware version mismatch (legacy object, stringified seconds, NaN)
- * surfaces in dev tools instead of silently showing nothing.
- *
- * The `parsed > 0` check also rejects `0` and any negative value, both of
- * which would render as a 1970-or-earlier date — exactly the symptom this
- * util was added to prevent. ZFS won't realistically report those, but
- * rejecting them closes the door on the original bug class.
+ * Converts middleware's unix-seconds `creation.parsed` to ms for the date pipes. Anything but a positive
+ * finite number (an older server's `{ $date }`, a string, 0) returns `undefined` with a dev warning,
+ * so a version mismatch surfaces instead of rendering a 1970 date or "Invalid Date".
  */
 export function getSnapshotCreationMs(snapshot: ZfsSnapshot | null | undefined): number | undefined {
   // `parsed` is typed as `number` (the current middleware contract), but a

@@ -260,14 +260,9 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
   }
 
   /**
-   * No `timeout(...)`: a timer here keeps the Angular zone unstable for the whole lookup (hanging
-   * harness-driven tests), and every settled outcome — success, error, or being superseded by
-   * `switchMap` — already clears the Save gate.
-   *
-   * @param reportFailure Whether a failure also raises an error modal. Only the explicit Retry does:
-   * the auto re-checks run on every dataset/recursive change, so with the endpoint down a user
-   * toggling Recursive a couple of times would collect a stack of identical modals on top of a form
-   * that already explains the failure inline and offers the retry.
+   * No `timeout(...)`: a timer would hang harness-driven tests, and every settled outcome already clears
+   * the Save gate. Only the explicit Retry passes `reportFailure`, so toggling Recursive with the endpoint
+   * down doesn't stack identical error modals over a form that already explains the failure.
    */
   private queryVmsInDataset(reportFailure: boolean): Observable<boolean> {
     return this.api
