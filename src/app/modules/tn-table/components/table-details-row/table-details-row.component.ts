@@ -62,13 +62,9 @@ export class TableDetailsRowComponent<T> {
   }
 
   /**
-   * Dev-mode guard for the one way this row goes wrong quietly: a column whose value is an object
-   * — a `Schedule`, a nested record — prints "[object Object]" here, while its own cell renders it
-   * through a pipe or a cell component the row cannot reach. Keyed on the printed text rather than
-   * `typeof`, so an array of strings (which prints readably, and prints the same in the cell) does
-   * not trip it. Reports rather than throws — the trade `guardSortValue` makes on the sort path —
-   * and at most once per column per rendered detail row: this component is instantiated per
-   * expansion, so expanding the same row again reports again.
+   * Dev-mode warning for a column whose value prints as "[object Object]" here while its cell renders
+   * it through a pipe or component. Checks the printed text, not `typeof`, so string arrays pass.
+   * Reports instead of throwing, once per column per expansion.
    */
   private reportUnprintable(column: TableColumn<T>, text: string): void {
     const title = column.title ?? column.columnName ?? String(column.propertyName);

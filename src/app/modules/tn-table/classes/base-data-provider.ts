@@ -33,15 +33,9 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   private readonly expandedRowValue = signal<T | null>(null);
 
   /**
-   * Backed by a signal so a consumer can derive from it — a `tn-table`
-   * `[activeRow]` that has to resolve the expanded row back to the reference
-   * actually rendered, say, which would otherwise be an O(n) `find()` on every
-   * change-detection pass. Reads and writes stay a plain property, as every
-   * existing call site (and `DataProvider`) expects.
-   *
-   * Because the write is now a signal write, it cannot happen inside a
-   * `computed` (NG0600) — assign it from an event handler, a subscription or an
-   * effect, which is where every caller already does.
+   * Signal-backed so consumers can derive from it, e.g. a `tn-table` `[activeRow]` that would otherwise
+   * run `find()` on every pass, while reads and writes stay a plain property. Being a signal write, it
+   * can't be assigned inside a `computed` (NG0600).
    */
   get expandedRow(): T | null {
     return this.expandedRowValue();
@@ -93,15 +87,9 @@ export class BaseDataProvider<T> implements DataProvider<T> {
   }
 
   /**
-   * Applies a filter and, by default, sends the user back to the first page — the right
-   * move when the QUERY changed, since the rows they were reading are no longer the ones
-   * the table holds.
-   *
-   * Pass `keepPage` when the same query is being re-run against refreshed rows, e.g. a
-   * background reload the user did not ask for. Resetting there reads as the table losing
-   * their place mid-task, which is what NAS-143108 reported. A page the refreshed total
-   * puts out of range is clamped back to the last page that has rows, so the user can
-   * never be stranded on an empty page whose pager the empty state has unmounted.
+   * Applies a filter and, by default, returns to the first page, since a changed query means new rows.
+   * Pass `keepPage` when re-running the same query on refreshed rows, so a background reload doesn't
+   * lose the user's place. A page now out of range clamps to the last page with rows.
    */
   setFilter(filter: TableFilter<T>, { keepPage = false }: { keepPage?: boolean } = {}): void {
     if (!keepPage) {

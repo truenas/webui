@@ -1,17 +1,9 @@
 import { TableColumn } from 'app/modules/tn-table/interfaces/table-column.interface';
 
 /**
- * Declares one `tn-table` column for {@link createTable}.
- *
- * ix-table had a builder per cell kind (`textColumn`, `yesNoColumn`, `stateButtonColumn`, …)
- * because the builder chose the component that drew the cell. `tn-table` draws every cell from
- * the template instead, so the kind carries no information any more and there is one factory.
- *
- * It is deliberately an identity function: inside `createTable<T>([…])` the array literal is
- * already contextually typed, so a bare object literal infers `T` for `propertyName`, `sortBy`
- * and `getValue` just as well. What it buys is a single named seam — every column in the app is
- * declared through one call, so a future column contract (a required field, a validation, a
- * default) has one place to grow and one shape to grep for.
+ * Declares one `tn-table` column for {@link createTable}. An identity function: `tn-table` draws cells
+ * from the template, so per-kind builders lost their purpose, and typing works without it. It gives
+ * every column one named seam where a future column contract can grow.
  */
 export function column<T>(config: TableColumn<T>): TableColumn<T> {
   return config;

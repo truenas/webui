@@ -17,16 +17,10 @@ import { TableFilter } from 'app/modules/tn-table/interfaces/table-filter.interf
 import { SortValue, TableSort } from 'app/modules/tn-table/interfaces/table-sort.interface';
 
 /**
- * Everything a `tn-table` list needs around the table itself: the column model it declares
- * ({@link createTable}), the adapters between a data provider and the table's inputs, row-tag
- * helpers for test ids, and the `tnTableListHost` that wires a whole list together.
- *
- * Row tags, however a table builds them (these helpers, `tnTableListHost.rowTag`, or by hand): use
- * fields that identify the row, never ones that change while it is on screen (job state, counters,
- * timestamps, the value a user edits). The tag is an e2e contract, and a tag that moves under a test
- * breaks every locator built against it. The exception is a tag kept verbatim from the legacy
- * `ix-table` because Release Engineering already selects on it (e.g. `cron-list`); such a tag says so
- * where it is declared.
+ * Helpers around `tn-table`: the column model ({@link createTable}), data-provider adapters, row-tag
+ * helpers and `tnTableListHost`. Build row tags from fields that identify the row, never ones that
+ * change on screen (job state, counters, edited values): the tag is an e2e contract. Tags kept
+ * verbatim from `ix-table` for Release Engineering (e.g. `cron-list`) say so where declared.
  */
 
 export function convertStringToId(inputString: string): string {
@@ -58,25 +52,10 @@ export function toUniqueRowTag(value: string): string {
 }
 
 /**
- * Wraps {@link toUniqueRowTag} in a per-row cache, for the template-side `[tnTestId]` of a
- * migrated tn-table.
- *
- * Every cell of every row calls its table's row-tag function on every change-detection pass, so
- * on a wide table that is (columns × rows) string rewrites per pass — and a list fed by a
- * websocket subscription runs a lot of passes. The tag is a pure function of the row, so cache
- * it against the row object; rows replaced by a reload drop out of the `WeakMap` on their own.
- *
- * The tables that call {@link toUniqueRowTag} directly are under the same pressure and can
- * graduate to this the moment it is worth measuring; they were left alone only because caching
- * against the row object assumes rows are replaced rather than mutated in place, which is worth
- * checking per data provider rather than in bulk.
- *
- * A list built on {@link tnTableListHost} has no reason to reach for this: its `rowTag` normalizes
- * through {@link toUniqueRowTag} just the same, and memoizes per row keyed on (rows, language)
- * rather than on the row object, so it also survives a row mutated in place. The two produce the
- * same tag, so a table may mix them.
- *
- * @param build the raw, un-kebab-ed tag for a row, e.g. ``(vm) => `virtual-machine-${vm.name}` ``.
+ * {@link toUniqueRowTag} cached per row object, for a tn-table's `[tnTestId]`: every cell recomputes
+ * its row tag on every change-detection pass. The cache assumes rows are replaced, not mutated in
+ * place. {@link tnTableListHost}'s `rowTag` memoizes on (rows, language) instead and gives the same tag.
+ * @param build the raw tag for a row, e.g. ``(vm) => `virtual-machine-${vm.name}` ``.
  */
 export function memoizedRowTag<T extends object>(build: (row: T) => string): (row: T) => string {
   const cache = new WeakMap<T, string>();
@@ -92,18 +71,10 @@ export function memoizedRowTag<T extends object>(build: (row: T) => string): (ro
 }
 
 /**
- * One raw row tag resolved the two ways a shares-dashboard card needs it.
- *
- * `uniqueRowTag` is the un-normalized form, and it is the contract: `[rowTestId]` and every shared
- * cell component (`ix-table-actions-cell`, `ix-table-toggle-cell`, `ix-tier-status`) emit it as it
- * is, so re-normalizing it would rename the row and action ids. `cellRowTag` is the lodash-kebabed
- * form, for the value cells whose ids were minted that way and cannot move — see
- * {@link normalizeTestIdString} for why the two kebabs disagree. It memoizes per row.
- *
- * Stated here rather than in each card so the pair cannot drift apart, and so a card declares the
- * raw tag once: four of them had the same three members and the same docblock copied verbatim.
- *
- * @param build the raw, un-kebab-ed tag for a row, e.g. ``(row) => `card-smb-share-${row.name}` ``.
+ * A shares-dashboard card's row tag both ways, declared once so they can't drift. `uniqueRowTag` is
+ * raw, which `[rowTestId]` and the shared cells emit as-is; `cellRowTag` is lodash-kebabed for value
+ * cells whose ids were minted that way (see {@link normalizeTestIdString}). Memoized per row.
+ * @param build the raw tag for a row, e.g. ``(row) => `card-smb-share-${row.name}` ``.
  */
 export function rowTagPair<T extends object>(build: (row: T) => string): {
   uniqueRowTag: (row: T) => string;
@@ -197,16 +168,9 @@ export function createTable<T>(columns: TableColumn<T>[]): TableColumn<T>[] {
 export type RowSortValue<T> = (row: T) => string | number | Date | null | undefined;
 
 /**
- * Narrows what an accessor returns into something lodash `sortBy` orders meaningfully:
- *
- * - a `Date` becomes its epoch — ordering the formatted string instead would sort by weekday name;
- * - a missing value becomes `''`, so rows without one group together rather than ordering
- *   arbitrarily against real values.
- *
- * Applied to every accessor this module hands over, so a column config can return the natural
- * value (`row.job?.time_finished?.$date`, a `Date` from a scheduler) without hand-writing a
- * `?? 0` / `+date` coercion at each site. Anything still unorderable after this is caught by
- * {@link guardSortValue}.
+ * Makes accessor output orderable by lodash `sortBy`: a `Date` becomes its epoch (a formatted string
+ * would sort by weekday), and a missing value becomes `''` so such rows group together. Applied to every
+ * accessor here, so columns can return natural values; {@link guardSortValue} catches the rest.
  */
 function normalizeSortValue<T>(accessor: RowSortValue<T>): (row: T) => SortValue {
   return (row: T) => {
@@ -226,16 +190,10 @@ function normalizeSortValue<T>(accessor: RowSortValue<T>): (row: T) => SortValue
  */
 export interface TnSortAccessors<T> {
   /**
-   * The column model the table already keeps for its picker. A column missing from it sorts by
-   * its raw value.
-   *
-   * Matched by `propertyName` across the whole model, hidden columns included, so the picker can
-   * bring one back with its accessor intact. Two columns sharing a `propertyName` both resolve to
-   * the first; give the loser a {@link sortAccessors} entry instead.
-   *
-   * A column here must resolve to something lodash can order — its `getValue` is typed `unknown`,
-   * and an array or object sorts meaninglessly. Give such a column an explicit `sortBy` (which
-   * wins over `getValue`); dev mode reports the column to the console either way.
+   * The picker's column model; a column missing from it sorts by its raw value. Matched by
+   * `propertyName` across hidden columns too, so a column brought back keeps its accessor; on a shared
+   * `propertyName` the first wins, so give the other a {@link sortAccessors} entry. A column whose
+   * `getValue` returns an array or object needs an explicit `sortBy`; dev mode reports it.
    */
   columns?: TableColumn<T>[];
 
@@ -315,17 +273,9 @@ function guardSortValue<T>(
 }
 
 /**
- * Bridges the ix-table column model driven by `<ix-table-column-picker>` to
- * the `displayedColumns` list a `tn-table` expects. The picker toggles each
- * column's `hidden` flag (and persists visibility via `columnPreferencesKey`);
- * this maps the still-visible columns, in declaration order, to the
- * `*tnColumnDef` names a tn-table renders. Shared so every column-selectable
- * tn-table migration bridges the two models identically.
- *
- * A column's tn-table name is its `propertyName`; a computed column must
- * declare an explicit `columnName`. Deriving one from `title` is not an option —
- * titles are translated, so the derived name would stop matching the template's
- * hard-coded `[tnColumnDef]` in every non-English locale.
+ * Maps the columns `<ix-table-column-picker>` left visible, in declaration order, to the `*tnColumnDef`
+ * names `tn-table`'s `displayedColumns` expects. The name is `propertyName`; a computed column must
+ * declare `columnName`, since a name derived from the translated `title` would break in other locales.
  */
 export function toDisplayedColumns<T>(columns: TableColumn<T>[]): string[] {
   return columns.filter((column) => !column.hidden).map(tnColumnName);
@@ -339,16 +289,9 @@ function tnColumnName<T>(column: TableColumn<T>): string {
 }
 
 /**
- * The accessor a data provider should sort a column by: its `sortBy`, else the value it renders.
- *
- * `getValue` wins over `propertyName` — the precedence `ix-table-head` applied to every column
- * before the migration. A column declaring both renders something the raw property doesn't say
- * (a crontab built from a `schedule` object, a credential's name pulled off a nested record, a
- * UI-only field the API never populates), so ordering by the property would sort by a value that
- * is nowhere on screen — or, when the property holds an object, by nothing meaningful at all.
- *
- * A column that means the opposite — a hidden sort key it deliberately orders by, e.g. Cloud Sync's
- * `*_sort_key` timestamps behind human-readable cells — says so with an explicit `sortBy`.
+ * The accessor to sort a column by: its `sortBy`, else `getValue`, so a column sorts by what it renders
+ * (a crontab built from a `schedule`, a name off a nested record), not by a raw property that may be an
+ * object. A column that deliberately sorts by a hidden key (Cloud Sync's `*_sort_key`) sets `sortBy`.
  */
 function columnSortBy<T>(column: TableColumn<T> | undefined): RowSortValue<T> | undefined {
   return (column?.sortBy ?? column?.getValue) as RowSortValue<T> | undefined;
@@ -403,16 +346,9 @@ export interface TableEmptyState {
 }
 
 /**
- * A tn-table's empty-state bindings, derived from its data provider. Must be
- * called from an injection context.
- *
- * {@link tnTableListHost} already exposes these as `list.empty`, which is how a
- * page-level list should reach them; this stays exported for a table that binds
- * the empty state without adopting the whole host (a card, a dialog).
- *
- * Both halves of the config survive: `title` goes to `[emptyMessage]` and `message` to
- * `[emptyDescription]`, which `@truenas/ui-components` 0.4.9 added — before it, the second
- * line ix-table rendered on the no-search-results state had nowhere to go.
+ * A tn-table's empty-state bindings from its data provider: `title` to `[emptyMessage]`, `message` to
+ * `[emptyDescription]`. Page lists get these as {@link tnTableListHost}'s `list.empty`; this is for a
+ * card or dialog that doesn't adopt the host. Call from an injection context.
  */
 export function dataProviderEmptyState<T>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,
@@ -514,15 +450,10 @@ export interface PickerColumnsConfig<T> {
 }
 
 /**
- * Builds the bindings a page-level `tn-table` list needs from its data provider,
- * so a migrated list declares only what is specific to it.
- *
- * Must be called from an injection context. Accepts the provider directly or as
- * a signal (e.g. an `input.required` provider).
- *
- * @example
- * protected readonly list = tnTableListHost(this.dataProvider, { columns: [...] });
- * protected readonly uniqueRowTag = this.list.rowTag((row) => 'rsync-task-' + row.path);
+ * Builds the bindings a page-level `tn-table` list needs from its data provider (or a signal of one),
+ * so a list declares only what is its own, e.g.
+ * `tnTableListHost(this.dataProvider, { columns: [...] }).rowTag((row) => 'rsync-task-' + row.path)`.
+ * Call from an injection context.
  */
 export function tnTableListHost<T extends object>(
   provider: BaseDataProvider<T> | Signal<BaseDataProvider<T>>,

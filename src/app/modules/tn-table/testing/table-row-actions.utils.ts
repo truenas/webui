@@ -3,17 +3,9 @@ import { ComponentFixture } from '@angular/core/testing';
 import { TnIconButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
 
 /**
- * Opens the "⋮" actions menu of a `tn-table` row and returns the open menu.
- *
- * `TableActionsCellComponent` collapses a row's actions behind a `dots-vertical`
- * icon button once there is more than one of them, and `tn-menu` renders into an
- * overlay rather than inside the fixture — so the menu has to be read from the
- * root loader, not the fixture loader.
- *
- * Scoped to `tn-table` because a page's own header often has a `dots-vertical`
- * menu of its own. `triggerIndex` counts menu triggers, not table rows — a row
- * left with a single visible action renders that action inline instead of behind
- * a menu, so the two only line up when every row has more than one action.
+ * Opens a `tn-table` row's "⋮" actions menu and returns it, read from the root loader because
+ * `tn-menu` renders in an overlay. `triggerIndex` counts menu triggers, not rows: a row with a single
+ * action renders it inline, without a menu.
  */
 export async function openRowActionsMenu(
   fixture: ComponentFixture<unknown>,

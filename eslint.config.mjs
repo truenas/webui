@@ -128,6 +128,7 @@ const commentCappedPaths = [
   'src/app/modules/terminal',
   'src/app/modules/test-id',
   'src/app/modules/theme',
+  'src/app/modules/tn-table',
   'src/app/modules/tn-table-cells',
   'src/app/modules/tooltip',
   'src/app/modules/translate',
