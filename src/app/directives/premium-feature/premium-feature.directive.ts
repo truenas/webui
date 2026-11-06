@@ -7,23 +7,10 @@ import {
 } from 'app/directives/premium-feature/premium-feature-wrapper.component';
 
 /**
- * Shows a premium feature the appliance is not entitled to, rather than hiding
- * it: the content renders dimmed and inert, with a "Premium" tag that explains
- * how to get it.
- *
- * ```html
- * <tn-form-section *ixPremiumFeature="hasVersioning(); testId: 's3-versioning'" [heading]="'Versioning' | translate">
- * ```
- *
- * The argument is the entitlement, so it reads as the positive: truthy renders
- * the content plainly. `undefined` — which is what the entitlement selectors
- * report while the map is still loading — counts as entitled here, so a gated
- * section does not flash a Premium tag on the way up and then lose it.
- *
- * Presentation only. Whether a denied feature can still be *submitted* is the
- * form's own business: the controls keep their values, so a payload built from
- * `getRawValue()` still carries what the record already had, and a form that
- * must omit a field when denied has to say so itself.
+ * Shows a feature the appliance isn't entitled to dimmed and inert with a "Premium" tag, instead of
+ * hiding it: `*ixPremiumFeature="hasVersioning(); testId: 's3-versioning'"`. Truthy renders plainly,
+ * and so does `undefined` (still loading), so a section doesn't flash the tag on boot. Presentation
+ * only: controls keep their values, so a form that must omit a denied field has to do it itself.
  */
 @Directive({
   selector: '[ixPremiumFeature]',

@@ -95,6 +95,7 @@ const commentCappedPaths = [
   'src/app/classes',
   'src/app/constants',
   'src/app/core',
+  'src/app/directives',
   'src/app/enums',
   'src/app/helptext',
   'src/app/modules/alerts',
