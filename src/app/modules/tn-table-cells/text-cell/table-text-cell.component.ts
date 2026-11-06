@@ -3,30 +3,16 @@ import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { TableCellTestIdSuffix } from 'app/modules/tn-table/interfaces/table-column.interface';
 
 /**
- * The test-id suffix the pre-tn-table column model resolved for each kind of
- * plain-text cell. `ix-cell-text` and `ix-cell-schedule` rendered the value as
- * text but tagged it differently, and `ix-cell-yes-no` tagged a translated
- * Yes/No the same way again — so the caller picks the shape rather than the
- * component guessing it from the value.
- *
- * A subset of {@link TableCellTestIdSuffix}, which is the same list across every
- * cell kind: a column declares the suffix from there so a details row tags a
- * hidden column's value the way this cell tags a visible one.
+ * The test-id suffix the old column model gave each kind of text cell. The caller picks it because
+ * text, schedule and yes/no cells tagged their text differently. Drawn from
+ * {@link TableCellTestIdSuffix} so a details row tags a hidden column the way this cell tags a visible one.
  */
 export type TextCellTestIdSuffix = Extract<TableCellTestIdSuffix, 'row-text' | 'row-yesno' | 'row-schedule'>;
 
 /**
- * tn-table replacement for the ix-table `textColumn` / `yesNoColumn` /
- * `scheduleColumn` cell renderers.
- *
- * Renders a value as text with the legacy test-id shape
- * (`text-<title>-<row tag>-<suffix>`) and an optional tooltip. Shared so a
- * migrated list declares one element per column instead of repeating the
- * `<span tnTestIdType="text" [tnTestId]="[…]">` block a dozen times, and so the
- * id shape lives in one place rather than in every template that renders a row.
- *
- * The host is a `<span>`, which the legacy directive prefixed with `text`, so
- * the migrated markup declares the same prefix through `tnTestIdType`.
+ * tn-table cell for text, yes/no and schedule values, with an optional tooltip. It keeps the legacy
+ * test-id shape (`text-<title>-<row tag>-<suffix>`) in one place instead of in every row template;
+ * the host is a `<span>`, which the legacy directive prefixed with `text`.
  */
 @Component({
   selector: 'ix-table-text-cell',

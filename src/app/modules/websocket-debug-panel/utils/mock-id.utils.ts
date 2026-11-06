@@ -2,15 +2,7 @@
  * Utility for generating consistent mock configuration IDs
  */
 
-/**
- * Generates a standardized mock ID for a given feature and endpoint
- * @param feature The feature name (e.g., 'enclosure', 'job', 'alert')
- * @param endpoint The endpoint or identifier (e.g., 'dashboard', 'query')
- * @returns A kebab-case ID in the format: '{feature}-mock-{endpoint}'
- * @example
- * generateMockId('enclosure', 'dashboard') // 'enclosure-mock-dashboard'
- * generateMockId('job', 'update') // 'job-mock-update'
- */
+/** Builds a mock ID in the form `{feature}-mock-{endpoint}`, e.g. `enclosure-mock-dashboard`. */
 export function generateMockId(feature: string, endpoint: string): string {
   return `${feature}-mock-${endpoint}`;
 }

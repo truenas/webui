@@ -11,40 +11,20 @@ const refusedCredentialCodes: AuthErrorCode[] = [
 ];
 
 /**
- * The authenticator's answer, read as the `auth.login_ex` result the UI is
- * written against.
- *
- * Both types describe the same wire object; the client's is the narrower and
- * partly differently-named view of it, because the client only ever needed the
- * handful of fields its own logic reads. `user_info` is the clearest case: the
- * client declares `username`, `two_factor_auth_configured` and a `privilege`
- * carrying nothing but roles, where middleware also sends `pw_name`,
- * `account_attributes`, `two_factor_config` and the `webui_access` and
- * `web_shell` privileges the UI decides access from. `response_type` is the
- * other: `DENIED` is a value middleware returns and the client's enum does not
- * list.
- *
- * So this is a re-reading of one object, not a conversion between two — hence
- * a cast rather than a mapping, which would have to invent the fields the
- * client does not name.
+ * Reads the authenticator's answer as the `auth.login_ex` result the UI is written against. Both
+ * types describe the same wire object, but the client's declares only the fields it reads: its
+ * `user_info` lacks `pw_name`, `two_factor_config` and the `webui_access`/`web_shell` privileges,
+ * and its enum lacks `DENIED`. Hence a cast, not a mapping that would have to invent those fields.
  */
 export function toLoginExResponse(response: AuthResponse): LoginExResponse {
   return response as unknown as LoginExResponse;
 }
 
 /**
- * Login failures the authenticator reports by throwing, put back as the
- * response they came from.
- *
- * The authenticator throws on `AUTH_ERR` for password and OTP logins, and on
- * every non-success for a token login. Since 9.0.2 the error carries the
- * answer middleware refused the login with, so a token login keeps telling
- * `EXPIRED`, `DENIED` and `REDIRECT` apart, and `processLoginResult` maps each
- * as it does for an interactive login. A refusal without an answer is read as
- * `AUTH_ERR`, which the UI answers the same way as before.
- *
- * Anything else — a transport failure, a login superseded by a later one — is
- * a genuine error and is left to propagate.
+ * Turns login failures the authenticator throws back into the response they came from, so
+ * `processLoginResult` maps `EXPIRED`, `DENIED` and `REDIRECT` for a token login as it does for an
+ * interactive one. A refusal without an answer reads as `AUTH_ERR`. Anything else, such as a
+ * transport failure or a superseded login, propagates.
  */
 export function recoverLoginFailure(): OperatorFunction<LoginExResponse, LoginExResponse> {
   return catchError((error: unknown): Observable<LoginExResponse> => {

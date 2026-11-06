@@ -2,24 +2,8 @@ import { TnToastType } from '@truenas/ui-components';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
 /**
- * Configuration options for displaying snackbar notifications.
- *
- * Backed by `TnToastService`; prefer the typed helpers `success()` / `error()`
- * on `SnackbarService` unless you need a custom action button.
- *
- * @example
- * // Simple success message
- * snackbar.success('Data saved successfully');
- *
- * @example
- * // Custom snackbar with action button
- * snackbar.open({
- *   message: 'File deleted',
- *   button: {
- *     title: 'Undo',
- *     action: () => restoreFile(),
- *   },
- * });
+ * Options for `SnackbarService.open()`, backed by `TnToastService`. Prefer the typed `success()` /
+ * `error()` helpers unless you need a custom action button.
  */
 export interface SnackbarOptions {
   /** The message to display. Should be a translated string. */

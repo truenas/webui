@@ -4,16 +4,9 @@ import { DisplayableState, JobState } from 'app/enums/job-state.enum';
 import { TaskState } from 'app/enums/task-state.enum';
 
 /**
- * Normalized display text for a job or task state, as a plain function.
- *
- * The pipe below is the template-side spelling of this; callers that have no template to pipe
- * through — a tn-table column model saying how a details row should print a hidden state column —
- * call this directly rather than injecting the pipe as a provider.
- *
- * Normalizations:
- * - JobState.Success + TaskState.Finished → 'Completed'
- * - JobState.Failed + TaskState.Error → 'Failed'
- * - All other states → Titlecased via translation
+ * Display text for a job or task state: Success/Finished → 'Completed', Failed/Error → 'Failed',
+ * anything else title-cased via translation. The pipe below wraps this for templates; code without
+ * one, like a tn-table column model, calls it directly.
  */
 export function formatJobStateValue(
   state: DisplayableState | null | undefined,

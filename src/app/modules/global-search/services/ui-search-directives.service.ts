@@ -81,14 +81,9 @@ export class UiSearchDirectivesService {
     const directive = this.get(config);
     let nextTriggerFired = triggerFired;
 
-    // Apply the highlight only when the directive is registered AND its host
-    // element is actually in the live DOM AND visible (non-display:none).
-    // mat-menu items in a closed menu can have their directive registered
-    // with a detached host. Master-detail cards (e.g. Manage User Quotas
-    // inside the dataset details panel) keep their `<a>` in the DOM but
-    // wrapped in a `display: none` container until the panel opens — adding
-    // the highlight class there paints onto an invisible element and burns
-    // the 4-second timer with nothing on screen.
+    // Highlight only a host that is in the live DOM and visible: items in a closed menu can be
+    // registered with a detached host, and master-detail cards sit in a `display: none` container
+    // until the panel opens, where the highlight would burn its 4-second timer unseen.
     if (directive) {
       const targetId = config.anchor && config.anchor !== directive.id ? config.anchor : directive.id;
       const targetElement = this.document.getElementById(targetId);
@@ -134,14 +129,9 @@ export class UiSearchDirectivesService {
   ): void {
     this.pendingTimeoutId = null;
     this.setPendingUiHighlightElement(null);
-    // Self-trigger entry (e.g. "Settings Menu" — the trigger button is its
-    // own anchor): click to expand its dropdown so the user sees its
-    // contents. Skip when the parent poll already fired it via the
-    // triggerAnchor branch — otherwise the dropdown opens twice (once when
-    // the trigger fires, once here), which can look like a flicker if CDK
-    // hasn't synced `aria-expanded` yet between the two clicks.
-    // The `aria-expanded !== 'true'` check is a secondary guard for the
-    // already-open case (the dropdown was open before the search ran).
+    // A self-trigger entry (e.g. "Settings Menu") is clicked to expand its dropdown. Skip when the
+    // triggerAnchor branch already fired it, or it opens twice and can flicker before CDK syncs
+    // `aria-expanded`; the `aria-expanded` check covers a dropdown that was already open.
     if (
       !triggerFired
       && config.triggerAnchor

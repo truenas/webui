@@ -17,20 +17,10 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import { stopRowActivationKeys } from 'app/modules/tn-table-cells/stop-row-activation-keys';
 
 /**
- * tn-table replacement for the ix-table `actionsWithMenuColumn`/`actionsColumn`
- * cell renderers. Built entirely on tn-* primitives (`tn-icon-button`,
- * `tn-menu`) so dashboard card tables carry no Material in their action column.
- * Shared across the sharing and data-protection card tables.
- *
- * - `mode = 'menu'` (default): one visible action renders as a single icon
- *   button; more than one collapses behind a "⋮" trigger (parity with
- *   `actionsWithMenuColumn`).
- * - `mode = 'inline'`: every visible action renders as its own icon button
- *   (parity with `actionsColumn`, used by the WebShare card).
- *
- * Test IDs are produced by each tn component's native `testId` input, which the
- * library prefixes with its element type via `composeTestId` — `button-…` for both
- * the icon buttons and the menu items, matching the ids these replaced.
+ * tn-table action column built only on tn-* primitives. `mode = 'menu'` (default) renders one action
+ * as an icon button and several behind a "⋮" menu; `mode = 'inline'` renders each as its own button.
+ * The library prefixes test ids with `button-` for both the icon buttons and the menu items, matching
+ * the ids these replaced.
  */
 @Component({
   selector: 'ix-table-actions-cell',

@@ -406,16 +406,9 @@ export class SmartAlertService {
   }
 
   /**
-   * Gets count of alerts by menu path for navigation badges
-   * Counts all alert instances for both the specific path and all parent paths
-   * Example: alert with path ['data-protection', 'cloud-backup']
-   * increments counts for both 'data-protection' and 'data-protection.cloud-backup'
-   *
-   * Alerts that declare `extraMenuPaths` are counted under those paths too, so an
-   * alert spanning two feature areas badges both (e.g. tiering: Storage + Datasets).
-   *
-   * Counts all alert instances to match what users see in the alert panel.
-   * For example, if there are 2 instances of the same alert, it counts as 2.
+   * Counts alert instances per menu path for navigation badges, matching what the alert panel shows.
+   * Each alert also counts toward every parent path and toward any `extraMenuPaths`, so an alert
+   * spanning two areas (e.g. tiering: Storage + Datasets) badges both.
    */
   getAlertCountsByMenuPath(
     alerts: (Alert & EnhancedAlert)[],

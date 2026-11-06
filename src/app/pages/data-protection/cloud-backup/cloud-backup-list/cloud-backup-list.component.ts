@@ -161,14 +161,10 @@ export class CloudBackupListComponent {
   );
 
   /**
-   * `tn-table` matches the active row by object identity, but `expandedRow` can hold a
-   * copy (a finished job replaces it with a spread of the row to re-trigger the detail
-   * pane), so resolve back to the reference actually rendered in the table.
-   *
-   * A `computed` rather than a method: `[activeRow]` is bound on a `[clickable]` table, so
-   * a method would re-run this lookup over every row on every change-detection pass.
-   * `BaseDataProvider.expandedRow` is signal-backed, so both it and the parent's writes to
-   * it invalidate this.
+   * `tn-table` matches the active row by identity, but `expandedRow` can hold a copy (a finished job
+   * replaces it with a spread to re-trigger the detail pane), so resolve back to the rendered row.
+   * A `computed`, not a method: `[activeRow]` on a `[clickable]` table would re-run the lookup over
+   * every row on every change-detection pass. `expandedRow` is signal-backed, so writes invalidate it.
    */
   protected readonly activeRow = computed<CloudBackup | null>(() => {
     const expanded = this.dataProvider().expandedRow;
