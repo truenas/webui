@@ -120,6 +120,7 @@ const commentCappedPaths = [
   'src/app/pages/dashboard',
   'src/app/pages/data-protection',
   'src/app/pages/directory-service',
+  'src/app/pages/jobs',
   'src/app/pages/reports-dashboard',
   'src/app/pages/services',
   'src/app/pages/shell',
