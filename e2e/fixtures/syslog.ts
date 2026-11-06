@@ -1,20 +1,10 @@
 /**
- * Syslog settings: preconditions, cleanup and readback, over the API.
+ * Syslog settings (part of `system.advanced`): preconditions, cleanup and readback, over the API.
  *
- * These four settings are part of `system.advanced`, a single config record.
- * There is nothing to create or delete, so each test starts from a known
- * baseline and teardown writes that baseline back. Like
- * `fixtures/preferences.ts`, it does not snapshot what it found and restore that.
- * A run interrupted between a change and its restore would make the next run's
- * "original" whatever the last test had set.
- *
- * The baseline is middleware's own default: no remote servers, level Info, and
- * FQDN and audit logs off. That is what a fresh appliance holds. On an
- * appliance someone has set up to forward its logs, a run clears that setup.
- *
- * Every server address is in 192.0.2.0/24, which RFC 5737 reserves for
- * documentation. The appliance never really reaches a log server, wherever it
- * runs.
+ * Each test starts from a baseline that teardown writes back; like `fixtures/preferences.ts`, it doesn't
+ * snapshot, or an interrupted run would make the next run's "original" whatever the last test set. The baseline
+ * is middleware's default (no remote servers, level Info, FQDN and audit logs off); a run clears any real log
+ * forwarding. Server addresses are in RFC 5737's 192.0.2.0/24, so no log server is ever reached.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

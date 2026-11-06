@@ -1,16 +1,9 @@
 /**
- * The API Keys list under Credentials > Users, its form and the dialog that
- * shows a new key.
- *
- * The list's row tag is `toUniqueRowTag('api-key-' + name)`, which lodash-kebabs
- * the whole tag before the library sees it — so the row and its cells go through
- * {@link legacyKebabTestSegment}: `e2e-api-key-target` is
- * `api-key-e-2-e-api-key-target` there. The row's own buttons do not: they are
- * `<tn-icon-button [testId]="['delete', row.name]">`, composed by the library, so
- * the same name is `button-delete-e2e-api-key-target` through
- * {@link kebabTestSegment}. Same name, two spellings, one row.
- *
- * Unlike most lists, the actions are inline icon buttons, not a kebab menu.
+ * The API Keys list under Credentials > Users, its form and the new-key dialog. Same name, two spellings, one
+ * row: the row tag is `toUniqueRowTag('api-key-' + name)`, lodash-kebabed first, so the row and cells use
+ * {@link legacyKebabTestSegment} (`api-key-e-2-e-api-key-target`); the row's inline icon buttons are composed by
+ * the library, so they use {@link kebabTestSegment} (`button-delete-e2e-api-key-target`). Actions are inline,
+ * not a kebab menu.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 

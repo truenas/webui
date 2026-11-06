@@ -1,14 +1,8 @@
 /**
- * Stories: acting on a share from the list acts on the one you picked.
- *
- * An NFS row's actions collapse into a kebab menu, so an action belongs to
- * whichever row's menu was opened; each test runs beside a second share that
- * must come through untouched. Unsharing has a second claim: it removes the
- * *share* and leaves what is on the path, which a test that only checked the
- * row was gone could not tell from a delete that took the dataset with it.
- *
- * Two datasets where the SMB spec has one. An NFS share has no name — its path
- * is what tells it from the next — so two shares need two paths.
+ * Stories: acting on a share from the list acts on the one you picked. Row actions sit in a kebab menu, so each test
+ * runs beside a second share that must come through untouched. Unsharing must remove the share but leave the path's
+ * data, which a row-gone check could not tell from a delete that took the dataset. NFS shares have no name, so two
+ * shares need two datasets.
  */
 import {
   ensureNfsServiceStopped, ensureNfsShareAbsent, ensureNfsSharePresent, findNfsShare,

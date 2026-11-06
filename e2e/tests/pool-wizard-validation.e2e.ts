@@ -1,21 +1,9 @@
 /**
- * Stories: the pool wizard refuses a name already in use, a name ZFS rejects and a pool with no
- * data vdev, and it warns about a stripe data vdev but still allows it.
- *
- * These checks all run in the browser: the name validators in `general-wizard-step.component.ts`
- * and the rules in `pool-manager-validation.service.ts`. So middleware's own tests do not cover
- * them. No test here creates a pool. Each one stops before Create Pool, and all but the
- * reserved-name test check through `pool.query` that the pool they named was not made.
- *
- * The General step's Next is bound to `form.invalid`, and both name validators are async. While
- * they run the form is PENDING, which is not invalid, so Next reads enabled. That is why a test
- * that expects Next to be disabled first waits for the field's error text: only then has the
- * validator answered. Going the other way, back to an accepted name, nothing on screen marks the
- * answer, so that test waits for `pool.validate_name`'s reply on the page's socket.
- *
- * Not covered: mixed disk sizes and capacity warnings (the CI disks are all the same), dRAID
- * warnings, special and dedup redundancy warnings, and the exported-pool and duplicate-serial
- * disk warnings.
+ * Stories: the pool wizard refuses a name in use, a name ZFS rejects and a pool with no data vdev, and warns about
+ * a stripe data vdev. These are browser-side checks; no test creates a pool, and most confirm via `pool.query`.
+ * Both name validators are async, and a PENDING form isn't invalid, so Next reads enabled while they run: tests
+ * expecting a disabled Next first wait for the error text, and going back to an accepted name waits for
+ * `pool.validate_name`'s reply on the socket.
  */
 import { ensurePoolAbsent, findPool, requireUnusedDisks } from '../fixtures/storage';
 import {

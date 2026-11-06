@@ -1,14 +1,8 @@
 /**
- * Stories: the full S3 bucket list, reached from the title of the Object
- * Storage (S3) Buckets card on the Shares dashboard.
- *
- * The list shows columns the card does not — the bucket's dataset among them —
- * and has a search over name, dataset and owner, which filters nothing until
- * the rows have loaded. Its row tag goes through lodash, unlike the card's; see
- * `locators/s3.ts`.
- *
- * The S3 service stays stopped: a bucket is configuration, and deleting one
- * needs nothing serving it.
+ * Stories: the full S3 bucket list, reached from the Object Storage (S3) Buckets card's title on the Shares
+ * dashboard. It shows columns the card doesn't, including dataset, and its search filters nothing until rows load.
+ * Its row tag goes through lodash, unlike the card's; see `locators/s3.ts`.
+ * The S3 service stays stopped: a bucket is configuration, and deleting one needs nothing serving it.
  */
 import {
   ensureS3BucketAbsent, ensureS3BucketPresent, ensureS3ServiceStopped, findS3Bucket,

@@ -1,15 +1,9 @@
 /**
- * Cloud credential preconditions, cleanup and readback, over the API.
+ * Cloud credential preconditions, cleanup and readback, over the API, keyed on the unique name the card builds
+ * row ids from. These are plain calls that never reach the remote; only `verify` does, and it is never called here.
  *
- * A credential is keyed here on its name, which middleware holds unique and the
- * card builds every id on a row from. Creating, updating and deleting one are
- * plain calls, and none of them reaches the remote: only `verify` does, which is
- * the form's Verify Credential button and never called from here.
- *
- * Every credential these helpers make points back at the appliance, so no
- * outside service is involved: SFTP to `127.0.0.1` as root, signing in with a
- * keypair the spec authorized through `fixtures/loopback-ssh.ts`, or S3 to the
- * appliance's own S3 service.
+ * Every credential points back at the appliance: SFTP to `127.0.0.1` as root with a keypair authorized through
+ * `fixtures/loopback-ssh.ts`, or S3 to the appliance's own S3 service.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

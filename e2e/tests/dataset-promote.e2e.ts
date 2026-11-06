@@ -1,15 +1,7 @@
 /**
- * Stories: promoting a clone from the Datasets page swaps it with the dataset it came from.
- *
- * Promote reverses the dependency: the snapshot moves to the clone, and the
- * original becomes the dataset with an origin. That decides which of the two can
- * be deleted afterwards, so teardown cannot assume an order — it removes
- * whichever dataset currently has an origin first, which is right on both sides
- * of the promote.
- *
- * Promote reloads the whole Datasets page, and the panel is gone while it
- * does, so the card is read only after the page's own reload has answered.
- * Hence `recordApiCalls`.
+ * Stories: promoting a clone from the Datasets page swaps it with the dataset it came from. That decides which can
+ * be deleted, so teardown removes whichever currently has an origin first. Promote reloads the whole page, so the
+ * card is read only after that reload has answered (`recordApiCalls`).
  */
 import type { Page } from '@playwright/test';
 import { cloneSnapshot, ensureSnapshotPresent, findSnapshot, snapshotId } from '../fixtures/snapshots';

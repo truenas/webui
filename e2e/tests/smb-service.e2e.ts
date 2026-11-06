@@ -1,12 +1,8 @@
 /**
- * Stories: what a share needs from the SMB service, and the switches on the card.
- *
- * A Time Machine share requires Apple SMB2/3 extensions, a setting on the
- * *service*. While they are off `extraDisabled` holds Save down and the form
- * offers to turn them on; that write (`smb.update`) outlives the share, so this
- * spec puts it back. It also starts the service, which is global state, and
- * stops it again whatever the test did. The "Restart SMB Service" prompt is
- * deliberately not covered — see the known gaps in `docs/status.md`.
+ * Stories: what a share needs from the SMB service, and the switches on the card. A Time Machine share needs the
+ * service's Apple SMB2/3 extensions; while off, `extraDisabled` holds Save down and the form offers to turn them
+ * on. That `smb.update` outlives the share, so the spec restores it, and stops the service it started whatever the
+ * test did. The "Restart SMB Service" prompt is deliberately not covered; see the known gaps in `docs/status.md`.
  */
 import { ensureServiceRunning, queryService } from '../fixtures/services';
 import {

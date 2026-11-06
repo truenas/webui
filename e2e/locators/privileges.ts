@@ -1,16 +1,8 @@
 /**
- * The list on Credentials > Privileges, and its form.
- *
- * Every id on a row is built from the list's own `uniqueRowTag`, `privilege-<name>`,
- * a plain concatenation with no pre-normalizing, so {@link kebabTestSegment} is the
- * one to use throughout. The tag is keyed on the name alone, so an edit that leaves
- * the name alone never renames the row.
- *
- * Each cell is a span tagged `[('<Title>' | translate), uniqueRowTag(row), '<kind>']`,
- * so its id is the column's title, then the row tag, then the kind of cell.
- *
- * The list asks for `mode="inline"`, so Edit and Delete are icon buttons on the row
- * rather than items in a kebab menu, and their ids have no `more-action`.
+ * The list on Credentials > Privileges, and its form. Row ids come from `uniqueRowTag`, `privilege-<name>`, with no
+ * pre-normalizing, so use {@link kebabTestSegment}; keyed on the name alone, so other edits keep the row id. Cells
+ * are `[('<Title>' | translate), uniqueRowTag(row), '<kind>']`. `mode="inline"` makes Edit and Delete row icon
+ * buttons with no `more-action`.
  */
 import { kebabTestSegment } from './test-id';
 

@@ -1,14 +1,8 @@
 /**
- * Story: an admin licenses a fresh pair of controllers for HA, from the
- * Support card on System > General Settings, and both controllers take it.
- *
- * The first link of the HA suite's chain (`playwright.config.ts`): every
- * journey after it needs the license. Its project records nothing — no
- * trace, screenshot or video — because this test pastes the license into a
- * textarea, and CI publishes all three.
- *
- * Nothing is torn down, here or anywhere in the HA suite: each journey sets
- * up what the next builds on, and the pair is gone with the runner.
+ * Story: an admin licenses a fresh pair for HA from the Support card on System > General Settings, and both
+ * controllers take it. The first link of the HA chain (`playwright.config.ts`). Its project records no trace,
+ * screenshot or video, because the license is pasted into a textarea and CI publishes all three. Nothing in the
+ * HA suite is torn down: each journey builds on the last, and the pair goes with the runner.
  */
 import {
   expectsEula, isEulaAccepted, readFailover, readHaLicense, requireHa,

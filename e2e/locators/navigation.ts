@@ -1,26 +1,14 @@
 /**
- * Main sidebar and submenu locators.
- *
- * Ids come from `navigation.component.html`, which sets `tnTestIdType="link"`
- * and `[tnTestId]="getItemName(item)"`. `getItemName` appends `-menu` and
- * replaces spaces with underscores, so `'Storage'` becomes `Storage-menu` and
- * normalizes to `link-storage-menu`.
- *
- * Submenu entries use the raw item name instead (`[tnTestId]="subItem.name"`),
- * so they are `link-users` rather than `link-users-menu`.
+ * Main sidebar and submenu locators. `navigation.component.html` sets `tnTestIdType="link"` and
+ * `[tnTestId]="getItemName(item)"`, which appends `-menu` and underscores spaces, so `'Storage'` normalizes to
+ * `link-storage-menu`. Submenu entries use the raw name (`link-users`, not `link-users-menu`).
  */
 import { kebabTestSegment } from './test-id';
 
 /**
- * Global search, the "Search UI" box in the topbar.
- *
- * The topbar's box is only a trigger: clicking it opens an overlay holding a
- * second box with the same `input-global-search` id, and hides the first. So
- * while search is open the id matches twice, and the visible one is the box a
- * user types into.
- *
- * A result is `[tnTestId]="['search-result', hierarchy.join('-')]"` with
- * `tnTestIdType="text"`, where the hierarchy is the breadcrumb it shows.
+ * Global search, the topbar's "Search UI" box. It's only a trigger: clicking opens an overlay with a second
+ * `input-global-search` and hides the first, so the id matches twice while open and the visible one is typed
+ * into. A result is a `text` id `['search-result', hierarchy.join('-')]`, the breadcrumb it shows.
  */
 export const globalSearchLocators = {
   input: '[data-test="input-global-search"]',

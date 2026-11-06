@@ -1,14 +1,8 @@
 /**
- * Authentication setup project (T5).
- *
- * Runs once per run, before the authenticated projects, and proves that token
- * login works against this appliance — the earliest and clearest place for
- * that to fail. It no longer persists browser state: the authenticated tests
- * sign in per test through the `page` fixture in `support/fixtures.ts`, which
- * explains why a saved `storageState` cannot carry more than one test.
- *
- * S1 deliberately does NOT depend on this — it drives the real sign-in form, so
- * the bypass can never hide a broken login page (R4.2).
+ * Authentication setup project (T5). Runs once before the authenticated projects to prove token login works
+ * here, the clearest place for it to fail. It persists no browser state: tests sign in per test through the
+ * `page` fixture (`support/fixtures.ts` explains why). S1 deliberately doesn't depend on this, so the bypass
+ * can never hide a broken login page (R4.2).
  */
 import { expect, test as setup } from '@playwright/test';
 import { withClient } from '../api/client';

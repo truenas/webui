@@ -1,20 +1,9 @@
 /**
- * Story: the built-in sharing administrator manages shares from the Shares
- * dashboard's SMB, NFS and iSCSI cards. They add an SMB share and delete
- * another, edit an NFS share and switch it off, and delete an iSCSI target, and
- * the appliance holds each change.
- *
- * The positive side of `roles-read-only-shares.e2e.ts`: the controls the
- * read-only admin finds locked are the ones this account must be able to use.
- * `expectUnlockedByRole` checks the ones that can carry the role-missing
- * wrapper; the row-menu items never do, so using them is the check.
- *
- * Two tests, so the account signs in twice: every sign-in spends from the
- * unauthenticated rate limit (see `flows/roles.ts`).
- *
- * The three services are stopped first, as the other share specs stop them.
- * The saves answer the "Start Service" offer, which is only raised while the
- * service is stopped, and decline it, so the services stay stopped.
+ * Story: the built-in sharing administrator adds and deletes SMB shares, edits and disables an NFS share, and
+ * deletes an iSCSI target; the positive side of `roles-read-only-shares.e2e.ts`. `expectUnlockedByRole` covers
+ * controls that can carry the role-missing wrapper; row-menu items never do, so using them is the check. Two
+ * tests, two sign-ins (see `flows/roles.ts`). Services are stopped first and saves decline "Start Service", so
+ * they stay stopped.
  */
 import {
   ensureIscsiServiceStopped, ensureIscsiShareAbsent, ensureIscsiSharePresent, findIscsiExtent, findIscsiTarget,

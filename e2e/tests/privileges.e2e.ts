@@ -1,19 +1,8 @@
 /**
- * Stories: an admin adds, edits and deletes a privilege from the list on
- * Credentials > Privileges, and the appliance holds what they did.
- *
- * Each save is asserted twice: the list's row says the screen believed it,
- * `privilege.query` says the appliance did it — and carries the roles' wire values
- * and the groups themselves, where the list shows labels and a count.
- *
- * Edit and delete each run beside a second privilege that must come through
- * untouched. Every row carries its own Edit and Delete buttons, so an action
- * belongs to whichever row's button was clicked, and a row-targeting bug changes
- * the wrong privilege without failing anything else.
- *
- * The edited privilege names a local group. The form shows groups by name and
- * sends them as gids, resolving each one on save, so an edit that never touches
- * the groups still has to send the same group back.
+ * Stories: an admin adds, edits and deletes a privilege on Credentials > Privileges. Each save is checked on the
+ * row and in `privilege.query`, which carries role wire values and groups where the list shows labels and a count.
+ * Edit and delete run beside a second privilege that must come through untouched, to catch row-targeting bugs.
+ * The form sends groups as gids resolved on save, so an edit that never touches groups must still send them back.
  */
 import { ensureGroupAbsent, ensureGroupPresent, findGroup } from '../fixtures/groups';
 import {

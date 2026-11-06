@@ -1,15 +1,8 @@
 /**
- * Stories: an admin changes a dataset's owner, its group and its permissions in the Unix
- * Permissions Editor, and the appliance holds what they did.
- *
- * Each story opens the editor from Edit on the dataset's Permissions card, saves, and is asserted
- * twice: on the card the app returns to, and through `filesystem.stat` on the mountpoint. Each also
- * checks that the two things it did not touch, of owner, group and mode, came through unchanged.
- *
- * The dataset is the spec's own and starts every test from one known owner, group and mode with a
- * trivial ACL, set over the API. A trivial ACL is what makes the card offer this editor at all.
- * Deleting the dataset is the teardown for all of it. The users and groups are removed once the
- * file is done.
+ * Stories: an admin changes a dataset's owner, group and permissions in the Unix Permissions Editor, opened from
+ * the Permissions card. Each is checked on the card and through `filesystem.stat`, including that the untouched
+ * parts did not change. The dataset starts each test from a known owner, group and mode with a trivial ACL, which
+ * is what makes the card offer this editor. Deleting it is the teardown; users and groups go after the file.
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import { readOwnership, setOwnership, type Ownership } from '../fixtures/permissions';

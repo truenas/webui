@@ -1,21 +1,9 @@
 /**
- * Story: an admin changes a share's storage tier from its row on the Shares
- * dashboard, and the row offers that only when it can act on it.
- *
- * With tiering on, the SMB and NFS cards grow a Storage Tier column, and each
- * row's menu a Change Storage Tier action that opens the same dialog as the
- * dataset details card, for the dataset under the share's path. The action is
- * hidden while tiering is off — the column with it — and on a share whose
- * dataset is locked. Each tier change is checked in the row and through
- * `pool.dataset.query`, which is what separates "the cell re-rendered" from
- * "the appliance moved the dataset".
- *
- * Every "the action is not there" is asserted with the menu open and its Edit
- * showing, so it cannot pass on a menu that never opened.
- *
- * The pool is `tiering-dataset.e2e.ts`'s, built once for the file for the same
- * reason: each create, export and tiering switch restarts the tiering daemon,
- * and done per test that is enough for systemd to stop starting it.
+ * Story: an admin changes a share's storage tier from its SMB or NFS row on the Shares dashboard, and the row offers
+ * it only when it can act: the action is hidden while tiering is off and on a locked dataset. Each change is checked
+ * in the row and in `pool.dataset.query`. Every "not there" is asserted with the menu open and Edit showing, so it
+ * can't pass on a menu that never opened. The pool is built once per file, as in `tiering-dataset.e2e.ts`, because
+ * per-test tiering daemon restarts make systemd stop starting it.
  */
 import { ensureEncryptedDatasetPresent, lockDataset } from '../fixtures/encryption';
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';

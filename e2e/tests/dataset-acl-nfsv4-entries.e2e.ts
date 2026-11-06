@@ -1,13 +1,8 @@
 /**
- * Stories: adding, editing and removing NFSv4 ACL entries in the dataset ACL editor.
- *
- * `smb-share-acl.e2e.ts` covers one entry, a user with a basic permission and the default flags.
- * These cover a group entry of type Deny, an entry with advanced permissions and advanced flags,
- * editing an entry already in the ACL, and removing one.
- *
- * Every story starts from a dataset made with the SMB preset, whose ACL is not trivial, so Edit on
- * the Permissions card opens the editor straight onto its entries. Each result is read back
- * through `filesystem.getacl`, which stores ids rather than names, so entries are matched by id.
+ * Stories: adding, editing and removing NFSv4 ACL entries in the dataset ACL editor: a Deny group entry, advanced
+ * permissions and flags, editing an existing entry, and removing one (`smb-share-acl.e2e.ts` covers a basic one).
+ * Each starts from an SMB-preset dataset, whose non-trivial ACL makes Edit open the editor on its entries. Results
+ * are read through `filesystem.getacl`, which stores ids, so entries are matched by id.
  */
 import { ensureGroupAbsent, ensureGroupPresent, findGroup } from '../fixtures/groups';
 import { findUserAclEntries, readAcl } from '../fixtures/permissions';

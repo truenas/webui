@@ -1,28 +1,9 @@
 /**
- * The Preferences form, reached from the user menu in the topbar.
- *
- * One form for everything the signed-in account can set about its own view of
- * the appliance — theme, session timeout, language, date and time format. It is
- * a side panel, so its Save belongs to the panel rather than to the form.
- *
- * The two ids that open it — the topbar trigger and the menu entry — live in
- * `topbar.ts` with the rest of that menu, not here.
- *
- * Only what the specs select on: the time format control is on this form and
- * deliberately absent below, because an entry here reads as a verified fact about
- * the screen and an unexercised one is only a guess at it.
- *
- * Language and date format are here, for `tests/localization.e2e.ts`.
- * **Language translates the whole app**, which is survivable for most `data-test`
- * selectors and not for any assertion on text. Not all of them, though: a few ids
- * are built from a translated string, such as the Date Created cell in
- * `locators/boot-environments.ts`, and those change with the language too.
- *
- * Session Timeout is here, for `tests/access-settings.e2e.ts`. **It drops an
- * idle session**, so a test that lowers it and does not put it back ends every
- * later test in the run at the sign-in page.
- *
- * See `signin.ts` for a note on the type-prefixing that produces these values.
+ * The Preferences form from the topbar's user menu (theme, session timeout, language, date/time format), a side
+ * panel whose Save belongs to the panel; the opening ids live in `topbar.ts`. Only what specs select on, as an
+ * entry reads as a verified fact. Language translates the whole app, which breaks text assertions and the few
+ * ids built from translated strings (e.g. Date Created in `locators/boot-environments.ts`). Session Timeout
+ * drops idle sessions, so a test that lowers it must restore it or every later test lands on sign-in.
  */
 import { kebabTestSegment } from './test-id';
 
@@ -38,15 +19,9 @@ export const preferencesLocators = {
     darkTheme: '[data-test="select-dark-theme"]',
 
     /**
-     * A theme option, by the label shown on screen.
-     *
-     * **By label, not by value** — `tn-select` derives an option's id from its
-     * label and falls back to the value only for labelless options. It matters
-     * here more than anywhere else in the suite, because the two disagree for
-     * most themes: `Dark` is stored as `ix-dark`, `Blue` as `ix-blue`, and a
-     * locator built from the stored value would never match. (`Paper`,
-     * `Dracula` and `Nord` happen to agree, which is what makes the mistake
-     * survivable right up until it isn't.)
+     * A theme option, by its on-screen label, never the stored value: `tn-select` derives option ids from labels,
+     * and most themes disagree (`Dark` is stored as `ix-dark`). `Paper`, `Dracula` and `Nord` happen to agree,
+     * which hides the mistake until it doesn't.
      */
     themeOption: (label: string): string => `[data-test="option-theme-${kebabTestSegment(label)}"]`,
 
@@ -68,15 +43,10 @@ export const preferencesLocators = {
     dateFormat: '[data-test="select-date-format"]',
 
     /**
-     * A date format option, by its label — and **a label is today's date** in
-     * that format, in the appliance's timezone (`LocaleService.getDateFormatOptions`),
-     * so the id changes every day. `monthDayYearLabel` in `flows/preferences.ts`
-     * builds the one label the specs use.
-     *
-     * Two formats can share an id. `MM/dd/yyyy` and `dd/MM/yyyy` give the same
-     * label on any day whose day and month are equal, and `dd/MM/yyyy` and
-     * `dd.MM.yyyy` always normalize to the same id. A spec picking one of those
-     * takes the first match, which is the earlier format in the list.
+     * A date format option, by its label, which is today's date in that format and the appliance's timezone, so
+     * the id changes daily; `monthDayYearLabel` in `flows/preferences.ts` builds it. Ids can collide:
+     * `MM/dd/yyyy` and `dd/MM/yyyy` when day equals month, and `dd/MM/yyyy` and `dd.MM.yyyy` always, so a spec
+     * picking one takes the first match, the earlier format in the list.
      */
     dateFormatOption: (label: string): string => `[data-test="option-date-format-${kebabTestSegment(label)}"]`,
 
@@ -87,29 +57,11 @@ export const preferencesLocators = {
 } as const;
 
 /**
- * The class `<html>` carries for a theme stored under the given name.
- *
- * **The two names are not the same**, and assuming they were cost a failing
- * test: webui stores `ix-dark` and the document reads `tn-dark`. The stored name
- * is webui's (`theme.constants.ts`), the class is the library's `TnTheme`, and
- * `webuiToComponentLibraryThemeMap` in `theme.service.ts` is what joins them.
- * Mirrored here as a map rather than a string rule — the `ix-` prefix is dropped
- * for two themes and absent from the other six, so any rule inferred from that
- * is a coincidence waiting to be a bug, and a map fails loudly on a theme nobody
- * added here.
- *
- * `<html>` is also the only place worth reading. It is the live value, updating
- * on preview as well as on save. **Not `<body>`**, which carries `ix-dark`
- * written statically into `src/index.html` so the first paint is not unstyled,
- * and which nothing ever updates — it still reads `ix-dark` after saving a light
- * theme and reloading, so a test asserting on it would pass against any theme at
- * all.
- *
- * A class rather than a `data-test`, which the suite otherwise forbids — but
- * that rule is about *selecting* elements and this selects nothing: it reads an
- * attribute off the document element to ask what theme is showing. There is no
- * other observable, and a `data-test` mirroring a CSS class would be a second
- * source of truth for one fact.
+ * The `<html>` class for a theme stored under the given name. They differ (`ix-dark` is stored, `tn-dark` shown),
+ * joined by `webuiToComponentLibraryThemeMap` in `theme.service.ts`; mirrored as a map, not a prefix rule, which
+ * would only hold by coincidence. Read `<html>`, the live value; never `<body>`, whose static `ix-dark` from
+ * `src/index.html` never updates, so asserting on it passes for any theme. A class, not a `data-test`, because
+ * this reads the document element rather than selecting anything, and there is no other observable.
  */
 export const themeClassByStoredName: Record<string, string> = {
   'ix-dark': 'tn-dark',

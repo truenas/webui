@@ -1,30 +1,10 @@
 /**
- * Story: an admin opens the Jobs page from the topbar's jobs panel, filters it
- * by state, downloads a failed job's log from its error, and follows a failed
- * job's "View Details" to that job on the page, already expanded.
- *
- * The page lists every job on the appliance, so every assertion is scoped to the
- * seeded jobs by id. The jobs are runs of cron jobs, started over the API as
- * `jobs-panel.e2e.ts` does: the page is the subject, not whatever starts a job.
- * What the page shows is checked against `core.get_jobs`.
- *
- * Each test opens the jobs panel before it seeds anything. The page and the
- * panel read one job store, which subscribes to job events only once it has
- * loaded, and a job started in between would never reach either.
- *
- * Read from middleware's `plugins/cron/execute.py`:
- * - a run whose command exits non-zero ends FAILED, with an `error` naming the
- *   exit status;
- * - the command's output is streamed into the job log as it runs, which is what
- *   the error dialog's Download Logs needs: it renders only for a job with a log
- *   excerpt. The fixture's `stdout: true` hides output by appending
- *   `> /dev/null` to the command line, and here that redirects only the `false`
- *   after the `;`, so the `echo` reaches the log;
- * - `cronjob.run` is not abortable, so the running `sleep` cannot be stopped in
- *   teardown and ends on its own. Its cron job is still removed.
- *
- * Expanding a row from its chevron (the ticket's second scenario) waits on a
- * row-scoped id for that chevron, #14687, and is not here yet.
+ * Story: from the jobs panel an admin opens the Jobs page, filters by state, downloads a failed job's log, and
+ * follows "View Details" to that job, expanded. Assertions are scoped to seeded cron-job runs by id and checked
+ * against `core.get_jobs`. Each test opens the panel before seeding: the shared job store subscribes to events only
+ * once loaded. Per `plugins/cron/execute.py`, a non-zero exit ends FAILED, output streams into the log (the
+ * `stdout: true` redirect hits only the `false`, so `echo` reaches it), and `cronjob.run` cannot be aborted.
+ * Expanding a row by chevron waits on a row-scoped id (#14687).
  */
 import { readFile } from 'node:fs/promises';
 import {

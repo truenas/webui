@@ -1,21 +1,8 @@
 /**
- * The suite's `test` object. Import this instead of `@playwright/test`.
- *
- * Provides a connected, authenticated middleware client as a fixture, so a spec
- * never wires one up by hand:
- *
- *     let api: E2eApiClient;
- *     test.beforeAll(async () => { api = await connectAndLogin(config); });
- *     test.afterAll(() => { api?.close(); });
- *
- * Copying it is how a socket gets left open — forget the `afterAll` and the
- * runner hangs at the end of a green run, which reads as a hang rather than a
- * mistake.
- *
- * It also signs the browser in. Every test in a project that leaves
- * `authenticate` on (the default) starts with `page` already inside the admin
- * shell — see the `page` override below for why that is done per test rather
- * than once through `storageState`.
+ * The suite's `test` object; import this instead of `@playwright/test`. It provides a connected middleware
+ * client as a worker fixture, so no spec wires one up by hand and forgets the `afterAll` close that otherwise
+ * hangs the runner after a green run. It also signs the browser in: with `authenticate` on (the default),
+ * `page` starts inside the admin shell; see the `page` override for why that's per test, not `storageState`.
  */
 import { expect, type Page, test as base } from '@playwright/test';
 import type { E2eApiClient } from './api/client';
@@ -34,20 +21,10 @@ import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitle
 import { poolLifecycle } from '../fixtures/pool';
 
 /**
- * The wall-clock budget for signing in, how long one attempt may wait for the
- * shell, and the pause before trying again.
- *
- * A budget rather than an attempt count, because the two ways an attempt fails
- * take wildly different times. When the web server is down `page.goto` rejects
- * in milliseconds, so three counted attempts would be over in under a second;
- * when it is up but the app has not rendered, the assertion waits its full
- * timeout. Attempts run until the deadline, each bounded to what is left, with
- * a pause between them so a down server is retried rather than hammered.
- *
- * The UI is not always there to be logged into: when a pool holding the system
- * dataset is exported or imported, the appliance restarts what depends on it
- * and the token URL loads nothing usable for a while. A re-navigation is what a
- * stalled page needs, and a single long wait never re-navigates.
+ * The sign-in wall-clock budget, one attempt's wait for the shell, and the pause between attempts. A budget,
+ * not an attempt count: a down server fails `page.goto` in milliseconds while an unrendered app waits the full
+ * timeout. Re-navigating matters because exporting or importing the system-dataset pool restarts services
+ * and leaves the token URL unusable for a while, which a single long wait never recovers from.
  */
 const tokenLoginBudgetMs = 90_000;
 const tokenLoginAttemptTimeoutMs = 30_000;
@@ -93,23 +70,11 @@ async function dismissConcurrencyDialogs(page: Page): Promise<void> {
 }
 
 /**
- * Signs `page` in through the token URL, with a token minted for this login.
- *
- * Per login, not per worker, because a token only ever carries one browser
- * session. Three CI runs on 2026-09-08 (34255132927, 34256452773 and the
- * one before them) showed the same shape whatever else changed between tests:
- * the first authenticated test in a worker signed in, the next one waited the
- * full timeout on the same token and saw no shell, and the retry Playwright
- * spawned — a fresh worker, a fresh token — was in within seconds. Middleware
- * stops honouring the token once the session that redeemed it is gone, so
- * reusing one across tests can never work. Minting is one authenticated call,
- * which the rate limit exempts, so it costs nothing worth saving.
- *
- * The mint is inside the `authenticate` branch rather than a fixture the
- * `page` override depends on: Playwright builds the fixture graph from what a
- * fixture destructures, not from which branches read it, so a token fixture in
- * `page`'s signature would run for the `unauthenticated` project too — whose
- * whole point is to keep running when token login is broken (R4.2).
+ * Signs `page` in through the token URL with a token minted for this login. Per login, not per worker:
+ * middleware stops honouring a token once the session that redeemed it is gone, so reuse makes the second test
+ * in a worker time out (seen in CI on 2026-09-08). Minting is one rate-limit-exempt call. It's minted inside
+ * the `authenticate` branch, not a fixture, because a fixture in `page`'s signature would also run for the
+ * `unauthenticated` project, which must keep working when token login is broken (R4.2).
  */
 /**
  * Resolves on the first animation frame the admin shell is rendered in.
@@ -241,21 +206,11 @@ export interface E2eWorkerFixtures {
 }
 
 /**
- * Both fixtures are worker-scoped, not test-scoped.
- *
- * Each connection costs a sign-in, and middleware rate-limits *unauthenticated*
- * calls at 20 per method per IP per minute — so connections, not queries, are
- * the scarce resource. One per worker means one for the whole run at the
- * current `workers: 1`, rather than one per spec file.
- *
- * Both are lazy in principle, but in practice every test in the `authenticated`
- * project opens the socket: the `page` override below names `api` so it can
- * mint a login token. The `unauthenticated` project's `page` does not need it,
- * yet Playwright builds the fixture graph from the destructuring pattern rather
- * than from the branch taken, so its tests open the socket too — harmlessly,
- * since both of those specs use `api` for their own cleanup anyway. Should a
- * sign-in test ever need to run with middleware unreachable, the token would
- * have to move behind a fixture that project overrides.
+ * Both fixtures are worker-scoped: each connection costs a sign-in against the unauthenticated rate limit
+ * (20 per method per IP per minute), so connections are the scarce resource. In practice every test opens
+ * the socket, since `page` names `api` to mint a token and Playwright builds the fixture graph from the
+ * destructuring, not the branch taken. A sign-in test that must run with middleware unreachable would need
+ * the token behind a fixture that project overrides.
  */
 export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
@@ -321,27 +276,11 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   ],
 
   /**
-   * Signs the page in through the token URL before each authenticated test.
-   *
-   * Per test, not once via `storageState`, because of what the app does with a
-   * token once it has redeemed it. webui keeps its session token in
-   * `localStorage` and replaces it after every login with a five-minute,
-   * single-use reconnect token of its own (`auth.service.ts`). A `storageState`
-   * captured after the setup login is therefore a snapshot of *that* token, not
-   * of the two-hour one that was redeemed — so it works for exactly one test,
-   * started within five minutes, and every later test lands on the sign-in
-   * page. The suite never noticed while it had a single authenticated test; the
-   * S3 journeys were the first pair to run back to back.
-   *
-   * The token URL is the same entry the setup project validates, and a login
-   * costs a few seconds — well under the fifteen the form takes, which is the
-   * cost the token exists to avoid (R4.1). See `signInWithToken` for why each
-   * login also gets its own token.
-   *
-   * It also records what the test exercised for `yarn e2e:coverage`, counting
-   * from the test's first navigation or user input so that the sign-in and the
-   * dashboard it lands on are not credited to every test. See
-   * `support/coverage.ts`.
+   * Signs the page in through the token URL before each authenticated test. Per test, not via `storageState`:
+   * webui replaces the redeemed token with a five-minute single-use reconnect token (`auth.service.ts`), so a
+   * saved state works for one test only. A token login takes a few seconds versus fifteen for the form (R4.1);
+   * see `signInWithToken` for why each login mints its own. It also records coverage for `yarn e2e:coverage`
+   * from the test's first navigation or input (`support/coverage.ts`).
    */
   page: async ({
     page, authenticate, recordApiCalls: recording, api, config,

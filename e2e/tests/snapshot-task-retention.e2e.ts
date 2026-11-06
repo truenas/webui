@@ -1,28 +1,10 @@
 /**
- * Stories: editing a periodic snapshot task so that it no longer owns
- * snapshots it already took warns how many, and offers to keep their current
- * removal date. Kept, the old date is written onto each snapshot. Not kept,
- * nothing dates them any more. An edit that touches nothing about retention
- * warns of nothing.
- *
- * The warning is about ownership, not lifetime: middleware's
- * `update_will_change_retention_for` names the snapshots the task owns before
- * the edit and not after, and ownership is the naming schema and the schedule
- * alone. Shortening the lifetime changes no snapshot's owner, so it never
- * warns; changing the naming schema disowns every snapshot the old one named.
- *
- * The task's snapshot is seeded over the API rather than taken by the task, the
- * way `periodic-snapshot-tasks.e2e.ts` seeds one for the delete dialog: a name
- * the naming schema parses, at a minute the schedule fires on, is the task's
- * without the task ever having run. See `ownedSnapshotName`.
- *
- * Every retention is asserted through `pool.snapshot.query`, not only through
- * what the warning said.
- *
- * Story: switching a disabled task back on from the card enables it.
- *
- * Story: the full list's Snapshots button leads to the snapshot list, where
- * the task's snapshot is.
+ * Stories: editing a task so it no longer owns snapshots it took warns how many and offers to keep their removal
+ * date (kept, it's written onto each; not kept, nothing dates them); an edit leaving ownership alone warns of
+ * nothing. Ownership is naming schema and schedule alone (`update_will_change_retention_for`), so a shorter lifetime
+ * never warns. The snapshot is seeded over the API with a name and minute the task would own (`ownedSnapshotName`),
+ * and retention is checked in `pool.snapshot.query`. Also: re-enabling a disabled task from the card, and the full
+ * list's Snapshots button leading to the task's snapshot.
  */
 import {
   ensureSnapshotTaskPresent,

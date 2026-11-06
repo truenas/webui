@@ -71,14 +71,11 @@ export async function searchTaskList(page: Page, query: string): Promise<void> {
 }
 
 /**
- * Opens a row's detail panel on the full list that is open, and waits for one
- * of its actions.
+ * Opens a row's detail panel on the open full list, and waits for one of its actions.
  *
- * Replication, cloud sync and periodic snapshot lists keep a row's actions in
- * that panel rather than on the row, and so does the cron jobs list. Clicking
- * anywhere on the row opens it, on a table that sets `expandOnRowClick`. The
- * caller passes a text cell to click, because a replication row also holds its
- * Enabled switch, and a click on the switch writes to the task.
+ * Replication, cloud sync, periodic snapshot and cron lists keep row actions in that panel, opened by a
+ * row click (`expandOnRowClick`). The caller passes a text cell to click, because a replication row also
+ * holds its Enabled switch, and clicking that writes to the task.
  */
 export async function expandTaskListRow(page: Page, cell: string, action: string): Promise<void> {
   await page.locator(cell).click();

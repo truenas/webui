@@ -1,12 +1,8 @@
 /**
- * Story: what the SMB share form accepts, what it refuses, and what the
- * appliance is left holding afterwards.
- *
- * `purpose` selects a preset, and `presetEnabledFields` decides from it which
- * options exist at all, so the same panel is a different form per purpose.
- * Saves are asserted through `sharing.smb.query`, which also carries back what
- * the form never shows: the `purpose` it stored and the `options` it derived.
- * Every save declines the offer to start SMB, because service state is global.
+ * Story: what the SMB share form accepts, refuses and leaves on the appliance. `purpose` picks a preset and
+ * `presetEnabledFields` decides from it which options exist, so each purpose is a different form. Saves are checked
+ * via `sharing.smb.query`, including the stored `purpose` and derived `options` the form never shows. Every save
+ * declines the offer to start SMB, because service state is global.
  */
 import {
   ensureSmbServiceStopped, ensureSmbShareAbsent, ensureSmbSharePresent, findSmbShare,

@@ -1,26 +1,9 @@
 /**
- * Stories: an admin opens a running container's shell from the Tools card in its details and runs
- * commands in it; on a stopped container the same item is disabled and says why.
- *
- * The container is seeded over the API from the first Debian image the registry lists, as
- * `containers-power.e2e.ts` does, and started over the API where the story needs it running. Its
- * state is read back from `container.query`.
- *
- * Only commands that print and change nothing are typed: `echo` with arithmetic, and reading
- * `/etc/hostname`. Middleware writes the container's name there as it starts it, and the
- * appliance's own file holds the appliance's hostname, so that line is what shows the shell is in
- * the container. Never `exit`: a closed shell makes the terminal reconnect on its own.
- *
- * ## Setup and teardown
- *
- * As `containers-power.e2e.ts`: each test starts with the worker's `pool` as the preferred pool and
- * no container named `e2e-ct-shell`. Teardown deletes the container, with `force`, which takes a
- * running one, then writes back the containers settings the appliance held before the first test.
- * Once the file is done it removes `<pool>/.truenas_containers` before the worker exports the pool.
- *
- * Not covered: `/containers/view/:id/console`, which nothing links to; the shell for a user without
- * `web_shell`, and for a suspended container; the terminal's font size and reconnecting, which
- * `system-shell.e2e.ts` covers for the same terminal.
+ * Stories: an admin opens a running container's shell from its Tools card and runs commands; on a stopped one the
+ * item is disabled and says why. Only read-only commands are typed: `echo` and `/etc/hostname`, which holds the
+ * container's name and so proves the shell is inside it. Never `exit`: a closed shell makes the terminal
+ * reconnect. Setup and teardown are as `containers-power.e2e.ts`, for `e2e-ct-shell`. Font size and reconnect are
+ * `system-shell.e2e.ts`.
  */
 import {
   type ContainerSettings, containersDataset, containerSettingsBaseline, ensureContainerAbsent,

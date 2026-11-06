@@ -52,26 +52,12 @@ export async function selectOption(page: Page, select: string, option: string): 
 }
 
 /**
- * Picks whichever option a `tn-select` offers first.
+ * Picks whichever option a `tn-select` offers first, for the disk-size control whose option ids vary.
  *
- * Used for the disk-size control, whose option ids encode a size and media type
- * that vary per appliance, so the test cannot name the one it wants.
- *
- * This is a genuine guess, and `requireUnusedDisks` is what makes it a safe one.
- * The wizard buckets the inventory by type and size and generates the width
- * options from the *selected* bucket alone, so taking the first bucket is only
- * sound if some bucket holds the whole vdev — which is the condition that
- * precondition now asserts. It previously counted disks across the whole
- * inventory, and an earlier version of this comment claimed there was only one
- * size on offer. Neither was true: `.first()` is here precisely because there
- * may be several.
- *
- * `options` must be a selector matching only the given select's options — a
- * `data-test` prefix, never `[role="option"]`. That earlier version matched
- * across the whole document, so `.first()` could land on a stale option: CDK
- * overlays detach on an animation, and this runs immediately after the previous
- * select has closed. The result would be a wrong disk size in the slowest test
- * in the suite, which is a miserable way to spend an afternoon.
+ * Safe only because `requireUnusedDisks` asserts some type/size bucket holds the whole vdev: the wizard builds
+ * width options from the *selected* bucket alone, and there may be several. `options` must match only this
+ * select's options (a `data-test` prefix, never `[role="option"]`): CDK overlays detach on an animation, so a
+ * document-wide match can hit the previous select's stale option and pick the wrong disk size.
  */
 export async function selectFirstOption(page: Page, select: string, options: string): Promise<void> {
   await page.locator(select).click();
@@ -152,16 +138,10 @@ export async function openPoolWizard(page: Page, name: string): Promise<void> {
 export async function leaveGeneralStep(page: Page): Promise<void> {
   await page.locator(poolWizardLocators.next).click();
 
-  // The step after General is not always Data. `pool-manager-wizard.component.html`
-  // inserts an "Enclosure Options" step when the appliance reports more than one
-  // enclosure and the platform supports them, and `tn-stepper` renders only the
-  // active step — so on such hardware `select-layout` is simply not in the DOM
-  // and every following action fails on a bare 20 second timeout naming a
-  // selector rather than the reason.
-  //
-  // Virtual appliances have no enclosures, so this holds today. Asserted rather
-  // than assumed because it is exactly the kind of thing that changes when the
-  // suite is first pointed at real hardware.
+  // The step after General is not always Data: the wizard inserts "Enclosure Options" when the appliance has
+  // several enclosures, and `tn-stepper` renders only the active step, so `select-layout` would be missing and
+  // everything after would fail on a bare timeout. Virtual appliances have no enclosures; asserted because
+  // that changes when the suite first meets real hardware.
   await expect(
     page.locator(poolWizardLocators.layout),
     'The Data step did not follow General. An "Enclosure Options" step appears on appliances '
@@ -339,14 +319,9 @@ export async function downloadPoolKey(page: Page): Promise<Download> {
 /**
  * Accepts the destructive-action confirmation dialog.
  *
- * Waits for the dialog rather than probing for it. `isVisible()` is a
- * point-in-time check that does not wait, so calling it immediately after the
- * triggering click races the dialog's render: it returns false, the
- * confirmation is silently skipped, and the failure surfaces much later as an
- * unrelated navigation timeout with a dialog sitting on screen.
- *
- * Required, not optional, for the same reason — a confirmation that can be
- * quietly skipped is one that will be.
+ * Waits for the dialog rather than probing with `isVisible()`, which does not wait: right after the click it
+ * races the render, skips the confirmation silently, and the failure surfaces later as an unrelated
+ * navigation timeout. Required, not optional, for the same reason.
  */
 export async function confirmDestructiveAction(page: Page): Promise<void> {
   const confirmCheckbox = page.locator(confirmDialogLocators.checkbox);
@@ -414,13 +389,9 @@ export async function openAddDatasetForm(page: Page, parent: string): Promise<vo
 /**
  * Selects a dataset in the tree and opens its edit form from the details card.
  *
- * The page lands with the pool root selected, and the root's card has an Edit
- * too, so the card's Path has to name `name` before the click. Otherwise Edit
- * can open the root's form.
- *
- * Then waits for the disabled Name field to hold the dataset's full name. It is
- * patched in only once the record has loaded, and so are the values in
- * Other Options, so changing a field before that would change it on an empty form.
+ * The page lands on the pool root, whose card has an Edit too, so the card's Path must name `name` before the
+ * click. Then waits for the disabled Name field to hold the full name: it and Other Options are patched in
+ * only once the record loads, so an earlier change would land on an empty form.
  */
 export async function openEditDatasetForm(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
@@ -747,14 +718,11 @@ export async function chooseDeletePool(page: Page): Promise<void> {
 }
 
 /**
- * Exports the pool from the open Disconnect dialog, keeping its data on the
- * disks, and returns once the dialog has closed.
+ * Exports the pool from the open Disconnect dialog, keeping its data on the disks, and returns once it closes.
  *
- * `deleteConfiguration` is the "Delete saved configurations from TrueNAS?" tick,
- * which the form starts ticked, so it is set either way rather than only when
- * it is wanted. The dialog closes only after the export job's own dialog has,
- * which is the app's signal that the job ended. Whether it did what was asked
- * is the caller's to check through the API.
+ * `deleteConfiguration` is the "Delete saved configurations from TrueNAS?" tick, which starts ticked, so it
+ * is set either way. The dialog closes only after the export job's dialog has, the app's signal the job
+ * ended; whether it did what was asked is the caller's to check through the API.
  */
 export async function exportPoolFromDialog(
   page: Page,

@@ -1,16 +1,9 @@
 /**
  * Kerberos realm and keytab preconditions, cleanup and readback, over the API.
  *
- * Middleware holds both unique by name — a realm case-insensitively — so these
- * helpers key on the name. Every realm here is under `.TEST`, which RFC 2606
- * reserves, so no KDC the names point at can exist. Nothing needs one: saving a
- * realm only rewrites `krb5.conf`, and no directory service is joined on the CI
- * appliance to read it.
- *
- * A keytab is checked when it is saved: middleware base64-decodes it, runs
- * `klist -ket` over the bytes and refuses a file that lists no entries. So
- * arbitrary bytes are not enough, and {@link buildKeytab} writes the smallest file
- * `klist` accepts.
+ * Both are unique by name (realms case-insensitively), so helpers key on it. Realms are under RFC 2606's
+ * `.TEST`, so no KDC exists, and none is needed: saving only rewrites `krb5.conf`. Middleware refuses a keytab
+ * that `klist -ket` lists no entries for, so {@link buildKeytab} writes the smallest file `klist` accepts.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -151,16 +144,10 @@ const aes256KeyBytes = 32;
 const keytabTimestamp = 1_767_225_600;
 
 /**
- * An MIT keytab (format `0x0502`) holding one entry for `principal@realm`.
+ * An MIT keytab (format `0x0502`) holding one entry for `principal@realm`, never used to authenticate.
  *
- * `klist -ket` reads the principal, the key version, the timestamp and the
- * enctype — and never the key itself, so the key is zeros. That is enough for
- * middleware, which only asks whether `klist` lists anything. The file is never
- * used to authenticate.
- *
- * Each entry is its length in four bytes, then: the component count, the realm,
- * each component, the name type, the timestamp, an 8-bit key version, the
- * enctype, the key, and a 32-bit key version.
+ * `klist -ket` never reads the key, so it is zeros. Each entry is its length in four bytes, then: component
+ * count, realm, each component, name type, timestamp, 8-bit key version, enctype, key, and 32-bit key version.
  */
 export function buildKeytab(principal: string, realm: string): Buffer {
   const components = principal.split('/');

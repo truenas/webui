@@ -12,13 +12,9 @@ import { preferencesLocators } from '../locators/preferences';
 /**
  * Opens the Preferences form from the Access card's link, starting from the sidebar.
  *
- * Waits first for the card to show the timeout the test expects to start from,
- * then for the form's Session Timeout field to hold the same value in minutes.
- * The form is filled from the preferences the app last loaded, so a value typed
- * before then could be overwritten by it.
- *
- * No first-time warning: that is raised by the card's Configure button, and this
- * link opens the panel directly.
+ * Waits for the card to show the expected timeout, then for Session Timeout to hold it in minutes: the
+ * form fills from the last-loaded preferences, so a value typed before then could be overwritten.
+ * No first-time warning: the card's Configure button raises that, and this link opens the panel directly.
  */
 export async function openSessionTimeoutFromAccessCard(
   page: Page,

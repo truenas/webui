@@ -111,13 +111,10 @@ export const pendingChangesLocators = {
 } as const;
 
 /**
- * "Set Gateway and DNS", `<tn-dialog-shell testId="default-gateway">`. The form
- * opens it after a save whenever `interface.network_config_to_be_removed` names
- * a gateway or DNS servers DHCP provides — on an appliance that takes them from
- * DHCP, after any save that stages a change, a new VLAN with no addresses
- * included. `answerGatewayDialog` in `flows/network-interfaces.ts` reads that
- * call rather than assuming the dialog. Prefilled with
- * them: Register saves them as static configuration, Skip saves nothing.
+ * "Set Gateway and DNS", `<tn-dialog-shell testId="default-gateway">`. Opens after a save whenever
+ * `interface.network_config_to_be_removed` names a DHCP-provided gateway or DNS, which on a DHCP appliance is
+ * any staging save, a new address-less VLAN included. `answerGatewayDialog` (`flows/network-interfaces.ts`)
+ * reads that call rather than assuming the dialog. Register saves the prefilled values as static; Skip saves nothing.
  */
 export const defaultGatewayDialogLocators = {
   title: '[data-test="dialog-title-default-gateway"]',

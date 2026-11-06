@@ -1,13 +1,9 @@
 /**
  * Browsing an explorer's popup instead of typing a path into the field.
  *
- * Every other flow types into an explorer and leaves the field, which hands the
- * text to the form without asking the explorer's provider anything. Browsing is
- * what makes the explorer call its provider, once per directory opened. The
- * entry names are what the provider listed, so a test that finds one has read
- * that listing.
- *
- * `base` is the explorer's id base — see `locators/explorer.ts`.
+ * Typing hands text to the form without asking the explorer's provider anything; browsing calls the
+ * provider once per directory opened, so a test that finds an entry has read that listing.
+ * `base` is the explorer's id base; see `locators/explorer.ts`.
  */
 import { expect, type Page } from '@playwright/test';
 import { explorerLocators } from '../locators/explorer';

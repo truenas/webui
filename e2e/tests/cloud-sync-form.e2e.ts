@@ -1,22 +1,10 @@
 /**
- * Stories: the full cloud sync form, reached from the wizard's Advanced Options. An admin dry-runs
- * a task that was never saved, and cannot until the form is complete. And an admin points an S3
- * credential at the appliance's own S3 service, then saves a push task to a bucket picked from the
- * form's list.
- *
- * The form's Dry Run is not the card's: it sends the unsaved task to `cloudsync.sync_onetime`
- * rather than a saved one's id to `cloudsync.sync` (`cloud-sync-tasks.e2e.ts` covers that one), so
- * `core.get_jobs` is where a run that really happened shows up, and `cloudsync.query` is where
- * nothing having been saved does.
- *
- * The S3 remote is this appliance too. With no listeners configured the S3 service serves plain
- * HTTP on port 9000 on every address, and rclone runs on the appliance, so `127.0.0.1:9000` reaches
- * it with no certificate involved. The bucket select is filled from `cloudsync.list_buckets` over
- * that credential and falls back to a free-text input when the call fails, so which of the two
- * renders is the UI's own report of whether it worked.
- *
- * The access key's secret is typed into the page, so it lands in a published trace. It is minted
- * per test and deleted after it, so nothing still valid outlives the job (see `e2e/CLAUDE.md`).
+ * Stories: in the full cloud sync form (wizard's Advanced Options) an admin dry-runs an unsaved task once the form
+ * is complete, and saves an S3 push task to a bucket picked from the list. Dry Run here sends the unsaved task to
+ * `cloudsync.sync_onetime`, so `core.get_jobs` shows the run and `cloudsync.query` shows nothing saved. The S3
+ * remote is this appliance's own service on `127.0.0.1:9000`; the bucket select falls back to a text input when
+ * `cloudsync.list_buckets` fails, so which renders is the UI's report. The typed secret lands in the trace, so the
+ * key is minted per test and deleted after it (see `e2e/CLAUDE.md`).
  */
 import {
   countCloudCredentials,

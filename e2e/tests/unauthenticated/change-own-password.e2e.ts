@@ -1,29 +1,10 @@
 /**
- * Stories: a signed-in user changes their own password from the topbar's user
- * menu, and from then on only the new one signs them in; the dialog refuses a
- * mismatched confirmation and a wrong current password, and a refused change
- * leaves the old password working; and a Full Admin is not asked for the
- * current password at all.
- *
- * Under `tests/unauthenticated/` because the claim is about the next sign-in,
- * which the token bypass would defeat — and the token fixture mints tokens for
- * the suite's admin only, so these accounts have to sign in through the form
- * anyway. Every sign-in spends from the unauthenticated rate limit (20 per
- * method per IP per 60s), so each story is one test with its steps in sequence.
- * The three use seven sign-ins between them.
- *
- * Each runs against a throwaway account, never the suite's own admin: every
- * later test's token, and the `api` fixture's own connection, sign in with that
- * admin's password, so a change that teardown failed to undo would take the rest
- * of the run down. Deleting the account is also what discards whatever password
- * a failed test left it with.
- *
- * Two accounts, because the dialog differs by role. The read-only admin is not a
- * Full Admin, so it is asked for its current password and middleware checks it;
- * the Full Admin is not asked.
- *
- * No password is ever read back over the API — there is no such read. The
- * sign-in form taking one password and refusing the other is the evidence.
+ * Stories: a user changes their own password from the user menu and only the new one signs them in; a mismatched
+ * confirmation or wrong current password is refused and the old one keeps working; a Full Admin isn't asked for the
+ * current password. Unauthenticated because the claim is the next sign-in; every sign-in spends from the rate limit
+ * (20 per method per IP per 60s), so each story is one test. Throwaway accounts only, since every later token and
+ * the `api` fixture sign in with the suite admin's password. No password can be read back, so the sign-in form
+ * taking one password and refusing the other is the evidence.
  */
 import { ensureRoleAdminPresent, type RoleAdmin } from '../../fixtures/role-admins';
 import { ensureSignInAdministratorPresent, ensureUserAbsent, findUser } from '../../fixtures/users';

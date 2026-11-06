@@ -1,17 +1,8 @@
 /**
- * Stories: an admin reads the appliance's license on the Support card, looks up the System
- * Thumbprint, and opens the EULA from global search.
- *
- * All of it is read-only. The card takes its readouts from the store, which combines `system.info`
- * with `truenas.license.info`, so each readout is checked against those two calls. Nothing on the
- * appliance is changed: the production toggle, File Ticket and the license upload are never
- * touched.
- *
- * ## Setup and teardown
- *
- * The Expiration Date is formatted with the account's date format, so the card test writes the
- * preference baseline from `preferences.e2e.ts` first and puts it back afterwards. The other tests
- * change nothing. Global search keeps its recent searches in the test's own `localStorage`.
+ * Stories: an admin reads the license on the Support card, looks up the System Thumbprint, and opens the EULA from
+ * global search. All read-only: each readout is checked against `system.info` and `truenas.license.info`, and the
+ * production toggle, File Ticket and license upload are never touched. The Expiration Date uses the account's date
+ * format, so the card test writes the `preferences.e2e.ts` baseline first and restores it afterwards.
  */
 import { establishPreferenceBaseline, restorePreferences } from '../fixtures/preferences';
 import type { PreferencesBlob } from '../fixtures/preferences';

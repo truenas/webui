@@ -1,16 +1,9 @@
 /**
- * Alert class settings: the Category card on System > Alert Settings, over the API.
+ * Alert class settings (the Category card on System > Alert Settings), over the API.
  *
- * Every class's level and frequency is one config record, `alertclasses.config`,
- * whose `classes` holds an entry only for a class that differs from its default.
- * `alertclasses.update` replaces that map whole, and so does the card: it sends
- * every override the form holds, not just the one that changed. So an override
- * the test did not touch surviving a save is something the UI did, not
- * something middleware kept for it.
- *
- * Which classes exist, and what they are called, is middleware's to say and
- * moves between releases. So the spec does not name one: {@link pickAlertClasses}
- * reads `alert.list_categories` and takes two from the same category.
+ * `alertclasses.config.classes` holds only non-default entries, and both `alertclasses.update` and the card
+ * replace the map whole, so an untouched override surviving a save is the UI's doing. Class names move between
+ * releases, so the spec names none: {@link pickAlertClasses} takes two from one `alert.list_categories` category.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

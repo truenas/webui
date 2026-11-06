@@ -1,21 +1,9 @@
 /**
- * Stories: an admin saves the WebShare service's Passkey mode and AI Assistant
- * (MCP) settings from its row on the Services page under System, and TrueSearch
- * stays locked off on an appliance without TrueNAS Connect.
- *
- * The page has no readout of the settings, so each save is asserted through
- * `webshare.config`, and as the whole set this spec reads: the form sends every
- * field back, so one it dropped or flipped fails here even when nobody edited it.
- *
- * `beforeEach` snapshots the settings, then moves them to a known start so each
- * edit is a change. The Passkey start is `Required`, not the form's own default
- * of `Disabled`, so seeing it in the select proves the form has loaded before a
- * test edits anything. Teardown writes the snapshot back, except TrueSearch,
- * which is never written over the API; a UI save leaves it off wherever it is
- * locked. The service is stopped throughout, so a save only rewrites configuration.
- *
- * The MCP test needs an appliance with no Directory Services login groups, as
- * CI's is. With one, the form offers a group picker and does not prefill.
+ * Stories: an admin saves WebShare's Passkey and AI Assistant (MCP) settings from System > Services, and TrueSearch
+ * stays locked off without TrueNAS Connect. Saves are checked as the whole `webshare.config` set this spec reads,
+ * since the form sends every field back. `beforeEach` snapshots and sets a known start; Passkey starts `Required`,
+ * not the form's `Disabled`, so seeing it proves the form loaded. Teardown restores all but TrueSearch, never
+ * written over the API. The service stays stopped. The MCP test needs no Directory Services login groups, as on CI.
  */
 import { readWebshareSettings, setWebshareSettings, type WebshareSettings } from '../fixtures/service-config';
 import { ensureServiceStopped } from '../fixtures/services';

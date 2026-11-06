@@ -1,14 +1,8 @@
 /**
- * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB, NFS and WebShare forms it opens.
- *
- * Every id on a row is keyed on a row tag of `service-<name>`, and two names are
- * in play. The page builds the tag from the display name (`SMB`) for the `<tr>`,
- * the Status cell and the Start Automatically switch; the status and actions
- * cells build it from the middleware name (`cifs`) for the start, stop and edit
- * buttons. They agree only where the two names do, as for `ssh` and `ftp`.
- *
- * The forms are hand-written templates whose controls fall back to their
- * `formControlName`, so the field ids read like the API's own keys.
+ * The Services page under System, and the SSH, FTP, SNMP, UPS, SMB, NFS and WebShare forms it opens. Row tags are
+ * `service-<name>` from two names: the display name (`SMB`) for the row, Status cell and Start Automatically switch;
+ * the middleware name (`cifs`) for start, stop and edit. They agree only where the names do (`ssh`, `ftp`). Form
+ * controls fall back to their `formControlName`, so ids read like API keys.
  */
 import { kebabTestSegment } from './test-id';
 

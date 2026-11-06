@@ -1,25 +1,9 @@
 /**
- * Story: an admin opens System > Shell from the sidebar and runs commands in a login shell on the
- * appliance, as themself. Making the font bigger saves that preference and resizes the shell, as
- * does resizing the window. A read-only administrator, whose privilege lacks `web_shell`, finds the
- * Shell entry locked.
- *
- * The shell runs on the appliance itself, as the suite's admin, so only commands that print and
- * change nothing are typed: `echo` with arithmetic, and `id -un`. Never `exit`: a closed shell makes
- * the terminal reconnect on its own. The one trace left is a line in that account's shell history.
- *
- * ## Setup
- *
- * The first test changes nothing. The font-size test writes the preference baseline, which pins
- * `terminalFontSize` to 14, and writes it back afterwards. The read-only administrator is created
- * and removed around its test.
- *
- * `core.resize_shell` is read off the page's own socket. The recorder keeps the method and whether
- * it was answered, not its params, so the claim is "a resize was sent and accepted", not the exact
- * columns and rows.
- *
- * Not covered: the `/shell` route, which nothing in the app links to; reconnecting after a dropped
- * socket; the font-size limits; global search's Shell entry.
+ * Story: an admin opens System > Shell and runs commands as themself; a bigger font saves a preference and resizes
+ * the shell, as does resizing the window; a read-only admin (no `web_shell`) finds Shell locked. Only commands that
+ * print and change nothing are typed (`echo`, `id -un`). Never `exit`: a closed shell reconnects on its own. The
+ * font test pins `terminalFontSize` via the preference baseline and restores it. `core.resize_shell` is recorded
+ * without params, so the claim is that a resize was sent and accepted, not its exact columns and rows.
  */
 import type { Page } from '@playwright/test';
 import {

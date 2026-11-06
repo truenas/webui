@@ -1,17 +1,8 @@
 /**
- * Story: an administrator creates a TrueNAS admin user, who can then sign in.
- *
- * This is the first test that covers a real user journey rather than proving
- * the rig. It deliberately runs without the token bypass — it lives under
- * `tests/unauthenticated/`, which signs nobody in and has no dependency on
- * the setup project, because a test of authentication that authenticates by
- * side channel tests nothing (R4.2).
- *
- * The journey is one test rather than four because the steps are not
- * independently meaningful: "sign out" and "sign in as the new account" only
- * say anything in sequence. That is a different case from S3–S8, where each
- * step is a feature in its own right and gets API-provisioned preconditions
- * (R3.1).
+ * Story: an administrator creates a TrueNAS admin user, who can then sign in. It runs without the token bypass,
+ * under `tests/unauthenticated/`, because a test of authentication that authenticates by side channel tests nothing
+ * (R4.2). One test, not four, because "sign out" and "sign in as the new account" only mean something in sequence,
+ * unlike S3–S8, where each step is a feature with API-provisioned preconditions (R3.1).
  */
 import { ensureUserAbsent, testAdmin } from '../../fixtures/users';
 import { expectSignedInAs, signIn, signOut } from '../../flows/auth';

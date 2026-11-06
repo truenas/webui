@@ -36,14 +36,9 @@ export async function queryService(client: E2eApiClient, service: string): Promi
 /**
  * Returns a service to stopped and not-auto-starting.
  *
- * An empty query is an error rather than "nothing to stop": every appliance has
- * a row for the services this suite touches, so no row means the query did not
- * answer — or the appliance lacks the feature, which the journeys cannot run
- * against either way. Returning quietly would skip the teardown that keeps the
- * next run honest.
- *
- * The auto-start flag matters too: the start dialog's toggle defaults to on, so
- * a run that starts the service also enables it at boot.
+ * An empty query is an error, not "nothing to stop": every appliance has rows for these services, so none means
+ * no answer or a missing feature, and returning quietly would skip the teardown. Auto-start matters because the
+ * start dialog's toggle defaults to on.
  */
 export async function ensureServiceStopped(
   client: E2eApiClient,

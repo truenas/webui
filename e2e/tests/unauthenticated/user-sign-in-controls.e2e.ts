@@ -1,21 +1,9 @@
 /**
- * Stories: an admin locks a user from the user details page and that user can
- * no longer sign in, unlocks them and they can again; and an admin generates a
- * one-time password that signs the user in exactly once.
- *
- * Under `tests/unauthenticated/` because the claim is about signing in as the
- * account afterwards, which the token bypass would defeat (R4.2). The admin
- * signs in through the form too, and every sign-in spends from the
- * unauthenticated rate limit (20 per method per IP per 60s) — which is why each
- * story is one test and the steps run in sequence rather than as separate tests.
- *
- * Each runs against a throwaway administrator, never the suite's own admin: a
- * lock that failed to come off again would otherwise take every later test's
- * sign-in down with it. The account is an administrator because a one-time
- * password needs a user holding a role, and signing in to the UI needs one too.
- *
- * `locked` is read back over the API after each toggle: the card swapping its
- * button says the screen believed it, `user.query` says the appliance did.
+ * Stories: an admin locks a user, who then can't sign in, and unlocks them; and generates a one-time password that
+ * signs the user in exactly once. Unauthenticated because the claim is signing in afterwards (R4.2); every sign-in
+ * spends from the rate limit, so each story is one test. A throwaway administrator is used, since a stuck lock on the
+ * suite's admin would break every later sign-in, and a one-time password needs a role-holding user. `locked` is
+ * read back from `user.query` after each toggle.
  */
 import { ensureSignInAdministratorPresent, ensureUserAbsent, findUser } from '../../fixtures/users';
 import {

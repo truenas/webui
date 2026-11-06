@@ -1,19 +1,9 @@
 /**
- * Stories: an admin imports a certificate with its private key from the
- * Certificates card on Credentials > Certificates, edits one, views its
- * certificate and key, and deletes one from its row, and the appliance holds
- * what they did.
- *
- * Every certificate here is the checked-in test certificate and key in
- * `fixtures/test-certificate.ts`, under a different name each time.
- *
- * Each save is asserted twice: the card's row says the screen believed it,
- * `certificate.query` says the appliance did it — and carries the PEM and the
- * trusted-store flag, which the card does not show.
- *
- * Edit and delete each run beside a second certificate that must come through
- * untouched. Every row has its own Edit and Delete in its own row menu, so a
- * row-targeting bug changes the wrong certificate without failing anything else.
+ * Stories: an admin imports a certificate with its key on Credentials > Certificates, edits one, views its
+ * certificate and key, and deletes one. Every certificate is the checked-in pair in `fixtures/test-certificate.ts`
+ * under a new name. Saves are checked on the row and through `certificate.query`, which carries the PEM and
+ * trusted-store flag. Edit and delete run beside a bystander that must come through untouched, so a row-targeting
+ * bug fails the test.
  */
 import {
   countCertificates,

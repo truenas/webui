@@ -1,20 +1,9 @@
 /**
- * The Tunable card on System > Advanced Settings, where sysctl variables live, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `tunable-<var>`, a plain template literal with no pre-normalizing — so the
- * row, its cells and its action menu all go through the library's normalizer,
- * and {@link kebabTestSegment} is the one to use throughout. A sysctl name is
- * dotted and underscored (`net.ipv4.tcp_fin_timeout`), and that normalizer
- * leaves `ipv4` whole where lodash would split it.
- *
- * The tag is keyed on the variable alone, and the form disables Variable once
- * the tunable exists, so **an edit never renames the row**.
- *
- * The form is built by `ix-form-renderer` from `tunable.form-config.ts`, so every
- * field's id is its control name — see `locators/groups.ts`. Value is a
- * `textarea` field, which the renderer hands to a multiline `tn-input`, and that
- * renders a `<textarea>` typed `textarea` — see `locators/api-keys.ts`.
+ * The Tunable card on System > Advanced Settings (sysctl variables), and its form. Row ids come from
+ * `uniqueRowTag`, `tunable-<var>`, with no pre-normalizing, so use {@link kebabTestSegment}, which keeps `ipv4`
+ * whole where lodash would split it. Keyed on the variable, which the form disables once saved, so edits never
+ * rename the row. The form is `ix-form-renderer` from `tunable.form-config.ts`, so ids are control names; Value is
+ * a multiline `tn-input` rendering a `<textarea>` typed `textarea`.
  */
 import { kebabTestSegment } from './test-id';
 

@@ -1,18 +1,9 @@
 /**
- * Stories: the ACL editor on a POSIX dataset. A built-in preset, a named user entry in both the
- * access and the default ACL, the refusal to apply an ACL recursively without default entries,
- * and Strip ACL.
- *
- * The dataset is made with `acltype: 'POSIX'`, so its ACL starts trivial and the Permissions card
- * opens the Unix editor, whose Set ACL raises the preset dialog. Every result is read back through
- * `filesystem.getacl`. A preset's entries are compared against the template
- * `filesystem.acltemplate.by_path` serves rather than written out here, and only what tells one
- * preset from another is asserted by hand.
- *
- * Which rows offer a remove control is checked on the custom ACL, not on a preset.
- * `canBeRemoved` counts access and default entries together, so on a preset with default entries
- * every USER_OBJ row can be removed. On the custom ACL each of the three trivial entries is the
- * only one of its kind.
+ * Stories: the ACL editor on a POSIX dataset: a built-in preset, a named user in access and default ACLs, refusal
+ * to apply recursively without default entries, and Strip ACL. The dataset starts trivial, so Set ACL in the Unix
+ * editor raises the preset dialog. Results are read through `filesystem.getacl`, with preset entries compared to
+ * `filesystem.acltemplate.by_path`. Remove controls are checked on the custom ACL: `canBeRemoved` counts access and
+ * default entries together, so on a preset with defaults every USER_OBJ row is removable.
  */
 import {
   applyPosixAclTemplate, posixEntries, readAcl, readAclTemplate, type AclTemplate,

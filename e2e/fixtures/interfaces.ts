@@ -1,16 +1,10 @@
 /**
  * Network interface preconditions, cleanup and readback, over the API.
  *
- * Interface edits are staged: `interface.create`, `update` and `delete` only
- * write the database, and nothing reaches the NIC until `interface.commit`
- * (Test Changes) and `interface.checkin` (Save Changes). `interface.rollback`
- * (Revert Changes) throws the staged edits away. So a spec here can stage
- * anything and revert it without the appliance's network ever changing.
- *
- * **Only `network-interfaces-commit.e2e.ts` commits**, through the helpers at
- * the end of this file, and only on an appliance with a spare NIC. A commit
- * re-applies every interface, the one the suite talks to included, and can drop
- * the socket the whole run depends on. Every other spec stages and reverts.
+ * Edits are staged: create, update and delete only write the database until `interface.commit` (Test Changes)
+ * and `interface.checkin` (Save Changes); `interface.rollback` discards them. **Only
+ * `network-interfaces-commit.e2e.ts` commits**, via the helpers at the end, on an appliance with a spare NIC:
+ * a commit re-applies every interface and can drop the suite's socket. Every other spec stages and reverts.
  */
 import { expect } from '@playwright/test';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -252,14 +246,11 @@ export async function readCheckinWaiting(client: E2eApiClient): Promise<number |
 }
 
 /**
- * Applies whatever is staged and keeps it: `interface.commit` with a rollback
- * timer, then `interface.checkin`, the API's Test Changes and Save Changes.
+ * Applies whatever is staged and keeps it: `interface.commit` with a rollback timer, then `interface.checkin`.
  *
- * A commit can restart DHCP on the NIC the suite talks to, and the answer can
- * be lost with the socket, so a failed call does not mean a failed commit.
- * `interface.checkin_waiting` says whether the commit landed. A commit that
- * really failed has already rolled itself back, and the poll then reports what
- * the call answered.
+ * A commit can restart DHCP on the suite's NIC and lose the answer with the socket, so a failed call is not a
+ * failed commit; `interface.checkin_waiting` says whether it landed. A commit that really failed has already
+ * rolled back, and the poll then reports what the call answered.
  */
 export async function commitInterfaceChanges(client: E2eApiClient, whatItCosts: string): Promise<void> {
   let commitAnswer = '';
@@ -288,16 +279,12 @@ export async function commitInterfaceChanges(client: E2eApiClient, whatItCosts: 
 }
 
 /**
- * Saves the management NIC to the database as DHCP, as it already runs, and
- * commits that. For a NIC with no row: check `hasInterfaceRow` first, and
- * record that this is being tried before calling it, since it can throw after
- * the row has landed.
+ * Saves the management NIC to the database as DHCP, as it already runs, and commits that. Check
+ * `hasInterfaceRow` first, and record the attempt before calling, since it can throw after the row lands.
  *
- * A fresh appliance has an empty `network.interfaces` table, and middleware
- * runs DHCP on every NIC. Once the table holds any row, `interface.sync`
- * unconfigures every NIC without one. So committing a VLAN on the spare NIC
- * would take the management NIC's address away, unless this row is there first.
- * Its lease does not change, so the socket survives the commit.
+ * With an empty `network.interfaces` table middleware runs DHCP everywhere, but once any row exists
+ * `interface.sync` unconfigures NICs without one, so a spare-NIC VLAN commit would drop the management address.
+ * The lease does not change, so the socket survives.
  */
 export async function pinManagementInterface(client: E2eApiClient, name: string): Promise<void> {
   await firstValueFrom(

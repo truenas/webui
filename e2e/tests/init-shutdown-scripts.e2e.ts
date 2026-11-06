@@ -1,20 +1,9 @@
 /**
- * Stories: an admin adds, edits and deletes an init/shutdown script from the
- * card on System > Advanced Settings, and the appliance holds what they did.
- *
- * Each save is asserted twice, the way the share specs do it: the card's row
- * says the screen believed it, `initshutdownscript.query` says the appliance did
- * it — and carries what the card shows differently or not at all, like the
- * timeout and the raw When value.
- *
- * Edit and delete each run beside a second script that must come through
- * untouched: the row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug changes the wrong
- * script without failing anything else.
- *
- * Every command is a harmless `echo`. An enabled script really runs at the
- * appliance's next boot or shutdown, and a run that dies before its teardown
- * leaves one there.
+ * Stories: an admin adds, edits and deletes an init/shutdown script from its card on System > Advanced Settings.
+ * Saves are checked on the row and through `initshutdownscript.query`, which carries the timeout and raw When.
+ * Edit and delete run beside a bystander script that must come through untouched, so a row-targeting bug fails.
+ * Commands are a harmless `echo`: an enabled script really runs at the next boot or shutdown, and a run that dies
+ * before teardown leaves one behind.
  */
 import {
   ensureInitShutdownScriptAbsent, ensureInitShutdownScriptPresent, findInitShutdownScript,

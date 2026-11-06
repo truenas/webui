@@ -1,42 +1,10 @@
 /**
- * Stories: an admin adds, edits and deletes a periodic snapshot task from the
- * card on Data Protection, and the appliance holds what they did.
- *
- * Each action is asserted twice, the way the other card specs do it: the card's
- * row says the screen believed it, and `pool.snapshottask.query` says the
- * appliance did it — and carries what the card does not show at all, the
- * retention, the naming schema and the schedule.
- *
- * Edit and delete each act beside a second task that must come through
- * untouched. The row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug would act on the
- * wrong task without failing anything else.
- *
- * Every task snapshots a dataset of its own, made fresh for each test. A task
- * that fires on its schedule leaves snapshots behind, and those go with the
- * dataset — and a dataset with snapshots would put a second box in the delete
- * dialog, which the delete test does not expect.
- *
- * Story: a task the appliance runs takes snapshots named by its naming schema.
- *
- * Neither card nor list has a Run Now for these tasks — the schedule is the only
- * thing that runs one — so that test schedules its task every minute and waits
- * for the first snapshot. A fresh dataset has no snapshots, so every snapshot
- * found on one was taken by its task.
- *
- * Story: switching a task off on the card disables that task and no other. It
- * asserts what the appliance now holds and does not wait to watch the
- * scheduler skip it.
- *
- * Stories: deleting a task that has snapshots asks whether to keep them with
- * their original retention. Kept, each one carries the removal date its task
- * would have given it. Not kept, nothing will remove them. Either way the
- * snapshots stay.
- *
- * Those tests seed the task's snapshot over the API rather than wait for the
- * task to take one. Middleware counts a snapshot as the task's when its name
- * parses with the naming schema at a minute the schedule fires on, which a
- * name can satisfy without the task ever having run.
+ * Stories: an admin adds, edits, deletes and switches off a periodic snapshot task from its card on Data
+ * Protection; a scheduled task takes snapshots named by its schema; deleting a task with snapshots asks whether to
+ * keep their retention. Saves are checked on the row and `pool.snapshottask.query`, beside an untouched bystander.
+ * Each task's dataset is fresh per test, so any snapshot on it is its task's and the delete dialog has no extra box.
+ * There is no Run Now, so the run test schedules every minute; retention tests seed snapshots over the API, since
+ * middleware claims any snapshot whose name parses with the schema at a scheduled minute.
  */
 import {
   ensureSnapshotTaskPresent,

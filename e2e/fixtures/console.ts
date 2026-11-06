@@ -1,19 +1,9 @@
 /**
- * Console settings: preconditions, cleanup and readback, over the API.
+ * Console settings (part of `system.advanced`, one config record): preconditions, cleanup, readback, over the API.
  *
- * These five settings are part of `system.advanced`, a single config record, so
- * — as in `fixtures/syslog.ts` — there is nothing to create or delete. Each test
- * starts from a known baseline and teardown writes that baseline back, rather
- * than snapshotting what it found and restoring that.
- *
- * The baseline is middleware's own default: the text console shown without a
- * password prompt, the serial console off on `ttyS0` at 9600 bps, and the stock
- * banner. That is what a fresh appliance holds.
- *
- * The serial port is never changed, only the console turned on and off over it.
- * Which ports exist depends on the machine, and middleware refuses to turn the
- * serial console on over one it does not list. `ttyS0` is the one the CI
- * appliance's own console is read from.
+ * As in `fixtures/syslog.ts`, tests start from middleware's default (no console password, serial off on
+ * `ttyS0` at 9600, stock banner) and teardown writes it back. The serial port is never changed: ports vary by
+ * machine and middleware refuses one it does not list; `ttyS0` is where CI reads its console.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

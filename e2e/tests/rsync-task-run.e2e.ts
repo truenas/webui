@@ -1,23 +1,8 @@
 /**
- * Story: an admin runs a rsync task from the card on Data Protection with Run
- * Now, the job completes, and the files really are copied to the target path.
- *
- * The task pushes over SSH through an SSH connection back to the appliance
- * itself — see `fixtures/ssh-connections.ts` — so no second machine is needed
- * and the target is a dataset this spec can read back. Middleware still runs
- * rsync over `ssh` exactly as it would to another host: the mode and the
- * connection decide that, not the address.
- *
- * The run is asserted on the card and on the appliance: the row's state for
- * what the screen said, `core.get_jobs` for whether the job worked, and
- * `filesystem.listdir` for what it copied, which appears nowhere on the screen.
- *
- * The run acts beside a second task that must not run. The row's actions sit in
- * a kebab menu, so Run job belongs to whichever row's menu was opened, and a
- * row-targeting bug would run the wrong task without failing anything else.
- *
- * Add, edit and delete are `rsync-tasks.e2e.ts`. SSH mode in the form, and Pull,
- * are `rsync-task-ssh.e2e.ts`.
+ * Story: an admin runs a rsync task from the Data Protection card with Run Now and the files are copied. The task
+ * pushes over SSH back to the appliance itself (`fixtures/ssh-connections.ts`); middleware still runs rsync over
+ * `ssh`. Checked via the row state, `core.get_jobs` and `filesystem.listdir`. The run happens beside a second task
+ * that must not run, so a row-targeting bug in the kebab menu fails the test.
  */
 import { findFileNames, writeFileOnAppliance } from '../fixtures/cloud-sync';
 import {

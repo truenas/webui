@@ -1,14 +1,9 @@
 /**
- * Containers: the global settings and the containers themselves —
- * preconditions, cleanup and readback, over the API.
+ * Containers: the global settings and the containers themselves; preconditions, cleanup and readback, over the API.
  *
- * The settings are one config record, `lxc.config`. A spec writes the settings
- * each test starts from, and teardown writes back what the appliance held
- * before the spec's first test.
- *
- * Setting a preferred pool creates nothing on it until a container is created
- * there, so it does not pin the pool. The spec clears it anyway before the
- * worker's pool is exported.
+ * The settings are one config record, `lxc.config`: a spec writes each test's starting settings, and teardown
+ * restores what the appliance held before its first test. A preferred pool does not pin the pool, but the spec
+ * clears it before the worker's pool is exported anyway.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -81,17 +76,12 @@ export async function findContainer(client: E2eApiClient, name: string): Promise
 }
 
 /**
- * An image to create a container from: the first registry product whose name
- * contains `os`, at its NEWEST build.
+ * An image to create a container from: the first registry product whose name contains `os`, at its NEWEST build.
  *
- * Not its first. `container.image.query_registry` lists versions in the order of
- * the registry index, which is oldest first, and the rootfs is downloaded from
- * images.linuxcontainers.org, which keeps only a few daily builds and deletes the
- * oldest. The index lags behind those deletions, so its first version is the one
- * whose download 404s next — on 2026-10-18 it was, failing every containers test.
- * Versions are `YYYYMMDD_HH:MM`, so the string order is the date order.
- *
- * Reading the registry reaches `images.sys.truenas.net`, hence the slow budget.
+ * Not its first: `container.image.query_registry` lists oldest first, and images.linuxcontainers.org deletes
+ * the oldest builds before the index catches up, so the first version is the next to 404 (on 2026-10-18 it
+ * failed every containers test). Versions are `YYYYMMDD_HH:MM`, so string order is date order. Reading the
+ * registry reaches `images.sys.truenas.net`, hence the slow budget.
  */
 export async function firstRegistryImage(
   client: E2eApiClient,

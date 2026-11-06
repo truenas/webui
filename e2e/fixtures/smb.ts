@@ -146,12 +146,9 @@ export async function setSmbShareAclWithUser(client: E2eApiClient, shareName: st
 /**
  * Returns the SMB service to stopped and not-auto-starting.
  *
- * Load-bearing for the fresh-install story, not mere tidiness. The app's
- * post-save dialogs branch on service state: stopped raises "Start SMB
- * Service", running raises "Restart SMB Service" instead. Leaving the service
- * running means the next run silently exercises a different path — and the
- * story's whole premise is a *fresh* instance, which a running, auto-starting
- * SMB service is not. The protocol itself lives in `fixtures/services.ts`.
+ * Load-bearing for the fresh-install story: post-save dialogs raise "Start SMB Service" when stopped and
+ * "Restart SMB Service" when running, so a running service silently changes the path, and the story premise is
+ * a *fresh* instance. The protocol lives in `fixtures/services.ts`.
  */
 export async function ensureSmbServiceStopped(client: E2eApiClient): Promise<void> {
   await ensureServiceStopped(

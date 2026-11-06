@@ -1,22 +1,9 @@
 /**
- * Stories: an admin aborts a running job from the topbar's jobs panel, or from the job progress
- * dialog the panel opens on it, and cancelling the panel's confirm leaves the job running.
- *
- * Both Aborts call `core.job_abort`. The panel's reducer marks the job ABORTED as soon as that call
- * answers, without waiting for middleware's event, so the panel changing proves only that the call
- * returned. `core.get_jobs` is what says the job really ended ABORTED. The page's own calls are
- * recorded too, so the cancel test can show that no abort was sent rather than only that the job
- * has not ended yet.
- *
- * The job is a `cloudsync.sync` run, started over the API: the panel is the subject, not the task.
- * `cronjob.run` would be cheaper, as in `jobs-panel.e2e.ts`, but middleware does not declare it
- * `abortable`, and the panel offers Abort only on a job that is. `cloudsync.sync` is, and given a
- * bandwidth limit and a large file over the loopback SFTP credential it runs for minutes, which is
- * the setup `cloud-sync-tasks.e2e.ts` uses for its own Stop test. Each test reads `abortable` off
- * the job it started before relying on it. Each test starts its own run.
- *
- * An aborted job leaves the panel altogether. The running list holds running and waiting jobs, and
- * "Recently Completed Jobs" holds succeeded and failed ones only.
+ * Stories: an admin aborts a running job from the jobs panel or its progress dialog, and cancelling the confirm
+ * leaves it running. The panel marks ABORTED as soon as `core.job_abort` answers, so `core.get_jobs` is what proves
+ * the job ended; recorded page calls show the cancel sent no abort. The job is a `cloudsync.sync` run (bandwidth
+ * limit, large file, loopback SFTP) because `cronjob.run` is not `abortable` and the panel offers Abort only on
+ * abortable jobs; each test checks `abortable` on its own run. Aborted jobs leave the panel entirely.
  */
 import {
   type CloudSyncBandwidthLimit,

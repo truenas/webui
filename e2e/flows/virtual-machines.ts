@@ -153,16 +153,12 @@ export async function discardVmWizard(page: Page): Promise<void> {
 }
 
 /**
- * Creates a Linux VM with the wizard, from the sidebar, on a new zvol or an existing one, and
- * optionally from a disk image (`importImage`).
+ * Creates a Linux VM with the wizard, from the sidebar, on a new or existing zvol, optionally from a disk
+ * image (`importImage`). See {@link openVmWizardOnDisks}; the NIC takes the first interface listed.
  *
- * See {@link openVmWizardOnDisks} for what the first step turns off. The NIC attaches to whichever
- * interface the appliance lists first, since a run cannot know their names.
- *
- * With an image, Save first creates the zvol and converts the image into it in a job dialog, and
- * only then creates the VM. A failed conversion sends the wizard back to Disks, which hides Save
- * just as closing the panel does, so with an image the caller's read-back of the VM is what tells
- * the two apart.
+ * With an image, Save converts it into the zvol in a job dialog before creating the VM. A failed conversion
+ * sends the wizard back to Disks, which hides Save just as closing does, so the caller's read-back of the VM
+ * tells the two apart.
  */
 export async function createVmWithWizard(page: Page, vm: NewVm | VmOnExistingZvol): Promise<void> {
   const { wizard } = virtualMachinesLocators;
@@ -208,13 +204,9 @@ export async function expandVmRow(page: Page, name: string, id: number): Promise
 /**
  * Clicks one of a VM's row actions, opening the row first whenever it is closed.
  *
- * The list binds no `expansionKey`, so tn-table closes every open row each time `vm.query` reports
- * a change, and a start or a stop reports more than one, not all at once. A row opened between two
- * of them can close again before the click lands, so opening and clicking are retried as one step.
- *
- * The action only renders in the matching state (Stop while running, Start while stopped), so this
- * also waits for the row to reach that state. A row left open in the old state is closed by the
- * Name click and opened again on the next attempt.
+ * With no `expansionKey`, tn-table closes open rows on every `vm.query` change, and a start or stop reports
+ * several, so opening and clicking are retried as one step. The action only renders in the matching state
+ * (Stop while running, Start while stopped), so this also waits for that state.
  */
 export async function clickVmRowAction(page: Page, name: string, action: string): Promise<void> {
   const button = page.locator(action);
@@ -429,15 +421,11 @@ export async function addDisplayFromDevicesPage(page: Page, display: NewDisplay)
 }
 
 /**
- * Opens Add on the open Devices page, picks Display, and returns the labels of the display types
- * it offers. Then closes the panel without saving anything.
+ * Opens Add on the open Devices page, picks Display, returns the offered display type labels, then closes
+ * the panel without saving.
  *
- * The list is filled in from `vm.get_display_devices` after the form opens, so the first option
- * appearing is the sign it has arrived. The options are read in one go once it has. Picking the
- * first closes the list again; it is the type the form selected for itself when only one is left.
- *
- * Picking Display has edited the form, so the panel asks before it closes and the discard is
- * confirmed.
+ * The list fills from `vm.get_display_devices` after the form opens, so the first option appearing is the
+ * signal. Picking Display edits the form, so the panel asks before closing and the discard is confirmed.
  */
 export async function listOfferedDisplayTypes(page: Page): Promise<string[]> {
   const form = virtualMachinesLocators.deviceForm;
@@ -579,16 +567,11 @@ export async function addUsbPassthroughFromDevicesPage(page: Page, usb: CustomUs
 }
 
 /**
- * Adds a PCI passthrough device from the open Devices page, by its label in the autocomplete, and
- * waits for the panel to close.
+ * Adds a PCI passthrough device from the open Devices page by its autocomplete label (clicking the option
+ * commits it), and waits for the panel to close.
  *
- * The autocomplete only accepts one of its own options, and clicking the option is what commits
- * it: the typed text alone does not.
- *
- * Save asks first, in webui's shared confirm, for a device with no reset mechanism. That confirm
- * keeps its tick box, which has to be ticked before Confirm enables. It is accepted here, and a
- * device that has a reset mechanism goes straight through. The panel closing is the sign either
- * way: declining would leave it open.
+ * For a device with no reset mechanism Save first raises webui's shared confirm, whose box must be ticked
+ * before Confirm enables; it is accepted here. The panel closing is the signal either way.
  */
 export async function addPciPassthroughFromDevicesPage(page: Page, label: string): Promise<void> {
   const form = virtualMachinesLocators.deviceForm;

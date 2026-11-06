@@ -1,28 +1,9 @@
 /**
- * The suite's console output: one line per test result, then the tally.
- *
- * Replaces Playwright's built-in `list` reporter, whose line opens with the
- * project name and ends with the duration — after a title of any length, so
- * the durations never line up and cannot be read down the page. Here a line is
- *
- *   ✅  137  [  3.9m] > e2e/tests/periodic-snapshot-tasks.e2e.ts:381:1 > switching a task off …
- *
- * with the run time at a fixed column and no `[authenticated]` tag: the project
- * is on nearly every line, and when it matters the spec's path already says it.
- *
- * ## What must not change
- *
- * The end of the output mirrors Playwright 1.56's base reporter word for word,
- * because it is read by people and by tooling outside this repository:
- *
- * - `N passed (30.6m)`, `N skipped` and above all `N flaky`. A test that fails
- *   and then passes on its CI retry is a clean pass in `junit.xml` — no
- *   `<failure>`, no retry attribute — so the flaky line in the log is the only
- *   place it is visible at all.
- * - `Slow test file:`, which is how a five-minute spec gets noticed.
- *
- * Failures are listed in full before the tally, as `list` did. The `junit` and
- * `html` reporters beside this one in `playwright.config.ts` are untouched.
+ * The suite's console output: one line per result, run time at a fixed column, no project tag, then the tally.
+ * Replaces Playwright's `list`, whose durations follow titles of any length and never line up.
+ * Don't change the ending: it mirrors Playwright 1.56's base reporter word for word because people and outside
+ * tooling read it. `N flaky` is the only place a retried-then-passed test shows (junit records a clean pass),
+ * and `Slow test file:` is how slow specs get noticed. Failures are listed in full before the tally.
  */
 import { relative } from 'node:path';
 import type {

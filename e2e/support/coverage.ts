@@ -1,26 +1,9 @@
 /**
- * Records what a test exercised, for `yarn e2e:coverage` to report on.
- *
- * Two things, both read off the browser rather than the code under test, so it
- * works against any build — the appliance's minified one included:
- *
- * - **Middleware methods** the UI called, from the JSON-RPC frames it sent.
- *   Only the browser's socket is watched; the fixtures' own `api` client never
- *   counts, so setting state up over the API cannot make a feature look tested.
- * - **Routes** the app reached, from main-frame navigations. Playwright reports
- *   same-document (`pushState`) navigations here too, which is every one an
- *   Angular router link makes.
- *
- * Both are counted from the test's first navigation or first user input after
- * the sign-in, so the dashboard every test lands on is not credited to all of
- * them — see {@link CoverageRecorder.start}.
- *
- * One JSON file per test attempt lands in `test-results/e2e-coverage/`.
- * Playwright clears `test-results` at the start of a run, so the directory only
- * ever holds the run that just finished. The directory is fixed rather than the
- * project's `outputDir`, because `ha-license` writes its results elsewhere and
- * its coverage would be left out of the report. The files hold method names and
- * URL paths only, never params, so they are safe to publish from any project.
+ * Records the middleware methods (from the browser socket's JSON-RPC frames) and routes a test exercised,
+ * for `yarn e2e:coverage`. Read off the browser, so any build works; the fixtures' `api` client never counts,
+ * so API setup can't make a feature look tested. Counting starts after sign-in ({@link CoverageRecorder.start}).
+ * One JSON per attempt goes to the fixed `test-results/e2e-coverage/` (not `outputDir`, since `ha-license`
+ * writes elsewhere); it holds method names and URL paths only, never params, so it is safe to publish.
  */
 import { mkdir, writeFile } from 'fs/promises';
 import { join } from 'path';
@@ -141,14 +124,9 @@ export class CoverageRecorder {
   }
 
   /**
-   * Watches the page for the first trusted user input. Before the sign-in, so
-   * the script is in place in every document the test loads.
-   *
-   * The input reaches this process separately from the socket's frames, so a
-   * frame its click handler sent at once can arrive first. Frames are therefore
-   * held from {@link start}, stamped on arrival, and the input carries the
-   * page's clock: those that arrived at or after it are counted. The browser
-   * runs on this host, so the two clocks are the same one.
+   * Watches the page for the first trusted user input; attached before sign-in so the script is in every
+   * document. The input can arrive after frames its click handler sent, so frames are held from {@link start}
+   * and stamped, and those at or after the input's page-clock time count (the browser shares this host's clock).
    */
   async attach(): Promise<void> {
     await this.page.exposeBinding(inputBinding, (_source, at: number) => this.onInput(at));
@@ -156,36 +134,11 @@ export class CoverageRecorder {
   }
 
   /**
-   * Counts from the test's first navigation or first user input, whichever
-   * comes first — not from here.
-   *
-   * Every authenticated test signs in onto the dashboard, and the dashboard is
-   * still talking to middleware when the shell appears: its widgets mount only
-   * after the saved layout loads, then send their own queries. Starting the count
-   * at a point in time credits whichever of those calls happen to land after it
-   * to every test — 29 of 149 tests claimed `reporting.netdata_get_data` in the
-   * first CI run. A navigation is a point in the *test*: the router updates the
-   * URL only once the new page has replaced the dashboard, whose calls are gone
-   * with it.
-   *
-   * A navigation alone missed every test that never makes one — those working
-   * in the topbar on the dashboard, like the jobs, alerts and preferences
-   * panels — so the first trusted input counts too. That is a point in the test
-   * as well, but the dashboard has not gone anywhere.
-   *
-   * So counting from an input is provisional. Nearly every test's first input
-   * is the sidebar click that leaves the dashboard, and the slide-out entries
-   * take two clicks and a wait before the URL changes; the dashboard is still
-   * sending all that time. If the first navigation after the input leaves the
-   * path the input was made on, what was counted is dropped and the count
-   * restarts there, exactly as for a test whose first act is a navigation. A
-   * reload, or a query-string change, keeps it. The cost: a test that works in
-   * the topbar and then navigates away still loses what it did first, as
-   * before, and a topbar-only test that acts while widgets are still loading
-   * is credited with their late calls.
-   *
-   * For the unauthenticated project the test's own `goto` is the first
-   * navigation.
+   * Counts from the test's first navigation or first trusted input, not from here: the dashboard keeps
+   * querying after sign-in, and a time-based start credited those calls to every test. Input-based counting
+   * is provisional: if the next navigation leaves the input's path (e.g. a sidebar click), the count restarts
+   * there; a reload or query-string change keeps it. Costs: topbar work before navigating away is lost, and a
+   * topbar-only test may be credited late widget calls. In the unauthenticated project the `goto` is first.
    */
   start(): void {
     this.armed = true;

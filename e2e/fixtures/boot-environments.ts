@@ -110,15 +110,11 @@ export async function listBootDisks(client: E2eApiClient): Promise<string[]> {
 }
 
 /**
- * An unused disk to mirror the boot pool onto: the smallest one at least as large,
- * in bytes, as the largest of `bootDisks`, by name among equals. Undefined when
- * every unused disk is smaller.
+ * An unused disk to mirror the boot pool onto: the smallest at least as large (bytes) as the largest of
+ * `bootDisks`, by name among equals. Undefined when every unused disk is smaller.
  *
- * `boot.attach` partitions the new disk to hold a copy of the boot partition and
- * refuses one without the room ("does not have enough space to hold the required
- * new partitions"). A disk at least as large as the boot disk always has it. The
- * CI appliance's ten data disks are smaller than its boot disk, so it is given
- * one larger disk for this (`extra-disk-gb` in `.github/workflows/e2e.yml`).
+ * `boot.attach` refuses a disk without room for a copy of the boot partition. CI's data disks are smaller
+ * than its boot disk, so it gets one larger disk for this (`extra-disk-gb` in `.github/workflows/e2e.yml`).
  */
 export async function pickBootMirrorDisk(
   client: E2eApiClient,
@@ -197,19 +193,12 @@ export async function attachBootDiskOverApi(client: E2eApiClient, disk: string):
 }
 
 /**
- * Takes every disk off the boot pool that was not on it at the start, and wipes
- * it — and wipes `attachedDisk` too, which a test that detached it through the UI
- * has already taken off.
+ * Detaches and wipes every boot pool disk not in `originalDisks` (from {@link listBootDisks} before the test),
+ * and wipes `attachedDisk` too, which a UI detach already removed. The boot disk is never touched.
  *
- * `originalDisks` is what {@link listBootDisks} said before the test touched
- * anything. Only a disk outside that list is ever detached or wiped, so the disk
- * the appliance boots from cannot be either.
- *
- * Detached by the partition's guid, which `zfs.pool.detach` matches before it
- * tries a path. Not by its name: `boot.get_state` reports a member of a mirror as
- * `/dev/vdl3`, and middleware compares names with `/dev/` stripped, so it answers
- * "Failed to find vdev for /dev/vdl3" (E2E run 39657038725). Wiped because a
- * detach leaves the boot partitions on the disk.
+ * Detached by partition guid, not name: `boot.get_state` reports `/dev/vdl3` but middleware compares names
+ * with `/dev/` stripped, failing "Failed to find vdev" (E2E run 39657038725). Wiped because a detach leaves
+ * the boot partitions on the disk.
  */
 export async function ensureBootPoolDisksOnly(
   client: E2eApiClient,

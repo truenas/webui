@@ -1,22 +1,10 @@
 /**
- * Stories: an admin adds a USB passthrough device and a PCI passthrough device to a stopped
- * virtual machine from its Devices page, and the appliance holds what they did.
- *
- * No test starts the VM. Saving a passthrough device only records it: the host device is claimed
- * when the machine starts, so a stopped VM can carry one without the appliance losing anything.
- * The PCI test reads the device's host drivers before and after, to show that holds.
- *
- * The USB device is given by vendor and product id through Specify custom. Middleware refuses ids
- * no connected device has, so they are the first available device's that
- * `vm.device.usb_passthrough_choices` lists; when it lists none, the USB test is skipped and says
- * what middleware answered. The PCI device has to be a real one too: the first that
- * `vm.device.passthrough_device_choices` lists as available, not critical to the host, and with a
- * label no other device shares, since the autocomplete keys its options on the label. The CI
- * appliance is itself a QEMU guest, so whether it lists one at all depends on what the host gives
- * it. When it lists none, the PCI test is skipped and says what middleware answered.
- *
- * Each device is asserted through `vm.device.query`, since the list shows a device's type and
- * order and nothing about which host device it names.
+ * Stories: an admin adds USB and PCI passthrough devices to a stopped VM from its Devices page. Saving only records
+ * a device; the host claims it at start, and the PCI test checks host drivers before and after to show that. The
+ * devices must be real: USB uses the first `vm.device.usb_passthrough_choices` ids, and PCI the first available,
+ * non-critical `vm.device.passthrough_device_choices` entry with a unique label (the autocomplete keys on labels).
+ * CI is itself a QEMU guest, so either test skips with middleware's answer when none is listed. Each device is
+ * checked in `vm.device.query`.
  */
 import {
   ensureVmAbsent, ensureVmPresent, findPassthroughCandidate, findUsbPassthroughIds, findVmDevices,

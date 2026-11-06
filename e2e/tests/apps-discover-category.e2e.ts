@@ -1,29 +1,9 @@
 /**
- * Stories: an admin presses View All under a category on Apps > Discover and gets every app in that
- * category on one page, then searches that page, and the term is still applied on Discover after Back
- * to Discover Page.
- *
- * ## Why no Apps pool
- *
- * Discover is reachable with no pool, and nothing here installs. `app.available` and `app.categories`
- * check no Docker state: they answer from the catalog a sync fills, and with no pool a sync clones
- * into a temporary directory, as `apps-settings.e2e.ts` relies on. So this file builds no pool.
- *
- * ## The category
- *
- * Picked at runtime: the first in `app.categories` that `app.available` gives more than 6 apps, since
- * Discover shows at most 6 per section and offers View All only above that. The expected apps are read
- * with the same call and filter the category page makes, so they come from the same preferred trains
- * Discover lists, and no train is changed here.
- *
- * ## Setup
- *
- * `beforeAll` syncs the catalog, so no page finds it empty and starts a first-time sync behind a
- * dialog. Nothing is created and no setting is changed, so there is nothing to tear down. The search
- * term lives in a component store that dies with the page.
- *
- * Not covered: Show All and the New & Updated and Recommended pages, the Filters panel, carrying a
- * Discover search into View All, and installing from the category page (`apps-install.e2e.ts`).
+ * Stories: an admin presses View All under a category on Apps > Discover, searches that page, and the term still
+ * applies after Back to Discover Page. No pool is built: these calls answer from a catalog sync, which clones to a
+ * temp directory with no pool. The category is the first with more than 6 apps (Discover shows 6 per section),
+ * and expected apps come from the same call and filter the page makes. `beforeAll` syncs the catalog so no page
+ * opens a first-sync dialog; nothing is changed, so nothing is torn down.
  */
 import {
   readAppCategories, readAvailableAppsInCategory, syncCatalog, type CatalogAppEntry,

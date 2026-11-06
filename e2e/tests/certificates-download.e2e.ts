@@ -1,17 +1,8 @@
 /**
- * Stories: an admin downloads a certificate, and a certificate signing request,
- * from its row on Credentials > Certificates, and gets the files the appliance
- * holds.
- *
- * One click on Download saves two files: the certificate or request, and its
- * private key. Each is a `core.download` of `filesystem.get` on the path the
- * record names. Each file is compared with what `certificate.query` returns for
- * that record, so a download of the wrong path, the wrong row, or an empty file
- * fails here.
- *
- * Both records are seeded over the API under names only this spec uses. The
- * downloads stay in Playwright's output directory. Nothing is written on the
- * appliance besides the seeds.
+ * Stories: an admin downloads a certificate and a CSR from their rows on Credentials > Certificates. One click
+ * saves two files, the certificate or request and its private key, and each is compared with what
+ * `certificate.query` returns, so a wrong path, wrong row or empty file fails. Both records are seeded over the
+ * API under names only this spec uses; downloads stay in Playwright's output directory.
  */
 import { readFile } from 'node:fs/promises';
 import type { Download } from '@playwright/test';

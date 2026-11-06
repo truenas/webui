@@ -55,19 +55,12 @@ async function fillExplorer(page: Page, selector: string, value: string): Promis
 }
 
 /**
- * Fills What and Where from a dataset on this appliance, names the task, and
- * moves on to When. `chooseTarget` picks where the target is, and leaves its
- * explorer showing.
+ * Fills What and Where from a dataset on this appliance, names the task, and moves on to When.
+ * `chooseTarget` picks the target and leaves its explorer showing.
  *
- * In this order because each "from" select clears the field below it when it
- * changes, and the name is regenerated from the source and target whenever
- * either changes.
- *
- * The target is chosen before the source is typed. Once there is a source path
- * the wizard counts its snapshots, and choosing a different system enables SSH
- * transport before an SSH connection is picked. Any count sent in that gap is
- * refused with "You should pass SSH credentials", and the error stays on the
- * source field. With no source yet, no count is sent.
+ * Ordered because each "from" select clears the field below it, and the name regenerates from source and
+ * target. The target comes before the source: with a source path the wizard counts snapshots, and a count
+ * sent before an SSH connection is picked is refused ("You should pass SSH credentials") onto the source.
  */
 async function fillWhatAndWhere(
   page: Page,
@@ -135,17 +128,12 @@ export async function fillRemoteReplication(
 }
 
 /**
- * Starts What and Where for a pull: the source on a different system, reached
- * through the SSH connection named `connection`. Leaves the source explorer
- * empty, for the caller to browse or type into, and the target's location
- * locked to this system.
+ * Starts What and Where for a pull from another system over SSH connection `connection`. Leaves the source
+ * explorer empty for the caller, and the target locked to this system.
  *
- * A source on a different system turns on both ways of naming its snapshots at
- * once. The radio shows Naming Schema, whose field is filled with the wizard's
- * default, but the regular expression field is shown as well, required and
- * empty, so Next would stay disabled. Moving the radio to the regular
- * expression and back is how an admin clears it, because each move turns the
- * other field off. The task then pulls by the default naming schema.
+ * A remote source shows both Naming Schema (filled with the default) and a required, empty regular expression
+ * field, so Next stays disabled. Moving the radio to regex and back clears it, as an admin would, since each
+ * move turns the other field off. The task then pulls by the default naming schema.
  */
 export async function chooseRemoteReplicationSource(page: Page, connection: string): Promise<void> {
   const { wizard } = replicationTaskLocators;

@@ -1,25 +1,9 @@
 /**
- * Stories: an admin creates an NVMe-oF subsystem with the Add Subsystem form on the
- * Shares dashboard, changes what is attached to one from its details page, adds a
- * host that has to authenticate, creates a port through Create New on the details
- * page, deletes one from its row on the dashboard card, and sets the global base NQN
- * — and the appliance holds what they did.
- *
- * The port form offers only the appliance's static addresses, so the Create New test
- * runs only where `nvmet.port.transport_address_choices` returns one, and otherwise
- * skips with what it returned. The CI appliance's NIC is on DHCP.
- *
- * A subsystem is only useful with what hangs off it, so every check reads the
- * associations back through the API: which namespaces, ports and hosts the subsystem
- * lists. Ports and hosts are shared, so the details-page tests run beside a second
- * subsystem holding links of its own, which must come through untouched.
- *
- * The service is never started. Nothing here needs a target that serves, and the add
- * form's start prompt is only raised while the service is stopped. RDMA and ANA need
- * RDMA hardware and HA, which the CI appliance does not have, so the global
- * configuration is checked to keep them out of reach rather than driven. The SPDK
- * implementation needs the `NVMEOF_SPDK` entitlement, which CI's license grants and a
- * community appliance lacks, so whether it is offered follows that.
+ * Stories: an admin creates an NVMe-oF subsystem from the Shares dashboard, changes its attachments on the details
+ * page, adds an authenticating host, creates a port via Create New, deletes a subsystem, and sets the base NQN.
+ * Associations are read back through the API, with details-page tests beside an untouched second subsystem. Create
+ * New skips unless `nvmet.port.transport_address_choices` returns a static address (CI is DHCP). The service is
+ * never started. RDMA and ANA are only checked as unreachable; SPDK follows the `NVMEOF_SPDK` entitlement.
  */
 import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';
 import {

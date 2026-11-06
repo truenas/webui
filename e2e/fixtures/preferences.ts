@@ -1,24 +1,10 @@
 /**
  * Preference preconditions and cleanup, over the API.
  *
- * Preferences are unlike every other fixture here. They are not an object the
- * suite creates and deletes — they are a blob hanging off the *account the whole
- * suite signs in as*, so a test that changes one changes what every later test
- * sees. A left-behind date format changes the text in every date cell; a
- * left-behind language translates the app.
- *
- * So there is no `ensure*Absent`. {@link establishPreferenceBaseline} writes a
- * known state before each test and hands back exactly what `afterEach` must
- * write to undo it.
- *
- * ## Why this establishes rather than observes
- *
- * The obvious version of this file snapshots whatever it finds and puts it back.
- * That reads as conservative and is not: it makes every test's precondition
- * "whatever the appliance happened to be set to", so an interrupted run — killed
- * between a toggle and its restore — leaves the next run asserting against a
- * state it did not choose. `CLAUDE.md` has the rule: cleanup runs in
- * `beforeEach` too, so a test is re-runnable against a dirty appliance.
+ * Preferences hang off the *account the whole suite signs in as*, so a leftover changes every later test (date
+ * cells, language). There is no `ensure*Absent`: {@link establishPreferenceBaseline} writes a known state before
+ * each test and returns what `afterEach` writes to undo it. It establishes rather than snapshots, so a killed run
+ * can't leave the next asserting against a state it didn't choose (`CLAUDE.md`: cleanup runs in `beforeEach` too).
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';
@@ -51,20 +37,12 @@ export const preferenceBaseline = {
 } as const;
 
 /**
- * A complete blob, for the one case where merging has nothing to merge into.
+ * A complete blob, for an account with no `preferences` attribute, which **is not the same as an empty one**.
  *
- * An account that has never saved a preference has no `preferences` attribute at
- * all, and **that is not the same as an empty one**: `preferences.effects.ts`
- * treats a missing attribute as `noPreferencesFound`, whose reducer seeds
- * webui's full defaults, while `{}` is truthy and takes the `preferencesLoaded`
- * path — leaving the app running with no `lifetime`, no `language`, no
- * `sidenavStatus`. Writing a partial blob onto such an account would put it in
- * that second state permanently, for this run and every later one.
- *
- * So this sits underneath every merge. It mirrors `defaultPreferences` in webui,
- * and `src/app/store/preferences/e2e-default-preferences-parity.spec.ts` holds
- * it to that set of keys — the silent drift being a field added to webui and not
- * here.
+ * `preferences.effects.ts` seeds webui's full defaults for a missing attribute, but `{}` takes the
+ * `preferencesLoaded` path with no `lifetime`, `language` or `sidenavStatus`; a partial write would leave the
+ * account that way permanently. So this sits under every merge. It mirrors `defaultPreferences`, and
+ * `src/app/store/preferences/e2e-default-preferences-parity.spec.ts` guards the key set against drift.
  */
 export const fullDefaultPreferences = {
   userTheme: 'ix-dark',
@@ -96,13 +74,8 @@ export type PreferenceKey = keyof typeof fullDefaultPreferences;
 /**
  * The signed-in account's preferences, or undefined when it has none.
  *
- * `auth.me` rather than `user.query`: preferences live on the *session's* own
- * account, and reading them the way the app does keeps this honest about where
- * they come from.
- *
- * Undefined rather than `{}` for an account that has never saved one — see
- * {@link fullDefaultPreferences} for why collapsing the two is a trap rather
- * than a convenience.
+ * `auth.me`, not `user.query`: preferences live on the session's own account, as the app reads them.
+ * Undefined rather than `{}` for an account that has never saved one; see {@link fullDefaultPreferences}.
  */
 export async function readPreferences(client: E2eApiClient): Promise<PreferencesBlob | undefined> {
   const me = await firstValueFrom(client.api.call('auth.me').pipe(timeout(readTimeoutMs)));
@@ -125,18 +98,12 @@ export async function restorePreferences(client: E2eApiClient, preferences: Pref
 }
 
 /**
- * Puts the account into {@link preferenceBaseline} and returns that state.
+ * Puts the account into {@link preferenceBaseline} and returns that state, for {@link restorePreferences} in
+ * `afterEach`. Returns the *written* state, so a test failing mid-change is still undone to something known.
  *
- * Call in `beforeEach` and hand the result straight back to
- * {@link restorePreferences} in `afterEach`. The return value is the *written*
- * state rather than the state found, so a test that fails halfway through a
- * change is still undone to something known.
- *
- * **One thing it cannot undo.** Middleware exposes `auth.set_attribute` and no
- * way to unset an attribute, so on an account that had no preferences at all
- * this leaves one behind — webui's own defaults, which is what that account was
- * already being given at runtime, but now written down. Recorded under Known
- * gaps in `docs/status.md`.
+ * **One thing it cannot undo**: middleware has no way to unset an attribute, so an account with no preferences
+ * is left with webui's defaults written down (what it got at runtime anyway). Recorded under Known gaps in
+ * `docs/status.md`.
  */
 export async function establishPreferenceBaseline(client: E2eApiClient): Promise<PreferencesBlob> {
   const existing = await readPreferences(client);
@@ -154,16 +121,10 @@ export async function establishPreferenceBaseline(client: E2eApiClient): Promise
 }
 
 /**
- * One preference, read fresh.
+ * One preference, read fresh, so it can be polled: the save is a socket round trip the UI does not wait on.
  *
- * The assertion a UI change is checked against: the screen re-rendering says it
- * believed the change, this says the appliance stored it. Fresh every call so it
- * can be polled — the save is a socket round trip the UI does not wait on.
- *
- * `unknown` rather than a scalar union: two of the fifteen preferences are not
- * scalars (`sidenavStatus` is an object, `tableDisplayedColumns` an array), so a
- * signature promising `string | number | boolean` would be lying about them.
- * `expect` and `expect.poll` take `unknown` happily.
+ * The UI re-rendering says it believed the change; this says the appliance stored it. `unknown`, not a scalar
+ * union: `sidenavStatus` is an object and `tableDisplayedColumns` an array.
  */
 export async function readPreference(client: E2eApiClient, key: PreferenceKey): Promise<unknown> {
   const preferences = await readPreferences(client);

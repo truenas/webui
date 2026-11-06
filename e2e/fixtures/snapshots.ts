@@ -1,15 +1,9 @@
 /**
- * Snapshot preconditions and cleanup, over the API.
+ * Snapshot preconditions and cleanup, over the API. A snapshot's id is its full `<dataset>@<name>`.
  *
- * A snapshot is named `<dataset>@<name>`, and that full name is its id — to
- * middleware, to the list's row tags, and to everything here.
- *
- * Cleanup has an order of its own. A snapshot cannot be destroyed while it is
- * held or while a clone depends on it, and a dataset cannot be destroyed while
- * one of its snapshots is in either state — so a spec that leaves a hold or a
- * clone behind leaves a dataset `ensureDatasetAbsent` cannot remove.
- * {@link ensureSnapshotsAbsent} releases holds for that reason; clones are
- * datasets, and are the spec's to remove first.
+ * Cleanup order matters: a held or cloned snapshot can't be destroyed, nor can its dataset, so a leftover hold
+ * or clone blocks `ensureDatasetAbsent`. {@link ensureSnapshotsAbsent} releases holds; clones are datasets, and
+ * the spec's to remove first.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -192,16 +186,11 @@ export async function ensureSnapshotsAbsent(client: E2eApiClient, dataset: strin
 }
 
 /**
- * Creates a directory inside a dataset.
+ * Creates a directory inside a dataset: the cheapest *contents* change, which is what a rollback undoes
+ * (properties and child datasets survive one).
  *
- * The cheapest change to a dataset's *contents* the API offers, and contents
- * are what a rollback is about: properties and child datasets survive one, so
- * neither can show that it happened.
- *
- * Middleware chmods a new directory whose mode differs from the requested one,
- * and a dataset with a RESTRICTED aclmode (the SMB preset's) refuses that with
- * EPERM. By default the directory is then removed and the call fails; without
- * `raise_chmod_error` it is kept, with the ACL it inherited.
+ * Middleware chmods a directory whose mode differs from the requested one, and a RESTRICTED aclmode (the SMB
+ * preset's) refuses that with EPERM; without `raise_chmod_error` the directory is kept with its inherited ACL.
  */
 export async function ensureDirectoryPresent(client: E2eApiClient, path: string): Promise<void> {
   if (await directoryExists(client, path)) {

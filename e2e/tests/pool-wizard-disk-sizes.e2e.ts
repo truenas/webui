@@ -1,25 +1,10 @@
 /**
- * Stories: on an appliance with unused disks of more than one size, the pool wizard offers one
- * Disk Size per size; "Treat Disk Size as Minimum" lets larger disks fill a vdev built for the
- * smaller size, and the appliance builds it from both; and Manual Disk Selection warns when a vdev
- * mixes disk sizes.
- *
- * The wizard groups unused disks by type and size (`getDiskTypeSizeMap`), offers one option per
- * group in ascending size, and generates the Width options from the selected group alone. So each
- * test reads the groups from `disk.details` first, and the widths it expects follow from their
- * counts. Every test skips where the appliance has only one size of a type.
- *
- * Automated selection fills a vdev smallest disks first (`GenerateVdevsService.pickDisks`), so the
- * only width that takes exactly one larger disk is one more than the smaller group holds. On CI
- * that is eleven wide: ten 10GB disks and the 32GB one. Middleware refuses a mirror wider than four
- * (`VDEV_MAX_DISKS` in `pool_/pool.py`), so that vdev is a RAIDZ1, which takes up to fifteen.
- *
- * Both sizes in one vdev are also visible after the pool is made: the VDEVs card on the Storage
- * dashboard reads "Mixed Capacity" in place of a size. The Review step has no such warning; the
- * Mixed Disk Capacities warning (`StorageService.validateVdevs`) is the card's.
- *
- * Each test owns its pool by name. Every name is removed before and after every test, whatever
- * happened, because a pool left behind holds its disks.
+ * Stories: with unused disks of several sizes, the wizard offers one Disk Size per size, "Treat Disk Size as
+ * Minimum" lets larger disks fill a vdev, and Manual Disk Selection warns about mixed sizes. Tests read the size
+ * groups from `disk.details` and skip where only one size exists. Selection fills smallest first
+ * (`GenerateVdevsService.pickDisks`), so the mixed vdev is one wider than the smaller group (eleven on CI), hence
+ * RAIDZ1: middleware caps mirrors at four (`VDEV_MAX_DISKS`). Each pool name is removed before and after every
+ * test, because a pool left behind holds its disks.
  */
 import type { Page } from '@playwright/test';
 import { readPoolTopology } from '../fixtures/pool';

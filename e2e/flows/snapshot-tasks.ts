@@ -129,16 +129,10 @@ export async function saveSnapshotTaskFormExpectingRefusal(page: Page, field: st
 /**
  * Deletes the task on a dataset from its row menu, and waits for its row to go.
  *
- * The card asks `pool.snapshottask.delete_will_change_retention_for` first and
- * then raises webui's shared confirm without `hideCheckbox`, so Delete stays
- * **disabled** until the box is ticked — asserted on the way, so a dialog that
- * lost its gate fails here rather than passing a test that never needed it. A
- * task with no snapshots yet gets no second box, so there is nothing else to tick.
- *
- * Pass `keepSnapshots` for a task that has snapshots. The dialog then has to
- * offer to keep them with their original retention, which is asserted, and the
- * box is ticked or left alone as asked. Whether the choice reached middleware
- * is the caller's to read back.
+ * After `pool.snapshottask.delete_will_change_retention_for`, the confirm has no `hideCheckbox`, so Delete is
+ * **disabled** until ticked (asserted). A task with no snapshots gets no second box. With `keepSnapshots`,
+ * the dialog must offer to keep them with their retention (asserted) and the box is set as asked; whether
+ * that reached middleware is the caller's to read back.
  */
 export async function deleteSnapshotTask(page: Page, dataset: string, keepSnapshots?: boolean): Promise<void> {
   await openRowMenu(page, dataset);

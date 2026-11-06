@@ -1,19 +1,8 @@
 /**
- * Story: an admin changes the session timeout from the Access card on
- * System > Advanced Settings, and the account keeps it.
- *
- * The card shows the timeout but does not own it. It is the signed-in account's
- * own preference, `lifetime` in seconds, and the card's "Preferences" link opens
- * the Preferences form, which edits it in minutes. So the save is asserted the
- * way the preferences spec does it: the card's readout says the screen believed
- * it, `auth.me` says the appliance stored it.
- *
- * The timeout only goes up. **Session Timeout drops an idle session**, so a test
- * that lowered it would be racing its own sign-out.
- *
- * Preferences hang off the account the whole suite signs in as, so `beforeEach`
- * writes a known baseline and `afterEach` writes it back. See
- * `fixtures/preferences.ts`.
+ * Story: an admin raises the session timeout from the Access card on System > Advanced Settings, and the account
+ * keeps it. The timeout is the account's own `lifetime` preference, edited via the card's Preferences link, so the
+ * save is checked on the card's readout and through `auth.me`. It only goes up: a lowered timeout would race the
+ * test's own sign-out. `beforeEach` writes a baseline and `afterEach` restores it (`fixtures/preferences.ts`).
  */
 import {
   establishPreferenceBaseline, readPreference, restorePreferences,

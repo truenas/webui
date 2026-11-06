@@ -14,15 +14,11 @@ import {
 const saveTimeoutMs = 90_000;
 
 /**
- * Opens the Tiering side panel from the storage dashboard, and waits until it
- * is safe to edit.
+ * Opens the Tiering side panel from the storage dashboard, and waits until it is safe to edit.
  *
- * Safe means Save is enabled, not that a field is visible. The panel is an
- * `ix-form` host: it renders on the component's own defaults and overwrites every
- * control when `zfs.tier.config` answers, so a value typed before then is silently
- * replaced — and saved. `canSubmit` is false while the form is loading, which
- * makes the button the one signal that covers exactly that window. The S3 service
- * form lost the same race on a slow appliance.
+ * Safe means Save is enabled, not that a field is visible: the `ix-form` renders defaults and overwrites
+ * every control when `zfs.tier.config` answers, so an earlier value is silently replaced and saved.
+ * `canSubmit` is false exactly while loading. The S3 service form lost the same race on a slow appliance.
  */
 export async function openTierConfig(page: Page): Promise<void> {
   await goToStorage(page);
@@ -38,17 +34,12 @@ export async function saveTierConfig(page: Page): Promise<void> {
 }
 
 /**
- * Selects a dataset in the tree, so its details card — and the tier row on it —
- * is the one on screen.
+ * Selects a dataset in the tree, so its details card and tier row are on screen.
  *
- * Opens its pool first. The page selects the first pool on arrival and expands
- * only the selected branch, so with the shared pool present as well — any full
- * run — the tier pool sits collapsed and its datasets are not rendered at all.
- * Selecting a node expands it (`selectedBranch$` in `dataset-management`), so
- * clicking the pool is how a user opens it too. Searching does not help: the
- * filter keeps the pool row but leaves it collapsed.
- *
- * `name` is the full dataset id; see `openDeleteDatasetDialog`.
+ * Opens its pool first: the page expands only the first pool, so in a full run (shared pool present) the
+ * tier pool is collapsed and its datasets are not rendered. Selecting a node expands it, as a user would;
+ * searching keeps the pool row but leaves it collapsed. `name` is the full dataset id; see
+ * `openDeleteDatasetDialog`.
  */
 export async function selectDataset(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
@@ -67,20 +58,12 @@ export async function selectDataset(page: Page, name: string): Promise<void> {
 }
 
 /**
- * Opens Change Storage Tier from the dataset details card and waits for its
- * details to load.
+ * Opens Change Storage Tier from the dataset details card and waits for its details to load.
  *
- * The signal is a tier's "available" line, not Apply. Apply is bound to
- * `isSubmitting() || loadFailed()`, both false from the first render, so it is
- * enabled before any of the dialog's calls have answered and says nothing about
- * them. The space lines come from `zpool.query` and render only once it and
- * `pool.dataset.query` are back — the regular tier's always, so whichever side
- * that is on appears.
- *
- * The four share queries have no such signal: with no share on the dataset they
- * render nothing. What they can do is fail, which sets `loadFailed` and disables
- * Apply for good — so Apply is asserted after the wait, where a failure that has
- * already landed is caught here rather than as a click on a disabled button.
+ * The signal is a tier's "available" line, not Apply, which is enabled from the first render. The space lines
+ * render once `zpool.query` and `pool.dataset.query` are back. The four share queries have no signal, but a
+ * failure sets `loadFailed` and disables Apply for good, so Apply is asserted after the wait to catch it here
+ * rather than as a click on a disabled button.
  */
 export async function openChangeTierDialog(page: Page): Promise<void> {
   await page.locator(datasetTierLocators.change).click();

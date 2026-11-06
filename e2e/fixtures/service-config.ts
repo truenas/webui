@@ -1,30 +1,10 @@
 /**
  * SSH, FTP, SNMP, UPS, SMB and WebShare service settings: preconditions, cleanup and readback, over the API.
  *
- * Each service's settings are a single config record, so — as in
- * `fixtures/syslog.ts` — there is nothing to create or delete. For SSH, FTP,
- * SNMP and UPS each test starts from a known baseline and teardown writes that
- * baseline back, rather than snapshotting what it found and restoring that. SMB
- * is the exception, for the reason on {@link SmbSettings}.
- *
- * Only the fields the specs change are written. The baseline is the stock
- * configuration: each protocol's standard port, the SSH options off, FTP's
- * usual limits, middleware's model defaults for the SSH and FTP advanced fields,
- * and SNMP's `public` community with v3 off. UPS is the exception: its stock
- * configuration cannot be written back, see {@link upsBaseline}. Nothing depends
- * on a baseline matching a fresh install exactly. On an appliance someone has
- * reconfigured, a run puts these fields back to it.
- *
- * The SSH and FTP forms' fields are read back in two halves: the basic ones, and
- * the ones behind its Advanced toggle. A test asserts the half it edits, whole.
- *
- * No settings test starts its service. Saving a stopped service's settings
- * only rewrites its configuration. On an appliance where SSH is running, the
- * port change restarts it on the new port until teardown. The SNMP and SMB
- * specs stop their service first, so their saves never restart anything.
- *
- * WebShare has no baseline of its own: its spec snapshots the settings it
- * edits and writes the snapshot back, for the reason on {@link WebshareSettings}.
+ * Single config records; as in `fixtures/syslog.ts`, SSH, FTP, SNMP and UPS start from a stock baseline that
+ * teardown writes back (only fields specs change). Exceptions: SMB ({@link SmbSettings}), UPS ({@link upsBaseline})
+ * and WebShare, which snapshots ({@link WebshareSettings}). SSH and FTP are read back as basic and Advanced halves.
+ * No test starts its service; with SSH running, the port change restarts it until teardown.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -322,14 +302,11 @@ export type UpsReadback = Pick<
 export type UpsSettings = Omit<UpsReadback, 'complete_identifier'> & { monpwd: string };
 
 /**
- * The UPS baseline: Slave mode, pointing at a TEST-NET address, with the stock
- * identifier, monitor user and password, and every other field moved off what
- * the spec saves, so each save has something to change.
+ * The UPS baseline: Slave mode at a TEST-NET address, stock identifier, monitor user and password, and every
+ * other field off what the spec saves, so each save changes something.
  *
- * Not the stock configuration, because that cannot be written back. A fresh
- * appliance is in Master mode with no driver and no port, and `ups.update`
- * validates the whole merged record — Master needs both — so writing the stock
- * values is refused. Slave mode needs only a remote host.
+ * Not stock, because stock can't be written back: a fresh appliance is Master with no driver or port, and
+ * `ups.update` validates the merged record, where Master needs both. Slave needs only a remote host.
  */
 export const upsBaseline: UpsSettings = {
   identifier: 'ups',

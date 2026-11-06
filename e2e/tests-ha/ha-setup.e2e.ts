@@ -1,23 +1,9 @@
 /**
- * Stories: an admin sets HA up on a licensed pair — failover off while the
- * pair is reconfigured, the data interface given both controllers' addresses
- * and a virtual IP, a pool, the whole configuration synced onto the standby,
- * and failover back on — and the pair ends up healthy: controller 1 active,
- * controller 2 standing by.
- *
- * The sync comes after the pool, not before it as in middleware's own HA
- * setup: the standby restarts onto a configuration that already has
- * everything, rather than relying on each later change reaching it.
- *
- * Serial, and a link in the HA suite's chain (`playwright.config.ts`): each
- * test sets up what the next needs, so a failure stops the rest rather than
- * letting them fail on what was never set up. Everything here goes through
- * controller 1's own address; there is no VIP to use until the second test
- * makes one.
- *
- * Each step is checked over the API as well as on screen, against
- * controller 1. The standby takes no logins of its own, but what is wrong
- * with it shows in controller 1's `failover.disabled.reasons`.
+ * Stories: an admin sets HA up on a licensed pair (failover off, data interface addresses and VIP, a pool,
+ * config synced to the standby, failover on) and the pair ends healthy with controller 1 active. Sync comes
+ * after the pool so the standby restarts onto a complete config. Serial, a link in the HA chain
+ * (`playwright.config.ts`): a failure stops the rest. All via controller 1's address (no VIP until the second
+ * test); each step is also checked over the API, where the standby's problems show in `failover.disabled.reasons`.
  */
 import {
   dropsDhcpGateway, findInterfaceWith, isFailoverEnabled, poolNames, readFailover, readHaInterface, readPeerBootId,

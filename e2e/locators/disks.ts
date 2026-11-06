@@ -1,19 +1,9 @@
 /**
- * The Disks page under Storage, its edit form and its wipe dialog.
- *
- * The page is reached from the "Disks" button in the Storage dashboard's header.
- * It is not in the sidebar.
- *
- * Every disk is a row tagged `disk-<name>`, built by `toUniqueRowTag`, which runs
- * lodash's `kebabCase` over it. A name with a letter/digit boundary therefore
- * splits (`nvme0n1` becomes `disk-nvme-0-n-1`), so the tag goes through
- * `legacyKebabTestSegment`. The row's Edit and Wipe buttons are keyed on the name
- * alone, through webui's `normalizeTestIdString`, which is the same lodash call.
- *
- * Only Name, Serial, Disk Size and Pool are columns by default. The rest are
- * hidden, and the expanded row prints each hidden one under the id its cell would
- * carry, `text-<title>-<row tag>-row-text`. So `cell('Description', …)` reads the
- * same value whether a saved column preference shows it in the table or not.
+ * The Disks page (reached from the Storage dashboard header's "Disks" button, not the sidebar), its edit form and
+ * wipe dialog. Rows are tagged `disk-<name>` by lodash `kebabCase`, which splits letter/digit boundaries
+ * (`nvme0n1` is `disk-nvme-0-n-1`), so use `legacyKebabTestSegment`; Edit and Wipe go through the same lodash
+ * call. Only Name, Serial, Disk Size and Pool show by default; the expanded row prints hidden columns under their
+ * cell ids, so `cell('Description', …)` works whatever the saved column preference.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
