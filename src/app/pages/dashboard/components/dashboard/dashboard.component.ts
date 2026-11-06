@@ -2,7 +2,7 @@ import {
   CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray,
 } from '@angular/cdk/drag-drop';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, signal, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, signal, inject, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -73,8 +73,8 @@ export class DashboardComponent implements OnInit {
   readonly searchableElements = dashboardElements;
   readonly isEditing = signal(false);
   readonly renderedGroups = signal<WidgetGroup[]>([]);
-  readonly savedGroups = toSignal(this.dashboardStore.groups$);
-  readonly isLoading = toSignal(this.dashboardStore.isLoading$);
+  readonly savedGroups = this.dashboardStore.groups;
+  readonly isLoading = this.dashboardStore.isLoading;
   readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   readonly isLoadingFirstTime = computed(() => this.isLoading() && this.savedGroups() === null);
   readonly removingGroups = signal(new Set<WidgetGroup>());
@@ -83,6 +83,17 @@ export class DashboardComponent implements OnInit {
     return !isEqual(this.renderedGroups(), getDefaultWidgets(this.isHaLicensed()));
   });
 
+  constructor() {
+    // Show each newly loaded or saved layout, but never replace one the user is in the middle of editing.
+    effect(() => {
+      const groups = this.savedGroups();
+      if (untracked(this.isEditing)) {
+        return;
+      }
+      this.renderedGroups.set(groups || []);
+    });
+  }
+
   /** Tracks whether the card-editor side panel is open so the page-level Escape handler yields to it. */
   protected editorOpen = signal(false);
 
@@ -90,7 +101,6 @@ export class DashboardComponent implements OnInit {
     performance.mark('Dashboard Start');
     performance.measure('Admin Init', 'Admin Init', 'Dashboard Start');
     this.dashboardStore.entered();
-    this.loadGroups();
   }
 
   protected onConfigure(): void {
@@ -202,17 +212,5 @@ export class DashboardComponent implements OnInit {
 
   protected isGroupRemoving(group: WidgetGroup): boolean {
     return this.removingGroups().has(group);
-  }
-
-  private loadGroups(): void {
-    this.dashboardStore.groups$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((groups) => {
-        if (this.isEditing()) {
-          return;
-        }
-
-        this.renderedGroups.set(groups || []);
-      });
   }
 }

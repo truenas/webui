@@ -8,7 +8,7 @@
     dndDropzone
     class="drag-container"
     [tnTestId]="['vdev-dropzone', layout(), position()]"
-    [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
+    [ngClass]="{'drag-active': dragToggleStore.dragActive()}"
     (dndDrop)="onDrop($event)"
   >
     <div class="outer-container">
@@ -39,7 +39,7 @@
                 <ix-disk-icon
                   class="disk-icon"
                   [tnTestId]="['drag-vdev-disk', disk.name]"
-                  [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
+                  [ngClass]="{ 'grabbed': dragToggleStore.dragActive(), 'drag-handle': editable() }"
                   [dndDraggable]="getMovableDisk(disk)"
                   [dndEffectAllowed]="'move'"
                   [dndDisableIf]="!editable()"
@@ -59,7 +59,7 @@
             <ix-disk-icon
               class="disk-icon"
               [tnTestId]="['drag-vdev-disk', disk.name]"
-              [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async, 'drag-handle': editable() }"
+              [ngClass]="{ 'grabbed': dragToggleStore.dragActive(), 'drag-handle': editable() }"
               [dndDraggable]="getMovableDisk(disk)"
               [dndEffectAllowed]="'move'"
               [dndDisableIf]="!editable()"

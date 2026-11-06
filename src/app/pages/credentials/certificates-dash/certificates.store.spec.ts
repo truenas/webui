@@ -41,11 +41,9 @@ describe('CertificatesStore', () => {
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.state()).toEqual({
-      isLoading: false,
-      certificates: [],
-      csrs: [],
-    });
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.certificates()).toEqual([]);
+    expect(spectator.service.csrs()).toEqual([]);
   });
 
   it('should call certificate.query when loadCertificates is called', () => {

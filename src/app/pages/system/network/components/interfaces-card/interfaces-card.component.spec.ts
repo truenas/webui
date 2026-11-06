@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnMenuHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
@@ -22,7 +23,7 @@ import { InterfacesCardComponent } from 'app/pages/system/network/components/int
 import {
   IpAddressesCellComponent,
 } from 'app/pages/system/network/components/interfaces-card/ip-addresses-cell/ip-addresses-cell.component';
-import { InterfacesState, InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
+import { InterfacesStore } from 'app/pages/system/network/stores/interfaces.store';
 import { NetworkService } from 'app/services/network.service';
 
 describe('InterfacesCardComponent', () => {
@@ -62,6 +63,7 @@ describe('InterfacesCardComponent', () => {
     },
   ];
   const failoverConfig$ = new BehaviorSubject({ disabled: true });
+  const storeInterfaces = signal(interfaces);
 
   const updateSubject$ = new Subject<AllNetworkInterfacesUpdate>();
 
@@ -74,10 +76,8 @@ describe('InterfacesCardComponent', () => {
     providers: [
       mockProvider(InterfacesStore, {
         loadInterfaces: jest.fn(),
-        state$: of({
-          interfaces,
-          isLoading: false,
-        } as InterfacesState),
+        interfaces: storeInterfaces,
+        isLoading: signal(false),
       }),
       mockProvider(ApiService, {
         call: jest.fn((method) => {
@@ -225,5 +225,14 @@ describe('InterfacesCardComponent', () => {
     const statusIcons = spectator.queryAll(InterfaceStatusIconComponent);
     expect(statusIcons).toHaveLength(3);
     expect(statusIcons[0].update).toEqual(someUpdate);
+  });
+
+  it('subscribes to traffic updates once, however often the interface list reloads', () => {
+    storeInterfaces.set([...interfaces]);
+    spectator.detectChanges();
+    storeInterfaces.set([...interfaces]);
+    spectator.detectChanges();
+
+    expect(spectator.inject(NetworkService).subscribeToInOutUpdates).toHaveBeenCalledTimes(1);
   });
 });

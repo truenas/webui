@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, output, signal, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, effect, inject, linkedSignal, output,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -76,7 +78,7 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
   ],
 })
 export class InterfacesCardComponent implements OnInit {
-  private interfacesStore$ = inject(InterfacesStore);
+  private interfacesStore = inject(InterfacesStore);
   private store$ = inject<Store<AppState>>(Store);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
@@ -92,16 +94,33 @@ export class InterfacesCardComponent implements OnInit {
   readonly interfacesUpdated = output();
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
-  protected readonly interfaces = signal<NetworkInterface[]>([]);
+  protected readonly interfaces = this.interfacesStore.interfaces;
 
   // Kept as a subject because IconActionConfig hidden/disabled/dynamicTooltip callbacks expect Observables.
   protected readonly isHaEnabled$ = new BehaviorSubject<boolean>(false);
   protected readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
 
-  protected readonly isLoading = signal(false);
+  protected readonly isLoading = this.interfacesStore.isLoading;
   dataProvider = new ArrayDataProvider<NetworkInterface>();
   protected readonly rows = dataProviderRows(this.dataProvider);
-  inOutUpdates = signal<AllNetworkInterfacesUpdate>({});
+
+  /** Starts each NIC at zero traffic whenever the list reloads; realtime updates are merged in after. */
+  inOutUpdates = linkedSignal<AllNetworkInterfacesUpdate>(() => {
+    const inOutUpdates: AllNetworkInterfacesUpdate = {};
+    for (const nic of this.interfaces()) {
+      inOutUpdates[nic.name] = {
+        link_state: nic.state?.link_state,
+        received_bytes_rate: 0,
+        sent_bytes_rate: 0,
+        speed: 0,
+      };
+    }
+    return inOutUpdates;
+  });
+
+  constructor() {
+    effect(() => this.dataProvider.setRows(this.interfaces()));
+  }
 
   protected readonly displayedColumns = ['state', 'name', 'ip_addresses', 'mac', 'actions'];
 
@@ -178,23 +197,8 @@ export class InterfacesCardComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.interfacesStore$.loadInterfaces();
-    this.interfacesStore$.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.isLoading.set(state.isLoading);
-      this.interfaces.set(state.interfaces);
-      this.dataProvider.setRows(state.interfaces);
-      const inOutUpdates: AllNetworkInterfacesUpdate = {};
-      for (const nic of state.interfaces) {
-        inOutUpdates[nic.name] = {
-          link_state: nic.state?.link_state,
-          received_bytes_rate: 0,
-          sent_bytes_rate: 0,
-          speed: 0,
-        };
-      }
-      this.inOutUpdates.set(inOutUpdates);
-      this.subscribeToUpdates();
-    });
+    this.interfacesStore.loadInterfaces();
+    this.subscribeToUpdates();
     this.checkFailoverDisabled();
   }
 
@@ -214,7 +218,7 @@ export class InterfacesCardComponent implements OnInit {
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
-      this.interfacesStore$.loadInterfaces();
+      this.interfacesStore.loadInterfaces();
     }, this.destroyRef);
   }
 
@@ -226,7 +230,7 @@ export class InterfacesCardComponent implements OnInit {
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
-      this.interfacesStore$.loadInterfaces();
+      this.interfacesStore.loadInterfaces();
     }, this.destroyRef);
   }
 
@@ -239,7 +243,7 @@ export class InterfacesCardComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => {
       this.interfacesUpdated.emit();
-      this.interfacesStore$.loadInterfaces();
+      this.interfacesStore.loadInterfaces();
       this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
     });
   }
@@ -263,7 +267,7 @@ export class InterfacesCardComponent implements OnInit {
       )
       .subscribe(() => {
         this.interfacesUpdated.emit();
-        this.interfacesStore$.loadInterfaces();
+        this.interfacesStore.loadInterfaces();
         this.store$.dispatch(networkInterfacesChanged({ commit: false, checkIn: false }));
       });
   }

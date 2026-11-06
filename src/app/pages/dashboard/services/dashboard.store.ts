@@ -1,9 +1,10 @@
 import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Store } from '@ngrx/store';
 import {
-  EMPTY,
-  Observable, catchError, combineLatest, finalize, map, switchMap, tap,
+  Observable, combineLatest, finalize, map, pipe, switchMap, tap,
 } from 'rxjs';
 import { toLoggedInUser } from 'app/interfaces/ds-cache.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -40,8 +41,6 @@ export interface OldDashboardConfigItem {
 
 export interface DashboardState {
   isLoading: boolean;
-  globalError: string;
-
   /**
    * Ordered.
    */
@@ -50,7 +49,6 @@ export interface DashboardState {
 
 export const initialState: DashboardState = {
   isLoading: false,
-  globalError: '',
   groups: null,
 };
 
@@ -60,41 +58,36 @@ export const initialState: DashboardState = {
  * It also doesn't care about edit mode.
  */
 @Injectable()
-export class DashboardStore extends ComponentStore<DashboardState> {
+export class DashboardStore {
   private authService = inject(AuthService);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private store$ = inject<Store<AppState>>(Store);
 
-  readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly groups$ = this.select((state) => state.groups);
+  private readonly state = signalState(initialState);
 
-  constructor() {
-    super(initialState);
-  }
+  readonly isLoading = this.state.isLoading;
+  readonly groups = this.state.groups;
 
-  readonly entered = this.effect((trigger$) => {
-    return trigger$.pipe(
-      tap(() => this.toggleLoadingState(true)),
-      // Read fresh rather than from the user cached at sign-in: the layout may have been saved from
-      // another tab since, and saving this tab's stale copy would overwrite it.
-      switchMap(() => combineLatest([
-        this.api.call('auth.me').pipe(map((user) => toLoggedInUser(user).attributes.dashState)),
-        this.store$.select(selectIsHaLicensed),
-      ])),
-      tap(([dashState, isHaLicensed]) => {
-        this.setState({
-          isLoading: false,
-          globalError: '',
-          groups: this.getDashboardGroups(dashState || getDefaultWidgets(isHaLicensed)),
-        });
+  readonly entered = rxMethod<void>(pipe(
+    tap(() => this.toggleLoadingState(true)),
+    // Read fresh rather than from the user cached at sign-in: the layout may have been saved from
+    // another tab since, and saving this tab's stale copy would overwrite it.
+    switchMap(() => combineLatest([
+      this.api.call('auth.me').pipe(map((user) => toLoggedInUser(user).attributes.dashState)),
+      this.store$.select(selectIsHaLicensed),
+    ]).pipe(
+      tapResponse({
+        next: ([dashState, isHaLicensed]) => {
+          patchState(this.state, {
+            isLoading: false,
+            groups: this.getDashboardGroups(dashState || getDefaultWidgets(isHaLicensed)),
+          });
+        },
+        error: (error: unknown) => this.handleError(error),
       }),
-      catchError((error: unknown) => {
-        this.handleError(error);
-        return EMPTY;
-      }),
-    );
-  });
+    )),
+  ));
 
   save(groups: WidgetGroup[]): Observable<void> {
     this.toggleLoadingState(true);
@@ -102,7 +95,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
     return this.api.call('auth.set_attribute', ['dashState', groups]).pipe(
       // Kept here too: `entered()` reads the layout once, so nothing else would tell the store, and
       // cancelling the next edit would bring back the layout from before this save.
-      tap(() => this.patchState({ groups })),
+      tap(() => patchState(this.state, { groups })),
       switchMap(() => this.authService.refreshUser()),
       finalize(() => this.toggleLoadingState(false)),
     );
@@ -114,7 +107,7 @@ export class DashboardStore extends ComponentStore<DashboardState> {
   }
 
   toggleLoadingState(isLoading: boolean): void {
-    this.patchState((state) => ({ ...state, isLoading }));
+    patchState(this.state, { isLoading });
   }
 
   private getDashboardGroups(dashState: WidgetGroup[] | OldDashboardConfigItem[]): WidgetGroup[] {

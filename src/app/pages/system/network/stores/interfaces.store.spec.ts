@@ -29,10 +29,8 @@ describe('InterfacesStore', () => {
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.state()).toEqual({
-      interfaces: [],
-      isLoading: false,
-    });
+    expect(spectator.service.interfaces()).toEqual([]);
+    expect(spectator.service.isLoading()).toBe(false);
   });
 
   it('should load interfaces when loadInterfaces is called', async () => {
@@ -40,10 +38,8 @@ describe('InterfacesStore', () => {
     await settleApi();
 
     expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('interface.query');
-    expect(spectator.service.state()).toEqual({
-      interfaces,
-      isLoading: false,
-    });
+    expect(spectator.service.interfaces()).toEqual(interfaces);
+    expect(spectator.service.isLoading()).toBe(false);
   });
 
   describe('loading state', () => {
@@ -53,20 +49,20 @@ describe('InterfacesStore', () => {
 
       spectator.service.loadInterfaces();
 
-      expect(spectator.service.state().isLoading).toBe(true);
+      expect(spectator.service.isLoading()).toBe(true);
 
       delayedResponse$.next(interfaces);
       delayedResponse$.complete();
 
-      expect(spectator.service.state().isLoading).toBe(false);
+      expect(spectator.service.isLoading()).toBe(false);
     });
 
     it('sets isLoading to false after interfaces are loaded', async () => {
       spectator.service.loadInterfaces();
       await settleApi();
 
-      expect(spectator.service.state().isLoading).toBe(false);
-      expect(spectator.service.state().interfaces).toEqual(interfaces);
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.interfaces()).toEqual(interfaces);
     });
   });
 
@@ -84,17 +80,26 @@ describe('InterfacesStore', () => {
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
 
-    it('keeps isLoading state when API error occurs without completion', () => {
+    it('clears isLoading when the API fails, so the card does not spin forever', () => {
       const delayedResponse$ = new Subject<NetworkInterface[]>();
       jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(delayedResponse$);
 
       spectator.service.loadInterfaces();
-      expect(spectator.service.state().isLoading).toBe(true);
+      expect(spectator.service.isLoading()).toBe(true);
 
       delayedResponse$.error(new Error('API error'));
 
-      // isLoading remains true because complete callback is not called on error
-      expect(spectator.service.state().isLoading).toBe(true);
+      expect(spectator.service.isLoading()).toBe(false);
+    });
+
+    it('still loads after an earlier load failed', async () => {
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValueOnce(throwError(() => new Error('API error')));
+      spectator.service.loadInterfaces();
+
+      spectator.service.loadInterfaces();
+      await settleApi();
+
+      expect(spectator.service.interfaces()).toEqual(interfaces);
     });
   });
 });

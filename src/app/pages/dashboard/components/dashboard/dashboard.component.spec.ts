@@ -2,6 +2,7 @@ import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NgTemplateOutlet } from '@angular/common';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
@@ -9,7 +10,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent, ngMocks } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { AnimateOutDirective } from 'app/directives/animate-out/animate-out.directive';
 import {
   DisableFocusableElementsDirective,
@@ -42,8 +43,8 @@ describe('DashboardComponent', () => {
   const groupC: WidgetGroup = { layout: WidgetGroupLayout.QuartersAndHalf, slots: [] };
   const groupD: WidgetGroup = { layout: WidgetGroupLayout.HalfAndQuarters, slots: [] };
   const defaultGroups = [groupA, groupB, groupC, groupD];
-  const groups$ = new BehaviorSubject<WidgetGroup[] | null>(defaultGroups);
-  const isLoading$ = new BehaviorSubject(false);
+  const storeGroups = signal<WidgetGroup[] | null>(defaultGroups);
+  const storeIsLoading = signal(false);
 
   let spectator: Spectator<DashboardComponent>;
   let loader: HarnessLoader;
@@ -60,8 +61,8 @@ describe('DashboardComponent', () => {
     componentProviders: [
       mockProvider(WidgetResourcesService),
       mockProvider(DashboardStore, {
-        groups$,
-        isLoading$,
+        groups: storeGroups,
+        isLoading: storeIsLoading,
         entered: jest.fn(),
         save: jest.fn(() => of(undefined)),
       }),
@@ -105,13 +106,13 @@ describe('DashboardComponent', () => {
     });
 
     it('shows skeleton loader when loading for first time', () => {
-      isLoading$.next(true);
-      groups$.next(null);
+      storeIsLoading.set(true);
+      storeGroups.set(null);
       spectator.detectChanges();
       expect(spectator.query(NgxSkeletonLoaderComponent)).toExist();
 
-      groups$.next(defaultGroups);
-      isLoading$.next(false);
+      storeGroups.set(defaultGroups);
+      storeIsLoading.set(false);
       spectator.detectChanges();
       expect(spectator.query(NgxSkeletonLoaderComponent)).not.toExist();
     });

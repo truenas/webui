@@ -1,9 +1,9 @@
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
-import { filter, firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -59,15 +59,18 @@ describe('DashboardStore', () => {
     spectator = createService();
   });
 
+  function currentState(): typeof initialState {
+    return { isLoading: spectator.service.isLoading(), groups: spectator.service.groups() };
+  }
+
   /** The state once the last `entered()` has finished loading, since `auth.me` answers asynchronously. */
-  function loadedState(): Promise<typeof initialState> {
-    return firstValueFrom(spectator.service.state$.pipe(filter((state) => !state.isLoading)));
+  async function loadedState(): Promise<typeof initialState> {
+    await settleApi();
+    return currentState();
   }
 
   it('correctly initializes dashboard store and converts old dashboard widgets to new ones', async () => {
-    expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-      ...initialState,
-    });
+    expect(currentState()).toEqual(initialState);
 
     spectator.service.entered();
 
@@ -126,7 +129,7 @@ describe('DashboardStore', () => {
 
     await firstValueFrom(spectator.service.save(saved));
 
-    expect(await firstValueFrom(spectator.service.groups$)).toEqual(saved);
+    expect(spectator.service.groups()).toEqual(saved);
   });
 
   it('should load demoWidgets if user does not have dashState', async () => {

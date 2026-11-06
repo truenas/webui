@@ -7,7 +7,7 @@
   class="dnd-wrapper"
   tnTestId="unused-disks-dropzone"
   dndDropzone
-  [ngClass]="{'drag-active': (dragToggleStore$.dragActive$ | async)}"
+  [ngClass]="{'drag-active': dragToggleStore.dragActive()}"
   (dndDrop)="onDrop($event)">
   <div
     class="tree-container"
@@ -25,7 +25,7 @@
         <div
           class="unused-disk"
           [tnTestId]="['drag-unused-disk', asDisk(disk).name]"
-          [ngClass]="{ 'grabbed': dragToggleStore$.dragActive$ | async }"
+          [ngClass]="{ 'grabbed': dragToggleStore.dragActive() }"
           [dndDraggable]="asDisk(disk)"
           [dndEffectAllowed]="'move'"
           (dndStart)="onDragStart()"

@@ -1,5 +1,8 @@
 import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { pipe } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { NetworkInterface, toNetworkInterface } from 'app/interfaces/network-interface.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -16,27 +19,26 @@ const initialState: InterfacesState = {
 };
 
 @Injectable()
-export class InterfacesStore extends ComponentStore<InterfacesState> {
+export class InterfacesStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
-  constructor() {
-    super(initialState);
-  }
+  private readonly state = signalState(initialState);
 
-  readonly loadInterfaces = this.effect((trigger$) => {
-    return trigger$.pipe(
-      tap(() => this.patchState({ isLoading: true })),
-      switchMap(() => {
-        return this.api.query('interface.query').pipe(
-          map((interfaces) => interfaces.map(toNetworkInterface)),
-          tap({
-            next: (interfaces) => this.patchState({ interfaces }),
-            error: (error: unknown) => this.errorHandler.showErrorModal(error),
-            complete: () => this.patchState({ isLoading: false }),
-          }),
-        );
-      }),
-    );
-  });
+  readonly interfaces = this.state.interfaces;
+  readonly isLoading = this.state.isLoading;
+
+  readonly loadInterfaces = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, { isLoading: true })),
+    switchMap(() => {
+      return this.api.query('interface.query').pipe(
+        map((interfaces) => interfaces.map(toNetworkInterface)),
+        tapResponse({
+          next: (interfaces) => patchState(this.state, { interfaces }),
+          error: (error: unknown) => this.errorHandler.showErrorModal(error),
+          finalize: () => patchState(this.state, { isLoading: false }),
+        }),
+      );
+    }),
+  ));
 }

@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness } from '@truenas/ui-components';
 import { MockComponents, MockPipe } from 'ng-mocks';
 import { DndDropEvent } from 'ngx-drag-drop';
-import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
@@ -55,7 +55,7 @@ describe('ManualSelectionVdevComponent', () => {
         removeDiskFromVdev: jest.fn(),
       }),
       mockProvider(ManualDiskDragToggleStore, {
-        dragActive$: of(false),
+        dragActive: signal(false),
         toggleActivateDrag: jest.fn(),
       }),
     ],
