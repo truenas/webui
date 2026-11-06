@@ -34,20 +34,10 @@ interface RunJobOptions {
   /** What it costs the next run if this did not happen. Thrown verbatim. */
   whatItCosts: string;
   /**
-   * Tie-break for when middleware answers that it has no record of the job,
-   * which it can do across a middlewared restart. Without it an unknown job is
-   * reported as work that did not happen, which may be false.
-   *
-   * Consulted in two places: when a query is *answered* and comes back empty,
-   * and when the job id never arrives (the id rides a job event over the socket
-   * these jobs disrupt, so losing it says nothing about whether the work ran).
-   * Never after a query that simply failed: one cut off by the restart the job
-   * causes says nothing about whether the job finished, and treating it as "no
-   * such job" is how a side effect that is true early becomes a false success.
-   *
-   * Pass one only where the side effect is the whole of what the job was for.
-   * `ensurePoolAbsent` passes none, because the pool row disappears while the
-   * `destroy: true` wipe is still running.
+   * Tie-break for when middleware has no record of the job, which can happen across a middlewared restart.
+   * Consulted when a query answers empty or the job id never arrives, never after a query that failed: a cut-off
+   * query says nothing about whether the job finished. Pass one only where the side effect is the whole job;
+   * `ensurePoolAbsent` passes none, because the pool row vanishes while the `destroy: true` wipe still runs.
    */
   confirm?: () => Promise<boolean>;
   /**
@@ -60,32 +50,11 @@ interface RunJobOptions {
 }
 
 /**
- * Starts a middleware job and returns its result when it has finished, or
- * throws saying what that cost.
- *
- * The result is `undefined` when `confirm` settled the outcome instead, since
- * no finished job was read.
- *
- * Polls `core.get_jobs` for the verdict rather than following job events alone.
- * `api.job()` waits for `collection_update` frames, and the jobs this suite runs
- * restart services over the socket those frames arrive on — `pool.export` with
- * `restart_services: true`, `service.control` by definition. A job that finishes
- * while that socket is down sends its last event to nobody, so waiting on events
- * alone stalls until the deadline on work that finished seconds in. Every poll
- * is a fresh request, so a reconnect costs one interval.
- *
- * The events still end each wait between polls early: a job is usually seen
- * finished there first, and polled at once. Without them every job paid at
- * least one whole interval — 269 of a run's 385 jobs took 2.0–2.5s, most of
- * them sub-second jobs waiting out the sleep.
- *
- * Acquiring the job id still needs one job event: `callAndGetJobId` correlates
- * on it because what a job method returns on the wire differs by version. A
- * disruption in that window loses the id, which is why a failed start reports
- * the outcome as unknown rather than as nothing having happened.
- *
- * The deadline is wall-clock. rxjs `timeout(n)` bounds the gap between
- * emissions, so a job reporting steady progress would reset it forever.
+ * Starts a middleware job and returns its result once finished (`undefined` when `confirm` settled it), or
+ * throws saying what that cost. Polls `core.get_jobs` because these jobs restart services over the socket job
+ * events arrive on, so a final event can go to nobody; events only end each wait early (otherwise most jobs
+ * paid a whole interval). The id still needs one event, so a disruption then reports the outcome as unknown.
+ * The deadline is wall-clock: rxjs `timeout(n)` bounds gaps between emissions, so progress would reset it.
  */
 export async function runJob(
   client: E2eApiClient,
@@ -208,16 +177,10 @@ interface FinishWatch {
 }
 
 /**
- * Watches `jobId`'s events for it finishing, to end the wait between polls.
- *
- * `trackJob` filters the client's one `core.get_jobs` subscription, which it
- * renews after every reconnect, so this asks the server for nothing per job but
- * the single read `trackJob` opens with. It is only a wake-up: the poll it
- * hurries still reads the verdict, and an event lost to a dropped socket, or a
- * stream that errors, leaves the polls to find the job finished on their own.
- *
- * A finish wakes one wait only. Should the poll it hurries not see the job
- * finished yet, the next wait is a whole interval rather than a tight loop.
+ * Watches `jobId`'s events for it finishing, only to end the wait between polls early; the poll still reads the
+ * verdict, so a lost event or errored stream just leaves the polls to find it. `trackJob` filters the client's
+ * one `core.get_jobs` subscription (renewed per reconnect), so this costs one read per job. A finish wakes one
+ * wait only, so a poll that doesn't yet see it falls back to a full interval, not a tight loop.
  */
 function watchForFinish(client: E2eApiClient, jobId: number): FinishWatch {
   let finished = false;
