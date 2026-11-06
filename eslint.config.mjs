@@ -84,14 +84,14 @@ const projectOverrides = {
     }],
     '@angular-eslint/prefer-host-metadata-property': 'error',
     '@angular-eslint/prefer-output-emitter-ref': 'error',
-    // Enforced as an error for `src/` below instead of as a repo-wide warning.
+    // Enforced as an error for `src/` and `e2e/` below instead of as a repo-wide warning.
     'truenas/max-comment-lines': 'off',
   },
 };
 
 // `pools-dashboard.component.ts` keeps one long comment until the open storage store migration lands.
 const commentCapOverrides = {
-  files: ['src/**/*.ts'],
+  files: ['src/**/*.ts', 'e2e/**/*.ts'],
   ignores: ['src/app/pages/storage/pools-dashboard.component.ts'],
   rules: {
     'truenas/max-comment-lines': ['error', { max: 6, skipBlankLines: true }],
