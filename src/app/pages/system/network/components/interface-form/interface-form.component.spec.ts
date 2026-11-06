@@ -332,6 +332,14 @@ describe('InterfaceFormComponent', () => {
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
+    it('does not leave the hidden VLAN Tag invalid when the type is changed away from VLAN', async () => {
+      await setSelectValue('type', 'VLAN');
+      expect(spectator.component.form.controls.vlan_tag.hasError('required')).toBe(true);
+
+      await setSelectValue('type', 'Bridge');
+      expect(spectator.component.form.controls.vlan_tag.valid).toBe(true);
+    });
+
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 

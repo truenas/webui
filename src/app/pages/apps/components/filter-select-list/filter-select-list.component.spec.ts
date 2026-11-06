@@ -1,6 +1,5 @@
 import { Signal, signal, WritableSignal } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { Option } from 'app/interfaces/option.interface';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';

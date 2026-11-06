@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent,

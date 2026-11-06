@@ -2,15 +2,14 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCardComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { forkJoin } from 'rxjs';
+import { forkJoin, startWith } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
@@ -142,7 +141,9 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
     traverse: helptextPermissions.traverseTooltip,
   };
 
-  protected readonly isRecursive = toSignal(this.form.select((values) => values.recursive));
+  protected readonly isRecursive = toSignal(
+    this.form.controls.recursive.valueChanges.pipe(startWith(this.form.controls.recursive.value)),
+  );
 
   get canSetAcl(): boolean {
     return this.aclType !== AclType.Off;

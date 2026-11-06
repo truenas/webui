@@ -1,5 +1,4 @@
-import { Validators } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { Validators, FormControl } from '@angular/forms';
 import { NewOrExisting } from 'app/enums/new-or-existing.enum';
 
 export interface PortModeControls {

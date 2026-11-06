@@ -1,7 +1,4 @@
-import {
-  FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn,
-} from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn, FormControl } from '@angular/forms';
 import { isEmpty } from 'lodash-es';
 
 export function matchOthersFgValidator(

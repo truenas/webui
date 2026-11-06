@@ -3,11 +3,10 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, inject, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { map, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -58,9 +57,17 @@ export class ExtendDialog {
     newDisk: ['', Validators.required],
   });
 
-  protected readonly newDisk = toSignal(this.form.controls.newDisk.value$, { initialValue: '' });
+  protected readonly newDisk = toSignal(
+    this.form.controls.newDisk.valueChanges,
+    { initialValue: this.form.controls.newDisk.value },
+  );
+
   private readonly sedDiskPassword = viewChild.required(SedDiskPasswordComponent);
-  private readonly isFormValid = toSignal(this.form.valid$, { initialValue: false });
+  private readonly isFormValid = toSignal(
+    this.form.statusChanges.pipe(map(() => this.form.valid)),
+    { initialValue: this.form.valid },
+  );
+
   protected readonly canSubmit = computed(() => this.isFormValid() && this.sedDiskPassword().isValid());
 
   readonly helptext = helptextVolumeStatus;

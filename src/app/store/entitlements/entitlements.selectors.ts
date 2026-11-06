@@ -44,18 +44,12 @@ export const selectIsEntitled = (
 );
 
 /**
- * The same decision for a feature the UI will not offer without an affirmative grant: a loaded
- * map missing the key reads as denied rather than as not gated. `undefined` still means not
- * loaded — nothing is decided before the answer arrives.
+ * Like `selectIsEntitled`, but a loaded map missing the key reads as denied, not as not gated.
+ * `undefined` still means not loaded.
  *
- * `selectIsEntitled` stays the default and the general rule, because it is middleware's: `check`
- * answers NOT_GATED for a key `POLICY` does not carry, and most gates here guard whole navigation
- * sections (Apps, VMs, Containers) that must not vanish because a middleware is older than a key,
- * or because the map failed to load.
- *
- * Reach for this one where showing the feature unlocked is the worse half of that guess: it is
- * new enough that a map without its key means a middleware that cannot enforce it either, and the
- * denied treatment costs nothing but a tag.
+ * `selectIsEntitled` stays the default: gates on whole sections (Apps, VMs, Containers) must not
+ * vanish on an older middleware or a failed load. Use this one only for features new enough that a
+ * missing key means middleware cannot enforce them either, and where denial costs only a tag.
  */
 export const selectIsEntitledStrictly = (
   feature: EntitlementFeature,

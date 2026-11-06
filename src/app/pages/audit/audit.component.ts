@@ -2,14 +2,13 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnDestroy, OnInit, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnButtonToggleComponent, TnButtonToggleGroupComponent } from '@truenas/ui-components';
 import {
-  combineLatest, distinctUntilChanged, filter, map, skip, tap,
+  combineLatest, distinctUntilChanged, filter, map, skip, startWith, tap,
 } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { ControllerType, controllerTypeLabels } from 'app/enums/controller-type.enum';
@@ -110,7 +109,7 @@ export class AuditComponent implements OnInit, OnDestroy {
    */
   private syncControllerStateToDataProvider(): void {
     combineLatest([
-      this.controllerTypeControl.value$,
+      this.controllerTypeControl.valueChanges.pipe(startWith(this.controllerTypeControl.value)),
       this.isHaLicensed$.pipe(map(Boolean)),
     ]).pipe(
       distinctUntilChanged(

@@ -3,8 +3,7 @@ import {
   ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
@@ -110,10 +109,10 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
   protected readonly InputType = InputType;
   readonly mntPath = mntPath;
   readonly defaultNamingSchema = 'auto-%Y-%m-%d_%H-%M';
-  sshCredentials: KeychainSshCredentials[] = [];
+  private sshCredentials: KeychainSshCredentials[] = [];
   snapshotsText = '';
   isSnapshotsWarning = false;
-  isSudoDialogShown = false;
+  private isSudoDialogShown = false;
 
   form = this.formBuilder.group({
     exist_replication: new FormControl(null as number | null),

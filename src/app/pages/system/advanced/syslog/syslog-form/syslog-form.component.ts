@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormBuilder, FormControl, FormArray } from '@ngneat/reactive-forms';
+import {
+  ReactiveFormsModule, Validators, FormBuilder, FormControl, FormArray, FormGroup,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -18,6 +19,7 @@ import { helptextSystemAdvanced, helptextSystemAdvanced as helptext } from 'app/
 import {
   AdvancedConfigUpdate, SyslogServer, toAdvancedConfigUpdateArgs,
 } from 'app/interfaces/advanced-config.interface';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { translateOptions } from 'app/modules/translate/translate.helper';
@@ -61,10 +63,10 @@ export class SyslogFormComponent extends IxFormHostForm implements OnInit {
     fqdn_syslog: [false],
     sysloglevel: new FormControl(null as SyslogLevel | null),
     syslog_audit: [false],
-    syslogservers: this.fb.array<SyslogServer>([]),
+    syslogservers: this.fb.array<FormGroup<ControlsOf<SyslogServer>>>([]),
   });
 
-  get syslogServersArray(): FormArray<SyslogServer> {
+  get syslogServersArray(): FormArray<FormGroup<ControlsOf<SyslogServer>>> {
     return this.form.controls.syslogservers;
   }
 
@@ -150,7 +152,7 @@ export class SyslogFormComponent extends IxFormHostForm implements OnInit {
       fqdn_syslog: values.fqdn_syslog,
       sysloglevel: values.sysloglevel || undefined,
       syslog_audit: values.syslog_audit,
-      syslogservers: values.syslogservers.filter((server: SyslogServer) => server.host),
+      syslogservers: values.syslogservers.filter((server) => server.host) as SyslogServer[],
     };
 
     return {
@@ -186,6 +188,7 @@ export class SyslogFormComponent extends IxFormHostForm implements OnInit {
         // Add conditional validation for TLS certificate
         if (server.transport === SyslogTransport.Tls && !server.tls_certificate) {
           serverGroup.controls.tls_certificate.setValidators([Validators.required]);
+          serverGroup.controls.tls_certificate.updateValueAndValidity();
         }
 
         // Watch for transport changes

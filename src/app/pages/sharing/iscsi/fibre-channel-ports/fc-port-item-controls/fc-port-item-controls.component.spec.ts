@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';

@@ -49,14 +49,10 @@ export function formatLicenseExpiration(
 /**
  * Whole calendar days from today until a license expires, both dates read in UTC.
  *
- * The wire value is a calendar date, not an instant, and the contract is in force
- * through the whole of that date. Subtracting instants answers a different question:
- * at 13:00 UTC the day before expiry the date is half a day away, which rounds to 0
- * and reads as "expires today". Truncating both sides to a UTC day keeps the answer
- * stable for the whole day.
+ * The contract is in force through the whole expiry date, so today is truncated to a UTC day:
+ * subtracting instants would read "expires today" from midday the day before.
  *
- * `0` means the contract ends today and support is still available. A negative
- * number means it has lapsed.
+ * `0` means the contract ends today and support is still available. Negative means it has lapsed.
  */
 export function getDaysUntilLicenseExpiration(
   expiresAt: ApiDate | null | undefined,

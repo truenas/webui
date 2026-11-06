@@ -1,6 +1,6 @@
 import { DestroyRef, signal, WritableSignal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormArray } from '@ngneat/reactive-forms';
+import { FormArray } from '@angular/forms';
 
 /**
  * Creates a signal that tracks form array changes to prevent
@@ -39,8 +39,7 @@ import { FormArray } from '@ngneat/reactive-forms';
  * ```
  */
 export function createFormArraySnapshot<T>(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  formArray: FormArray<any>,
+  formArray: FormArray,
   destroyRef: DestroyRef,
   initialValue?: T[],
 ): WritableSignal<T[]> {

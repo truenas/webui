@@ -123,13 +123,9 @@ export class AlertServiceComponent implements OnInit {
   // construction.
   private existingAlertService: AlertService | undefined;
 
-  // Mirrors the dynamic child form's `invalid` state into a signal so the
-  // wrapper's OnPush `[extraDisabled]` binding (and the Send Test Alert
-  // button's `[disabled]`) re-evaluate reactively. The child lives in a
-  // ViewContainerRef, so its statusChanges don't flow through Angular's
-  // input system to this host — without this mirror, a programmatic
-  // setValidators/setValue on the child wouldn't tick CD on the host and
-  // the gate would appear stuck.
+  // The child form lives in a ViewContainerRef, so its status changes never reach this host's
+  // change detection. Mirroring them into a signal keeps `[extraDisabled]` and the Send Test
+  // Alert button from getting stuck after a programmatic validator or value change.
   protected readonly childFormInvalid = signal(true);
   private childFormStatusSub?: Subscription;
 
@@ -163,15 +159,9 @@ export class AlertServiceComponent implements OnInit {
   }
 
   /**
-   * Host hook (`<tn-side-panel>` closeGuard). Combined dirty: both the top-level `commonForm` and
-   * the dynamic `alertServiceForm` child (rendered into a `ViewContainerRef`, so its dirty state is
-   * invisible to `commonForm`). Also stays true once the user has changed `type` at least once,
-   * since rerendering the child resets its dirty flag while the parent's edit clearly hasn't been
-   * undone.
-   *
-   * `alertServiceForm` is set synchronously in `ngOnInit` via `renderAlertServiceForm()`, and the
-   * host only calls this when the user attempts to close — necessarily after `ngOnInit` — so the
-   * optional chain is defensive, not load-bearing.
+   * Host hook (`<tn-side-panel>` closeGuard). The child form's dirty state is invisible to
+   * `commonForm`, so both are checked, plus `hadTypeChange`: re-rendering the child on a `type`
+   * change resets its dirty flag even though the user's edit stands.
    */
   hasUnsavedChanges(): boolean {
     return Boolean(this.commonForm.dirty || this.alertServiceForm?.form.dirty || this.hadTypeChange);
@@ -186,16 +176,8 @@ export class AlertServiceComponent implements OnInit {
     onClick: () => this.onSendTestAlert(),
   }];
 
-  // True once the user has ever caused the child form to re-render by
-  // changing `type`. The new child form starts pristine even though the
-  // user has clearly edited the parent — we keep a sticky bit so that
-  // post-rerender state is still counted as dirty.
-  //
-  // Intentionally never reset: even if the user flips back to the
-  // original type, the act of swapping replaced the child form with a
-  // fresh instance, so the original child's pristine/dirty bookkeeping
-  // is gone. Treating that round-trip as "still dirty" is the safer
-  // default — false positive on dirty-confirm vs. silently losing edits.
+  // Sticky: changing `type` replaces the child form with a pristine one, so the form counts as
+  // dirty from then on, even if the user switches back. A needless confirm beats lost edits.
   private hadTypeChange = false;
 
   ngOnInit(): void {

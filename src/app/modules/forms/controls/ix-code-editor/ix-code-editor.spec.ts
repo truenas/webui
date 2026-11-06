@@ -1,5 +1,4 @@
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormControl } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';

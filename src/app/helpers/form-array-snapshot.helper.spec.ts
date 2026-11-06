@@ -1,6 +1,6 @@
 import { DestroyRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { FormBuilder } from '@angular/forms';
 import { createFormArraySnapshot } from './form-array-snapshot.helper';
 
 describe('createFormArraySnapshot', () => {
@@ -247,7 +247,7 @@ describe('createFormArraySnapshot', () => {
   it('handles form arrays with null and undefined values', () => {
     const formArray = fb.array([
       fb.control(null),
-      fb.control(),
+      fb.control(undefined),
       fb.control('valid'),
     ]);
 

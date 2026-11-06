@@ -123,15 +123,10 @@ describe('DeviceFormComponent', () => {
   }
 
   /**
-   * Asserts a field is genuinely absent from the DOM, across both control kinds this form mixes.
-   * Goes through the same index `fillForm` fills by — not `TnFormFieldHarness.with({ label })`,
-   * which only ever matches a `tn-form-field`'s own label and so would pass vacuously for an
-   * `ix-*` field (`Size`) or for a self-naming `tn-checkbox` in a label-less field
-   * (`Web Interface`), whether or not either is on screen.
-   *
-   * Stronger than a bare `expect(await getValues()).not.toHaveProperty(label)`: `getValues()` also
-   * drops any control whose value the harness cannot read, so a present-but-unreadable field would
-   * vanish from the values map and pass. The index keeps it.
+   * Asserts a field is absent from the DOM, across both control kinds this form mixes. Uses the
+   * index `fillForm` fills by: `TnFormFieldHarness.with({ label })` passes vacuously for an `ix-*`
+   * field (`Size`) or a self-naming `tn-checkbox` (`Web Interface`), and `getValues()` drops any
+   * control it cannot read, so a present-but-unreadable field would pass too.
    */
   async function expectNoField(label: string): Promise<void> {
     expect(Object.keys(await indexFormControls(loader))).not.toContain(label);
@@ -891,7 +886,7 @@ describe('DeviceFormComponent', () => {
         error: 400,
         extra: [['something', 'Path must exist when "exists" is set', 0]],
         reason: 'something',
-        trace: { class: 'something', formatted: 'something', frames: [] },
+        trace: { class: 'something', formatted: 'something', repr: '' },
         message: null,
       };
       const otherErrorDetails = { ...errorDetails, extra: [['something', 'other message', 0]] };

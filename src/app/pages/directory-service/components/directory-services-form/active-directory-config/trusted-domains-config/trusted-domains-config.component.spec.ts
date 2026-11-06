@@ -245,5 +245,20 @@ describe('TrustedDomainsConfigComponent', () => {
 
       expect(emittedValid).toBe(true);
     });
+
+    it('does not leave the hidden LDAP fields invalid when backend is changed from LDAP to RID', async () => {
+      let emittedValid: boolean | undefined;
+      spectator.component.isValid.subscribe((valid) => {
+        emittedValid = valid;
+      });
+
+      await addDomain('LDAP');
+
+      expect(emittedValid).toBe(false);
+
+      await (await getSelect('idmap_backend')).selectOption('RID (Default - algorithmic mapping based on RID values)');
+
+      expect(emittedValid).toBe(true);
+    });
   });
 });

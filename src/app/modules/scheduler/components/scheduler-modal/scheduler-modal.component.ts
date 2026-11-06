@@ -1,11 +1,10 @@
 import { DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -13,6 +12,7 @@ import {
 } from '@truenas/ui-components';
 import * as cronParser from 'cron-parser';
 import { DayOfTheWeekRange, MonthRange } from 'cron-parser/types';
+import { distinctUntilChanged, map, startWith } from 'rxjs';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import {
   SchedulerModalConfig,
@@ -53,6 +53,7 @@ export class SchedulerModalComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   config = inject<SchedulerModalConfig>(DIALOG_DATA);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected form = this.formBuilder.group({
     preset: [''],
@@ -118,9 +119,11 @@ export class SchedulerModalComponent implements OnInit {
     orTooltip: helptextGlobal.scheduler.orTooltip,
   };
 
-  readonly hasOrConditionExplanation$ = this.form.select((values) => {
-    return !this.areAllWeekdaysSelected && values.days !== '*';
-  });
+  readonly hasOrConditionExplanation$ = this.form.valueChanges.pipe(
+    startWith(null),
+    map(() => !this.areAllWeekdaysSelected && this.form.controls.days.value !== '*'),
+    distinctUntilChanged(),
+  );
 
   ngOnInit(): void {
     this.dialogRef.addPanelClass('scheduler-modal');
@@ -153,6 +156,7 @@ export class SchedulerModalComponent implements OnInit {
         this.timezone = timezone;
       }
       this.crontab = this.getCrontabFromForm();
+      this.cdr.markForCheck();
     });
   }
 

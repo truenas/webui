@@ -23,8 +23,8 @@ export class ContainerShellComponent implements TerminalConfiguration {
 
   reconnectShell$ = new Subject<void>();
 
-  protected appName: string;
-  protected containerId: string;
+  private appName: string;
+  private containerId: string;
 
   get connectionData(): TerminalConnectionData {
     return {

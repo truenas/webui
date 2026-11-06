@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { Component, OnInit, ChangeDetectionStrategy, signal, inject, computed, effect, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { AbstractControl, Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import {
+  AbstractControl, Validators, ReactiveFormsModule, FormBuilder, FormGroup,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { CallParams } from '@truenas/api-client';
@@ -21,6 +22,7 @@ import { SmbMinProtocol, smbMinProtocolLabels } from 'app/enums/smb-min-protocol
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextServiceSmb } from 'app/helptext/services/components/service-smb';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import { smbSearchSpotlight } from 'app/interfaces/smb-config.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -71,7 +73,7 @@ function createSmbForm(fb: FormBuilder, validatorsService: IxValidatorsService, 
     filemask: ['', []],
     dirmask: ['', []],
     admin_group: ['', [Validators.maxLength(120)]],
-    bindip: fb.array<BindIp>([]),
+    bindip: fb.array<FormGroup<ControlsOf<BindIp>>>([]),
     aapl_extensions: [false, []],
     multichannel: [false, []],
     encryption: [SmbEncryption.Default],

@@ -1,5 +1,4 @@
-import { FormArray, FormControl, UntypedFormGroup } from '@angular/forms';
-import { FormGroup } from '@ngneat/reactive-forms';
+import { FormArray, FormControl, UntypedFormGroup, FormGroup } from '@angular/forms';
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { Observable } from 'rxjs';
 import { ChartSchemaType } from 'app/enums/chart-schema-type.enum';
