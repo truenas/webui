@@ -100,6 +100,7 @@ const commentCappedPaths = [
   'src/app/modules/card-expand-collapse',
   'src/app/modules/charts',
   'src/app/modules/disk-icon',
+  'src/app/modules/empty',
   'src/app/modules/feedback',
   'src/app/modules/global-search',
   'src/app/modules/interface-status-icon',

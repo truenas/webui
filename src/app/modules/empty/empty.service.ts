@@ -36,14 +36,10 @@ export class EmptyService {
   private readonly langChange = langChangeSignal();
 
   /**
-   * Memoizes the resolved copy, because most call sites are template expressions — a `tn-table`'s
-   * `[emptyMessage]`/`[emptyDescription]` are re-evaluated on every change-detection pass whether
-   * or not the empty state is rendered, and a page with live metrics ticking runs a lot of them.
-   * Without this, each pass would cost a `translate.instant()` plus (for the description) two
-   * regex passes and a string allocation, per table, for a value that changes almost never.
-   *
-   * A fresh cache per catalog, so invalidation is structural — the same shape `perRow` uses in
-   * `ix-table/utils`. Keyed on the empty *type*, of which there are six, so it cannot grow.
+   * Memoizes the resolved copy: a `tn-table`'s `[emptyMessage]`/`[emptyDescription]` re-evaluate on
+   * every change-detection pass, rendered or not, and each would otherwise cost a `translate.instant()`
+   * and regex passes. A fresh cache per catalog makes invalidation structural; keyed on the six empty
+   * types, it can't grow.
    */
   private readonly copyCache = computed(() => {
     this.langChange();
@@ -64,34 +60,19 @@ export class EmptyService {
   }
 
   /**
-   * Translated title for `tn-table [emptyMessage]` / `tn-empty [title]`.
-   *
-   * The one place this is derived: every call site used to inline
-   * `defaultEmptyConfig(type).title | translate` — or, off a template, a `translated()` wrapper
-   * around `instant()`, since `instant()` alone freezes on whichever locale was loaded when it
-   * ran. Both halves of that (the catalog lookup and the language dependency) live here now, so a
-   * call site binds one expression. Mirrors {@link iconForType}: give it the empty *type*, not a
-   * resolved config. Empty for a state whose config carries no `title`, which none do today.
+   * Translated title for `tn-table [emptyMessage]` / `tn-empty [title]`. It tracks the language, which
+   * `instant()` alone wouldn't, so a call site binds one expression. Like {@link iconForType}, it takes
+   * the empty *type*, not a resolved config.
    */
   titleForType(type?: EmptyType | null): string {
     return this.copyForType(type).title;
   }
 
   /**
-   * Translated body copy for `tn-table [emptyDescription]` / `tn-empty [description]`, resolved
-   * from the same catalog {@link titleForType} takes the title from. Empty for a state whose
-   * config carries no `message`, which is most of them.
-   *
-   * The one place this is derived: every call site used to inline
-   * `conf.message ? (conf.message | translate) : ''`.
-   *
-   * The result is flattened as a guard, not because today's catalog needs it: of the four configs
-   * {@link defaultEmptyConfig} can return only `noSearchResultsConfig` carries a `message` at all,
-   * and it is plain text. The messages that do still carry `<br>`/`<p>` — they were written for
-   * `<ix-empty>`, which took HTML — sit on page-specific configs this method never sees, and reach
-   * `tn-empty` through the `flattenEmptyMessage` pipe in their own templates. Flattening here keeps
-   * the two paths equivalent, so routing one of those configs through the service later can't
-   * regress into literal markup.
+   * Translated body copy for `tn-table [emptyDescription]` / `tn-empty [description]`, from the same
+   * catalog as {@link titleForType}; empty when the config has no `message`. It is flattened like the
+   * `flattenEmptyMessage` pipe does for page-specific configs that still carry `<br>`/`<p>`, so routing
+   * one of those through here can't regress into literal markup.
    */
   descriptionForType(type?: EmptyType | null): string {
     return this.copyForType(type).description;
@@ -132,16 +113,10 @@ export class EmptyService {
   }
 
   /**
-   * Resolves the icon for an empty state from its type. Mirrors the icon mapping
-   * historically rendered by ix-empty so tn-table's `[emptyIcon]` reflects the
-   * state (error/search/no-data) instead of a static page-specific icon.
-   *
-   * ⚠ `tn-empty`'s `iconLibrary` defaults to `mdi` and `tn-table` gives its inner
-   * `tn-empty` no library, so a name that already carries a *different* library
-   * prefix is prefixed a second time (`app-x` → `mdi-app-x`) and falls back to a
-   * two-letter abbreviation. Every marker below is therefore `mdi-*` except the
-   * loading one, which the table never renders (its empty state is gated on
-   * `!loading()`). Pass a non-mdi icon only where you can also set `iconLibrary`.
+   * Resolves the empty-state icon from its type, so tn-table's `[emptyIcon]` reflects the state.
+   * `tn-table` gives its inner `tn-empty` no `iconLibrary`, which defaults to `mdi`, so another
+   * library's icon gets double-prefixed (`app-x` → `mdi-app-x`) and falls back to an abbreviation.
+   * Hence every marker here is `mdi-*`, except loading, which the table never renders.
    */
   iconForType(type?: EmptyType | null): string {
     switch (type) {
