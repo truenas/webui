@@ -230,14 +230,8 @@ export class JobsListComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    // handle query updates and expand rows according to URL params.
-    // we combine `queryTrigger$` with `jobsTrigger$` since, if we
-    // were to try and run `autoExpandRow` before `this.jobs` was populated, then
-    // nothing would happen. `combineLatest` is a neat way to ensure that BOTH observables have
-    // values before doing anything.
-    //
-    // the `take(1)` operator is there to ensure that `jobsTrigger$` only ever emits once,
-    // which will prevent job updates re-triggering row expansion.
+    // Expand rows from URL params. `combineLatest` waits for the jobs to load, since `autoExpandRow`
+    // does nothing before `this.jobs` is populated; `take(1)` stops job updates re-expanding rows.
     combineLatest([jobsTrigger$.pipe(take(1)), queryTrigger$])
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(([_, query]) => {

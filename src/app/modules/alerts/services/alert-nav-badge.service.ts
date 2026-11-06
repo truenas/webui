@@ -16,37 +16,8 @@ export interface NavBadge {
 }
 
 /**
- * Service for integrating smart alerts with navigation badges
- *
- * Usage in navigation components:
- *
- * ```typescript
- * export class NavigationComponent {
- *   private navBadgeService = inject(AlertNavBadgeService);
- *
- *   // Get badge counts as a signal
- *   badgeCounts = this.navBadgeService.getBadgeCountsSignal();
- *
- *   // Check if a menu path has alerts
- *   hasAlerts(path: string[]): boolean {
- *     const counts = this.badgeCounts().get(path.join('.'));
- *     return counts && (counts.critical > 0 || counts.warning > 0);
- *   }
- *
- *   // Get badge count for display
- *   getBadgeCount(path: string[]): number {
- *     const counts = this.badgeCounts().get(path.join('.'));
- *     return counts ? counts.critical + counts.warning : 0;
- *   }
- * }
- * ```
- *
- * Example menu paths from the registry:
- * - ['system', 'general', 'support'] - License alerts
- * - ['storage'] - Storage/pool alerts
- * - ['network'] - Network alerts
- * - ['services'] - Service alerts
- * - ['credentials', 'certificates'] - Certificate alerts
+ * Exposes smart-alert counts for navigation badges, keyed by menu path joined with dots
+ * (e.g. `storage`, `credentials.certificates`).
  */
 @Injectable({
   providedIn: 'root',

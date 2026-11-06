@@ -7,20 +7,8 @@ export interface VersionChange {
 }
 
 /**
- * Analyzes an app to determine what type of version changes are available.
- * Compares current versions with latest available versions to detect:
- * - App version changes (upstream application version)
- * - Revision changes (catalog version/revision)
- *
- * @param app - The app to analyze
- * @returns Object indicating which types of changes are available
- *
- * @example
- * // App with revision-only change
- * analyzeVersionChange(app) // Returns { hasAppVersionChange: false, hasRevisionChange: true }
- *
- * // App with app version change (revision will also change)
- * analyzeVersionChange(app) // Returns { hasAppVersionChange: true, hasRevisionChange: true }
+ * Reports whether the upstream app version, the catalog revision, or both change in the available
+ * upgrade. An app version change always comes with a revision change.
  */
 export function analyzeVersionChange(app: App): VersionChange {
   // If no upgrade is available, return no changes

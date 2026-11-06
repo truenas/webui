@@ -297,14 +297,9 @@ export class AuditSearchComponent implements OnInit, AfterViewInit {
   } | null = null;
 
   /**
-   * Builds the slice of search properties whose translated labels do not
-   * depend on the current page of audit entries. Cached on first call to
-   * avoid re-translating every event/credential label on each page change.
-   *
-   * Returns leading/trailing halves so `setSearchProperties` can splice in
-   * page-dependent properties (`address`, user suggestions) without coupling
-   * to magic indexes. The halves are returned as fresh arrays so callers can
-   * destructure/splice them without mutating the cached source.
+   * The search properties whose labels don't depend on the current page, cached so paging doesn't
+   * re-translate every event and credential label. Split into leading and trailing halves so the
+   * page-dependent ones can go between them; the halves are fresh arrays, so the cache stays intact.
    */
   private getStaticSearchProperties(): {
     leading: SearchProperty<AuditEntry>[];

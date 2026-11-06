@@ -85,25 +85,16 @@ export class GlobalSearchResultsComponent {
       const hasWildcard = route[route.length - 1] === '*';
       const navigateTo = hasWildcard ? route.slice(0, -1) : route;
 
-      // Convention: `anchorRouterLink` / `routerLink` always start with `/`
-      // (verified across all `*.elements.ts` files). We resolve via the
-      // router so the segments serialise to the same absolute string format
-      // as `router.url`, making the equality / startsWith comparisons below
-      // exact. `createUrlTree` without `relativeTo` resolves from
-      // `routerState.snapshot.root`, so even if a non-absolute route ever
-      // sneaks in it serialises from root rather than the active route.
+      // Resolve through the router so the target serialises in the same absolute form as
+      // `router.url`, keeping the comparisons below exact. Without `relativeTo` it resolves from root,
+      // even if a non-absolute route sneaks in.
       const targetPath = stripQueryAndFragment(
         this.router.serializeUrl(this.router.createUrlTree(navigateTo)),
       );
 
-      // Skip navigation when we're already on the target page — even same-URL
-      // `router.navigate` calls fire `NavigationSkipped` events that
-      // master-detail views interpret as "page changed".
-      // Prefix-startsWith only applies when the route opts in with a trailing
-      // `*` (master-detail descendants like `/datasets/<pool>`). Without it
-      // we'd treat sibling pages such as `/credentials/users/api-keys` as a
-      // descendant of `/credentials/users` and skip the navigation the user
-      // actually asked for.
+      // Skip navigation when already on the target: a same-URL `router.navigate` still fires
+      // `NavigationSkipped`, which master-detail views read as a page change. Prefix matching needs a
+      // trailing `*` opt-in, or a sibling like `/credentials/users/api-keys` would count as on `/credentials/users`.
       const currentPath = stripQueryAndFragment(this.router.url);
       const onTargetPath = currentPath === targetPath
         || (hasWildcard && currentPath.startsWith(`${targetPath}/`));

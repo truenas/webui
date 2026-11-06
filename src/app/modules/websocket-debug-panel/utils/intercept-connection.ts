@@ -13,17 +13,10 @@ type Message = Parameters<Connection['send']>[0];
 type Messages = ReturnType<Connection['messages']>;
 
 /**
- * Puts the WebSocket debug panel between the tab and its one connection: every
- * frame written is logged and checked against the enabled mock configs, every
- * frame read is logged, and mocked answers are read as if the appliance sent them.
- *
- * Done on the connection's own `send` and `messages()` because that is where all
- * traffic meets: `ApiService` and the client's own verbs and authenticator
- * all write through `send` and listen on `messages()`. Interception kept in any
- * one of them would see only that one's traffic.
- *
- * Install it last, after `limitConcurrentCalls`, so a mocked call never reaches
- * the gate: it is answered here and takes no place among the calls in flight.
+ * Puts the debug panel between the tab and its connection: frames are logged both ways, writes are
+ * checked against the enabled mocks, and mocked answers are read as if the appliance sent them.
+ * It wraps the connection's `send` and `messages()` because all traffic meets there. Install it after
+ * `limitConcurrentCalls`, so a mocked call is answered here and never takes a slot at the gate.
  */
 export function interceptConnection(
   connection: Connection,

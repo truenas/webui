@@ -66,32 +66,9 @@ export class DialogService {
   }
 
   /**
-   * Confirms deletion, executes the API call or job, handles loading/errors/snackbar.
-   * Caller only needs to subscribe and refresh.
-   *
-   * Usage (simple api.call):
-   * ```
-   * this.dialogService.confirmDelete({
-   *   message: this.translate.instant('Delete "{name}"?', { name: row.name }),
-   *   call: () => this.api.call('endpoint.delete', [row.id]),
-   *   successMessage: this.translate.instant('Deleted.'),
-   * }).pipe(takeUntilDestroyed(this.destroyRef))
-   *   .subscribe(() => this.refresh());
-   * ```
-   *
-   * Usage (long-running job):
-   * ```
-   * this.dialogService.confirmDelete({
-   *   message: this.translate.instant('Delete "{name}"?', { name: row.name }),
-   *   job: () => this.api.job('endpoint.delete', [row.id]),
-   *   jobProgressTitle: this.translate.instant('Deleting...'),
-   *   successMessage: this.translate.instant('Deleted.'),
-   * }).pipe(takeUntilDestroyed(this.destroyRef))
-   *   .subscribe(() => this.refresh());
-   * ```
-   *
-   * Emits once (`void`) on successful deletion.
-   * Completes without emitting if the user cancels the confirmation dialog.
+   * Confirms deletion, then runs `call` (an `api.call`) or `job` (an `api.job`, with
+   * `jobProgressTitle`) and handles loading, errors and the `successMessage` snackbar.
+   * Emits once on success, so the caller only refreshes; completes without emitting on cancel.
    */
   confirmDelete(options: ConfirmDeleteOptions): Observable<void> {
     return this.confirm({
@@ -286,22 +263,9 @@ export class DialogService {
   }
 
   /**
-   * Usage:
-   * ```
-   * this.dialogService.jobDialog(
-   *   this.api.call('pool.create', [pool]),
-   * )
-   *  .afterClosed()
-   *  .pipe(
-   *    this.errorHandler.catchError(),
-   *    takeUntilDestroyed(this.destroyRef),
-   *  )
-   *  .subscribe(() => {
-   *    // Job completed.
-   *  });
-   * ```
-   *
-   * If you need more control over JobProgressDialogComponent, use it directly.
+   * Shows job progress for `job$`, e.g. `this.api.job('pool.create', [pool])`. `afterClosed()` emits
+   * once the job completes; pipe it through `errorHandler.catchError()`. For more control, use
+   * `JobProgressDialogComponent` directly.
    */
   jobDialog<R>(
     job$: Observable<Job<R>>,

@@ -26,14 +26,9 @@ export function formatRelativeDateValue(value: unknown, translate: TranslateServ
 }
 
 /**
- * tn-table replacement for the ix-table `relativeDateColumn` cell renderer.
- * Renders a shortened "time ago" label with the machine/browser timestamps in
- * the tooltip, mirroring `ix-cell-relative-date` (including its `N/A` and
- * invalid-date handling) so migrated lists read identically.
- *
- * The test ID keeps the legacy `text-…-row-relative-date` shape: the host is a
- * `<span>`, which the legacy directive prefixed with `text`, so the migrated
- * markup declares the same prefix through `tnTestIdType`.
+ * tn-table cell for a shortened "time ago" label, with machine and browser timestamps in the tooltip.
+ * Mirrors `ix-cell-relative-date`, including `N/A` and invalid dates, so migrated lists read the same.
+ * The test id keeps the legacy `text-…-row-relative-date` shape through `tnTestIdType`.
  */
 @Component({
   selector: 'ix-table-relative-date-cell',

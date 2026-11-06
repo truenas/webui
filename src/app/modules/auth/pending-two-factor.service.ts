@@ -15,42 +15,19 @@ interface StoredPendingTwoFactor {
 }
 
 /**
- * How long a marker keeps forcing the confirmation step.
- *
- * Nothing outside this browser can clear it: confirm the same secret on another machine
- * and this one goes on re-opening the `disableClose` setup dialog on every guard run,
- * because `secret_configured` reads the same either way. Bounding it is what turns that
- * from indefinite into a nuisance that ages out.
- *
- * A week, because the two cases are far apart in scale — a confirmation step is a minute's
- * work and a reload lands straight back on it, so a marker still standing days later is
- * much more likely a secret settled elsewhere than a setup still in progress. Expiring one
- * wrongly costs the guarantee this whole step adds, so the bound is deliberately generous.
+ * How long a marker keeps forcing the confirmation step. Nothing outside this browser can clear it,
+ * so a secret confirmed on another machine would otherwise reopen the setup dialog here forever.
+ * A week, because a marker still standing days later is far likelier settled elsewhere than still
+ * in progress, and expiring a live one wrongly costs the guarantee this step adds.
  */
 const pendingTtlMs = 7 * 24 * 60 * 60 * 1000;
 
 /**
- * Records that an account has a 2FA secret its owner has not yet proven their
- * authenticator app holds.
- *
- * The middleware mints and arms a secret in one call and has no notion of a secret
- * awaiting confirmation, so that state lives here. It is persisted rather than kept in
- * memory so a reload, a navigation away, or a browser crash lands the user back on the
- * confirmation step instead of on a page claiming the setup is finished — and it is read
- * by the guard that opens the first-login dialog as well as by the setup page, so a
- * reload mid-setup does not walk past the prompt.
- *
- * Keyed by account because nothing clears it on logout: on a shared workstation an
- * origin-wide key would put the next user into a confirmation step for a secret that was
- * never theirs.
- *
- * Being browser state, the guarantee is per browser, not per account, and it is one-way
- * in both directions. Generate a secret here and open the page in another browser (or a
- * private window, or after a storage clear) and it reports the setup as settled, because
- * `secret_configured` is all the server can tell us. Confirm it over there instead and
- * nothing tells this browser, which goes on asking for a code against a secret that is
- * already settled — escapable by entering the code, and bounded by {@link pendingTtlMs}
- * so it is not indefinite. Closing either needs a middleware pending-secret API.
+ * Records that an account has a 2FA secret its owner hasn't yet proven their authenticator holds.
+ * Middleware arms a secret in one call with no pending state, so it lives here, persisted so a reload
+ * or crash lands back on the confirmation step. Keyed by account because logout doesn't clear it.
+ * Being browser state, it can't see a secret confirmed elsewhere, so it keeps asking until
+ * {@link pendingTtlMs}; closing that gap needs a middleware pending-secret API.
  */
 @Injectable({ providedIn: 'root' })
 export class PendingTwoFactorService {
