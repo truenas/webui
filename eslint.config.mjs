@@ -152,6 +152,7 @@ const commentCappedPaths = [
   'src/app/pages/signin',
   'src/app/pages/system',
   'src/app/pages/system-tasks',
+  'src/app/pages/two-factor-auth',
   'src/app/pages/vm',
   'src/app/store',
   'src/app/types',

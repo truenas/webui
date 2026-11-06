@@ -40,15 +40,10 @@ import { twoFactorElements } from 'app/pages/two-factor-auth/two-factor.elements
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
- * How long the load waits before calling the read failed.
- *
- * `defaultIfEmpty` only fires on completion, and two of the three sources never complete:
- * `user$` is a BehaviorSubject, and `getGlobalTwoFactorConfig()` switchMaps over another
- * one, so an inner call that ends without a result leaves the whole load hanging rather
- * than empty. Since this flag now disables every secret button, a hang is a permanently
- * inert card — so the load needs a terminal outcome even when nothing downstream provides
- * one. The bound is a judgement call: long enough not to fire on a slow appliance, short
- * enough that nobody stares at a dead card.
+ * How long the load waits before calling the read failed. Two sources never complete, so an inner call
+ * that ends empty hangs the load rather than tripping `defaultIfEmpty`, and `isDataLoading` keeps every
+ * secret button disabled meanwhile. Long enough for a slow appliance, short enough that nobody stares at
+ * a dead card.
  */
 const loadTimeoutMs = 30_000;
 
@@ -134,15 +129,9 @@ export class TwoFactorComponent implements OnInit {
   protected pendingVerification = signal(false);
 
   /**
-   * Set when the load could not read the account or the global config.
-   *
-   * Without it the banner keeps rendering from field defaults, which reads as a
-   * confident "2FA is not enabled on this system" — a statement the page has no basis
-   * for and which invites the user to act on it.
-   *
-   * Cleared by {@link setSecretConfigured} rather than only by a reload: the load is not
-   * the page's last chance to learn the account state, and leaving it set would shadow
-   * every later banner — including the one explaining what the code field is for.
+   * Set when the load couldn't read the account or global config, so the banner doesn't confidently
+   * claim 2FA is off from field defaults. {@link setSecretConfigured} also clears it, since a later read
+   * can learn the state and leaving it set would hide every later banner.
    */
   private loadFailed = signal(false);
 
@@ -153,28 +142,16 @@ export class TwoFactorComponent implements OnInit {
   private username = signal('');
 
   /**
-   * The appliance's own OTP tolerance, in time steps either side of the current one.
-   * The confirmation check has to use it rather than its own default, or it can accept
-   * a code login will reject — the exact outcome this step exists to prevent.
-   *
-   * `null` until the page has actually read it, rather than `0`. A failed load leaves the
-   * secret buttons enabled on purpose, so this step can open on a page that never got this
-   * value — and `0` there is stricter than login rather than equal to it, which rejects
-   * codes the appliance accepts. {@link readCalibration} fills it in on the first confirm.
+   * The appliance's OTP tolerance in time steps either side, so this check never rejects a code login
+   * accepts. `null` until read, not `0`: a failed load can still open this step, and `0` would be
+   * stricter than login. {@link readCalibration} fills it on the first confirm.
    */
   private toleranceWindow = signal<number | null>(null);
 
   /**
-   * Appliance clock minus browser clock, in milliseconds.
-   *
-   * TOTP works because the authenticator and the appliance are both NTP-synced; the
-   * browser is a third clock with no part in the real exchange. Checking against it
-   * would reject the very code login accepts whenever the workstation has drifted —
-   * and with Renew and Unset hidden, the only offered way out is Cancel Setup. Reading
-   * the appliance's own time makes this check ask the same question login will.
-   *
-   * `null` while unread, for the same reason as {@link toleranceWindow}; the check then
-   * falls back to the browser clock, which is where it stood before this was consulted.
+   * Appliance clock minus browser clock, in ms. TOTP relies on the authenticator and appliance being
+   * NTP-synced, so checking against a drifted browser clock would reject codes login accepts. `null`
+   * while unread, as with {@link toleranceWindow}; the check then falls back to the browser clock.
    */
   private clockOffset = signal<number | null>(null);
 
@@ -191,14 +168,9 @@ export class TwoFactorComponent implements OnInit {
   });
 
   /**
-   * Whether there is a secret on the account still waiting to be confirmed.
-   *
-   * Narrower than `pendingVerification()`: the marker is written before the call that
-   * mints the secret, so a failed renew leaves the step showing with no secret behind
-   * it. Only the narrow case should take away Renew and Unset — the rationale for
-   * hiding them (renewing would just replace one unconfirmed secret with another) does
-   * not hold when there is nothing to replace, and hiding them there would leave
-   * Cancel Setup as the only control on the page.
+   * Whether the account has a secret awaiting confirmation. Narrower than `pendingVerification()`,
+   * which is set before the secret is minted, so a failed renew has none behind it. Only this case
+   * hides Renew and Unset; with nothing to replace, hiding them would leave only Cancel Setup.
    */
   protected readonly hasUnconfirmedSecret = computed(() => {
     return this.pendingVerification() && this.userTwoFactorAuthConfigured();
@@ -292,15 +264,9 @@ export class TwoFactorComponent implements OnInit {
   private loadTwoFactorConfigs(): void {
     this.isDataLoading.set(true);
     this.loadFailed.set(false);
-    // A call can complete WITHOUT emitting, not just error: a clean websocket reconnect
-    // completes the response stream, so an in-flight call ends silently and combineLatest
-    // completes with it — leaving the card rendering field defaults that state 2FA is off
-    // for a user who has it on, with no error anywhere. `defaultIfEmpty` turns that into a
-    // value this can recognise.
-    //
-    // Only the bare `system.info` call can reach that today: the other two are piped off
-    // BehaviorSubjects that never complete, so they either emit or hang, and `timeout` is
-    // what covers them. Their guards are belt-and-braces against those shapes changing.
+    // A clean websocket reconnect can complete a call without emitting, which would leave the card
+    // claiming 2FA is off; `defaultIfEmpty` makes that recognisable. Only `system.info` can do this
+    // today (the others hang instead, which `timeout` covers); their guards hedge against that changing.
     combineLatest([
       // The whole user, not just userTwoFactorConfig$: the persisted pending flag is
       // keyed to the account name, which only the user record carries.
@@ -435,14 +401,9 @@ export class TwoFactorComponent implements OnInit {
       return;
     }
 
-    // Screen against the cached secret before going to the network. A wrong code is the
-    // ordinary case, and the re-read below calls `refreshUser()`, which pushes a
-    // transient null through the app-wide `user$` — consumers that read it unguarded
-    // blink while it is in flight. A typo should not cost that, or a round trip.
-    //
-    // `take(1)` on `user$` without `filter`, so a null current value is an answer rather
-    // than a wait: being blind means there is nothing to screen against, and the re-read
-    // is exactly what that case needs.
+    // Screen against the cached secret first: a typo is common, and the re-read below calls
+    // `refreshUser()`, which pushes a transient null through `user$` and makes unguarded readers blink.
+    // `take(1)` without `filter`, so a null user goes straight to the re-read instead of waiting.
     this.authService.user$.pipe(
       take(1),
       switchMap((user) => {
@@ -538,18 +499,10 @@ export class TwoFactorComponent implements OnInit {
   }
 
   /**
-   * Reads the two values this check needs in order to ask what login asks, when the load
-   * did not get them.
-   *
-   * Reachable because a failed load deliberately leaves Configure and Renew enabled: the
-   * page can mint a secret and open the confirmation step having read neither the
-   * appliance's tolerance nor its clock. The global config is recorded in full while it
-   * is in hand — the load is not the page's last chance to learn what it says.
-   *
-   * Best effort. If this read fails too the check falls back to
-   * {@link defaultToleranceWindow} and the browser clock, which is permissive rather than
-   * stricter than login — the direction that costs an over-accepted code here instead of
-   * a card whose only working control is Cancel Setup.
+   * Reads the tolerance and clock offset when the load didn't, which can happen because a failed load
+   * leaves Configure and Renew enabled. The global config is recorded in full while in hand. Best
+   * effort: on failure the check falls back to {@link defaultToleranceWindow} and the browser clock,
+   * erring permissive rather than leaving Cancel Setup as the only working control.
    */
   private readCalibration(): Observable<unknown> {
     // Keyed on each value separately, not on the tolerance as a proxy for both: the load
@@ -677,14 +630,10 @@ export class TwoFactorComponent implements OnInit {
         this.currentSessionIs2fa.set(false);
         this.verificationForm.reset();
         this.username.set(user.pw_name);
-        // Marked before the call, not after it. `renew_2fa_secret` arms the secret
-        // server-side, so a call that times out having actually succeeded — or whose
-        // `refreshUser` follow-up fails — would otherwise leave an armed secret with
-        // nothing recording that it is unconfirmed, and the next load would present it
-        // as finished setup. Being wrongly pending is recoverable: the stale sweep in
-        // loadTwoFactorConfigs drops the flag when no secret materialised, and on the
-        // renewal path the user clears it by entering a code. Being wrongly finished is
-        // the failure this whole step exists to prevent.
+        // Marked before the call: `renew_2fa_secret` arms the secret server-side, so a call that
+        // times out after succeeding would leave an armed secret that the next load shows as finished.
+        // Wrongly pending is recoverable (the stale sweep or a confirmed code clears it); wrongly
+        // finished is what this step exists to prevent.
         this.setPendingVerification(true, kind);
       }),
       // See confirmAgainstAccount: neither `api.call` nor `refreshUser` gives up on its
