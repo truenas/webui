@@ -3,15 +3,8 @@ import { TnChipInputComponent } from '@truenas/ui-components';
 import { DirectoryChipsBase } from 'app/modules/forms/ix-forms/classes/directory-field.base';
 
 /**
- * Multi-group selection as chips, searched against {@link UserDirectoryService}.
- * The group-side twin of `ix-user-chips`.
- *
- * @example
- * ```html
- * <tn-form-field [label]="'Groups' | translate">
- *   <ix-group-chips formControlName="groups" />
- * </tn-form-field>
- * ```
+ * Multi-group selection as chips, searched against {@link UserDirectoryService}; the group twin of
+ * `ix-user-chips`: `<ix-group-chips formControlName="groups" />`.
  */
 @Component({
   selector: 'ix-group-chips',

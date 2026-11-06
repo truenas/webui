@@ -3,16 +3,9 @@ import { TnChipInputComponent } from '@truenas/ui-components';
 import { DirectoryChipsBase } from 'app/modules/forms/ix-forms/classes/directory-field.base';
 
 /**
- * Multi-user selection as chips, searched against {@link UserDirectoryService}.
- * Every typed name is checked for existence, and the ones that do not resolve
- * are named in a single validation message.
- *
- * @example
- * ```html
- * <tn-form-field [label]="'Users' | translate">
- *   <ix-user-chips formControlName="users" />
- * </tn-form-field>
- * ```
+ * Multi-user selection as chips, searched against {@link UserDirectoryService}. Every typed name is
+ * checked, and those that don't resolve are named in one validation message. Use inside a
+ * `tn-form-field`: `<ix-user-chips formControlName="users" />`.
  */
 @Component({
   selector: 'ix-user-chips',
