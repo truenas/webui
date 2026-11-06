@@ -94,6 +94,7 @@ const projectOverrides = {
 const commentCappedPaths = [
   'src/app/classes',
   'src/app/constants',
+  'src/app/enums',
   'src/app/helptext',
   'src/app/modules/alerts',
   'src/app/modules/auth',
