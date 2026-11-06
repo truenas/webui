@@ -34,19 +34,10 @@ export interface GroupFormValue {
 }
 
 /**
- * Self-contained declarative config for the group form — no up-front fetch, no wrapper
- * component. The form renders immediately; the few values that depend on an API call load
- * on the fly into their own fields rather than blocking the whole panel:
- *
- * - **privileges options** — a live `privilege.query` observable bound to the chips field
- *   (shared via `shareReplay`, so the same result feeds `loadData` and `submit` — one call).
- * - **name uniqueness** — an async validator that checks a cached `group.query`, instead of
- *   pre-fetching a forbidden-names list.
- * - **initial values** — `loadData` patches the next GID (add) or the current privilege
- *   selection (edit) once their query resolves; everything else is sync from `editingGroup`.
- *
- * `loadData` makes the renderer treat the form as an edit, so submit branches on
- * `editingGroup` (the closure) rather than `event.isEdit`.
+ * Declarative group form config that renders immediately, loading API-dependent values per field:
+ * privilege options from a shared `privilege.query` (one call for `loadData` and `submit`), name
+ * uniqueness from an async validator over cached `group.query`, and the next GID or current privileges
+ * via `loadData`. `loadData` makes the renderer treat the form as an edit, so submit branches on `editingGroup`.
  */
 export function getGroupFormConfig(
   api: ApiService,

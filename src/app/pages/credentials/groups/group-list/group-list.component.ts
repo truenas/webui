@@ -88,14 +88,9 @@ export class GroupListComponent implements OnInit {
   });
 
   /**
-   * Only expand rows whose detail panel would actually render an action: `ix-group-details-row`
-   * shows Members for local groups, Edit for editable local ones, and Delete for non-builtin
-   * groups with AccountWrite. Without this, builtin/non-local rows expand into a blank panel.
-   *
-   * A `computed` of the predicate, not a plain arrow that reads the role signal internally:
-   * `hasAccountWrite` starts `false` and flips once the role resolves, and only a new function
-   * identity is guaranteed to make the table re-evaluate expandability. A stable identity would
-   * leave that up to whether `tn-table` calls the predicate from a reactive binding.
+   * Expands only rows whose details would show an action (Members or Edit for local groups, Delete for
+   * non-builtin ones with AccountWrite), so others don't open blank. A `computed` so the predicate gets a
+   * new identity when `hasAccountWrite` resolves, which makes the table re-evaluate.
    */
   protected readonly canExpandGroup = computed(() => {
     const hasAccountWrite = this.hasAccountWrite();
