@@ -2,15 +2,10 @@ import { getMissingInjectionErrorFactory } from 'app/core/testing/utils/missing-
 import { ApiService } from 'app/modules/websocket/api.service';
 
 /**
- * Provided globally in `setup-jest.ts` so a spec that reaches `ApiService`
- * without mocking it fails with a clear error instead of building the real
- * client, which opens a WebSocket to `environment.remote` and hangs the test.
- *
- * Mock it per spec with `mockApi()`. A bare `mockProvider(ApiService)`
- * is not enough: `query`, `queryOne` and `queryCount` are instance properties
- * rather than prototype methods, so Spectator's spy object leaves them
- * undefined. Pass them explicitly if you must use `mockProvider`:
- * `mockProvider(ApiService, { query: jest.fn(() => of([])) })`.
+ * Provided globally in `setup-jest.ts` so an unmocked `ApiService` fails clearly instead of opening
+ * a WebSocket and hanging. Mock it with `mockApi()`. A bare `mockProvider(ApiService)` leaves
+ * `query`, `queryOne` and `queryCount` undefined, since they are instance properties, so pass them
+ * explicitly: `mockProvider(ApiService, { query: jest.fn(() => of([])) })`.
  */
 export class EmptyApiService {
   call = getMissingInjectionErrorFactory(ApiService.name);

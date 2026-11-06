@@ -149,16 +149,10 @@ function translateError(
 }
 
 /**
- * App-wide resolver for `tn-form-field` validation messages.
- *
- * The library ships English-only fallbacks and no project-specific validator
- * wording, so this wires its `TN_FORM_FIELD_ERRORS` hook to `TranslateService`
- * and reuses the same messages as the legacy `ix-errors` component:
- * 1. A custom validator that stored a pre-built `{ message }` string wins.
- * 2. A server-side validation error (`manualValidateError`) resolves to the
- *    message its sibling keys carry.
- * 3. Otherwise a known error key resolves to its translated message.
- * 4. Unknown keys return `null` to fall through to the library defaults.
+ * Resolves `tn-form-field` validation messages through `TranslateService`, reusing the `ix-errors`
+ * wording. In order: a custom validator's pre-built `{ message }`, a server-side error
+ * (`manualValidateError`) via its sibling keys, a known key's translated message, else `null` for the
+ * library's English default.
  */
 export function provideTnFormFieldErrors(): Provider {
   return {
@@ -187,18 +181,10 @@ export function provideTnFormFieldErrors(): Provider {
 }
 
 /**
- * App-wide list of error keys a user may close.
- *
- * Only the manual validation keys: a server-side rejection is not something the
- * user can retype their way out of, so without a close button the message sits
- * under the field until the control changes. The legacy `ix-errors` component
- * gave every such message a close icon; wiring the keys once here keeps that
- * behaviour for every `tn-form-field` and `tn-form-errors` in the app, rather
- * than needing the input on each of hundreds of fields.
- *
- * `FormErrorHandlerService` writes all three keys together, and the resolver
- * above reads across them, so all three are listed — whichever ends up active is
- * the one carrying the message on screen.
+ * Error keys a user may close: only the manual validation keys, since a server-side rejection can't be
+ * retyped away and would otherwise sit under the field until the control changes. Wired once here
+ * instead of on every field. All three keys are listed because `FormErrorHandlerService` writes them
+ * together and whichever is active carries the message.
  */
 export function provideTnFormFieldDismissibleErrors(): Provider {
   return {

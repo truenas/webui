@@ -46,21 +46,10 @@ interface LooseApi {
 }
 
 /**
- * Test double for `ApiService`, running a real `@truenas/api-client`
- * over the package's fake connection.
- *
- * Nothing here reimplements dispatch, job correlation or subscriptions: every
- * verb forwards to the real client, and `mockCall` / `mockQuery` / `mockJob`
- * script the *answers* the fake connection gives. The client is strict, so a
- * call nothing scripted fails with `UnmockedCallError` naming the method
- * rather than hanging.
- *
- * Every verb rethrows a refusal through the same `rethrowAsApiCallError` as
- * `ApiService`, so an error scripted with `mockCallError` surfaces as the
- * `ApiCallError` production throws, `extra` and all.
- *
- * Set it up with `mockApi()`. For connection-level scenarios — a dropped
- * socket, a hand-written reply — reach the client through `client`.
+ * Test double for `ApiService` running a real `@truenas/api-client` over the fake connection. Every
+ * verb forwards to the real client; `mockCall` / `mockQuery` / `mockJob` only script the answers, and
+ * an unscripted call fails with `UnmockedCallError` instead of hanging. Refusals go through
+ * `rethrowAsApiCallError` like production. Set it up with `mockApi()`; use `client` for socket-level cases.
  */
 @Injectable()
 export class MockApiService implements OnDestroy {

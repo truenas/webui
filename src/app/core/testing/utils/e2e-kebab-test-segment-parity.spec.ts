@@ -2,26 +2,10 @@ import { kebabTestSegment } from '@truenas/ui-components';
 import { kebabTestSegment as e2eKebabTestSegment } from '../../../../../e2e/locators/test-id';
 
 /**
- * Keeps the E2E suite's copy of `kebabTestSegment` honest.
- *
- * `e2e/locators/test-id.ts` replicates the library function rather than importing
- * it, because `@truenas/ui-components` has a single Angular entry point and the
- * Playwright runner is a Node process with no browser — see that file for the
- * full reasoning. This spec is what holds the copy to the original: without it,
- * the two could drift and nothing would say so.
- *
- * This lives under `src/` deliberately: it is the only tree where the library
- * resolves, and Jest is the only runner that compiles it. `e2e/` is in Jest's
- * `testPathIgnorePatterns`, so the guard could not live beside the code it
- * guards.
- *
- * Why it is worth a test at all: a `~0.4.9` bump that touches the normalizer
- * desynchronizes the copy silently. `datasetLocators.treeNode`, `widthOption`
- * and `vdevCountOption` all interpolate through it, so the divergence would
- * surface as a locator that never matches — a 20 second action timeout partway
- * into the slowest test in the suite, pointing at the pool wizard rather than at
- * the one-line string function actually responsible. Failing here instead costs
- * a second and names the cause.
+ * Keeps `e2e/locators/test-id.ts`'s copy of `kebabTestSegment` in step with the library, which the
+ * Node-only Playwright runner can't import. It lives under `src/` because Jest ignores `e2e/`.
+ * A library bump that changes the normalizer would otherwise surface as a locator that never
+ * matches, timing out deep in the pool wizard test instead of naming the cause here.
  */
 describe('e2e kebabTestSegment parity with @truenas/ui-components', () => {
   // Chosen so that every transformation step in the function is the sole reason

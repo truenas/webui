@@ -16,16 +16,10 @@ const labelKeys: Record<keyof TnFallbackLabels, string> = {
 };
 
 /**
- * Names every spinner, progress bar and modal surface that has nothing more specific to say.
- *
- * The library's own fallbacks are English literals, so before this each unnamed one either
- * announced "Loading" whatever the language or carried its own `[ariaLabel]="'Loading' | translate"`
- * — the same string repeated across a dozen templates. Providing the bundle once covers all seven,
- * and, per the token's contract, stands the library's dev-mode naming warning down: an app-wide
- * fallback is a decision, not a forgotten label.
- *
- * A component that can say WHAT is loading or open still binds `[ariaLabel]` (or, for a dialog and
- * a side panel, `[title]`) itself, and that wins over this.
+ * Translated fallback names for every spinner, progress bar and modal surface that has nothing more
+ * specific to say; the library's own fallbacks are English. Providing them app-wide also stands down
+ * the library's dev-mode naming warning. A component that can say what is loading still binds
+ * `[ariaLabel]` (or `[title]` for a dialog or side panel), which wins.
  */
 export function provideTnFallbackLabels(): Provider {
   return {

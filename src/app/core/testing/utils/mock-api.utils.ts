@@ -14,26 +14,11 @@ type D = WebUiApiDirectory;
 export type MockApiResponse = (api: MockApiService) => void;
 
 /**
- * Sugar for mocking `ApiService`.
- *
- * Behind it is a real `@truenas/api-client` on the package's fake connection
- * (`@truenas/api-client/testing`), so the real dispatch, job correlation and
- * subscriptions run and only the answers are scripted. Fixtures are checked
- * against the API directory; a call nothing scripted fails by name.
- *
- * @example
- * providers: [
- *   mockApi([
- *     mockCall('system.info', { version: 'x' } as SystemInfoResult),
- *     mockCallError('user.delete', { errname: 'EINVAL', extra: [['user_delete.id', 'No such user', 22]] }),
- *     mockQuery('user.query', [{ id: 1 } as UserEntry]),
- *     mockJob('pool.dataset.export_key', [{ state: JobState.Success, result: 'key' }]),
- *   ]),
- * ]
- *
- * `MockApiService` is also available for adjusting answers on the fly, and
- * exposes the fake client for connection-level scenarios:
- * `spectator.inject(MockApiService).client.connection.simulateClose()`.
+ * Mocks `ApiService` with a real `@truenas/api-client` on its fake connection, so dispatch, jobs and
+ * subscriptions run for real and only answers are scripted, e.g.
+ * `mockApi([mockCall('system.info', { version: 'x' } as SystemInfoResult), mockJob(...)])`.
+ * Fixtures are checked against the API directory, and an unscripted call fails by name. Inject
+ * `MockApiService` to change answers on the fly or reach `client.connection.simulateClose()`.
  */
 export function mockApi(mocks: MockApiResponse[] = []): (FactoryProvider | ExistingProvider)[] {
   return [
