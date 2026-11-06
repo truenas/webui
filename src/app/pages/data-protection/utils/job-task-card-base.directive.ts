@@ -24,18 +24,10 @@ function taskIdOf(job: Job): number | null {
 }
 
 /**
- * Shared wiring for the data-protection task cards whose rows are backed by a
- * job (cloud sync, replication, rsync, cloud backup). It owns the boilerplate
- * that was otherwise copy-pasted across every card: the Add-button action, sort
- * plumbing, row tracking, the {@link TaskCardJobRepainter}, and — critically —
- * the load-bearing "publish rows before watching" ordering (see
- * {@link loadAndWatch}). Subclasses supply only what genuinely differs: the
- * query, the row→job merge, the default sort column, and the Add handler.
- *
- * The periodic-snapshot card is intentionally NOT a subclass: it has no backing
- * job (no repainter) and refreshes via `api.subscribe` rather than this
- * query-and-repaint flow, so forcing it through here would add hooks no other
- * card needs.
+ * Shared wiring for the job-backed task cards (cloud sync, replication, rsync, cloud backup): the Add
+ * action, sorting, row tracking, the {@link TaskCardJobRepainter} and the "publish rows before
+ * watching" ordering in {@link loadAndWatch}. The periodic-snapshot card is not a subclass: it has no
+ * backing job and refreshes via `api.subscribe`.
  */
 @Directive()
 export abstract class JobTaskCardBase<T extends TaskWithJob> implements OnInit {

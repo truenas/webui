@@ -10,22 +10,11 @@ export interface TaskWithJob {
 }
 
 /**
- * Shared subscribe-dedupe-and-repaint helper for the data-protection task cards
- * (cloud sync, replication, rsync, cloud backup).
- *
- * Every card renders a presentational status pill that must repaint as its
- * backing job progresses in the background. The pill no longer updates itself,
- * so an in-place mutation would be missed by OnPush — a fresh row array is
- * pushed back through the card's `setRows`, which also feeds the data provider.
- *
- * `watch()` is re-run on every reload (the data-provider source re-emits), so it
- * unsubscribes the previous batch first to avoid leaking one subscription per
- * task on each reload.
- *
- * Ordering: callers MUST publish their backing rows (via `setRows`/assignment)
- * before calling `watch()`. `selectJob` emits synchronously on subscribe, so the
- * first repaint can fire before `watch()` returns and `getRows()` has to already
- * see the freshly-loaded rows.
+ * Repaints the job-backed task cards' status pills as jobs progress. The pill doesn't update itself,
+ * so a fresh row array goes back through the card's `setRows`; OnPush would miss an in-place mutation.
+ * `watch()` re-runs on every reload, so it drops the previous subscriptions first.
+ * Callers must publish their rows before `watch()`: `selectJob` emits synchronously on subscribe,
+ * so the first repaint can fire before `watch()` returns.
  */
 export class TaskCardJobRepainter<T extends TaskWithJob> {
   /** Last seen state per job id, used by `reconcile` to dedupe full reloads. */
@@ -95,14 +84,10 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
   }
 
   /**
-   * Whether `job` carries a log excerpt (or error) the matching row's copy is missing.
-   *
-   * A job reaches its final state *before* middleware has its logs: `SUCCESS` is published
-   * from the progress update at the end of the method body, and `logs_excerpt` is only read
-   * off disk afterwards, arriving in a second `CHANGED` event that carries the very same
-   * state. Deduping on state alone drops that second event, so the row keeps a completed
-   * job with no logs and the status pill answers "No logs are available for this task" for
-   * a run that does have them.
+   * Whether `job` carries a log excerpt (or error) the row's copy is missing. Middleware publishes
+   * the final state before reading `logs_excerpt` off disk, so the logs arrive in a second `CHANGED`
+   * event with the same state. Deduping on state alone would leave the pill saying "No logs are
+   * available" for a run that has them.
    */
   private bringsLogs(job: Job): boolean {
     const current = this.getRows().find((row) => row.job?.id === job.id)?.job;
@@ -114,16 +99,10 @@ export class TaskCardJobRepainter<T extends TaskWithJob> {
   }
 
   /**
-   * Apply `transform` to the row with the given id and republish the whole list
-   * through `setRows`. Lets the imperative run/stop handlers repaint a single
-   * row's state/job without re-implementing the `map` + republish dance in every
-   * card — the merge shape stays per-card, the plumbing is shared here.
-   *
-   * Run/stop handler contract: repaint in place with this, then call `reconcile`
-   * only when you hold a fresh job. `repaintRow` deliberately does NOT touch
-   * `jobStates`, so a repaint-only call (e.g. stopping to an `Aborted` pill with
-   * no fresh job in hand) leaves the dedupe map stale on purpose — the live
-   * `watch()` subscription corrects it on the next store emit.
+   * Applies `transform` to one row and republishes the list through `setRows`. Run/stop handlers
+   * repaint with this and call `reconcile` only when they hold a fresh job. It leaves `jobStates`
+   * alone on purpose: after a repaint-only call (e.g. stopping to `Aborted`), the `watch()`
+   * subscription corrects the dedupe map on the next store emit.
    */
   repaintRow(rowId: number, transform: (row: T) => T): void {
     this.setRows(this.getRows().map((row) => (row.id === rowId ? transform(row) : row)));
