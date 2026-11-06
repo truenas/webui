@@ -31,17 +31,10 @@ export class AuditApiDataProvider extends QueryFiltersAndOptionsApiDataProvider<
   }
 
   /**
-   * Block direct callers — they would desync `this.queryFilters` and `this.params`,
-   * and the audit data provider's typed `setQueryFilters` is the supported entry
-   * point. The override keeps `super.setParams` reachable from `setQueryFilters`.
-   *
-   * TODO(NAS-141063): this is a runtime-only contract — anything calling
-   * `setParams` through the base type still compiles and throws in production.
-   * The type-safe fix is to make the base `setParams` `protected` (or rename it
-   * to `setRawParams`) so this surface is enforced by the compiler instead; that
-   * touches every data provider, so it is deferred to a dedicated change. Until
-   * then, audit-api-data-provider.spec.ts guards that no inherited lifecycle
-   * method routes through this throwing override.
+   * Blocked because direct callers would desync `queryFilters` and `params`; use `setQueryFilters`.
+   * TODO(NAS-141063): this only fails at runtime. Making the base `setParams` `protected` would let
+   * the compiler enforce it, but touches every data provider. Until then, the spec guards that no
+   * inherited lifecycle method routes through this override.
    */
   override setParams(): never {
     throw new Error(
