@@ -10,7 +10,7 @@
 </ix-page-header>
 
 @if (pool) {
-  @let selectedNode = selectedNode$ | async;
+  @let selectedNode = vDevsStore.selectedNode();
   @let showDetails = !masterList.searchQuery() || selectedNode.disk.toLowerCase().includes(masterList.searchQuery().toLowerCase());
 
   <ix-master-detail-view
@@ -47,11 +47,11 @@
       @if (selectedNode) {
         <ix-disk-details-panel
           [topologyItem]="selectedNode | cast"
-          [topologyParentItem]="selectedParentNode$ | async | cast"
+          [topologyParentItem]="selectedParentNode() | cast"
           [disk]="vDevsStore.getDisk(selectedNode.children?.[0] || selectedNode)"
           [poolId]="pool"
-          [hasTopLevelRaidz]="!!(hasTopLevelRaidz$ | async)"
-          [topologyCategory]="selectedTopologyCategory$ | async"
+          [hasTopLevelRaidz]="hasTopLevelRaidz()"
+          [topologyCategory]="selectedTopologyCategory()"
           (closeMobileDetails)="masterDetailView.toggleShowMobileDetails(false)"
         ></ix-disk-details-panel>
       }

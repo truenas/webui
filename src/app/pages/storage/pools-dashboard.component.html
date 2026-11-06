@@ -92,7 +92,7 @@
         [pool]="pool"
         [disks]="getDisksByPool(pool)"
         [isLoading]="isLoadingPoolDetails()"
-        [rootDataset]="rootDatasets[pool.name]"
+        [rootDataset]="rootDatasets()[pool.name]"
       ></ix-dashboard-pool>
     }
   }

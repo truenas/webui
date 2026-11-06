@@ -1,11 +1,12 @@
-import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { computed, Injectable, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
-import { EMPTY, Observable, of } from 'rxjs';
 import {
-  catchError, map, switchMap, tap,
-} from 'rxjs/operators';
+  map, of, pipe, switchMap, tap,
+} from 'rxjs';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk, toDisk } from 'app/interfaces/disk.interface';
@@ -19,7 +20,6 @@ export interface VDevsState {
   isLoading: boolean;
   poolId: number | null;
   poolName: string;
-  error: unknown;
   nodes: VDevNestedDataNode[];
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
@@ -29,7 +29,6 @@ const initialState: VDevsState = {
   isLoading: false,
   poolId: null,
   poolName: '',
-  error: null,
   nodes: [],
   diskDictionary: {},
   selectedNodeGuid: null,
@@ -38,108 +37,84 @@ const initialState: VDevsState = {
 @Injectable({
   providedIn: 'root',
 })
-export class VDevsStore extends ComponentStore<VDevsState> {
+export class VDevsStore {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
 
-  readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly error$ = this.select((state) => state.error);
-  readonly poolName$ = this.select((state) => state.poolName);
-  readonly nodes$ = this.select((state) => state.nodes);
-  readonly diskDictionary$ = this.select((state) => state.diskDictionary);
-  readonly selectedBranch$ = this.select((state) => {
-    if (!state.selectedNodeGuid) {
+  private readonly state = signalState(initialState);
+
+  readonly isLoading = this.state.isLoading;
+  readonly poolName = this.state.poolName;
+  readonly nodes = this.state.nodes;
+  readonly diskDictionary = this.state.diskDictionary;
+
+  readonly selectedBranch = computed(() => {
+    const selectedNodeGuid = this.state.selectedNodeGuid();
+    if (!selectedNodeGuid) {
       return null;
     }
 
-    const selectedBranch = getTreeBranchToNode(state.nodes, (dataset) => dataset.guid === state.selectedNodeGuid);
-    if (!selectedBranch) {
-      return null;
-    }
-
-    return selectedBranch;
+    return getTreeBranchToNode(this.state.nodes(), (dataset) => dataset.guid === selectedNodeGuid);
   });
 
-  readonly selectedNode$ = this.select(
-    this.selectedBranch$,
-    (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 1] : null),
-  );
+  readonly selectedNode = computed(() => {
+    const selectedBranch = this.selectedBranch();
+    return selectedBranch ? selectedBranch[selectedBranch.length - 1] : null;
+  });
 
-  readonly selectedParentNode$ = this.select(
-    this.selectedBranch$,
-    (selectedBranch) => (selectedBranch ? selectedBranch[selectedBranch.length - 2] : null),
-  );
+  readonly selectedParentNode = computed(() => {
+    const selectedBranch = this.selectedBranch();
+    return selectedBranch ? selectedBranch[selectedBranch.length - 2] : null;
+  });
 
-  readonly selectedTopologyCategory$ = this.select(
-    this.selectedBranch$,
-    (selectedBranch) => (selectedBranch ? (selectedBranch[0] as VDevGroup).guid : null),
-  );
+  readonly selectedTopologyCategory = computed(() => {
+    const selectedBranch = this.selectedBranch();
+    return selectedBranch ? (selectedBranch[0] as VDevGroup).guid : null;
+  });
 
-  readonly loadNodes = this.effect((poolIds$: Observable<number>) => {
-    return poolIds$.pipe(
-      tap((poolId) => {
-        this.patchState({
-          ...initialState,
-          poolId,
-          isLoading: true,
-        });
-      }),
-      switchMap((poolId) => {
-        return this.api.query('pool.query', [['id', '=', poolId]]).pipe(
-          map((pools) => pools.map(toPool)),
-          switchMap((pools) => {
-            if (!pools?.length) {
-              return of([]);
-            }
-            return this.api.query('disk.query', [['pool', '=', pools[0].name]], { extra: { pools: true } }).pipe(
-              map((disks) => disks.map(toDisk)),
-              tap((disks) => {
-                this.patchState({
-                  isLoading: false,
-                  error: null,
-                  poolName: pools[0].name,
-                  diskDictionary: keyBy(disks, (disk) => disk.devname),
-                  nodes: this.createDataNodes(pools[0].topology),
-                });
-              }),
-              catchError((error: unknown) => {
-                this.patchState({
-                  isLoading: false,
-                  error,
-                });
-
-                this.errorHandler.showErrorModal(error);
-
-                return EMPTY;
-              }),
-            );
-          }),
+  readonly loadNodes = rxMethod<number>(pipe(
+    tap((poolId) => patchState(this.state, { ...initialState, poolId, isLoading: true })),
+    switchMap((poolId) => this.api.query('pool.query', [['id', '=', poolId]]).pipe(
+      map((pools) => pools.map(toPool)),
+      switchMap((pools) => {
+        if (!pools.length) {
+          return of(null);
+        }
+        return this.api.query('disk.query', [['pool', '=', pools[0].name]], { extra: { pools: true } }).pipe(
+          map((disks) => ({ pool: pools[0], disks: disks.map(toDisk) })),
         );
       }),
-    );
-  });
-
-  readonly reloadList = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      tap(() => {
-        const poolId = this.get((state) => state.poolId);
-        if (poolId) {
-          this.loadNodes(poolId);
-        }
+      tapResponse({
+        next: (loaded) => {
+          if (!loaded) {
+            patchState(this.state, { isLoading: false });
+            return;
+          }
+          patchState(this.state, {
+            isLoading: false,
+            poolName: loaded.pool.name,
+            diskDictionary: keyBy(loaded.disks, (disk) => disk.devname),
+            nodes: this.createDataNodes(loaded.pool.topology),
+          });
+        },
+        error: (error: unknown) => {
+          patchState(this.state, { isLoading: false });
+          this.errorHandler.showErrorModal(error);
+        },
       }),
-    );
-  });
+    )),
+  ));
 
-  readonly selectNodeByGuid = this.updater((state, selectedNodeGuid: string) => {
-    return {
-      ...state,
-      selectedNodeGuid,
-    };
-  });
+  reloadList(): void {
+    const poolId = this.state.poolId();
+    if (poolId) {
+      this.loadNodes(poolId);
+    }
+  }
 
-  constructor() {
-    super(initialState);
+  selectNodeByGuid(selectedNodeGuid: string): void {
+    patchState(this.state, { selectedNodeGuid });
   }
 
   private createDataNodes(topology: PoolTopology): VDevNestedDataNode[] {
@@ -200,6 +175,6 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     if (isVdevGroup(node) || !isTopologyDisk(node)) {
       return undefined;
     }
-    return this.state().diskDictionary[node.disk];
+    return this.state.diskDictionary()[node.disk];
   }
 }

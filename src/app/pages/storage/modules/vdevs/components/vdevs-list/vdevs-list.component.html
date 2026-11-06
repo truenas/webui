@@ -1,10 +1,9 @@
 
-@let selectedNode = selectedNode$ | async;
 <div class="container">
   <div class="table-container">
     <ix-fake-progress-bar
       class="loader-bar"
-      [loading]="!!(isLoading$ | async)"
+      [loading]="isLoading()"
     ></ix-fake-progress-bar>
 
     <div class="item-search">
@@ -38,7 +37,7 @@
             *cdkTreeNodeDef="let topologyItem"
             routerLinkActive="selected"
             [testId]="['vdev', topologyItem.guid]"
-            [class.selected]="topologyItem.guid === selectedNode?.guid"
+            [class.selected]="topologyItem.guid === selectedNode()?.guid"
             [routerLink]="['/storage', poolId(), 'vdevs', topologyItem.guid]"
             (click)="viewDetails(poolId(), topologyItem.guid); $event.stopPropagation()"
             (keydown.enter)="onRowEnter($event, topologyItem.guid)"
@@ -81,7 +80,7 @@
             [testId]="['vdev', vdev.guid]"
             [toggleAriaLabel]="'Toggle {row}' | translate: { row: vdev.guid }"
             [toggleTestId]="['toggle', vdev.guid]"
-            [class.selected]="vdev.guid === selectedNode?.guid"
+            [class.selected]="vdev.guid === selectedNode()?.guid"
             [routerLink]="['/storage', poolId(), 'vdevs', vdev.guid]"
             (click)="viewDetails(poolId(), vdev.guid); $event.stopPropagation()"
             (keydown.enter)="onRowEnter($event, vdev.guid)"
