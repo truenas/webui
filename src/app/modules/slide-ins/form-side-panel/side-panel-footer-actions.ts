@@ -32,14 +32,9 @@ interface SidePanelFooterEntry {
  */
 export interface SidePanelFooterAction extends SidePanelFooterEntry {
   /**
-   * Accessible name override (untranslated marker; the container pipes it through `translate`).
-   * For a disclosure-style action such as the Advanced/Basic toggle, whose visible label alone
-   * doesn't say what it does to the content above it — `tn-button` exposes no `aria-expanded`
-   * hook, so the state has to ride in the name. Must contain the visible {@link label} (WCAG
-   * 2.5.3, Label in Name).
-   *
-   * Deliberately not on {@link SidePanelFooterEntry}: `tn-menu-item` has no `ariaLabel` input, so
-   * a menu item declaring one would be silently ignored.
+   * Accessible name override (untranslated; the container translates it), for a disclosure action
+   * whose label doesn't say what it does, since `tn-button` has no `aria-expanded`. Must contain the
+   * visible {@link label} (WCAG 2.5.3). Not on {@link SidePanelFooterEntry}: `tn-menu-item` would ignore it.
    */
   ariaLabel?: string;
   /** `tn-button` color; defaults to `'default'` (secondary). */
@@ -94,25 +89,11 @@ export const advancedModeSettingLabels: AdvancedModeLabels = {
 };
 
 /**
- * The Advanced/Basic footer toggle that every long form otherwise re-implements: a single secondary
- * action whose label flips with `isAdvancedMode`, and whose click flips the signal.
- *
- * Returned as a `computed` rather than built inside a getter, so the container's per-change-detection
- * read of `footerActions` hands back the same array until the mode actually changes. Wire it as:
- *
- * ```ts
- * private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);
- * get footerActions(): SidePanelFooterAction[] { return this.advancedToggle(); }
- * ```
- *
- * The action sits in the panel footer, after — and detached from — the fields it reveals, and
- * `tn-button` has no `aria-expanded` input, so the mode rides in the accessible name instead: the
- * visible label names the mode being switched to, and {@link SidePanelFooterAction.ariaLabel} says
- * that it will be shown.
- *
- * @param options `labels` swaps the wording (see {@link advancedModeSettingLabels}); `testId`
- * overrides the default so a form that already shipped a different `data-test` value keeps it;
- * `onToggle` runs after the flip, for forms that re-validate the fields the toggle reveals.
+ * The Advanced/Basic footer toggle: its label flips with `isAdvancedMode` and a click flips the signal.
+ * A `computed`, so `footerActions` returns the same array until the mode changes; expose it via
+ * `get footerActions() { return this.advancedToggle(); }`. The mode rides in the accessible name, since
+ * `tn-button` has no `aria-expanded`. `testId` keeps an already-shipped `data-test`; `onToggle` runs after
+ * the flip, for forms that re-validate the revealed fields.
  */
 export function advancedModeFooterAction(
   isAdvancedMode: WritableSignal<boolean>,

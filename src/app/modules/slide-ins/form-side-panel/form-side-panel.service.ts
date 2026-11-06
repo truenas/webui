@@ -54,17 +54,9 @@ export interface FormSidePanelOptions {
 }
 
 /**
- * Opens a {@link SidePanelHostForm} in a `tn-side-panel`, imperatively — the form's host-agnostic
- * exposing `closed` / `canSubmit` / `submit`.
- *
- * This is the go-forward replacement for declaring a `<tn-side-panel>` in every card/page that
- * hosts a config form: callers just `open(FormComponent)` and the chrome (header, close button,
- * focus trap, footer Save, unsaved-changes guard) lives in one place.
- *
- * ```ts
- * this.formPanel.open(ServiceNfsComponent, { title: 'NFS', wide: true })
- *   .onSuccess(() => this.dataProvider.load(), this.destroyRef);
- * ```
+ * Opens a {@link SidePanelHostForm} in a `tn-side-panel` imperatively, e.g.
+ * `this.formPanel.open(ServiceNfsComponent, { title: 'NFS', wide: true }).onSuccess(...)`, so the
+ * chrome (header, focus trap, footer Save, unsaved-changes guard) lives here instead of in every caller.
  */
 @Injectable({ providedIn: 'root' })
 export class FormSidePanelService {
@@ -74,34 +66,17 @@ export class FormSidePanelService {
   private document = inject(DOCUMENT);
 
   /**
-   * Live panels, oldest first. Usually holds a single panel — a config side panel is modal — but a
-   * form may open another from within itself (e.g. a username picker's "Add New" inside a hosted
-   * form), so panels stack: each new one is appended later than the one before it, so at
-   * tn-side-panel's shared `z-index` it paints on top, its backdrop dimming the panel beneath, and
-   * pops to reveal it on close. A re-entrant open of the component already on top (e.g. a
-   * double-fired menu click) is deduped — it returns the in-flight result instead of stacking a
-   * duplicate.
-   *
-   * "Appended later" means inside the CDK overlay container, not on `<body>`: the container element
-   * created here is a body child, but `tn-side-panel` attaches the overlay that actually paints
-   * through CDK's `Overlay` when it opens, so the stacking is decided by open order — against other
-   * panels and against CDK dialogs and dropdowns alike. Either way they sit
-   * outside any route's view, so they outlive navigation unless torn down explicitly —
-   * {@link closeAll} does that for every panel in the stack.
+   * Live panels, oldest first. A form can open another from inside itself (e.g. "Add New" in a
+   * picker), so panels stack: CDK overlays paint in open order, so the newest sits on top and pops on
+   * close. Re-opening the top component (e.g. a double click) returns the in-flight result instead.
+   * Panels live outside any route's view, so they outlive navigation unless {@link closeAll} runs.
    */
   private stack: OpenPanel[] = [];
 
   /**
-   * Opens a declarative {@link FormDefinition} in the side panel without a per-form wrapper
-   * component — hosts {@link IxFormRendererComponent} directly with the definition (and optional
-   * `editData`) as inputs. Use this for config forms whose only per-form code is their
-   * `*.form-config.ts`; reach for {@link open} only when a form needs bespoke component logic.
-   *
-   * ```ts
-   * this.formPanel.openForm(getNtpServersFormConfig(this.api, this.translate, server), {
-   *   title: 'Edit NTP Server', editData: server,
-   * }).onSuccess(() => this.reload(), this.destroyRef);
-   * ```
+   * Opens a declarative {@link FormDefinition} by hosting {@link IxFormRendererComponent} directly,
+   * with optional `editData`. Use it for forms whose only code is their `*.form-config.ts`; use
+   * {@link open} when a form needs its own component logic.
    */
   openForm<T extends object>(
     definition: FormDefinition<T>,
@@ -116,23 +91,11 @@ export class FormSidePanelService {
   }
 
   /**
-   * Opens `component` in a `<tn-side-panel>` and resolves with whatever it emits through `closed`.
-   *
-   * CANONICAL RULE for what counts as a save under this host — `SubmitResult.closeWith` and
-   * `SidePanelForm.closeWith` both defer here rather than restating it:
-   *
-   * Only a TRUTHY `closed` payload resolves as a success. Anything falsy becomes `undefined`, i.e.
-   * a cancel, which is how a plain boolean form reports "closed without saving". That is narrower
-   * than {@link SlideInResult}'s own `=== undefined` rule, so a form must never close with `0`,
-   * `''`, `null` or `false` to mean success — hand back the record, or a non-empty wrapper. (An
-   * empty array is truthy, so a bulk save that changed nothing still resolves as a success.)
-   *
-   * A form whose payload has a `null` fallback (`IxFormHostForm<Dataset | null>`) is still accepted
-   * here, and emitting that `null` does tear the panel down — but it resolves as a CANCEL, not a
-   * save: the opener's `onSuccess` never runs, so its snackbar and store refresh are skipped. Use
-   * that fallback only as a safety net for an endpoint that is expected to return the saved record
-   * (without it, a record-less success would leave the panel stuck open), never as a routine
-   * "saved, no record" path.
+   * Opens `component` in a `<tn-side-panel>` and resolves with its `closed` payload. The canonical save
+   * rule: only a truthy payload is a success; anything falsy resolves `undefined`, a cancel. So never
+   * close with `0`, `''`, `null` or `false` to mean saved (an empty array is truthy). A `null` fallback
+   * on the payload type still tears the panel down but skips `onSuccess`; keep it only as a safety net
+   * for endpoints expected to return the record.
    */
   open<R = boolean>(
     component: Type<SidePanelHostCloseable<R>>,

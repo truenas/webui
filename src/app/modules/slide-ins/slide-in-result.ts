@@ -12,15 +12,9 @@ import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
 type NonUndefined<T> = Exclude<T, undefined>;
 
 /**
- * Extends Observable<SlideInResponse<R>> with convenience methods
- * for common slide-in patterns.
- *
- * Since it extends Observable, existing .pipe() and .subscribe() callers
- * continue to work unchanged, while new callers can use .onSuccess().
- *
- * Internally the source is replayed (shareReplay(1)) so that subscribing
- * via both the Observable interface and the convenience methods does not
- * cause duplicate side-effects on the upstream.
+ * An Observable<SlideInResponse<R>> with helpers like `.onSuccess()`, so `.pipe()`/`.subscribe()`
+ * callers keep working. The source is replayed (`shareReplay(1)`) so using both doesn't repeat
+ * upstream side effects.
  */
 export class SlideInResult<R> extends Observable<SlideInResponse<R>> {
   private shared$: Observable<SlideInResponse<R>>;
