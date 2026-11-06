@@ -328,14 +328,10 @@ export class DiskListComponent {
   ]));
 
   /**
-   * `columns` stays a writable signal because the column picker writes back to it. SED
-   * visibility is layered on top rather than frozen into the column definition, so it
-   * follows the entitlement instead of whatever was known at field init. The entitlement
-   * never touches `hidden`: that flag belongs to the picker and the user's saved preference.
-   * A column dropped here is unknown to the picker, which treats a saved preference naming it as
-   * stale and restores the defaults for every column; one gained later starts hidden until the
-   * user picks it, because the saved preference predates it. Both are accepted for the rare
-   * entitlement transition, since the alternative is offering a column that cannot be shown.
+   * The picker's columns with SED visibility layered on, so it follows the entitlement without touching
+   * `hidden`, which belongs to the user's saved preference. On the rare entitlement change, a dropped
+   * column resets saved preferences to defaults and a gained one starts hidden; both beat offering a
+   * column that can't be shown.
    */
   protected readonly visibleColumns = computed(() => (
     this.hasSedEntitlement()
@@ -429,17 +425,9 @@ export class DiskListComponent {
   }
 
   /**
-   * Drops the selection the moment the displayed rows change — a search, a page, a sort, a
-   * reload, or the optimistic `setRows` after a save.
-   *
-   * tn-table does the same to its own checkboxes: an internal effect on its `data()` computed
-   * clears its `SelectionModel` and emits `(selectionChange)` with an empty list whenever the
-   * `[dataSource]` reference changes. That model holds row *references*, not `[trackBy]` keys,
-   * so rebuilding the rows with the same identifiers unticks them too. This mirrors that in our
-   * own state rather than depending on the emission: the selection is held by identifier, and a
-   * row that left the page and came back (search then Reset, page 2 then page 1) would otherwise
-   * return already selected in the batch bar with its checkbox unticked — and Edit would act on
-   * a disk the user never picked.
+   * Clears the selection whenever the displayed rows change, mirroring tn-table, which unticks its
+   * checkboxes on every new `[dataSource]`. Our selection is held by id, so without this a row that left
+   * and came back would return selected in the batch bar but unticked, and Edit would act on it.
    */
   private clearSelectionWhenRowsChange(): void {
     effect(() => {

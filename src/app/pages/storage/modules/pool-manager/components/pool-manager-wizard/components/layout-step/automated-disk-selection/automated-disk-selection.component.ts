@@ -65,13 +65,9 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   });
 
   /**
-   * Explains the parity lock on special/dedup layout dropdowns. Bound to the layout field's
-   * `[hint]` input, which tn-form-field associates with the control via aria-describedby.
-   *   - No hint when the Stripe option is present (data has no redundancy, so
-   *     there's no meaningful restriction to explain).
-   *   - Exact-match copy when only one layout remains (pool already has vdevs
-   *     in this category — we lock to that layout, not just its parity).
-   *   - Parity-level copy otherwise (a 3-way mirror alongside RAIDZ2, etc.).
+   * Explains the parity lock on special/dedup layouts, via the field's `[hint]` (aria-describedby). Empty
+   * when Stripe is offered; exact-match copy when one layout remains because the pool already has vdevs
+   * of this kind; parity-level copy otherwise.
    */
   protected layoutRestrictionHint = computed(() => {
     if (!this.requiresDataParity()) {

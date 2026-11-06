@@ -155,6 +155,7 @@ const commentCappedPaths = [
   'src/app/pages/sharing',
   'src/app/pages/shell',
   'src/app/pages/signin',
+  'src/app/pages/storage/modules',
   'src/app/pages/system',
   'src/app/pages/system-tasks',
   'src/app/pages/two-factor-auth',

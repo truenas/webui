@@ -249,16 +249,9 @@ export function layoutParity(layout: CreateVdevLayout, width: number): number {
 }
 
 /**
- * Resolves the parity lock for a special or dedup vdev. ER-72 requires that
- * Mirror, RAIDZ1, RAIDZ2 and RAIDZ3 are always selectable regardless of the
- * data vdev's layout — the wizard no longer enforces parity matching at the
- * dropdown level. Stripe remains gated on the data vdev also being Stripe so
- * a no-redundancy metadata vdev can't be silently introduced. dRAID is never
- * offered (ZFS doesn't support it for special/dedup).
- *
- * Mirror data without a width still resolves to Mirror, which hides Stripe.
- * Stripe special/dedup is a misconfiguration anyway, so concealing it during
- * the transient pre-width state is preferable to briefly exposing it.
+ * Resolves the parity lock for a special or dedup vdev. Per ER-72, Mirror and RAIDZ1-3 are always
+ * offered; Stripe only when data is Stripe, so no-redundancy metadata can't slip in; dRAID never (ZFS
+ * doesn't support it). Mirror data without a width resolves to Mirror, hiding Stripe in that brief state.
  */
 export function resolveParityLock(
   existingData: VDevItem[] | undefined,

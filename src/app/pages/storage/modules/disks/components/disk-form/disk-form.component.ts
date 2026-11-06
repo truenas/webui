@@ -91,16 +91,9 @@ export class DiskFormComponent extends IxFormHostForm<DiskFormResponse> implemen
   protected readonly optionLabelTestId = advPowerManagementOptionTestId;
 
   /**
-   * A disk normally always has a power-management value, so the field is marked required and
-   * backed by a validator rather than leaving Save always enabled. Only when the disk actually
-   * arrived with a value, though: requiring one that came back empty would leave Save
-   * permanently disabled — blocking an edit to the description, say — on a field the user
-   * never touched and got no explanation about.
-   *
-   * Plain fields, not computeds: the asterisk and the validator are two halves of one decision,
-   * so they are resolved together in `ngOnInit` (the panel sets `diskToEdit` once, before it)
-   * rather than leaving the marker reactive and the validator imperative — a pair with two
-   * reactivity models drifts the moment the input becomes re-settable.
+   * Power-management fields are required only when the disk arrived with a value; requiring an empty one
+   * would block Save on a field the user never touched. Plain fields, set together with the validators in
+   * `ngOnInit`, so the asterisk and the validator can't drift apart.
    */
   protected isHddStandbyRequired = false;
   protected isAdvPowerManagementRequired = false;

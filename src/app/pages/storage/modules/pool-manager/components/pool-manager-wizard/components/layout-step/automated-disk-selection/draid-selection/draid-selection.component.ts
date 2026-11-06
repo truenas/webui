@@ -113,16 +113,9 @@ export class DraidSelectionComponent implements OnInit, OnChanges {
           vdevsNumber: 1,
         });
 
-        // Restoring the declared defaults is only half a reset: they are starting values, not
-        // necessarily *valid* ones. `tn-select` renders a value verbatim even when no option
-        // matches it (the legacy select used to blank exactly that state), so a reset that clears the
-        // disk selection would otherwise leave every control showing its default over a
-        // "No options" dropdown. Re-deriving the option lists here blanks whatever the current
-        // disks don't support and keeps the defaults that they do.
-        //
-        // Done here rather than left to the disk-size child's own reset — which emits an empty
-        // selection and re-enters through `onDisksSelected` — so the panel ends up consistent
-        // whichever of the two reset subscribers the store notifies first.
+        // The defaults aren't necessarily valid for the current disks, and `tn-select` shows a value
+        // with no matching option, so re-derive the options to blank unsupported values. Done here rather
+        // than via the disk-size child's reset, so the result holds whichever reset subscriber runs first.
         this.updateDataDevicesOptions();
       });
   }
