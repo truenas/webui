@@ -38,13 +38,9 @@ export interface AppMaintainer {
 }
 
 /**
- * Reads an `app.available` / `app.latest` / `app.similar` row into the shape the apps pages are
- * written against. It describes the same object, but the two types do not overlap, so the
- * conversion goes through `unknown`:
- * - `last_update` is typed as a plain string where middleware sends a `{ $date }` envelope
- *   (gap 15 in docs/devs/typed-api-client.md);
- * - `capabilities`, `run_as_context` and `versions` arrive through the model's open
- *   `{ [k: string]: unknown }` rather than as declared fields.
+ * Reads an `app.available` / `app.latest` / `app.similar` row as `AvailableApp`, via `unknown` because
+ * the types don't overlap: `last_update` is really a `{ $date }` envelope (gap 15 in
+ * docs/devs/typed-api-client.md), and some fields arrive through the model's open index signature.
  */
 export function toAvailableApp(app: WebUiQueryEntity<'app.available'>): AvailableApp {
   return app as unknown as AvailableApp;
