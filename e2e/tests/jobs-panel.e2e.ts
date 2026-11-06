@@ -1,17 +1,8 @@
 /**
- * Story: with the topbar's jobs panel open, a job that starts on the appliance
- * appears among the running jobs, and when it completes it moves to the
- * recently finished ones.
- *
- * The panel is the subject, not whatever starts the job, so the job is started
- * over the API: a run of a cron job whose command is a short `sleep`, long
- * enough for the panel to show it running. The panel learns of it the way it
- * learns of any job another session started, from the `core.get_jobs` events
- * the app subscribes to.
- *
- * Its completion is asserted twice: the panel moves the job's row from one list
- * to the other, and `core.get_jobs` says it ended in SUCCESS. The finished list
- * holds failed jobs too, so the row alone would not say which.
+ * Story: with the jobs panel open, a job started on the appliance appears among the running jobs and moves to the
+ * finished ones when done. It is a cron job run with a short `sleep`, started over the API, which the panel learns
+ * of from `core.get_jobs` events. Completion is checked in the panel and through `core.get_jobs` (SUCCESS), since
+ * the finished list holds failed jobs too.
  */
 import {
   ensureCronjobAbsent,

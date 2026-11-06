@@ -1,34 +1,10 @@
 /**
- * Stories: a user signing in while two-factor is on for the appliance, with no
- * secret of their own, is put through the full-screen setup dialog. They set it
- * up there — a wrong code is refused, and the right one lets them finish — or
- * they skip it, and nothing is armed.
- *
- * `two-factor.e2e.ts` sets two-factor up on the `/two-factor-auth` page, where
- * the admin layout's guard does not raise the dialog. This covers the dialog,
- * which the guard raises on the first route of a session everywhere else.
- *
- * Under `tests/unauthenticated/` because the dialog is reached by signing in as
- * the throwaway user through the form; the token bypass mints tokens for the
- * suite's admin only. One sign-in per test, because every one spends from the
- * unauthenticated rate limit (20 per method per IP per 60s).
- *
- * The guard is a child-route guard that holds the navigation until the dialog
- * closes, so the shell is not on screen behind it. Each test waits for the
- * dialog first. Only the skip test then waits for the shell: Skip closes the
- * dialog with `true`, which lets the held navigation land, while Finish closes
- * it with no value, which the guard hands to the router as-is. So after Finish
- * this asserts the dialog closing, and not where the user ends up.
- *
- * Global two-factor is on here as a precondition, not the thing under test, so
- * it is set over the API. Left on, it would put every later account with no
- * secret — the suite's admin included — through this dialog, so it is turned
- * off before each test and after it, unconditionally and not skipped under
- * `TN_KEEP_TEST_DATA`.
- *
- * Codes are computed on the appliance's clock (`applianceNow`), which is the one
- * the card checks them against. No secret or code is quoted in an assertion:
- * they are only ever typed into the field.
+ * Stories: a user with no secret signing in while global two-factor is on gets the setup dialog, and sets it up (a
+ * wrong code refused, the right one finishing) or skips it, arming nothing. The guard holds navigation until the
+ * dialog closes: Skip closes it with `true` so the route lands, but Finish with no value, so after Finish only the
+ * dialog closing is asserted. One sign-in per test for the rate limit. Global two-factor is set over the API and
+ * turned off before and after each test, unconditionally and not skipped under `TN_KEEP_TEST_DATA`, or every later
+ * secretless account would hit this dialog. Codes use `applianceNow` and are never quoted in an assertion.
  */
 import {
   disableGlobalTwoFactor, ensureTwoFactorUserPresent, readGlobalTwoFactor, setGlobalTwoFactor, twoFactorUser,

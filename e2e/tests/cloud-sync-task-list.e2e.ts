@@ -1,25 +1,9 @@
 /**
- * Stories: an admin opens the full Cloud Sync Tasks list from its card on Data
- * Protection, searches it down to the task they want, and runs, edits and
- * deletes a task from its row. The appliance holds what they did.
- *
- * The card's own journeys are `cloud-sync-tasks.e2e.ts`. The list is a different
- * page, with its own search, and its actions in a detail panel that opens when
- * the row is clicked rather than in a kebab menu. Its ids are its own too (see
- * `cloudSyncLocators.list`), so nothing the card spec passes says anything
- * about it.
- *
- * Every action acts beside a second task that must come through untouched. The
- * panel's actions are keyed by the task's id, so an action belongs to whichever
- * row was opened, and a row-targeting bug would act on the wrong task without
- * failing anything else.
- *
- * The list has no Enabled switch: Enabled is a Yes/No cell. Switching a task off
- * from the list goes through the edit form's checkbox, so the edit test does it.
- *
- * Every task syncs through the SFTP credential that points back at the
- * appliance itself (see `fixtures/cloud-sync.ts`), so the run can be checked by
- * what it actually copied.
+ * Stories: an admin opens the full Cloud Sync Tasks list from its card on Data Protection, searches it, and runs,
+ * edits and deletes a task from its row. The list has its own search, detail-panel actions and ids
+ * (`cloudSyncLocators.list`), so `cloud-sync-tasks.e2e.ts` says nothing about it. Every action runs beside a
+ * bystander task that must come through untouched, so a row-targeting bug fails. Enabled is a cell, not a switch,
+ * so the edit test turns a task off. Tasks sync to the appliance itself (`fixtures/cloud-sync.ts`).
  */
 import {
   cloudSyncRunTimeoutMs,

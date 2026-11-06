@@ -1,17 +1,8 @@
 /**
- * Story: a read-only administrator browses a dataset, its snapshots and the
- * storage dashboard, and finds every control that would change them locked or
- * absent, while the dataset and its snapshot stay as they were.
- *
- * Two styles of gate, and they are asserted differently. Most controls sit in
- * `*ixRequiresRoles`, which renders them disabled inside the role-missing
- * wrapper. Edit and Delete on the Dataset Details card are not rendered at all
- * without `DATASET_WRITE` / `DATASET_DELETE`.
- *
- * One sign-in for the whole story, as steps: every sign-in spends from the
- * unauthenticated rate limit. Nothing locked is ever clicked. The dataset, the
- * snapshot, its hold and the pool's last scan are read back over the API as a
- * guard that nothing got through.
+ * Story: a read-only administrator browses a dataset, its snapshots and the storage dashboard and finds every
+ * control locked or absent. Most sit in `*ixRequiresRoles` (disabled inside the role-missing wrapper), but Edit and
+ * Delete on Dataset Details aren't rendered without `DATASET_WRITE` / `DATASET_DELETE`. One sign-in, as steps, for
+ * the rate limit. Nothing locked is clicked; the dataset, snapshot, hold and last scan are read back as a guard.
  */
 import {
   ensureRoleAdminAbsent, ensureRoleAdminPresent, roleAdmins,

@@ -1,15 +1,9 @@
 /**
- * Stories: looking after a bucket that already exists.
+ * Stories: an administrator grants a user and a group access to a bucket, disables one from the dashboard, and
+ * deletes one; each starts from an API-created bucket, so a broken bucket form doesn't read as a broken row menu.
  *
- * An administrator grants a user and a group access to a bucket, disables a
- * bucket from the dashboard, and deletes one. Each starts from a bucket the
- * API created — creating it through the UI is `s3.e2e.ts`'s story, and a
- * broken bucket form should not read as a broken row menu.
- *
- * What only an appliance can answer here: that the principal pickers list the
- * real accounts, that a saved grant comes back with the uid and gid middleware
- * resolved, that the row toggle's `sharing.s3.update` took, and that deleting
- * a bucket leaves its dataset in place — the promise the delete dialog makes.
+ * Only an appliance shows the pickers listing real accounts, a saved grant returning middleware's uid and gid, the
+ * row toggle's `sharing.s3.update` taking, and a deleted bucket leaving its dataset, as the delete dialog promises.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';

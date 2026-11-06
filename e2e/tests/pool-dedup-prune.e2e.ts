@@ -1,22 +1,8 @@
 /**
- * Stories: on the Storage dashboard, an admin prunes a pool's dedup table from
- * Prune on its Storage Health card, by percentage and by age.
- *
- * A prune changes nothing a test can read back from the pool: it drops entries
- * for blocks written once, if they are old enough, and the table's size is not a
- * number either test can predict. What the UI owns is the request, so each test
- * asserts the `pool.ddt_prune` job middleware ran for this pool, with the value
- * chosen in the dialog, and that it succeeded.
- *
- * ## Why this spec builds its own pool
- *
- * The dedup line, and Prune on it, need a pool with a dedup vdev and a table
- * with something in it, which the worker-scoped `pool` fixture has neither of.
- * Each test builds one, writes to it and waits for the table to have a size,
- * then destroys it before and after, unconditionally: the pool holds four disks,
- * and `fresh-install` needs nine alike.
- *
- * Not covered here: Set Quota on the same line, which `pool-autotrim-dedup-quota.e2e.ts` covers.
+ * Stories: on the Storage dashboard an admin prunes a pool's dedup table by percentage and by age. A prune's effect
+ * is unpredictable, so each test asserts the `pool.ddt_prune` job ran for this pool with the chosen value and
+ * succeeded. The shared `pool` has no dedup vdev, so each test builds one, writes until the table has a size, and
+ * destroys it before and after unconditionally: it holds four disks, and `fresh-install` needs nine alike.
  */
 import {
   addDedupSeed, ensureDedupPoolPresent, findDedupPruneRuns, readDedupTableSize,

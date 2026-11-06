@@ -1,24 +1,9 @@
 /**
- * Story: an admin picks a pool for Apps, sees the Apps service come up on it, and takes Apps off it
- * again.
- *
- * Both actions are the UI's, from Apps > Configuration: Choose Pool and its dialog, and Unset Pool
- * and its confirmation. Each is checked on screen, in the status beside the page title, and through
- * `docker.config` and `docker.status`. The pool Apps moves to is built over the API.
- *
- * ## Why this spec builds its own pool
- *
- * Choosing a pool creates `<pool>/ix-apps` and starts Docker on it, and Docker then holds that
- * dataset. The worker-scoped `pool` fixture is exported when the worker ends, which cannot happen
- * while Docker runs there, and a teardown that failed to unset Apps would take every later spec's
- * pool with it. `e2e_apps` is one disk and nobody else's. Teardown unsets Apps first, then exports
- * it, in that order, whatever the test did.
- *
- * Not covered: moving Apps from one pool to another with "Migrate existing applications", and
- * anything about the catalog, which `apps-install.e2e.ts` covers. A pool change starts a catalog
- * sync in the background, and that sync does not fail `docker.update`.
- *
- * The "Pool has been unset." snackbar is not checked: the snackbar renders no `data-test`.
+ * Story: an admin picks a pool for Apps from Apps > Configuration, sees the service come up, and unsets it; each
+ * is checked on screen and through `docker.config` and `docker.status`. The pool is `e2e_apps`, built over the API,
+ * not the worker `pool` fixture: Docker holds `<pool>/ix-apps`, which blocks the export, and a failed unset would
+ * take every later spec's pool with it. Teardown unsets Apps first, then exports the pool, in that order.
+ * The "Pool has been unset." snackbar renders no `data-test` and is not checked.
  */
 import {
   ensureAppsPoolUnset, findAppsDataset, readDocker, setAppsPool,

@@ -1,26 +1,9 @@
 /**
- * Story: day one on a fresh TrueNAS instance.
- *
- * An administrator creates their own admin account, signs in as it, builds a
- * redundant pool from the available disks, carves out a dataset for file
- * sharing, and publishes an SMB share on it.
- *
- * This is deliberately one long journey rather than the independent tests R1.2
- * prescribes, because the *sequence* is what is being simulated — a fresh
- * appliance taken to a working share. The cost is real and worth stating: a
- * failure at the pool step takes the dataset and share steps with it, so a
- * single break reports as three missing capabilities rather than one. Where
- * that trade is not worth making — S3 through S8 — preconditions come from the
- * API instead.
- *
- * The first three steps overlap `admin-user.e2e.ts` almost exactly, and that is
- * intentional rather than an oversight. R3.1 would have the account provisioned
- * over the API here, since the pool and share work merely depends on it — but
- * "you cannot use the appliance until you have made yourself an account" is the
- * defining constraint of day one, and a fresh-install story that starts already
- * signed in as somebody skips the part that makes it a fresh install. The
- * duplicated coverage is the price of keeping the premise honest; the two tests
- * share one identity (`testAdmin`) so it is visibly the same account.
+ * Story: day one on a fresh TrueNAS instance: an administrator creates their own admin account, signs in, builds a
+ * redundant pool, creates a dataset for sharing, and publishes an SMB share on it. One long journey rather than
+ * R1.2's independent tests, because the sequence is what's simulated; a pool failure takes the later steps with it.
+ * The account steps overlap `admin-user.e2e.ts` on purpose, despite R3.1: having to make an account first is what
+ * defines day one. Both share `testAdmin` so it's visibly the same account.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureSmbServiceStopped, ensureSmbShareAbsent } from '../../fixtures/smb';
@@ -63,19 +46,10 @@ const serviceStateCallTimeoutMs = 10_000;
 const serviceStartTimeoutMs = 60_000;
 
 /**
- * Restores the fresh-instance premise the story depends on.
- *
- * Order matters: the service is stopped before its share is removed, and the
- * share before the pool, so nothing is ever left pointing at a path that has
- * ceased to exist. The user goes last because it is the cheapest thing to leak —
- * a leftover account costs the next run nothing, while a leftover pool holds its
- * disks and starves every later run (R3.2).
- *
- * Every step runs even when an earlier one throws, and the failures are reported
- * together. Plain sequential `await`s meant one failing call abandoned the rest,
- * so a `user.delete` that kept failing would wedge the suite: `afterEach` would
- * leak the pool, and the retry's `beforeEach` would throw at the same first call
- * and never reach the export either.
+ * Restores the fresh-instance premise. Order matters: the service stops before its share goes and the share before
+ * the pool, so nothing points at a vanished path; the user goes last, as a leftover pool starves later runs (R3.2)
+ * and a leftover account costs nothing. Every step runs even when an earlier one throws, and failures are reported
+ * together; otherwise one failing `user.delete` would leak the pool and wedge every retry at the same call.
  */
 async function cleanUp(api: E2eApiClient): Promise<void> {
   const steps: [string, () => Promise<unknown>][] = [
@@ -153,16 +127,10 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
     expect(shares[0]?.path).toBe(datasetPath);
     expect(shares[0]?.enabled).toBe(true);
 
-    // The point of starting the service. A share on a stopped service is
-    // configuration that serves nothing, and the UI alone cannot tell the
-    // difference — the share row looks identical either way.
-    //
-    // Polled rather than sampled once: starting a service is a job, so it
-    // completes after the dialog closes. Sampling immediately races it and
-    // reports STOPPED on a service that is seconds from running (R8.3).
-    // Recorded so a persistent query fault reaches the failure message. Without
-    // it the only output is "SMB never started", which points at the wrong
-    // subsystem when the real problem is that every query is rejecting.
+    // The point of starting the service: a share on a stopped one serves nothing, and its row looks identical.
+    // Polled, since starting is a job that completes after the dialog closes; sampling once races it (R8.3).
+    // The last poll error is recorded so a persistent query fault reaches the failure message, rather than an
+    // "SMB never started" that points at the wrong subsystem.
     let lastPollError: unknown;
 
     const readServiceState = async (): Promise<string | undefined> => {
@@ -212,16 +180,10 @@ test('an admin sets up a fresh instance: user, pool, dataset, SMB share', async 
     }
   });
 
-  // The share is only useful if the admin who made it can actually read and
-  // write it. That is decided by the dataset ACL and group membership, not by
-  // anything visible on the share screen, so nothing above would notice if it
-  // stopped being true.
-  //
-  // No ACL is configured to make this pass: creating the user with TrueNAS and
-  // SMB access places them in `builtin_administrators` and `builtin_users`, and
-  // the SMB dataset preset grants both. This asserts that those two defaults
-  // still meet — a regression in either would otherwise ship a share nobody
-  // can use, with every UI step still reporting success.
+  // The share is only useful if its admin can read and write it, which the dataset ACL and group membership decide,
+  // not anything on the share screen. No ACL is set to make this pass: a user with TrueNAS and SMB access joins
+  // `builtin_administrators` and `builtin_users`, and the SMB preset grants both. This asserts those defaults still
+  // meet; otherwise a regression would ship an unusable share with every UI step reporting success.
   await test.step('confirm the new admin can actually use the share', async () => {
     const grants = await findGroupAclGrants(api, testAdmin.username, datasetPath);
 

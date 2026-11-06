@@ -1,23 +1,9 @@
 /**
- * Stories: an admin ticks several boot environments on System > Boot and deletes
- * them at once from the Batch Operations toolbar, and the running boot
- * environment is never sent for deletion even when it is ticked.
- *
- * Each delete is asserted twice: the dialog and the list say what the screen
- * believed, `boot.environment.query` says what the appliance holds.
- *
- * A third boot environment is cloned beside the two under test and never ticked.
- * The batch sends whatever the selection held, so a selection that picked up an
- * extra row would delete it without failing anything else.
- *
- * Every boot environment made here is a clone of the running one, so none of
- * them is running or set to boot next, and nothing here changes what the
- * appliance boots into. The running one is only ever ticked, never deleted.
- *
- * What the ticket asked as a third story, a kept boot environment reported as not
- * deleted, is not here: `boot.environment.destroy` refuses only the running and
- * the activated boot environment and ignores `keep`, which only tells the updater
- * what it may prune. A kept clone in the batch is deleted like any other.
+ * Stories: an admin deletes several boot environments at once from System > Boot's Batch Operations toolbar, and
+ * the running one is never sent for deletion even when ticked. Checked in the dialog, the list and
+ * `boot.environment.query`. A third clone is never ticked, so a selection that grabbed an extra row fails the test.
+ * All are clones of the running one, so nothing changes what the appliance boots into. "Kept is not deleted" is
+ * not tested: `boot.environment.destroy` ignores `keep`, which only guides the updater's pruning.
  */
 import {
   ensureBootEnvironmentAbsent,

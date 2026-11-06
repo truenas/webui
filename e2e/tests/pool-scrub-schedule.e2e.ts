@@ -1,23 +1,9 @@
 /**
- * Stories: on the Storage dashboard, an admin schedules a pool's scrub from the
- * Scheduled Scrub line on its Storage Health card, changes the schedule, and
- * switches it off.
- *
- * The form saves through `pool.scrub.create` when the pool has no task and
- * `pool.scrub.update` when it has one, so each test reads the task back from
- * `pool.scrub.query`, as well as what the line says afterwards. The UI has no
- * delete for a task: unticking Enabled is how a schedule goes off, and the line
- * then reads "Not Set".
- *
- * ## Why this spec builds its own pool
- *
- * Middleware may give a new pool a scrub task of its own, and every test here
- * changes it. A pool of one disk, rebuilt before each test and destroyed after,
- * keeps that away from the worker-scoped `pool` the other specs share. Its task
- * goes with it.
- *
- * Not covered: Scrub Now (`pool-scrub.e2e.ts`) and the boot pool's scrub
- * interval, which is on the Boot Environments page.
+ * Stories: an admin schedules a pool's scrub from the Storage Health card's Scheduled Scrub line, changes it, and
+ * switches it off. The form uses `pool.scrub.create` or `.update`, so each test reads the task back from
+ * `pool.scrub.query`. The UI can't delete a task; unticking Enabled turns it off and the line reads "Not Set".
+ * Middleware may give a new pool its own scrub task, so a one-disk pool, rebuilt before each test and destroyed
+ * after, keeps these changes off the shared worker `pool`.
  */
 import type { CronSchedule } from '../fixtures/cron';
 import { ensurePoolPresent } from '../fixtures/pool';

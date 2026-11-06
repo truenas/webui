@@ -1,16 +1,8 @@
 /**
- * Stories: an admin reads the Interfaces card on System > Network, stages a
- * VLAN from it, and throws a staged change away with Revert Changes.
- *
- * Interface edits are staged until Test Changes and Save Changes apply them
- * (see `fixtures/interfaces.ts`). Neither is pressed here, and nothing here
- * calls `interface.commit`: the CI appliance has one NIC, the one the suite
- * talks to, and applying anything to it can cut the run off. Committing is
- * #14537's, on an appliance with a spare NIC. Staging and reverting never
- * touch the NIC, which is what the last assertion of the add test checks.
- *
- * The NIC's name differs per machine, so it is read from `interface.query`
- * rather than written down.
+ * Stories: an admin reads the Interfaces card on System > Network, stages a VLAN, and discards it with Revert
+ * Changes. Edits stay staged until Test Changes and Save Changes (see `fixtures/interfaces.ts`); neither is pressed
+ * and `interface.commit` is never called, as CI's only NIC is the one the suite talks to (committing is #14537's).
+ * The add test's last assertion checks the NIC is untouched. Its name is read from `interface.query`.
  */
 import {
   ensureNoPendingInterfaceChanges, findInterface, findManagementInterface, hasNetworkConfigToBeRemoved,

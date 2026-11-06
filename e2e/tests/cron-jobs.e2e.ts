@@ -1,21 +1,9 @@
 /**
- * Stories: an admin adds, edits, runs and deletes a cron job from the card on
- * System > Advanced Settings, and the appliance holds what they did.
- *
- * Each action is asserted twice, the way the share specs do it: the card says
- * the screen believed it, and middleware says the appliance did it. For a save
- * that is `cronjob.query`, which also carries what the card shows differently
- * or not at all, like the raw schedule and the output flags. For a run it is
- * `core.get_jobs`, because "Run job" starts a `cronjob.run` job, and only its
- * state can say whether the command actually ran.
- *
- * Run, edit and delete each act beside a second job that must come through
- * untouched. The row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug would act on the
- * wrong job without failing anything else.
- *
- * Every command is a harmless `echo` run as root. An enabled job really runs on
- * its schedule, and a run that dies before its teardown leaves one there.
+ * Stories: an admin adds, edits, runs and deletes a cron job from its card on System > Advanced Settings. Saves
+ * are checked on the card and through `cronjob.query`; a run through the `cronjob.run` job in `core.get_jobs`,
+ * since only its state says the command ran. Run, edit and delete act beside a bystander job that must come
+ * through untouched, so a row-targeting bug fails. Commands are a harmless `echo` as root: enabled jobs really run,
+ * and a run that dies before teardown leaves one behind.
  */
 import {
   ensureCronjobAbsent, ensureCronjobPresent, findCronjob, findCronRuns, type CronSchedule,

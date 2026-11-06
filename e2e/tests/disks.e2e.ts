@@ -1,24 +1,9 @@
 /**
- * Stories: an admin looks through the disks on the Disks page under Storage,
- * edits one, and wipes one that is in no pool.
- *
- * Each change is asserted on the page and through the API. `disk.query` holds
- * what an edit saved. `disk.details` says whether a disk still carries a pool.
- *
- * The wipe needs a result the API can see, and a blank disk has none: a wipe
- * leaves it exactly as it found it. So the disk wiped here carries a pool
- * exported without `destroy`. Such a disk is in no pool, so the page offers Wipe
- * for it, and the dialog warns that the exported pool will be lost. A wipe that
- * really ran leaves `disk.details` reporting no pool on it. Only Quick is used.
- * The other methods write all of a disk.
- *
- * Ticking a row and opening one by its chevron are covered here too, as the
- * cheapest proof of the ids `tn-table` gives those controls (`locators/table.ts`).
- *
- * The bulk edit is `disks-bulk-edit.e2e.ts`.
- *
- * Not covered: the column picker, the SED password and the SED Unlock and Reset
- * actions, which need a self-encrypting drive.
+ * Stories: an admin browses Storage > Disks, edits a disk, and wipes one in no pool, each checked on the page and
+ * through `disk.query` or `disk.details`. A blank disk shows no result after a wipe, so the wiped disk carries a
+ * pool exported without `destroy`; a real wipe leaves `disk.details` reporting no pool. Only Quick is used, since
+ * other methods write the whole disk. Ticking and expanding a row are the cheapest proof of `tn-table`'s control
+ * ids (`locators/table.ts`). Bulk edit is `disks-bulk-edit.e2e.ts`; SED actions need a self-encrypting drive.
  */
 import {
   diskBaseline,

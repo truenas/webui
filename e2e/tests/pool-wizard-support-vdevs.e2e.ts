@@ -1,22 +1,9 @@
 /**
- * Stories: an admin creates a pool with a mirrored log, a cache disk and a spare through the pool
- * wizard's Log, Spare and Cache steps, and the appliance holds all three; and the wizard warns
- * about a stripe log but still allows it.
- *
- * Each of those steps puts its selection into its own part of `pool.create`'s topology
- * (`topologyToPayload`). If one were dropped, the pool would still be created without it and the
- * wizard would still report success. So the first test reads the result back three ways: the
- * Review step, the pool's VDEVs card on the Storage dashboard, and `pool.query`'s topology. The last
- * is the one that matters.
- *
- * The Spare and Cache steps render no layout select, and the Log, Spare and Cache steps no vdev
- * count: each builds exactly one vdev, and a spare or a cache device is one disk.
- *
- * Both tests own their pool by name. Each name is removed before and after every test, whatever
- * happened, because a pool left behind holds its disks.
- *
- * Not covered: special and dedup vdevs, and removing a log, cache or spare. Adding a log or a cache
- * to an existing pool from Add VDEV is `pool-add-vdevs.e2e.ts`.
+ * Stories: an admin creates a pool with a mirrored log, a cache disk and a spare, and the appliance holds all
+ * three; and the wizard warns about a stripe log but allows it. A dropped step would still create the pool and
+ * report success, so the result is read back on Review, the VDEVs card, and `pool.query`'s topology, which is the
+ * check that matters. Each pool name is removed before and after every test, because a pool left behind holds
+ * its disks.
  */
 import { readPoolTopology, type TopologyVdev } from '../fixtures/pool';
 import { ensurePoolAbsent, findPool, requireUnusedDisks } from '../fixtures/storage';

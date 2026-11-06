@@ -1,37 +1,10 @@
 /**
- * Story: an admin updates an installed catalog app to the latest revision from its Application Info
- * card, and rolls an updated one back to the revision it ran before.
- *
- * Each action is the UI's: Update in the card's menu and its dialog, Roll Back on the card and its
- * dialog. Each is checked on screen, on the card's Revision and the list's Updates cell, and through
- * `app.query`. The starting revision is installed over the API with `app.create`, and the upgrade
- * the rollback starts from is made with `app.upgrade`.
- *
- * ## The app
- *
- * `nginx` from the `test` train. Most catalog apps keep a single revision, so there is nothing to
- * update to or roll back to. truenas/apps keeps old revisions of this one on purpose
- * (`ix-dev/test/nginx/to_keep_versions.yaml`), and `1.0.5` is the oldest that needs no host path:
- * `1.0.3` and `1.0.4` bind-mount directories the appliance does not have. Every revision keeps
- * `app_version: v1`, so the card's Version never changes and Revision is the readout that does.
- *
- * Its images, `nginx` and `bash`, are untagged on Docker Hub, whose anonymous pull limit has already
- * failed installs on CI. So they are pulled once before the first test, through the retrying
- * `ensureImagePresent`, and an app deleted between tests leaves them behind. Revision `1.0.5` sets no
- * `pull_policy`, so its install starts from those local images. `app.upgrade` pulls the new
- * revision's images itself whatever is present, which a spec cannot avoid. The images are deleted
- * after the last test.
- *
- * Middleware reads `upgrade_available` from its catalog cache, which holds every train, so `test`
- * does not have to be a preferred train and the preferred trains are left alone.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
- * per worker. Teardown deletes the app before and after every test, and the images after the last.
- *
- * Not covered: rolling back ix-volume snapshots, and image-only updates. Update All and Update All
- * Selected are `apps-bulk-update.e2e.ts`.
+ * Story: an admin updates a catalog app to the latest revision from its Application Info card and rolls it back,
+ * checked on the card's Revision, the list's Updates cell and `app.query`. The app is `nginx` from `test`: most
+ * apps keep one revision, but truenas/apps keeps old ones of this (`ix-dev/test/nginx/to_keep_versions.yaml`), and
+ * `1.0.5` is the oldest needing no host path. Version never changes, so Revision is the readout. Its Docker Hub
+ * images are pulled once via the retrying `ensureImagePresent` and deleted after the last test; `app.upgrade`
+ * still pulls new ones. `upgrade_available` reads every train, so preferred trains are left alone.
  */
 import {
   appInstallTimeoutMs,

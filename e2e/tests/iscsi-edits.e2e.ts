@@ -1,19 +1,8 @@
 /**
- * Stories: an admin edits an iSCSI target and an authorized access entry, and
- * deletes initiator groups, from the full iSCSI page, and the appliance holds
- * what they did.
- *
- * Each edit or delete runs beside a second record of the same kind that must
- * come through untouched, and everything is read back through the `iscsi.*`
- * queries. Every value an edit sets differs from both the form's default and
- * middleware's: an alias, a network, CHAP on a group with an auth tag, and a
- * new secret.
- *
- * Deleting an initiator group a target still uses is not refused: middleware's
- * `iscsi.initiator.delete` checks nothing, and the target group's reference to
- * it is `ON DELETE SET NULL`, so the target keeps its group with no initiator
- * group in it. That is read from middleware's source, and the test pins it.
- *
+ * Stories: on the full iSCSI page an admin edits a target and an authorized access entry and deletes initiator
+ * groups; each beside an untouched bystander, read back through the `iscsi.*` queries, with values differing from
+ * both form and middleware defaults. Deleting a group a target uses is not refused: `iscsi.initiator.delete` checks
+ * nothing and the reference is `ON DELETE SET NULL`. That was read from middleware's source; the test pins it.
  * The iSCSI service is never started.
  */
 import {

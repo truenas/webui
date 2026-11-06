@@ -1,13 +1,8 @@
 /**
- * Stories: an admin exports a key-encrypted dataset's key from its Encryption card, sees the key the
- * dataset holds, and downloads it as a file. The card offers Export Key nowhere else.
- *
- * What the dialog shows is checked against `pool.dataset.export_key`, and the dataset against
- * `pool.dataset.query`. Keys are compared as booleans with a message, never with `toBe(key)`, so a
- * failure never prints a key into the report.
- *
- * Unlocking with the exported key is not covered: the card disables Lock unless the dataset has a
- * passphrase, so the UI has no way to lock a key-encrypted dataset in the first place.
+ * Stories: an admin exports a key-encrypted dataset's key from its Encryption card, sees it, and downloads it.
+ * Checked against `pool.dataset.export_key` and `pool.dataset.query`. Keys are compared as booleans with a message,
+ * never `toBe(key)`, so a failure never prints a key into the report. Unlocking with it is not covered: the UI
+ * cannot lock a key-encrypted dataset, since Lock needs a passphrase.
  */
 import { readFile } from 'node:fs/promises';
 import {

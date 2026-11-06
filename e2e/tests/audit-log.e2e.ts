@@ -1,17 +1,8 @@
 /**
- * Story: an admin opens the Audit page under System and it lists what middleware recorded.
- *
- * The page lists middleware's records, newest first. The spec reads the newest record that has a
- * user and an event from `audit.query` before it opens the page, so that record is on the first
- * page the app loads, behind only what was recorded in the seconds between. Its row has to be
- * there, carrying the same user and event. A row id ends in the record's UUID, so the row cannot
- * be one the page made up or one left over from an earlier run.
- *
- * Signing in and opening the page record events of their own, which is why the record is not
- * expected to be the first row.
- *
- * Nothing is created, so there is no teardown. The audit settings on System > Advanced Settings
- * are `audit-settings.e2e.ts`.
+ * Story: an admin opens System > Audit and it lists what middleware recorded. The newest record with a user and
+ * event is read from `audit.query` before the page opens, so its row (id ending in the record's UUID) must be on
+ * the first page with the same user and event. It need not be the first row: signing in and opening the page
+ * record events of their own. Nothing is created, so there is no teardown; settings are `audit-settings.e2e.ts`.
  */
 import { findNewestAuditRecord } from '../fixtures/audit';
 import { goToAudit } from '../flows/navigation';

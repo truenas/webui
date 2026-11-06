@@ -1,22 +1,8 @@
 /**
- * Stories: the SMB status page, opened from "SMB Sessions" on the SMB list.
- *
- * The page has four tabs (Sessions, Locks, Shares and Notifications), each a
- * list of what `smb.status` reports. What is checked is that each tab can be
- * reached: it routes, it is the selected tab, and its list is on the page.
- *
- * Not covered:
- * - Each tab's empty state. `tn-table` renders it as a `tn-empty` with no id,
- *   so no selector reaches it. A count of rows is no substitute: with no client
- *   connected the appliance has no rows to give, so a count of zero would pass
- *   while the list was still loading, or if its call had failed.
- * - The Shares tab listing a share. `smb.status` at the `SHARES` level reports
- *   tree connections, which exist only while a client is connected to a share.
- *   Publishing a share with the service running is not enough, and nothing in
- *   this suite can connect as an SMB client.
- *
- * The service runs for these tests, because the page reports on the running
- * server, and it is stopped again in teardown.
+ * Stories: the SMB status page from "SMB Sessions": each of its four tabs routes, is selected, and shows its list.
+ * Not covered: empty states (`tn-empty` has no id, and a zero row count would also pass while loading or after a
+ * failed call); and the Shares tab listing a share, since `smb.status` reports tree connections only while a client
+ * is connected, and this suite has no SMB client. The service runs for these tests and is stopped in teardown.
  */
 import { ensureSmbServiceRunning, ensureSmbServiceStopped } from '../fixtures/smb';
 import { openSmbListPage, openSmbStatusTab } from '../flows/smb';

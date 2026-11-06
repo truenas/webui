@@ -1,31 +1,10 @@
 /**
- * Story: a read-only administrator opens System > Services and System > Boot,
- * sees every service's state and the boot environments, and finds every control
- * that would change them locked, while SSH and the boot environments stay as
- * they were.
- *
- * Each service row is gated on the roles that manage that service, and the
- * read-only admin holds none of them, so SSH stands for the page. The boot
- * environment list's row actions and its Stats/Settings and Scrub Boot Pool
- * buttons need `BOOTENV_WRITE`; Boot Pool Status does not, and is opened.
- *
- * Only the running boot environment is used, and the list never renders Delete
- * on that one for any account, so Delete is not asserted: seeing it locked would
- * take a second boot environment, which is out of proportion to one button.
- *
- * Story: the same administrator opens General Settings, Advanced Settings, Alert
- * Settings and Directory Services, finds every control that would change a
- * setting there locked, and can still open File Ticket.
- *
- * Email Settings and an alert category carry no role on the way in, so the form
- * opens and the category's selects are live. Each is changed, so that Save is
- * held down by the role rather than by a pristine form, and then dropped. The
- * Send Feedback dialog is only opened and closed: submitting it would file a real
- * ticket.
- *
- * Each test signs in once and takes its pages as steps: every sign-in spends from
- * the unauthenticated rate limit. Nothing locked is ever clicked. What each page
- * would change is read back over the API as a guard that nothing got through.
+ * Stories: a read-only administrator finds controls on Services and Boot locked while SSH and boot environments
+ * stay unchanged; and on General, Advanced, Alert Settings and Directory Services, while File Ticket still opens.
+ * SSH stands for the Services page. Delete isn't asserted: it's never rendered on the running boot environment,
+ * and a second one is out of proportion to one button. Email Settings and alert categories are edited so only the
+ * role holds Save down, then dropped; Send Feedback is never submitted, as that files a real ticket. One sign-in
+ * per test for the rate limit; nothing locked is clicked, and each page's state is read back as a guard.
  */
 import type { Page } from '@playwright/test';
 import { pickAlertClasses, readAlertClassOverride, readAlertClassOverrides } from '../fixtures/alert-classes';

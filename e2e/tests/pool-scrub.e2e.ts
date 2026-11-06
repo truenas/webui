@@ -1,27 +1,9 @@
 /**
- * Story: an admin scrubs a pool from the storage dashboard and sees it finish.
- *
- * The scrub is the UI's: Scrub Now on the pool's Storage Health card, and Start
- * Scrub in the confirmation it raises. The pool is built over the API.
- *
- * The finished scrub is checked through the API and on screen. `pool.query` has
- * to report a `SCRUB` scan in state `FINISHED` with no errors. On the card, Last
- * Scan has to read "Finished Scrub on …" and Last Scan Errors has to read 0. The
- * card is not reloaded for that. It updates from the `pool.scan` events it
- * subscribes to, and that update is part of what is tested.
- *
- * ## Why this spec builds its own pool
- *
- * The worker-scoped `pool` fixture is an existing pool wherever the appliance
- * has one, and on a developer's box that pool can hold enough data to take hours
- * to scrub. `e2e_scrub_tank` is one empty disk, so its scrub takes seconds.
- *
- * It is built fresh before each test, because a pool that has been scrubbed
- * already shows "Finished Scrub" on its card. Without the rebuild the on-screen
- * checks could pass when the button did nothing. Teardown destroys it.
- *
- * Not covered: Pause, Resume and Stop. A scrub of an empty pool is over before
- * the buttons could be clicked. The scheduled scrub form is `pool-scrub-schedule.e2e.ts`.
+ * Story: an admin scrubs a pool from its Storage Health card and sees it finish, in `pool.query` and on the card.
+ * The card isn't reloaded: it updates from `pool.scan` events, and that update is under test. `e2e_scrub_tank` is
+ * one empty disk so its scrub takes seconds; the shared `pool` may be a real one that takes hours. It's rebuilt
+ * before each test because an already-scrubbed pool shows "Finished Scrub" anyway, which would let the checks pass
+ * when the button did nothing. Teardown destroys it.
  */
 import { ensurePoolPresent } from '../fixtures/pool';
 import { ensurePoolAbsent, findPoolScan } from '../fixtures/storage';

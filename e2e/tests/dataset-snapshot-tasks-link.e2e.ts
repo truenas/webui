@@ -1,23 +1,9 @@
 /**
- * Stories: an admin on a dataset opens its periodic snapshot tasks from the
- * dataset's Data Protection card, by "View Snapshot Tasks", and edits and
- * deletes a task from the list that link opens. The appliance holds what they did.
- *
- * The link goes to `/data-protection/snapshot/<dataset>`, which is the full
- * Periodic Snapshot Tasks list (`snapshot-task-list.e2e.ts` reaches it from the
- * Data Protection dashboard). The list does not filter by route: it copies the
- * dataset into its search box, and the search then matches it as a substring of
- * the Pool/Dataset or Naming Schema column. So "filtered to the dataset" is a
- * search a user can see and clear, and it has to survive the list reloading
- * after an edit or a delete.
- *
- * The bystander's dataset and naming schema are picked so that neither holds
- * the target's path: the search hides it for being another dataset's task, not
- * by accident.
- *
- * Every task is scheduled monthly on a dataset of its own, made fresh for each
- * test, so none takes a snapshot while the spec runs, and Delete's confirm
- * offers no second box.
+ * Stories: from a dataset's Data Protection card, "View Snapshot Tasks" opens its periodic snapshot tasks, where an
+ * admin edits and deletes one. The list does not filter by route: it copies the dataset into its search box, which
+ * matches Pool/Dataset or Naming Schema as a substring, so the filter must survive the list reloading after an
+ * edit or delete. The bystander's dataset and schema never contain the target's path, so it is hidden on purpose.
+ * Tasks are monthly on fresh datasets, so none snapshots mid-run and Delete's confirm offers no second box.
  */
 import {
   ensureSnapshotTaskPresent,

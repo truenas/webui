@@ -1,32 +1,10 @@
 /**
- * Stories: a user with two-factor gets in with the right code, and middleware
- * records the session as opened on one; a wrong code is refused back to the
- * password step with no session, and the password and the right code from there
- * sign the user in; and a user who cancels the code step goes back to the
- * password form with no session.
- *
- * `two-factor.e2e.ts` already signs in with a right code and is refused a wrong
- * one, but it loads the page afresh between the two. This adds what the form
- * shows after a refusal and the sign-in from there, the session middleware
- * opens, and the step's Cancel, which nothing else drives.
- *
- * Under `tests/unauthenticated/` because every claim here is about signing in,
- * which the token bypass would skip (R4.2). Each password and each code is one
- * `auth.login_ex`, and every one spends from the unauthenticated rate limit (20
- * per method per IP per 60s): seven across this file.
- *
- * The secret is armed over the API: setting it up through the UI is the claim of
- * `two-factor.e2e.ts` and `two-factor-setup.e2e.ts`, not this one. A fresh one per
- * test, so no code is ever replayed (`pam_oath` refuses a code it has seen). Codes
- * are computed on the appliance's clock (`applianceNow`), which is the one
- * middleware checks them against, and neither a secret nor a code is quoted in an
- * assertion: they are only ever typed into the field.
- *
- * Global two-factor is on here as a precondition, and left on it would put every
- * later account with no secret — the suite's admin included — through the setup
- * dialog. So it is turned off after each test, unconditionally and not skipped
- * under `TN_KEEP_TEST_DATA`, and the user goes with it: its armed secret would
- * otherwise ask for a code at its next sign-in in another spec.
+ * Stories: a user with two-factor signs in with the right code; a wrong code returns to the password step with no
+ * session, from which the right code signs in; and Cancel returns to the password form. Unlike `two-factor.e2e.ts`
+ * nothing reloads between attempts. Seven `auth.login_ex` calls spend from the rate limit (R4.2). A fresh secret is
+ * armed over the API per test, as `pam_oath` refuses a replayed code; codes use `applianceNow` and are never quoted
+ * in assertions. Global two-factor is turned off after each test, unconditionally and not skipped under
+ * `TN_KEEP_TEST_DATA`, and the user is removed with it, or its secret would ask for a code in another spec.
  */
 import {
   armTwoFactorSecret, disableGlobalTwoFactor, ensureTwoFactorUserPresent, readGlobalTwoFactor,

@@ -1,15 +1,8 @@
 /**
- * Stories: an admin clones a virtual machine from its row on the Virtual Machines page, under a
- * name they choose or under one middleware picks, and the appliance holds a second VM like the
- * first.
- *
- * The source is provisioned over the API with no devices (`ensureVmPresent`), so the clone is of
- * the VM's record alone: with a disk, `vm.clone` would clone its zvol too, which is out of scope.
- * Nothing here starts a machine.
- *
- * Left unnamed, middleware names the clone `<source>_clone<N>`, with N the first number not
- * already taken. The spec does not rely on that shape beyond the source's name leading it: it
- * reads every VM name before and after, and the one that is new is the clone.
+ * Stories: an admin clones a VM from its row, under a chosen name or one middleware picks. The source has no devices
+ * (`ensureVmPresent`), so only the record is cloned; with a disk, `vm.clone` would clone its zvol too. Nothing
+ * starts a machine. An unnamed clone is `<source>_clone<N>`, but the spec relies only on the source's name leading
+ * it: it diffs VM names before and after to find the clone.
  */
 import {
   ensureVmAbsent, ensureVmPresent, findVm, listVmNames, provisionedVm, requireVirtualization,

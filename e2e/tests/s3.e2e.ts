@@ -1,15 +1,9 @@
 /**
- * Stories: S3 as a backup target.
+ * Stories: S3 as a backup target. An administrator publishes a bucket with object lock from the Shares dashboard,
+ * starting the service when offered; and mints an access key, taking the secret off the one dialog that shows it.
  *
- * An administrator publishes a bucket with object lock from the Shares
- * dashboard, starting the S3 service when the app offers to; and separately
- * mints an access key for the account that will write to it, taking the
- * secret off the one dialog that ever shows it.
- *
- * Two independent tests rather than one chain (R1.2): the key does not need
- * the bucket, and a broken bucket form should not read as a broken key form.
- * Everything they merely depend on — a pool, the parent dataset, the account,
- * a stopped S3 service — comes from the API.
+ * Two independent tests rather than one chain (R1.2): the key doesn't need the bucket, and a broken bucket form
+ * shouldn't read as a broken key form. What they depend on (pool, parent dataset, account, stopped S3) is API-made.
  */
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import { findOnlinePool } from '../fixtures/pool';

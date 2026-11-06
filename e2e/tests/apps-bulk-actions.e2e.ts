@@ -1,31 +1,10 @@
 /**
- * Story: an admin acts on several installed apps at once from the installed apps list's bulk bar,
- * and deletes several container images at once from Manage Container Images.
- *
- * Rows are ticked with `selectRow`. The bulk bar's Stop All Selected and Start All Selected call
- * `app.stop` and `app.start` once per app, each behind its own job progress dialog, and clear the
- * selection and show their snackbar at once, before any job ends. So a test waits on the rows'
- * states and on every job dialog closing, never on the snackbar. Delete All Selected and the
- * images toolbar's Delete each run one `core.bulk` job.
- *
- * ## The apps and images
- *
- * Three custom apps on BusyBox 1.36, as `apps-custom-yaml.e2e.ts` runs it: `e2e-bulk-a` and
- * `e2e-bulk-b`, which the tests act on, and `e2e-bulk-keep`, the bystander a test leaves alone.
- * The list sorts by name, so they are in that order on screen and in the delete dialog's name.
- *
- * The image tests pull two more small images, each a different image from BusyBox 1.36, from the
- * same project on ghcr.io.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
- * per worker. BusyBox 1.36 is pulled once and kept for the file; the extra images are pulled by the
- * tests that need them. Teardown deletes the three apps with their images kept, because the other two
- * may still run the same one, and then deletes the extra images; BusyBox 1.36 goes after the last test.
- *
- * Not covered: Update All Selected (`apps-bulk-update.e2e.ts`), select-all, a selection with a search filter, the
- * narrow layout's cards, Remove iXVolumes, which needs a catalog app with ix-volumes, and Force.
+ * Story: an admin stops, starts and deletes several installed apps from the bulk bar, and deletes several
+ * container images from Manage Container Images. Stop/Start All Selected clear the selection and show their
+ * snackbar before any job ends, so tests wait on row states and every job dialog closing, never the snackbar.
+ * Apps are BusyBox custom apps `e2e-bulk-a`, `e2e-bulk-b` and bystander `e2e-bulk-keep` on the shared `e2e_apps`
+ * pool. Teardown deletes apps with images kept, since the others may share one; BusyBox goes after the last test.
+ * Update All Selected is `apps-bulk-update.e2e.ts`.
  */
 import type { Page } from '@playwright/test';
 import {

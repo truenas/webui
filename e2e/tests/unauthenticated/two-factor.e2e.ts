@@ -1,34 +1,10 @@
 /**
- * Story: an admin turns two-factor authentication on for the appliance; an
- * account signing in next sets it up on the Two-Factor Authentication page it
- * lands on; from then on it is asked for a code, which lets it in when right and
- * not when wrong; and an admin can clear it again from that user's details.
- *
- * It lands on that page because the sign-in returns to the route the admin
- * signed out from. The full-screen setup dialog other routes raise is covered by
- * `two-factor-setup.e2e.ts`, not here.
- *
- * Under `tests/unauthenticated/` because every claim here is about signing in,
- * which the token bypass would skip (R4.2). One test, with the story as steps,
- * because each step needs the state the last one left — and every sign-in spends
- * from the unauthenticated rate limit (20 per method per IP per 60s).
- *
- * The sign-in page spends from it too: each time it starts it asks
- * `system.advanced.login_banner` and `user.has_local_administrator_set_up`, and
- * signing out starts it. So after a sign-out the next sign-in fills the form
- * already on screen rather than loading the page again, which would spend both a
- * second time. Run close behind `signin.e2e.ts`, loading it every time put the
- * last sign-in over the limit. `two-factor-setup.e2e.ts` now sorts between the
- * two, with one sign-in per test and slow two-factor saves around each.
- *
- * Codes come from `support/totp.ts`, computed from the secret the
- * `/two-factor-auth` page shows, which is what an authenticator app does with it.
- *
- * Global two-factor is the dangerous part. Left on, it puts every account with
- * no secret — the suite's own admin included — through the setup dialog at its
- * next sign-in, so every later spec would fail. It is turned off before the test
- * and after it, in `afterAll`, whatever happened. The suite's own admin is never
- * given a secret: the API client cannot answer a code prompt.
+ * Story: an admin turns on global two-factor; the next account sets it up on the page it lands on, is then let in
+ * only by a right code, and an admin can clear it from the user's details. One test with steps (R4.2), as each step
+ * needs the last one's state and every sign-in spends from the rate limit. The sign-in page spends too, so after a
+ * sign-out the next sign-in reuses the form on screen; reloading put the last sign-in over the limit when run close
+ * behind `signin.e2e.ts`. Codes come from `support/totp.ts`. Global two-factor is turned off before the test and in
+ * `afterAll`, whatever happened; the suite's admin never gets a secret, as the API client can't answer a code prompt.
  */
 import {
   disableGlobalTwoFactor, ensureTwoFactorUserPresent, readGlobalTwoFactor, twoFactorUser,

@@ -1,12 +1,7 @@
 /**
- * Story: the S3 service is put on a TLS listener.
- *
- * An administrator opens the service configuration from the dashboard card,
- * adds a listener on a real bind address with TLS, sets the server count,
- * region and log level, and saves. Everything the form sends is something
- * middleware validates — a bind address it does not offer, a port it refuses,
- * a listener shape it does not accept — and none of that is visible to the
- * unit suite, which is why this is an appliance test.
+ * Story: an administrator opens S3 service configuration from the dashboard card, adds a TLS listener on a real
+ * bind address, sets server count, region and log level, and saves. Middleware validates all of it (bind address,
+ * port, listener shape), which the unit suite can't see.
  *
  * The configuration is snapshotted before and restored after, over the API.
  */

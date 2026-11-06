@@ -1,14 +1,8 @@
 /**
- * Stories: an admin changes an encrypted dataset's encryption from Edit Encryption Options on its
- * Encryption card, and the appliance holds what they chose.
- *
- * Each is asserted through `pool.dataset.query`, because the card shows only a type and whether the
- * dataset is a root. Switching to a key and changing a passphrase are both `pool.dataset.change_key`,
- * a job; inheriting is `pool.dataset.inherit_parent_encryption_properties`, a plain call.
- *
- * Every dataset is made over the API as a passphrase root. The first two sit directly under the
- * unencrypted test pool, so the dialog offers Encryption Type and no Inherit. The third is a root
- * under an encrypted parent, which is the only place Inherit is offered.
+ * Stories: an admin changes an encrypted dataset's encryption from Edit Encryption Options, checked through
+ * `pool.dataset.query` since the card shows little. Switching to a key and changing a passphrase are the
+ * `pool.dataset.change_key` job; inheriting is a plain call. Datasets are passphrase roots: two sit under the
+ * unencrypted pool (Encryption Type, no Inherit), the third under an encrypted parent, the only place Inherit is.
  */
 import { ensureEncryptedDatasetPresent, lockDataset, unlockDataset } from '../fixtures/encryption';
 import { ensureDatasetAbsent, findDataset } from '../fixtures/storage';

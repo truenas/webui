@@ -1,15 +1,8 @@
 /**
- * Stories: applying an NFSv4 ACL recursively from the ACL editor, with and
- * without its child datasets, and stripping one, with and without them.
- *
- * The parent is made with the SMB preset, so its ACL is not trivial and the
- * Permissions card opens the ACL editor on it. Under it sit a child dataset and,
- * for the recursive stories, a plain directory. Recursion reaches the directory
- * by itself and the child dataset only with "Apply permissions to child
- * datasets". Every result is read back per path through `filesystem.getacl`.
- *
- * The recursive stories apply NFS4_OPEN rather than a preset the parent might
- * already carry, so that the save is visible on every path it reaches.
+ * Stories: applying an NFSv4 ACL recursively from the ACL editor, with and without child datasets, and stripping
+ * one, with and without them. The parent uses the SMB preset so the ACL editor opens; recursion reaches a plain
+ * directory by itself and the child dataset only with "Apply permissions to child datasets". Results are read per
+ * path through `filesystem.getacl`; recursive stories apply NFS4_OPEN so the save is visible on every path.
  */
 import { nfs4Entries, readAcl } from '../fixtures/permissions';
 import { ensureDirectoryPresent } from '../fixtures/snapshots';

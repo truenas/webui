@@ -1,17 +1,10 @@
 /**
- * Story: serving an existing dataset read-only over S3.
+ * Story: an administrator serves a dataset SMB already shares read-write as a read-only S3 bucket ("Existing
+ * Dataset (Read-only)"), then reopens the bucket's editor and its filesystem ACL.
  *
- * An administrator has a dataset that SMB already shares read-write, and adds an S3 bucket that serves it as it
- * is, read-only, by choosing "Existing Dataset (Read-only)" at the top of the bucket form. They come back to the
- * bucket's editor and its filesystem ACL afterwards.
- *
- * What only an appliance can answer: that middleware accepts the dataset the form sends and stores the bucket with
- * the `DATASET` layout, on that dataset rather than a new one, with the Multiprotocol model and Object Writer
- * ownership the form chose for it and none of the versioning options it hid; and that the ACL editor opens on the
- * dataset itself, since such a bucket has no `s3data` directory. The unit spec mocks the create; the two have to
- * agree.
- *
- * Whether S3 clients really are refused writes is the S3 service's behaviour, and this suite holds no S3 client.
+ * Only an appliance shows middleware storing the bucket with the `DATASET` layout on that dataset, with the form's
+ * Multiprotocol model and Object Writer ownership and no versioning options, and the ACL editor opening on the
+ * dataset itself (there's no `s3data` directory). The unit spec mocks the create; the two have to agree.
  */
 import { ensureS3BucketAbsent, ensureS3ServiceStopped, findS3Bucket } from '../fixtures/s3';
 import { ensureDatasetAbsent, ensureSmbDatasetPresent } from '../fixtures/storage';

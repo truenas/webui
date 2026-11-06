@@ -1,25 +1,8 @@
 /**
- * Story: on a pool's VDEVs page, an admin adds a fourth disk to a three-disk
- * RAIDZ1 vdev with Extend, and ZFS widens the vdev onto it.
- *
- * The change is asserted on the page and through `pool.query`, which holds the
- * vdev's type and its disks.
- *
- * ## Why this spec builds its own pool
- *
- * The test changes a pool's topology, so it may not use the worker-scoped `pool`
- * fixture other specs share. The pool here is one RAIDZ1 data vdev of three disks,
- * built over the API so a broken wizard does not fail this test. It is destroyed
- * and built again before the test, so a vdev an interrupted run widened is never
- * what it starts from, and destroyed after it: it holds four disks, and
- * `fresh-install` needs nine alike.
- *
- * `pool.attach` on a RAIDZ vdev answers only once ZFS reports the expansion
- * finished, so the pool is settled by the time the dialog closes, and teardown
- * does not export it mid-expansion.
- *
- * Not covered: RAIDZ2 and RAIDZ3, which take the same path, and extending by more
- * than one disk.
+ * Story: on a pool's VDEVs page, an admin adds a fourth disk to a three-disk RAIDZ1 vdev with Extend.
+ * The spec builds its own RAIDZ1 pool over the API, so a broken wizard doesn't fail it. It's rebuilt before the
+ * test, so a vdev an interrupted run widened is never the start, and destroyed after: `fresh-install` needs nine
+ * disks alike. `pool.attach` on RAIDZ answers only once the expansion finishes, so teardown never exports mid-way.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import { createRaidzPool, readFirstDataVdev, readPoolStatus } from '../fixtures/pool-devices';

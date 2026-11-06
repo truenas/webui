@@ -1,17 +1,8 @@
 /**
- * Stories: the full Tunable list, reached from the title of the card on
- * System > Advanced Settings.
- *
- * The list has a search the card does not, and its Delete runs `tunable.delete`
- * as a job behind a progress dialog with no first-time warning. Its rows carry
- * the card's ids — see `locators/tunable.ts`.
- *
- * The search turns the `_` in a variable into a space before matching, so the
- * query here is `keepalive intvl`: `tcp_keepalive_intvl` would match nothing.
- *
- * The variables are the ones `sysctl-tunables.e2e.ts` uses, a step below their
- * kernel defaults. That spec's cleanup removes them by name too, which is only
- * safe while `workers: 1` keeps the two files apart.
+ * Stories: the full Tunable list from its card's title on Advanced Settings, with a search the card lacks, and Delete
+ * as a `tunable.delete` job with no first-time warning. Rows carry the card's ids (`locators/tunable.ts`). The search
+ * turns `_` into a space before matching, so the query is `keepalive intvl`. The variables are
+ * `sysctl-tunables.e2e.ts`'s, whose cleanup removes them by name too, only safe while `workers: 1` keeps them apart.
  */
 import { ensureTunableAbsent, ensureTunablePresent, findTunable } from '../fixtures/tunable';
 import { openAdvancedSettingsList } from '../flows/advanced-settings';
