@@ -34,22 +34,11 @@ const createSentinel = '__ix_create_user__';
 export type PrincipalKind = 'user' | 'group';
 
 /**
- * Shared behaviour of the four user/group fields — `ix-user-combobox`,
- * `ix-group-combobox`, `ix-user-chips`, `ix-group-chips`: reaching
- * {@link UserDirectoryService}, building the `[dataSource]` the inner tn-*
- * control consumes, running existence validation, and forwarding the
- * `ControlValueAccessor` contract to that inner control.
- *
- * A `Directive` rather than a plain class so Angular's DI works in its field
- * initializers; it is never applied to an element itself.
- *
- * **On the CVA forwarding.** Each field is the `ControlValueAccessor` its
- * `formControlName` binds to, and delegates to the `tn-autocomplete` /
- * `tn-chip-input` it renders. Angular hands a CVA its value and callbacks while
- * setting up the directive, which is *before* the inner view exists — so all
- * four are buffered here and replayed the moment the child registers itself.
- * Without that, the first `writeValue` of every edit form would land on nothing
- * and the field would render empty.
+ * Shared behaviour of `ix-user-combobox`, `ix-group-combobox`, `ix-user-chips` and `ix-group-chips`:
+ * directory search, the inner control's `[dataSource]`, existence validation, and forwarding the CVA
+ * contract to the inner tn-* control. Angular calls the CVA before the inner view exists, so value and
+ * callbacks are buffered and replayed when the child registers; otherwise edit forms render empty.
+ * A `Directive` so DI works in field initializers; it is never applied to an element.
  */
 @Directive()
 export abstract class DirectoryFieldBase implements ControlValueAccessor {
@@ -60,15 +49,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
   protected abstract readonly multiple: boolean;
 
   /**
-   * The inner `tn-autocomplete` / `tn-chip-input`, declared by each concrete
-   * field.
-   *
-   * It has to be declared *there* rather than here: a view query on an abstract
-   * `@Directive()` never runs, because a directive has no view of its own for
-   * Angular to query, and inheriting it does not attach it to the derived
-   * component's view either. Declared on the base, this silently resolves to
-   * `undefined` forever — every field renders, and nothing a user does ever
-   * reaches the form control.
+   * The inner `tn-autocomplete` / `tn-chip-input`, declared by each concrete field. A view query on an
+   * abstract `@Directive()` never runs and isn't inherited, so declared here it would stay `undefined`
+   * and nothing a user did would reach the form control.
    */
   protected abstract readonly innerControl: Signal<DirectoryInnerControl | undefined>;
 
@@ -106,17 +89,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
   readonly debounce = input<number>(defaultDebounceTimeMs);
 
   /**
-   * Options merged ahead of whatever the directory returns, deduplicated by
-   * value.
-   *
-   * For a value the search cannot produce but the field must still name: an id
-   * already on the record, resolved to its display name elsewhere. Without it
-   * such a field shows the raw id until the user happens to search for it.
-   *
-   * They reach the display two ways, because the directory's first page is not
-   * fetched until the field is focused: pinned ahead of that page once it is,
-   * and handed to the inner control as `[options]` straight away, so a field on
-   * an edit form reads its name without anyone touching it.
+   * Options merged ahead of the directory's results, deduplicated by value, for values search can't
+   * produce, such as an id already on the record. They're pinned ahead of the first page, which loads
+   * only on focus, and passed as `[options]` straight away, so an edit form shows the name untouched.
    */
   readonly extraOptions = input<PrincipalOption[]>([]);
 
@@ -124,14 +99,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
   readonly testId = input<TnTestIdValue>(undefined);
 
   /**
-   * The base the inner control stamps its ids from.
-   *
-   * `controlTestId` is `self`-scoped so that a composite control cannot leak
-   * its name onto the children it embeds — which means the inner
-   * `tn-autocomplete` / `tn-chip-input`, having no `NgControl` of its own (this
-   * field claimed it), would resolve to nothing and drop every `data-test`.
-   * Resolving here, where the `NgControl` actually is, and passing the result
-   * down is what keeps `formControlName="owner"` emitting an id.
+   * The id base the inner control stamps from. `controlTestId` is `self`-scoped, and the inner control
+   * has no `NgControl` (this field claimed it), so it would resolve to nothing. Resolving here, where the
+   * `NgControl` is, keeps `formControlName="owner"` emitting an id.
    */
   protected readonly resolvedTestId = controlTestId(this.testId);
 
@@ -147,14 +117,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
       : this.translate.instant('Type to search groups...')));
 
   /**
-   * The `[dataSource]` the inner control consumes. A stable function identity —
-   * it reads `directoryOptions()` when called rather than closing over it, so
-   * changing that input does not swap the source out from under a live search.
-   *
-   * Stability alone is only half of it: nothing inside the inner control
-   * observes these inputs, so a change to them would take effect no earlier
-   * than the next keystroke. The effect in the constructor, keyed on
-   * {@link directoryQueryKey}, is the other half.
+   * The inner control's `[dataSource]`, with a stable identity: it reads `directoryOptions()` when
+   * called, so changing the input doesn't swap the source mid-search. The inner control doesn't watch
+   * these inputs, so the constructor's effect keyed on {@link directoryQueryKey} applies changes.
    */
   protected readonly optionsSource: TnOptionsFetchFn<PrincipalOption> = (search: string, page: number) => {
     const options = this.directoryOptions();
@@ -170,15 +135,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
       next: () => this.lookupFailed.set(false),
       error: () => this.lookupFailed.set(true),
     }), map((rows) => {
-      // Only ahead of the FIRST page: later pages append, and re-inserting
-      // these each time would push duplicates through the paging dedupe.
-      //
-      // The pinned rows do inflate the length the engine measures exhaustion
-      // by, so a genuinely-last first page topped up to `pageSize` reads as a
-      // full one and costs a page-1 request that can only come back empty. The
-      // alternative is holding server rows back to make room, which loses them
-      // for good — the paging is by page index, so the next page starts past
-      // them. One wasted round trip, after which exhaustion latches correctly.
+      // Only ahead of the first page, or later pages would push duplicates through the paging dedupe.
+      // Pinned rows can make a short last page look full, costing one empty extra request; holding
+      // server rows back instead would lose them, since paging is by page index.
       const extra = page === 0 ? this.extraOptions() : [];
       if (extra.length === 0) {
         return rows;
@@ -207,14 +166,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
   private inner = signal<ControlValueAccessor | null>(null);
 
   /**
-   * The instance {@link registerInner} last replayed into.
-   *
-   * The registering effect re-runs whenever change detection re-reads its view
-   * query — which is often — and replaying `writeValue` on each of those runs
-   * overwrites whatever the user is currently typing with the last committed
-   * value. The draft is then blank at blur, so nothing is ever committed and
-   * the field silently refuses every typed value. Replay only on a genuinely
-   * new instance.
+   * The instance {@link registerInner} last replayed into. The registering effect re-runs on every view
+   * query re-read, and replaying `writeValue` each time would wipe the user's typing, so nothing typed
+   * would ever commit. Replay only for a new instance.
    */
   private registeredInner: ControlValueAccessor | null = null;
 
@@ -338,27 +292,11 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
   // ── Existence validation ──
 
   /**
-   * Keeps the existence validator on the bound control in step with
-   * {@link validateExistence}, for as long as this field exists.
-   *
-   * Mirrored rather than attached once, because the control is not this field's
-   * to keep:
-   *
-   * - `[validateExistence]` is a signal input, so a value that flips after init
-   *   — `[validateExistence]="showAdvanced()"` — has to take effect. Attaching
-   *   once from `ngOnInit` silently ignored every later value, and nothing in
-   *   the API surface said the input was init-only.
-   * - The control outlives the field whenever a parent `@if` (or a stepper
-   *   page) re-creates it. Each re-creation added another validator to the same
-   *   control — N duplicate directory lookups per validation pass — while the
-   *   validator from the destroyed instance kept flagging a value from a
-   *   component nobody can see or correct.
-   *
-   * On attach, `updateValueAndValidity` is deliberately NOT called: an edit
-   * form would otherwise open with every loaded value already flagged, before
-   * the user has touched anything. Validation runs on the first change, or on
-   * submit. On detach it *is* called, so a verdict — or a PENDING state — from
-   * a validator that is gone does not outlive it.
+   * Keeps the existence validator on the bound control in step with {@link validateExistence}. Mirrored,
+   * not attached once: the input can flip after init, and the control outlives this field when an `@if`
+   * re-creates it, which used to stack duplicate validators. Attaching skips `updateValueAndValidity`,
+   * so an edit form doesn't open with loaded values flagged; detaching runs it, so a removed validator's
+   * verdict or PENDING state doesn't linger.
    */
   protected attachExistenceValidator(): void {
     const control = this.ngControl?.control;
@@ -435,13 +373,9 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
 
   private findMissing(names: string[]): Observable<string[]> {
     const checks = names.map((name) => this.exists(name).pipe(
-      // `first()` on this pipe rather than only inside `forkJoin`, so the
-      // one-name branch below gets it too: Angular wraps even a single async
-      // validator in `forkJoin`, which emits only when its source COMPLETES. A
-      // lookup answered from a cache that never completes would park the
-      // control in PENDING forever, and any submit button gated on validity
-      // would stay disabled. Ahead of `catchError` so an empty completion is
-      // caught as "cannot say" too.
+      // `first()` here, not only inside `forkJoin`: Angular wraps even one async validator in
+      // `forkJoin`, which waits for completion, so a never-completing cached lookup would leave the
+      // control PENDING and Save disabled. Before `catchError`, so an empty completion means "cannot say".
       first(),
       // A lookup that fails is not evidence the name is wrong — treat the
       // transport error as "cannot say" rather than flagging a real user.
@@ -628,17 +562,10 @@ export abstract class DirectoryChipsBase extends DirectoryFieldBase implements O
 }
 
 /**
- * Identity of everything `optionsSource` reads, so a change to any of it can
- * invalidate what the inner control has already fetched.
- *
- * Serialized rather than compared by reference on purpose: a template that
- * rebuilds the bag each cycle — `[directoryOptions]="buildQuery()"`, a getter —
- * would otherwise read as a change on every tick and re-query the directory
- * forever. These are a handful of fields and a few pinned options; stringifying
- * them is far cheaper than the request it prevents.
- *
- * Returning `null` for something JSON refuses costs a redundant refetch;
- * letting the throw out of an effect would break the field for good.
+ * Identity of everything `optionsSource` reads, so a change invalidates what the inner control fetched.
+ * Serialized, not compared by reference, so a template rebuilding the options each cycle doesn't
+ * re-query forever; stringifying a few fields is far cheaper than the request. Returns `null` for
+ * anything JSON rejects: a redundant refetch beats a throw that breaks the field for good.
  */
 function directoryQueryKey(
   query: DirectoryQueryOptions,
