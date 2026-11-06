@@ -36,15 +36,9 @@ export function formatTaskStateValue(
 }
 
 /**
- * tn-table replacement for the ix-table `stateButtonColumn` cell renderer.
- * Shared across data-protection task lists/cards and the jobs list. The
- * library has no multi-colour status pill (`tn-button` only does filled/outline,
- * `tn-chip` only primary/secondary/accent), so the pill markup is a plain
- * `<button>` styled locally rather than a `tn-*` element. Every dialog this cell
- * opens goes through `DialogService`, which owns the `tn-dialog` overlays.
- * The live job state arrives via the bound `[state]`/`[job]` inputs (the host
- * card updates the row); the cell itself handles the click, opening the
- * running-job dialog or the error / logs modals as `ix-cell-state-button` did.
+ * tn-table cell for a task's job state, shared by the data-protection lists and cards and the jobs
+ * list. The pill is a locally styled `<button>`: the library has no multi-colour status pill. The
+ * host card keeps `[state]`/`[job]` current; a click opens the running-job dialog or the error/logs modal.
  */
 @Component({
   selector: 'ix-task-state-cell',

@@ -74,13 +74,9 @@ export class TableToggleCellComponent {
   }
 
   /**
-   * Undo the user's optimistic flip, returning the toggle to the authoritative
-   * `checked` value. Parents call this on a failed update — the table reuses this cell
-   * across reloads, so the toggle's internal state has to be reset directly rather than
-   * waiting for the `checked` input to change (`tn-slide-toggle` OR-merges its CVA value
-   * with the `checked` input, so a stale optimistic flip would otherwise stick). Writing
-   * the control drives the library's `writeValue`, which resets that internal state and
-   * re-renders the native input through its own `[checked]` binding.
+   * Undoes the optimistic flip after a failed update. The table reuses this cell across reloads and
+   * `tn-slide-toggle` OR-merges its CVA value with `checked`, so a stale flip would stick while waiting
+   * for the input to change. Writing the control resets the library's internal state via `writeValue`.
    */
   revert(): void {
     this.control.setValue(this.checked(), { emitEvent: false });
