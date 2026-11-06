@@ -9,7 +9,7 @@ import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@t
 import { map, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
-import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { VDev } from 'app/interfaces/storage.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -124,10 +124,7 @@ export class RaidzExtendDialog {
   }
 
   private setFilterMinimumSizeFn(): void {
-    let diskDictionary: Record<string, Disk> = {};
-    this.vDevsStore.diskDictionary$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((dictionary) => diskDictionary = dictionary);
+    const diskDictionary = this.vDevsStore.diskDictionary();
 
     const minimumSize = this.data.vdev.children.reduce((acc, topologyDisk) => {
       const disk = diskDictionary[topologyDisk.disk];

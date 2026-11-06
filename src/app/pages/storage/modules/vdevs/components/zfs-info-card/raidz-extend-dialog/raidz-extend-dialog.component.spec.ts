@@ -1,6 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
@@ -71,7 +72,7 @@ describe('RaidzExtendDialogComponent', () => {
         checkForExistingExtendJob: jest.fn(() => of(false)),
       }),
       mockProvider(VDevsStore, {
-        diskDictionary$: of({
+        diskDictionary: signal({
           sda: {
             name: 'sda',
             size: 12 * TiB,

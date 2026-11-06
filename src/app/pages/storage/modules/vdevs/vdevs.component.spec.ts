@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -208,14 +209,15 @@ describe('VDevsComponent', () => {
         params: of({ poolId: 2, guid: '14429755380210151979' }),
       }),
       mockProvider(VDevsStore, {
-        selectedNode$: of(selectedNode),
-        selectedParentNode$: of(parentNode),
-        nodes$: of(nodes),
-        poolName$: of('test'),
-        selectedTopologyCategory$: of(VDevType.Data),
+        selectedNode: signal(selectedNode),
+        isLoading: signal(false),
+        selectedParentNode: signal(parentNode),
+        nodes: signal(nodes),
+        poolName: signal('test'),
+        selectedTopologyCategory: signal(VDevType.Data),
         loadNodes: jest.fn(),
         selectNodeByGuid: jest.fn(),
-        selectedBranch$: of(selectedBranch),
+        selectedBranch: signal(selectedBranch),
       }),
       provideMockStore({
         selectors: [

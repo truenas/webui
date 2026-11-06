@@ -1,11 +1,11 @@
 import { computed, Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { CallResponse } from '@truenas/api-client';
 import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
-  combineLatest, forkJoin, Observable, of, tap,
+  catchError, combineLatest, EMPTY, forkJoin, map, Observable, of, pipe, switchMap, tap,
 } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
 import { Alert, toAlert } from 'app/interfaces/alert.interface';
 import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
 import {
@@ -38,57 +38,52 @@ const initialState: PoolsDashboardState = {
 };
 
 @Injectable()
-export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
+export class PoolsDashboardStore {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
   private poolStoreService = inject(poolStore);
 
-  readonly pools = computed(() => this.state().pools);
-  readonly arePoolsLoading = computed(() => this.state().arePoolsLoading);
-  readonly isLoadingPoolDetails = computed(() => this.state().isLoadingPoolDetails);
-  readonly disks = computed(() => this.state().disks);
+  private readonly state = signalState(initialState);
 
-  readonly rootDatasets$ = this.select((state) => state.rootDatasets);
+  readonly pools = this.state.pools;
+  readonly arePoolsLoading = this.state.arePoolsLoading;
+  readonly isLoadingPoolDetails = this.state.isLoadingPoolDetails;
+  readonly disks = this.state.disks;
+  readonly rootDatasets = this.state.rootDatasets;
 
   readonly disksByPool = computed<Record<string, StorageDashboardDisk[]>>(() => {
-    return groupBy(this.state().disks, (disk) => disk.pool);
+    return groupBy(this.state.disks(), (disk) => disk.pool);
   });
 
   scrubForPool(pool: Pool): ScrubTask | undefined {
-    return this.state().scrubs.find((scrub) => scrub.pool === pool.id);
+    return this.state.scrubs().find((scrub) => scrub.pool === pool.id);
   }
 
-  constructor() {
-    super(initialState);
-  }
-
-  readonly loadDashboard = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      tap(() => {
-        this.poolStoreService.invalidate();
-        this.patchState({
-          ...initialState,
-          arePoolsLoading: true,
-          isLoadingPoolDetails: true,
+  readonly loadDashboard = rxMethod<void>(pipe(
+    tap(() => {
+      this.poolStoreService.invalidate();
+      patchState(this.state, {
+        ...initialState,
+        arePoolsLoading: true,
+        isLoadingPoolDetails: true,
+      });
+    }),
+    // The pools half is a live subscription that never completes, so nothing reaches `next`:
+    // both halves write the store themselves, and only an error needs handling here.
+    switchMap(() => forkJoin([
+      this.loadPoolsAndRootDatasets(),
+      this.loadPoolDetails(),
+    ]).pipe(
+      catchError((error: unknown) => {
+        patchState(this.state, {
+          arePoolsLoading: false,
+          isLoadingPoolDetails: false,
         });
+        this.errorHandler.showErrorModal(error);
+        return EMPTY;
       }),
-      switchMap(() => {
-        return forkJoin([
-          this.loadPoolsAndRootDatasets(),
-          this.loadPoolDetails(),
-        ]).pipe(
-          catchError((error: unknown) => {
-            this.patchState({
-              arePoolsLoading: false,
-              isLoadingPoolDetails: false,
-            });
-            this.errorHandler.showErrorModal(error);
-            return of(null);
-          }),
-        );
-      }),
-    );
-  });
+    )),
+  ));
 
   private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], CallResponse<WebUiApiDirectory, 'zpool.query'>]> {
     return combineLatest([
@@ -138,7 +133,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
             special_class_usable: rawSpecialUsable == null ? undefined : Number(rawSpecialUsable),
           };
         });
-        this.patchState({
+        patchState(this.state, {
           arePoolsLoading: false,
           pools: sortBy(poolsWithTierData, (pool) => pool.name),
           rootDatasets: keyBy(rootDatasets, (dataset) => dataset.id),
@@ -156,7 +151,7 @@ export class PoolsDashboardStore extends ComponentStore<PoolsDashboardState> {
       this.api.query('pool.scrub.query').pipe(map((scrubs) => scrubs.map(toScrubTask))),
     ]).pipe(
       tap(([disks, scrubs]) => {
-        this.patchState({
+        patchState(this.state, {
           scrubs,
           disks: [...disks],
           isLoadingPoolDetails: false,

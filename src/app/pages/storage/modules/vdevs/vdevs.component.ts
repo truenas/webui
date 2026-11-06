@@ -1,12 +1,12 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterViewInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, signal, OnInit, AfterViewInit, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
-import { map, Observable } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -38,7 +38,6 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     SplitTagPipe,
     DiskDetailsPanelComponent,
     MasterDetailViewComponent,
-    AsyncPipe,
     TopologyItemIconComponent,
   ],
 })
@@ -50,7 +49,7 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   private destroyRef = inject(DestroyRef);
 
   protected poolId = signal<number | null>(null);
-  protected poolName = toSignal(this.vDevsStore.poolName$, { initialValue: '' });
+  protected poolName = this.vDevsStore.poolName;
 
   protected readonly requiredRoles = [Role.PoolWrite];
   // `splitTag` renders the <name> part next to the vdev icon.
@@ -59,16 +58,13 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   protected isMobileView = signal(false);
   protected showMobileDetails = signal(false);
 
-  protected selectedParentNode$ = this.vDevsStore.selectedParentNode$;
-  protected selectedTopologyCategory$ = this.vDevsStore.selectedTopologyCategory$;
-  protected selectedNode$ = this.vDevsStore.selectedNode$;
-  protected readonly hasTopLevelRaidz$: Observable<boolean> = this.vDevsStore.nodes$.pipe(
-    map((node) => {
-      return node.some((nodeItem) => nodeItem.children.some((child: VDevItem) => {
-        return raidzItems.includes(child.type);
-      }));
-    }),
-  );
+  protected selectedParentNode = this.vDevsStore.selectedParentNode;
+  protected selectedTopologyCategory = this.vDevsStore.selectedTopologyCategory;
+  protected readonly hasTopLevelRaidz = computed(() => {
+    return this.vDevsStore.nodes().some((nodeItem) => nodeItem.children.some((child: VDevItem) => {
+      return raidzItems.includes(child.type);
+    }));
+  });
 
   protected getTitle(topologyItem: VDevItem): string {
     if (isTopologyDisk(topologyItem)) {
