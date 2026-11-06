@@ -1,15 +1,8 @@
 /**
- * A minimal RFC 6238 (TOTP) / RFC 4226 (HOTP) verifier that runs in the browser.
- *
- * The middleware has no "check this code without enabling anything" endpoint —
- * `user.renew_2fa_secret` both mints the secret and arms it — so the confirmation
- * step on the 2FA setup page has to check the code the user reads off their
- * authenticator app locally, against the secret the QR code carries.
- *
- * That makes this a usability check ("your app really did register this secret"),
- * not a security boundary: the authoritative check still happens at login, in the
- * middleware. Hence also the hand-rolled SHA-1 rather than `crypto.subtle`, which
- * is undefined on the plain-HTTP LAN addresses much of the UI is served from.
+ * A minimal browser-side RFC 6238 (TOTP) / RFC 4226 (HOTP) verifier. Middleware can't check a code
+ * without arming the secret, so the 2FA setup page checks it here against the QR code's secret.
+ * It's a usability check, not a security boundary: login still verifies in middleware. SHA-1 is
+ * hand-rolled because `crypto.subtle` is undefined on the plain-HTTP LAN addresses the UI is served from.
  */
 
 const base32Alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';

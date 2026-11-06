@@ -5,16 +5,9 @@ import { switchMap } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 /**
- * Tracks a form's validity as a signal for driving tn-stepper's `[completed]` input
- * (the declarative replacement for mat-stepper's `[stepControl]`). Seeded with the
- * current validity and updated on every status change, so gating never reads
- * `form.valid` during change detection (OnPush-safe).
- *
- * Accepts either a form directly, or a signal of a form for inputs whose form
- * identity is set after construction (e.g. `input.required()`); in the latter case
- * the validity is seeded to `false` since the form is not yet available.
- *
- * Must be called in an injection context (e.g. a field initializer).
+ * A form's validity as a signal for tn-stepper's `[completed]`, updated on every status change so
+ * gating never reads `form.valid` during change detection. Takes a form, or a signal of one for
+ * inputs set after construction (seeded `false` until it arrives). Call from an injection context.
  */
 export function stepCompletedSignal(form: AbstractControl | Signal<AbstractControl>): Signal<boolean> {
   // When a ControlValueAccessor attaches (formControlName binding during the first

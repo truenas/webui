@@ -38,16 +38,8 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   /**
-   * Adds a new filter via AND.
-   *
-   * ```
-   * new QueryBuilder()
-   *  .filter('username', '=', 'bob')
-   *  .andFilter('age', '>', 40);
-   *
-   * is equivalent to:
-   * username = 'bob' AND age > 40
-   * ```
+   * Adds a filter via AND: `.filter('username', '=', 'bob').andFilter('age', '>', 40)` is
+   * `username = 'bob' AND age > 40`.
    */
   andFilter(property: QueryFilter<T>[0], comparator: QueryFilter<T>[1], value: QueryFilter<T>[2]): this {
     this.andFilters([[property, comparator, value]]);
@@ -56,16 +48,8 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   /**
-   * Connects new filter to a previous one using an OR statement.
-   *
-   * ```
-   * new QueryBuilder()
-   *  .filter('username', '=', 'bob')
-   *  .orFilter('username', '=', 'alice');
-   *
-   * is equivalent to:
-   * username = 'bob' OR username = 'alice'
-   * ```
+   * Adds a filter via OR: `.filter('username', '=', 'bob').orFilter('username', '=', 'alice')` is
+   * `username = 'bob' OR username = 'alice'`.
    */
   orFilter(property: QueryFilter<T>[0], comparator: QueryFilter<T>[1], value: QueryFilter<T>[2]): this {
     this.orFilters([property, comparator, value] as QueryFilters<T>);
@@ -74,19 +58,8 @@ export class ParamsBuilder<T, ExtraOptions = Record<string, unknown>> {
   }
 
   /**
-   * Starts a new group (similar to taking statements in brackets)
-   *
-   * ```
-   * new QueryBuilder()
-   *  .group((group) => {
-   *    group
-   *      .filter('username', '=', 'bob')
-   *      .orFilter('username', '=', 'alice');
-   *  })
-   *  .andFilter('age', '>', 40);
-   * ```
-   * is equivalent to:
-   * (username = 'bob' OR username = 'alice') AND age > 40
+   * Starts a bracketed group: `.group((g) => g.filter('username', '=', 'bob').orFilter('username', '=', 'alice'))
+   * .andFilter('age', '>', 40)` is `(username = 'bob' OR username = 'alice') AND age > 40`.
    */
   group(groupBuilder: (group: ParamsBuilderGroup<T, ExtraOptions>) => void): this {
     const group = new ParamsBuilder<T, ExtraOptions>();
