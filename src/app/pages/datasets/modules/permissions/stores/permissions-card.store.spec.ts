@@ -221,4 +221,21 @@ describe('PermissionsCardStore', () => {
 
     expect(state()).toEqual({ isLoading: false, stat: null, acl: null });
   });
+
+  it('reset() cancels a load that is still in flight', () => {
+    const delayedStat$ = new Subject<FileSystemStat>();
+    const delayedAcl$ = new Subject<Acl>();
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation((method) => {
+      return method === 'filesystem.stat' ? delayedStat$ : delayedAcl$;
+    });
+
+    spectator.service.loadPermissions('/mnt/pool/dataset');
+    spectator.service.reset();
+    delayedStat$.next(mockStat);
+    delayedStat$.complete();
+    delayedAcl$.next(mockAcl);
+    delayedAcl$.complete();
+
+    expect(state()).toEqual({ isLoading: false, stat: null, acl: null });
+  });
 });

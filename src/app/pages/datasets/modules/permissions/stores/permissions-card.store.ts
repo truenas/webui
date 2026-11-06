@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
 import { patchState, signalState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { forkJoin, pipe } from 'rxjs';
+import { EMPTY, forkJoin, pipe } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 import { AclType } from 'app/enums/acl-type.enum';
 import { NfsAclTag } from 'app/enums/nfs-acl.enum';
@@ -30,9 +30,14 @@ export class PermissionsCardStore {
   readonly acl = this.state.acl;
   readonly stat = this.state.stat;
 
-  readonly loadPermissions = rxMethod<string>(pipe(
-    tap(() => patchState(this.state, { ...initialState, isLoading: true })),
+  /** `null` clears; sharing one `switchMap` with loads lets a reset cancel a load still in flight. */
+  private readonly load = rxMethod<string | null>(pipe(
+    tap((mountpoint) => patchState(this.state, { ...initialState, isLoading: mountpoint !== null })),
     switchMap((mountpoint) => {
+      if (mountpoint === null) {
+        return EMPTY;
+      }
+
       return forkJoin([
         this.api.call('filesystem.stat', [mountpoint]),
         this.api.call('filesystem.getacl', [mountpoint, true, true]).pipe(map(toAcl)),
@@ -51,9 +56,13 @@ export class PermissionsCardStore {
     }),
   ));
 
+  loadPermissions(mountpoint: string): void {
+    this.load(mountpoint);
+  }
+
   /** Clears what was loaded, for a dataset whose permissions can't be read (locked, unmounted, no mountpoint). */
   reset(): void {
-    patchState(this.state, { acl: null, stat: null });
+    this.load(null);
   }
 }
 
