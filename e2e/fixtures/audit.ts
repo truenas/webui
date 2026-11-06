@@ -1,21 +1,10 @@
 /**
- * Audit settings: preconditions, cleanup and readback, over the API.
+ * Audit settings (`audit.config`, one config record) and audit log reads for System > Audit, over the API.
  *
- * These five settings are `audit.config`, a single config record, so — as in
- * `fixtures/syslog.ts` — there is nothing to create or delete. Each test starts
- * from a known baseline and teardown writes that baseline back, rather than
- * snapshotting what it found and restoring that.
- *
- * The baseline is middleware's own default: keep audit records for 7 days, no
- * reservation and no quota on the audit dataset, warn at 75% and alert at 95%.
- * That is what a fresh appliance holds.
- *
- * Reservation and quota are set on the audit dataset in the boot pool, in GiB.
- * The specs keep both to a few GiB, which a fresh appliance's audit dataset is
- * far below and its boot pool can spare.
- *
- * It also reads the audit log itself, for the Audit page under System. That is
- * a read only: middleware writes the log as the appliance is used.
+ * As in `fixtures/syslog.ts`, each test starts from a baseline and teardown writes it back, rather than
+ * restoring what it found. The baseline is middleware's default: 7 days, no reservation or quota, warn 75%,
+ * alert 95%. Reservation and quota are in GiB on the boot-pool audit dataset; specs keep both to a few GiB,
+ * which the boot pool can spare.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

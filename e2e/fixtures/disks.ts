@@ -1,16 +1,10 @@
 /**
  * Disks: preconditions, cleanup and readback, over the API.
  *
- * A disk cannot be created or deleted, so the edit test works like the config
- * specs (`fixtures/email.ts`). It starts from a fixed baseline and writes that
- * baseline back afterwards. The baseline is what middleware gives a disk it has
- * never been told anything about.
- *
- * The wipe test needs a disk with something on it that a wipe removes and the
- * API can see. A pool exported without `destroy` is that: the disk stays out of
- * every pool and `disk.details` still reports the pool on it as `exported_zpool`.
- * Such a disk is offered nowhere else. `getSelectableDisks` leaves it out, so a
- * disk left in that state is one fewer for every later run. Teardown wipes it.
+ * Disks cannot be created or deleted, so the edit test works like the config specs (`fixtures/email.ts`), from
+ * and back to middleware's never-configured baseline. The wipe test uses a disk holding a pool exported without
+ * `destroy` (`exported_zpool` in `disk.details`). `getSelectableDisks` skips such disks, so one left that way
+ * is lost to every later run; teardown wipes it.
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

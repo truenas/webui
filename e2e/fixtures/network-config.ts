@@ -1,15 +1,9 @@
 /**
- * The appliance's global network configuration: readback and restore, over the API.
+ * The appliance's global network configuration (`network.configuration.config`): readback and restore.
  *
- * It is one config record, `network.configuration.config`, and global to the
- * appliance, so a spec that changes it reads it first and writes that back after.
- *
- * The CI appliance is reached through qemu's user-mode NAT on DHCP, so its
- * nameservers and default gateway are what keep the suite connected. The
- * restore writes only when something differs, and a refused save never writes
- * at all. Saving the Settings form does write them, though: the form fills an
- * empty nameserver or gateway with the live value DHCP handed out, so a save
- * stores those as static values, and the restore puts back the empty ones.
+ * CI reaches the appliance through qemu's user-mode NAT on DHCP, so nameservers and gateway keep the suite
+ * connected. The restore writes only when something differs. Saving the Settings form fills empty nameserver
+ * or gateway fields with the live DHCP values and stores them as static, so the restore puts the empty ones back.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { isEqual } from 'lodash-es';

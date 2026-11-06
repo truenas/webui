@@ -1,14 +1,9 @@
 /**
  * Two-factor authentication: preconditions, cleanup and readback, over the API.
  *
- * Global two-factor is one config record (`auth.twofactor`), so there is nothing
- * to create or delete — only a setting to write back. It matters more than most:
- * while it is on, every account that has no secret is put through the setup
- * dialog at its next sign-in, the suite's own admin included, and every later
- * spec would meet that dialog instead of the shell. So teardown always writes
- * `enabled: false`, whatever it found.
- *
- * A user's secret lives on the user, and goes when the user does.
+ * Global two-factor (`auth.twofactor`) is one config record. While on, every account without a secret, the suite's
+ * admin included, gets the setup dialog at next sign-in instead of the shell, so teardown always writes
+ * `enabled: false`, whatever it found. A user's secret lives on the user, and goes when the user does.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -64,15 +59,11 @@ export async function setGlobalTwoFactor(client: E2eApiClient, update: GlobalTwo
 }
 
 /**
- * Arms a fresh two-factor secret on `username` and returns it, as base32 text.
+ * Arms a fresh two-factor secret on `username` and returns it as base32, for specs not about UI setup.
  *
- * A precondition for a spec about signing in with a code, where setting the
- * secret up through the UI is not the claim. Called as the suite's admin, which
- * middleware lets renew another user's secret because it holds FULL_ADMIN.
- *
- * The result is read as `unknown` and narrowed: middleware merges
- * `twofactor_config` into the user entry it returns, and the secret is only in
- * there as the `secret` query parameter of its `otpauth://` provisioning URI.
+ * Called as the suite's admin, whose FULL_ADMIN lets it renew another user's secret. The result is read as
+ * `unknown` and narrowed: the secret appears only as the `secret` query parameter of the merged
+ * `twofactor_config`'s `otpauth://` URI.
  */
 export async function armTwoFactorSecret(client: E2eApiClient, username: string): Promise<string> {
   const result: unknown = await firstValueFrom(

@@ -1,15 +1,10 @@
 /**
  * The System Security password policy: preconditions, cleanup and readback, over the API.
  *
- * `system.security` is one config record, so there is nothing to create or delete — only five
- * password fields to write back. FIPS and STIG live in the same record and are NEVER written
- * here: enabling FIPS needs a reboot, and enabling STIG locks out every account without
- * two-factor, the suite's own admin included. {@link setPasswordPolicy} sends only the five
- * password fields, so a restore cannot carry either switch with it.
- *
- * A policy left behind is not harmless. The user and password specs (`users-form`,
- * `change-own-password`) would have their passwords refused by it, and an age or history
- * limit can stop a password being changed at all.
+ * `system.security` is one config record. FIPS and STIG share it and are NEVER written here (FIPS needs a reboot;
+ * STIG locks out accounts without two-factor, the suite's admin included): {@link setPasswordPolicy} sends only
+ * the five password fields. A leftover policy would refuse `users-form` and `change-own-password` passwords, and
+ * an age or history limit can block changes entirely.
  */
 import type { CallResponse, JobParams } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -59,13 +54,9 @@ export const systemSecuritySaveTimeoutMs = 60_000;
 /**
  * The ruleset as a plain list.
  *
- * The generated types declare a nullable list, but middleware stores a JSON set and hands it back
- * as `{ $set: [...] }`, which is the shape the card and the form read. Both are accepted here, so
- * the readers do not depend on which one a given appliance sends.
- *
- * It is never null on read: the column is `JSON(set)`, which middleware's `sqlalchemy.py` binds
- * a null as `set()` and reads a NULL back as `set()`. So a cleared ruleset reads as an empty list,
- * and an empty list is what this returns for anything else too.
+ * The types say nullable list, but middleware returns its JSON set as `{ $set: [...] }` (what the card and form
+ * read); both are accepted. Never null on read: the `JSON(set)` column maps NULL to `set()`, so a cleared ruleset
+ * is an empty list, as is anything else unrecognized.
  */
 function unwrapRuleset(value: unknown): PasswordComplexityRule[] {
   const list = value && typeof value === 'object' && '$set' in value ? value.$set : value;

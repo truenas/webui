@@ -1,17 +1,10 @@
 /**
- * Dashboard layout preconditions and cleanup, and the readings its widgets are checked against,
- * over the API.
+ * Dashboard layout preconditions and cleanup, and the readings its widgets are checked against, over the API.
  *
- * The layout is the `dashState` attribute of the account the whole suite signs in as, written by
- * `DashboardStore.save` with `auth.set_attribute`. Like preferences, it is not an object a test
- * creates and deletes: a test that changes it changes what every later test sees, and
- * `tests/dashboard.e2e.ts` relies on the admin's layout holding System Information. So a spec
- * captures the layout once with {@link captureDashState} and writes it back with
- * {@link restoreDashState}, unconditionally.
- *
- * `null` and a missing attribute are the same layout to webui (`dashState || getDefaultWidgets()`).
- * Middleware has no way to unset an attribute, so restoring an account that never had one writes
- * `null`, which leaves the key behind. Recorded under Known gaps in `docs/status.md`.
+ * The layout is the suite account's `dashState` attribute, so changing it affects every later test, and
+ * `tests/dashboard.e2e.ts` relies on System Information being there: specs capture it with
+ * {@link captureDashState} and always write it back with {@link restoreDashState}. Middleware cannot unset an
+ * attribute, so restoring a missing one writes `null` (the same layout to webui); see Known gaps in `docs/status.md`.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

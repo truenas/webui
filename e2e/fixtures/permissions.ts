@@ -1,12 +1,9 @@
 /**
  * A dataset's owner, group and Unix mode, and its NFSv4 and POSIX ACL entries, over the API.
  *
- * Provisioning only, plus the reads a test asserts against. Changing them is what
- * `tests/dataset-permissions.e2e.ts` and `tests/smb-share-acl.e2e.ts` drive through the UI, so
- * nothing here may stand in for it.
- * Permissions have no teardown of their own: they live on the dataset's mountpoint, and the spec
- * deletes the dataset. Custom ACL templates are the exception. They are global to the appliance and
- * outlive every dataset, so they are created and deleted here.
+ * Provisioning and reads only: changing them is what `tests/dataset-permissions.e2e.ts` and
+ * `tests/smb-share-acl.e2e.ts` drive through the UI. No teardown, since the spec deletes the dataset; custom
+ * ACL templates are global and outlive datasets, so they are created and deleted here.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
