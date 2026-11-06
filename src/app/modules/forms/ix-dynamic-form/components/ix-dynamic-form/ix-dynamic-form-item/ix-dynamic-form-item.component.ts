@@ -119,24 +119,10 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Seeds a list schema's `default` entries on a create form. Lived inside the legacy list control before the
-   * move to `tn-form-list`, which knows nothing about chart schemas — and it never belonged
-   * there: it reads `itemsSchema` and emits one add per default, both of which are this
-   * component's own concern.
-   *
-   * Deferred to `AfterViewInit` (and a macrotask beyond it) as it was: adding controls seeds the
-   * `FormArray` the view has just rendered, so it cannot run during that render.
-   *
-   * Seeding waits for the list to be *visible*, which is what the legacy list control got for free by living
-   * under `@if (!(isHidden$ | async))`. The question has to be asked of `hidden$` rather than
-   * `schema.hidden`, because a `show_if` relation or a subquestion hides a question through the
-   * subject alone: `app-schema.service` pairs `hidden$.next(true)` with `disable()` and leaves the
-   * static flag `false`.
-   *
-   * Seeding a hidden list would not just add invisible rows, it would un-disable them:
-   * `FormArray.push` runs `updateValueAndValidity` → `_setInitialStatus`, which re-enables an
-   * array once it holds an enabled control, so the rows would reach the install payload of a
-   * question the user never saw.
+   * Seeds a list schema's `default` entries on a create form, after the view renders the `FormArray`.
+   * Waits until the list is visible via `hidden$`, not `schema.hidden`, because `show_if` hides through
+   * the subject alone. Seeding a hidden list would re-enable it (`FormArray.push` re-enables an array
+   * holding an enabled control), sending a question the user never saw in the install payload.
    */
   ngAfterViewInit(): void {
     const schema = this.dynamicSchema();

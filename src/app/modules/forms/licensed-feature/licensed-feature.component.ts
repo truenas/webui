@@ -5,21 +5,10 @@ import { NgControl } from '@angular/forms';
 import { TnIconComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 
 /**
- * Standard presentation for a form control gated behind a license (Enterprise, HA) or
- * licensed hardware. Wrap the control inside its `tn-form-field` (leave the field's own
- * `tooltip` unset — this component renders the help icon instead):
- *
- * ```html
- * <tn-form-field>
- *   <ix-licensed-feature [locked]="form.controls.rdma.disabled" [tooltip]="helptext.rdma | translate">
- *     <tn-checkbox formControlName="rdma" [label]="'Enable RDMA' | translate"></tn-checkbox>
- *   </ix-licensed-feature>
- * </tn-form-field>
- * ```
- *
- * - Unlocked: a regular `?` help icon with `tooltip` (none when `tooltip` is empty).
- * - Locked: a key icon instead of the `?`, and hovering the disabled control shows the same
- *   text as the key, so users never have to click to learn why the control is disabled.
+ * Wraps a control gated behind a license or licensed hardware, inside its `tn-form-field` (leave the
+ * field's `tooltip` unset), e.g. `<ix-licensed-feature [locked]="form.controls.rdma.disabled" [tooltip]="...">`.
+ * Unlocked, it shows a `?` help icon with `tooltip`; locked, a key icon, and hovering the disabled control
+ * shows the same text, so users needn't click to learn why it's disabled.
  */
 @Component({
   selector: 'ix-licensed-feature',

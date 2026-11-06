@@ -1,13 +1,7 @@
 /**
- * Returned by a control harness asked for something it cannot read off the control it wraps —
- * `TnFormControlHarness` over a `tn-form-field` holding a `tn-chip-input`, say. Whole-form readers
- * (`getControlValues`, `getDisabledStates`) leave such a control out of their result entirely
- * rather than reporting a stand-in for it, so a form-wide `toEqual` fails on the missing key
- * instead of passing against something that was never read from anything.
- *
- * Declared next to the contract rather than next to its only producer today, because both
- * whole-form readers are generic over {@link IxFormControlHarness} — the sentinel is part of what
- * that interface promises, not an implementation detail of one harness.
+ * Returned by a control harness that can't read the control it wraps (e.g. a `tn-chip-input` in a
+ * field). Whole-form readers omit such controls, so a form-wide `toEqual` fails instead of passing on
+ * an unread value. Declared with the contract because both readers are generic over it.
  */
 export const unreadableControl = Symbol('unreadableControl');
 

@@ -6,15 +6,9 @@ import { TreeNodeSource } from 'app/modules/forms/file-picker/tree-node-source';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 /**
- * Builds a `tn-file-picker` `[source]` from a middleware {@link TreeNodeProvider}:
- *
- * ```html
- * <tn-file-picker formControlName="path" [source]="treeNodeProvider | filePickerSource" />
- * <tn-file-picker formControlName="dataset" [source]="provider | filePickerSource : [emptyRootNode]" />
- * ```
- *
- * Pure, so a new source (with a fresh listing cache) is built only when the provider or the
- * root nodes change.
+ * Builds a `tn-file-picker` `[source]` from a {@link TreeNodeProvider}, e.g.
+ * `[source]="provider | filePickerSource : [emptyRootNode]"`. Pure, so a new source and listing cache
+ * are built only when the provider or root nodes change.
  */
 @Pipe({
   name: 'filePickerSource',

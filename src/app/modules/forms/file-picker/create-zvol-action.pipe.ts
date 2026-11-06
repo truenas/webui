@@ -13,17 +13,9 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
 
 /**
- * A "Create Zvol" action for a `tn-file-picker` browsing `/dev/zvol` (`[zvolsRootNode]`): it
- * opens the zvol form for the browsed dataset, and the picker selects the zvol it creates.
- *
- * ```html
- * @let zvolSource = zvolProvider | filePickerSource : [zvolsRootNode];
- * <tn-file-picker
- *   formControlName="device_path"
- *   [source]="zvolSource"
- *   [createActions]="[zvolSource | createZvolAction]"
- * />
- * ```
+ * A "Create Zvol" action for a `tn-file-picker` browsing `/dev/zvol`: it opens the zvol form for the
+ * browsed dataset and the picker selects the result. Use as
+ * `[createActions]="[zvolSource | createZvolAction]"`, with `zvolSource` built by `filePickerSource`.
  */
 @Pipe({
   name: 'createZvolAction',

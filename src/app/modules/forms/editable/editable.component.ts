@@ -11,22 +11,8 @@ import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.util
 import { FocusService } from 'app/services/focus.service';
 
 /**
- * Editable component that allows inline editing of a value.
- *
- * You may want to use it with ix-details-table.
- *
- * @example
- * ```html
- * <ix-editable>
- *    <div view>
- *      {{ form.value.name }}
- *    </div>
- *
- *    <div edit>
- *      <tn-input formControlName="name"></tn-input>
- *    </div>
- *  </ix-editable>
- * ```
+ * Inline editing of a value, often inside ix-details-table. Project the read-only content into `view`
+ * and the controls into `edit`.
  */
 @Component({
   selector: 'ix-editable',
@@ -121,30 +107,18 @@ export class EditableComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Determines whether the given target element should be considered "inside"
-   * this editable component. This prevents the editable from being closed when:
-   *
-   * - The click occurs within the editable itself.
-   * - The click occurs within allowed overlay components like autocomplete, select dropdowns, menus, or datepickers.
-   * - Any modal/dialog container is currently open (assumes it overlaps the editable contextually).
-   *
-   * @param target - The DOM element that was clicked or interacted with.
-   * @returns True if the target is within the editable or a valid overlay area; otherwise, false.
-  */
+   * Whether a click target counts as inside the editable: the editable itself, an allowed overlay
+   * (autocomplete, select, menu, datepicker), or anything while a dialog is open.
+   */
   isElementWithin(target: HTMLElement): boolean {
     const editableEl = this.elementRef.nativeElement;
 
     if (editableEl.contains(target)) return true;
 
     const allowedOverlaySelectors = [
-      // @truenas/ui-components (tn-* form controls) overlays. These render in a
-      // CDK overlay outside the editable's DOM, so without this a click on a
-      // tn-select option / tn-chip-input suggestion counts as "outside" and
-      // prematurely closes the editable.
-      // TEMP: these are internal library class names, not part of the
-      // @truenas/ui-components public API, and may break on a library bump.
-      // Replace once the library exposes a stable overlay hook (tracked under
-      // Epic NAS-141021 as a library follow-up).
+      // tn-* overlays render in a CDK overlay outside this DOM, so clicks there would close the editable.
+      // TEMP: internal library class names that may break on a bump; replace once the library exposes a
+      // stable overlay hook (NAS-141021 follow-up).
       '.tn-select-dropdown',
       '.tn-chip-input__dropdown',
       '.tn-autocomplete__dropdown',

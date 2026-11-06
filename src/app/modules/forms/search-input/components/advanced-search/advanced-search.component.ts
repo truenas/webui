@@ -370,14 +370,9 @@ export class AdvancedSearchComponent<T> implements OnInit {
   }
 
   /**
-   * Two `property = value` conditions on the same property can never both hold, so a repeated
-   * `=` is treated as the user replacing the earlier value — the behavior the filter-preset
-   * toggles rely on (e.g. picking "Show Built-in Users" after "Hide Built-in Users").
-   *
-   * Every other comparator stacks legitimately and is left untouched:
-   * `Event != "AUTHENTICATION" AND Event != "CLOSE"` excludes both events, and
-   * `Timestamp > "..." AND Timestamp < "..."` is a range. Collapsing those by property name
-   * silently dropped all but the last condition (NAS-142222).
+   * Two `property = value` conditions can't both hold, so a repeated `=` replaces the earlier one, which
+   * the filter-preset toggles rely on. Other comparators stack legitimately (`Event != "A" AND Event != "B"`,
+   * or a `Timestamp` range), so they are left alone.
    */
   private mergeConflictingFilters(filters: QueryFilters<T>): QueryFilters<T> {
     const lastEqualityIndexes = new Map<string, number>();

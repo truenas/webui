@@ -49,15 +49,9 @@ export class IxPermissionsComponent implements OnInit, ControlValueAccessor {
   private formatRe = /^[0-7][0-7][0-7]$/;
 
   /**
-   * Ids for the four permission rows, scoped by the bound control's name. Built once in
-   * {@link ngOnInit} — `NgControl.name` comes from the `formControlName` binding, so it is set
-   * before then and does not change — rather than from the template, which would rebuild four
-   * arrays on every change-detection pass.
-   *
-   * Normalized rather than left to the library for both halves of the legacy behaviour: lodash
-   * splits a letter→digit boundary the library's kebab leaves alone (`mode2` →
-   * `row-mode-2-user-permissions`), and an unnamed control contributes no segment at all rather
-   * than a literal `null`. See {@link normalizeTestIdParts}.
+   * Ids for the four permission rows, scoped by the control's name, built once in {@link ngOnInit} rather
+   * than per change detection. Normalized with lodash (see {@link normalizeTestIdParts}) to keep the legacy
+   * ids: `mode2` → `row-mode-2-user-permissions`, and no segment at all for an unnamed control.
    */
   protected rowTestIds: Record<'header' | 'user' | 'group' | 'other', string[]>;
 

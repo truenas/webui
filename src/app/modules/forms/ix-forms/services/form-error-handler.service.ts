@@ -202,26 +202,11 @@ export class FormErrorHandlerService {
 
 
   /**
-   * A backend verdict is pinned with `setErrors()`, so — unlike a validator result — it never
-   * re-evaluates. Angular drops it when THAT control changes, but an error the user is meant to
-   * answer from a DIFFERENT field (ticking `Force` for an NTP address the server could not reach)
-   * would stay pinned forever, leaving Save disabled with no way out but re-editing the flagged
-   * field.
-   *
-   * So the pin retires itself: a verdict describes one submitted payload, and an edit elsewhere in
-   * the form moves the payload on. Re-running the controls' validators is what retires them — the
-   * pinned set is replaced by each control's real validation state, so a field that is genuinely
-   * empty-but-required goes back to saying `required` rather than falling silently valid. If the
-   * verdict still stands, the next save pins it again.
-   *
-   * A verdict can flag several fields at once, and then only edits OUTSIDE the flagged set count:
-   * answering one of them must not wipe the messages for the others the user has not reached yet.
-   * `valueChanges` doesn't say which control moved, but Angular has already dropped that control's
-   * own pin by the time this runs — so a flagged control that lost its pin IS the edited one, and
-   * the rest stay pinned and keep listening.
-   *
-   * Unsubscribed before the clearing so `updateValueAndValidity()` can emit normally: that emission
-   * is what refreshes `<ix-form>`'s status signal, and so the host's Save button.
+   * Backend verdicts are pinned with `setErrors()` and never re-evaluate, so one answered from another
+   * field (ticking `Force` for an unreachable NTP server) would leave Save disabled. An edit outside the
+   * flagged set re-runs validators, restoring each control's real state; the next save re-pins it if it
+   * still stands. Angular already drops an edited control's own pin, so the rest stay pinned. Unsubscribes
+   * first so `updateValueAndValidity()` emits and refreshes the host's Save button.
    */
   private retirePinnedErrorsOnNextEdit(): void {
     const pinned = this.pinnedControls;

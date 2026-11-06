@@ -9,15 +9,10 @@ import { ExplorerNodeData, TreeNode } from 'app/interfaces/tree-node.interface';
 import { TreeNodeProvider } from 'app/modules/forms/file-picker/tree-node-provider.interface';
 
 /**
- * Adapts a {@link TreeNodeProvider} (middleware filesystem/dataset listings) and its root nodes
- * to a `tn-file-picker` `[source]`. Build one with the `filePickerSource` pipe.
- *
- * Paths come in two spaces:
- * - provider space — what providers, root nodes and the form value use. Usually absolute
- *   (`/mnt/tank`), but some providers (replication datasets, pool.filesystem_choices) work with
- *   relative dataset names under an empty root (`tank/child`).
- * - picker space — what `tn-file-picker` browses with, always slash-rooted. Relative names get a
- *   leading slash (`/tank/child`); `valueRoot: '/'` maps them back for the form value.
+ * Adapts a {@link TreeNodeProvider} and its root nodes to a `tn-file-picker` `[source]`; build it with
+ * `filePickerSource`. Provider paths are usually absolute, but some providers use relative dataset names
+ * (`tank/child`). The picker always browses slash-rooted paths, so relative names gain a leading slash
+ * and `valueRoot: '/'` maps them back for the form value.
  */
 export class TreeNodeSource implements FilePickerSource {
   readonly callbacks: FilePickerCallbacks = {
@@ -45,13 +40,9 @@ export class TreeNodeSource implements FilePickerSource {
   ) {
     this.usesRelativePaths = !(rootNodes[0]?.path ?? '/').startsWith('/');
 
-    // The static single roots (`[datasetsRootNode]` → /mnt, `[zvolsRootNode]` → /dev/zvol)
-    // become the picker root directly: browsing starts inside them and cannot navigate above
-    // them. Everything else — multiple roots, relative roots, and dynamic single roots like
-    // smb's per-pool nodes (whose count varies per system, so rooting inside one would make the
-    // same form behave differently across systems) — falls back to `/`, with the top-level
-    // listing synthesized from the root nodes (see `loadChildren`). Only browsing is confined:
-    // typed paths are committed verbatim (`allowFreeText`).
+    // A static single root (/mnt, /dev/zvol) becomes the picker root, confining browsing to it. Other
+    // roots, including smb's per-pool nodes whose count varies by system, fall back to `/` with a listing
+    // synthesized from the root nodes. Typed paths are still committed verbatim (`allowFreeText`).
     const isStaticRoot = rootNodes.length === 1 && [mntPath, zvolPath].includes(rootNodes[0].path);
     this.rootPath = isStaticRoot ? rootNodes[0].path : '/';
     this.startPath = this.rootPath;

@@ -1,13 +1,5 @@
 /**
- * Default debounce time in milliseconds for autocomplete suggestions and validation.
- *
- * Used by the `ix-user-*` / `ix-group-*` directory
- * pickers, for BOTH the search fetch and the existence validation — so a field
- * does not query the directory twice on different clocks.
- *
- * The 300ms value provides a balance between:
- * - Responsive UI (fast enough that users don't notice delay)
- * - API efficiency (prevents spamming backend on every keystroke)
- * - Accessibility (accommodates users who type more slowly)
+ * Debounce for autocomplete suggestions and validation. The `ix-user-*` / `ix-group-*` pickers use it for
+ * both search and existence checks, so a field doesn't query the directory on two clocks.
  */
 export const defaultDebounceTimeMs = 300;
