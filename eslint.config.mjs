@@ -115,6 +115,7 @@ const commentCappedPaths = [
   'src/app/modules/unsaved-changes',
   'src/app/modules/use-enterprise-marketing-link',
   'src/app/modules/warning',
+  'src/app/pages/apps',
   'src/app/pages/dashboard',
   'src/app/pages/directory-service',
   'src/app/pages/reports-dashboard',

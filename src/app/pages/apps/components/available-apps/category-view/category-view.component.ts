@@ -108,13 +108,11 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * The query parameter is the source of truth here: it carries the term over from the Discover
-   * page, survives a reload and makes a searched category shareable as a link. Where the URL
-   * carries no parameter the term already in the store is inherited instead, so the entry points
-   * that do not set one - `Show All` and the `Available Apps` count, which both link to
-   * `/apps/available/all` bare - narrow the category rather than silently throwing the term away
-   * (and dropping it for Discover too, on the way back). The inherited term is written into the
-   * URL straight away, so the box, the grid and the address bar never disagree.
+   * The query parameter is the source of truth: it carries the term over from Discover, survives a
+   * reload and makes a searched category shareable. Without one, the store's term is inherited, so the
+   * bare `/apps/available/all` links (`Show All`, the `Available Apps` count) narrow the category
+   * instead of dropping the term. The inherited term goes into the URL straight away, so the box, the
+   * grid and the address bar never disagree.
    */
   private setUpSearch(): void {
     this.appsFilterStore.searchQuery$.pipe(

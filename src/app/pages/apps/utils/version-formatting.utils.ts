@@ -1,16 +1,8 @@
 
 /**
- * Extracts the upstream app version from a version string.
- * Handles the format "app_version_library_version" by removing the library version suffix.
- *
- * @param humanVersion - The human-readable version string (e.g., "32.0.3_2.1.22")
- * @param libraryVersion - The internal library version (e.g., "2.1.22")
- * @returns The upstream app version (e.g., "32.0.3")
- *
- * @example
- * extractAppVersion("32.0.3_2.1.22", "2.1.22") // Returns "32.0.3"
- * extractAppVersion("1.0.0", "1.0.0") // Returns "1.0.0"
- * extractAppVersion(undefined, "1.0.0") // Returns "1.0.0"
+ * Extracts the upstream app version by dropping the library version suffix from a human version
+ * in the form "app_version_library_version": ("32.0.3_2.1.22", "2.1.22") → "32.0.3".
+ * Without a human version, returns the library version.
  */
 export function extractAppVersion(humanVersion: string | undefined, libraryVersion: string): string {
   if (!humanVersion) {
@@ -26,19 +18,8 @@ export function extractAppVersion(humanVersion: string | undefined, libraryVersi
 }
 
 /**
- * Formats a version display string, emphasizing app version over revision.
- * Can show just app version or include revision for uniqueness.
- *
- * @param libraryVersion - The internal library version (e.g., "2.1.22")
- * @param humanVersion - The human-readable version string or app version (e.g., "32.0.3_2.1.22" or "32.0.3")
- * @param options - Optional configuration
- * @param options.showRevision - Whether to show revision in parentheses (default: true)
- * @returns Formatted version string
- *
- * @example
- * formatVersionLabel("2.1.22", "32.0.3_2.1.22") // Returns "32.0.3 (2.1.22)"
- * formatVersionLabel("2.1.22", "32.0.3_2.1.22", { showRevision: false }) // Returns "32.0.3"
- * formatVersionLabel("1.0.0", "1.0.0") // Returns "1.0.0 (1.0.0)"
+ * Formats the app version with the revision in parentheses, which keeps labels unique:
+ * ("2.1.22", "32.0.3_2.1.22") → "32.0.3 (2.1.22)". Pass `showRevision: false` for the app version alone.
  */
 export function formatVersionLabel(
   libraryVersion: string,
@@ -58,16 +39,8 @@ export function formatVersionLabel(
 }
 
 /**
- * Formats a version label with explicit "Version" and "Revision" labels.
- * Used in dropdown options and update dialogs for clarity.
- *
- * @param libraryVersion - The internal library version (e.g., "2.1.22")
- * @param humanVersion - The human-readable version string (e.g., "32.0.3_2.1.22")
- * @returns Formatted string in the format "Version: X / Revision: Y"
- *
- * @example
- * formatVersionWithRevision("2.1.22", "32.0.3_2.1.22") // Returns "Version: 32.0.3 / Revision: 2.1.22"
- * formatVersionWithRevision("1.0.0", "1.0.0") // Returns "Version: 1.0.0 / Revision: 1.0.0"
+ * Formats "Version: X / Revision: Y" for dropdown options and update dialogs,
+ * e.g. ("2.1.22", "32.0.3_2.1.22") → "Version: 32.0.3 / Revision: 2.1.22".
  */
 export function formatVersionWithRevision(libraryVersion: string, humanVersion: string): string {
   const appVersion = extractAppVersion(humanVersion, libraryVersion);
