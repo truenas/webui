@@ -123,6 +123,7 @@ const commentCappedPaths = [
   'src/app/modules/unsaved-changes',
   'src/app/modules/use-enterprise-marketing-link',
   'src/app/modules/warning',
+  'src/app/modules/websocket-debug-panel',
   'src/app/pages/apps',
   'src/app/pages/audit',
   'src/app/pages/dashboard',
