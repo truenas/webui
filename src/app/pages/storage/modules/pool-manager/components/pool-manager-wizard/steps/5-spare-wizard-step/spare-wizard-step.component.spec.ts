@@ -1,9 +1,9 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -42,7 +42,7 @@ describe('SpareWizardStepComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockProvider(PoolManagerStore, {
-        getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        getInventoryForStep: jest.fn(() => signal(fakeInventory)),
         resetStep: jest.fn(),
       }),
     ],

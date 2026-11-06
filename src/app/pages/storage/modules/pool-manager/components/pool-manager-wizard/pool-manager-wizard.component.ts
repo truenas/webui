@@ -1,5 +1,7 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnDestroy, OnInit, output, viewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, OnDestroy, OnInit, output,
+  viewChild, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -8,13 +10,11 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnDialog, TnStepComponent, TnStepperComponent,
 } from '@truenas/ui-components';
-import { combineLatest, of } from 'rxjs';
-import {
-  filter, map, switchMap, tap,
-} from 'rxjs/operators';
+import { of } from 'rxjs';
+import { filter, switchMap } from 'rxjs/operators';
 import { StepActivationDirective } from 'app/directives/step-activation.directive';
 import {
-  CreatePool, Pool, toPoolCreateArgs, toPoolUpdateArgs, UpdatePool,
+  CreatePool, toPoolCreateArgs, toPoolUpdateArgs, UpdatePool,
 } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -27,7 +27,7 @@ import {
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationWizardStep, getPoolCreationWizardStepIndex } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-wizard-step.enum';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
-import { PoolManagerState, PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { topologyToPayload } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
@@ -64,7 +64,6 @@ import { ReviewWizardStepComponent } from './steps/9-review-wizard-step/review-w
     DedupWizardStepComponent,
     ReviewWizardStepComponent,
     TranslateModule,
-    AsyncPipe,
   ],
   providers: [
     PoolManagerValidationService,
@@ -88,27 +87,35 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   private generalStep = viewChild<GeneralWizardStepComponent>('generalStep');
   private enclosureStep = viewChild<EnclosureWizardStepComponent>('enclosureStep');
 
-  protected existingPool: Pool | null = null;
-
   readonly stepChanged = output<PoolCreationWizardStep>();
 
   private readonly stepper = viewChild.required(TnStepperComponent);
 
-  isLoading$ = combineLatest([this.store.isLoading$, this.addVdevsStore.isLoading$]).pipe(
-    map(([storeLoading, secondaryLoading]) => storeLoading || secondaryLoading),
-  );
+  protected existingPool = this.addVdevsStore.pool;
+  protected topology = this.store.topology;
+  protected isLoading = computed(() => this.store.isLoading() || this.addVdevsStore.isLoading());
+
+  private hasEnclosureSupport = this.systemStore$.selectSignal(selectHasEnclosureSupport);
+  protected hasEnclosureStep = computed(() => {
+    return this.store.hasMultipleEnclosuresAfterFirstStep() && this.hasEnclosureSupport();
+  });
 
   activeStep: PoolCreationWizardStep = PoolCreationWizardStep.General;
-  hasEnclosureStep = false;
-  state: PoolManagerState;
-  topLevelWarningsForEachStep: Partial<Record<PoolCreationWizardStep, string | null>>;
-  topLevelErrorsForEachStep: Partial<Record<PoolCreationWizardStep, string | null>>;
   activatedSteps: Partial<Record<PoolCreationWizardStep, boolean>> = {};
 
   protected readonly PoolCreationWizardStep = PoolCreationWizardStep;
 
+  constructor() {
+    // The Enclosure step appears above the current one, so keep the stepper on the step the user was on.
+    effect(() => {
+      if (this.hasEnclosureStep()) {
+        setTimeout(() => this.stepper().selectedIndex.set(getPoolCreationWizardStepIndex[this.activeStep]));
+      }
+    });
+  }
+
   get hasSoftwareEncryption(): boolean {
-    return this.state.encryptionType === EncryptionType.Software;
+    return this.store.encryptionType() === EncryptionType.Software;
   }
 
   get isFormDirty(): boolean {
@@ -116,10 +123,8 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.connectToStore();
-    this.checkEnclosureStepAvailability();
+    this.store.initialize();
     this.listenForStartOver();
-    this.loadExistingPoolDetails();
   }
 
   ngOnDestroy(): void {
@@ -127,24 +132,12 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     this.store.resetStoreToInitialState();
   }
 
-  private loadExistingPoolDetails(): void {
-    this.addVdevsStore.pool$.pipe(
-      filter(Boolean),
-      tap((pool) => {
-        this.existingPool = pool;
-        this.cdr.markForCheck();
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
-  }
-
   getTopLevelWarningForStep(step: PoolCreationWizardStep): string | null | undefined {
-    return this.topLevelWarningsForEachStep?.[step];
+    return this.poolManagerValidation.topLevelWarningsForEachStep()[step];
   }
-
 
   getTopLevelErrorForStep(step: PoolCreationWizardStep): string {
-    return this.topLevelErrorsForEachStep?.[step] || '';
+    return this.poolManagerValidation.topLevelErrorsForEachStep()[step] || '';
   }
 
   getWasStepActivated(step: PoolCreationWizardStep): boolean {
@@ -164,8 +157,9 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     const payload = this.prepareCreatePayload();
 
     // If SED encryption is selected and a password was entered, update global SED password first
-    const sedPasswordUpdate$ = this.state.encryptionType === EncryptionType.Sed && this.state.sedPassword
-      ? this.api.call('system.advanced.update', [{ sed_passwd: this.state.sedPassword }])
+    const sedPassword = this.store.sedPassword();
+    const sedPasswordUpdate$ = this.store.encryptionType() === EncryptionType.Sed && sedPassword
+      ? this.api.call('system.advanced.update', [{ sed_passwd: sedPassword }])
       : of(null);
 
     sedPasswordUpdate$.pipe(
@@ -220,50 +214,11 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     });
   }
 
-  private connectToStore(): void {
-    this.store.initialize();
-
-    this.store.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.state = state;
-      this.cdr.markForCheck();
-    });
-
-    this.poolManagerValidation.getTopLevelWarningsForEachStep().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((warnings) => {
-      this.topLevelWarningsForEachStep = warnings;
-      this.cdr.markForCheck();
-    });
-
-    this.poolManagerValidation.getTopLevelErrorsForEachStep().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((warnings) => {
-      this.topLevelErrorsForEachStep = warnings;
-      this.cdr.markForCheck();
-    });
-  }
-
-  private checkEnclosureStepAvailability(): void {
-    combineLatest([
-      this.store.hasMultipleEnclosuresAfterFirstStep$,
-      this.systemStore$.select(selectHasEnclosureSupport),
-    ]).pipe(
-      map(([hasMultipleEnclosures, hasEnclosureSupport]) => hasMultipleEnclosures && hasEnclosureSupport),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((result) => {
-      this.hasEnclosureStep = result;
-      if (result) {
-        setTimeout(() => this.stepper().selectedIndex.set(getPoolCreationWizardStepIndex[this.activeStep]));
-      }
-      this.cdr.markForCheck();
-    });
-  }
-
   private prepareCreatePayload(): CreatePool {
     const payload: CreatePool = {
-      name: this.state.name,
-      topology: topologyToPayload(this.state.topology),
-      allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
+      name: this.store.name(),
+      topology: topologyToPayload(this.store.topology()),
+      allow_duplicate_serials: this.store.diskSettings().allowNonUniqueSerialDisks,
       encryption: this.hasSoftwareEncryption,
     };
 
@@ -273,13 +228,13 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       };
     }
 
-    if (this.state.encryptionType === EncryptionType.Sed) {
+    if (this.store.encryptionType() === EncryptionType.Sed) {
       payload.all_sed = true;
     }
 
-    // Only offered without a SUPPORT entitlement (see review-wizard-step), so state.forceTopology
+    // Only offered without a SUPPORT entitlement (see review-wizard-step), so forceTopology
     // is never true on a supported system, where middleware rejects it outright.
-    if (this.state.forceTopology) {
+    if (this.store.forceTopology()) {
       payload.force_topology = true;
     }
 
@@ -288,16 +243,16 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
 
   private updatePool(): void {
     const payload: UpdatePool = {
-      topology: topologyToPayload(this.state.topology),
-      allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
+      topology: topologyToPayload(this.store.topology()),
+      allow_duplicate_serials: this.store.diskSettings().allowNonUniqueSerialDisks,
     };
 
-    if (this.state.forceTopology) {
+    if (this.store.forceTopology()) {
       payload.force_topology = true;
     }
 
     this.dialogService.jobDialog(
-      this.api.job('pool.update', [this.existingPool.id, toPoolUpdateArgs(payload)]),
+      this.api.job('pool.update', [this.existingPool().id, toPoolUpdateArgs(payload)]),
       { title: this.translate.instant('Update Pool') },
     )
       .afterClosed()
@@ -320,7 +275,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
-        if (!this.existingPool) {
+        if (!this.existingPool()) {
           this.createPool();
           return;
         }

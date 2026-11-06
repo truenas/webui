@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   TnFormFieldComponent, TnFormFieldHarness, TnSelectComponent, TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponents, ngMocks } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -60,7 +61,7 @@ describe('AutomatedDiskSelection', () => {
       mockProvider(PoolManagerStore, {
         startOver$,
         resetStep$,
-        isLoading$: of(false),
+        isLoading: signal(false),
       }),
     ],
   });

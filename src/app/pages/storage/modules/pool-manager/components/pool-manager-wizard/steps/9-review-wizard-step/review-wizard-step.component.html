@@ -4,16 +4,16 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Pool Name' | translate }}</div>
-      <div class="value" tnTestId="review-pool-name" tnTestIdType="text">{{ state.name || ('Not Set' | translate) }}</div>
+      <div class="value" tnTestId="review-pool-name" tnTestIdType="text">{{ name() || ('Not Set' | translate) }}</div>
     </div>
 
-    @if (state.encryptionType !== EncryptionType.None) {
+    @if (encryptionType() !== EncryptionType.None) {
       <div class="summary-item">
         <div class="label">{{ 'Encryption' | translate }}</div>
         <div class="value" tnTestId="review-encryption" tnTestIdType="text">
-          @if (state.encryptionType === EncryptionType.Software) {
+          @if (encryptionType() === EncryptionType.Software) {
             {{ 'Software (ZFS)' | translate }}
-          } @else if (state.encryptionType === EncryptionType.Sed) {
+          } @else if (encryptionType() === EncryptionType.Sed) {
             {{ 'Hardware (SED)' | translate }}
           }
         </div>
@@ -25,7 +25,7 @@
   <div class="summary-group topology-summary">
     <h4>{{ 'Topology Summary' | translate }}</h4>
 
-    @for (category of nonEmptyTopologyCategories; track category[0]) {
+    @for (category of nonEmptyTopologyCategories(); track category[0]) {
       <div class="summary-item">
         <div class="label" tnTestIdType="text" [tnTestId]="['review', category[0], 'label']">
           {{ category[0] | mapValue: vdevTypeLabels | translate }}
@@ -44,18 +44,18 @@
 
     <div class="summary-item">
       <div class="label">{{ 'Est. Usable Raw Capacity' | translate }}</div>
-      <div class="value" tnTestId="review-est-usable-raw-capacity" tnTestIdType="text">{{ (totalCapacity$ | async) | ixFileSize }}</div>
+      <div class="value" tnTestId="review-est-usable-raw-capacity" tnTestIdType="text">{{ totalCapacity() | ixFileSize }}</div>
     </div>
 
-    @if (state.enclosureSettings.maximizeEnclosureDispersal || limitToEnclosureName) {
+    @if (enclosureSettings().maximizeEnclosureDispersal || limitToEnclosureName()) {
       <div class="summary-item">
         <div class="label">{{ 'Dispersal Strategy' | translate }}</div>
         <div class="value" tnTestId="review-dispersal-strategy" tnTestIdType="text">
-          @if (state.enclosureSettings.maximizeEnclosureDispersal) {
+          @if (enclosureSettings().maximizeEnclosureDispersal) {
             {{ 'Maximize Dispersal' | translate }}
           }
-          @if (limitToEnclosureName) {
-            {{ 'Limit To {name} Enclosure' | translate: { name: limitToEnclosureName } }}
+          @if (limitToEnclosureName()) {
+            {{ 'Limit To {name} Enclosure' | translate: { name: limitToEnclosureName() } }}
           }
         </div>
       </div>
@@ -63,10 +63,10 @@
   </div>
 </div>
 <div class="summary-row">
-  @if (poolCreationErrors.length) {
+  @if (poolCreationErrors().length) {
     <div>
       <h4>{{ 'Warnings' | translate }}</h4>
-      @for (error of poolCreationErrors; track error.severity + error.text) {
+      @for (error of poolCreationErrors(); track error.severity + error.text) {
         <div>
           <div tnTestIdType="text" [tnTestId]="['review-warning', $index]" [class]="[error.severity, 'summary-item']">
             {{ error.text }}
@@ -99,7 +99,7 @@
     [label]="'Back' | translate"
   ></tn-button>
 
-  @if (hasVdevs) {
+  @if (hasVdevs()) {
     <tn-button
       [testId]="'inspect-vdevs'"
       [label]="'Inspect VDEVs' | translate"
@@ -107,7 +107,7 @@
     ></tn-button>
   }
 
-  @if (showStartOver) {
+  @if (showStartOver()) {
     <tn-button
       color="warn"
       [testId]="'start-over'"
@@ -121,7 +121,7 @@
     color="primary"
     [testId]="'create-pool'"
     [label]="isAddingVdevs() ? ('Update Pool' | translate) : ('Create Pool' | translate)"
-    [disabled]="isCreateDisabled"
+    [disabled]="isCreateDisabled()"
     (onClick)="createPool.emit()"
   ></tn-button>
 </ix-form-actions>

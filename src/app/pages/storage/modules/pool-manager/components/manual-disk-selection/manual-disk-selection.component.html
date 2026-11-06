@@ -11,7 +11,7 @@
       <div class="right-pane">
         <div class="header vdevs-header">
           <h3>{{ 'VDEVs' | translate }}</h3>
-          @if (!(hideAddVdevButton$ | async)) {
+          @if (!hideAddVdevButton()) {
             <div class="header-actions">
               <tn-button
                 *ixRequiresRoles="requiredRoles"
@@ -26,13 +26,13 @@
 
         <tn-divider class="header-divider"></tn-divider>
         <div class="vdevs-container">
-          @if (!currentVdevs.length) {
+          @if (!currentVdevs().length) {
             <div class="no-vdevs">
               <p>{{ 'Click Add to add the first VDEV.' | translate }}</p>
               <p>{{ 'Alternatively, you can start by configuring VDEVs in the wizard first and then opening Manual selection to make adjustments.' | translate }}</p>
             </div>
           } @else {
-            @for (vdev of currentVdevs; track trackVdevById($index, vdev)) {
+            @for (vdev of currentVdevs(); track trackVdevById($index, vdev)) {
               <ix-manual-selection-vdev
                 [vdev]="vdev"
                 [layout]="data.layout"
@@ -59,7 +59,7 @@
       color="primary"
       testId="save-selection"
       [label]="'Save Selection' | translate"
-      [disabled]="isSaveDisabled$ | async"
+      [disabled]="isSaveDisabled()"
       (onClick)="onSaveSelection()"
     ></tn-button>
   </div>

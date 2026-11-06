@@ -1,10 +1,10 @@
 <ix-layout-step
   [description]="helptext.specialVdevDescription | translate"
   [type]="vDevType.Special"
-  [inventory]="(inventory$ | async) || []"
+  [inventory]="inventory()"
   [canChangeLayout]="true"
-  [limitLayouts]="allowedLayouts"
-  [minMirrorWidth]="minMirrorWidth"
+  [limitLayouts]="parityLock().allowedLayouts"
+  [minMirrorWidth]="parityLock().minMirrorWidth"
   [isStepActive]="isStepActive()"
 ></ix-layout-step>
 

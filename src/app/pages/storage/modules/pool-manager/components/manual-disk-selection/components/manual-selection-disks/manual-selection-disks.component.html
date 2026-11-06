@@ -1,6 +1,6 @@
 <ix-manual-selection-disk-filters
   [isSedEncryption]="isSedEncryption()"
-  (filtersUpdated)="filtersUpdated.next($event)"
+  (filtersUpdated)="filters.set($event)"
 ></ix-manual-selection-disk-filters>
 
 <div
@@ -13,7 +13,7 @@
     class="tree-container"
   >
     <tn-tree
-      [dataSource]="dataSource"
+      [dataSource]="dataSource()"
       [treeControl]="treeControl"
     >
       <tn-nested-tree-node
@@ -75,7 +75,7 @@
         <ng-container slot="children" tnTreeNodeOutlet></ng-container>
       </tn-nested-tree-node>
     </tn-tree>
-    @if (!dataSource.data.length) {
+    @if (!dataSource().data.length) {
       <div class="empty-tree">
         {{ 'No Unassigned Disks' | translate }}
       </div>

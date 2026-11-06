@@ -44,7 +44,7 @@ import { minDisksPerLayout } from 'app/pages/storage/modules/pool-manager/utils/
 })
 export class ManualSelectionVdevComponent {
   private cdr = inject(ChangeDetectorRef);
-  protected store$ = inject(ManualDiskSelectionStore);
+  private store = inject(ManualDiskSelectionStore);
   private translate = inject(TranslateService);
   protected dragToggleStore = inject(ManualDiskSelectionDragToggleStore);
 
@@ -144,7 +144,7 @@ export class ManualSelectionVdevComponent {
   }
 
   deleteVdev(): void {
-    this.store$.removeVdev(this.vdev());
+    this.store.removeVdev(this.vdev());
   }
 
   onDrop(event: DndDropEvent): void {
@@ -153,9 +153,9 @@ export class ManualSelectionVdevComponent {
       return;
     }
     if (disk.vdevUuid) {
-      this.store$.removeDiskFromVdev(disk);
+      this.store.removeDiskFromVdev(disk);
     }
-    this.store$.addDiskToVdev({ disk, vdev: this.vdev() });
+    this.store.addDiskToVdev({ disk, vdev: this.vdev() });
     this.dragToggleStore.toggleActivateDrag(false);
     this.cdr.markForCheck();
   }

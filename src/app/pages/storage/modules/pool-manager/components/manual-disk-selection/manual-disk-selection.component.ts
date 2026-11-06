@@ -1,10 +1,9 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, OnInit, inject,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnDividerComponent } from '@truenas/ui-components';
-import { combineLatest, filter, map } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -47,7 +46,6 @@ export interface ManualDiskSelectionParams {
     TnButtonComponent,
     ManualSelectionVdevComponent,
     TranslateModule,
-    AsyncPipe,
   ],
   providers: [
     ManualDiskSelectionStore,
@@ -58,42 +56,28 @@ export class ManualDiskSelectionComponent implements OnInit {
   protected data = inject<ManualDiskSelectionParams>(DIALOG_DATA);
   protected dialogRef = inject<DialogRef<unknown, ManualDiskSelectionComponent>>(DialogRef);
   private manualDiskSelectionStore = inject(ManualDiskSelectionStore);
-  private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
 
-  isSaveDisabled$ = combineLatest([
-    this.manualDiskSelectionStore.vdevs$,
-    this.manualDiskSelectionStore.layout$.pipe(filter((value) => !!value)),
-  ]).pipe(
-    map(([vdevs, layout]) => {
-      let vdevError = false;
-      for (const vdev of vdevs) {
-        if (vdev.disks?.length < minDisksPerLayout[layout]) {
-          vdevError = true;
-        }
-      }
+  protected currentVdevs = this.manualDiskSelectionStore.vdevs;
 
-      return vdevError;
-    }),
-  );
+  protected isSaveDisabled = computed(() => {
+    const layout = this.manualDiskSelectionStore.layout();
+    if (!layout) {
+      return false;
+    }
+    return this.currentVdevs().some((vdev) => vdev.disks?.length < minDisksPerLayout[layout]);
+  });
 
-  hideAddVdevButton$ = this.manualDiskSelectionStore.vdevs$.pipe(map((vdevs) => {
-    return this.data.vdevsLimit && vdevs.length >= this.data.vdevsLimit;
-  }));
+  protected hideAddVdevButton = computed(() => {
+    return Boolean(this.data.vdevsLimit && this.currentVdevs().length >= this.data.vdevsLimit);
+  });
 
-  protected currentVdevs: ManualSelectionVdev[];
   private oldVdevs: DetailsDisk[][] = [];
 
   ngOnInit(): void {
     this.dialogRef.addPanelClass('manual-disk-selection-ref');
     this.dialogRef.updateSize('80vw', '80vh');
-    this.manualDiskSelectionStore.vdevs$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((vdevs) => {
-      this.currentVdevs = vdevs;
-      this.cdr.markForCheck();
-    });
-
     this.oldVdevs = this.data.vdevs;
     this.manualDiskSelectionStore.initialize({
       vdevs: vdevsToManualSelectionVdevs(this.data.vdevs),
@@ -108,7 +92,7 @@ export class ManualDiskSelectionComponent implements OnInit {
       return;
     }
 
-    this.dialogRef.close(manualSelectionVdevsToVdevs(this.currentVdevs));
+    this.dialogRef.close(manualSelectionVdevsToVdevs(this.currentVdevs()));
   }
 
   addVdev(): void {
@@ -118,7 +102,7 @@ export class ManualDiskSelectionComponent implements OnInit {
   protected readonly trackVdevById = (_: number, vdev: ManualSelectionVdev): string => vdev.uuid;
 
   private areVdevsTheSame(): boolean {
-    const newVdevs = this.currentVdevs;
+    const newVdevs = this.currentVdevs();
 
     if (newVdevs.length !== this.oldVdevs.length) {
       return false;

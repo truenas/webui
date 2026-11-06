@@ -1,5 +1,7 @@
 import { KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, OnInit, inject, untracked,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
@@ -72,8 +74,11 @@ export class PoolWarningsComponent implements OnInit {
     ],
   );
 
-  ngOnInit(): void {
+  constructor() {
     this.initUnsafeDisksWarnings();
+  }
+
+  ngOnInit(): void {
     this.connectWarningsToStore();
   }
 
@@ -92,21 +97,24 @@ export class PoolWarningsComponent implements OnInit {
   }
 
   private initUnsafeDisksWarnings(): void {
-    combineLatest([
-      this.diskStore.selectableDisks$,
-      this.store.encryptionType$,
-    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([allDisks, encryptionType]) => {
-      // Filter disks based on SED encryption requirement
-      const filteredDisks = encryptionType === EncryptionType.Sed
-        ? allDisks.filter(isSedCapable)
-        : allDisks;
+    effect(() => {
+      const allDisks = this.diskStore.selectableDisks();
+      const encryptionType = this.store.encryptionType();
 
-      this.nonUniqueSerialDisks = filteredDisks.filter(hasNonUniqueSerial);
-      this.disksWithExportedPools = filteredDisks.filter(hasExportedPool);
+      // Untracked: pruning allowed pools updates the store, which must not re-run this effect.
+      untracked(() => {
+        // Filter disks based on SED encryption requirement
+        const filteredDisks = encryptionType === EncryptionType.Sed
+          ? allDisks.filter(isSedCapable)
+          : allDisks;
 
-      this.setNonUniqueSerialDisksWarning();
-      this.setExportedPoolOptions();
-      this.cdr.markForCheck();
+        this.nonUniqueSerialDisks = filteredDisks.filter(hasNonUniqueSerial);
+        this.disksWithExportedPools = filteredDisks.filter(hasExportedPool);
+
+        this.setNonUniqueSerialDisksWarning();
+        this.setExportedPoolOptions();
+        this.cdr.markForCheck();
+      });
     });
   }
 

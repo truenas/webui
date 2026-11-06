@@ -1,10 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal, WritableSignal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Spectator } from '@ngneat/spectator';
 import { mockProvider, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnFormFieldHarness, TnRadioHarness } from '@truenas/ui-components';
-import { BehaviorSubject, of } from 'rxjs';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolWarningsComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/pool-warnings/pool-warnings.component';
@@ -44,10 +44,10 @@ describe('PoolWarningsComponent', () => {
     providers: [
       mockProvider(PoolManagerStore, {
         setDiskWarningOptions: jest.fn(),
-        encryptionType$: of(EncryptionType.None),
+        encryptionType: signal(EncryptionType.None),
       }),
       mockProvider(DiskStore, {
-        selectableDisks$: of([duplicateSerialDisk, exportedPoolDisk, duplicateSerialAndExportedPoolDisk]),
+        selectableDisks: signal([duplicateSerialDisk, exportedPoolDisk, duplicateSerialAndExportedPoolDisk]),
       }),
     ],
   });
@@ -117,30 +117,30 @@ describe('PoolWarningsComponent', () => {
       devname: 'sdi',
     } as DetailsDisk;
 
-    let encryptionType$: BehaviorSubject<EncryptionType>;
+    let encryptionType: WritableSignal<EncryptionType>;
     const createSedComponent = createComponentFactory({
       component: PoolWarningsComponent,
       imports: [ReactiveFormsModule],
       providers: [
         mockProvider(PoolManagerStore, {
           setDiskWarningOptions: jest.fn(),
-          get encryptionType$() { return encryptionType$; },
+          get encryptionType() { return encryptionType; },
         }),
         mockProvider(DiskStore, {
-          selectableDisks$: of([sedExportedPoolDisk, nonSedExportedPoolDisk]),
+          selectableDisks: signal([sedExportedPoolDisk, nonSedExportedPoolDisk]),
         }),
       ],
     });
 
     it('clears stale exported pool entries when encryption type switches to SED', async () => {
-      encryptionType$ = new BehaviorSubject<EncryptionType>(EncryptionType.None);
+      encryptionType = signal(EncryptionType.None);
       const sedSpectator = createSedComponent();
       const sedLoader = TestbedHarnessEnvironment.loader(sedSpectator.fixture);
 
       let checkboxes = await sedLoader.getAllHarnesses(TnCheckboxHarness);
       expect(checkboxes).toHaveLength(2);
 
-      encryptionType$.next(EncryptionType.Sed);
+      encryptionType.set(EncryptionType.Sed);
       sedSpectator.detectChanges();
 
       checkboxes = await sedLoader.getAllHarnesses(TnCheckboxHarness);
@@ -149,7 +149,7 @@ describe('PoolWarningsComponent', () => {
     });
 
     it('drops an allowed exported pool from the store when its checkbox disappears', async () => {
-      encryptionType$ = new BehaviorSubject<EncryptionType>(EncryptionType.None);
+      encryptionType = signal(EncryptionType.None);
       const sedSpectator = createSedComponent();
       const sedLoader = TestbedHarnessEnvironment.loader(sedSpectator.fixture);
 
@@ -168,7 +168,7 @@ describe('PoolWarningsComponent', () => {
 
       // Switching to SED filters NON_SED_POOL's disk out, so the user can no longer see or
       // uncheck it — the allowance has to go with the checkbox.
-      encryptionType$.next(EncryptionType.Sed);
+      encryptionType.set(EncryptionType.Sed);
       sedSpectator.detectChanges();
 
       expect(sedSpectator.inject(PoolManagerStore).setDiskWarningOptions).toHaveBeenLastCalledWith({

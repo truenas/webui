@@ -137,7 +137,7 @@ export class AutomatedDiskSelectionComponent implements OnChanges {
   }
 
   private updateStoreOnChanges(): void {
-    this.store.isLoading$
+    toObservable(this.store.isLoading)
       .pipe(filter((isLoading) => !isLoading), take(1), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

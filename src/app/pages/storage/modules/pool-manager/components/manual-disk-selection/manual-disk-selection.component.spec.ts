@@ -1,10 +1,10 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
-import { BehaviorSubject, of } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
@@ -39,7 +39,7 @@ describe('ManualDiskSelectionComponent', () => {
     [{ devname: 'sdc' }, { devname: 'sdd' }],
   ] as DetailsDisk[][];
   const enclosures = [] as Enclosure[];
-  const storeVdevs$ = new BehaviorSubject<ManualSelectionVdev[]>(
+  const storeVdevs = signal<ManualSelectionVdev[]>(
     vdevsToManualSelectionVdevs(incomingVdevs),
   );
 
@@ -55,8 +55,8 @@ describe('ManualDiskSelectionComponent', () => {
       mockAuth(),
       mockProvider(ManualDiskSelectionStore, {
         addVdev: jest.fn(),
-        vdevs$: storeVdevs$.asObservable(),
-        layout$: of(CreateVdevLayout.Stripe),
+        vdevs: storeVdevs,
+        layout: signal(CreateVdevLayout.Stripe),
         initialize: jest.fn(),
       }),
       mockProvider(DialogRef),
@@ -108,9 +108,9 @@ describe('ManualDiskSelectionComponent', () => {
     it('renders vdevs from store', () => {
       const vdevs = spectator.queryAll(ManualSelectionVdevComponent);
       expect(vdevs).toHaveLength(2);
-      expect(vdevs[0].vdev).toEqual(storeVdevs$.value[0]);
+      expect(vdevs[0].vdev).toEqual(storeVdevs()[0]);
       expect(vdevs[0].layout).toBe(CreateVdevLayout.Stripe);
-      expect(vdevs[1].vdev).toEqual(storeVdevs$.value[1]);
+      expect(vdevs[1].vdev).toEqual(storeVdevs()[1]);
       expect(vdevs[1].layout).toBe(CreateVdevLayout.Stripe);
     });
 
@@ -130,7 +130,7 @@ describe('ManualDiskSelectionComponent', () => {
       });
 
       it('returns new vdevs when there was change in vdevs', async () => {
-        storeVdevs$.next([
+        storeVdevs.set([
           {
             uuid: uuidv4(),
             disks: [{ devname: 'sda' }],

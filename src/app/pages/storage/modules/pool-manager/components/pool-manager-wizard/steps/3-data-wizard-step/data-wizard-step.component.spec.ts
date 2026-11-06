@@ -1,7 +1,7 @@
+import { signal } from '@angular/core';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
@@ -39,11 +39,11 @@ describe('DataWizardStepComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockProvider(AddVdevsStore, {
-        pool$: of(null),
+        pool: signal(null),
       }),
       mockProvider(PoolManagerStore, {
-        getInventoryForStep: jest.fn(() => of(fakeInventory)),
-        topology$: of(null),
+        getInventoryForStep: jest.fn(() => signal(fakeInventory)),
+        topology: signal(null),
       }),
     ],
   });

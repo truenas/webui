@@ -2,7 +2,7 @@
 <ix-layout-step
   [description]="helptext.cacheVdevDescription | translate"
   [type]="vDevType.Cache"
-  [inventory]="(inventory$ | async) || []"
+  [inventory]="inventory()"
   [canChangeLayout]="false"
   [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive()"

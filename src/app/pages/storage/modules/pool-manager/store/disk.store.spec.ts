@@ -47,10 +47,8 @@ describe('DiskStore', () => {
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.state()).toEqual({
-      usedDisks: [],
-      unusedDisks: [],
-    });
+    expect(spectator.service.usedDisks()).toEqual([]);
+    expect(spectator.service.selectableDisks()).toEqual([]);
   });
 
   describe('loadDisks', () => {
@@ -63,10 +61,8 @@ describe('DiskStore', () => {
     it('updates state with unused and used disks', async () => {
       await firstValueFrom(spectator.service.loadDisks());
 
-      expect(spectator.service.state()).toEqual({
-        unusedDisks,
-        usedDisks,
-      });
+      expect(spectator.service.usedDisks()).toEqual(usedDisks);
+      expect(spectator.service.selectableDisks()).toEqual([...unusedDisks, usedDisks[1]]);
     });
 
     it('returns the disk details response', async () => {
@@ -81,46 +77,44 @@ describe('DiskStore', () => {
       await firstValueFrom(spectator.service.loadDisks());
     });
 
-    it('usedDisks$ - returns used disks from state', async () => {
-      const result = await firstValueFrom(spectator.service.usedDisks$);
-
-      expect(result).toEqual(usedDisks);
+    it('usedDisks - returns used disks from state', () => {
+      expect(spectator.service.usedDisks()).toEqual(usedDisks);
     });
 
-    it('selectableDisks$ - includes all unused disks', async () => {
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+    it('selectableDisks - includes all unused disks', () => {
+      const selectableDisks = spectator.service.selectableDisks();
 
       expect(selectableDisks).toContainEqual(unusedDisks[0]);
       expect(selectableDisks).toContainEqual(unusedDisks[1]);
     });
 
-    it('selectableDisks$ - includes used disks without imported_zpool', async () => {
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+    it('selectableDisks - includes used disks without imported_zpool', () => {
+      const selectableDisks = spectator.service.selectableDisks();
 
       // sdd has no imported_zpool, should be included
       expect(selectableDisks).toContainEqual(usedDisks[1]);
     });
 
-    it('selectableDisks$ - excludes used disks with imported_zpool', async () => {
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+    it('selectableDisks - excludes used disks with imported_zpool', () => {
+      const selectableDisks = spectator.service.selectableDisks();
 
       // sdc has imported_zpool, should be excluded
       expect(selectableDisks).not.toContainEqual(usedDisks[0]);
     });
 
-    it('selectableDisks$ - returns disks sorted by devname', async () => {
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+    it('selectableDisks - returns disks sorted by devname', () => {
+      const selectableDisks = spectator.service.selectableDisks();
 
       expect(selectableDisks.map((disk) => disk.devname)).toEqual(['sda', 'sdb', 'sdd']);
     });
   });
 
-  describe('selectableDisks$ with different data', () => {
+  describe('selectableDisks with different data', () => {
     it('handles empty unused and used disks', async () => {
       spectator.inject(MockApiService).mockCall('disk.details', { unused: [], used: [] } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+      const selectableDisks = spectator.service.selectableDisks();
 
       expect(selectableDisks).toEqual([]);
     });
@@ -129,7 +123,7 @@ describe('DiskStore', () => {
       spectator.inject(MockApiService).mockCall('disk.details', { unused: unusedDisks, used: [] } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+      const selectableDisks = spectator.service.selectableDisks();
 
       expect(selectableDisks).toEqual(unusedDisks);
     });
@@ -143,7 +137,7 @@ describe('DiskStore', () => {
       spectator.inject(MockApiService).mockCall('disk.details', { unused: [], used: usedWithoutZpool } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+      const selectableDisks = spectator.service.selectableDisks();
 
       expect(selectableDisks).toEqual(usedWithoutZpool);
     });
@@ -157,14 +151,14 @@ describe('DiskStore', () => {
       spectator.inject(MockApiService).mockCall('disk.details', { unused: [], used: usedWithZpool } as DiskDetailsCallResponse);
 
       await firstValueFrom(spectator.service.loadDisks());
-      const selectableDisks = await firstValueFrom(spectator.service.selectableDisks$);
+      const selectableDisks = spectator.service.selectableDisks();
 
       expect(selectableDisks).toEqual([]);
     });
   });
 
-  describe('hasSedCapableDisks$', () => {
-    it('returns true when there are SED-capable disks with UNINITIALIZED status', async () => {
+  describe('hasSedCapableDisks', () => {
+    it('returns true when there are SED-capable disks with UNINITIALIZED status', () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Uninitialized } as DetailsDisk,
         { devname: 'sdb' } as DetailsDisk,
@@ -177,10 +171,10 @@ describe('DiskStore', () => {
 
       spectator.service.loadDisks().subscribe();
 
-      expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(true);
+      expect(spectator.service.hasSedCapableDisks()).toBe(true);
     });
 
-    it('returns true when there are SED-capable disks with UNLOCKED status', async () => {
+    it('returns true when there are SED-capable disks with UNLOCKED status', () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Locked } as DetailsDisk,
         { devname: 'sdb', sed_status: SedStatus.Unlocked } as DetailsDisk,
@@ -193,10 +187,10 @@ describe('DiskStore', () => {
 
       spectator.service.loadDisks().subscribe();
 
-      expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(true);
+      expect(spectator.service.hasSedCapableDisks()).toBe(true);
     });
 
-    it('returns false when there are no SED-capable disks', async () => {
+    it('returns false when there are no SED-capable disks', () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Locked } as DetailsDisk,
         { devname: 'sdb' } as DetailsDisk,
@@ -209,10 +203,10 @@ describe('DiskStore', () => {
 
       spectator.service.loadDisks().subscribe();
 
-      expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(false);
+      expect(spectator.service.hasSedCapableDisks()).toBe(false);
     });
 
-    it('returns false when there are no disks', async () => {
+    it('returns false when there are no disks', () => {
       jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(of({
         unused: [],
         used: [],
@@ -220,10 +214,10 @@ describe('DiskStore', () => {
 
       spectator.service.loadDisks().subscribe();
 
-      expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(false);
+      expect(spectator.service.hasSedCapableDisks()).toBe(false);
     });
 
-    it('checks both unused and used disks for SED capability', async () => {
+    it('checks both unused and used disks for SED capability', () => {
       const unusedSedDisks = [
         { devname: 'sda' } as DetailsDisk,
       ];
@@ -239,10 +233,10 @@ describe('DiskStore', () => {
 
       spectator.service.loadDisks().subscribe();
 
-      expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(true);
+      expect(spectator.service.hasSedCapableDisks()).toBe(true);
     });
 
-    it('returns true when mixed SED and non-SED disks are present', async () => {
+    it('returns true when mixed SED and non-SED disks are present', () => {
       const disks = [
         { devname: 'sda', sed_status: SedStatus.Uninitialized } as DetailsDisk,
         { devname: 'sdb' } as DetailsDisk,
@@ -257,7 +251,7 @@ describe('DiskStore', () => {
 
       spectator.service.loadDisks().subscribe();
 
-      expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(true);
+      expect(spectator.service.hasSedCapableDisks()).toBe(true);
     });
   });
 });

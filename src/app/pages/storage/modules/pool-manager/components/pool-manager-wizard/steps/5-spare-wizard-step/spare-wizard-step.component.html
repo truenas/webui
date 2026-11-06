@@ -1,7 +1,7 @@
 <ix-layout-step
   [description]="helptext.spareVdevDescription | translate"
   [type]="vDevType.Spare"
-  [inventory]="(inventory$ | async) || []"
+  [inventory]="inventory()"
   [canChangeLayout]="false"
   [limitLayouts]="allowedLayouts"
   [isStepActive]="isStepActive()"

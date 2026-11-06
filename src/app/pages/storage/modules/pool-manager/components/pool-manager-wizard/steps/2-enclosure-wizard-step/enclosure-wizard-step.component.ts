@@ -1,5 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, input, OnChanges, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -15,7 +16,7 @@ import {
 } from '@truenas/ui-components';
 import { timer } from 'rxjs';
 import {
-  filter, map, switchMap, tap,
+  filter, switchMap, tap,
 } from 'rxjs/operators';
 import { translated } from 'app/helpers/translated.helper';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
@@ -37,7 +38,6 @@ export enum DispersalStrategy {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnTestIdDirective,
-    AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnRadioComponent,
@@ -64,14 +64,10 @@ export class EnclosureWizardStepComponent implements OnInit, OnChanges {
     limitToEnclosure: [null as string | null],
   });
 
-  protected enclosureOptions$ = this.store.enclosures$.pipe(
-    map((enclosures) => {
-      return enclosures.map((enclosure) => ({
-        label: enclosure.label || enclosure.name,
-        value: enclosure.id,
-      }));
-    }),
-  );
+  protected enclosureOptions = computed(() => this.store.enclosures().map((enclosure) => ({
+    label: enclosure.label || enclosure.name,
+    value: enclosure.id,
+  })));
 
   // `translated`, not a plain field: the labels are composed in TypeScript rather than
   // piped in the template, so `instant()` alone would freeze them in whatever language was

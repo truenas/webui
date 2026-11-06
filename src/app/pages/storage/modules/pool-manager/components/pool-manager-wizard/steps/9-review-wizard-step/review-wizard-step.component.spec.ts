@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { computed, signal } from '@angular/core';
 import {
   byTextContent, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
 import {
   TnButtonHarness, TnCheckboxHarness, TnDialog, TnStepperComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
@@ -65,8 +66,22 @@ describe('ReviewWizardStepComponent', () => {
       limitToSingleEnclosure: null,
     },
   } as PoolManagerState;
-  const state$ = new BehaviorSubject(state);
-  const forceTopology$ = new BehaviorSubject(false);
+  const currentState = signal(state);
+  const forceTopology = signal(false);
+  const poolManagerStoreMock = {
+    name: computed(() => currentState().name),
+    encryptionType: computed(() => currentState().encryptionType),
+    topology: computed(() => currentState().topology),
+    enclosures: computed(() => currentState().enclosures),
+    enclosureSettings: computed(() => currentState().enclosureSettings),
+    forceTopology,
+    totalUsableCapacity: signal(2 * GiB),
+  };
+
+  beforeEach(() => {
+    currentState.set(state);
+    forceTopology.set(false);
+  });
 
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
@@ -81,13 +96,9 @@ describe('ReviewWizardStepComponent', () => {
         confirm: jest.fn(() => of(true)),
       }),
       mockProvider(PoolManagerValidationService, {
-        getPoolCreationErrors: jest.fn(() => of([])),
+        poolCreationErrors: signal([]),
       }),
-      mockProvider(PoolManagerStore, {
-        state$,
-        forceTopology$,
-        totalUsableCapacity$: of(2 * GiB),
-      }),
+      mockProvider(PoolManagerStore, poolManagerStoreMock),
       mockProvider(TnDialog),
       mockEntitlements([EntitlementFeature.Support]),
       mockAuth(),
@@ -141,7 +152,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('shows hardware (SED) encryption', () => {
-      state$.next({
+      currentState.set({
         ...state,
         encryptionType: EncryptionType.Sed,
       });
@@ -151,7 +162,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('does not show encryption when encryption type is None', () => {
-      state$.next({
+      currentState.set({
         ...state,
         encryptionType: EncryptionType.None,
       });
@@ -167,7 +178,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('shows VDEVs count for spare disks with null disk info', () => {
-      state$.next({
+      currentState.set({
         ...state,
         topology: {
           ...state.topology,
@@ -189,7 +200,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('says Maximize Dispersal when this dispersal strategy is used', () => {
-      state$.next({
+      currentState.set({
         ...state,
         enclosureSettings: {
           maximizeEnclosureDispersal: true,
@@ -203,7 +214,7 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('shows if Limit To Enclosure option is used', () => {
-      state$.next({
+      currentState.set({
         ...state,
         enclosureSettings: {
           maximizeEnclosureDispersal: false,
@@ -241,13 +252,9 @@ describe('ReviewWizardStepComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(PoolManagerStore, {
-            state$,
-            forceTopology$,
-            totalUsableCapacity$: of(2 * GiB),
-          }),
+          mockProvider(PoolManagerStore, poolManagerStoreMock),
           mockProvider(PoolManagerValidationService, {
-            getPoolCreationErrors: jest.fn(() => of([
+            poolCreationErrors: signal([
               {
                 text: 'Some error #1',
                 severity: PoolCreationSeverity.Error,
@@ -258,7 +265,7 @@ describe('ReviewWizardStepComponent', () => {
                 severity: PoolCreationSeverity.Warning,
                 step: PoolCreationWizardStep.General,
               },
-            ])),
+            ]),
           }),
         ],
       });
@@ -287,10 +294,6 @@ describe('ReviewWizardStepComponent', () => {
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
 
-    afterEach(() => {
-      forceTopology$.next(false);
-    });
-
     it('shows the Force checkbox', async () => {
       const checkbox = await loader.getHarnessOrNull(TnCheckboxHarness.with({ label: 'Force' }));
       expect(checkbox).not.toBeNull();
@@ -304,12 +307,12 @@ describe('ReviewWizardStepComponent', () => {
     });
 
     it('unchecks the Force checkbox when the store resets forceTopology (e.g. Start Over)', async () => {
-      forceTopology$.next(true);
+      forceTopology.set(true);
       spectator.detectChanges();
       const checkbox = await loader.getHarness(TnCheckboxHarness.with({ label: 'Force' }));
       expect(await checkbox.isChecked()).toBe(true);
 
-      forceTopology$.next(false);
+      forceTopology.set(false);
       spectator.detectChanges();
       expect(await checkbox.isChecked()).toBe(false);
     });

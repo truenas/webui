@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnFormFieldHarness, TnInputHarness, TnRadioHarness, TnStepperComponent,
 } from '@truenas/ui-components';
-import { BehaviorSubject, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
@@ -50,15 +51,15 @@ describe('GeneralWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
-        isLoading$: of(false),
-        hasSedCapableDisks$: of(false),
-        encryptionType$: of(EncryptionType.None),
+        isLoading: signal(false),
+        hasSedCapableDisks: signal(false),
+        encryptionType: signal(EncryptionType.None),
         setGeneralOptions: jest.fn(),
         setEncryptionOptions: jest.fn(),
         setDiskWarningOptions: jest.fn(),
       }),
       mockProvider(DiskStore, {
-        selectableDisks$: of([]),
+        selectableDisks: signal([]),
       }),
       provideMockStore({
         selectors: [
@@ -222,7 +223,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
 
   const startOver$ = new Subject<void>();
   // The store loads the disks after the step is created; tests that care flip this to `true` first.
-  const isLoading$ = new BehaviorSubject(false);
+  const isLoading = signal(false);
 
   const createComponent = createComponentFactory({
     component: GeneralWizardStepComponent,
@@ -242,15 +243,15 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
-        isLoading$,
-        hasSedCapableDisks$: of(true),
-        encryptionType$: of(EncryptionType.None),
+        isLoading,
+        hasSedCapableDisks: signal(true),
+        encryptionType: signal(EncryptionType.None),
         setGeneralOptions: jest.fn(),
         setEncryptionOptions: jest.fn(),
         setDiskWarningOptions: jest.fn(),
       }),
       mockProvider(DiskStore, {
-        selectableDisks$: of([]),
+        selectableDisks: signal([]),
       }),
       provideMockStore({
         selectors: [
@@ -262,7 +263,7 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
   });
 
   beforeEach(() => {
-    isLoading$.next(false);
+    isLoading.set(false);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
@@ -297,23 +298,25 @@ describe('GeneralWizardStepComponent with SED disks and no global password', () 
   });
 
   it('selects SED once the disk load finishes', () => {
-    isLoading$.next(true);
+    isLoading.set(true);
     spectator = createComponent();
 
     expect(spectator.component.form.value.encryptionType).toBe(EncryptionType.None);
 
-    isLoading$.next(false);
+    isLoading.set(false);
+    spectator.detectChanges();
 
     expect(spectator.component.form.value.encryptionType).toBe(EncryptionType.Sed);
   });
 
   it('keeps an encryption type picked while the disks were loading', async () => {
-    isLoading$.next(true);
+    isLoading.set(true);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
 
     await (await loader.getHarness(TnRadioHarness.with({ label: 'Software Encryption (ZFS)' }))).check();
-    isLoading$.next(false);
+    isLoading.set(false);
+    spectator.detectChanges();
 
     expect(spectator.component.form.value.encryptionType).toBe(EncryptionType.Software);
   });
@@ -343,15 +346,15 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
       }),
       mockProvider(PoolManagerStore, {
         startOver$,
-        isLoading$: of(false),
-        hasSedCapableDisks$: of(true),
-        encryptionType$: of(EncryptionType.None),
+        isLoading: signal(false),
+        hasSedCapableDisks: signal(true),
+        encryptionType: signal(EncryptionType.None),
         setGeneralOptions: jest.fn(),
         setEncryptionOptions: jest.fn(),
         setDiskWarningOptions: jest.fn(),
       }),
       mockProvider(DiskStore, {
-        selectableDisks$: of([]),
+        selectableDisks: signal([]),
       }),
       provideMockStore({
         selectors: [

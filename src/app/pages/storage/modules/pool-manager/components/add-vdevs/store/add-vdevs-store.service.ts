@@ -1,11 +1,11 @@
-import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { computed, Injectable, inject } from '@angular/core';
 import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { cloneDeep } from 'lodash-es';
-import {
-  combineLatest, filter, switchMap, tap,
-} from 'rxjs';
+import { pipe, switchMap, tap } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology, toPool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
@@ -24,57 +24,40 @@ const initialState: AddVdevsState = {
 };
 
 @Injectable()
-export class AddVdevsStore extends ComponentStore<AddVdevsState> {
+export class AddVdevsStore {
   private diskStore = inject(DiskStore);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
-  readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly pool$ = this.select((state) => state.pool);
-  readonly poolDisks$ = combineLatest([
-    this.pool$.pipe(filter(Boolean)),
-    this.diskStore.usedDisks$,
-  ]).pipe(
-    map(([pool, usedDisks]) => {
-      return usedDisks.filter((disk) => disk.imported_zpool === pool.name);
-    }),
-  );
+  private readonly state = signalState(initialState);
 
-  constructor() {
-    super(initialState);
-  }
+  readonly isLoading = this.state.isLoading;
+  readonly pool = this.state.pool;
+  readonly poolDisks = computed<DetailsDisk[]>(() => {
+    const pool = this.state.pool();
+    if (!pool) {
+      return [];
+    }
+    return this.diskStore.usedDisks().filter((disk) => disk.imported_zpool === pool.name);
+  });
 
   resetStoreToInitialState(): void {
-    this.setState({ ...initialState });
+    patchState(this.state, initialState);
   }
 
-  initialize = this.effect((trigger$) => {
-    return trigger$.pipe(
-      tap(() => this.setState(() => ({ ...initialState }))),
-    );
-  });
+  initialize(): void {
+    this.resetStoreToInitialState();
+  }
 
-  loadPoolData = this.effect<number>((triggers$) => {
-    return triggers$.pipe(
-      tap(() => this.patchState({ isLoading: true })),
-      switchMap((poolId) => {
-        return this.api.query('pool.query', [['id', '=', +poolId]]).pipe(map((pools) => pools.map(toPool)));
-      }),
+  readonly loadPoolData = rxMethod<number>(pipe(
+    tap(() => patchState(this.state, { isLoading: true })),
+    switchMap((poolId) => this.api.query('pool.query', [['id', '=', +poolId]]).pipe(
+      map((pools) => pools.map(toPool)),
       tapResponse({
-        next: (pools) => {
-          this.patchState({
-            pool: cloneDeep(pools[0]),
-            isLoading: false,
-          });
-        },
-        error: (error: unknown) => {
-          this.patchState({
-            isLoading: false,
-          });
-          this.errorHandler.showErrorModal(error);
-        },
+        next: (pools) => patchState(this.state, { pool: cloneDeep(pools[0]) }),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+        finalize: () => patchState(this.state, { isLoading: false }),
       }),
-      filter((pools) => !!pools),
-    );
-  });
+    )),
+  ));
 }

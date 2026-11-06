@@ -1,6 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, input, output, inject,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -8,7 +8,6 @@ import {
   TnStepperPreviousDirective,
   TnTestIdDirective,
 } from '@truenas/ui-components';
-import { map } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
@@ -16,6 +15,8 @@ import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { resolveTopologyLayout } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
+
+const logLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
 
 @Component({
   selector: 'ix-log-wizard-step',
@@ -29,41 +30,30 @@ import { resolveTopologyLayout } from 'app/pages/storage/modules/pool-manager/ut
     TnStepperPreviousDirective,
     TnStepperNextDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
-export class LogWizardStepComponent implements OnInit {
+export class LogWizardStepComponent {
   private store = inject(PoolManagerStore);
   private addVdevsStore = inject(AddVdevsStore);
-  private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>(false);
   readonly stepWarning = input<string | null>();
 
   readonly goToLastStep = output();
 
-  protected canChangeLayout = true;
-
   protected readonly vDevType = VDevType;
   protected readonly helptext = helptextPoolCreation;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Log);
-  protected allowedLayouts = [CreateVdevLayout.Mirror, CreateVdevLayout.Stripe];
+  protected readonly inventory = this.store.getInventoryForStep(VDevType.Log);
 
-  ngOnInit(): void {
-    this.addVdevsStore.pool$.pipe(
-      map((pool) => resolveTopologyLayout(pool?.topology[VDevType.Log])),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((layout) => {
-      if (!layout) {
-        return;
-      }
-      this.allowedLayouts = [layout];
-      this.canChangeLayout = false;
-      this.cdr.markForCheck();
-    });
-  }
+  // When adding to an existing pool that has log vdevs, new ones must use the same layout.
+  private existingLayout = computed(() => resolveTopologyLayout(this.addVdevsStore.pool()?.topology[VDevType.Log]));
+  protected allowedLayouts = computed(() => {
+    const existingLayout = this.existingLayout();
+    return existingLayout ? [existingLayout] : logLayouts;
+  });
+
+  protected canChangeLayout = computed(() => !this.existingLayout());
 
   protected goToReviewStep(): void {
     this.goToLastStep.emit();

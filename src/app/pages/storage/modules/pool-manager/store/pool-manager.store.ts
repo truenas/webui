@@ -1,20 +1,22 @@
-import { DestroyRef, Injectable, inject } from '@angular/core';
+import {
+  computed, DestroyRef, Injectable, Signal, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ValidationErrors } from '@angular/forms';
-import { ComponentStore } from '@ngrx/component-store';
 import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TnDialog } from '@truenas/ui-components';
 import { differenceBy, isEqual, without } from 'lodash-es';
 import {
-  combineLatest,
-  forkJoin, Observable, of, Subject,
+  forkJoin, Observable, pipe, Subject,
 } from 'rxjs';
 import {
-  filter, map, switchMap, take, tap,
+  filter, map, switchMap, tap,
 } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
-import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure, toEnclosure } from 'app/interfaces/enclosure.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ManualDiskSelectionComponent, ManualDiskSelectionParams } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/manual-disk-selection.component';
@@ -138,7 +140,7 @@ export const initialState: PoolManagerState = {
 };
 
 @Injectable()
-export class PoolManagerStore extends ComponentStore<PoolManagerState> {
+export class PoolManagerStore {
   private diskStore = inject(DiskStore);
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
@@ -146,92 +148,60 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   private tnDialog = inject(TnDialog);
   private destroyRef = inject(DestroyRef);
 
+  private readonly state = signalState(initialState);
+
   readonly startOver$ = new Subject<void>();
   readonly resetStep$ = new Subject<VDevType>();
-  readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly name$ = this.select((state) => state.name);
-  readonly nameErrors$ = this.select((state) => state.nameErrors);
-  readonly encryptionType$ = this.select((state) => state.encryptionType);
-  readonly sedPassword$ = this.select((state) => state.sedPassword);
-  readonly hasSedCapableDisks$ = this.select((state) => state.hasSedCapableDisks);
-  readonly enclosures$ = this.select((state) => state.enclosures);
-  readonly topology$ = this.select((state) => state.topology);
-  readonly diskSettings$ = this.select((state) => state.diskSettings);
-  readonly enclosureSettings$ = this.select((state) => state.enclosureSettings);
-  readonly forceTopology$ = this.select((state) => state.forceTopology);
-  readonly totalUsableCapacity$ = this.select(
-    this.topology$,
-    (topology) => categoryCapacity(topology[VDevType.Data]),
-  );
+  readonly isLoading = this.state.isLoading;
+  readonly name = this.state.name;
+  readonly nameErrors = this.state.nameErrors;
+  readonly encryptionType = this.state.encryptionType;
+  readonly sedPassword = this.state.sedPassword;
+  readonly hasSedCapableDisks = this.state.hasSedCapableDisks;
+  readonly enclosures = this.state.enclosures;
+  readonly topology = this.state.topology;
+  readonly diskSettings = this.state.diskSettings;
+  readonly enclosureSettings = this.state.enclosureSettings;
+  readonly forceTopology = this.state.forceTopology;
+  readonly categorySequence = this.state.categorySequence;
+  readonly totalUsableCapacity = computed(() => categoryCapacity(this.state.topology()[VDevType.Data]));
 
-  readonly allowedDisks$ = this.select(
-    this.diskStore.selectableDisks$,
-    this.diskSettings$,
-    this.enclosureSettings$,
-    this.encryptionType$,
-    (unusedDisks, diskOptions, enclosureOptions, encryptionType) => filterAllowedDisks(unusedDisks, {
-      ...diskOptions,
-      ...enclosureOptions,
-      requireSedCapable: encryptionType === EncryptionType.Sed,
-    }),
-  );
+  readonly allowedDisks = computed(() => filterAllowedDisks(this.diskStore.selectableDisks(), {
+    ...this.state.diskSettings(),
+    ...this.state.enclosureSettings(),
+    requireSedCapable: this.state.encryptionType() === EncryptionType.Sed,
+  }));
 
-  readonly hasMultipleEnclosuresAfterFirstStep$ = this.select(
-    this.diskStore.selectableDisks$,
-    this.diskSettings$,
-    (unusedDisks, diskOptions) => {
-      const disksAfterFirstStep = filterAllowedDisks(unusedDisks, {
-        ...diskOptions,
-        limitToSingleEnclosure: null,
-      });
-      const uniqueEnclosures = new Set<string>();
-      disksAfterFirstStep.forEach((disk) => {
-        if (disk.enclosure) {
-          uniqueEnclosures.add(disk.enclosure.id);
-        }
-      });
-      return uniqueEnclosures.size > 1;
-    },
-  );
+  readonly hasMultipleEnclosuresAfterFirstStep = computed(() => {
+    const disksAfterFirstStep = filterAllowedDisks(this.diskStore.selectableDisks(), {
+      ...this.state.diskSettings(),
+      limitToSingleEnclosure: null,
+    });
+    const uniqueEnclosures = new Set<string>();
+    disksAfterFirstStep.forEach((disk) => {
+      if (disk.enclosure) {
+        uniqueEnclosures.add(disk.enclosure.id);
+      }
+    });
+    return uniqueEnclosures.size > 1;
+  });
 
-  readonly inventory$ = this.select(
-    this.allowedDisks$,
-    this.topology$,
-    (allowedDisks, topology) => {
-      const usedDisks = topologyToDisks(topology);
-      return differenceBy(allowedDisks, usedDisks, (disk) => disk.devname);
-    },
-  );
+  readonly inventory = computed(() => {
+    const usedDisks = topologyToDisks(this.state.topology());
+    return differenceBy(this.allowedDisks(), usedDisks, (disk) => disk.devname);
+  });
 
-  // TODO: Check if this needs to be optimized
-  getInventoryForStep(type: VDevType): Observable<DetailsDisk[]> {
-    return this.select(
-      this.allowedDisks$,
-      this.topology$,
-      (allowedDisks, topology) => {
-        const disksUsedInOtherCategories = Object.values(topology).flatMap((category) => {
-          if (category === topology[type]) {
-            return [];
-          }
-          return topologyCategoryToDisks(category);
-        });
-        return differenceBy(allowedDisks, disksUsedInOtherCategories, (disk) => disk.devname);
-      },
-    );
-  }
-
-  constructor() {
-    super(initialState);
+  getInventoryForStep(type: VDevType): Signal<DetailsDisk[]> {
+    return computed(() => this.inventoryForStep(type));
   }
 
   resetStoreToInitialState(): void {
-    this.setState({ ...initialState });
+    patchState(this.state, initialState);
   }
 
   startOver(): void {
     this.startOver$.next();
-    this.setState({ ...initialState, isLoading: true });
-    this.loadStateInitialData().pipe(take(1)).subscribe();
+    this.initialize();
   }
 
   resetStep(vdevType: VDevType): void {
@@ -239,90 +209,68 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.resetStep$.next(vdevType);
   }
 
-  readonly initialize = this.effect((trigger$) => {
-    return trigger$.pipe(
-      tap(() => this.setState({ ...initialState, isLoading: true })),
-      switchMap(() => this.loadStateInitialData()),
-    );
-  });
+  readonly initialize = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, { ...initialState, isLoading: true })),
+    switchMap(() => this.loadStateInitialData()),
+  ));
 
-  loadStateInitialData(): Observable<[Enclosure[], DiskDetailsResponse]> {
+  private loadStateInitialData(): Observable<unknown> {
     return forkJoin([
       this.api.query('enclosure2.query').pipe(map((enclosures) => enclosures.map(toEnclosure))),
       this.diskStore.loadDisks(),
     ]).pipe(
-      switchMap(([enclosures, diskDetails]) => {
-        // After disks are loaded, get the SED capability status reactively
-        return this.diskStore.hasSedCapableDisks$.pipe(
-          take(1),
-          tap((hasSedCapableDisks) => {
-            this.patchState({
-              isLoading: false,
-              enclosures,
-              hasSedCapableDisks,
-            });
-          }),
-          // Return the original tuple type to maintain method signature
-          map(() => [enclosures, diskDetails] as [Enclosure[], DiskDetailsResponse]),
-        );
-      }),
+      // Not `finalize`: a restart unsubscribes the previous load after the new one has set `isLoading`.
       tapResponse({
-        next: () => {
-          // State already set in switchMap
+        next: ([enclosures]) => {
+          patchState(this.state, {
+            isLoading: false,
+            enclosures,
+            hasSedCapableDisks: this.diskStore.hasSedCapableDisks(),
+          });
         },
         error: (error: unknown) => {
-          this.patchState({ isLoading: false });
+          patchState(this.state, { isLoading: false });
           this.errorHandler.showErrorModal(error);
         },
       }),
     );
   }
 
-  readonly resetTopologyCategory = this.updater((state, category: VDevType) => {
+  resetTopologyCategory(category: VDevType): void {
     const newCategory = { ...initialTopology[category] };
     if (category === VDevType.Spare || category === VDevType.Cache) {
       newCategory.layout = CreateVdevLayout.Stripe;
     }
-    return {
-      ...state,
+    patchState(this.state, (state) => ({
       topology: {
         ...state.topology,
         [category]: newCategory,
       },
-    };
-  });
+    }));
+  }
 
-  readonly resetTopology = this.updater((state) => {
-    return {
-      ...state,
-      topology: initialTopology,
-    };
-  });
+  resetTopology(): void {
+    patchState(this.state, { topology: initialTopology });
+  }
 
-  readonly setGeneralOptions = this.updater((state, options: Pick<PoolManagerState, 'nameErrors' | 'name'>) => {
-    return {
-      ...state,
-      ...options,
-    };
-  });
+  setGeneralOptions(options: Pick<PoolManagerState, 'nameErrors' | 'name'>): void {
+    patchState(this.state, options);
+  }
 
   setEncryptionOptions(options: {
     encryptionType: EncryptionType;
     sedPassword: string | null;
   }): void {
-    this.patchState(options);
+    patchState(this.state, options);
     this.resetTopologyIfNotEnoughDisks();
   }
 
-  readonly setHasSedCapableDisks = this.updater((state, hasSedCapableDisks: boolean) => {
-    return {
-      ...state,
-      hasSedCapableDisks,
-    };
-  });
+  setHasSedCapableDisks(hasSedCapableDisks: boolean): void {
+    patchState(this.state, { hasSedCapableDisks });
+  }
 
   setDiskWarningOptions(diskOptions: PoolManagerDiskSettings): void {
-    this.patchState({
+    patchState(this.state, {
       diskSettings: diskOptions,
     });
 
@@ -330,11 +278,11 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   setForceTopology(forceTopology: boolean): void {
-    this.patchState({ forceTopology });
+    patchState(this.state, { forceTopology });
   }
 
   setEnclosureOptions(enclosureOptions: PoolManagerEnclosureSettings): void {
-    this.patchState({
+    patchState(this.state, {
       enclosureSettings: enclosureOptions,
     });
 
@@ -357,7 +305,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     newLayout: CreateVdevLayout,
   ): void {
     const isNewLayoutDraid = isDraidLayout(newLayout);
-    const isOldLayoutDraid = isDraidLayout(this.get().topology[type].layout);
+    const isOldLayoutDraid = isDraidLayout(this.state.topology()[type].layout);
     if (isNewLayoutDraid !== isOldLayoutDraid) {
       this.resetTopologyCategory(type);
     }
@@ -380,8 +328,19 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     this.regenerateVdevs();
   }
 
+  private inventoryForStep(type: VDevType): DetailsDisk[] {
+    const topology = this.state.topology();
+    const disksUsedInOtherCategories = Object.values(topology).flatMap((category) => {
+      if (category === topology[type]) {
+        return [];
+      }
+      return topologyCategoryToDisks(category);
+    });
+    return differenceBy(this.allowedDisks(), disksUsedInOtherCategories, (disk) => disk.devname);
+  }
+
   private updateTopologyCategory(type: VDevType, update: Partial<PoolManagerTopologyCategory>): void {
-    this.patchState((state) => {
+    patchState(this.state, (state) => {
       const topology = state.topology[type];
       const wasCategoryChanged = !Object.entries(update)
         .every(([key, value]) => isEqual(topology[key as keyof typeof topology], value));
@@ -390,7 +349,6 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
         : state.categorySequence;
 
       return {
-        ...state,
         categorySequence,
         topology: {
           ...state.topology,
@@ -404,13 +362,12 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   }
 
   private resetTopologyIfNotEnoughDisks(): void {
-    this.allowedDisks$.pipe(take(1)).subscribe((allowedDisks) => {
-      Object.entries(this.get().topology).forEach(([type, category]) => {
-        const usedDisks = topologyCategoryToDisks(category);
-        if (usedDisks.some((disk) => !allowedDisks.includes(disk))) {
-          this.resetStep(type as VDevType);
-        }
-      });
+    const allowedDisks = this.allowedDisks();
+    Object.entries(this.state.topology()).forEach(([type, category]) => {
+      const usedDisks = topologyCategoryToDisks(category);
+      if (usedDisks.some((disk) => !allowedDisks.includes(disk))) {
+        this.resetStep(type as VDevType);
+      }
     });
   }
 
@@ -420,54 +377,42 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
    * In this case the vdevs of one category may affect the vdevs of another category.
    */
   private regenerateVdevs(): void {
-    // TODO: subscription is not great. Can this be an effect?
-    this.allowedDisks$
-      .pipe(take(1))
-      .subscribe((allowedDisks) => {
-        const newVdevs = this.generateVdevs.generateVdevs({
-          allowedDisks,
-          topology: this.get().topology,
-          maximizeDispersal: this.get().enclosureSettings.maximizeEnclosureDispersal,
-          categorySequence: this.get().categorySequence,
-        });
-        Object.entries(newVdevs).forEach(([type, vdevs]) => {
-          this.updateTopologyCategory(type as VDevType, { vdevs });
-        });
-      });
+    const newVdevs = this.generateVdevs.generateVdevs({
+      allowedDisks: this.allowedDisks(),
+      topology: this.state.topology(),
+      maximizeDispersal: this.state.enclosureSettings().maximizeEnclosureDispersal,
+      categorySequence: this.state.categorySequence(),
+    });
+    Object.entries(newVdevs).forEach(([type, vdevs]) => {
+      this.updateTopologyCategory(type as VDevType, { vdevs });
+    });
   }
 
   openManualSelectionDialog(type: VDevType): void {
-    this.state$.pipe(
-      take(1),
-      switchMap((state: PoolManagerState) => combineLatest([
-        of(state),
-        this.getInventoryForStep(type).pipe(take(1)),
-      ])),
-      switchMap(([state, inventoryForStep]: [PoolManagerState, DetailsDisk[]]) => {
-        const usedDisks = topologyCategoryToDisks(state.topology[type]);
-        const inventory = differenceBy(inventoryForStep, usedDisks, (disk: DetailsDisk) => disk.devname);
-        const isVdevsLimitedToOne = type === VDevType.Spare || type === VDevType.Cache || type === VDevType.Log;
-        return this.tnDialog.open(ManualDiskSelectionComponent, {
-          data: {
-            inventory,
-            layout: state.topology[type].layout,
-            enclosures: state.enclosures,
-            vdevs: state.topology[type].vdevs,
-            vdevsLimit: isVdevsLimitedToOne ? 1 : null,
-            isSedEncryption: state.encryptionType === EncryptionType.Sed,
-          } as ManualDiskSelectionParams,
-          panelClass: 'manual-selection-dialog',
-        }).closed;
-      }),
+    const category = this.state.topology()[type];
+    const usedDisks = topologyCategoryToDisks(category);
+    const inventory = differenceBy(this.inventoryForStep(type), usedDisks, (disk: DetailsDisk) => disk.devname);
+    const isVdevsLimitedToOne = type === VDevType.Spare || type === VDevType.Cache || type === VDevType.Log;
+
+    this.tnDialog.open(ManualDiskSelectionComponent, {
+      data: {
+        inventory,
+        layout: category.layout,
+        enclosures: this.state.enclosures(),
+        vdevs: category.vdevs,
+        vdevsLimit: isVdevsLimitedToOne ? 1 : null,
+        isSedEncryption: this.state.encryptionType() === EncryptionType.Sed,
+      } as ManualDiskSelectionParams,
+      panelClass: 'manual-selection-dialog',
+    }).closed.pipe(
       filter(Boolean),
-      tap((customVdevs: DetailsDisk[][]) => {
-        if (!customVdevs.length) {
-          this.resetStep(type);
-        } else {
-          this.setManualTopologyCategory(type, customVdevs);
-        }
-      }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe((customVdevs: DetailsDisk[][]) => {
+      if (!customVdevs.length) {
+        this.resetStep(type);
+      } else {
+        this.setManualTopologyCategory(type, customVdevs);
+      }
+    });
   }
 }

@@ -1,9 +1,10 @@
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { KeyValuePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, computed, inject,
+} from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { omitBy } from 'lodash-es';
-import { map } from 'rxjs';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -27,7 +28,6 @@ import {
     CastPipe,
     FileSizePipe,
     MapValuePipe,
-    AsyncPipe,
     KeyValuePipe,
     TopologyCategoryDescriptionPipe,
   ],
@@ -40,18 +40,14 @@ export class ConfigurationPreviewComponent {
   readonly vDevType = VDevType;
   protected readonly EncryptionType = EncryptionType;
 
-  protected name$ = this.store.name$;
-  protected encryptionType$ = this.store.encryptionType$;
+  protected name = this.store.name;
+  protected encryptionType = this.store.encryptionType;
 
-  protected topology$ = this.store.topology$.pipe(
-    map((topology) => {
-      // Remove empty vdevs. Dedicated spares are allowed alongside dRAID data
-      // vdevs (NAS-140629), so they are shown in the preview when present.
-      return omitBy(topology, (value) => value.vdevs.length === 0);
-    }),
-  );
+  // Remove empty vdevs. Dedicated spares are allowed alongside dRAID data
+  // vdevs (NAS-140629), so they are shown in the preview when present.
+  protected topology = computed(() => omitBy(this.store.topology(), (value) => value.vdevs.length === 0));
 
-  protected totalCapacity$ = this.store.totalUsableCapacity$;
+  protected totalCapacity = this.store.totalUsableCapacity;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
   get unknownProp(): string {

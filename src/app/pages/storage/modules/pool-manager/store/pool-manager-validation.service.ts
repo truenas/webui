@@ -1,10 +1,9 @@
-import { Injectable, inject } from '@angular/core';
+import { computed, Injectable, inject } from '@angular/core';
 import { ValidationErrors } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import { uniqBy } from 'lodash-es';
-import { combineLatest, map, Observable } from 'rxjs';
 import { CreateVdevLayout, VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -118,42 +117,46 @@ export class PoolManagerValidationService {
 
   exportedPoolsWarning = this.translate.instant(helptextPoolCreation.exportedSelectedDisksWarning);
 
-  readonly poolCreationErrors$ = combineLatest([
-    this.addVdevsStore.pool$,
-    this.store.nameErrors$,
-    this.store.topology$,
-    this.store.enclosureSettings$,
-    combineLatest([
-      this.store.hasMultipleEnclosuresAfterFirstStep$,
-      this.systemStore$.select(selectHasEnclosureSupport),
-    ]),
-  ])
-    .pipe(
-      map(([existingPool, nameErrors, topology, enclosure, [hasMultipleEnclosures, hasEnclosureSupport]]) => {
-        const errors: PoolCreationError[] = [];
+  private hasEnclosureSupport = this.systemStore$.selectSignal(selectHasEnclosureSupport);
 
-        errors.push(...this.parseNameErrors(nameErrors));
-        errors.push(...this.parseEnclosureErrors(enclosure, hasMultipleEnclosures, hasEnclosureSupport));
-        errors.push(...this.validateMinVdevsLimit(existingPool, topology));
-        if (!existingPool) {
-          errors.push(...this.validateNewPoolVdevs(topology));
-        } else {
-          errors.push(...this.validateAddVdevs(topology));
+  readonly poolCreationErrors = computed(() => {
+    const existingPool = this.addVdevsStore.pool();
+    const topology = this.store.topology();
+    const errors: PoolCreationError[] = [];
+
+    errors.push(...this.parseNameErrors(this.store.nameErrors()));
+    errors.push(...this.parseEnclosureErrors(
+      this.store.enclosureSettings(),
+      this.store.hasMultipleEnclosuresAfterFirstStep(),
+      this.hasEnclosureSupport(),
+    ));
+    errors.push(...this.validateMinVdevsLimit(existingPool, topology));
+    if (!existingPool) {
+      errors.push(...this.validateNewPoolVdevs(topology));
+    } else {
+      errors.push(...this.validateAddVdevs(topology));
+    }
+    errors.push(...this.validateRedundancyMismatch(topology, existingPool));
+    errors.push(...this.validateMixedAllocClassLayout(topology, existingPool));
+    errors.push(...this.validateIncompleteCategories(topology));
+
+    return uniqBy(errors, 'text')
+      .sort((a, b) => {
+        const warningSeverity = PoolCreationSeverity.Warning;
+        if (a.severity === warningSeverity) {
+          return -1;
         }
-        errors.push(...this.validateRedundancyMismatch(topology, existingPool));
-        errors.push(...this.validateMixedAllocClassLayout(topology, existingPool));
-        errors.push(...this.validateIncompleteCategories(topology));
+        return b.severity === warningSeverity ? 1 : 0;
+      });
+  });
 
-        return uniqBy(errors, 'text')
-          .sort((a, b) => {
-            const warningSeverity = PoolCreationSeverity.Warning;
-            if (a.severity === warningSeverity) {
-              return -1;
-            }
-            return b.severity === warningSeverity ? 1 : 0;
-          });
-      }),
-    );
+  readonly topLevelWarningsForEachStep = computed(() => {
+    return this.firstErrorTextForEachStep((errors, step) => this.filterWarningsTypeByStep(errors, step));
+  });
+
+  readonly topLevelErrorsForEachStep = computed(() => {
+    return this.firstErrorTextForEachStep((errors, step) => this.filterErrorsTypeByStep(errors, step));
+  });
 
   private parseNameErrors(nameErrors: ValidationErrors | null): PoolCreationError[] {
     const errors: PoolCreationError[] = [];
@@ -292,36 +295,17 @@ export class PoolManagerValidationService {
     return errors;
   }
 
-  getPoolCreationErrors(): Observable<PoolCreationError[]> {
-    return this.poolCreationErrors$;
-  }
+  private firstErrorTextForEachStep(
+    filterByStep: (errors: PoolCreationError[], step: PoolCreationWizardStep) => PoolCreationError[],
+  ): Partial<Record<PoolCreationWizardStep, string | null>> {
+    const errors = this.poolCreationErrors();
+    const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
 
-  getTopLevelWarningsForEachStep(): Observable<Partial<Record<PoolCreationWizardStep, string | null>>> {
-    return this.poolCreationErrors$.pipe(
-      map((errors) => {
-        const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
+    Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
+      result[step] = filterByStep(errors, step)?.[0]?.text || null;
+    });
 
-        Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
-          result[step] = this.filterWarningsTypeByStep(errors, step)?.[0]?.text || null;
-        });
-
-        return result;
-      }),
-    );
-  }
-
-  getTopLevelErrorsForEachStep(): Observable<Partial<Record<PoolCreationWizardStep, string | null>>> {
-    return this.poolCreationErrors$.pipe(
-      map((errors) => {
-        const result: Partial<Record<PoolCreationWizardStep, string | null>> = {};
-
-        Object.values(PoolCreationWizardStep).forEach((step: PoolCreationWizardStep) => {
-          result[step] = this.filterErrorsTypeByStep(errors, step)?.[0]?.text || null;
-        });
-
-        return result;
-      }),
-    );
+    return result;
   }
 
   private filterWarningsTypeByStep(errors: PoolCreationError[], step: PoolCreationWizardStep): PoolCreationError[] {

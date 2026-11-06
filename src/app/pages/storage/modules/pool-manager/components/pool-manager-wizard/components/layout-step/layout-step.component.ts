@@ -1,11 +1,11 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, input, inject,
+} from '@angular/core';
 import { TnTestIdDirective } from '@truenas/ui-components';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import {
   PoolManagerStore,
-  PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { AutomatedDiskSelectionComponent } from './automated-disk-selection/automated-disk-selection.component';
 import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-layout-applied.component';
@@ -17,10 +17,8 @@ import { CustomLayoutAppliedComponent } from './custom-layout-applied/custom-lay
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [TnTestIdDirective, AutomatedDiskSelectionComponent, CustomLayoutAppliedComponent],
 })
-export class LayoutStepComponent implements OnInit {
+export class LayoutStepComponent {
   private store = inject(PoolManagerStore);
-  private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
 
   readonly isStepActive = input<boolean>(false);
   readonly type = input.required<VDevType>();
@@ -33,16 +31,5 @@ export class LayoutStepComponent implements OnInit {
 
   readonly inventory = input<DetailsDisk[]>([]);
 
-  protected topologyCategory: PoolManagerTopologyCategory;
-
-  ngOnInit(): void {
-    this.connectToStore();
-  }
-
-  private connectToStore(): void {
-    this.store.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(({ topology }) => {
-      this.topologyCategory = topology[this.type()];
-      this.cdr.markForCheck();
-    });
-  }
+  protected topologyCategory = computed(() => this.store.topology()[this.type()]);
 }
