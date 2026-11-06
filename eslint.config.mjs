@@ -93,6 +93,7 @@ const projectOverrides = {
 // Once every directory is listed, replace this with `**/*.ts`.
 const commentCappedPaths = [
   'src/app/classes',
+  'src/app/constants',
   'src/app/helptext',
   'src/app/modules/alerts',
   'src/app/modules/auth',
