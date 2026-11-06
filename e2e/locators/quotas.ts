@@ -1,13 +1,8 @@
 /**
- * The User Quotas and Group Quotas pages of a dataset, and their add and edit forms.
- *
- * Both pages are one component, `dataset-quotas-list`, routed twice. Every id on a row is built
- * from its `uniqueRowTag`, `<users|groups>-quota-<name>`, run through `convertStringToId` and then
- * the library's normalizer. The tag is keyed on the name alone, so editing a quota never renames
- * its row. The list asks for `mode="inline"`, so Edit and Delete are icon buttons on the row.
- *
- * By default the list shows only principals with a quota set, so a row exists exactly while one
- * does. Show All also lists every principal middleware reports with none.
+ * The User Quotas and Group Quotas pages of a dataset (one `dataset-quotas-list` component routed twice), and their
+ * add and edit forms. Row ids come from `uniqueRowTag`, `<users|groups>-quota-<name>`, via `convertStringToId` then
+ * the library normalizer; keyed on the name alone, so edits keep the row. `mode="inline"` makes Edit and Delete row
+ * icon buttons. By default only principals with a quota have rows; Show All lists every principal.
  */
 import { kebabTestSegment } from './test-id';
 import type { QuotaKind } from '../fixtures/quotas';

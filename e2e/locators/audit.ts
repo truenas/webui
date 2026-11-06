@@ -1,23 +1,10 @@
 /**
- * The Audit card on System > Advanced Settings, and its form.
- *
- * The card has no rows: each setting is a readout tagged `tnTestIdType="text"`,
- * so its id is static. Each holds a single value, without its label, and reads
- * `None` when the value is 0.
- *
- * The form is built by `ix-form-renderer` from `audit.form-config.ts`, so every
- * field's id is its control name through the library normalizer — see
- * `locators/tunable.ts`.
- *
- * The Audit page under System is the log itself, a `tn-table` whose row tag is
- * `audit-<service>-<username>-<event>-<audit id>` through lodash. Every record's
- * id is a UUID, so the tag is unique and is split at each letter/digit boundary.
- *
- * Above the log sit the Service selector, the search box and Export
- * (`audit-search.component.html`). The search box is the shared
- * `ix-search-input`: a plain input in basic mode, a CodeMirror editor in
- * advanced mode. Clicking a row opens Log Details beside the list, whose
- * readouts are static ids because the page shows one record at a time.
+ * The Audit card on System > Advanced Settings and its form, plus the Audit log page. Card readouts are static
+ * `text` ids holding the value alone (`None` for 0). The form is `ix-form-renderer` from `audit.form-config.ts`,
+ * so ids are control names (see `locators/tunable.ts`). The log is a `tn-table` tagged
+ * `audit-<service>-<username>-<event>-<audit id>` through lodash; the UUID id is split at letter/digit boundaries.
+ * The search box is the shared `ix-search-input` (CodeMirror in advanced mode). Log Details ids are static,
+ * as one record shows at a time.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 

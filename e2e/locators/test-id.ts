@@ -1,51 +1,12 @@
 import { kebabCase } from 'lodash-es';
 
 /**
- * The library's `data-test` segment normalizer, replicated.
- *
- * Every `data-test` value in the app is built from segments run through this
- * function, so any locator that interpolates a runtime value — a pool name, a
- * disk width — has to apply the same normalization or it will look for an
- * element that does not exist.
- *
- * ## Why a copy rather than an import
- *
- * `kebabTestSegment` is exported from `@truenas/ui-components`, but that
- * package has a single entry point (`fesm2022/truenas-ui-components.mjs`) and
- * importing it pulls the whole Angular library into the Playwright runner — a
- * Node process with no browser and no Angular platform — for one pure string
- * function. Until the library ships a browser-free subpath export for its
- * test-id helpers, a faithful copy is the lesser cost.
- *
- * Copied verbatim from `kebabTestSegment` in
- * `node_modules/@truenas/ui-components/fesm2022/truenas-ui-components.mjs`, so a
- * diff against it is trivial. If a normalization here ever disagrees with the
- * app, this is the first place to check.
- *
- * **The copy is guarded.**
- * `src/app/core/testing/utils/e2e-kebab-test-segment-parity.spec.ts` runs both
- * implementations over a corpus and asserts they agree, so a library bump that
- * changes the normalizer fails in Jest — in a second, naming this file — rather
- * than surfacing later as a locator that never matches, twenty minutes into the
- * slowest test in the suite. The guard lives under `src/` because that is the
- * only tree where the Angular library resolves and Jest ignores `e2e/`.
- *
- * What is enforced is that the two agree on every input in that corpus, not that
- * the text is identical. A source-text comparison was tried and rejected: it
- * breaks on a build-tool formatting change while the only extra thing it catches
- * is drift in a branch no input can reach — which by definition cannot affect a
- * selector. If you change this function, add the case that motivated it to the
- * corpus.
- *
- * ## Not the only normalizer
- *
- * webui's own `normalizeTestIdString` and controls declaring
- * `[optionTestIdKey]="optionTestIdByKebabLabel"` use **lodash** `kebabCase`
- * instead, which splits letters from digits: `RAIDZ2` becomes `raidz-2` there
- * and `raidz2` here. Derive option ids from the extractor the control actually
- * declares — see the `layoutOption` note in `locators/storage.ts`, and
- * {@link legacyKebabTestSegment} below for interpolating a runtime value into
- * one of those ids.
+ * The library's `data-test` segment normalizer, copied verbatim from `kebabTestSegment` in `@truenas/ui-components`
+ * (`fesm2022/truenas-ui-components.mjs`); a locator interpolating a runtime value must use it. Copied because the
+ * package's single entry point would pull all of Angular into the Node runner; drop it once a browser-free subpath
+ * exists. `src/app/core/testing/utils/e2e-kebab-test-segment-parity.spec.ts` (Jest ignores `e2e/`) checks both
+ * agree on a corpus, not identical text; add the case behind any change. webui's `normalizeTestIdString` and
+ * `optionTestIdByKebabLabel` use lodash instead (`raidz-2` vs `raidz2`); see {@link legacyKebabTestSegment}.
  */
 export function kebabTestSegment(part: string | number): string {
   return String(part)
@@ -58,41 +19,12 @@ export function kebabTestSegment(part: string | number): string {
 }
 
 /**
- * webui's *legacy* normalizer, for the ids that still go through it.
- *
- * Not a copy: it is lodash `kebabCase` itself, from `lodash-es` — the same
- * import webui's `normalizeTestIdString` helper uses, so there is no third
- * implementation to keep in step (see the "Not the only normalizer" note above).
- * The ESM build, because Playwright loads the suite as ES modules and a named
- * import from the CommonJS `lodash` fails there.
- *
- * The local directive that minted these ids is gone (NAS-143893); every call site
- * now pre-normalizes with `normalizeTestIdString` or `normalizeTestIdParts` and
- * hands the result to the library, so the ids are unchanged and this is still the
- * normalizer to reach for.
- *
- * Where it applies:
- *
- * - `ix-user-picker`, `ix-combobox` and every other control whose options are
- *   `option-<control>-<label>`, with the label run through this.
- * - Table row tags built with `toUniqueRowTag` (`tn-table/utils.ts`), which
- *   pre-normalizes the whole tag this way before the library sees it — so a
- *   key named `e2e-s3-key` in the access key list renders as
- *   `text-name-s-3-access-key-e-2-e-s-3-key-row-text`.
- * - Exactly those shares-dashboard card cells that carried a legacy id, which
- *   normalize through their card's `cellRowTag`: NFS Path/Description, SMB
- *   Name/Path/Description/Audit Logging, WebShare Name/Path, and NVMe-oF
- *   Namespaces/Ports/Hosts. Nothing else on those cards does — `[rowTestId]`,
- *   every action button, NVMe-oF's own Name cell, and the whole of `s3-card`
- *   and `iscsi-card` come from `uniqueRowTag`, which is `convertStringToId`
- *   alone. So a row and the cells inside it disagree on a name with a
- *   letter/digit boundary: `row-card-smb-share-smb123` beside
- *   `text-name-card-smb-share-smb-123-row-text`. Use {@link kebabTestSegment}
- *   for the former and this for the latter.
- *
- * The two agree on anything with no letter/digit boundary, which is why most
- * locators can use {@link kebabTestSegment} without caring. Reach for this one
- * when the value is dynamic and the emitting side is one of the above.
+ * webui's legacy normalizer: lodash `kebabCase` itself, from `lodash-es` like `normalizeTestIdString` (no third copy;
+ * ESM because Playwright loads the suite as ES modules). Applies to `option-<control>-<label>` options
+ * (`ix-user-picker`, `ix-combobox`, …), row tags from `toUniqueRowTag`, and only the legacy-id shares-card cells via
+ * `cellRowTag` (NFS Path/Description, SMB Name/Path/Description/Audit Logging, WebShare Name/Path, NVMe-oF
+ * Namespaces/Ports/Hosts), whose rows use {@link kebabTestSegment}: `row-card-smb-share-smb123` beside
+ * `text-name-card-smb-share-smb-123-row-text`. The two agree on anything without a letter/digit boundary.
  */
 export function legacyKebabTestSegment(part: string | number): string {
   return kebabCase(String(part));

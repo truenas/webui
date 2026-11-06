@@ -1,15 +1,7 @@
 /**
- * The popup of a form's `tn-file-picker`.
- *
- * The picker takes its control name as its test-id base, and the
- * picker builds every id below from that base. The base is the control name
- * kebab-cased, the same one its typable field is `input-<base>` by:
- * `folder-destination` for `folder_destination`.
- *
- * The popup renders in a CDK overlay outside the form, and lists one directory
- * at a time. An entry's ids carry its name, never its path, so two directories
- * holding the same name give the same ids. The flows only ever read the
- * directory that is open.
+ * The popup of a form's `tn-file-picker`. Ids derive from the control name kebab-cased, the same base as its
+ * `input-<base>` field (`folder-destination`). The popup is a CDK overlay outside the form showing one directory
+ * at a time; entry ids carry the name, not the path, so the flows only read the open directory.
  */
 import { kebabTestSegment } from './test-id';
 

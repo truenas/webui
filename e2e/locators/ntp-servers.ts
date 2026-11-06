@@ -1,19 +1,9 @@
 /**
- * The NTP Servers card on System > Advanced Settings, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `ntp-server-<address>-<minpoll>-<maxpoll>`, a plain template literal with no
- * pre-normalizing — so the row, its cells and its action menu all go through the
- * library's normalizer, and {@link kebabTestSegment} is the one to use
- * throughout. An IPv4 address loses its dots to it: `192.0.2.10` becomes
- * `192-0-2-10`.
- *
- * The tag carries both poll intervals, so **an edit that changes either one
- * renames every id on the row**. A spec that edits them looks the row up again
- * under the new values.
- *
- * The form is built by `ix-form-renderer` from `ntp-servers.form-config.ts`, so
- * every field's id is its control name — see `locators/groups.ts`.
+ * The NTP Servers card on System > Advanced Settings, and its form. Row ids come from `uniqueRowTag`,
+ * `ntp-server-<address>-<minpoll>-<maxpoll>`, with no pre-normalizing, so use {@link kebabTestSegment}
+ * (`192.0.2.10` becomes `192-0-2-10`). Changing either poll interval renames every id on the row; look it up
+ * again under the new values. The form is `ix-form-renderer` from `ntp-servers.form-config.ts`, so ids are
+ * control names.
  */
 import { kebabTestSegment } from './test-id';
 

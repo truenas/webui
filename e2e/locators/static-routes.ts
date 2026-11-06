@@ -1,21 +1,9 @@
 /**
- * The Static Routes card on System > Network, its form and its delete dialog.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `static-route-<destination>-<gateway>`, run through `convertStringToId` and
- * then the library's normalizer. The two agree on everything an address holds,
- * so {@link kebabTestSegment} is the one to use throughout: `198.51.100.0/26`
- * via `192.0.2.21` tags its row `static-route-198-51-100-0-26-192-0-2-21`.
- *
- * The tag carries the gateway, so **an edit that changes the gateway renames
- * every id on the row**. A spec that edits it looks the row up again under the
- * new value. The description is not in the tag, and the card does not show it.
- *
- * The card asks for `mode="inline"`, so Edit and Delete are icon buttons on the
- * row rather than items in a kebab menu, and their ids have no `more-action`.
- *
- * The form is built by `ix-form-renderer` from `static-route.form-config.ts`, so
- * every field's id is its control name — see `locators/groups.ts`.
+ * The Static Routes card on System > Network, its form and its delete dialog. Row ids come from `uniqueRowTag`,
+ * `static-route-<destination>-<gateway>`, via `convertStringToId` then the library normalizer, which agree on
+ * addresses, so use {@link kebabTestSegment} (`static-route-198-51-100-0-26-192-0-2-21`). Changing the gateway
+ * renames every id on the row; look it up again. `mode="inline"` makes Edit and Delete row icon buttons with no
+ * `more-action`. The form is `ix-form-renderer` from `static-route.form-config.ts`, so ids are control names.
  */
 import { kebabTestSegment } from './test-id';
 
