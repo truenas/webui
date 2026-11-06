@@ -25,18 +25,10 @@ function getBrowserTimezone(): string {
   return cachedBrowserTimezone;
 }
 
-// Projects an instant onto the wall-clock of `machineTimezone`, returned as a
-// Date whose browser-local components (the ones date-fns-tz `format()` reads
-// when called without a timeZone option) equal that wall-clock. The
-// `fromZonedTime` hop normalizes the input to an absolute UTC instant whether
-// it arrived as unix-ms or as a Date already re-zoned into another timezone, so
-// the conversion holds in both cases.
-//
-// Pure — the timezone is passed in rather than read from the service — so
-// `<ix-date>` can share it driven by the mockable `LocaleService.timezone`
-// property. That keeps the component testable: a unit test stubbing only
-// `timezone` gets the real conversion without having to stub a service method
-// (an auto-mocked method returns `undefined` and would otherwise break render).
+// Returns a Date whose browser-local components equal the wall-clock of `machineTimezone`, which
+// is what date-fns-tz `format()` reads without a timeZone option. The `fromZonedTime` hop makes it
+// hold whether the input is unix-ms or an already re-zoned Date. The timezone is a parameter so
+// `<ix-date>` can drive it from the mockable `LocaleService.timezone` instead of an auto-mocked method.
 export function getMachineTime(date: number | Date, machineTimezone: string | undefined): Date {
   const browserTimezone = getBrowserTimezone();
   const instant = fromZonedTime(date, browserTimezone);
