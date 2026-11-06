@@ -6,37 +6,11 @@ import { Role } from 'app/enums/role.enum';
 import { FormSubmitEvent, SubmitResult } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 
 /**
- * Declarative form description rendered by `<ix-form-renderer>`.
- *
- * This is the "simple" shape: a flat list of primitive fields, optionally
- * grouped into titled sections, with a submit handler. It covers CRUD forms
- * whose fields are static, plus single-field conditional visibility/enablement
- * (`visibleWhen`/`enabledWhen`) and read-only fields. Anything needing dynamic
- * field sets, custom widgets (explorer/scheduler/...), FormArrays,
- * wizards, imperative `valueChanges` side-effects, or per-field reactive
- * attributes should stay on the hand-written `<ix-form>` + template approach.
- *
- * The host component owns the definition as an instance property, so it can
- * close over injected services (api, translate, slide-in data) in `submit`
- * and in any `validators`.
- *
- * @example
- * protected definition: FormDefinition<CreateNtpServer> = {
- *   addTitle: T('Add NTP Server'),
- *   editTitle: T('Edit NTP Server'),
- *   requiredRoles: [Role.NetworkGeneralWrite],
- *   sections: [{
- *     title: T('NTP Servers'),
- *     fields: [
- *       { name: 'address', type: 'input', label: T('Address'), required: true },
- *       { name: 'burst', type: 'checkbox', label: T('Burst'), value: false },
- *     ],
- *   }],
- *   submit: (event) => ({
- *     request$: this.api.call('system.ntpserver.create', [event.allValues]),
- *     successMessage: this.translate.instant('NTP server added'),
- *   }),
- * };
+ * Declarative form rendered by `<ix-form-renderer>`: static fields, optionally in titled sections, with
+ * single-field `visibleWhen`/`enabledWhen` and read-only fields. Dynamic field sets, custom widgets,
+ * FormArrays, wizards and `valueChanges` side effects stay on hand-written `<ix-form>` templates. The
+ * host owns the definition as a property, so `submit` and `validators` can use injected services.
+ * See `ntp-servers.form-config.ts` for an example.
  */
 /**
  * Fields are supplied EITHER as a flat `fields` list (one untitled fieldset)
@@ -70,14 +44,9 @@ interface FormDefinitionBase<T extends object> {
   formValidators?: ValidatorFn[];
 
   /**
-   * Async loader for singleton-config forms whose initial values come from an
-   * API call (e.g. `mail.config`, `audit.config`) rather than `editData`. The
-   * renderer shows the loading bar, fetches once on init, patches the form and
-   * captures the result as the change-tracking baseline. The form is treated as
-   * an edit. Mutually exclusive with `editData`. On failure the renderer clears
-   * loading and surfaces the error in a modal, so a config need not add its own
-   * `catchError` — though it may still pre-handle the error in the returned
-   * Observable (e.g. to map it or close the slide-in).
+   * Loads initial values for a singleton-config form (e.g. `mail.config`) instead of `editData`, with
+   * which it is mutually exclusive. The renderer fetches once, patches the form, captures the baseline and
+   * treats it as an edit. On failure it shows the error in a modal, so no `catchError` is needed.
    */
   loadData?: () => Observable<Partial<T>>;
 

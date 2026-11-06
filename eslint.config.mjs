@@ -110,6 +110,7 @@ const commentCappedPaths = [
   'src/app/modules/disk-icon',
   'src/app/modules/empty',
   'src/app/modules/feedback',
+  'src/app/modules/forms',
   'src/app/modules/global-search',
   'src/app/modules/interface-status-icon',
   'src/app/modules/jobs',

@@ -9,14 +9,9 @@ import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
 
 /**
- * The ix-* controls that still render a label row of their own, so a spec can find one by label
- * without an enclosing `tn-form-field`. `ix-permissions`, `ix-ip-input-with-netmask`
- * and `ix-code-editor` are deliberately absent: they are bare controls now, so they
- * have no label to be found by. Inside a form they are projected into a `tn-form-field` and
- * {@link TnFormControlHarness} reaches them through it; the few places that render one outside a
- * field — `job-logs-row` and the websocket debug `message-list` both show a read-only
- * `ix-code-editor` — are display-only, so nothing needs to index them at all. Listing them here
- * would also close an import cycle back through this module.
+ * ix-* controls that still render their own label row, so specs can find them without a `tn-form-field`.
+ * `ix-permissions`, `ix-ip-input-with-netmask` and `ix-code-editor` are bare controls reached through
+ * their field, and listing them would also close an import cycle.
  */
 export const supportedFormControlSelectors = [
   SchedulerHarness,
@@ -26,21 +21,10 @@ export const supportedFormControlSelectors = [
 export type IxFormBasicValueType = string | number | boolean | string[] | number[];
 
 /**
- * Every control-harness type a form may contain — the ix-* harnesses plus {@link
- * TnFormControlHarness} — typed once as harnesses that expose the {@link IxFormControlHarness}
- * surface. Forms part-way through the tn-* migration hold both kinds side by side, so anything
- * that wants "every control in this form" has to query the whole heterogeneous list.
- *
- * Described here rather than at each call site so the list can't drift between them. The
- * assertion is the price of a heterogeneous constructor list: `locatorForAll`/`getAllHarnesses`
- * need a single constructor type, and the harnesses share only the interface, not a base class.
- *
- * The order here does NOT set precedence between two harnesses matching the same label:
- * `locatorForAll` returns its results in DOM order, so an ix-* composite that renders a
- * `tn-form-field` of its own under the same label — `ix-scheduler` is a `tn-select` labelled
- * "Schedule" — is shadowed by that inner field under {@link indexControlsByLabel}'s last-wins.
- * Drive such a control through its own harness rather than by label; `cron-form` and
- * `rsync-task-form` both reach the scheduler through `SchedulerHarness`.
+ * Every control-harness type a form may hold, ix-* plus {@link TnFormControlHarness}, typed once as the
+ * {@link IxFormControlHarness} surface; the cast is needed because they share an interface, not a base.
+ * Order doesn't set precedence: results come in DOM order, so a composite with its own inner field
+ * under the same label (`ix-scheduler`'s "Schedule") is shadowed; drive it through `SchedulerHarness`.
  */
 export const formControlHarnessTypes = [
   ...supportedFormControlSelectors,
@@ -72,17 +56,10 @@ export async function indexControlsByLabel<T extends IxFormControlHarness>(
   const result: Record<string, T> = {};
   for (const control of controls) {
     const label = await control.getLabelText();
-    // Repeated *labelled* controls are legitimate and long-standing here — a `tn-form-list`
-    // renders one set of labels per row — so those stay last-wins, as they have always been. An unlabelled
-    // control is different: '' is not a name any caller would ask for, and a second one would
-    // collide with the first under it. Skip them unconditionally rather than only once a second
-    // appears — a threshold would make whether '' resolves depend on unrelated markup elsewhere
-    // in the form, so adding a label-less field could silently drop an existing `''` assertion's
-    // coverage instead of breaking it. Skipping rather than throwing keeps the index usable: a
-    // form is allowed to hold an unreachable control alongside addressable ones, and only the ''
-    // lookup fails — `fillControlValues` explains why. Note that "unlabelled" is narrow: a
-    // `tn-checkbox`'s own `[label]` and a radio group's `[ariaLabel]` both count as labels
-    // (see `TnFormControlHarness.getLabelText`), so only a genuinely nameless control lands here.
+    // Repeated labelled controls stay last-wins (a `tn-form-list` repeats labels per row). Unlabelled
+    // controls are always skipped, never by threshold, so adding a label-less field elsewhere can't
+    // silently change what '' resolves to; only the '' lookup fails (`fillControlValues` says why).
+    // A `tn-checkbox`'s `[label]` and a radio group's `[ariaLabel]` count as labels.
     if (!label) {
       continue;
     }

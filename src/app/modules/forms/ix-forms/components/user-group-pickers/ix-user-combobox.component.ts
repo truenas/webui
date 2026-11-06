@@ -3,30 +3,10 @@ import { TnAutocompleteComponent } from '@truenas/ui-components';
 import { DirectoryComboboxBase } from 'app/modules/forms/ix-forms/classes/directory-field.base';
 
 /**
- * Single-user selection, searched against {@link UserDirectoryService}.
- *
- * Everything a user field needs is here: the server-side search with its
- * debounce and paging, the "does this name exist" validation for a typed value,
- * and — with `allowCreate` — a row that opens the create-user side panel and
- * selects whoever comes back. Drop it into a `tn-form-field` and bind a control.
- *
- * @example
- * ```html
- * <tn-form-field [label]="'Owner' | translate">
- *   <ix-user-combobox formControlName="owner" />
- * </tn-form-field>
- * ```
- *
- * @example Restricted to privileged users, with a create row
- * ```html
- * <ix-user-combobox
- *   formControlName="username"
- *   [requireSelection]="true"
- *   [allowCustomValue]="false"
- *   [allowCreate]="true"
- *   [directoryOptions]="{ queryParams: [[['roles', '!=', []]]] }"
- * ></ix-user-combobox>
- * ```
+ * Single-user selection searched against {@link UserDirectoryService}, with debounced paged search,
+ * existence validation for typed names, and with `allowCreate` a row that opens the create-user panel
+ * and selects the result. Use inside a `tn-form-field`, e.g. `<ix-user-combobox formControlName="owner" />`;
+ * narrow it with `[directoryOptions]`, e.g. `{ queryParams: [[['roles', '!=', []]]] }` for privileged users.
  */
 @Component({
   selector: 'ix-user-combobox',

@@ -1,16 +1,9 @@
 import { QueryComparator } from 'app/interfaces/query-api.interface';
 
 /**
- * Example query: (Username = "Bob" AND Age > 19) OR (Username = "Peter")
- *
- * Query
- *  ConditionGroup ((Username = "Bob" AND Age > 19) OR (Username = "Peter"))
- *    ConditionGroup (Username = "Bob" AND Age > 19)
- *      Condition (Username = "Bob")
- *      comparator (AND)
- *      Condition (Age > 19)
- *    comparator (OR)
- *    Condition (Username = "Peter")
+ * Parsed query tree. `(Username = "Bob" AND Age > 19) OR (Username = "Peter")` becomes a ConditionGroup
+ * joined by OR, holding a nested ConditionGroup (`Username = "Bob"` AND `Age > 19`) and the Condition
+ * `Username = "Peter"`.
  */
 export interface QueryParsingResult {
   hasErrors: boolean;

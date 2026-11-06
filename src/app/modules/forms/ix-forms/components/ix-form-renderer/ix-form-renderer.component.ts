@@ -74,15 +74,9 @@ interface RenderSection {
 }
 
 /**
- * Renders a declarative {@link FormDefinition} into a fully-functional
- * slide-in form. Builds the `FormGroup` from the field list, wires it into
- * `<ix-form>` (which owns the chrome, change tracking and submit lifecycle)
- * and renders each field as a `<tn-form-field>` wrapping the matching tn-*
- * control. API/validation errors surface through `tn-form-field`'s resolver
- * (`provideTnFormFieldErrors`, wired app-wide) fed by `FormErrorHandlerService`.
- *
- * @example
- * <ix-form-renderer [definition]="definition" [editData]="editingEntity" />
+ * Renders a declarative {@link FormDefinition}: builds the `FormGroup`, wires it into `<ix-form>` and
+ * renders each field as a `<tn-form-field>` around its tn-* control, e.g.
+ * `<ix-form-renderer [definition]="definition" [editData]="editingEntity" />`.
  */
 @Component({
   selector: 'ix-form-renderer',
@@ -227,18 +221,10 @@ implements OnInit, SidePanelHostForm {
   }
 
   /**
-   * Wires `visibleWhen`/`enabledWhen` (field and section level), then re-applies
-   * on every value change. Hidden / disabled-when states are both expressed by
-   * disabling the control (so it drops out of validation and `.value`), with
-   * visibility additionally toggling the template `@if`. Enable/disable use
-   * `emitEvent: false` to avoid re-triggering the subscription.
-   *
-   * The initial pass is split to keep edit/loadData forms correct: when a patch
-   * is coming (`editData`/`loadData`), only the visibility signals are seeded —
-   * from the entity-merged value — and the authoritative enable/disable is
-   * deferred to the patch's own `valueChanges`, so it runs against the patched
-   * values rather than the pre-patch defaults. Create-mode forms have nothing to
-   * patch, so the full state applies at once.
+   * Wires `visibleWhen`/`enabledWhen` and re-applies them on every value change. Both disable the
+   * control so it drops out of validation and `.value`; visibility also toggles the `@if`. When an
+   * `editData`/`loadData` patch is coming, only visibility is seeded now and enable/disable waits for
+   * the patch's `valueChanges`, so it runs against patched values rather than defaults.
    */
   private setupConditionalState(): void {
     const hasConditionalLogic = this.sections.some(

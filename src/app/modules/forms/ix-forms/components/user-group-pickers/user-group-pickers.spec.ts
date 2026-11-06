@@ -32,16 +32,10 @@ import {
 } from 'app/services/user-directory.service';
 
 /**
- * The four user/group pickers, against a stub directory.
- *
- * These replaced five near-identical wrappers built on the legacy combobox /
- * chips controls, so what matters here is the contract those wrappers carried: the
- * value reaches a form control through two levels of `ControlValueAccessor`, a
- * typed name that does not exist is rejected, and an edit form does not open
- * already showing errors for values it just loaded.
- *
- * TrueNAS query shaping is not covered here — that lives in
- * `UserDirectoryService` and is covered by its own spec.
+ * The four user/group pickers against a stub directory, covering the contract the legacy wrappers
+ * carried: values reach a form control through two levels of `ControlValueAccessor`, a nonexistent
+ * typed name is rejected, and an edit form doesn't open with errors for values it just loaded. Query
+ * shaping is covered by `UserDirectoryService`'s spec.
  */
 
 const users = ['root', 'operator', 'admin'];

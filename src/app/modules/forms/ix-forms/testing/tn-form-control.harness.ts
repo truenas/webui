@@ -27,33 +27,11 @@ import {
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 
 /**
- * Adapter that lets a `tn-form-field`-wrapped tn-* control be driven through the same
- * {@link IxFormControlHarness} contract the ix-* control harnesses implement, so a form
- * part-way through the tn-* migration — with ix-* and tn-* controls side by side — can still
- * be filled and read by label through one indexed lookup.
- *
- * Extends {@link TnFormFieldHarness} rather than composing it: both share the same
- * `tn-form-field` host, and `locatorFor` only searches descendants — so inheriting is
- * the only way to reuse the library's own `getLabel()` instead of re-deriving it.
- *
- * **Supported controls: `tn-input`, `tn-select`, `tn-autocomplete`, `tn-checkbox`,
- * `tn-checkbox-group`, `tn-radio`, and the `ix-user-*` / `ix-group-*` pickers.**
- *
- * A field may also wrap a composite ix-* control rather than a bare tn-* one (the ix-* control
- * hands its label row to the field so it lines up with the `tn-input`s beside it). Those are
- * matched FIRST — see {@link delegate} and {@link projectedIxControl} — because the tn-* locators
- * below would otherwise reach *inside* one and drive an internal that is not the field's control
- * at all. The user/group pickers are the exception: they carry no `ix-label` marker, so they get
- * explicit branches of their own at the end.
- *
- * A field wrapping anything else (a bare `tn-chip-input`, `tn-file-input`, …) still indexes by
- * label, but {@link getValue} and {@link isDisabled} return {@link unreadableControl} — whole-form
- * readers like `getControlValues`/`getDisabledStates` walk every control at once, so a throw there
- * would take the rest of the form down with it, while returning `''`/`false` would let an
- * assertion pass while reading nothing. The sentinel does neither: readers drop the entry, so a
- * form-wide `toEqual` fails on the missing key. {@link setValue} targets one control and does
- * throw. Extend the branches below when a form needs one of those, or drive that control through
- * its own tn-* harness.
+ * Drives a `tn-form-field`-wrapped control through the {@link IxFormControlHarness} contract, so mixed
+ * ix-* and tn-* forms fill and read by label through one lookup. Extends {@link TnFormFieldHarness} to reuse
+ * its `getLabel()`. Supports `tn-input`, `tn-select`, `tn-autocomplete`, `tn-checkbox(-group)`,
+ * `tn-radio` and the user/group pickers; projected ix-* composites are matched first (see {@link delegate}).
+ * Anything else reads as {@link unreadableControl}, so form-wide readers drop it and `toEqual` fails.
  */
 export class TnFormControlHarness extends TnFormFieldHarness implements IxFormControlHarness {
   static override readonly hostSelector = 'tn-form-field';
@@ -79,20 +57,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
    */
   private filePicker = this.locatorForOptional(TnFilePickerHarness);
   /**
-   * Any *other* projected ix-* control. `RegisteredControlDirective` — the host directive every
-   * ix-* control carries — stamps `ix-label` on its own element once the control registers, so
-   * this recognises them all without naming twenty-odd selectors by hand and going stale.
-   *
-   * Probed before every tn-* locator below, and answered with {@link unreadableControl}: a
-   * composite renders tn-* internals of its own (a `tn-select` for a unit, a `tn-checkbox` per
-   * row), and reading one of those back reports a plausible wrong value rather than nothing —
-   * exactly what the sentinel exists to prevent. Drive such a field through the ix-* control's
-   * own harness, or give it a branch here.
-   *
-   * The marker only lands on a control the directive could register, which needs a name — an
-   * ix-* control bound through a bare `[formControl]` is invisible here. Forms name their
-   * controls, so that gap is theoretical; a control that must be recognised regardless needs its
-   * own element-matched locator, the way {@link ipInputWithNetmask} has one.
+   * Any other projected ix-* control, found by the `ix-label` marker `RegisteredControlDirective` stamps
+   * on registration. Probed before the tn-* locators and answered with {@link unreadableControl},
+   * because a composite's tn-* internals would read back a plausible wrong value. Only named controls
+   * get the marker; one that must match regardless needs its own locator, like {@link ipInputWithNetmask}.
    */
   private projectedIxControl = this.locatorForOptional(`[${ixControlLabelTag}]`);
   private input = this.locatorForOptional(TnInputHarness);
@@ -139,15 +107,10 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   private namedCheckboxGroup = this.locatorForOptional('[role="group"][aria-label]');
 
   /**
-   * `TnFormFieldHarness.with()` names its own class in the predicate it builds, so inheriting it
-   * would hand back a plain field harness with none of the control access below. Matches on
-   * {@link getLabelText} rather than the field's own `getLabel()`, so a self-naming `tn-checkbox`
-   * or `tn-radio-group` is reachable under the same name `indexControlsByLabel` files it under.
-   *
-   * **Keep the options below in sync with `FormFieldHarnessFilters`.** Re-listing them by hand is
-   * what re-declaring the predicate costs: should the library grow a third filter, a caller
-   * passing it here still type-checks but the option is never added, so the predicate matches
-   * every field instead of narrowing. Re-check this list when bumping `@truenas/ui-components`.
+   * Re-declared because `TnFormFieldHarness.with()` names its own class in the predicate. Matches on
+   * {@link getLabelText}, so self-naming checkboxes and radio groups resolve as `indexControlsByLabel`
+   * files them. **Keep the options in sync with `FormFieldHarnessFilters`**: a new library filter would
+   * type-check here but never narrow. Re-check when bumping `@truenas/ui-components`.
    */
   static override with(options: FormFieldHarnessFilters = {}): HarnessPredicate<TnFormControlHarness> {
     return new HarnessPredicate(TnFormControlHarness, options)
@@ -421,14 +384,9 @@ export class TnFormControlHarness extends TnFormFieldHarness implements IxFormCo
   }
 
   /**
-   * **Sharp edge:** a radio group reports disabled only when *every* option is, which is what the
-   * `IxFormControlHarness` contract means for a group disabled as a unit (how `setDisabledState`
-   * drives one). A partially-disabled group — individual options disabled to bar certain choices —
-   * therefore reads as enabled, and no assertion here can see which options are off. Assert those
-   * through `TnRadioHarness.isDisabled()` per option instead.
-   *
-   * Returns {@link unreadableControl} for a control with no branch here, for the reason spelled out
-   * on {@link getValue}: a `false` would read as "enabled" for a control that may well be disabled.
+   * A radio group reads as disabled only when every option is, matching a group disabled as a unit,
+   * so a partially disabled group reads as enabled; check options with `TnRadioHarness.isDisabled()`.
+   * Returns {@link unreadableControl} for an unsupported control, as {@link getValue} explains.
    */
   async isDisabled(): Promise<boolean | typeof unreadableControl> {
     const delegate = await this.delegate();

@@ -2,29 +2,11 @@ import { TnSelectOption } from '@truenas/ui-components';
 import { kebabCase } from 'lodash-es';
 
 /**
- * Ready-made `optionTestIdKey` callbacks for `tn-select` / `tn-autocomplete`.
- *
- * With no key, the library's `optionTestId()` derives an option's id from its **value** when that
- * value is a `string` or a `number`, and falls back to the **label** for anything else. The ids
- * these replaced always came from the label, so a select whose label and value differ
- * *and* whose value is a primitive — `<name> | <guid>` vs the bare guid, an enclosure name vs its
- * id — silently renames every option id on migration unless the key is pinned back to the label.
- * Object- or array-valued options (`{ size, type }`) already land on the label unaided and need no
- * key; pin one only if the default would be wrong or if you want the derivation stated in the
- * template.
- *
- * Kept here so the reasoning is pinned in one place instead of being re-derived per component.
- * Pass one straight through:
- * `[optionTestIdKey]="optionTestIdByLabel"`.
- *
- * A select whose id has to come from somewhere other than the label — a lookup keyed by the
- * option value, say — still needs its own callback; see `app-update-dialog.component.ts`.
- *
- * **Sharp edge:** a label-derived id is locale-dependent — the option ids shift with the active
- * language, so a test pinned to `option-pool-my-pool` in English will not resolve under another
- * locale. The ids these replaced had exactly the same property, so pinning the
- * key is parity-preserving rather than a new hazard; but where an id must be stable across
- * languages, key off a locale-independent field of the option value instead.
+ * `optionTestIdKey` callbacks for `tn-select` / `tn-autocomplete`. Without a key, the library derives
+ * an option id from a primitive value, but the ids these replaced came from the label, so a select with
+ * differing label and primitive value needs `[optionTestIdKey]="optionTestIdByLabel"` to keep its ids.
+ * Object values already fall back to the label. Label-derived ids change with the locale; key off a
+ * locale-independent field where that matters (see `app-update-dialog.component.ts`).
  */
 export const optionTestIdByLabel = (option: TnSelectOption): string => option.label;
 

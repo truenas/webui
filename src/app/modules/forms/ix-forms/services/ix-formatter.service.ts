@@ -73,14 +73,9 @@ export class IxFormatterService {
   };
 
   /**
-   * Converts a human readable size string with units into bytes. Any invalid letters result in null returned
-   * @param hstr The string to be converted
-   * @param dec Does the passed string has a decimal point values
-   * @param allowedUnits allowedUnits should include any or all of 'bkmgtp', the first letters of KiB, Mib, etc.
-   * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
-   * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
-   * so 256 is considered 256 bytes.
-   * @returns The passed human readable string converted into number of bytes
+   * Converts a human-readable size to bytes, or null on invalid letters. `allowedUnits` takes any of
+   * 'bkmgtp' and its first letter is the default unit (256 with 'gtp' is 256 GiB); without it all are
+   * allowed and a bare number is bytes.
    */
   convertHumanStringToNum = (
     hstr: string,
@@ -93,14 +88,9 @@ export class IxFormatterService {
   };
 
   /**
-   * Converts passed in human readable string into two parts. The digit value in numbers and the unit that's applied.
-   * @param hstr The human readable size string
-   * @param dec Does the value has decimal point values
-   * @param allowedUnits allowedUnits should include any or all of 'bkmgtp', the first letters of KiB, Mib, etc.
-   * The first letter is used as the default, so for 'gtp', an entered value of 256 becomes 256 GiB.
-   * If you don't pass in allowedUnits, all of the above are accepted AND no unit is attached to an unlabeled number,
-   * so 256 is considered 256 bytes.
-   * @returns The passed human readable string converted into number and unit separately
+   * Splits a human-readable size into its number and unit. `allowedUnits` takes any of 'bkmgtp' and its
+   * first letter is the default unit (256 with 'gtp' is 256 GiB); without it all are allowed and a bare
+   * number is bytes.
    */
   getNumberAndUnitFromHumanString(
     hstr: string,

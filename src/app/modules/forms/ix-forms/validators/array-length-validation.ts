@@ -9,19 +9,8 @@ export interface ArrayLengthValidationError {
 }
 
 /**
- * Validates that a FormArray has at least the specified number of items.
- *
- * This validator is specifically designed for FormArray controls in the Apps form schema.
- * It can be used anywhere array length validation is needed.
- *
- * @param minLength The minimum number of items required in the array
- * @returns A validator function that returns an error if the array has fewer than minLength items
- *
- * @example
- * ```typescript
- * const control = new FormArray([], minArrayLengthValidator(1));
- * // Empty array will fail validation: { minArrayLength: { requiredLength: 1, actualLength: 0 } }
- * ```
+ * Fails a FormArray with fewer than `minLength` items, returning `{ minArrayLength: { requiredLength,
+ * actualLength } }`. Built for the Apps form schema but usable anywhere.
  */
 export function minArrayLengthValidator(minLength: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -50,19 +39,7 @@ export function minArrayLengthValidator(minLength: number): ValidatorFn {
 }
 
 /**
- * Validates that a FormArray has no more than the specified number of items.
- *
- * This validator is specifically designed for FormArray controls in the Apps form schema.
- * It can be used anywhere array length validation is needed.
- *
- * @param maxLength The maximum number of items allowed in the array
- * @returns A validator function that returns an error if the array has more than maxLength items
- *
- * @example
- * ```typescript
- * const control = new FormArray([], maxArrayLengthValidator(5));
- * // Arrays with 0-5 items are valid, 6+ items will fail validation
- * ```
+ * Fails a FormArray with more than `maxLength` items. Built for the Apps form schema but usable anywhere.
  */
 export function maxArrayLengthValidator(maxLength: number): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

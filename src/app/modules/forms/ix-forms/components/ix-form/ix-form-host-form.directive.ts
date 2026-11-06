@@ -9,41 +9,11 @@ import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directi
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
- * Base for a side-panel form that WRAPS an inner `<ix-form>` and delegates the host surface to it,
- * rather than being the form itself (that self-contained shape is {@link SidePanelForm}). It holds
- * the `<ix-form>` view query and re-exposes its submit / validity / dirty state so
- * `FormSidePanelService` and its container can drive the panel Save and unsaved-changes guard.
- *
- * Centralizes the four-member surface (`closed` / `hasUnsavedChanges` / `canSubmit` / `submit`) that
- * every `<ix-form>`-wrapping migration otherwise re-implements by hand, plus the config-load state
- * that {@link loadFormConfig} owns. Because it satisfies {@link SidePanelHostForm}, subclasses can
- * be handed to `open()` by their real type — no `as unknown as Type<SidePanelForm>` cast.
- *
- * Subclasses render exactly one `<ix-form>` in their template and forward its `closed` to
- * {@link closed} (`(closed)="closed.emit($event)"`), or emit a richer payload from their own close
- * handler when `R` is not `boolean`. The load state reaches that `<ix-form>` through the view query
- * below — a config form's template carries no load-state bindings of its own.
- *
- * @typeParam R success payload emitted through {@link closed} (defaults to `boolean`).
- * @typeParam V the {@link form}'s raw value shape, which types {@link initialFormSnapshot} so it
- * lines up with the `<ix-form>` it is bound to. Passed explicitly (rather than derived from
- * `this['form']`) so {@link form} can stay `protected` — an indexed access can only reach a public
- * member. Forms that don't bind `initialFormSnapshot` can leave it at the default.
- *
- * Deriving `V` therefore can't go through the component either, which is why the config forms
- * build their group in a module-level factory and read the shape off that:
- *
- * ```ts
- * // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
- * function createFooForm(fb: FormBuilder) { return fb.group({ … }); }
- * type FooFormValue = ReturnType<ReturnType<typeof createFooForm>['getRawValue']>;
- *
- * export class FooComponent extends IxFormHostForm<boolean, FooFormValue> { … }
- * ```
- *
- * The factory's return type is deliberately left inferred (hence the lint suppression): the
- * inferred `FormGroup` IS the contract the alias reads, and writing it out would restate every
- * control.
+ * Base for a side-panel form that wraps one `<ix-form>` and delegates `closed` / `hasUnsavedChanges`
+ * / `canSubmit` / `submit` to it (the self-contained shape is {@link SidePanelForm}). Subclasses forward
+ * `(closed)` and get the config-load state from {@link loadFormConfig}. `V` is passed explicitly so
+ * {@link form} can stay `protected`; config forms build their group in a module-level factory with an
+ * inferred return type and read `V` off its `getRawValue`.
  */
 @Directive()
 export abstract class IxFormHostForm<R = boolean, V extends object = Record<string, unknown>>
@@ -118,16 +88,10 @@ implements SidePanelHostForm<R> {
   }
 
   /**
-   * Everything {@link loadFormConfig} tracks, in the shape `<ix-form>` consumes.
-   *
-   * Pushed into the inner form through the view query this base already owns, rather than asked of
-   * every subclass template as `[externalLoading]` + `[extraDisabled]` + `[initialFormSnapshot]`.
-   * Those three bindings did nothing until they were written out, and omitting them failed SILENTLY
-   * — the panel still showed its "settings could not be loaded" banner while Save stayed enabled
-   * over the untouched defaults, which is the exact scenario {@link loadFailed} exists to prevent.
-   * Wiring it here instead rides on the same `ixForm` query that already backs `submit()` /
-   * `canSubmit()`, so there is no longer a partial state to get wrong: either the subclass renders
-   * an `<ix-form>` and gets the whole contract, or it renders none and breaks loudly.
+   * The load state `<ix-form>` consumes, pushed in through the existing view query instead of three
+   * template bindings per subclass. Omitting those bindings used to fail silently, leaving Save enabled
+   * over unloaded defaults; now a subclass either renders an `<ix-form>` and gets the whole contract, or
+   * breaks loudly.
    */
   private readonly loadState = computed<IxFormLoadState>(() => ({
     loading: this.dataLoading(),
@@ -141,25 +105,11 @@ implements SidePanelHostForm<R> {
   }
 
   /**
-   * Runs a config form's initial load: raises {@link dataLoading}, hands the loaded value to
-   * `patch` to populate the controls, then captures {@link initialFormSnapshot}. On failure — the
-   * request erroring OR `patch` throwing — it reports the error and latches {@link loadFailed}, so
-   * Save can never submit the defaults the user never saw.
-   *
-   * Re-entrant: any load still in flight is unsubscribed, and both {@link loadFailed} and the
-   * snapshot are cleared, so a retry (or a second load) starts clean rather than racing the
-   * previous attempt — a late stale response could otherwise re-latch a failure over a successful
-   * retry. The arguments are kept so {@link retryLoad} can replay them.
-   *
-   * `patch` must therefore be IDEMPOTENT: it runs again on every retry, against a group that still
-   * holds whatever the previous attempt left behind. `patchValue` is naturally re-runnable, but a
-   * patch that PUSHES (e.g. a `FormArray` row per loaded item) has to clear the array first —
-   * replaying it would otherwise come back with every row duplicated. The base can't reset the
-   * group on its behalf: it knows neither the form's defaults nor which array rows were structure
-   * rather than data.
-   *
-   * For the same reason `patch` is the wrong place to WIRE anything (a `valueChanges` subscription,
-   * a validator): a replay would register it a second time. Set those up once, before the load.
+   * Runs a config form's initial load: raises {@link dataLoading}, passes the value to `patch`, then
+   * captures {@link initialFormSnapshot}. If the request errors or `patch` throws, it latches
+   * {@link loadFailed} so Save can't submit unseen defaults. A new call cancels the previous one and
+   * {@link retryLoad} replays it, so `patch` must be idempotent (clear a `FormArray` before pushing rows)
+   * and must not wire subscriptions or validators.
    */
   protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
     this.loadSubscription?.unsubscribe();

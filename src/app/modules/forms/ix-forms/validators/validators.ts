@@ -52,26 +52,9 @@ export function greaterThanFg(
 }
 
 /**
- * Validates that the selected path is not /mnt itself or a pool root.
- * Pool roots are paths like /mnt/poolname with no subdirectories.
- *
- * The backend requires a child dataset to be selected for operations like
- * ISO uploads and disk exports because writing directly to pool roots can
- * cause filesystem issues and is considered a security risk. Operations
- * should target specific datasets (e.g., /mnt/pool/dataset) rather than
- * the pool root itself.
- *
- * @param errorMessage Translated error message to show when validation fails.
- *                     Must be translated before passing to this validator for proper i18n support.
- * @returns ValidatorFn that returns null if valid, or ValidationErrors if invalid
- *
- * @example
- * // Usage in a form control with translated message
- * this.form = this.fb.group({
- *   path: ['', [validateNotPoolRoot(
- *     this.translate.instant('Cannot select pool root. Please select a dataset.')
- *   )]],
- * });
+ * Rejects `/mnt` and pool roots like `/mnt/pool`: middleware requires a child dataset for operations
+ * like ISO uploads and disk exports, since writing to a pool root is unsafe. Pass an already
+ * translated `errorMessage`.
  */
 export function validateNotPoolRoot(errorMessage: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -98,18 +81,8 @@ export function validateNotPoolRoot(errorMessage: string): ValidatorFn {
 }
 
 /**
- * Validates that a string has an exact length.
- * Provides a clearer error message than using minLength and maxLength together.
- *
- * @param length The exact required length
- * @param errorMessage Optional custom error message. If not provided, uses default message.
- * @returns ValidatorFn that returns null if valid, or ValidationErrors if invalid
- *
- * @example
- * // Encryption key must be exactly 64 characters
- * this.form = this.fb.group({
- *   key: ['', exactLength(64, this.translate.instant('Key must be exactly 64 characters'))],
- * });
+ * Requires an exact string length, with a clearer message than `minLength` plus `maxLength`, e.g.
+ * `exactLength(64, translatedMessage)` for an encryption key.
  */
 export function exactLength(length: number, errorMessage?: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {

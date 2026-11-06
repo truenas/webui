@@ -17,16 +17,8 @@ export class DirectoryComboboxHarnessBase extends ComponentHarness {
   private inner = this.locatorFor(TnAutocompleteHarness);
 
   /**
-   * Narrows to one field among several, by any base filter — most usefully
-   * `selector`, so a form with four of these can address each by the control it
-   * is bound to rather than by DOM order.
-   *
-   * @example
-   * ```ts
-   * loader.getHarness(
-   *   IxUserComboboxHarness.with({ selector: '[formControlName="maproot_user"]' }),
-   * );
-   * ```
+   * Narrows to one field among several by any base filter, usually `selector`, so each can be addressed
+   * by its bound control rather than DOM order: `.with({ selector: '[formControlName="maproot_user"]' })`.
    */
   static with<T extends ComponentHarness>(
     this: ComponentHarnessConstructor<T>,

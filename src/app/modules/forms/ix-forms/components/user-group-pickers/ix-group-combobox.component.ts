@@ -3,15 +3,9 @@ import { TnAutocompleteComponent } from '@truenas/ui-components';
 import { DirectoryComboboxBase } from 'app/modules/forms/ix-forms/classes/directory-field.base';
 
 /**
- * Single-group selection, searched against {@link UserDirectoryService}. The
- * group-side twin of `ix-user-combobox`, minus the create row.
- *
- * @example
- * ```html
- * <tn-form-field [label]="'Group' | translate">
- *   <ix-group-combobox formControlName="group" [directoryOptions]="{ localOnly: true }" />
- * </tn-form-field>
- * ```
+ * Single-group selection searched against {@link UserDirectoryService}; the group twin of
+ * `ix-user-combobox`, without the create row, e.g.
+ * `<ix-group-combobox formControlName="group" [directoryOptions]="{ localOnly: true }" />`.
  */
 @Component({
   selector: 'ix-group-combobox',

@@ -3,15 +3,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { FileInputHarnessFilters, TnFileInputHarness } from '@truenas/ui-components';
 
 /**
- * `TnFileInputHarness` with the writer the library's own harness doesn't ship.
- *
- * The library harness exposes only readers (`getButtonText`/`getFileName`/`hasFile`/`isDisabled`/
- * `open`), so a spec that needs the control to *hold* a value has to drive the native input the way
- * the legacy file-input harness's `setValue` did: dispatch a synthetic `change` whose `target.files` the
- * component's `onFilesSelected` reads. Subclassing keeps that inside a harness — `locatorFor` is
- * only reachable from within one — instead of scattering raw DOM queries through specs.
- *
- * Drop this once `TnFileInputHarness` grows a `setValue` (NAS-141021).
+ * `TnFileInputHarness` plus the `setValue` the library harness lacks: it dispatches a synthetic
+ * `change` whose `target.files` the component reads, kept inside a harness since only one can use
+ * `locatorFor`. Drop it once the library harness gains `setValue` (NAS-141021).
  */
 export class TnFileInputTestHarness extends TnFileInputHarness {
   private nativeFileInput = this.locatorFor('input[type="file"]');

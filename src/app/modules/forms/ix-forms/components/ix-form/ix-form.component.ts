@@ -30,14 +30,9 @@ import { TranslatedString } from 'app/modules/translate/translate.helper';
 export const defaultMinSubmitFeedbackMs = 500;
 
 /**
- * Minimum time (ms) the submitting indicator stays up on a successful `<tn-side-panel>`-hosted save.
- * A local API call can resolve in a few ms, closing the panel before the host's progress bar / dim
- * overlay are perceptible — the save reads as if nothing happened. Holding success handling
- * (snackbar + close) until at least this long has elapsed guarantees the loader is actually seen.
- * Only the success path waits; errors surface immediately (see {@link IxFormComponent.onFormSubmit}).
- *
- * Injectable so specs that assert a synchronous close can set it to `0` (which skips the timer
- * entirely, restoring the un-delayed path); `ixFormTestingProviders()` does this by default.
+ * Minimum time (ms) the submitting indicator stays up after a successful save, so a fast local call
+ * doesn't close the panel before the progress bar is seen. Errors surface immediately. Set to `0` to
+ * skip the timer, as `ixFormTestingProviders()` does for specs that expect a synchronous close.
  */
 export const ixFormMinSubmitFeedbackMs = new InjectionToken<number>('ixFormMinSubmitFeedbackMs', {
   providedIn: 'root',
@@ -52,15 +47,9 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
   allValues: T;
 
   /**
-   * Top-level keys whose value differs from the initial snapshot (create mode:
-   * all of them). Disabled controls are excluded — a field hidden/disabled by
-   * `visibleWhen`/`enabledWhen` never appears here, so its stale value can't leak
-   * into a "only send what changed" payload. Use `allValues` if you genuinely
-   * need disabled values. Shallow per-key deep-equality; nested groups report as
-   * one whole-object entry. Build from `allValues` instead for paired/derived
-   * controls, inherit sentinels, or payload reshaping.
-   *
-   * Computed on first access (and cached), so leaving it unread costs nothing.
+   * Top-level keys that differ from the initial snapshot (all of them on create), computed lazily.
+   * Disabled controls are excluded, so a hidden field's stale value can't leak in. Nested groups report
+   * as one whole entry; use `allValues` for those, paired or derived controls, or reshaped payloads.
    */
   changedValues: Partial<T>;
 }
@@ -93,15 +82,9 @@ interface SubmitResultBase<R, TResult> {
   onError?: (error: unknown) => boolean;
 
   /**
-   * Shapes the payload the form closes with. The SlideIn host closes the slide-in with it
-   * (default: the raw request$ result; an `undefined` is coerced to `true` since SlideInResponse
-   * reads `undefined` as a cancel). The `<tn-side-panel>` host emits it through
-   * {@link IxFormComponent.closed}, which is how a panel-hosted form hands the saved record back
-   * to its opener — without it that output carries a bare `true`.
-   *
-   * IMPORTANT — under the `<tn-side-panel>` host, only a TRUTHY payload counts as a save; never
-   * return `0`, `''`, `null` or `false` to mean one. `FormSidePanelService.open` documents the
-   * rule and owns the coercion.
+   * Shapes the payload {@link IxFormComponent.closed} carries, which is how a panel-hosted form hands
+   * the saved record to its opener; without it the output is a bare `true`. Only a TRUTHY payload counts
+   * as a save, so never return `0`, `''`, `null` or `false` (see `FormSidePanelService.open`).
    */
   closeWith?: (result: TResult) => R;
 }
@@ -138,41 +121,11 @@ export interface IxFormLoadState {
 }
 
 /**
- * Unified form wrapper: modal header + card + save/actions chrome, change
- * tracking (snapshot + submit diff), loading state, dirty confirmation, and the
- * submit lifecycle (loading → API call → snackbar + close / error handling).
- *
- * ```html
- * <ix-form [formGroup]="form" [editData]="entity"
- *          [addTitle]="'Add Group' | translate" [editTitle]="'Edit Group' | translate"
- *          [requiredRoles]="requiredRoles" [submitHandler]="handleSubmit">
- *   <tn-form-field [label]="'Name' | translate">
- *     <tn-input formControlName="name"></tn-input>
- *   </tn-form-field>
- * </ix-form>
- * ```
- *
- * For self-managed async setup use `initialFormSnapshot` + `externalLoading` +
- * `isEditMode` instead of `editData` (snapshot wins if both are set).
- *
- * Projected controls resolve their `ControlContainer` in the CONSUMER's view — from the
- * `FormGroupDirective` that `[formGroup]` puts on the `<ix-form>` element via the consumer's own
- * `ReactiveFormsModule` import. The inner `<form>` below is NOT in that chain (it exists to give
- * `ngSubmit`), so it never serves projected content. A child component that holds some of the
- * fields therefore can't inherit the container across the projection boundary: hand it the group as
- * an input and let it bind `[formGroup]` in its own template.
- *
- * Hosted inside a `<tn-side-panel>`: the host owns the header and the footer Save, and the
- * {@link closed} output drives the panel to close and reload. Tests use
- * `ixFormTestingProviders()`.
- *
- * Input surface is FROZEN: no new top-level inputs without team review — keep
- * outlier forms bespoke rather than grow this API.
- *
- * @typeParam T form value shape
- * @typeParam R payload {@link closed} carries in the side-panel host; inferred from the
- *   `submitHandler`'s {@link SubmitResult} and defaulting to `boolean`.
- * @typeParam TResult what the handler's `request$` emits; inferred alongside `R`.
+ * Form wrapper owning change tracking (snapshot + submit diff), loading and dirty confirmation, and the
+ * submit lifecycle; the `<tn-side-panel>` host owns the header and Save. For async setup, use
+ * `initialFormSnapshot` + `externalLoading` + `isEditMode` instead of `editData`. Projected controls
+ * resolve the consumer's `FormGroupDirective`, not the inner `<form>`, so pass a child its group as an
+ * input. The input surface is FROZEN: new inputs need team review. Tests use `ixFormTestingProviders()`.
  */
 @Component({
   selector: 'ix-form',
@@ -207,15 +160,10 @@ export class IxFormComponent<
   readonly initialFormSnapshot = input<Partial<T> | null>(null);
 
   /*
-   * NOT RENDERED. `<ix-modal-header>` was the sole consumer of the three title inputs (through
-   * {@link resolvedTitle}) and of `requiredRoles` (which gated the in-body Save); both went with
-   * the legacy SlideIn host in NAS-141472. The `<tn-side-panel>` host takes its title from
-   * `FormSidePanelService.open({ title })` and gates its footer Save on the PAGE component's
-   * `requiredRoles`, neither of which comes from here.
-   *
-   * Kept rather than deleted because ~30 templates still bind them and this input surface is
-   * frozen (see the class docblock) — removing four inputs wants the same team review adding one
-   * would. Do not build on them; drop them and their bindings in one pass when that review happens.
+   * NOT RENDERED. The title inputs and `requiredRoles` only fed the legacy SlideIn header; the
+   * `<tn-side-panel>` host takes its title from `FormSidePanelService.open()` and its roles from the
+   * page. Kept because ~30 templates bind them and the input surface is frozen. Don't build on them;
+   * remove them and their bindings together once the team reviews it.
    */
 
   /** Explicit title; overrides addTitle/editTitle. */
@@ -522,14 +470,9 @@ export class IxFormComponent<
   }
 
   /**
-   * Dev-only guard. `changedValues` diffs per top-level key with a shallow deep
-   * equality, so a nested `FormGroup`/`FormArray` reports as a single whole-object
-   * entry: change one inner control and the entire subtree lands in the payload.
-   * That silently defeats a "send only what changed" submit, so warn the author
-   * to build the payload from `allValues` (or diff the subtree themselves) for
-   * those keys. Fires once per form instance, and only from a submit that actually
-   * reads `changedValues` — a form that already builds from `allValues` is doing
-   * the right thing and stays quiet.
+   * Dev-only warning: `changedValues` diffs top-level keys, so a nested `FormGroup`/`FormArray` lands
+   * whole in the payload when one inner control changes, defeating a "send only what changed" submit.
+   * Fires once per form, and only when a submit reads `changedValues`.
    */
   private warnNestedChangedValues(controls: FormGroup['controls']): void {
     if (this.warnedNestedChangedValues) {
