@@ -5,7 +5,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { DndModule } from 'ngx-drag-drop';
-import { of } from 'rxjs';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -51,7 +50,7 @@ describe('ManualSelectionDisksComponent', () => {
         dragActive: signal(false),
       }),
       mockProvider(ManualDiskSelectionStore, {
-        inventory$: of([
+        inventory: signal([
           {
             name: 'sda',
             sed_status: SedStatus.Unlocked,

@@ -1,9 +1,9 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { combineLatest, filter, tap } from 'rxjs';
-import { DetailsDisk } from 'app/interfaces/disk.interface';
-import { Pool } from 'app/interfaces/pool.interface';
+import { tap } from 'rxjs';
 import { AddVdevsStore } from 'app/pages/storage/modules/pool-manager/components/add-vdevs/store/add-vdevs-store.service';
 import { ExistingConfigurationPreviewComponent } from 'app/pages/storage/modules/pool-manager/components/existing-configuration-preview/existing-configuration-preview.component';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
@@ -14,11 +14,10 @@ import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.sto
 import {
   PoolManagerValidationService,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
-import { PoolManagerStore, PoolManagerTopology } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
 } from 'app/pages/storage/modules/pool-manager/utils/generate-vdevs/generate-vdevs.service';
-import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-manager/utils/topology.utils';
 
 @Component({
   selector: 'ix-add-vdevs',
@@ -43,13 +42,12 @@ import { poolTopologyToStoreTopology } from 'app/pages/storage/modules/pool-mana
 export class AddVdevsComponent implements OnInit {
   private addVdevsStore = inject(AddVdevsStore);
   private activatedRoute = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
   protected hasConfigurationPreview = true;
-  protected existingPool: Pool | null = null;
-  protected poolDisks: DetailsDisk[] = [];
-  protected topology: PoolManagerTopology | null = null;
+  protected poolDisks = this.addVdevsStore.poolDisks;
+  // Shown once the pool's disks are known, so the preview never renders an empty disk list.
+  protected existingPool = computed(() => (this.poolDisks().length ? this.addVdevsStore.pool() : null));
 
   ngOnInit(): void {
     this.addVdevsStore.initialize();
@@ -59,17 +57,6 @@ export class AddVdevsComponent implements OnInit {
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
-    combineLatest([
-      this.addVdevsStore.pool$.pipe(filter(Boolean)),
-      this.addVdevsStore.poolDisks$.pipe(filter((disks) => !!disks.length)),
-    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: ([pool, poolDisks]) => {
-        this.existingPool = pool;
-        this.poolDisks = poolDisks;
-        this.topology = poolTopologyToStoreTopology(pool.topology, poolDisks);
-        this.cdr.markForCheck();
-      },
-    });
   }
 
   onStepChanged(step: PoolCreationWizardStep): void {

@@ -1,5 +1,5 @@
-import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { computed, Injectable, inject } from '@angular/core';
+import { patchState, signalState } from '@ngrx/signals';
 import { sortBy } from 'lodash-es';
 import { map, Observable, tap } from 'rxjs';
 import { DetailsDisk, DiskDetailsResponse, toDiskDetails } from 'app/interfaces/disk.interface';
@@ -18,37 +18,27 @@ const initialState: DiskState = {
 };
 
 @Injectable()
-export class DiskStore extends ComponentStore<DiskState> {
+export class DiskStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
-  private readonly unusedDisks$ = this.select((state) => state.unusedDisks);
-  readonly usedDisks$ = this.select((state) => state.usedDisks);
+  private readonly state = signalState(initialState);
 
-  readonly selectableDisks$ = this.select(
-    this.unusedDisks$,
-    this.usedDisks$,
-    (unusedDisks, usedDisks) => {
-      const disksWithExportedPools = usedDisks.filter((disk) => !disk.imported_zpool);
-      return sortBy([...unusedDisks, ...disksWithExportedPools], 'devname');
-    },
-  );
+  readonly usedDisks = this.state.usedDisks;
 
-  readonly hasSedCapableDisks$ = this.select(
-    this.selectableDisks$,
-    (disks) => disks.some((disk) => isSedCapable(disk)),
-  );
+  readonly selectableDisks = computed(() => {
+    const disksWithExportedPools = this.state.usedDisks().filter((disk) => !disk.imported_zpool);
+    return sortBy([...this.state.unusedDisks(), ...disksWithExportedPools], 'devname');
+  });
 
-  constructor() {
-    super(initialState);
-  }
+  readonly hasSedCapableDisks = computed(() => this.selectableDisks().some((disk) => isSedCapable(disk)));
 
   loadDisks(): Observable<DiskDetailsResponse> {
     return this.api.call('disk.details').pipe(
       map(toDiskDetails),
       this.errorHandler.withErrorHandler(),
       tap((diskResponse) => {
-        this.patchState({
+        patchState(this.state, {
           unusedDisks: diskResponse.unused,
           usedDisks: diskResponse.used,
         });

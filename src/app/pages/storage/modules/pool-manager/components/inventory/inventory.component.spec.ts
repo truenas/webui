@@ -1,5 +1,5 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { InventoryComponent } from 'app/pages/storage/modules/pool-manager/components/inventory/inventory.component';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -29,9 +29,9 @@ describe('InventoryComponent', () => {
     component: InventoryComponent,
     providers: [
       mockProvider(PoolManagerStore, {
-        isLoading$: of(false),
-        inventory$: of(fakeInventory),
-        encryptionType$: of(EncryptionType.None),
+        isLoading: signal(false),
+        inventory: signal(fakeInventory),
+        encryptionType: signal(EncryptionType.None),
         setManualTopologyCategory: jest.fn(),
         setDiskWarningOptions: jest.fn(),
       }),
@@ -64,9 +64,9 @@ describe('InventoryComponent with SED encryption', () => {
     component: InventoryComponent,
     providers: [
       mockProvider(PoolManagerStore, {
-        isLoading$: of(false),
-        inventory$: of(fakeInventory),
-        encryptionType$: of(EncryptionType.Sed),
+        isLoading: signal(false),
+        inventory: signal(fakeInventory),
+        encryptionType: signal(EncryptionType.Sed),
       }),
     ],
   });
@@ -88,9 +88,9 @@ describe('InventoryComponent with Software encryption', () => {
     component: InventoryComponent,
     providers: [
       mockProvider(PoolManagerStore, {
-        isLoading$: of(false),
-        inventory$: of(fakeInventory),
-        encryptionType$: of(EncryptionType.Software),
+        isLoading: signal(false),
+        inventory: signal(fakeInventory),
+        encryptionType: signal(EncryptionType.Software),
       }),
     ],
   });

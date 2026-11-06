@@ -1,7 +1,5 @@
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
-import { TestScheduler } from 'rxjs/testing';
 import { TiB } from 'app/constants/bytes.constant';
-import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -9,7 +7,6 @@ import { ManualDiskSelectionStore } from 'app/pages/storage/modules/pool-manager
 
 describe('ManualDiskSelectionStore', () => {
   let spectator: SpectatorService<ManualDiskSelectionStore>;
-  let testScheduler: TestScheduler;
 
   const unusedDisks: DetailsDisk[] = [
     {
@@ -51,7 +48,6 @@ describe('ManualDiskSelectionStore', () => {
         ...unusedDisks,
       ],
     });
-    testScheduler = getTestScheduler();
   });
 
   it('adds a new vdev', () => {
@@ -59,45 +55,40 @@ describe('ManualDiskSelectionStore', () => {
     jest.spyOn(require('uuid'), 'v4')
       .mockReturnValueOnce('first_vdev');
     spectator.service.addVdev();
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.vdevs$).toBe('a', {
-        a: [{
-          disks: [],
-          uuid: 'first_vdev',
-        }],
-      });
-    });
+
+    expect(spectator.service.vdevs()).toEqual([{
+      disks: [],
+      uuid: 'first_vdev',
+    }]);
   });
 
   it('adds disks to vdev', () => {
-    testScheduler.run(({ expectObservable }) => {
-      spectator.service.addDiskToVdev({
-        disk: unusedDisks[0],
-        vdev: {
-          disks: [],
-          uuid: 'first_vdev',
-        },
-      });
-      spectator.service.addDiskToVdev({
-        disk: unusedDisks[1],
-        vdev: {
-          disks: [],
-          uuid: 'first_vdev',
-        },
-      });
-      expectObservable(spectator.service.vdevs$).toBe('a', {
-        a: [{
-          disks: [{
-            ...unusedDisks[0],
-            vdevUuid: 'first_vdev',
-          }, {
-            ...unusedDisks[1],
-            vdevUuid: 'first_vdev',
-          }],
-          uuid: 'first_vdev',
-        }],
-      });
+    spectator.service.addDiskToVdev({
+      disk: unusedDisks[0],
+      vdev: {
+        disks: [],
+        uuid: 'first_vdev',
+      },
     });
+    spectator.service.addDiskToVdev({
+      disk: unusedDisks[1],
+      vdev: {
+        disks: [],
+        uuid: 'first_vdev',
+      },
+    });
+
+    expect(spectator.service.vdevs()).toEqual([{
+      disks: [{
+        ...unusedDisks[0],
+        vdevUuid: 'first_vdev',
+      }, {
+        ...unusedDisks[1],
+        vdevUuid: 'first_vdev',
+      }],
+      uuid: 'first_vdev',
+    }]);
+    expect(spectator.service.inventory()).toEqual([]);
   });
 
   it('removes disk from vdev', () => {
@@ -121,17 +112,14 @@ describe('ManualDiskSelectionStore', () => {
       vdevUuid: 'first_vdev',
     });
 
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.vdevs$).toBe('a', {
-        a: [{
-          disks: [{
-            ...unusedDisks[1],
-            vdevUuid: 'first_vdev',
-          }],
-          uuid: 'first_vdev',
-        }],
-      });
-    });
+    expect(spectator.service.vdevs()).toEqual([{
+      disks: [{
+        ...unusedDisks[1],
+        vdevUuid: 'first_vdev',
+      }],
+      uuid: 'first_vdev',
+    }]);
+    expect(spectator.service.inventory()).toEqual([{ ...unusedDisks[0], vdevUuid: null }]);
   });
 
   it('removes vdev', () => {
@@ -139,10 +127,7 @@ describe('ManualDiskSelectionStore', () => {
       disks: [],
       uuid: 'first_vdev',
     });
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.vdevs$).toBe('a', {
-        a: [],
-      });
-    });
+
+    expect(spectator.service.vdevs()).toEqual([]);
   });
 });

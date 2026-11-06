@@ -1,9 +1,8 @@
 import { DialogRef } from '@angular/cdk/dialog';
+import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TnDialog } from '@truenas/ui-components';
-import {
-  BehaviorSubject, firstValueFrom, of,
-} from 'rxjs';
+import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { mockApi, mockQuery, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -17,7 +16,7 @@ import { DispersalStrategy } from 'app/pages/storage/modules/pool-manager/compon
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import {
-  initialState, PoolManagerState, PoolManagerStore, PoolManagerTopologyCategory,
+  initialState, PoolManagerState, PoolManagerStore,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import {
   GenerateVdevsService,
@@ -69,8 +68,8 @@ describe('PoolManagerStore', () => {
       ]),
       mockProvider(DiskStore, {
         loadDisks: () => of(disks),
-        selectableDisks$: of(disks),
-        hasSedCapableDisks$: of(false),
+        selectableDisks: signal(disks),
+        hasSedCapableDisks: signal(false),
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
@@ -86,12 +85,12 @@ describe('PoolManagerStore', () => {
   });
 
   describe('selectors', () => {
-    it('hasMultipleEnclosuresAfterFirstStep$ - returns true when disks after first step have multiple enclosures', async () => {
+    it('hasMultipleEnclosuresAfterFirstStep - returns true when disks after first step have multiple enclosures', () => {
       spectator.service.initialize();
-      expect(await firstValueFrom(spectator.service.hasMultipleEnclosuresAfterFirstStep$)).toBe(true);
+      expect(spectator.service.hasMultipleEnclosuresAfterFirstStep()).toBe(true);
     });
 
-    it('allowedDisks$ – returns loaded disks applying disk and enclosure settings', async () => {
+    it('allowedDisks – returns loaded disks applying disk and enclosure settings', () => {
       spectator.service.initialize();
       spectator.service.setEnclosureOptions({
         limitToSingleEnclosure: 'id1',
@@ -103,10 +102,10 @@ describe('PoolManagerStore', () => {
         allowNonUniqueSerialDisks: false,
       });
 
-      expect(await firstValueFrom(spectator.service.allowedDisks$)).toEqual([disks[0], disks[1]]);
+      expect(spectator.service.allowedDisks()).toEqual([disks[0], disks[1]]);
     });
 
-    it('inventory$ – returns all remaining Unassigned Disks', async () => {
+    it('inventory – returns all remaining Unassigned Disks', () => {
       spectator.service.initialize();
       spectator.service.setEnclosureOptions({
         limitToSingleEnclosure: 'id1',
@@ -115,14 +114,14 @@ describe('PoolManagerStore', () => {
       });
       spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
 
-      expect(await firstValueFrom(spectator.service.inventory$)).toEqual([disks[1]]);
+      expect(spectator.service.inventory()).toEqual([disks[1]]);
     });
 
-    it('getInventoryForStep – returns disks usable in a step (including disks already used in the step)', async () => {
+    it('getInventoryForStep – returns disks usable in a step (including disks already used in the step)', () => {
       spectator.service.initialize();
       spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
 
-      const inventory = await firstValueFrom(spectator.service.getInventoryForStep(VDevType.Data));
+      const inventory = spectator.service.getInventoryForStep(VDevType.Data)();
       expect(inventory).toHaveLength(2);
       const diskNames = inventory.map((disk) => disk.devname).sort((a, b) => a.localeCompare(b));
       expect(diskNames).toEqual(['sdb', 'sdc']);
@@ -137,42 +136,44 @@ describe('PoolManagerStore', () => {
       const api = spectator.inject(ApiService);
       expect(api.query).toHaveBeenCalledWith('enclosure2.query');
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-        ...initialState,
-        enclosures,
-        isLoading: false,
-      });
+      expect(spectator.service.enclosures()).toEqual(enclosures);
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.topology()).toEqual(initialState.topology);
     });
   });
 
   describe('start over functionality', () => {
     it('reverts state to initial state', async () => {
+      spectator.service.setGeneralOptions({ name: 'tank', nameErrors: null });
+      spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
+      const startOver = jest.fn();
+      spectator.service.startOver$.subscribe(startOver);
+
       spectator.service.startOver();
+      expect(spectator.service.isLoading()).toBe(true);
       await settleApi();
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-        ...initialState,
-        enclosures,
-      });
+      expect(startOver).toHaveBeenCalled();
+      expect(spectator.service.name()).toBe('');
+      expect(spectator.service.topology()).toEqual(initialState.topology);
+      expect(spectator.service.enclosures()).toEqual(enclosures);
+      expect(spectator.service.isLoading()).toBe(false);
     });
   });
 
   describe('methods - options', () => {
-    it('setGeneralOptions - sets options such as name', async () => {
+    it('setGeneralOptions - sets options such as name', () => {
       const generalOptions = {
         name: 'tank',
         nameErrors: null,
       } as PoolManagerState;
       spectator.service.setGeneralOptions(generalOptions);
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-        ...initialState,
-        name: generalOptions.name,
-        nameErrors: null,
-      });
+      expect(spectator.service.name()).toBe(generalOptions.name);
+      expect(spectator.service.nameErrors()).toBeNull();
     });
 
-    it('setEnclosureSettings – sets enclosure settings', async () => {
+    it('setEnclosureSettings – sets enclosure settings', () => {
       const enclosureSettings = {
         limitToSingleEnclosure: 'id5',
         maximizeEnclosureDispersal: false,
@@ -180,52 +181,43 @@ describe('PoolManagerStore', () => {
       };
       spectator.service.setEnclosureOptions(enclosureSettings);
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-        ...initialState,
-        enclosureSettings,
-      });
+      expect(spectator.service.enclosureSettings()).toEqual(enclosureSettings);
     });
 
-    it('setDiskWarningOptions – sets disk warning options', async () => {
+    it('setDiskWarningOptions – sets disk warning options', () => {
       const diskSettings = {
         allowNonUniqueSerialDisks: true,
         allowExportedPools: ['pool1', 'pool2'],
       };
       spectator.service.setDiskWarningOptions(diskSettings);
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-        ...initialState,
-        diskSettings,
-      });
+      expect(spectator.service.diskSettings()).toEqual(diskSettings);
     });
   });
 
   describe('methods - working with topology categories', () => {
-    it('setManualTopologyCategory – sets manually configured vdevs for a category', async () => {
+    it('setManualTopologyCategory – sets manually configured vdevs for a category', () => {
       const manuallyConfiguredVdevs = [{}] as DetailsDisk[][];
       spectator.service.setManualTopologyCategory(VDevType.Data, manuallyConfiguredVdevs);
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({
-        ...initialState,
-        topology: {
-          ...initialState.topology,
-          [VDevType.Data]: {
-            hasCustomDiskSelection: true,
-            vdevs: manuallyConfiguredVdevs,
-          },
+      expect(spectator.service.topology()).toMatchObject({
+        ...initialState.topology,
+        [VDevType.Data]: {
+          hasCustomDiskSelection: true,
+          vdevs: manuallyConfiguredVdevs,
         },
-        categorySequence: [
-          VDevType.Log,
-          VDevType.Spare,
-          VDevType.Cache,
-          VDevType.Special,
-          VDevType.Dedup,
-          VDevType.Data,
-        ],
       });
+      expect(spectator.service.categorySequence()).toEqual([
+        VDevType.Log,
+        VDevType.Spare,
+        VDevType.Cache,
+        VDevType.Special,
+        VDevType.Dedup,
+        VDevType.Data,
+      ]);
     });
 
-    it('setAutomaticTopologyCategory – sets settings for topology category and generates vdevs for it', async () => {
+    it('setAutomaticTopologyCategory – sets settings for topology category and generates vdevs for it', () => {
       jest.spyOn(spectator.inject(GenerateVdevsService), 'generateVdevs');
       spectator.service.initialize();
       spectator.service.setAutomaticTopologyCategory(VDevType.Data, {
@@ -239,8 +231,7 @@ describe('PoolManagerStore', () => {
 
       expect(spectator.inject(GenerateVdevsService).generateVdevs).toHaveBeenCalled();
 
-      const state = await firstValueFrom(spectator.service.state$);
-      expect(state.topology[VDevType.Data]).toEqual({
+      expect(spectator.service.topology()[VDevType.Data]).toEqual({
         diskSize: 2 * TiB,
         diskType: DiskType.Hdd,
         isDiskSizeAutoSelected: false,
@@ -255,63 +246,55 @@ describe('PoolManagerStore', () => {
       });
     });
 
-    it('resetTopologyCategory – resets topology category', async () => {
+    it('resetTopologyCategory – resets topology category', () => {
       spectator.service.setManualTopologyCategory(VDevType.Data, [{}] as DetailsDisk[][]);
       spectator.service.resetTopologyCategory(VDevType.Data);
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
+      expect(spectator.service.topology()).toMatchObject(initialState.topology);
     });
 
-    it('setTopologyCategoryLayout – keeps configured dedicated spares when switching the data layout to dRAID', async () => {
+    it('setTopologyCategoryLayout – keeps configured dedicated spares when switching the data layout to dRAID', () => {
       const spareVdevs = [[{ devname: 'sda' }]] as DetailsDisk[][];
       spectator.service.setManualTopologyCategory(VDevType.Spare, spareVdevs);
 
       spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Draid1);
 
-      let state = await firstValueFrom(spectator.service.state$);
-      expect(state.topology[VDevType.Data].layout).toBe(CreateVdevLayout.Draid1);
-      expect(state.topology[VDevType.Spare].vdevs).toEqual(spareVdevs);
+      expect(spectator.service.topology()[VDevType.Data].layout).toBe(CreateVdevLayout.Draid1);
+      expect(spectator.service.topology()[VDevType.Spare].vdevs).toEqual(spareVdevs);
 
       // Changing the dRAID parity must not discard already-configured spares.
       spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Draid2);
 
-      state = await firstValueFrom(spectator.service.state$);
-      expect(state.topology[VDevType.Data].layout).toBe(CreateVdevLayout.Draid2);
-      expect(state.topology[VDevType.Spare].vdevs).toEqual(spareVdevs);
+      expect(spectator.service.topology()[VDevType.Data].layout).toBe(CreateVdevLayout.Draid2);
+      expect(spectator.service.topology()[VDevType.Spare].vdevs).toEqual(spareVdevs);
     });
 
-    it('resetTopology – completely resets pool topology', async () => {
+    it('resetTopology – completely resets pool topology', () => {
       spectator.service.setManualTopologyCategory(VDevType.Data, [{}] as DetailsDisk[][]);
       spectator.service.setManualTopologyCategory(VDevType.Log, [{}] as DetailsDisk[][]);
       spectator.service.resetTopology();
 
-      expect(await firstValueFrom(spectator.service.state$)).toMatchObject({ topology: initialState.topology });
+      expect(spectator.service.topology()).toMatchObject(initialState.topology);
     });
   });
 
   describe('methods - openManualSelectionDialog', () => {
-    const topologyCategory = {
-      layout: CreateVdevLayout.Stripe,
-      vdevs: [
-        [{ devname: 'sda' }],
-      ],
-      hasCustomDiskSelection: false,
-    } as PoolManagerTopologyCategory;
+    const dataVdevs = [[disks[0]]];
 
-    const state = {
-      topology: {
-        [VDevType.Data]: topologyCategory,
-      },
-      enclosures,
-    } as PoolManagerState;
-    const state$ = new BehaviorSubject(state);
-    const inventory = [
-      { devname: 'sda' },
-      { devname: 'sdb' },
-    ] as DetailsDisk[];
+    beforeEach(async () => {
+      spectator.service.initialize();
+      await settleApi();
+      // Leaves sdb as the only allowed disk: sda has an exported pool, sdc is in the other enclosure.
+      spectator.service.setEnclosureOptions({
+        limitToSingleEnclosure: 'id1',
+        maximizeEnclosureDispersal: false,
+        dispersalStrategy: DispersalStrategy.LimitToSingle,
+      });
+      spectator.service.setTopologyCategoryLayout(VDevType.Data, CreateVdevLayout.Stripe);
+      spectator.service.setManualTopologyCategory(VDevType.Data, dataVdevs);
+    });
+
     it('opens manual selection dialog when one of the child components emits (manualSelectionClicked)', () => {
-      Object.defineProperty(spectator.service, 'state$', { value: state$ });
-      jest.spyOn(spectator.service, 'getInventoryForStep').mockReturnValue(of(inventory));
       jest.spyOn(spectator.service, 'setManualTopologyCategory');
       spectator.service.openManualSelectionDialog(VDevType.Data);
 
@@ -319,8 +302,8 @@ describe('PoolManagerStore', () => {
         data: {
           enclosures,
           inventory: [expect.objectContaining({ devname: 'sdb' })],
-          vdevs: topologyCategory.vdevs,
-          layout: topologyCategory.layout,
+          vdevs: dataVdevs,
+          layout: CreateVdevLayout.Stripe,
           vdevsLimit: null,
           isSedEncryption: false,
         } as ManualDiskSelectionParams,
@@ -347,40 +330,37 @@ describe('PoolManagerStore', () => {
 
   describe('SED encryption', () => {
     describe('setEncryptionOptions', () => {
-      it('sets encryption type and SED password', async () => {
+      it('sets encryption type and SED password', () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
           sedPassword: 'mypassword',
         });
 
-        const state = await firstValueFrom(spectator.service.state$);
-        expect(state.encryptionType).toBe(EncryptionType.Sed);
-        expect(state.sedPassword).toBe('mypassword');
+        expect(spectator.service.encryptionType()).toBe(EncryptionType.Sed);
+        expect(spectator.service.sedPassword()).toBe('mypassword');
       });
 
-      it('sets software encryption', async () => {
+      it('sets software encryption', () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Software,
           sedPassword: null,
         });
 
-        const state = await firstValueFrom(spectator.service.state$);
-        expect(state.encryptionType).toBe(EncryptionType.Software);
-        expect(state.sedPassword).toBeNull();
+        expect(spectator.service.encryptionType()).toBe(EncryptionType.Software);
+        expect(spectator.service.sedPassword()).toBeNull();
       });
 
-      it('sets no encryption', async () => {
+      it('sets no encryption', () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.None,
           sedPassword: null,
         });
 
-        const state = await firstValueFrom(spectator.service.state$);
-        expect(state.encryptionType).toBe(EncryptionType.None);
-        expect(state.sedPassword).toBeNull();
+        expect(spectator.service.encryptionType()).toBe(EncryptionType.None);
+        expect(spectator.service.sedPassword()).toBeNull();
       });
 
-      it('resets topology categories holding non-SED-capable disks when switching to SED', async () => {
+      it('resets topology categories holding non-SED-capable disks when switching to SED', () => {
         spectator.service.setManualTopologyCategory(VDevType.Data, [[disks[0]]]);
 
         spectator.service.setEncryptionOptions({
@@ -388,50 +368,47 @@ describe('PoolManagerStore', () => {
           sedPassword: 'mypassword',
         });
 
-        const state = await firstValueFrom(spectator.service.state$);
-        expect(state.topology[VDevType.Data].vdevs).toEqual([]);
+        expect(spectator.service.topology()[VDevType.Data].vdevs).toEqual([]);
       });
     });
 
     describe('setHasSedCapableDisks', () => {
-      it('sets hasSedCapableDisks to true', async () => {
+      it('sets hasSedCapableDisks to true', () => {
         spectator.service.setHasSedCapableDisks(true);
 
-        const state = await firstValueFrom(spectator.service.state$);
-        expect(state.hasSedCapableDisks).toBe(true);
+        expect(spectator.service.hasSedCapableDisks()).toBe(true);
       });
 
-      it('sets hasSedCapableDisks to false', async () => {
+      it('sets hasSedCapableDisks to false', () => {
         spectator.service.setHasSedCapableDisks(false);
 
-        const state = await firstValueFrom(spectator.service.state$);
-        expect(state.hasSedCapableDisks).toBe(false);
+        expect(spectator.service.hasSedCapableDisks()).toBe(false);
       });
     });
 
     describe('selectors', () => {
-      it('encryptionType$ - returns encryption type', async () => {
+      it('encryptionType - returns encryption type', () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
           sedPassword: 'password',
         });
 
-        expect(await firstValueFrom(spectator.service.encryptionType$)).toBe(EncryptionType.Sed);
+        expect(spectator.service.encryptionType()).toBe(EncryptionType.Sed);
       });
 
-      it('sedPassword$ - returns SED password', async () => {
+      it('sedPassword - returns SED password', () => {
         spectator.service.setEncryptionOptions({
           encryptionType: EncryptionType.Sed,
           sedPassword: 'mypassword',
         });
 
-        expect(await firstValueFrom(spectator.service.sedPassword$)).toBe('mypassword');
+        expect(spectator.service.sedPassword()).toBe('mypassword');
       });
 
-      it('hasSedCapableDisks$ - returns whether SED-capable disks are available', async () => {
+      it('hasSedCapableDisks - returns whether SED-capable disks are available', () => {
         spectator.service.setHasSedCapableDisks(true);
 
-        expect(await firstValueFrom(spectator.service.hasSedCapableDisks$)).toBe(true);
+        expect(spectator.service.hasSedCapableDisks()).toBe(true);
       });
     });
   });

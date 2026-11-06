@@ -1,9 +1,7 @@
+import { signal } from '@angular/core';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { firstValueFrom, of } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
 import { GiB } from 'app/constants/bytes.constant';
-import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -27,33 +25,32 @@ import { selectHasEnclosureSupport } from 'app/store/system-info/system-info.sel
 describe('PoolManagerValidationService', () => {
   describe('required steps validation', () => {
     let spectator: SpectatorService<PoolManagerValidationService>;
-    let testScheduler: TestScheduler;
 
-    const mockName$ = of('');
-    const mockTopology$ = of({
+    const mockName = signal('');
+    const mockTopology = signal({
       [VDevType.Data]: { vdevs: [] },
       [VDevType.Log]: { vdevs: [] },
     });
-    const mockEnclosureSettings$ = of({
+    const mockEnclosureSettings = signal({
       limitToSingleEnclosure: null,
       dispersalStrategy: DispersalStrategy.LimitToSingle,
     });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
+    const mockHasMultipleEnclosuresAfterFirstStep = signal(true);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: of({
+          name: mockName,
+          nameErrors: signal({
             required: true,
           }),
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+          enclosureSettings: mockEnclosureSettings,
+          topology: mockTopology,
+          hasMultipleEnclosuresAfterFirstStep: mockHasMultipleEnclosuresAfterFirstStep,
         }),
         mockProvider(AddVdevsStore, {
-          pool$: of(null),
+          pool: signal(null),
         }),
         provideMockStore({
           selectors: [
@@ -68,59 +65,49 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      testScheduler = getTestScheduler();
     });
 
     it('generates errors for required steps', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
-          a: [
-            {
-              severity: 'error',
-              step: 'general',
-              text: 'Name not added',
-            },
-            {
-              severity: 'error',
-              step: 'enclosure',
-              text: 'An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.',
-            },
-            {
-              severity: 'error',
-              step: 'data',
-              text: 'At least 1 data VDEV is required.',
-            },
-          ],
-        });
-      });
+      expect(spectator.service.poolCreationErrors()).toEqual([
+        {
+          severity: 'error',
+          step: 'general',
+          text: 'Name not added',
+        },
+        {
+          severity: 'error',
+          step: 'enclosure',
+          text: 'An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.',
+        },
+        {
+          severity: 'error',
+          step: 'data',
+          text: 'At least 1 data VDEV is required.',
+        },
+      ]);
     });
 
     it('generates top level error for each step if exists', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getTopLevelErrorsForEachStep()).toBe('a', {
-          a: {
-            cache: null,
-            data: 'At least 1 data VDEV is required.',
-            dedup: null,
-            enclosure: 'An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.',
-            general: 'Name not added',
-            log: null,
-            metadata: null,
-            review: null,
-            spare: null,
-          },
-        });
+      expect(spectator.service.topLevelErrorsForEachStep()).toEqual({
+        cache: null,
+        data: 'At least 1 data VDEV is required.',
+        dedup: null,
+        enclosure: 'An enclosure must be selected when \'Limit Pool to a Single Enclosure\' is enabled.',
+        general: 'Name not added',
+        log: null,
+        metadata: null,
+        review: null,
+        spare: null,
       });
     });
   });
 
   describe('warnings generation', () => {
     let spectator: SpectatorService<PoolManagerValidationService>;
-    let testScheduler: TestScheduler;
 
-    const mockName$ = of('No error for name');
-    const mockNameErrors$ = of(null);
-    const mockTopology$ = of({
+    const mockName = signal('No error for name');
+    const mockNameErrors = signal(null);
+    const mockTopology = signal({
       [VDevType.Data]: {
         hasCustomDiskSelection: false,
         layout: 'STRIPE',
@@ -166,24 +153,24 @@ describe('PoolManagerValidationService', () => {
         ],
       },
     });
-    const mockEnclosureSettings$ = of({
+    const mockEnclosureSettings = signal({
       limitToSingleEnclosure: null,
       dispersalStrategy: DispersalStrategy.None,
     });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
+    const mockHasMultipleEnclosuresAfterFirstStep = signal(true);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: mockNameErrors$,
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+          name: mockName,
+          nameErrors: mockNameErrors,
+          enclosureSettings: mockEnclosureSettings,
+          topology: mockTopology,
+          hasMultipleEnclosuresAfterFirstStep: mockHasMultipleEnclosuresAfterFirstStep,
         }),
         mockProvider(AddVdevsStore, {
-          pool$: of(null),
+          pool: signal(null),
         }),
         provideMockStore({
           selectors: [
@@ -198,88 +185,78 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      testScheduler = getTestScheduler();
     });
 
     it('generates warnings for steps', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
-          a: [
-            {
-              severity: 'warning',
-              step: 'log',
-              text: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
-            },
-            {
-              severity: 'warning',
-              step: 'review',
-              text: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
-            },
-            {
-              severity: 'warning',
-              step: 'review',
-              text: 'Warning: There are 1 disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.',
-            },
-            {
-              severity: 'error-warning',
-              step: 'data',
-              text: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
-            },
-          ],
-        });
-      });
+      expect(spectator.service.poolCreationErrors()).toEqual([
+        {
+          severity: 'warning',
+          step: 'log',
+          text: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
+        },
+        {
+          severity: 'warning',
+          step: 'review',
+          text: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
+        },
+        {
+          severity: 'warning',
+          step: 'review',
+          text: 'Warning: There are 1 disks available that have non-unique serial numbers. Non-unique serial numbers can be caused by a cabling issue and adding such disks to a pool can result in lost data.',
+        },
+        {
+          severity: 'error-warning',
+          step: 'data',
+          text: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
+        },
+      ]);
     });
 
     it('generates top level warnings for each step if exists', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getTopLevelWarningsForEachStep()).toBe('a', {
-          a: {
-            cache: null,
-            data: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
-            dedup: null,
-            enclosure: null,
-            general: null,
-            log: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
-            metadata: null,
-            review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
-            spare: null,
-          },
-        });
+      expect(spectator.service.topLevelWarningsForEachStep()).toEqual({
+        cache: null,
+        data: 'A stripe data VDEV is highly discouraged and will result in data loss if it fails',
+        dedup: null,
+        enclosure: null,
+        general: null,
+        log: 'A stripe log VDEV may result in data loss if it fails combined with a power outage.',
+        metadata: null,
+        review: 'Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.',
+        spare: null,
       });
     });
   });
 
   describe('errors when adding vdevs to existing pool and no vdevs are selected', () => {
     let spectator: SpectatorService<PoolManagerValidationService>;
-    let testScheduler: TestScheduler;
 
-    const mockName$ = of('No error for name');
-    const mockTopology$ = of({
+    const mockName = signal('No error for name');
+    const mockTopology = signal({
       [VDevType.Data]: {
         hasCustomDiskSelection: false,
         layout: 'STRIPE',
         vdevs: [],
       },
     });
-    const mockEnclosureSettings$ = of({
+    const mockEnclosureSettings = signal({
       limitToSingleEnclosure: null,
       dispersalStrategy: DispersalStrategy.None,
     });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
-    const mockNameErrors$ = of(null);
+    const mockHasMultipleEnclosuresAfterFirstStep = signal(true);
+    const mockNameErrors = signal(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: mockNameErrors$,
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+          name: mockName,
+          nameErrors: mockNameErrors,
+          enclosureSettings: mockEnclosureSettings,
+          topology: mockTopology,
+          hasMultipleEnclosuresAfterFirstStep: mockHasMultipleEnclosuresAfterFirstStep,
         }),
         mockProvider(AddVdevsStore, {
-          pool$: of({ topology: { data: [{ type: 'MIRROR' }] } } as Pool),
+          pool: signal({ topology: { data: [{ type: 'MIRROR' }] } } as Pool),
         }),
         provideMockStore({
           selectors: [
@@ -294,29 +271,24 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      testScheduler = getTestScheduler();
     });
 
     it('throws error when no vdevs are selected', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
-          a: [
-            {
-              severity: 'error',
-              step: 'review',
-              text: 'At least 1 vdev is required to make an update to the pool.',
-            },
-          ],
-        });
-      });
+      expect(spectator.service.poolCreationErrors()).toEqual([
+        {
+          severity: 'error',
+          step: 'review',
+          text: 'At least 1 vdev is required to make an update to the pool.',
+        },
+      ]);
     });
   });
 
   describe('dRAID validation', () => {
     let spectator: SpectatorService<PoolManagerValidationService>;
 
-    const mockName$ = of('Pool');
-    const mockTopology$ = of({
+    const mockName = signal('Pool');
+    const mockTopology = signal({
       [VDevType.Data]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Draid1,
@@ -326,25 +298,25 @@ describe('PoolManagerValidationService', () => {
         width: 9,
       } as PoolManagerTopologyCategory,
     });
-    const mockEnclosureSettings$ = of({
+    const mockEnclosureSettings = signal({
       limitToSingleEnclosure: null,
       dispersalStrategy: DispersalStrategy.None,
     });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(true);
-    const mockNameErrors$ = of(null);
+    const mockHasMultipleEnclosuresAfterFirstStep = signal(true);
+    const mockNameErrors = signal(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: mockNameErrors$,
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+          name: mockName,
+          nameErrors: mockNameErrors,
+          enclosureSettings: mockEnclosureSettings,
+          topology: mockTopology,
+          hasMultipleEnclosuresAfterFirstStep: mockHasMultipleEnclosuresAfterFirstStep,
         }),
         mockProvider(AddVdevsStore, {
-          pool$: of(null),
+          pool: signal(null),
         }),
         provideMockStore({
           selectors: [
@@ -362,8 +334,8 @@ describe('PoolManagerValidationService', () => {
     });
 
     // TODO: Spit apart and add more boundary checks.
-    it('adds a warning when dRAID data disk is not a power of two', async () => {
-      const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+    it('adds a warning when dRAID data disk is not a power of two', () => {
+      const errors = spectator.service.poolCreationErrors();
       expect(errors).toContainEqual({
         text: 'Recommended number of data disks for optimal space allocation should be a power of 2 (2, 4, 8, 16...).',
         severity: PoolCreationSeverity.Warning,
@@ -371,8 +343,8 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
-    it('adds a warning when dRAID children is less than 10', async () => {
-      const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+    it('adds a warning when dRAID children is less than 10', () => {
+      const errors = spectator.service.poolCreationErrors();
       expect(errors).toContainEqual({
         text: 'For dRAID\'s benefits to outweigh those of RaidZ, we recommend at least 10 disks per dRAID vdev.',
         severity: PoolCreationSeverity.Warning,
@@ -380,8 +352,8 @@ describe('PoolManagerValidationService', () => {
       });
     });
 
-    it('adds a warning when dRAID does not have spares added', async () => {
-      const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+    it('adds a warning when dRAID does not have spares added', () => {
+      const errors = spectator.service.poolCreationErrors();
       expect(errors).toContainEqual({
         text: 'At least one distributed spare is recommended for dRAID. Distributed spares cannot be added after the pool is created.',
         severity: PoolCreationSeverity.Warning,
@@ -392,35 +364,34 @@ describe('PoolManagerValidationService', () => {
 
   describe('add-vdev special stripe redundancy warning', () => {
     let spectator: SpectatorService<PoolManagerValidationService>;
-    let testScheduler: TestScheduler;
 
-    const mockName$ = of('Pool');
-    const mockTopology$ = of({
+    const mockName = signal('Pool');
+    const mockTopology = signal({
       [VDevType.Special]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
         vdevs: [[{ devname: 'sdc' }]],
       },
     });
-    const mockEnclosureSettings$ = of({
+    const mockEnclosureSettings = signal({
       limitToSingleEnclosure: null,
       dispersalStrategy: DispersalStrategy.None,
     });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(false);
-    const mockNameErrors$ = of(null);
+    const mockHasMultipleEnclosuresAfterFirstStep = signal(false);
+    const mockNameErrors = signal(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: mockNameErrors$,
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+          name: mockName,
+          nameErrors: mockNameErrors,
+          enclosureSettings: mockEnclosureSettings,
+          topology: mockTopology,
+          hasMultipleEnclosuresAfterFirstStep: mockHasMultipleEnclosuresAfterFirstStep,
         }),
         mockProvider(AddVdevsStore, {
-          pool$: of({ name: 'existing-pool' } as Pool),
+          pool: signal({ name: 'existing-pool' } as Pool),
         }),
         provideMockStore({
           selectors: [
@@ -435,55 +406,49 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      testScheduler = getTestScheduler();
     });
 
     it('displays warning when adding stripe special vdev to existing pool', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
-          a: [
-            {
-              severity: PoolCreationSeverity.ErrorWarning,
-              step: PoolCreationWizardStep.Metadata,
-              text: 'Adding a stripe special VDEV introduces a single point of failure to your pool.',
-            },
-          ],
-        });
-      });
+      expect(spectator.service.poolCreationErrors()).toEqual([
+        {
+          severity: PoolCreationSeverity.ErrorWarning,
+          step: PoolCreationWizardStep.Metadata,
+          text: 'Adding a stripe special VDEV introduces a single point of failure to your pool.',
+        },
+      ]);
     });
   });
 
   describe('add-vdev dedup stripe redundancy warning', () => {
     let spectator: SpectatorService<PoolManagerValidationService>;
-    let testScheduler: TestScheduler;
 
-    const mockName$ = of('Pool');
-    const mockTopology$ = of({
+    const mockName = signal('Pool');
+    const mockTopology = signal({
       [VDevType.Dedup]: {
         hasCustomDiskSelection: false,
         layout: CreateVdevLayout.Stripe,
         vdevs: [[{ devname: 'sdc' }]],
       },
     });
-    const mockEnclosureSettings$ = of({
+    const mockEnclosureSettings = signal({
       limitToSingleEnclosure: null,
       dispersalStrategy: DispersalStrategy.None,
     });
-    const mockHasMultipleEnclosuresAfterFirstStep$ = of(false);
-    const mockNameErrors$ = of(null);
+    const mockHasMultipleEnclosuresAfterFirstStep = signal(false);
+    const mockNameErrors = signal(null);
 
     const createService = createServiceFactory({
       service: PoolManagerValidationService,
       providers: [
         mockProvider(PoolManagerStore, {
-          name$: mockName$,
-          nameErrors$: mockNameErrors$,
-          enclosureSettings$: mockEnclosureSettings$,
-          topology$: mockTopology$,
-          hasMultipleEnclosuresAfterFirstStep$: mockHasMultipleEnclosuresAfterFirstStep$,
+          name: mockName,
+          nameErrors: mockNameErrors,
+          enclosureSettings: mockEnclosureSettings,
+          topology: mockTopology,
+          hasMultipleEnclosuresAfterFirstStep: mockHasMultipleEnclosuresAfterFirstStep,
         }),
         mockProvider(AddVdevsStore, {
-          pool$: of({ name: 'existing-pool' } as Pool),
+          pool: signal({ name: 'existing-pool' } as Pool),
         }),
         provideMockStore({
           selectors: [
@@ -498,21 +463,16 @@ describe('PoolManagerValidationService', () => {
 
     beforeEach(() => {
       spectator = createService();
-      testScheduler = getTestScheduler();
     });
 
     it('displays warning when adding stripe dedup vdev to existing pool', () => {
-      testScheduler.run(({ expectObservable }) => {
-        expectObservable(spectator.service.getPoolCreationErrors()).toBe('a', {
-          a: [
-            {
-              severity: PoolCreationSeverity.ErrorWarning,
-              step: PoolCreationWizardStep.Dedup,
-              text: 'Adding a stripe dedup VDEV introduces a single point of failure to your pool.',
-            },
-          ],
-        });
-      });
+      expect(spectator.service.poolCreationErrors()).toEqual([
+        {
+          severity: PoolCreationSeverity.ErrorWarning,
+          step: PoolCreationWizardStep.Dedup,
+          text: 'Adding a stripe dedup VDEV introduces a single point of failure to your pool.',
+        },
+      ]);
     });
   });
 
@@ -524,19 +484,19 @@ describe('PoolManagerValidationService', () => {
     };
 
     const sharedProviders = [
-      mockProvider(AddVdevsStore, { pool$: of(null) }),
+      mockProvider(AddVdevsStore, { pool: signal(null) }),
       provideMockStore({
         selectors: [{ selector: selectHasEnclosureSupport, value: true }],
       }),
     ];
     const sharedStoreMock = {
-      name$: of('Pool'),
-      nameErrors$: of(null),
-      enclosureSettings$: of({
+      name: signal('Pool'),
+      nameErrors: signal(null),
+      enclosureSettings: signal({
         limitToSingleEnclosure: null,
         dispersalStrategy: DispersalStrategy.None,
       }),
-      hasMultipleEnclosuresAfterFirstStep$: of(false),
+      hasMultipleEnclosuresAfterFirstStep: signal(false),
     };
 
     describe('when user picked a disk size for metadata but width was cleared', () => {
@@ -546,7 +506,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Special]: {
                 ...emptyCategory,
@@ -564,8 +524,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('flags metadata step', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('flags metadata step', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
@@ -581,7 +541,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Dedup]: {
                 ...emptyCategory,
@@ -599,8 +559,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('flags dedup step', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('flags dedup step', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Dedup,
@@ -616,7 +576,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Special]: {
                 ...emptyCategory,
@@ -633,8 +593,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('flags metadata step', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('flags metadata step', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
@@ -650,7 +610,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Special]: {
                 ...emptyCategory,
@@ -667,8 +627,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('flags metadata step even without a disk size', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('flags metadata step even without a disk size', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Metadata,
@@ -688,7 +648,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [vdevType]: {
                 ...emptyCategory,
@@ -705,8 +665,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it(`flags ${label} step`, async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it(`flags ${label} step`, () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step,
@@ -722,7 +682,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Log]: emptyCategory,
               [VDevType.Spare]: emptyCategory,
@@ -739,8 +699,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not flag any incomplete errors', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not flag any incomplete errors', () => {
+        const errors = spectator.service.poolCreationErrors();
         const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
         expect(incompleteErrors).toEqual([]);
       });
@@ -760,7 +720,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Log]: autoSelectedCategory,
               [VDevType.Spare]: autoSelectedCategory,
@@ -777,8 +737,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not flag any incomplete errors', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not flag any incomplete errors', () => {
+        const errors = spectator.service.poolCreationErrors();
         const incompleteErrors = errors.filter((err) => err.text.includes('configuration is incomplete'));
         expect(incompleteErrors).toEqual([]);
       });
@@ -791,7 +751,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: dataCategory,
               [VDevType.Log]: {
                 ...emptyCategory,
@@ -809,8 +769,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('flags Log step', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('flags Log step', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Error,
           step: PoolCreationWizardStep.Log,
@@ -822,13 +782,13 @@ describe('PoolManagerValidationService', () => {
 
   describe('redundancy-mismatch warning (NAS-140839)', () => {
     const sharedStoreMock = {
-      name$: of('Pool'),
-      nameErrors$: of(null),
-      enclosureSettings$: of({
+      name: signal('Pool'),
+      nameErrors: signal(null),
+      enclosureSettings: signal({
         limitToSingleEnclosure: null,
         dispersalStrategy: DispersalStrategy.None,
       }),
-      hasMultipleEnclosuresAfterFirstStep$: of(false),
+      hasMultipleEnclosuresAfterFirstStep: signal(false),
     };
 
     describe('when special parity is lower than data parity (new pool)', () => {
@@ -838,7 +798,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -851,7 +811,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -862,8 +822,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('emits a non-blocking metadata redundancy warning', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('emits a non-blocking metadata redundancy warning', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Metadata,
@@ -879,7 +839,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -892,7 +852,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -903,8 +863,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('still emits the metadata redundancy warning using the smallest vdev disk count', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('still emits the metadata redundancy warning using the smallest vdev disk count', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Metadata,
@@ -920,7 +880,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Mirror,
                 width: null,
@@ -933,7 +893,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -944,8 +904,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('emits the metadata redundancy warning using the manual data vdev disk count', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('emits the metadata redundancy warning using the manual data vdev disk count', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Metadata,
@@ -961,7 +921,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -974,7 +934,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -985,8 +945,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('clears the redundancy warning based on the actual vdev disk count, not the stale width', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('clears the redundancy warning based on the actual vdev disk count, not the stale width', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).not.toContainEqual(expect.objectContaining({
           step: PoolCreationWizardStep.Metadata,
           severity: PoolCreationSeverity.Warning,
@@ -1002,7 +962,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -1015,7 +975,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -1026,8 +986,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('emits the warning based on the actual vdev disk count, not the stale higher width', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('emits the warning based on the actual vdev disk count, not the stale higher width', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Metadata,
@@ -1043,7 +1003,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -1059,7 +1019,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -1070,8 +1030,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('uses the smallest vdev disk count (conservative) — emits the warning when the weakest vdev parity is below data', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('uses the smallest vdev disk count (conservative) — emits the warning when the weakest vdev parity is below data', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Metadata,
@@ -1087,7 +1047,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -1100,7 +1060,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -1111,8 +1071,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('suppresses the redundancy warning when no real vdev disks are present', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('suppresses the redundancy warning when no real vdev disks are present', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).not.toContainEqual(expect.objectContaining({
           step: PoolCreationWizardStep.Metadata,
           severity: PoolCreationSeverity.Warning,
@@ -1128,7 +1088,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Raidz2,
                 width: 4,
@@ -1141,7 +1101,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -1152,8 +1112,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not warn', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not warn', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors.find((err) => err.text.includes('redundancy is lower'))).toBeUndefined();
       });
     });
@@ -1165,7 +1125,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Dedup]: {
                 layout: CreateVdevLayout.Mirror,
                 width: 2,
@@ -1174,7 +1134,7 @@ describe('PoolManagerValidationService', () => {
             }),
           }),
           mockProvider(AddVdevsStore, {
-            pool$: of({
+            pool: signal({
               name: 'pool',
               topology: {
                 [VDevType.Data]: [
@@ -1193,8 +1153,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('emits a dedup redundancy warning', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('emits a dedup redundancy warning', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Dedup,
@@ -1210,7 +1170,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Stripe,
                 width: 1,
@@ -1223,7 +1183,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -1234,8 +1194,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not double-warn (stripe warning handles the message)', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not double-warn (stripe warning handles the message)', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors.find((err) => err.text.includes('redundancy is lower'))).toBeUndefined();
       });
     });
@@ -1243,13 +1203,13 @@ describe('PoolManagerValidationService', () => {
 
   describe('mixed-layout warning (NAS-140839)', () => {
     const sharedStoreMock = {
-      name$: of('Pool'),
-      nameErrors$: of(null),
-      enclosureSettings$: of({
+      name: signal('Pool'),
+      nameErrors: signal(null),
+      enclosureSettings: signal({
         limitToSingleEnclosure: null,
         dispersalStrategy: DispersalStrategy.None,
       }),
-      hasMultipleEnclosuresAfterFirstStep$: of(false),
+      hasMultipleEnclosuresAfterFirstStep: signal(false),
     };
 
     describe('when adding a special vdev with a layout different from existing pool special', () => {
@@ -1259,7 +1219,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Special]: {
                 layout: CreateVdevLayout.Raidz1,
                 width: 3,
@@ -1268,7 +1228,7 @@ describe('PoolManagerValidationService', () => {
             }),
           }),
           mockProvider(AddVdevsStore, {
-            pool$: of({
+            pool: signal({
               name: 'pool',
               topology: {
                 [VDevType.Special]: [
@@ -1287,8 +1247,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('emits a non-blocking mixed-layout warning', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('emits a non-blocking mixed-layout warning', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Metadata,
@@ -1304,7 +1264,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Data]: {
                 layout: CreateVdevLayout.Mirror,
                 width: 2,
@@ -1317,7 +1277,7 @@ describe('PoolManagerValidationService', () => {
               },
             }),
           }),
-          mockProvider(AddVdevsStore, { pool$: of(null) }),
+          mockProvider(AddVdevsStore, { pool: signal(null) }),
           provideMockStore({
             selectors: [{ selector: selectHasEnclosureSupport, value: true }],
           }),
@@ -1328,8 +1288,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not warn', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not warn', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
       });
     });
@@ -1341,7 +1301,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Dedup]: {
                 layout: CreateVdevLayout.Raidz1,
                 width: 3,
@@ -1350,7 +1310,7 @@ describe('PoolManagerValidationService', () => {
             }),
           }),
           mockProvider(AddVdevsStore, {
-            pool$: of({
+            pool: signal({
               name: 'pool',
               topology: {
                 [VDevType.Dedup]: [
@@ -1369,8 +1329,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('emits a non-blocking dedup mixed-layout warning', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('emits a non-blocking dedup mixed-layout warning', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.Warning,
           step: PoolCreationWizardStep.Dedup,
@@ -1386,7 +1346,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Special]: {
                 layout: CreateVdevLayout.Stripe,
                 width: 1,
@@ -1395,7 +1355,7 @@ describe('PoolManagerValidationService', () => {
             }),
           }),
           mockProvider(AddVdevsStore, {
-            pool$: of({
+            pool: signal({
               name: 'pool',
               topology: {
                 [VDevType.Special]: [
@@ -1414,8 +1374,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('only surfaces the stripe single-point-of-failure warning, not the mixed-layout one', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('only surfaces the stripe single-point-of-failure warning, not the mixed-layout one', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
         expect(errors).toContainEqual({
           severity: PoolCreationSeverity.ErrorWarning,
@@ -1432,7 +1392,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Special]: {
                 layout: CreateVdevLayout.Mirror,
                 width: 2,
@@ -1441,7 +1401,7 @@ describe('PoolManagerValidationService', () => {
             }),
           }),
           mockProvider(AddVdevsStore, {
-            pool$: of({
+            pool: signal({
               name: 'pool',
               topology: {
                 [VDevType.Special]: [
@@ -1460,8 +1420,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not warn', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not warn', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
       });
     });
@@ -1473,7 +1433,7 @@ describe('PoolManagerValidationService', () => {
         providers: [
           mockProvider(PoolManagerStore, {
             ...sharedStoreMock,
-            topology$: of({
+            topology: signal({
               [VDevType.Special]: {
                 layout: CreateVdevLayout.Mirror,
                 width: 2,
@@ -1482,7 +1442,7 @@ describe('PoolManagerValidationService', () => {
             }),
           }),
           mockProvider(AddVdevsStore, {
-            pool$: of({
+            pool: signal({
               name: 'pool',
               topology: {
                 [VDevType.Data]: [
@@ -1501,8 +1461,8 @@ describe('PoolManagerValidationService', () => {
         spectator = createService();
       });
 
-      it('does not emit a mixed-layout warning when the existing pool has no special class', async () => {
-        const errors = await firstValueFrom(spectator.service.getPoolCreationErrors());
+      it('does not emit a mixed-layout warning when the existing pool has no special class', () => {
+        const errors = spectator.service.poolCreationErrors();
         expect(errors.find((err) => err.text.includes('Mixing layouts'))).toBeUndefined();
       });
     });

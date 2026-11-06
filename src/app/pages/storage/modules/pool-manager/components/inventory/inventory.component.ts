@@ -1,9 +1,9 @@
-import { KeyValue, AsyncPipe, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { KeyValue, KeyValuePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, computed, inject,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnCardHeaderDirective, TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
-import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -23,35 +23,19 @@ import { getDiskTypeSizeMap } from 'app/pages/storage/modules/pool-manager/utils
     TnCardHeaderDirective,
     TnIconComponent,
     TranslateModule,
-    AsyncPipe,
     KeyValuePipe,
   ],
 })
-export class InventoryComponent implements OnInit {
-  poolManagerStore = inject(PoolManagerStore);
-  private cdr = inject(ChangeDetectorRef);
-  private destroyRef = inject(DestroyRef);
+export class InventoryComponent {
+  private poolManagerStore = inject(PoolManagerStore);
 
-  protected sizeDisksMap: DiskTypeSizeMap = { [DiskType.Hdd]: {}, [DiskType.Ssd]: {} };
   protected readonly DiskType = DiskType;
   protected readonly EncryptionType = EncryptionType;
 
-  protected isLoading$ = this.poolManagerStore.isLoading$;
-  protected hasDisks$ = this.poolManagerStore.inventory$.pipe(
-    map((unusedDisks) => unusedDisks.length),
-  );
-
-  protected encryptionType$ = this.poolManagerStore.encryptionType$;
-
-  ngOnInit(): void {
-    // Continuously react to inventory changes (including encryption type changes)
-    this.poolManagerStore.inventory$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((unusedDisks) => {
-        this.sizeDisksMap = getDiskTypeSizeMap(unusedDisks);
-        this.cdr.markForCheck();
-      });
-  }
+  protected isLoading = this.poolManagerStore.isLoading;
+  protected hasDisks = computed(() => this.poolManagerStore.inventory().length > 0);
+  protected encryptionType = this.poolManagerStore.encryptionType;
+  protected sizeDisksMap = computed<DiskTypeSizeMap>(() => getDiskTypeSizeMap(this.poolManagerStore.inventory()));
 
   getFilesize(size: string): string {
     return buildNormalizedFileSize(Number(size));

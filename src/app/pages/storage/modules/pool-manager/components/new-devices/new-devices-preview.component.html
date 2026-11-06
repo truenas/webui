@@ -1,6 +1,6 @@
 <tn-card class="card" [title]="'New Devices' | translate">
   <div>
-    @for (category of topology$ | async | keyvalue; track category.key) {
+    @for (category of topology() | keyvalue; track category.key) {
       <div class="details-item">
         <span class="label" tnTestIdType="text" [tnTestId]="['new-devices', category.key, 'label']">
           {{ category.key | mapValue: vdevTypeLabels | translate }}:

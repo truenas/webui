@@ -1,11 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { computed, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnDialog, TnStepperHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockApi, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -63,7 +64,7 @@ describe('PoolManagerWizardComponent', () => {
 
   const startOver$ = new Subject<void>();
 
-  const hasMultipleEnclosuresInAllowedDisks$ = new BehaviorSubject(false);
+  const hasMultipleEnclosuresInAllowedDisks = signal(false);
   const state = {
     name: 'pewl',
     encryptionType: EncryptionType.None,
@@ -93,9 +94,9 @@ describe('PoolManagerWizardComponent', () => {
       },
     },
   } as PoolManagerState;
-  const state$ = new BehaviorSubject(state);
+  const currentState = signal(state);
   const createdPool = {} as WebUiQueryEntity<'pool.query'>;
-  const existingPool$ = new BehaviorSubject<Pool | null>(null);
+  const existingPool = signal<Pool | null>(null);
 
   const createComponent = createComponentFactory({
     component: PoolManagerWizardComponent,
@@ -116,10 +117,15 @@ describe('PoolManagerWizardComponent', () => {
     componentProviders: [
       mockProvider(PoolManagerStore, {
         initialize: jest.fn(),
-        hasMultipleEnclosuresAfterFirstStep$: hasMultipleEnclosuresInAllowedDisks$.asObservable(),
-        state$: state$.asObservable(),
+        hasMultipleEnclosuresAfterFirstStep: hasMultipleEnclosuresInAllowedDisks,
+        name: computed(() => currentState().name),
+        encryptionType: computed(() => currentState().encryptionType),
+        sedPassword: computed(() => currentState().sedPassword),
+        diskSettings: computed(() => currentState().diskSettings),
+        topology: computed(() => currentState().topology),
+        forceTopology: computed(() => currentState().forceTopology),
         startOver$,
-        isLoading$: of(false),
+        isLoading: signal(false),
       }),
       mockApi([
         mockQuery('pool.query', []),
@@ -150,14 +156,14 @@ describe('PoolManagerWizardComponent', () => {
         ],
       }),
       mockProvider(AddVdevsStore, {
-        pool$: existingPool$,
-        isLoading$: of(false),
+        pool: existingPool,
+        isLoading: signal(false),
       }),
       mockProvider(Router),
       mockProvider(SnackbarService),
       mockProvider(PoolManagerValidationService, {
-        getTopLevelWarningsForEachStep: jest.fn(() => of({})),
-        getTopLevelErrorsForEachStep: jest.fn(() => of({})),
+        topLevelWarningsForEachStep: signal({}),
+        topLevelErrorsForEachStep: signal({}),
       }),
     ],
   });
@@ -193,7 +199,7 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   it('shows an extra Enclosure Options step for enterprise systems with multiple enclosures', async () => {
-    hasMultipleEnclosuresInAllowedDisks$.next(true);
+    hasMultipleEnclosuresInAllowedDisks.set(true);
     spectator.detectChanges();
 
     const stepLabels = await wizard.getStepLabels();
@@ -247,7 +253,7 @@ describe('PoolManagerWizardComponent', () => {
     });
 
     it('shows a DownloadKeyDialog after pool has been created if encryption was used', async () => {
-      state$.next({
+      currentState.set({
         ...state,
         encryptionType: EncryptionType.Software,
       });
@@ -262,7 +268,7 @@ describe('PoolManagerWizardComponent', () => {
     });
 
     it('sends encryption options without an algorithm when software encryption is used', async () => {
-      state$.next({
+      currentState.set({
         ...state,
         encryptionType: EncryptionType.Software,
       });
@@ -279,7 +285,7 @@ describe('PoolManagerWizardComponent', () => {
     });
 
     it('adds force_topology to the payload when forceTopology is set in the store', async () => {
-      state$.next({ ...state, forceTopology: true });
+      currentState.set({ ...state, forceTopology: true });
 
       await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
@@ -288,36 +294,36 @@ describe('PoolManagerWizardComponent', () => {
         expect.objectContaining({ force_topology: true }),
       ]);
 
-      state$.next(state);
+      currentState.set(state);
     });
   });
 
   describe('updating an existing pool', () => {
-    const existingPool = { id: 42 } as Pool;
+    const pool = { id: 42 } as Pool;
 
     beforeEach(async () => {
-      existingPool$.next(existingPool);
+      existingPool.set(pool);
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       wizard = await loader.getHarness(TnStepperHarness);
     });
 
     afterEach(() => {
-      existingPool$.next(null);
+      existingPool.set(null);
     });
 
     it('adds force_topology to the pool.update payload when forceTopology is set in the store', async () => {
-      state$.next({ ...state, forceTopology: true });
+      currentState.set({ ...state, forceTopology: true });
 
       await wizard.selectStep((await wizard.getStepLabels()).indexOf('Review'));
       spectator.query(ReviewWizardStepComponent)!.createPool.emit();
 
       expect(spectator.inject(ApiService, true).job).toHaveBeenCalledWith('pool.update', [
-        existingPool.id,
+        pool.id,
         expect.objectContaining({ force_topology: true }),
       ]);
 
-      state$.next(state);
+      currentState.set(state);
     });
   });
 });

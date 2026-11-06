@@ -1,5 +1,5 @@
 <tn-card class="card">
-  <ix-fake-progress-bar [loading]="!!(isLoading$ | async)"></ix-fake-progress-bar>
+  <ix-fake-progress-bar [loading]="isLoading()"></ix-fake-progress-bar>
   <form (keydown.enter)="$event.preventDefault()">
     <tn-stepper #stepper orientation="vertical">
       <tn-step
@@ -12,12 +12,12 @@
       >
         <ix-general-wizard-step
           #generalStep
-          [isAddingVdevs]="!!existingPool"
-          [pool]="existingPool"
+          [isAddingVdevs]="!!existingPool()"
+          [pool]="existingPool()"
         ></ix-general-wizard-step>
       </tn-step>
 
-      @if (hasEnclosureStep && !existingPool) {
+      @if (hasEnclosureStep() && !existingPool()) {
         <tn-step
           ixStepActivation
           [label]="'Enclosure Options' | translate"
@@ -64,7 +64,7 @@
         ></ix-log-wizard-step>
       </tn-step>
 
-      @if (state.topology[PoolCreationWizardStep.Spare]) {
+      @if (topology()[PoolCreationWizardStep.Spare]) {
         <tn-step
           ixStepActivation
           [label]="('Spare' | translate) + ' ' + ('(Optional)' | translate)"
@@ -132,7 +132,7 @@
         (activate)="onStepActivated(PoolCreationWizardStep.Review)"
       >
         <ix-review-wizard-step
-          [isAddingVdevs]="!!existingPool"
+          [isAddingVdevs]="!!existingPool()"
           (createPool)="submit()"
         ></ix-review-wizard-step>
       </tn-step>

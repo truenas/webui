@@ -1,5 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, input, output, inject, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, input, output, inject, OnChanges,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,10 +8,9 @@ import {
   TnCheckboxComponent, TnFormFieldComponent, TnInputComponent, TnSelectComponent, tnIconMarker,
 } from '@truenas/ui-components';
 import { uniq } from 'lodash-es';
-import { map } from 'rxjs/operators';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
-import { redundantListToUniqueOptions } from 'app/helpers/operators/options.operators';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import {
   ManualDiskSelectionStore,
 } from 'app/pages/storage/modules/pool-manager/components/manual-disk-selection/store/manual-disk-selection.store';
@@ -23,7 +23,6 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
   styleUrls: ['./manual-selection-disk-filters.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     ReactiveFormsModule,
     TnFormFieldComponent,
     TnInputComponent,
@@ -34,7 +33,7 @@ export type ManualDiskSelectionFilters = ManualSelectionDiskFiltersComponent['fi
 })
 export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
   private formBuilder = inject(FormBuilder);
-  store$ = inject(ManualDiskSelectionStore);
+  private store = inject(ManualDiskSelectionStore);
   private destroyRef = inject(DestroyRef);
 
   readonly isSedEncryption = input<boolean>(false);
@@ -47,19 +46,17 @@ export class ManualSelectionDiskFiltersComponent implements OnInit, OnChanges {
     sedCapable: [false],
   });
 
-  readonly typeOptions$ = this.store$.inventory$.pipe(
-    map((disks) => disks.map((disk) => disk.type)),
-    redundantListToUniqueOptions(),
-  );
+  protected readonly typeOptions = computed(() => {
+    const types = uniq(this.store.inventory().map((disk) => disk.type));
+    return types.map((type) => ({ label: ignoreTranslation(type), value: type }));
+  });
 
-  readonly sizeOptions$ = this.store$.inventory$.pipe(
-    map((disks) => {
-      const diskSizes = disks.toSorted((a, b) => a.size - b.size).map((disk) => disk.size);
-      const sizeLabels = diskSizes.map((size) => buildNormalizedFileSize(size));
-      const uniqueLabels = uniq(sizeLabels);
-      return uniqueLabels.map((size: string) => ({ label: size, value: size }));
-    }),
-  );
+  protected readonly sizeOptions = computed(() => {
+    const diskSizes = this.store.inventory().toSorted((a, b) => a.size - b.size).map((disk) => disk.size);
+    const sizeLabels = diskSizes.map((size) => buildNormalizedFileSize(size));
+    const uniqueLabels = uniq(sizeLabels);
+    return uniqueLabels.map((size: string) => ({ label: size, value: size }));
+  });
 
   ngOnChanges(): void {
     this.updateSedFilter();

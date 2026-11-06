@@ -1,6 +1,6 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -37,10 +37,10 @@ describe('ConfigurationPreviewComponent', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
-        name$: of('tank'),
-        encryptionType$: of(EncryptionType.Software),
-        totalUsableCapacity$: of(10 * GiB),
-        topology$: of({
+        name: signal('tank'),
+        encryptionType: signal(EncryptionType.Software),
+        totalUsableCapacity: signal(10 * GiB),
+        topology: signal({
           [VDevType.Data]: {
             diskSize: 2 * GiB,
             vdevsNumber: 2,
@@ -144,10 +144,10 @@ describe('ConfigurationPreviewComponent with no encryption', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
-        name$: of('tank'),
-        encryptionType$: of(EncryptionType.None),
-        totalUsableCapacity$: of(10 * GiB),
-        topology$: of({} as PoolManagerTopology),
+        name: signal('tank'),
+        encryptionType: signal(EncryptionType.None),
+        totalUsableCapacity: signal(10 * GiB),
+        topology: signal({} as PoolManagerTopology),
       }),
     ],
   });
@@ -180,10 +180,10 @@ describe('ConfigurationPreviewComponent with SED encryption', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
-        name$: of('tank'),
-        encryptionType$: of(EncryptionType.Sed),
-        totalUsableCapacity$: of(10 * GiB),
-        topology$: of({} as PoolManagerTopology),
+        name: signal('tank'),
+        encryptionType: signal(EncryptionType.Sed),
+        totalUsableCapacity: signal(10 * GiB),
+        topology: signal({} as PoolManagerTopology),
       }),
     ],
   });

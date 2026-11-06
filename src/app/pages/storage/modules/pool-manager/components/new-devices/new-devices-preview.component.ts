@@ -1,9 +1,10 @@
-import { AsyncPipe, KeyValuePipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { KeyValuePipe } from '@angular/common';
+import {
+  ChangeDetectionStrategy, Component, computed, inject,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { omitBy } from 'lodash-es';
-import { map } from 'rxjs';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
 import { isTopologyLimitedToOneLayout } from 'app/helpers/storage.helper';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
@@ -24,7 +25,6 @@ import {
     TranslateModule,
     CastPipe,
     MapValuePipe,
-    AsyncPipe,
     KeyValuePipe,
     TopologyCategoryDescriptionPipe,
   ],
@@ -33,13 +33,7 @@ export class NewDevicesPreviewComponent {
   private store = inject(PoolManagerStore);
 
   protected readonly vdevTypeLabels = vdevTypeLabels;
-  protected topology$ = this.store.topology$.pipe(
-    map((topology) => {
-      return omitBy(topology, (value) => {
-        return value.vdevs.length === 0;
-      });
-    }),
-  );
+  protected topology = computed(() => omitBy(this.store.topology(), (value) => value.vdevs.length === 0));
 
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 

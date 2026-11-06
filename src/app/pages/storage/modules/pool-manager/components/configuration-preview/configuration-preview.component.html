@@ -1,9 +1,9 @@
 <tn-card class="card" [title]="'Configuration Preview' | translate">
   <div class="details-item">
     <div class="label">{{ 'Name' | translate }}:</div>
-    <div class="value" tnTestId="config-preview-name" tnTestIdType="text">{{ (name$ | async) || unknownProp }}</div>
+    <div class="value" tnTestId="config-preview-name" tnTestIdType="text">{{ name() || unknownProp }}</div>
   </div>
-  @for (category of topology$ | async | keyvalue; track category.key) {
+  @for (category of topology() | keyvalue; track category.key) {
     <div class="details-item">
       <div class="label" tnTestIdType="text" [tnTestId]="['config-preview', category.key, 'label']">
         {{ category.key | mapValue: vdevTypeLabels | translate }}:
@@ -16,11 +16,11 @@
   <div class="details-item">
     <div class="label">{{ 'Encryption' | translate }}:</div>
     <div class="value" tnTestId="config-preview-encryption" tnTestIdType="text">
-      @if ((encryptionType$ | async) === EncryptionType.None) {
+      @if (encryptionType() === EncryptionType.None) {
         {{ 'None' | translate }}
-      } @else if ((encryptionType$ | async) === EncryptionType.Software) {
+      } @else if (encryptionType() === EncryptionType.Software) {
         {{ 'Software (ZFS)' | translate }}
-      } @else if ((encryptionType$ | async) === EncryptionType.Sed) {
+      } @else if (encryptionType() === EncryptionType.Sed) {
         {{ 'Hardware (SED)' | translate }}
       } @else {
         {{ unknownProp }}
@@ -29,6 +29,6 @@
   </div>
   <div class="details-item">
     <div class="label">{{ 'Total Raw Capacity' | translate }}:</div>
-    <div class="value" tnTestId="config-preview-total-raw-capacity" tnTestIdType="text">{{ totalCapacity$ | async | ixFileSize }}</div>
+    <div class="value" tnTestId="config-preview-total-raw-capacity" tnTestIdType="text">{{ totalCapacity() | ixFileSize }}</div>
   </div>
 </tn-card>

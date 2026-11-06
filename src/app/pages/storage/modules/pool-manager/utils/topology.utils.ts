@@ -1,4 +1,4 @@
-import { combineLatest, distinctUntilChanged, map, Observable } from 'rxjs';
+import { computed, Signal } from '@angular/core';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -211,8 +211,8 @@ export const nonDraidLayouts: readonly CreateVdevLayout[] = Object.values(Create
 
 /**
  * Stable references for the two outcomes of {@link resolveParityLock} so that
- * callers can compare allowedLayouts by reference (parityLock$'s
- * distinctUntilChanged) without walking the array on every emission.
+ * callers can compare allowedLayouts by reference (parityLock's equality
+ * check) without walking the array on every change.
  */
 const layoutsWithoutStripe: readonly CreateVdevLayout[] = nonDraidLayouts
   .filter((layout) => layout !== CreateVdevLayout.Stripe);
@@ -278,20 +278,16 @@ export function resolveParityLock(
  * and dedup wizard steps so both react to the same set of inputs (existing
  * pool data layout, wizard data layout) in the same way.
  */
-export function parityLock$(
-  pool$: Observable<Pool | null>,
-  topology$: Observable<PoolManagerTopology>,
-): Observable<ParityLock> {
-  return combineLatest([pool$, topology$]).pipe(
-    map(([pool, topology]) => resolveParityLock(
-      pool?.topology[VDevType.Data],
-      { layout: topology[VDevType.Data].layout },
-    )),
-    distinctUntilChanged((a, b) => (
-      a.minMirrorWidth === b.minMirrorWidth
-      && a.allowedLayouts === b.allowedLayouts
-    )),
-  );
+export function parityLock(
+  pool: Signal<Pool | null>,
+  topology: Signal<PoolManagerTopology>,
+): Signal<ParityLock> {
+  return computed(() => resolveParityLock(
+    pool()?.topology[VDevType.Data],
+    { layout: topology()[VDevType.Data].layout },
+  ), {
+    equal: (a, b) => a.minMirrorWidth === b.minMirrorWidth && a.allowedLayouts === b.allowedLayouts,
+  });
 }
 
 export function isDraidLayout(layout: CreateVdevLayout | TopologyItemType | null | undefined): boolean {

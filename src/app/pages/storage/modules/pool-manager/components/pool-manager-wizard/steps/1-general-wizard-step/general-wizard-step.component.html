@@ -26,10 +26,8 @@
 
     <!-- Info box when SED disks are available but Software encryption is selected -->
     @if (form.controls.encryptionType.value === EncryptionType.Software) {
-      @if (hasSedCapableDisks$ | async; as hasSedDisks) {
-        @if (hasSedDisks && (hasSedEntitlement$ | async)) {
-          <ix-warning tnTestId="sed-info" tnTestIdType="text" color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
-        }
+      @if (hasSedCapableDisks() && hasSedEntitlement()) {
+        <ix-warning tnTestId="sed-info" tnTestIdType="text" color="green" [message]="helptext.sedInfoMessage | translate"></ix-warning>
       }
     }
 

@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, input, output, inject,
 } from '@angular/core';
@@ -27,7 +26,6 @@ import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/p
     TnStepperPreviousDirective,
     TnStepperNextDirective,
     TranslateModule,
-    AsyncPipe,
   ],
 })
 export class SpareWizardStepComponent {
@@ -41,7 +39,7 @@ export class SpareWizardStepComponent {
   protected readonly vDevType = VDevType;
   protected readonly helptext = helptextPoolCreation;
 
-  protected readonly inventory$ = this.store.getInventoryForStep(VDevType.Spare);
+  protected readonly inventory = this.store.getInventoryForStep(VDevType.Spare);
   protected allowedLayouts = [CreateVdevLayout.Stripe];
 
   protected goToReviewStep(): void {

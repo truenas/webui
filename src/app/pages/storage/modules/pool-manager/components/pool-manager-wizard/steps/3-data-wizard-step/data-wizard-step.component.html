@@ -1,9 +1,9 @@
 <ix-layout-step
   [description]="helptext.dataVdevDescription | translate"
   [type]="vDevType.Data"
-  [inventory]="(inventory$ | async) || []"
-  [canChangeLayout]="canChangeLayout"
-  [limitLayouts]="allowedLayouts"
+  [inventory]="inventory()"
+  [canChangeLayout]="canChangeLayout()"
+  [limitLayouts]="allowedLayouts()"
   [isStepActive]="isStepActive()"
 ></ix-layout-step>
 

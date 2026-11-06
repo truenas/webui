@@ -1,4 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
@@ -135,9 +136,9 @@ describe('AddVdevsComponent – Add Vdev to existing pool', () => {
       }),
       mockProvider(AddVdevsStore, {
         initialize: jest.fn(),
-        isLoading$: of(false),
-        pool$: of(existingPool),
-        poolDisks$: of(existingPoolDisks),
+        isLoading: signal(false),
+        pool: signal(existingPool),
+        poolDisks: signal(existingPoolDisks),
         loadPoolData: jest.fn(),
       }),
       mockAuth(),

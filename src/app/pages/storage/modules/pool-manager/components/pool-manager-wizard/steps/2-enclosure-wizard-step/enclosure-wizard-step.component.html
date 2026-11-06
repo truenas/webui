@@ -24,7 +24,7 @@
       <tn-form-field [label]="'Enclosure' | translate" [required]="true">
         <tn-select
           formControlName="limitToEnclosure"
-          [options]="(enclosureOptions$ | async) ?? []"
+          [options]="enclosureOptions()"
           [optionTestIdKey]="enclosureOptionTestIdKey"
         ></tn-select>
       </tn-form-field>

@@ -1,9 +1,9 @@
+import { signal } from '@angular/core';
 import {
   mockProvider, Spectator, SpectatorFactory, createComponentFactory,
 } from '@ngneat/spectator/jest';
 import { TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { CreateVdevLayout, TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -43,15 +43,15 @@ describe('MetadataWizardStepComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockProvider(AddVdevsStore, {
-        pool$: of(pool as Pool | null),
-        isLoading$: of(false),
+        pool: signal(pool as Pool | null),
+        isLoading: signal(false),
       }),
       mockProvider(PoolManagerStore, {
-        topology$: of({
+        topology: signal({
           [VDevType.Data]: { layout: dataLayout },
           [VDevType.Special]: { layout: specialLayout },
         } as PoolManagerTopology),
-        getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        getInventoryForStep: jest.fn(() => signal(fakeInventory)),
       }),
     ],
   });

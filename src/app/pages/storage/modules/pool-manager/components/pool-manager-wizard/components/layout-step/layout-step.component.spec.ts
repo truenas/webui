@@ -1,6 +1,6 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
-import { BehaviorSubject } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -43,7 +43,7 @@ describe('LayoutStepComponent', () => {
     },
     enclosures,
   } as PoolManagerState;
-  const state$ = new BehaviorSubject(state);
+  const topology = signal(state.topology);
 
   const createComponent = createComponentFactory({
     component: LayoutStepComponent,
@@ -55,14 +55,14 @@ describe('LayoutStepComponent', () => {
     ],
     providers: [
       mockProvider(PoolManagerStore, {
-        state$: state$.asObservable(),
+        topology,
         resetTopologyCategory: jest.fn(),
       }),
     ],
   });
 
   beforeEach(() => {
-    state$.next(state);
+    topology.set(state.topology);
     spectator = createComponent({
       props: {
         limitLayouts,
@@ -83,14 +83,11 @@ describe('LayoutStepComponent', () => {
   });
 
   it('shows custom layout block when custom layout has been applied', () => {
-    state$.next({
-      ...state,
-      topology: {
-        ...state.topology,
-        [VDevType.Data]: {
-          ...state.topology[VDevType.Data],
-          hasCustomDiskSelection: true,
-        },
+    topology.set({
+      ...state.topology,
+      [VDevType.Data]: {
+        ...state.topology[VDevType.Data],
+        hasCustomDiskSelection: true,
       },
     });
     spectator.detectChanges();

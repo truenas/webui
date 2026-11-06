@@ -6,12 +6,13 @@
   </div>
   <div class="sidebar">
     <div class="details-container">
-      @if (hasConfigurationPreview && !!existingPool) {
+      @let pool = existingPool();
+      @if (hasConfigurationPreview && pool) {
         <ix-existing-configuration-preview
-          [name]="existingPool.name"
-          [topology]="existingPool.topology"
-          [disks]="poolDisks"
-          [size]="existingPool.size"
+          [name]="pool.name"
+          [topology]="pool.topology"
+          [disks]="poolDisks()"
+          [size]="pool.size"
         ></ix-existing-configuration-preview>
       }
 

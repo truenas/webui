@@ -1,7 +1,8 @@
 import { CdkTreeModule } from '@angular/cdk/tree';
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, input, inject, signal,
+} from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   createNestedTreeControl,
@@ -17,7 +18,6 @@ import {
 import {
   DndDropEvent, DndDropzoneDirective, DndDraggableDirective, DndDragImageRefDirective,
 } from 'ngx-drag-drop';
-import { BehaviorSubject, combineLatest } from 'rxjs';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
@@ -71,25 +71,34 @@ const noEnclosureId = 'no-enclosure';
     TnTreeNodeOutletDirective,
   ],
 })
-export class ManualSelectionDisksComponent implements OnInit {
+export class ManualSelectionDisksComponent {
   private translate = inject(TranslateService);
-  protected store$ = inject(ManualDiskSelectionStore);
+  private store = inject(ManualDiskSelectionStore);
   protected dragToggleStore = inject(ManualDiskDragToggleStore);
-  private destroyRef = inject(DestroyRef);
-  private cdr = inject(ChangeDetectorRef);
 
   readonly enclosures = input.required<Enclosure[]>();
   readonly isSedEncryption = input<boolean>(false);
 
   protected readonly enclosureTooltip = this.translate.instant('Enclosure');
 
-  dataSource: TnNestedTreeDataSource<DiskOrGroup>;
   treeControl: TnTreeExpansion<DiskOrGroup, string> = createNestedTreeControl<DiskOrGroup, string>(
     (node) => node.children,
     { trackBy: (node) => node.identifier },
   );
 
-  filtersUpdated = new BehaviorSubject<ManualDiskSelectionFilters>({});
+  protected filters = signal<ManualDiskSelectionFilters>({});
+
+  protected dataSource = computed(() => {
+    const filteredDisks = this.filterDisks(this.store.inventory(), this.filters());
+    const disksInEnclosures = this.mapDisksToEnclosures(filteredDisks, this.enclosures());
+
+    // Don't show enclosure header if there is only one enclosure
+    const nodes = disksInEnclosures.length === 1
+      ? disksInEnclosures[0].children
+      : disksInEnclosures;
+
+    return new TnNestedTreeDataSource<DiskOrGroup>(nodes);
+  });
 
   readonly isGroup = (_: number, node: DiskOrGroup): node is EnclosureGroup => 'group' in node;
 
@@ -101,36 +110,12 @@ export class ManualSelectionDisksComponent implements OnInit {
     this.treeControl.toggle(group);
   }
 
-  ngOnInit(): void {
-    this.createDataSource();
-  }
-
   asDisk(node: DiskOrGroup): DetailsDisk {
     return node as DetailsDisk;
   }
 
   asEnclosureGroup(node: DiskOrGroup): EnclosureGroup {
     return node as EnclosureGroup;
-  }
-
-  private createDataSource(): void {
-    combineLatest([
-      this.store$.inventory$,
-      this.filtersUpdated,
-    ])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([disks, filterValues]) => {
-        const filteredDisks = this.filterDisks(disks, filterValues);
-        const disksInEnclosures = this.mapDisksToEnclosures(filteredDisks, this.enclosures());
-
-        // Don't show enclosure header if there is only one enclosure
-        const nodes = disksInEnclosures.length === 1
-          ? disksInEnclosures[0].children
-          : disksInEnclosures;
-
-        this.dataSource = new TnNestedTreeDataSource(nodes);
-        this.cdr.markForCheck();
-      });
   }
 
   private mapDisksToEnclosures(disks: DetailsDisk[], enclosures: Enclosure[]): DiskOrGroup[] {
@@ -193,7 +178,7 @@ export class ManualSelectionDisksComponent implements OnInit {
   onDrop(event: DndDropEvent): void {
     const disk = event.data as ManualSelectionDisk;
     this.dragToggleStore.toggleActivateDrag(false);
-    this.store$.removeDiskFromVdev(disk);
+    this.store.removeDiskFromVdev(disk);
   }
 
   onDragStart(): void {

@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnRadioHarness, TnSelectHarness, TnStepperComponent } from '@truenas/ui-components';
-import { of, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Enclosure } from 'app/interfaces/enclosure.interface';
 import { DispersalStrategy, EnclosureWizardStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/2-enclosure-wizard-step/enclosure-wizard-step.component';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
@@ -23,7 +24,7 @@ describe('EnclosureWizardStepComponent', () => {
       mockProvider(TnStepperComponent),
       mockProvider(PoolManagerStore, {
         startOver$,
-        enclosures$: of([{
+        enclosures: signal([{
           label: 'Fake enclosure',
           id: 'id55',
         } as Enclosure]),

@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, OnInit, output, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -28,13 +27,11 @@ import {
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
-import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
 import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
 import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-manager/store/pool-manager-validation.service';
 import {
-  PoolManagerState,
   PoolManagerStore,
-  PoolManagerTopology, PoolManagerTopologyCategory,
+  PoolManagerTopologyCategory,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
 import { EntitlementsService } from 'app/services/entitlements.service';
 
@@ -54,7 +51,6 @@ import { EntitlementsService } from 'app/services/entitlements.service';
     TranslateModule,
     FileSizePipe,
     MapValuePipe,
-    AsyncPipe,
     TopologyCategoryDescriptionPipe,
     FormActionsComponent,
   ],
@@ -63,7 +59,6 @@ export class ReviewWizardStepComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private store = inject(PoolManagerStore);
   private entitlements = inject(EntitlementsService);
-  private cdr = inject(ChangeDetectorRef);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private poolManagerValidation = inject(PoolManagerValidationService);
@@ -78,87 +73,69 @@ export class ReviewWizardStepComponent implements OnInit {
   protected readonly hasSupport = this.entitlements.entitled(EntitlementFeature.Support);
   protected readonly forceTopologyControl = new FormControl(false, { nonNullable: true });
 
-  state: PoolManagerState;
-  nonEmptyTopologyCategories: [VDevType, PoolManagerTopologyCategory][] = [];
-  poolCreationErrors: PoolCreationError[];
-  isCreateDisabled = false;
+  protected readonly name = this.store.name;
+  protected readonly encryptionType = this.store.encryptionType;
+  protected readonly enclosureSettings = this.store.enclosureSettings;
+  protected readonly nonEmptyTopologyCategories = computed(() => {
+    return Object.entries(this.store.topology())
+      .filter(([, category]) => category.vdevs.length > 0) as [VDevType, PoolManagerTopologyCategory][];
+  });
 
-  protected totalCapacity$ = this.store.totalUsableCapacity$;
+  protected readonly poolCreationErrors = this.poolManagerValidation.poolCreationErrors;
+  protected readonly isCreateDisabled = computed(() => {
+    return this.poolCreationErrors().some((error) => error.severity === PoolCreationSeverity.Error);
+  });
+
+  protected totalCapacity = this.store.totalUsableCapacity;
   protected readonly vdevTypeLabels = vdevTypeLabels;
   protected isLimitedToOneLayout = isTopologyLimitedToOneLayout;
 
   protected readonly Role = Role;
   protected readonly EncryptionType = EncryptionType;
 
-  get showStartOver(): boolean {
+  protected readonly showStartOver = computed(() => {
     return Boolean(
-      this.state?.name
-      || this.state?.encryptionType !== EncryptionType.None
-      || this.nonEmptyTopologyCategories?.length,
+      this.name()
+      || this.encryptionType() !== EncryptionType.None
+      || this.nonEmptyTopologyCategories().length,
     );
-  }
+  });
 
-  get hasVdevs(): boolean {
-    return Object.keys(this.state.topology).some((type) => {
-      return this.state.topology[type as VDevType].vdevs.length > 0;
-    });
-  }
+  protected readonly hasVdevs = computed(() => this.nonEmptyTopologyCategories().length > 0);
 
-  get limitToEnclosureName(): string | undefined {
-    const limitToSingleEnclosure = this.state.enclosureSettings.limitToSingleEnclosure;
+  protected readonly limitToEnclosureName = computed(() => {
+    const limitToSingleEnclosure = this.enclosureSettings().limitToSingleEnclosure;
     if (limitToSingleEnclosure === null) {
       return undefined;
     }
 
-    return this.state.enclosures.find((enclosure) => {
-      return enclosure.id === this.state.enclosureSettings.limitToSingleEnclosure;
-    })?.name;
-  }
+    return this.store.enclosures().find((enclosure) => enclosure.id === limitToSingleEnclosure)?.name;
+  });
 
-  ngOnInit(): void {
-    this.store.state$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((state) => {
-      this.state = state;
-      this.nonEmptyTopologyCategories = this.filterNonEmptyCategories(state.topology);
-      this.cdr.markForCheck();
-    });
-
-    this.poolManagerValidation.getPoolCreationErrors().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((errors) => {
-      this.poolCreationErrors = errors;
-      this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
-      this.cdr.markForCheck();
-    });
-
-    this.forceTopologyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
-      this.store.setForceTopology(forceTopology);
-    });
-
+  constructor() {
     // Keep the checkbox in sync with the store so a reset/Start Over (which sets
     // forceTopology back to false) unchecks it, instead of leaving a checked box
     // whose value is no longer reflected in the payload. emitEvent: false avoids
-    // looping back through the valueChanges subscription above.
-    this.store.forceTopology$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
-      this.forceTopologyControl.setValue(forceTopology, { emitEvent: false });
+    // looping back through the valueChanges subscription below.
+    effect(() => {
+      this.forceTopologyControl.setValue(this.store.forceTopology(), { emitEvent: false });
+    });
+  }
+
+  ngOnInit(): void {
+    this.forceTopologyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((forceTopology) => {
+      this.store.setForceTopology(forceTopology);
     });
   }
 
   onInspectVdevsPressed(): void {
     this.tnDialog.open(InspectVdevsDialog, {
       data: {
-        topology: this.state.topology,
-        enclosures: this.state.enclosures,
+        topology: this.store.topology(),
+        enclosures: this.store.enclosures(),
       },
       panelClass: 'inspect-vdevs-dialog',
     });
-  }
-
-  private filterNonEmptyCategories(topology: PoolManagerTopology): [VDevType, PoolManagerTopologyCategory][] {
-    return Object.keys(topology).reduce((acc, type) => {
-      const category = topology[type as VDevType];
-      if (category.vdevs.length > 0) {
-        acc.push([type as VDevType, category]);
-      }
-      return acc;
-    }, [] as [VDevType, PoolManagerTopologyCategory][]);
   }
 
   startOver(): void {

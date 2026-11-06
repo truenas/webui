@@ -1,7 +1,7 @@
+import { signal } from '@angular/core';
 import { mockProvider, Spectator, createComponentFactory } from '@ngneat/spectator/jest';
 import { TnStepperComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
 import { helptextPoolCreation } from 'app/helptext/storage/volumes/pool-creation/pool-creation';
 import { LayoutStepComponent } from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/components/layout-step/layout-step.component';
@@ -38,7 +38,7 @@ describe('CacheWizardStepComponent', () => {
     providers: [
       mockProvider(TnStepperComponent),
       mockProvider(PoolManagerStore, {
-        getInventoryForStep: jest.fn(() => of(fakeInventory)),
+        getInventoryForStep: jest.fn(() => signal(fakeInventory)),
       }),
     ],
   });

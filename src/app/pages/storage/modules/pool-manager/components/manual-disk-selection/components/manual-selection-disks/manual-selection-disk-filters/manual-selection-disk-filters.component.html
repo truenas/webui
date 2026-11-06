@@ -17,14 +17,14 @@
         <tn-select
           formControlName="diskType"
           [allowEmpty]="true"
-          [options]="(typeOptions$ | async) ?? []"
+          [options]="typeOptions()"
         ></tn-select>
       </tn-form-field>
       <tn-form-field [label]="'Filter by Disk Size' | translate">
         <tn-select
           formControlName="diskSize"
           [allowEmpty]="true"
-          [options]="(sizeOptions$ | async) ?? []"
+          [options]="sizeOptions()"
         ></tn-select>
       </tn-form-field>
     </div>

@@ -141,7 +141,7 @@ describe('PoolManagerComponent – step changing', () => {
   });
 
   it('changes the sequence of categories', async () => {
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Data,
       VDevType.Log,
       VDevType.Special,
@@ -168,7 +168,7 @@ describe('PoolManagerComponent – step changing', () => {
     // unconstrained — it admits every non-dRAID layout, so AutomatedDiskSelection
     // can't auto-pick one. Special and Dedup therefore stay unmoved until the
     // user actually visits those steps.
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Log,
       VDevType.Special,
       VDevType.Dedup,
@@ -185,7 +185,7 @@ describe('PoolManagerComponent – step changing', () => {
       Width: '1',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Special,
       VDevType.Dedup,
       VDevType.Spare,
@@ -201,7 +201,7 @@ describe('PoolManagerComponent – step changing', () => {
       Width: '1',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Special,
       VDevType.Dedup,
       VDevType.Cache,
@@ -217,7 +217,7 @@ describe('PoolManagerComponent – step changing', () => {
       Width: '1',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Special,
       VDevType.Dedup,
       VDevType.Data,
@@ -235,7 +235,7 @@ describe('PoolManagerComponent – step changing', () => {
       'Number of VDEVs': '1',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Dedup,
       VDevType.Data,
       VDevType.Log,
@@ -253,7 +253,7 @@ describe('PoolManagerComponent – step changing', () => {
       'Number of VDEVs': '1',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Data,
       VDevType.Log,
       VDevType.Spare,
@@ -270,7 +270,7 @@ describe('PoolManagerComponent – step changing', () => {
       Width: '2',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Data,
       VDevType.Log,
       VDevType.Cache,
@@ -286,7 +286,7 @@ describe('PoolManagerComponent – step changing', () => {
       Width: '2',
     });
 
-    expect(store.state().categorySequence).toEqual([
+    expect(store.categorySequence()).toEqual([
       VDevType.Log,
       VDevType.Cache,
       VDevType.Special,

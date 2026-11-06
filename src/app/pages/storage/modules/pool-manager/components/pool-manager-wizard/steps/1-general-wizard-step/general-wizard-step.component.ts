@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnChanges, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -86,19 +86,18 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   protected readonly InputType = InputType;
   protected readonly helptext = helptextPoolCreation;
 
-  isLoading$ = this.store.isLoading$;
+  private isLoading$ = toObservable(this.store.isLoading);
   poolNames$ = this.api.query('pool.query', [], { select: ['name'], order_by: ['name'] }).pipe(
     map((pools) => pools.map((pool) => pool.name)),
   );
 
   private readonly oldNameForbiddenValidator = forbiddenAsyncValues(this.poolNames$);
 
-  hasSedCapableDisks$ = this.store.hasSedCapableDisks$;
-  hasSedEntitlement$ = this.entitlements.entitled$(EntitlementFeature.Sed);
+  private hasSedEntitlement$ = this.entitlements.entitled$(EntitlementFeature.Sed);
   isSedPasswordSet$ = this.api.call('system.advanced.sed_global_password_is_set');
 
-  private readonly hasSedCapableDisks = toSignal(this.hasSedCapableDisks$, { initialValue: false });
-  private readonly hasSedEntitlement = toSignal(this.hasSedEntitlement$, { initialValue: false });
+  protected readonly hasSedCapableDisks = this.store.hasSedCapableDisks;
+  protected readonly hasSedEntitlement = toSignal(this.hasSedEntitlement$, { initialValue: false });
 
   // `translated`, not a plain `computed`: the labels are composed with `instant()` in
   // TypeScript rather than piped in the template, so they would otherwise freeze at whatever was
@@ -158,13 +157,13 @@ export class GeneralWizardStepComponent implements OnInit, OnChanges {
   private getDefaultEncryptionType$(): Observable<EncryptionType> {
     // The store loads the disks after this step is created, so wait for that load to finish before reading
     // whether any are SED-capable; reading earlier always sees the initial `false`.
-    return this.store.isLoading$.pipe(
+    return this.isLoading$.pipe(
       filter((isLoading) => !isLoading),
       take(1),
-      switchMap(() => combineLatest([this.hasSedCapableDisks$, this.hasSedEntitlement$])),
+      switchMap(() => this.hasSedEntitlement$),
       take(1),
-      map(([hasSedDisks, hasSedEntitlement]) => {
-        return (hasSedDisks && hasSedEntitlement) ? EncryptionType.Sed : EncryptionType.None;
+      map((hasSedEntitlement) => {
+        return (this.store.hasSedCapableDisks() && hasSedEntitlement) ? EncryptionType.Sed : EncryptionType.None;
       }),
     );
   }
