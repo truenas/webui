@@ -20,6 +20,14 @@
   line-height: 1.4;
 }
 
+.failure-detail {
+  color: var(--fg2);
+  font-size: 13px;
+  line-height: 1.4;
+  margin-top: 8px;
+  overflow-wrap: anywhere;
+}
+
 .connecting-header,
 .failed-header,
 .active-header {

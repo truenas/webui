@@ -12,6 +12,11 @@
   <div class="failed-description" tnTestId="tnc-status-reason" tnTestIdType="text">
     {{ failedDescription() | translate }}
   </div>
+  @if (failureDetail(); as detail) {
+    <div class="failure-detail" tnTestId="tnc-failure-detail" tnTestIdType="text">
+      {{ "Details: {detail}" | translate: { detail } }}
+    </div>
+  }
 } @else if (status() === TncStatus.Active) {
   <div class="status-header">
     <tn-icon class="status-connected" name="check-circle" library="mdi"></tn-icon>
