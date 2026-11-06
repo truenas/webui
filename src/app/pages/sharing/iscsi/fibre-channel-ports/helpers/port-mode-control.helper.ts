@@ -7,34 +7,9 @@ export interface PortModeControls {
 }
 
 /**
- * Configures validators and enabled state for port/host_id controls
- * based on the selected mode (existing port vs new virtual port).
- *
- * This helper centralizes the logic for switching between two mutually exclusive
- * form control configurations in FC MPIO port selection:
- *
- * - **"existing" mode**: Uses the `port` control (string), disables `host_id`
- * - **"new" mode**: Uses the `host_id` control (number), disables `port`
- *
- * The function handles:
- * - Clearing validators from the disabled control
- * - Setting required validator on the enabled control
- * - Disabling/enabling controls appropriately
- * - Clearing values from disabled controls
- * - Calling updateValueAndValidity() to trigger validation
- *
- * @param mode The selected mode (`Existing` to use existing port, `New` to create virtual port)
- * @param controls Object containing both port and host_id form controls
- *
- * @example
- * ```typescript
- * // In component with mode switching:
- * this.modeControl.valueChanges.pipe(
- *   takeUntilDestroyed(this.destroyRef),
- * ).subscribe((mode) => {
- *   configurePortControlsForMode(mode, this.form().controls);
- * });
- * ```
+ * Switches FC MPIO port selection between its two exclusive controls: `Existing` uses `port`, `New`
+ * uses `host_id`. The other control is disabled, cleared and stripped of validators, the active one
+ * made required, and both revalidated. Call it on every mode change.
  */
 export function configurePortControlsForMode(
   mode: NewOrExisting | null,

@@ -42,20 +42,8 @@ export class WebShareValidatorService {
   }
 
   /**
-   * Validates that a WebShare path is valid and not a root dataset.
-   *
-   * Rules enforced:
-   * 1. Path must be under /mnt/
-   * 2. Path cannot be a root dataset (e.g., /mnt/pool)
-   * 3. Path must be a subdirectory (e.g., /mnt/pool/dataset)
-   *
-   * Examples:
-   * - /mnt/pool          → REJECTED (root dataset)
-   * - /mnt/pool/         → REJECTED (root dataset with trailing slash)
-   * - /mnt/pool//dataset → ACCEPTED (multiple slashes normalized)
-   * - /mnt/pool/dataset  → ACCEPTED (valid subdirectory)
-   * - /etc/passwd        → REJECTED (not under /mnt/)
-   * - /mnt/../etc        → REJECTED (path traversal)
+   * Requires a path under /mnt/ that is below a root dataset: `/mnt/pool/dataset` passes, while
+   * `/mnt/pool`, `/mnt/pool/`, `/etc/passwd` and `/mnt/../etc` fail. Repeated slashes are normalized.
    */
   validateWebSharePath(): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
@@ -78,13 +66,8 @@ export class WebShareValidatorService {
         };
       }
 
-      // Check if it's a root dataset (e.g., /mnt/pool)
-      // Remove the '/mnt/' prefix (5 characters) and split by '/'
-      // Filter out empty strings which come from multiple consecutive slashes
-      // Example: '/mnt/pool' → 'pool' → ['pool'] → length 1 (REJECTED)
-      // Example: '/mnt/pool/dataset' → 'pool/dataset' → ['pool', 'dataset'] → length 2 (ACCEPTED)
-      // Example: '/mnt/pool//dataset' → 'pool//dataset' → ['pool', '', 'dataset']
-      //          → ['pool', 'dataset'] → length 2 (ACCEPTED)
+      // A root dataset leaves one segment after '/mnt/'; empty segments from repeated slashes don't count,
+      // so '/mnt/pool//dataset' is accepted.
       const pathParts = normalizedPath.substring(5).split('/').filter((part) => part.length > 0);
       if (pathParts.length === 1) {
         return {

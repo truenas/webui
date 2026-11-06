@@ -20,15 +20,9 @@ import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
 interface UnusedPortRow {
   port: NvmeOfPort;
   /**
-   * `addr_trsvcid` is optional (FC and RDMA ports carry none), and
-   * {@link normalizeTestIdParts} drops empty segments — so those rows now resolve to
-   * `add-port-fc-<addr>` where the pre-migration code stringified the missing value and
-   * emitted a literal `add-port-fc-<addr>-undefined`. Deliberate: the trailing `undefined`
-   * was a bug, and RE has been told the ids of those rows change. Every port that does have
-   * a service id is unaffected.
-   *
-   * Resolved with the row rather than by a template method, so the `[testId]` signal input
-   * isn't handed a freshly allocated array on every change detection pass.
+   * FC and RDMA ports have no `addr_trsvcid`, and {@link normalizeTestIdParts} drops it, so those rows
+   * resolve to `add-port-fc-<addr>`; the old literal `-undefined` suffix was a bug and RE knows of the
+   * change. Resolved with the row so `[testId]` doesn't get a new array every change-detection pass.
    */
   testId: string[];
 }

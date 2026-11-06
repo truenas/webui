@@ -35,16 +35,11 @@ interface RecoverRow {
 }
 
 /**
- * Registers buckets again from datasets that still hold them — one deleted by mistake, or a disaster recovery
- * system taking over replicated datasets. Middleware keeps a backup of each bucket's configuration on its dataset,
- * and `sharing.s3.recover` restores it unchanged except for the name and owner, which are the two things that can
- * clash with what this system already has.
- *
- * Every dataset gets its own answer, so a partial failure keeps the panel open on the buckets that failed, each
- * with its reason, while the ones that worked drop out of the list. The opener reloads on any close for that reason.
- *
- * Also swapped in for the bucket form when a new bucket's dataset turns out to hold a deleted one, scoped to that
- * dataset by {@link dataset}.
+ * Re-registers buckets from datasets that still hold them (deleted by mistake, or replicated to a DR
+ * system). `sharing.s3.recover` restores each bucket's saved configuration, except the name and owner,
+ * which can clash here. Each dataset succeeds or fails on its own, so failures stay listed with their
+ * reason; the opener reloads on any close. Also replaces the bucket form when a new bucket's dataset
+ * holds a deleted one, scoped by {@link dataset}.
  */
 @Component({
   selector: 'ix-s3-bucket-recover-form',

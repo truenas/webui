@@ -147,6 +147,7 @@ const commentCappedPaths = [
   'src/app/pages/jobs',
   'src/app/pages/reports-dashboard',
   'src/app/pages/services',
+  'src/app/pages/sharing',
   'src/app/pages/shell',
   'src/app/pages/signin',
   'src/app/pages/system',

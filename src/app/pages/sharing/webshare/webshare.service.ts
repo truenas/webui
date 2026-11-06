@@ -120,13 +120,9 @@ export class WebShareService {
   readonly truenasConnectHostname$ = toObservable(this.truenasConnectHostname);
 
   /**
-   * Whether WebShare can be opened. Requires an accessible hostname
-   * (the current `.truenas.direct` domain, a resolved hostname, or `hostnameChoices` to pick from), that
-   * TrueNAS Connect is currently configured, AND that the WebShare service is not
-   * known to be stopped — an unloaded services slice does not block, so the button
-   * is usable while the state is still unknown rather than flashing a false reason.
-   * This reacts to TrueNAS Connect being disabled or the service being stopped so the
-   * UI immediately blocks WebShare access without a page refresh.
+   * Whether WebShare can be opened: a usable hostname, TrueNAS Connect configured, and the service not
+   * known to be stopped. An unloaded services slice doesn't block, so the button doesn't flash a false
+   * reason. Reacts live to Connect being disabled or the service stopping.
    */
   readonly canOpenWebShare = computed<boolean>(() => !this.webShareUnavailableReason());
 

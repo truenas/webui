@@ -320,15 +320,10 @@ export class S3BucketFormComponent extends IxFormHostForm implements OnInit {
   });
 
   /**
-   * Object lock is a primary option (backup targets), so it drives versioning rather than depending
-   * on it: checking it switches versioning on and keeps it there. The one thing that rules it out is
-   * the Multiprotocol permissions model, under which another protocol could rewrite a locked object.
-   *
-   * Deliberately NOT the versioning entitlement, though the section is tagged Premium without it.
-   * This clears the control when it turns false (see `syncObjectLockAvailability`), and a bucket that
-   * already has object lock keeps it: the dataset root latches the flag and middleware refuses to
-   * serve a bucket whose row contradicts the latch. Middleware gates the *transition* for the same
-   * reason, so an unentitled appliance saving such a bucket sends the value back unchanged.
+   * Object lock drives versioning (checking it turns versioning on) and is ruled out only by the
+   * Multiprotocol model, where another protocol could rewrite a locked object. It deliberately ignores
+   * the versioning entitlement: turning false clears the control, but a bucket that already has object
+   * lock must keep it, because middleware latches it on the dataset and gates only the transition.
    */
   protected readonly canUseObjectLock = computed(() => !this.isMultiprotocol());
 

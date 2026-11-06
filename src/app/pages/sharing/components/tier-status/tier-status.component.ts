@@ -49,13 +49,9 @@ export class TierStatusComponent {
   });
 
   /**
-   * Only a job that can still change is worth a subscription. A job the payload
-   * already reports as settled will never emit again, and `ix-tier-status`
-   * renders once per row across the share lists and cards — subscribing for
-   * every historical job would open a websocket subscription per row for no
-   * gain. Derived from the input snapshot rather than `tierJob()` to avoid a
-   * circular signal dependency; the subscription then lives until the row's
-   * payload is refetched, which is the same lifetime as the badge itself.
+   * Only a job that can still change is watched; this badge renders on every share row, so watching
+   * settled jobs would open a subscription per row. Derived from the input, not `tierJob()`, to avoid
+   * a circular dependency.
    */
   private watchedJobId = computed(() => {
     const job = this.tier()?.tier_job ?? null;
@@ -63,16 +59,9 @@ export class TierStatusComponent {
   });
 
   /**
-   * The `tier` input comes from a list/details payload that isn't refetched
-   * while a migration runs, so a job that started as RUNNING would keep
-   * spinning until the user reloaded the page. Track the job's own status topic
-   * instead — it replays current state on subscribe and emits every transition.
-   *
-   * `catchError` is per-job and deliberate: `toSignal` stores a stream error and
-   * re-throws it on every read, and `tierJob()` is read from the template during
-   * change detection of whatever hosts the badge. A pruned job id or a rejected
-   * subscription would therefore poison CD for the whole host component, so a
-   * failed stream degrades to the input snapshot — the pre-fix behaviour.
+   * The `tier` input isn't refetched during a migration, so the job's own status topic is followed
+   * instead. `catchError` is per job because `toSignal` rethrows a stored error on every read, and a
+   * template read would break change detection for the whole host; a failed stream falls back to the input.
    */
   private liveJob = toSignal(
     toObservable(this.watchedJobId).pipe(

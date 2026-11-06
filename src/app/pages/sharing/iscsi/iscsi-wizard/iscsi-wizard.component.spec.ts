@@ -129,14 +129,9 @@ describe('IscsiWizardComponent', () => {
   );
 
   /**
-   * Fills controls addressed by their visible label. `IxFormHarness` is scoped to a `<form>`
-   * element, which this wizard has none of — `indexFormControls` works off any loader.
-   * Repeated labels stay last-wins, which is what the FC-port tests rely on to fill
-   * the row they just added.
-   *
-   * Re-indexes before every key, the way `IxFormHarness.fillForm` does: one key can reveal the
-   * next control (picking 'Create new virtual port' is what renders the host select), so a single
-   * snapshot taken up front would miss it.
+   * Fills controls by visible label; `IxFormHarness` needs a `<form>`, which this wizard lacks. Repeated
+   * labels resolve to the last one, which the FC-port tests rely on. Re-indexes before every key, since
+   * one value can reveal the next control.
    */
   const fillByLabel = async (values: Record<string, unknown>): Promise<void> => {
     for (const [label, value] of Object.entries(values)) {
