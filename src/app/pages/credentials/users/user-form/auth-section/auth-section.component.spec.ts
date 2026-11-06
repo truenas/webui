@@ -153,6 +153,33 @@ describe('AuthSectionComponent', () => {
       expect(labelsAfter).toContain('Confirm Password');
     });
 
+    it('does not leave the hidden Confirm Password invalid when an editing user clears the new password', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Change Password': 'newpassword' });
+      expect(spectator.component.form.valid).toBe(false);
+
+      await form.fillForm({ 'Change Password': '' });
+      await spectator.fixture.whenStable();
+      expect(await form.getLabels()).not.toContain('Confirm Password');
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
+    it('does not leave a filled, hidden Confirm Password failing the match when the new password is cleared', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Change Password': 'abc' });
+      await form.fillForm({ 'Confirm Password': 'abc' });
+
+      await form.fillForm({ 'Change Password': '' });
+      await spectator.fixture.whenStable();
+      expect(await form.getLabels()).not.toContain('Confirm Password');
+      expect(spectator.component.form.controls.password_confirm.value).toBe('');
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
     it('validates password confirmation is required for new users', async () => {
       // For new users, password_confirm should be required
       expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(true);
