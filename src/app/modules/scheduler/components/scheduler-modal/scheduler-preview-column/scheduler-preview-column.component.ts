@@ -44,23 +44,11 @@ export class SchedulerPreviewColumnComponent {
   private readonly activeDate = signal<Date>(new Date());
 
   /**
-   * Where the preview starts counting from, as a wall clock in the system time zone — the
-   * zone the schedule actually runs in, and the one the example times are shown in.
-   *
-   * The calendar pages in the browser's months, so the month on screen is the frame and
-   * where "now" falls within it decides where counting starts. The two clocks disagree
-   * about the date most of the day and about the *month* on the first and last day of one,
-   * which is what made this worth spelling out: counting from the system clock while the
-   * browser had already rolled over left the whole month on screen blank (NAS-142970).
-   *
-   * Null means there is nothing left to preview in the month on screen, because the system
-   * time zone is already past the end of it — a month the user paged back to, and equally
-   * the tail of the browser's current month once the system time zone has rolled over.
-   *
-   * `new Date()` is not a signal read, so "now" is memoized until `activeDate` — or
-   * `timezone` — next changes, rather than tracking the wall clock. That is fine for a
-   * modal: it cannot outlive a month rollover by long enough to matter, and navigating the
-   * calendar — the only way to reach a stale month — invalidates it anyway.
+   * Where the preview starts counting, as a wall clock in the system time zone the schedule runs in.
+   * The calendar pages in browser months, and the two clocks can disagree about the month, so
+   * counting from the wrong one can blank the whole month on screen. Null when the system zone is
+   * already past the month shown. "Now" is memoized until `activeDate` or `timezone` changes, which
+   * is fine for a modal: navigating the calendar invalidates it.
    */
   protected readonly startDate = computed<Date | null>(() => {
     const activeDate = this.activeDate();

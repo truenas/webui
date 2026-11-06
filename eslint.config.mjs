@@ -116,6 +116,7 @@ const commentCappedPaths = [
   'src/app/modules/master-detail-view',
   'src/app/modules/page-header',
   'src/app/modules/pipes',
+  'src/app/modules/scheduler',
   'src/app/modules/summary',
   'src/app/modules/terminal',
   'src/app/modules/test-id',
