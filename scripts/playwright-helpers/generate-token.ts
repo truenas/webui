@@ -35,20 +35,10 @@ function getEnvironment(): { remote: string; port: number } {
 }
 
 /**
- * Signs in over `@truenas/api-client`, as the UI does, and returns the
- * `reconnect_token` that login mints.
- *
- * That is the token the `?token=` URL param expects: the sign-in page spends it
- * through `AuthService.loginWithToken`, i.e. `auth.login_ex` with `TOKEN_PLAIN`.
- * It outlives this script's session, which is closed straight away.
- *
- * The connection is plain `ws://` (`protocol: 'http:'`), as the dev server's own
- * page makes it: served from `http://localhost`, the UI connects to the remote
- * over `ws://` too. That also keeps self-signed certificates out of the way.
- *
- * No version is pinned: the token is the same on every version that mints one
- * (v27.0.0 and later), so discovery picks it and a version bump in the UI does
- * not need this file edited.
+ * Signs in over `@truenas/api-client` and returns the `reconnect_token` login mints, which the `?token=` URL
+ * param spends via `auth.login_ex` (`TOKEN_PLAIN`); it outlives this session. Plain `ws://`, as the dev
+ * server's page connects, which also sidesteps self-signed certs. No version pinned: every version from
+ * v27.0.0 mints the same token, so UI version bumps don't touch this file.
  */
 async function generateDevToken(credentials: AuthCredentials = {}): Promise<string> {
   const creds = { ...defaultCredentials, ...credentials };
