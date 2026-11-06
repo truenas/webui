@@ -62,15 +62,10 @@ export class RestartComponent implements OnInit {
           this.wsStatus.setReconnectAllowed(false);
         }
         this.connection.prepareShutdown();
-        // Keep the splash up for the whole reboot instead of a fixed few seconds - a reboot
-        // takes minutes, so the old timer dropped the user on a sign-in page that could not
-        // reach middleware yet.
-        //
-        // Deliberately no `reconnect()` here: `system.reboot` returns as soon as the reboot is
-        // scheduled, so closing the socket ourselves would make the connection retry at once
-        // while middleware is still answering, and that early retry would be read as "the
-        // system is back". The reboot tearing the connection down schedules a reconnect on its
-        // own, which is the one we actually want to wait for.
+        // Keep the splash up for the whole reboot, which takes minutes. No `reconnect()` here:
+        // `system.reboot` returns once the reboot is scheduled, so closing the socket ourselves would
+        // retry while middleware still answers, and that would read as "the system is back". The
+        // reboot's own teardown schedules the reconnect worth waiting for.
         this.redirect.goToSigninWhenSystemIsBack(this.destroyRef);
       },
     });

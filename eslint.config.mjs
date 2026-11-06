@@ -125,6 +125,7 @@ const commentCappedPaths = [
   'src/app/pages/shell',
   'src/app/pages/signin',
   'src/app/pages/system',
+  'src/app/pages/system-tasks',
   'src/app/pages/vm',
   'src/app/store',
   'src/app/types',
