@@ -111,6 +111,7 @@ const commentCappedPaths = [
   'src/app/modules/empty',
   'src/app/modules/feedback',
   'src/app/modules/forms/ix-forms/components',
+  'src/app/modules/forms/ix-forms/testing',
   'src/app/modules/global-search',
   'src/app/modules/interface-status-icon',
   'src/app/modules/jobs',

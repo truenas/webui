@@ -6,22 +6,8 @@ import {
 } from 'app/modules/forms/ix-forms/testing/directory-field.harness-base';
 
 /**
- * Harness for interacting with `ix-user-combobox` in tests.
- *
- * @example
- * ```ts
- * const owner = await loader.getHarness(IxUserComboboxHarness);
- * await owner.focus();
- * expect(await owner.getOptions()).toEqual(['Add New', 'root', 'operator']);
- * await owner.selectOption('operator');
- * ```
- *
- * @example Addressing one field among several
- * ```ts
- * const maproot = await loader.getHarness(
- *   IxUserComboboxHarness.with({ selector: '[formControlName="maproot_user"]' }),
- * );
- * ```
+ * Harness for `ix-user-combobox`: `focus()`, `getOptions()` (including the "Add New" row) and
+ * `selectOption()`. Address one of several with `.with({ selector: '[formControlName="maproot_user"]' })`.
  */
 export class IxUserComboboxHarness extends DirectoryComboboxHarnessBase {
   static readonly hostSelector = 'ix-user-combobox';
@@ -35,16 +21,7 @@ export class IxGroupComboboxHarness extends DirectoryComboboxHarnessBase {
   static readonly hostSelector = 'ix-group-combobox';
 }
 
-/**
- * Harness for interacting with `ix-user-chips` in tests.
- *
- * @example
- * ```ts
- * const users = await loader.getHarness(IxUserChipsHarness);
- * await users.addChip('root');
- * expect(await users.getChips()).toEqual(['root']);
- * ```
- */
+/** Harness for `ix-user-chips`, e.g. `await users.addChip('root')` then `getChips()`. */
 export class IxUserChipsHarness extends DirectoryChipsHarnessBase {
   static readonly hostSelector = 'ix-user-chips';
 }

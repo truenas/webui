@@ -47,15 +47,8 @@ export class IxFormHarness extends ComponentHarness {
   }
 
   /**
-   * Sequentially fill in the form.
-   * Argument is a dictionary, where key is label:
-   * ```
-   * {
-   *   'First Name': 'John',
-   *   'Last Name': 'Smith',
-   *   'Receive email updates': true,
-   * }
-   * ```
+   * Fills the form in order from a map of label to value, e.g. `{ 'First Name': 'John', 'Receive
+   * email updates': true }`.
    */
   async fillForm(values: Record<string, unknown>): Promise<void> {
     const labels = Object.keys(values);
