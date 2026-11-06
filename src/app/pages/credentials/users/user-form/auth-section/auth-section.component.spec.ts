@@ -161,6 +161,20 @@ describe('AuthSectionComponent', () => {
       expect(await getInputOrNull('password_confirm')).not.toBeNull();
     });
 
+    it('does not leave the hidden Confirm Password invalid when an editing user clears the new password', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      await (await getInput('password')).setValue('newpassword');
+      expect(spectator.component.form.controls.password_confirm.hasError('required')).toBe(true);
+
+      // `TnInputHarness.setValue('')` sends no keys, which the CDK rejects.
+      spectator.typeInElement('', spectator.query('tn-input[name="password"] input')!);
+      await spectator.fixture.whenStable();
+      expect(await getInputOrNull('password_confirm')).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
     it('validates password confirmation is required for new users', () => {
       // For new users, password_confirm should be required
       expect(spectator.component.form.controls.password_confirm.hasValidator(Validators.required)).toBe(true);
