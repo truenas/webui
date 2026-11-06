@@ -2,19 +2,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TnTestIdDirective } from '@truenas/ui-components';
 
 /**
- * Renders table with key on the left and value on the right.
- *
- * @example
- *
- * ```html
- * <ix-details-table>
- *   <ix-details-item [label]="'Name' | translate">
- *     {{ user.name}}
- *   </ix-details-item>
- * </ix-details-table>
- * ```
- *
- * For examples on how to test this component with harnesses, see `details-table.harness.spec.ts`.
+ * Renders a table with keys on the left and values on the right, built from
+ * `<ix-details-item [label]="…">` children. `details-table.harness.spec.ts` shows how to test it.
  */
 @Component({
   selector: 'ix-details-table',
