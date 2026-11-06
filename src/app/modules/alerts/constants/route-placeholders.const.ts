@@ -1,16 +1,6 @@
 /**
- * Route placeholders for dynamic alert navigation.
- * These placeholders are replaced at runtime with extracted values from alert data.
- *
- * Usage in alert enhancement registry:
- * ```typescript
- * {
- *   route: ['/storage', routePlaceholders.poolId, 'vdevs'],
- *   extractApiParams: (alert) => ({ poolId: alert.args.id })  // Returns mapping object
- * }
- * ```
- *
- * The SmartAlertService will automatically replace placeholders with extracted values.
+ * Placeholders in registry routes, e.g. `['/storage', routePlaceholders.poolId, 'vdevs']`.
+ * `SmartAlertService` replaces them with the values the entry's `extractApiParams` returns.
  */
 export const routePlaceholders = {
   /**

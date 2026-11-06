@@ -7,19 +7,10 @@ import { getAlertBannerMenuPaths } from 'app/modules/alerts/utils/alert-menu-pat
 import { getAlertSummary } from 'app/modules/alerts/utils/alert-summary.utils';
 
 /**
- * Alerts consolidate when they report the same kind of problem, even about different
- * objects - one banner for four pools that need upgrading instead of four banners.
- *
- * Merging is opt-in: only classes whose enhancement declares a `groupSummary` are folded
- * together, because that headline is the only honest thing to title a merged row with.
- * Without one the row would show the newest alert's own text - naming one object while
- * standing for several, and dismissing all of them. Those classes keep the old behaviour
- * of merging byte-identical duplicates only, and a per-object class added to the registry
- * later cannot inherit merging by accident.
- *
- * The level and the pages the alert points at are part of the key so that alert classes
- * with conditional enhancements (boot pool vs data pool capacity, for example) are not
- * folded into a single entry that would link to the wrong page.
+ * Alerts of the same kind about different objects consolidate into one row. Opt-in: only classes
+ * with a `groupSummary` merge, since a merged row titled with one alert's text would name one object
+ * while dismissing several; the rest merge byte-identical duplicates only. The level and target pages
+ * are in the key so conditional enhancements (boot vs data pool capacity) don't link to the wrong page.
  */
 export function getAlertConsolidationKey(alert: Alert & EnhancedAlert): string {
   if (!alert.groupSummary) {

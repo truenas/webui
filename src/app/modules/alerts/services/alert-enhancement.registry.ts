@@ -19,14 +19,8 @@ import { isBootPoolAlert } from 'app/modules/alerts/utils/boot-pool.utils';
 import { bootListElements } from 'app/pages/system/bootenv/bootenv-list/bootenv-list.elements';
 
 /**
- * Registry of smart alert enhancements that map alert sources and classes
- * to actionable items, contextual help, and navigation paths.
- *
- * This registry enriches basic alerts with:
- * - Quick action buttons (navigate, external links, automated fixes)
- * - Contextual help text
- * - Related menu paths for navigation badges
- * - Category grouping for better organization
+ * Maps alert sources and classes to quick actions, contextual help, the menu paths that get
+ * navigation badges, and a category.
  */
 export const smartAlertRegistry: SmartAlertConfig = {
   bySource: {
