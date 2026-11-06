@@ -82,17 +82,9 @@ describe('ThemeService', () => {
     });
 
     /**
-     * Holds the E2E suite's copy of this map to this one.
-     *
-     * `e2e/locators/preferences.ts` duplicates it rather than importing
-     * `ThemeService`, because the Playwright runner is a Node process with no
-     * Angular platform — the same reason `e2e/locators/test-id.ts` copies
-     * `kebabTestSegment`, and guarded the same way, here under `src/` because
-     * Jest ignores `e2e/`.
-     *
-     * Without this, a theme renamed on either side desynchronizes silently and
-     * surfaces as an E2E assertion about a CSS class failing twenty minutes into
-     * a run, pointing at the preferences form rather than at a stale map.
+     * Keeps `e2e/locators/preferences.ts`'s copy of this map in step. The Playwright runner has no
+     * Angular platform, so it can't import `ThemeService`, and Jest ignores `e2e/`, so the guard
+     * lives here. Without it, a renamed theme fails an E2E class assertion deep into a run instead.
      */
     it('matches the map the E2E suite asserts theme classes with', () => {
       expect(e2eThemeClassByStoredName).toStrictEqual(spectator.service.webuiToComponentLibraryThemeMap);
