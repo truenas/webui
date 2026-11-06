@@ -95,16 +95,9 @@ export class AuthService implements OnDestroy {
   );
 
   /**
-   * Whether the current user is allowed to open a Web Shell. Every shell
-   * (system, VM serial, container console) connects through the same
-   * `/websocket/shell/` endpoint, which is gated by the `web_shell` privilege.
-   *
-   * Only emits for a resolved (non-null) user. `take(1)`-gated consumers (e.g.
-   * the terminal access check) rely on this: shell routes sit behind AuthGuard,
-   * so a user is always resolved by the time they activate. Filtering out the
-   * transient nulls (initial seed, refreshUser, reconnect) means we wait for the
-   * re-resolved user instead of snapshotting a premature `false` and denying
-   * access permanently.
+   * Whether the user may open a Web Shell. Every shell connects through `/websocket/shell/`, gated by
+   * the `web_shell` privilege. Emits only for a resolved user, so `take(1)` consumers wait out the
+   * transient nulls (initial seed, refreshUser, reconnect) instead of denying access for good.
    */
   readonly hasWebShellAccess$: Observable<boolean> = this.user$.pipe(
     filter(Boolean),
@@ -304,18 +297,10 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * Ends the session with `auth.logout`.
-   *
-   * The stored token goes first, before the call. `authenticator.logout()`
-   * drops `authenticated$` at the call rather than when middleware answers, and
-   * that walks the app to the sign-in page synchronously — which auto-logs-in
-   * from the stored token. Clearing first leaves it nothing to log in with.
-   *
-   * Emits as soon as the frame is written rather than when it is acknowledged.
-   * Every caller navigates to /signin on that emission, and the acknowledgement
-   * may never come: a socket on its way down is the case this is written for.
-   * The session is over locally either way — `endLocalSession` has already run
-   * — so waiting would only decide how long the user stares at a menu.
+   * Ends the session with `auth.logout`. The stored token is cleared first: `authenticator.logout()`
+   * drops `authenticated$` at the call, which walks the app to the sign-in page, and that would
+   * auto-log-in from a stored token. Emits once the frame is written, not acknowledged: callers
+   * navigate on it, and a socket going down may never answer.
    */
   logout(): Observable<void> {
     return this.client$.pipe(
@@ -496,18 +481,11 @@ export class AuthService implements OnDestroy {
   }
 
   /**
-   * The token minted at login carries an absolute TTL: it dies that many seconds after it was
-   * issued, however busy the session was in between. The Session Timeout preference it is cut
-   * from is an *inactivity* timeout, which `SessionTimeoutService` enforces on its own clock —
-   * and nothing has kept the two in step since the periodic regeneration was dropped in favour
-   * of the single token `auth.login_ex` hands back. So refreshing a page the user has been
-   * working in all along lands on the sign-in page with "Session expired" as soon as that
-   * deadline passes: five minutes in on a default install, twenty on a session configured for
-   * twenty.
-   *
-   * Minting a replacement on a timer keeps a usable token in storage for as long as the session
-   * is entitled to live, and re-minting when the preference changes lets a new Session Timeout
-   * govern re-authentication without signing out first.
+   * The login token has an absolute TTL, but the Session Timeout it is cut from is an *inactivity*
+   * timeout that `SessionTimeoutService` enforces on its own clock. Without renewal, refreshing a page
+   * the user has been working in lands on "Session expired" once the TTL passes. Re-minting on a
+   * timer keeps a usable token stored while the session may live, and re-minting when the preference
+   * changes applies the new timeout without signing out.
    */
   private setupTokenRenewal(): void {
     this.tokenLastUsedService.lifetime$.pipe(
