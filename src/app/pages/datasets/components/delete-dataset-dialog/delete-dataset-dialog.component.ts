@@ -1,8 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
@@ -180,6 +179,7 @@ export class DeleteDatasetDialog implements OnInit {
         confirmMessage,
       ),
     );
+    this.form.controls.confirmDatasetName.updateValueAndValidity();
   }
 
   private setDeleteMessage(): void {

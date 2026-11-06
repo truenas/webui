@@ -4,10 +4,9 @@ import {
   inject, input, output, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { FormControl, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
-import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
@@ -718,7 +717,7 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   getPayload(): CloudSyncTaskUpdate {
-    const formValue = this.form.value;
+    const formValue = this.form.value as Required<FormValue>;
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
     const bwlimit = prepareBwlimit(formValue.bwlimit);

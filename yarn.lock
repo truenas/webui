@@ -3408,17 +3408,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngneat/reactive-forms@npm:~5.0.2":
-  version: 5.0.2
-  resolution: "@ngneat/reactive-forms@npm:5.0.2"
-  dependencies:
-    tslib: "npm:^2.3.0"
-  peerDependencies:
-    "@angular/forms": ">= 14.0.0"
-  checksum: 10/eb811a1d0329c7da3a4a3265185b692faea27b487157a16af5b7af08061dbefc995f7fed7dfdb89bf36889ff1564c58fabef8ce720186bd5a27c50ac693d44fa
-  languageName: node
-  linkType: hard
-
 "@ngneat/spectator@npm:~22.1.0":
   version: 22.1.0
   resolution: "@ngneat/spectator@npm:22.1.0"
@@ -15501,7 +15490,6 @@ __metadata:
     "@mdi/js": "npm:~7.4.47"
     "@mdi/svg": "npm:~7.4.47"
     "@messageformat/core": "npm:~3.3.0"
-    "@ngneat/reactive-forms": "npm:~5.0.2"
     "@ngneat/spectator": "npm:~22.1.0"
     "@ngrx/component-store": "npm:~22.0.1"
     "@ngrx/effects": "npm:~22.0.1"

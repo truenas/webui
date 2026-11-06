@@ -2,8 +2,7 @@ import {
   ChangeDetectionStrategy, Component, OnInit, inject, input, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -191,7 +190,7 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
-    const nfsShare = { ...this.form.value };
+    const nfsShare = { ...this.form.value as Required<typeof this.form.value> };
 
     if (!this.hasNfsSnapshots()) {
       delete nfsShare.expose_snapshots;

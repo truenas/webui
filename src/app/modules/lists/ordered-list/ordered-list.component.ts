@@ -3,8 +3,7 @@ import {
 } from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NgControl } from '@angular/forms';
-import { ControlValueAccessor } from '@ngneat/reactive-forms';
+import { NgControl, ControlValueAccessor } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   injectTnFormFieldAria,

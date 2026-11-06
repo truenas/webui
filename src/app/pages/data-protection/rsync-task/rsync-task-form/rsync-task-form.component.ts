@@ -1,18 +1,19 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input, output, viewChild,
+  ChangeDetectionStrategy, Component, DestroyRef, Injector, OnInit, inject, input, output, viewChild,
 } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnChipInputComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent, TnSelectOption, TnSlideToggleComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
-import { Observable, map } from 'rxjs';
+import { Observable, map, merge } from 'rxjs';
 import { Direction } from 'app/enums/direction.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { RsyncMode, RsyncSshConnectMode } from 'app/enums/rsync-mode.enum';
+import { revalidateAfterRender } from 'app/helpers/revalidate-after-render.helper';
 import { helptextRsyncForm } from 'app/helptext/data-protection/rsync/rsync-form';
 import { newOption } from 'app/interfaces/option.interface';
 import { RsyncTask, RsyncTaskUpdate, toRsyncTask } from 'app/interfaces/rsync-task.interface';
@@ -65,6 +66,7 @@ export class RsyncTaskFormComponent implements OnInit {
   private filesystemService = inject(FilesystemService);
   private validatorsService = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   /** The record being edited, supplied by the `<tn-side-panel>` host (undefined = create). */
   readonly taskToEdit = input<RsyncTask | undefined>(undefined);
@@ -176,6 +178,17 @@ export class RsyncTaskFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.editingTask = this.taskToEdit();
+
+    // Both modes hide required remote fields, which keep a stale `required` error once hidden.
+    merge(this.form.controls.mode.valueChanges, this.form.controls.sshconnectmode.valueChanges).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      const controls = this.form.controls;
+      revalidateAfterRender(
+        this.injector,
+        [controls.remotehost, controls.remotemodule, controls.remoteport, controls.ssh_credentials],
+      );
+    });
 
     if (this.editingTask) {
       this.setTaskForEdit(this.editingTask);

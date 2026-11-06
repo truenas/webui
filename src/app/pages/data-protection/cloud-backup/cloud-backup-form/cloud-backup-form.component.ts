@@ -3,8 +3,7 @@ import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject, input, output, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType,
@@ -286,7 +285,7 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   protected handleSubmit = (): SubmitResult<CloudBackup, CloudBackup> => {
-    const payload = this.prepareData(this.form.value);
+    const payload = this.prepareData(this.form.value as Required<FormValue>);
     const request$: Observable<CloudBackup> = this.editingTask
       ? this.api.call('cloud_backup.update', [this.editingTask.id, payload]).pipe(map(toCloudBackup))
       : this.api.call('cloud_backup.create', [payload]).pipe(map(toCloudBackup));
@@ -364,7 +363,7 @@ export class CloudBackupFormComponent implements OnInit {
       });
   }
 
-  private prepareData(formValue: FormValue): CloudBackupUpdate {
+  private prepareData(formValue: Required<FormValue>): CloudBackupUpdate {
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
       bucket: this.form.value.bucket_input && this.isNewBucketOptionSelected

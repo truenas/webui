@@ -1,13 +1,14 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, input } from '@angular/core';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
-import { of, Subscription } from 'rxjs';
+import {
+  distinctUntilChanged, map, of, startWith, Subscription,
+} from 'rxjs';
 import { InitShutdownScriptType, initShutdownScriptTypeLabels } from 'app/enums/init-shutdown-script-type.enum';
 import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/init-shutdown-script-when.enum';
 import { Role } from 'app/enums/role.enum';
@@ -68,7 +69,11 @@ export class InitShutdownFormComponent extends IxFormHostForm implements OnInit 
     timeout: [10],
   });
 
-  readonly isCommand$ = this.form.select((values) => values.type === InitShutdownScriptType.Command);
+  readonly isCommand$ = this.form.valueChanges.pipe(
+    startWith(null),
+    map(() => this.form.controls.type.value === InitShutdownScriptType.Command),
+    distinctUntilChanged(),
+  );
 
   readonly typeOptions$ = of(mapToOptions(initShutdownScriptTypeLabels, this.translate));
   readonly whenOptions$ = of(mapToOptions(initShutdownScriptWhenLabels, this.translate));
@@ -101,15 +106,22 @@ export class InitShutdownFormComponent extends IxFormHostForm implements OnInit 
     // Wired before `<ix-form>` patches `editData` in its own (later) ngOnInit, so an edited
     // script's type immediately disables whichever of command/script it doesn't use.
     this.subscriptions.push(
-      this.form.controls.command.enabledWhile(this.isCommand$),
-      this.form.controls.script.disabledWhile(this.isCommand$),
+      this.isCommand$.subscribe((isCommand) => {
+        if (isCommand) {
+          this.form.controls.command.enable();
+          this.form.controls.script.disable();
+        } else {
+          this.form.controls.command.disable();
+          this.form.controls.script.enable();
+        }
+      }),
     );
   }
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
     // `form.value`, not the event's `allValues`: `command` and `script` disable each other by type,
     // and only the enabled one belongs in the payload.
-    const values = this.form.value;
+    const values = this.form.value as Required<typeof this.form.value>;
     const editingScript = this.editingScript;
 
     return {

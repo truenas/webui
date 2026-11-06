@@ -2,8 +2,9 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, output, signal, viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import {
+  Validators, ReactiveFormsModule, FormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -140,10 +141,10 @@ export class IscsiWizardComponent implements OnInit, SidePanelHostCloseable<Iscs
       portal: new FormControl(null as typeof newOption | number | null, [Validators.required]),
       listen: this.fb.array<string>([]),
       initiators: [[] as string[]],
-      fcPorts: this.fb.array<{
+      fcPorts: this.fb.array<FormGroup<{
         port: FormControl<string | null>;
         host_id: FormControl<number | null>;
-      }>([]),
+      }>>([]),
     }),
   }, {
     validators: [

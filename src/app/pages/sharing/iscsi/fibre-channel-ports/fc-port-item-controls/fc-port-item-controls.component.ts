@@ -3,8 +3,7 @@ import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl, FormGroup } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnFormFieldComponent, TnSelectComponent } from '@truenas/ui-components';
 import { map } from 'rxjs';

@@ -1,14 +1,14 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, signal, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder, FormControl } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { CallParams } from '@truenas/api-client';
 import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent, TnSelectComponent, TnFilePickerComponent,
 } from '@truenas/ui-components';
+import { distinctUntilChanged, map, startWith } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { invertUmask } from 'app/helpers/mode.helper';
 import { idNameArrayToOptions } from 'app/helpers/operators/options.operators';
@@ -135,8 +135,17 @@ export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> i
 
   readonly treeNodeProvider = this.filesystemService.getFilesystemNodeProvider();
 
-  readonly isAnonymousLoginAllowed$ = this.form.select((values) => values.onlyanonymous);
-  readonly isTlsEnabled$ = this.form.select((values) => values.tls);
+  readonly isAnonymousLoginAllowed$ = this.form.valueChanges.pipe(
+    startWith(null),
+    map(() => this.form.controls.onlyanonymous.value),
+    distinctUntilChanged(),
+  );
+
+  readonly isTlsEnabled$ = this.form.valueChanges.pipe(
+    startWith(null),
+    map(() => this.form.controls.tls.value),
+    distinctUntilChanged(),
+  );
 
   /** The Advanced/Basic toggle rendered in the `<tn-side-panel>` footer (before Save). */
   private readonly advancedToggle = advancedModeFooterAction(this.isAdvancedMode);

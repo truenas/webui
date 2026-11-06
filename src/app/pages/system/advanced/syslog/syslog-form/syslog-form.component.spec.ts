@@ -1,7 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
@@ -20,12 +19,6 @@ describe('SyslogFormComponent', () => {
   let spectator: Spectator<SyslogFormComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-
-  // Helper to check FormArray length since toHaveLength doesn't work with @ngneat/reactive-forms FormArray
-  const expectArrayLength = (array: { length: number }, expectedLength: number): void => {
-    // eslint-disable-next-line jest/prefer-to-have-length
-    expect(array.length).toBe(expectedLength);
-  };
 
   const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
     TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
@@ -175,12 +168,12 @@ describe('SyslogFormComponent', () => {
     // which calls ngOnInit automatically
 
     // Start with one server from mock data
-    expectArrayLength(spectator.component.syslogServersArray, 1);
+    expect(spectator.component.syslogServersArray.controls).toHaveLength(1);
     expect(spectator.component.canAddServer).toBe(true);
 
     // Click add server button
     spectator.component.addServer();
-    expectArrayLength(spectator.component.syslogServersArray, 2);
+    expect(spectator.component.syslogServersArray.controls).toHaveLength(2);
 
     // Fill in the second server
     spectator.component.syslogServersArray.at(1).patchValue({
@@ -193,13 +186,13 @@ describe('SyslogFormComponent', () => {
 
     // Remove first server
     spectator.component.removeServer(0);
-    expectArrayLength(spectator.component.syslogServersArray, 1);
+    expect(spectator.component.syslogServersArray.controls).toHaveLength(1);
     expect(spectator.component.syslogServersArray.at(0).value.host).toBe('second.server.com');
 
     // Can remove the last server too
     expect(spectator.component.canRemoveServer).toBe(true);
     spectator.component.removeServer(0);
-    expectArrayLength(spectator.component.syslogServersArray, 0);
+    expect(spectator.component.syslogServersArray.controls).toHaveLength(0);
     expect(spectator.component.canRemoveServer).toBe(false);
   });
 
@@ -229,7 +222,7 @@ describe('SyslogFormComponent', () => {
   it('allows configuration with no syslog servers', async () => {
     // Remove the existing server
     spectator.component.removeServer(0);
-    expectArrayLength(spectator.component.syslogServersArray, 0);
+    expect(spectator.component.syslogServersArray.controls).toHaveLength(0);
 
     // Save with no servers
     // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.

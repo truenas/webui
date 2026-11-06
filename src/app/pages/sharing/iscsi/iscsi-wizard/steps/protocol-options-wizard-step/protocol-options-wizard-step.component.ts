@@ -1,8 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, OnInit, inject, DestroyRef } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Validators, ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnChipInputComponent, TnFormFieldComponent, TnFormListComponent, TnFormListItemComponent, TnSelectComponent,

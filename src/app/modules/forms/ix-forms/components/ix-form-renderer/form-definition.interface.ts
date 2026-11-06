@@ -160,7 +160,7 @@ interface BaseFieldDefinition<T extends object> {
    * Conditional enablement. The field stays visible but is enabled only while
    * this predicate returns true (re-evaluated on every value change). Disabled
    * controls are excluded from `.value` and validation. Declarative equivalent
-   * of the reactive-forms `enabledWhile` pattern.
+   * of calling `enable()`/`disable()` from a `valueChanges` subscription.
    */
   enabledWhen?: (value: T) => boolean;
   /**

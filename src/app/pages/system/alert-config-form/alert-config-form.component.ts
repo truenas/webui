@@ -1,8 +1,9 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { ControlsOf, FormBuilder, FormGroup } from '@ngneat/reactive-forms';
+import {
+  ReactiveFormsModule, FormsModule, FormBuilder, FormControl, FormGroup,
+} from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
@@ -27,6 +28,7 @@ import { helptextAlertSettings } from 'app/helptext/system/alert-settings';
 import {
   AlertCategory, AlertClassesUpdate, AlertClassSettings, toAlertCategories,
 } from 'app/interfaces/alert.interface';
+import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
@@ -71,7 +73,7 @@ export class AlertConfigFormComponent implements OnInit {
 
   protected categories: AlertCategory[] = [];
   protected selectedCategory: AlertCategory | undefined = undefined;
-  protected form = this.formBuilder.group({});
+  protected form = this.formBuilder.group<Record<string, FormGroup<ControlsOf<AlertClassSettings>>>>({});
   protected isFormLoading = signal(false);
   protected readonly helptext = helptextAlertSettings;
 
@@ -109,16 +111,16 @@ export class AlertConfigFormComponent implements OnInit {
 
           categories.forEach((category) => {
             category.classes.forEach((cls) => {
-              this.form.addControl(cls.id, this.formBuilder.group<AlertClassSettings>({
-                level: cls.level,
-                policy: AlertPolicy.Immediately,
+              // nonNullable makes each control's `defaultValue` its initial value; onSubmit diffs against it.
+              this.form.addControl(cls.id, this.formBuilder.group({
+                level: new FormControl(cls.level, { nonNullable: true }),
+                policy: new FormControl(AlertPolicy.Immediately, { nonNullable: true }),
               }));
-              this.form.controls[cls.id].controls.level.defaultValue = cls.level;
-              this.form.controls[cls.id].controls.policy.defaultValue = AlertPolicy.Immediately;
             });
           });
 
-          this.form.patchValue(alertConfig.classes);
+          // The API types `level`/`policy` with its own enums, which carry the same values as ours.
+          this.form.patchValue(alertConfig.classes as Record<string, AlertClassSettings>);
           this.isFormLoading.set(false);
         },
         error: (error: unknown) => {

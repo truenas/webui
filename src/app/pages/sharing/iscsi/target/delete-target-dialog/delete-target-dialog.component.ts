@@ -1,8 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, signal, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnCheckboxComponent, TnFormFieldComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { take } from 'rxjs/operators';

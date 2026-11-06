@@ -4,8 +4,7 @@ import {
   ChangeDetectionStrategy, Component, computed, inject, signal,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
-import { FormBuilder } from '@ngneat/reactive-forms';
+import { ReactiveFormsModule, Validators, FormBuilder } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
@@ -127,8 +126,14 @@ export class ContainerNicFormDialog {
       : this.translate.instant(containersHelptext.macTooltip);
   });
 
-  protected readonly useDefault = toSignal(this.form.controls.use_default.value$);
-  protected readonly selectedType = toSignal(this.form.controls.type.value$);
+  protected readonly useDefault = toSignal(
+    this.form.controls.use_default.valueChanges.pipe(startWith(this.form.controls.use_default.value)),
+  );
+
+  protected readonly selectedType = toSignal(
+    this.form.controls.type.valueChanges.pipe(startWith(this.form.controls.type.value)),
+  );
+
   protected readonly isVirtio = computed(() => this.selectedType() === ContainerNicDeviceType.Virtio);
 
   protected saveDevice(): void {
