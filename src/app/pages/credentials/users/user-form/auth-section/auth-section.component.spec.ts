@@ -4,6 +4,7 @@ import { signal } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { IxCheckboxHarness } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.harness';
+import { IxInputHarness } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.harness';
 import { IxRadioGroupHarness } from 'app/modules/forms/ix-forms/components/ix-radio-group/ix-radio-group.harness';
 import { IxTextareaHarness } from 'app/modules/forms/ix-forms/components/ix-textarea/ix-textarea.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -151,6 +152,36 @@ describe('AuthSectionComponent', () => {
       await form.fillForm({ 'Change Password': 'newpassword' });
       const labelsAfter = await form.getLabels();
       expect(labelsAfter).toContain('Confirm Password');
+    });
+
+    it('does not leave the hidden Confirm Password invalid when an editing user clears the new password', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      const password = await loader.getHarness(IxInputHarness.with({ label: 'Change Password' }));
+      await password.setValue('newpassword');
+      expect(spectator.component.form.controls.password_confirm.valid).toBe(false);
+
+      // `MatInputHarness.setValue('')` sends no keys, which the CDK rejects.
+      await password.setValueAndTriggerBlur('');
+      await spectator.fixture.whenStable();
+      expect(await form.getLabels()).not.toContain('Confirm Password');
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
+    it('does not leave a filled, hidden Confirm Password failing the match when the new password is cleared', async () => {
+      spectator.setInput('editingUser', { id: 1, username: 'test' });
+      spectator.detectChanges();
+
+      await form.fillForm({ 'Change Password': 'abc' });
+      await form.fillForm({ 'Confirm Password': 'abc' });
+
+      const password = await loader.getHarness(IxInputHarness.with({ label: 'Change Password' }));
+      await password.setValueAndTriggerBlur('');
+      await spectator.fixture.whenStable();
+      expect(await form.getLabels()).not.toContain('Confirm Password');
+      expect(spectator.component.form.controls.password_confirm.value).toBe('');
+      expect(spectator.component.form.valid).toBe(true);
     });
 
     it('validates password confirmation is required for new users', async () => {
