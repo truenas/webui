@@ -34,15 +34,9 @@ export class LicenseService {
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
 
   /**
-   * Not migrated to the `STIG` entitlement: `fips_available` reports firmware capability,
-   * a different question from whether the licence permits STIG. The card likely needs both.
-   *
-   * True when the backend reports FIPS hardware support — that's
-   * the same condition `AdvancedSettingsComponent.isSystemLicensed` uses to
-   * render the card. `catchError` falls back to `false` so a transient
-   * `fips_available` failure hides the System Security entries rather than
-   * crashing the search filter chain. `refCount: true` ensures the fallback
-   * isn't permanently cached.
+   * Whether the hardware supports FIPS, the condition `AdvancedSettingsComponent.isSystemLicensed` uses.
+   * Not the `STIG` entitlement, which answers whether the licence permits it; the card likely needs both.
+   * Errors map to `false` so the search filter chain survives, and `refCount: true` keeps that from sticking.
    */
   readonly hasSystemSecurity$ = defer(() => this.api.call('system.security.info.fips_available')).pipe(
     map(Boolean),
