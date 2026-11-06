@@ -99,6 +99,7 @@ const commentCappedPaths = [
   'src/app/modules/buttons',
   'src/app/modules/card-expand-collapse',
   'src/app/modules/charts',
+  'src/app/modules/dialog',
   'src/app/modules/disk-icon',
   'src/app/modules/empty',
   'src/app/modules/feedback',
