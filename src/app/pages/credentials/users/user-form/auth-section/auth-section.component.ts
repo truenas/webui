@@ -182,16 +182,9 @@ export class AuthSectionComponent implements OnInit {
   }
 
   /**
-   * Applies the create flow's preset to the one control here it can name.
-   *
-   * Applied once, and only once SMB access has actually gone off: the watcher
-   * above forces this control off and disabled for as long as SMB access reads
-   * true, so a value set ahead of that is silently undone. This is the
-   * ordering a generic patcher could not know about, and the reason applying a
-   * preset is each form's own job.
-   *
-   * Once is what makes it a starting point rather than a setting — the user
-   * can change it back, and nothing puts it again.
+   * Applies the create flow's preset to this control, once, and only after SMB access is off: the watcher
+   * above holds the control off while SMB is on, silently undoing an earlier value. Applying once keeps
+   * it a starting point the user can change.
    */
   private applyPreset(): void {
     let applied = false;

@@ -72,15 +72,9 @@ export class GroupMembersComponent implements OnInit, CanComponentDeactivate {
   protected readonly isInitialLoading = computed(() => this.isLoading() && !this.group());
 
   /**
-   * Built-in accounts (root, daemon, bin, ...) make up most of the list on a stock system
-   * and bury the real users, so they can be filtered out of the picker. Built-ins on the
-   * members side are kept: filtering one out of the source would make it vanish from both
-   * lists the moment it is moved off that side, since the picker rebuilds its available list
-   * out of the source it was given.
-   *
-   * The members are read untracked, so ticking the checkbox snapshots who is in the group
-   * right then. Tracking them would rebuild the source on every move and reset the picker's
-   * lists under the user.
+   * Built-in accounts can be filtered out of the picker so they don't bury real users, but built-in
+   * members stay in the source, or one moved off the members side would vanish from both lists. Members
+   * are read untracked, so the filter snapshots them instead of resetting the lists on every move.
    */
   protected readonly availableUsers = computed(() => {
     const users = this.users();

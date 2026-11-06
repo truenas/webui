@@ -9,14 +9,9 @@ import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth
 import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
 
 /**
- * `TnFormFieldHarness.getTooltip()` reads the help button's `aria-label`, and the library
- * strips markup out of that: an `aria-label` is announced verbatim, so `<i>` and `<br>` in it
- * would be read out. The visible tooltip still renders them — only the name is plain — so an
- * assertion against the raw helptext compares the wrong one of the two.
- *
- * Parsed rather than regex-stripped, mirroring the library's own `plainTextMessage()`: the
- * document `DOMParser` builds is inert, and it decodes entities as well as dropping tags, so
- * the expectation matches what a screen reader actually hears.
+ * `getTooltip()` reads the help button's `aria-label`, which the library strips of markup, so compare
+ * against plain text. Parsed like the library's `plainTextMessage()` rather than regex-stripped, so
+ * entities decode as a screen reader hears them.
  */
 function asAccessibleName(helpText: string): string {
   return new DOMParser().parseFromString(helpText, 'text/html').body.textContent ?? '';

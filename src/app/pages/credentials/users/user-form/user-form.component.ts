@@ -209,16 +209,9 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
     if (this.editingUser()) {
       this.setupEditUserForm(this.editingUser());
     } else {
-      // A new user has no name of its own to exclude, which is what the
-      // optional argument is for. Without this the clash is only caught by
-      // middleware, after a round trip — the edit form catches it as you type.
-      //
-      // The list it reads is filled by `userPageEntered`, which only the Users
-      // page dispatches. Opened from a picker (`UserDirectoryService.createUser`)
-      // it validates against whatever that left in the root store — nothing at
-      // all in a session that never visited the page, otherwise a list kept
-      // current only by the add/change/remove actions. An async validator over
-      // `user.query` would answer for both entry points.
+      // Catches a clash with an existing name as you type instead of after a middleware round trip.
+      // The list comes from `userPageEntered`, so opened from a picker it may be empty or stale; an
+      // async validator over `user.query` would cover both entry points.
       this.setNamesInUseValidator();
     }
   }
@@ -274,16 +267,9 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
 
       const username = this.form.controls.username;
 
-      // Replace rather than append: the list emits again whenever it reloads,
-      // and a stacked validator goes on forbidding names that have since been
-      // deleted. Revalidate too, because the list can land after a name has
-      // already been typed — on the create form, before the user reaches Save.
-      //
-      // Events are emitted, not suppressed: the field's error message renders
-      // off `statusChanges`, so a silent update clears the error without
-      // clearing the message. The value is unchanged, so the `valueChanges`
-      // that comes with it re-pushes the same username and is absorbed
-      // downstream.
+      // Replace, don't append: the list re-emits on reload and a stacked validator would keep forbidding
+      // deleted names. Revalidate with events, since the list can land after a name is typed and the
+      // error message renders off `statusChanges`; the unchanged `valueChanges` is absorbed downstream.
       if (this.namesInUseValidator) {
         username.removeValidators(this.namesInUseValidator);
       }

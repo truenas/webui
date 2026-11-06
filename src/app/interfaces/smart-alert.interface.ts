@@ -85,13 +85,9 @@ export interface SmartAlertEnhancement {
   // Falls back to relatedMenuPath when omitted, and never applies to extraMenuPaths.
   bannerMenuPath?: string[];
 
-  // Secondary feature areas of the alert. Each path surfaces both the badge and the
-  // banner in full, unaffected by any bannerMenuPath narrowing of the primary path.
-  // Use for alerts that span two feature areas, e.g. ZFS tiering alerts are raised
-  // against a pool (Storage) but are acted on per-dataset (Datasets).
-  // Resulting scopes: badge = relatedMenuPath + extraMenuPaths,
-  // banner = (bannerMenuPath ?? relatedMenuPath) + extraMenuPaths.
-  // See getAlertBadgeMenuPaths / getAlertBannerMenuPaths.
+  // Secondary feature areas, e.g. tiering alerts raised on a pool (Storage) but handled per dataset
+  // (Datasets). Each gets the full badge and banner regardless of `bannerMenuPath`; see
+  // getAlertBadgeMenuPaths / getAlertBannerMenuPaths.
   extraMenuPaths?: string[][];
 
   // Visual enhancements
@@ -106,20 +102,8 @@ export interface SmartAlertEnhancement {
 }
 
 /**
- * Conditional enhancement that applies different configurations based on alert context.
- * Use this when an alert class needs different actions/paths depending on alert.args or other context.
- *
- * @example
- * // ZpoolCapacity alerts redirect to Boot Environments when it's the boot pool
- * ZpoolCapacityCritical: {
- *   conditions: [
- *     {
- *       check: (alert) => isBootPoolAlert(alert.args),
- *       enhancement: { category: SmartAlertCategory.System, ... }
- *     }
- *   ],
- *   defaultEnhancement: { category: SmartAlertCategory.Storage, ... }
- * }
+ * Picks an enhancement by alert context: the first matching `conditions` entry wins, else
+ * `defaultEnhancement`. E.g. ZpoolCapacity points to Boot Environments when it's about the boot pool.
  */
 export interface ConditionalSmartAlertEnhancement {
   /**
@@ -221,29 +205,10 @@ export type ConsolidatedAlert<T> = T & {
 export type AlertWithDuplicates = ConsolidatedAlert<Alert & EnhancedAlert>;
 
 /**
- * Creates an extractFragment function that extracts a specific field from an alert message.
- *
- * @param taskPrefix - The prefix to use for the extracted fragment (e.g., 'cloud-backup', 'rsync-task')
- * @param regex - The regex to extract the value from the alert message
- * @param fallbackAnchor - Optional fallback anchor if extraction fails
- * @param transform - Optional function to transform the extracted value
- * @returns A function that extracts and formats the fragment
- *
- * @example
- * // Extract task description without transformation (matches raw uniqueRowTag)
- * const extractor = createFragmentExtractor('cloud-backup',
- * /Cloud\s+Backup(?:\s+Task)?\s+"([^"]+)"/i, 'cloud-backup-tasks');
- * const fragment = extractor('Cloud Backup Task "My Task" failed'); // Returns: 'cloud-backup-My Task'
- *
- * @example
- * // Extract with transformation (for components that transform uniqueRowTag)
- * const extractor = createFragmentExtractor(
- *   'replication-task',
- *   /Replication\s+"([^"]+)"/i,
- *   undefined,
- *   (value) => value.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase()
- * );
- * const fragment = extractor('Replication "My Task" failed'); // Returns: 'replication-task-my-task'
+ * Builds an `extractFragment` that pulls a value out of the alert message with `regex` and prefixes it
+ * with `taskPrefix`, falling back to `fallbackAnchor`. Without `transform` the value stays raw to match
+ * `uniqueRowTag` (`'Cloud Backup Task "My Task"'` → `cloud-backup-My Task`); pass one for components that
+ * transform their row tag.
  */
 export function createFragmentExtractor(
   taskPrefix: string,
@@ -265,19 +230,8 @@ export function createFragmentExtractor(
 }
 
 /**
- * Creates a standard task ID extractor for API call actions.
- * Handles the common pattern where alert.args contains either:
- * - An array with an object { id: number, name: string }
- * - An array with a direct ID value
- * - A direct object with an id property
- *
- * @returns A function that extracts the task ID from alert args
- *
- * @example
- * // In alert-enhancement.registry.ts:
- * CloudBackupTaskFailed: {
- *   extractApiParams: createTaskIdExtractor(),
- * }
+ * Extracts a task id from alert args shaped as `[{ id, name }]`, `[id]` or `{ id }`, for registry
+ * entries like `extractApiParams: createTaskIdExtractor()`.
  */
 export function createTaskIdExtractor(): (alert: { args: unknown }) => number | undefined {
   return (alert: { args: unknown }) => {

@@ -108,17 +108,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   private readonly minNameColumnWidth = 150;
 
   /**
-   * Width of the tree's horizontally scrollable content. Fed to the CSS as
-   * `--ix-tree-content-width`: it both reserves the scroll range and stretches the sticky
-   * header over it, so the header labels track the columns as you scroll right.
-   *
-   * It deliberately is NOT measured from the rendered rows. The tree is virtualized, so
-   * only a window of rows exists at any moment and the deepest-indented of them used to
-   * decide the scroll range. Scrolling vertically swaps that window; when shallower rows
-   * came in the range shrank and the browser clamped `scrollLeft` back to 0, which left
-   * the right-hand columns (Usage) unreachable for the rows at the top of a long list
-   * (NAS-144025). Deriving it from the deepest *visible* level keeps the range constant
-   * for as long as the tree shows the same nodes.
+   * Width of the tree's scrollable content, fed to `--ix-tree-content-width` to reserve the scroll range
+   * and stretch the sticky header. Derived from the deepest visible level, not measured from rendered
+   * rows: the tree is virtualized, so measuring let the range shrink while scrolling and snap
+   * `scrollLeft` back to 0, hiding the Usage column.
    */
   protected readonly treeContentWidth = signal<string | null>(null);
 
@@ -252,21 +245,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   /**
-   * Refreshes the tree when a tier rewrite job appears, changes status or goes away.
-   *
-   * The details card reloads once after "Change Storage Tier" is applied, but
-   * `pool.dataset.details` can answer before the new job is visible in it, so that
-   * reload alone may miss the migration and the card never shows its badge.
-   *
-   * `refreshDatasets`, not `loadDatasets`: these events arrive for jobs on any dataset,
-   * and a load unmounts the details panel while it runs.
-   *
-   * The `zfs.tier.rewrite_job_query` topic behind this carries a job's id and status and
-   * nothing else, and middleware sends it only for those three transitions, polling every
-   * five seconds. Progress is on the per-job `zfs.tier.rewrite_job_status` topic, which the
-   * migration badge and dialog follow and this page does not — so a running migration does
-   * not turn this into a refresh loop. Should that ever change, `refreshDatasets` queues
-   * rather than restarts, so the worst case is back-to-back fetches, not a starved page.
+   * Refreshes the tree when a tier rewrite job appears, changes status or ends, since the details card's
+   * own reload can beat the job into `pool.dataset.details`. `refreshDatasets`, because a load would
+   * unmount the details panel. The topic only carries these transitions; progress is on the per-job
+   * topic this page doesn't follow, so a running migration can't cause a refresh loop.
    */
   private listenForTierJobs(): void {
     this.sharingTierService.wireTierJobRefresh({

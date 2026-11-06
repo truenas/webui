@@ -81,16 +81,9 @@ function parityFromLayoutWidth(
 }
 
 /**
- * Parity for a topology category. The actual disk count in `vdevs` takes
- * precedence over the configured `width`: manual disk selection updates
- * `vdevs` without re-syncing `width` on the category, so `width` can be stale
- * (e.g. width=2 from a prior automated selection, then a 3rd disk added
- * manually). When vdevs are present we use the smallest vdev's disk count,
- * which yields the worst-case parity across configured vdevs — the
- * conservative choice for a warning. Width is the source of truth only when
- * vdevs haven't been generated yet. For layout-determined parity
- * (Stripe/RAIDZ/dRAID) this choice is harmless. Returns null when neither a
- * layout nor an effective width can be resolved.
+ * Parity for a topology category, or null if neither a layout nor a width resolves. The disk count in
+ * `vdevs` wins over `width`, which manual selection can leave stale; with several vdevs the smallest
+ * gives the worst-case parity, the conservative choice for a warning.
  */
 function parityFromCategory(category: PoolManagerTopologyCategory): number | null {
   if (!category.layout) {
@@ -368,17 +361,9 @@ export class PoolManagerValidationService {
   }
 
   /**
-   * Flags an optional category that the user has partially configured (picked
-   * a disk size) but that currently has no vdevs. Runs in both flows:
-   *  - New pool: typical trigger is the data-parity lock changing the
-   *    metadata/dedup layout, which invalidates a previously picked width and
-   *    clears the category's vdevs.
-   *  - Add vdev to existing pool: user picks disk size / width for an optional
-   *    category (Log/Spare/Cache/Special/Dedup) and then clears it, leaving
-   *    state partially filled.
-   * Without this, the Review step silently omits the category and the step
-   * header shows no error indicator even though the form inside the step is
-   * invalid.
+   * Flags an optional category with a picked disk size but no vdevs, e.g. after the data-parity lock
+   * cleared its vdevs, or after the user cleared it when adding vdevs. Otherwise Review would silently
+   * omit the category with no error on the step.
    */
   private validateIncompleteCategories(topology: PoolManagerTopology): PoolCreationError[] {
     const messageTemplate = T('{vdevType} VDEV configuration is incomplete. Complete the layout, width and number of VDEVs.');
@@ -403,23 +388,10 @@ export class PoolManagerValidationService {
   }
 
   /**
-   * True when the user has touched any of the category's configurable fields.
-   * `layout` is intentionally excluded because it can be set programmatically:
-   * AutomatedDiskSelectionComponent auto-selects the sole choice when a
-   * category has only one allowed layout, and resetTopologyCategory preloads
-   * Stripe for Spare/Cache. A non-null layout therefore does not imply that
-   * the user engaged with the category.
-   *
-   * The disk size is excluded on the same grounds while `isDiskSizeAutoSelected`
-   * is set: DiskSizeSelectsComponent fills in the sole size on offer whenever
-   * the inventory refreshes while the step is open, so an optional step the
-   * user only clicked through can carry one. A size the user picked still counts.
-   *
-   * We use `!= null` (matching both null and undefined) rather than `!== null`
-   * so partially-populated test fixtures — which cast `Partial<Category>` via
-   * `as` and only fill the fields under test — still register as "not touched"
-   * on unspecified fields. Production state (from the store's initialTopology)
-   * never leaves any of these fields undefined.
+   * Whether the user touched any of the category's configurable fields. `layout` doesn't count, since it
+   * can be set programmatically (a sole allowed layout, or Stripe preloaded for Spare/Cache), nor does an
+   * auto-selected disk size. `!= null` lets partial test fixtures read as untouched; production state
+   * never leaves these undefined.
    */
   private isCategoryPartiallyConfigured(category: PoolManagerTopologyCategory): boolean {
     const hasPickedDiskSize = !category.isDiskSizeAutoSelected
@@ -556,16 +528,9 @@ export class PoolManagerValidationService {
       if (layout === null) {
         return null;
       }
-      // Existing pool vdevs always carry a children list; the fallback only
-      // guards against malformed payloads and is irrelevant for non-Mirror
-      // layouts where parity is layout-determined. We fall back to 2 (parity
-      // 1) rather than 1 (parity 0) because validateRedundancyMismatch
-      // short-circuits on `dataParity <= 0` — a lower fallback would silently
-      // suppress *all* mismatch warnings for a malformed Mirror payload.
-      // Existing-pool vdevs are not run through parityFromCategory: their
-      // disk count lives in `children`, not in a wizard `vdevs[][]`, and the
-      // wizard's "smallest vdev" convention doesn't translate cleanly to an
-      // existing pool whose vdevs are already created and immutable here.
+      // Existing vdevs always carry children; the fallback of 2 (parity 1) only covers malformed payloads,
+      // since `validateRedundancyMismatch` skips `dataParity <= 0` and 1 would hide every Mirror warning.
+      // Not via parityFromCategory: existing vdevs keep their disk count in `children`, not `vdevs[][]`.
       const width = existingDataVdevs[0].children?.length ?? 2;
       return layoutParity(layout, width);
     }

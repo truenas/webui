@@ -89,18 +89,10 @@ export class DatasetTreeStore extends ComponentStore<DatasetTreeState> {
   };
 
   /**
-   * Refetches the datasets without entering the loading state, so the tree and the
-   * details panel stay mounted while it runs — for refreshes the user did not ask for,
-   * where `loadDatasets` would blank the page.
-   *
-   * A refresh never cancels a fetch in flight. It waits for that one to answer and then
-   * runs once, however many arrived meanwhile — so a burst of them cannot keep restarting
-   * `pool.dataset.details` (the heaviest dataset call there is) and starve the page, and a
-   * load the user is waiting on is never thrown away for one they did not ask for.
-   *
-   * A fetch that is never answered leaves refreshes queued until the next `loadDatasets`,
-   * which replaces it. The one way that happens is the socket dropping, and that sends the
-   * app to sign-in; the page loads again on the way back.
+   * Refetches without entering the loading state, so the tree and details stay mounted, for refreshes
+   * the user didn't ask for. It never cancels a fetch in flight: it runs once after it, however many
+   * arrived, so a burst can't keep restarting `pool.dataset.details` or discard a load the user awaits.
+   * An unanswered fetch leaves refreshes queued until the next `loadDatasets`.
    */
   readonly refreshDatasets = (): void => {
     if (this.isFetching) {

@@ -49,13 +49,9 @@ import { isContainerRunning, isContainerStopped } from 'app/pages/containers/uti
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
- * Element-wise reference equality. tn-table clears its selection whenever the
- * `dataSource` reference changes, and the store's `containers` computed re-emits
- * a new array on every state change — including the frequent `container.metrics`
- * patches. Using this as the `filteredContainers` equality keeps the same array
- * reference while the list content is unchanged, so a metrics tick no longer
- * wipes the user's row selection. Metric cells still refresh because they read
- * the `metrics()` signal directly rather than through the row data.
+ * Element-wise reference equality for `filteredContainers`. tn-table clears its selection on a new
+ * `dataSource` reference, and the store re-emits a new array on every metrics patch; this keeps the
+ * reference while content is unchanged. Metric cells still update since they read `metrics()` directly.
  */
 function sameContainers(a: Container[], b: Container[]): boolean {
   return a.length === b.length && a.every((container, index) => container === b[index]);

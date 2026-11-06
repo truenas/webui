@@ -71,23 +71,14 @@ setupZonelessTestEnv();
 // so mocking a card-bearing component never corrupts a sibling button's label.
 ngMocks.globalKeep(LabelMarkupPipe);
 
-// `TnInputComponent` exposes its `<input>` through a signal `viewChild('inputEl')`,
-// which real consumers read (e.g. `BasicSearchComponent.focusInput()` calls
-// `searchInput().inputEl()`, and harnesses query the rendered `input.tn-input`).
-// When ng-mocks deep-mocks any component whose graph transitively imports
-// `tn-input`, it replaces `TnInputComponent` across the whole TestBed with an empty
-// mock — silently breaking sibling *real* search inputs that depend on the rendered
-// element. Keep the lightweight input real everywhere so a deep-mocked parent never
-// blanks an unrelated real search field.
+// Consumers read `TnInputComponent`'s `inputEl` (e.g. `BasicSearchComponent.focusInput()`). Deep-mocking
+// anything that imports `tn-input` would mock it across the whole TestBed and break unrelated real
+// search fields, so keep it real everywhere.
 ngMocks.globalKeep(TnInputComponent);
 
-// Every tn-* component hosts `TnTestIdDirective` in its own template to compose its
-// `data-test` attribute. When ng-mocks deep-mocks any component whose standalone import
-// graph transitively includes the directive (e.g. `MockComponent(PageHeaderComponent)`
-// once breadcrumb imports it), the mock leaks into the *library components'* template
-// scope too — silently dropping every library-composed `data-test` in the TestBed and
-// breaking `[data-test=...]` selectors on unrelated real components. Keep the pure,
-// render-only directive real everywhere.
+// Every tn-* component composes its `data-test` with `TnTestIdDirective`. Deep-mocking anything that
+// transitively imports it leaks the mock into library templates and drops every library-composed
+// `data-test` in the TestBed, so keep the render-only directive real.
 ngMocks.globalKeep(TnTestIdDirective);
 
 const silenceJsDomCssParseError: (message: string, methodName: string) => boolean = (message, methodName) => {
@@ -162,15 +153,9 @@ defineGlobalsInjections({
     // ('No options available') where the app renders webui's ('No options').
     provideTnSelectLabels(),
     {
-      // Mirror production (main.ts) again: the app names every unnamed spinner,
-      // progress bar and modal surface through this token, which is also what stands
-      // the library's dev-mode naming warning down. Without it here, a spec rendering
-      // one warns and `jest-fail-on-console` fails the test for a decision the app
-      // has already made.
-      //
-      // The library's English defaults rather than `provideTnFallbackLabels()`: what a
-      // spec needs is the token PROVIDED, and reusing the app provider would make every
-      // spec that renders a spinner depend on a TranslateService too.
+      // Mirror main.ts: providing this token names unnamed spinners and modals and stands down the
+      // library's dev-mode warning, which `jest-fail-on-console` would fail on. The library's English
+      // defaults, not `provideTnFallbackLabels()`, so specs don't all need a TranslateService.
       provide: TN_FALLBACK_LABELS,
       useValue: TN_DEFAULT_FALLBACK_LABELS,
     },

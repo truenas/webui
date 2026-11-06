@@ -87,20 +87,10 @@ export class AllowedAccessSectionComponent {
   }
 
   /**
-   * Applies the create flow's preset to the one control here it can name.
-   *
-   * Once, as the auth section does: a host binding an object literal —
-   * `[createPreset]="{ values: { smb: false } }"` — hands this a new reference
-   * every change-detection pass, and re-applying would undo the user's own
-   * tick each time. An unlocked preset is a starting point, so it has to stop
-   * being applied the moment the form is on screen.
-   *
-   * `setValue` before `disable`, and the disable silenced: the store learns
-   * the value from the first call, and the second has nothing new to say.
-   * What keeps it said is {@link updateStoreOnChanges} reporting the raw
-   * value — `smb` reaches `user.create` through the store, not through the
-   * form, so a disabled control that stopped reporting would quietly drop out
-   * of the request.
+   * Applies the create flow's preset to this control, once: a host binding an object literal passes a new
+   * reference every pass, and re-applying would undo the user's changes. `setValue` precedes a silenced
+   * `disable`; {@link updateStoreOnChanges} keeps reporting the raw value because `smb` reaches
+   * `user.create` through the store, and a disabled control would otherwise drop out.
    */
   private applyPreset(): void {
     let applied = false;

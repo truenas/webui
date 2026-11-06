@@ -1,18 +1,6 @@
 /**
- * E.g. given User interface:
- * {
- *  name: string;
- *   address: {
- *     line1: string;
- *   }
- * }
- *
- * PropertyPath<User> will allow
- * 'name'
- * 'address'
- * 'address.line1'
- *
- * It only supports up to 3 levels of nesting because some of our interfaces have recursion and this creates problems.
+ * Dot paths into `T`, e.g. `'name'`, `'address'`, `'address.line1'`. Limited to 3 levels because some
+ * of our interfaces are recursive.
  */
 export type PropertyPath<T, Depth extends number = 3>
   = Depth extends 0 ? never

@@ -325,15 +325,9 @@ export class SnapshotListComponent implements OnInit {
   }
 
   /**
-   * The one place `snapshots` is written, so the name index and the selection can never
-   * drift from it.
-   *
-   * The prune has to happen here rather than only in `onSelectionChange`: a snapshot
-   * selected on a page the user has since left is destroyed elsewhere and the reload
-   * lands — nothing about the VISIBLE selection changed, so there is no guarantee
-   * tn-table emits `selectionChange` for it. Dropping it where the list is rebuilt makes
-   * the invariant hold whoever emits, and keeps a batch action from being pointed at a
-   * snapshot that is gone.
+   * The only writer of `snapshots`, so the name index and selection can't drift. Pruning the selection
+   * here, not only in `onSelectionChange`, covers a selected snapshot destroyed from another page,
+   * where tn-table may not emit `selectionChange`, so batch actions never target a gone snapshot.
    */
   private setSnapshots(snapshots: ZfsSnapshot[]): void {
     this.snapshots = [...snapshots];
@@ -350,14 +344,9 @@ export class SnapshotListComponent implements OnInit {
   }
 
   /**
-   * @param options `keepPage` re-runs the same query without moving the user — see
-   * `BaseDataProvider.setFilter`. A query the user typed always starts at page 1.
-   *
-   * The dataset filter is CHOSEN before it is applied rather than applied and then undone.
-   * Applying it first and falling back on an empty result cost the user their page: the
-   * discarded pass ran with `keepPage`, so it clamped the page down against zero rows, and
-   * the real pass then started from page 1. It also put an empty page on `currentPage$`
-   * that nothing wanted to render.
+   * `keepPage` re-runs the same query without moving the user (see `BaseDataProvider.setFilter`); a typed
+   * query starts at page 1. The dataset filter is chosen before applying, not applied and undone, since a
+   * discarded `keepPage` pass would clamp the page against zero rows.
    */
   protected onListFiltered(query: string, { keepPage = false }: { keepPage?: boolean } = {}): void {
     this.searchQuery.set(query);
@@ -388,13 +377,9 @@ export class SnapshotListComponent implements OnInit {
   }
 
   /**
-   * `name` carries both the dataset and the snapshot name, so it covers the two
-   * default columns. When the extra columns are visible the search should also
-   * match what those cells show — `used`, `referenced` and `created` are
-   * display-only columns backed by nested `properties` fields, so we point
-   * `filterTableRows` at those dot-paths (resolved via lodash `get`) and format
-   * each raw value into the exact string the cell renders via the preprocessMap.
-   * The casts are nominal: the paths aren't literal `ZfsSnapshot` keys.
+   * `name` covers the two default columns. With the extra columns shown, the search also matches the
+   * `used`, `referenced` and `created` cells by pointing `filterTableRows` at their nested `properties`
+   * paths and formatting each value as the cell does. The casts are nominal.
    */
   private buildSearchFilter(query: string): TableFilter<ZfsSnapshot> {
     if (!this.showExtraColumns()) {

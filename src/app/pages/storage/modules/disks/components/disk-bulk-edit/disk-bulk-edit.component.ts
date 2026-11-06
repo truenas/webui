@@ -101,15 +101,9 @@ export class DiskBulkEditComponent extends IxFormHostForm<DiskFormResponse> impl
       request$: this.api.job('core.bulk', ['disk.update', req]).pipe(
         filter((job) => job.state === JobState.Success),
         take(1),
-        // core.bulk reports per-disk failures in its result rather than failing the job, so keep
-        // the per-disk errors alongside the entries that did apply for `onSuccess` to report.
-        // One result per request, in order — but read defensively in both places rather than
-        // trusting that and throwing mid-save if a response ever comes back short.
-        //
-        // core.bulk is not transactional: the disks that reported no error were already updated
-        // on the backend, so resolve with just those — otherwise the list keeps showing pre-edit
-        // values for disks that did change. An all-failed bulk resolves with an empty list, which
-        // still reloads, matching what the pre-migration form closed with either way.
+        // core.bulk reports per-disk failures in its result and isn't transactional, so resolve with the
+        // disks that did update (all-failed resolves empty and still reloads) and keep the errors for
+        // `onSuccess`. Results are read defensively in case a response comes back short.
         map((job) => {
           const results = job.result ?? [];
           return {

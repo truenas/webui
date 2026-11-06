@@ -377,17 +377,9 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
     event: FormSubmitEvent<ZvolFormData>,
     datasets: Dataset[],
   ): { payload: DatasetUpdate; canSubmit: boolean } {
-    // Payload mixes two sources on purpose:
-    //   - `event.changedValues` for the bulk of the keys (diff-based, so
-    //     untouched fields aren't sent).
-    //   - `this.form.controls.*` / `originalVolsize` / `originalReadonlyValue`
-    //     for the readonly/volsize interaction below, because the decision of
-    //     whether to include `volsize` depends on the *effective* readonly
-    //     value (which resolves `inherit` against the parent) and the
-    //     precision-preserved original volsize — neither of which survives
-    //     the diff cleanly.
-    // Refactors that move logic between the two must keep readonly and volsize
-    // reading from the live form, not from `changedValues`.
+    // Most keys come from `changedValues`, so untouched fields aren't sent. Readonly and volsize must read
+    // the live form and originals instead: whether to send `volsize` depends on the effective readonly
+    // value (with `inherit` resolved) and the precision-preserved original, neither of which survives the diff.
     const data: ZvolFormData = { ...event.changedValues };
 
     // Remove fields that should never be sent on edit
@@ -420,18 +412,8 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
       delete data.volsize;
     }
 
-    // Handle special_small_block_size transformation.
-    //
-    // Inherit is intentionally dropped from the payload rather than sent as
-    // 'INHERIT': the zvol UI has always stripped it on create, and the zvol
-    // update endpoint treats an omitted key as "leave inherited" on its side.
-    // If the server ever grows a distinction between "still inherit" and
-    // "no change", this branch must start sending `inherit` explicitly (as
-    // dataset-form already does) — otherwise explicit → inherit transitions
-    // would silently no-op.
-    //
-    // `in changedValues` gates on "did either paired control change" (membership
-    // = changed); the value itself comes from allValues so both halves are seen.
+    // Inherit is dropped rather than sent as 'INHERIT' (see `ZvolFormData`). Membership in `changedValues`
+    // gates on either paired control changing; the value comes from `allValues` so both halves are seen.
     if ('special_small_block_size' in event.changedValues || 'special_small_block_size_custom' in event.changedValues) {
       const transformedValue = transformSpecialSmallBlockSizeForPayload(
         event.allValues.special_small_block_size as WithInherit<OnOff>,

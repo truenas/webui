@@ -31,16 +31,10 @@ interface SedDiskState {
 }
 
 /**
- * Lets the user choose which password a SED disk is set up or unlocked with when it joins a pool,
- * for the dialogs that hand a new disk to `pool.attach` or `pool.replace`.
- *
- * Those jobs prepare a SED disk themselves, but only ever with the global SED password: they
- * initialize an uninitialized disk when the pool is all-SED, and unlock a locked one. This section
- * appears when the picked disk is in one of those states and offers an individual password
- * instead. {@link prepareDisk} applies it through `disk.setup_sed` / `disk.unlock_sed`, which
- * also store it as the disk's own password, before the host starts its job; the job then finds
- * the disk unlocked and leaves it alone. Choosing the global password changes nothing about what
- * the job already does.
+ * Lets the user pick the password a SED disk is set up or unlocked with when `pool.attach` or
+ * `pool.replace` adds it. Those jobs only ever use the global SED password, so for an individual one
+ * {@link prepareDisk} runs `disk.setup_sed` / `disk.unlock_sed` first, which also stores it as the
+ * disk's password; the job then finds the disk unlocked. Choosing the global password changes nothing.
  */
 @Component({
   selector: 'ix-sed-disk-password',
