@@ -111,6 +111,7 @@ const commentCappedPaths = [
   'src/app/modules/loader',
   'src/app/modules/master-detail-view',
   'src/app/modules/page-header',
+  'src/app/modules/pipes',
   'src/app/modules/summary',
   'src/app/modules/terminal',
   'src/app/modules/tn-table-cells',
