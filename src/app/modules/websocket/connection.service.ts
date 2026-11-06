@@ -34,18 +34,10 @@ export type TypedConnection = WebUiApiClient['connection'];
 export const silentSocketTimeoutMs = 90_000;
 
 /**
- * The app's view of the tab's one connection: the typed client's.
- *
- * The connection is the transport; this is what the UI layers over it — whether
- * it is up, whether the appliance refused us, and whether the system is being
- * taken down on purpose. The last two are UI concepts with no counterpart on the
- * connection, which is why they live here and not on it.
- *
- * Nothing here owns a socket. Reconnecting is the connection's own business;
- * `reconnect()` and `setEndpoint()` only ask it for another attempt.
- *
- * An app initializer in `main.ts` creates this at startup, so the status it
- * publishes to `WebSocketStatusService` is live before anything reads it.
+ * The UI's view of the typed client's connection: whether it's up, whether the appliance refused us,
+ * and whether the system is being taken down on purpose, which the connection itself has no notion of.
+ * It owns no socket; `reconnect()` and `setEndpoint()` only ask for another attempt. `main.ts` creates
+ * it at startup so `WebSocketStatusService` is live before anything reads it.
  */
 @Injectable({
   providedIn: 'root',

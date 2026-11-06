@@ -62,20 +62,10 @@ export type WebUiQueryEntity<M extends WebUiQueryMethod> = QueryEntity<WebUiApiD
 export type TypedQueryFilter<E> = v28_0_0.QueryFilter<E>;
 
 /**
- * The `@truenas/api-client` instance behind {@link ApiService}.
- *
- * It owns the tab's only API socket (the shell's terminal socket is separate),
- * and its session is the app's session.
- *
- * Injected as an observable because the factory is asynchronous. It resolves
- * once and replays. The socket opens as soon as the client exists
- * (`enabled: true`), and an app initializer in `main.ts` creates it at
- * startup rather than on first use.
- *
- * The version is stated as a literal *at this call site* on purpose. That is
- * how the client derives its typed surface (`ApiDirectoryV28_0_0`) from the
- * string instead of asserting it — forward it through a variable or a wrapper
- * and the surface silently widens to the oldest supported version.
+ * The `@truenas/api-client` behind {@link ApiService}: it owns the tab's only API socket, and its session
+ * is the app's. An observable because the factory is async; it resolves once and replays, and `main.ts`
+ * creates it at startup. The version must stay a literal *at this call site*: the client derives its
+ * typed surface from it, and passing it through a variable silently widens to the oldest version.
  */
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export const TYPED_API_CLIENT = new InjectionToken<Observable<WebUiApiClient>>(

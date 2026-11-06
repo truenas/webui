@@ -53,36 +53,11 @@ type D = WebUiApiDirectory;
 type ClientApi = WebUiApiClient['api'];
 
 /**
- * Fully-typed API access, backed by `@truenas/api-client`.
- *
- * Method names, params and responses come from types generated from
- * `middlewared --dump-api`, so an unknown method or a wrong param shape is a
- * compile error rather than a runtime surprise, and there is no hand-maintained
- * directory to keep in sync.
- *
- * ## Session
- *
- * There is one socket, one session and one login, and they are this client's:
- * `AuthService` drives `client.authenticator`, so the session holds the
- * credentials, the reconnect-token chain and the session's roles.
- *
- * Call sites therefore never authenticate here. Requests are held until the
- * session is authenticated, which is what a page loaded before sign-in, or one
- * caught mid-reconnect, is waiting for.
- *
- * ## Duplicate calls
- *
- * Every request verb reports itself to `DuplicateCallTrackerService` as it is
- * called, before it waits for the session, so a repeat is warned about with the
- * stack of the code that made it. Tracking at the connection instead would see
- * only the client's internals on the stack.
- *
- * ## Errors
- *
- * Every verb throws a refusal as `ApiCallError` carrying the full JSON-RPC
- * error, which `ErrorHandlerService` and form validation read. The verbs that
- * need a session also end it on `ENOTAUTHENTICATED`: a call or query then
- * completes without a value, and a job never settles (see `handleRefusal`).
+ * Fully typed API access via `@truenas/api-client`, typed from `middlewared --dump-api`. The client
+ * owns the one socket and session, which `AuthService` drives, so call sites never authenticate:
+ * requests wait for the session. Each verb reports to `DuplicateCallTrackerService` before waiting, so
+ * the warning carries the caller's stack. Refusals throw `ApiCallError` (see `handleRefusal`).
+ * See docs/devs/typed-api-client.md.
  */
 @Injectable({
   providedIn: 'root',
@@ -111,15 +86,8 @@ export class ApiService {
   }
 
   /**
-   * Send a request and emit its result.
-   *
-   * ```typescript
-   * this.typedApi.call('system.info');                 // Observable<SystemInfoResult>
-   * this.typedApi.call('alert.dismiss', ['uuid-1']);   // params required
-   * this.typedApi.call('nope.nope');                   // compile error
-   * ```
-   *
-   * Errors are thrown as `ApiCallError`; see "Errors" above.
+   * Sends a request and emits its result, e.g. `call('alert.dismiss', ['uuid-1'])`; an unknown method
+   * or wrong params fail to compile. Refusals throw `ApiCallError`.
    */
   call<M extends CallMethod<D>>(method: M, ...params: ArgsOf<CallParams<D, M>>): Observable<CallResponse<D, M>> {
     this.duplicates.trackCall(method, params[0]);
@@ -167,17 +135,9 @@ export class ApiService {
   }
 
   /**
-   * Query a collection. Typed by the entity behind the `.query` method, with
-   * `select` narrowing the rows to the picked fields.
-   *
-   * Use `satisfies` rather than an annotation when building options into a
-   * variable, or the result widens to `Partial<E>[]`.
-   *
-   * The query verbs are forwarded rather than declared, so their signatures
-   * stay the client's own instead of a copy of them to keep in step. The cast
-   * restores the client's generic signature over the forwarding arrow; the
-   * arguments and return value are exactly the client's, so nothing is widened
-   * at the call site.
+   * Queries a collection, typed by the entity behind the `.query` method, with `select` narrowing
+   * rows. Build options with `satisfies`, not an annotation, or rows widen to `Partial<E>[]`. Forwarded
+   * so the signatures stay the client's; the cast only restores its generics.
    */
   readonly query = ((
     ...args: Parameters<ClientApi['query']>
@@ -253,20 +213,10 @@ export class ApiService {
   }
 
   /**
-   * Subscribe to a collection's change events, or to an event source with its arguments.
-   *
-   * ```typescript
-   * this.typedApi.subscribe('pool.query');
-   * this.typedApi.subscribe('filesystem.file_tail_follow', { path: '/var/log/messages' });
-   * ```
-   *
-   * Held until the typed session is authenticated like every other verb:
-   * middleware refuses `core.subscribe` on an unauthenticated session, and the
-   * refusal is silent and one-shot rather than retried.
-   *
-   * The emitted union is discriminated on `msg`; narrow on it before reading
-   * `fields`, since a removal carries only an `id`. An event source completes
-   * when middleware ends it and throws `ApiCallError` when middleware rejects its arguments.
+   * Subscribes to a collection's changes (`'pool.query'`) or an event source with arguments. Held until
+   * authenticated, since middleware silently refuses `core.subscribe` without a session. Narrow on `msg`
+   * before reading `fields`: a removal carries only an `id`. An event source completes when middleware
+   * ends it and throws `ApiCallError` on bad arguments.
    */
   subscribe<E extends EventName<D>>(event: E): Observable<EventUnion<D, E>>;
   // Not unifiable: the two overloads constrain `E` differently, as the client's own `events` does.
@@ -327,17 +277,10 @@ export class ApiService {
   }
 
   /**
-   * Rethrows a refusal as `ApiCallError`, and ends the app's session when
-   * middleware refused for want of one: swallow the error, drop the session, and let the app
-   * fall back to the sign-in page, which logs straight back in when the stored
-   * token is still good.
-   *
-   * What the refused request does then is `afterSessionLost`. A call or query completes
-   * without a value. The job verbs pass `NEVER`, because a job that completes is a job
-   * that succeeded: `JobProgressDialog` and `observeJob` consumers would report success for
-   * a job that never started. Losing the session closes every dialog and leaves the page,
-   * which is what tears those subscriptions down — as the legacy client, whose jobs waited
-   * on the jobs store, also left them.
+   * Rethrows a refusal as `ApiCallError`; on a missing session, swallows it and ends the app's session
+   * so the sign-in page can log back in. The request then does `afterSessionLost`: a call completes
+   * empty, while jobs pass `NEVER` because a completed job reads as a success. Leaving the page tears
+   * those subscriptions down.
    */
   private handleRefusal<T>(afterSessionLost: Observable<never> = EMPTY): MonoTypeOperatorFunction<T> {
     return pipe(
