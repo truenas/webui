@@ -8,6 +8,8 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
   TnTestIdDirective,
 } from '@truenas/ui-components';
+import { filter } from 'rxjs';
+import { revalidateAfterRender } from 'app/helpers/revalidate-after-render.helper';
 import { isEmptyHomeDirectory } from 'app/helpers/user.helper';
 import { helptextUsers } from 'app/helptext/account/user-form';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
@@ -298,5 +300,15 @@ export class AuthSectionComponent implements OnInit {
     this.form.controls.ssh_password_enabled.valueChanges.pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((sshPasswordEnabled) => this.applySshPasswordEnabledState(sshPasswordEnabled));
+
+    // While editing, clearing the new password hides Confirm Password. Its old value would trip the
+    // match validator, and the reset still sees the template `required`, so revalidate once it is gone.
+    this.form.controls.password.valueChanges.pipe(
+      filter((password) => !password && Boolean(this.editingUser())),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.form.controls.password_confirm.reset();
+      revalidateAfterRender(this.injector, [this.form.controls.password_confirm]);
+    });
   }
 }
