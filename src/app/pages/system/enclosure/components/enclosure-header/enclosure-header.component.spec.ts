@@ -1,6 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { of } from 'rxjs';
@@ -23,8 +24,8 @@ describe('EnclosureHeaderComponent', () => {
     providers: [
       mockProvider(TnDialog),
       mockProvider(EnclosureStore, {
-        enclosureLabel: () => 'My Enclosure',
-        selectedEnclosure: () => ({
+        enclosureLabel: signal('My Enclosure'),
+        selectedEnclosure: signal({
           id: 'enclosure-id',
           name: 'M50',
           label: 'My enclosure',

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, input, model,
+  ChangeDetectionStrategy, Component, input, model, signal,
 } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
@@ -75,9 +75,9 @@ describe('MiniEnclosureComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => enclosure,
-        selectedSlot: () => null as DashboardEnclosureSlot | null,
-        poolColors: () => ({ 'pool-1': 'red', 'pool-2': 'blue' }),
+        selectedEnclosure: signal(enclosure),
+        selectedSlot: signal<DashboardEnclosureSlot | null>(null),
+        poolColors: signal({ 'pool-1': 'red', 'pool-2': 'blue' }),
         selectSlot: jest.fn(),
       }),
     ],

@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import {
   createRoutingFactory,
   mockProvider,
@@ -10,6 +11,7 @@ import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import {
   EnclosureDashboardComponent,
@@ -19,6 +21,8 @@ import { EnclosureStore } from 'app/pages/system/enclosure/services/enclosure.st
 describe('EnclosureDashboardComponent', () => {
   let spectator: SpectatorRouting<EnclosureDashboardComponent>;
   let loader: HarnessLoader;
+  const isLoading = signal(false);
+  const selectedEnclosure = signal<DashboardEnclosure | undefined>(undefined);
   const createComponent = createRoutingFactory({
     component: EnclosureDashboardComponent,
     shallow: true,
@@ -27,8 +31,8 @@ describe('EnclosureDashboardComponent', () => {
     ],
     componentProviders: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: jest.fn(),
-        isLoading: jest.fn(),
+        selectedEnclosure,
+        isLoading,
         initiate: jest.fn(),
         listenForDiskUpdates: jest.fn(() => of()),
         selectEnclosure: jest.fn(),
@@ -44,40 +48,23 @@ describe('EnclosureDashboardComponent', () => {
   });
 
   beforeEach(() => {
+    isLoading.set(false);
+    selectedEnclosure.set(undefined);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
   it('shows loading indicator when enclosures are loading', () => {
-    const enclosureStore = spectator.inject(EnclosureStore, true);
-    enclosureStore.isLoading.mockReturnValue(true);
-    enclosureStore.selectedEnclosure.mockReturnValue(undefined);
-
-    // OnPush: the store mock is a plain jest.fn, so the component has to be marked dirty.
-    spectator.detectComponentChanges();
+    isLoading.set(true);
+    spectator.detectChanges();
 
     // `tn-empty` has no loading variant, so loading renders a spinner instead.
     expect(spectator.query(TnSpinnerComponent)).toExist();
-
-    // Verify store methods are being called correctly
-    expect(enclosureStore.isLoading).toHaveBeenCalled();
-    expect(enclosureStore.selectedEnclosure).toHaveBeenCalled();
   });
 
   it('shows unavailable message when no enclosure is available after loading', async () => {
-    const enclosureStore = spectator.inject(EnclosureStore, true);
-    enclosureStore.isLoading.mockReturnValue(false);
-    enclosureStore.selectedEnclosure.mockReturnValue(undefined);
-
-    // OnPush: the store mock is a plain jest.fn, so the component has to be marked dirty.
-    spectator.detectComponentChanges();
-
     const empty = await loader.getHarness(TnEmptyHarness);
     expect(await empty.getTitle()).toBe('Enclosure Unavailable');
-
-    // Verify store methods are being called correctly
-    expect(enclosureStore.isLoading).toHaveBeenCalled();
-    expect(enclosureStore.selectedEnclosure).toHaveBeenCalled();
   });
 
   it('initializes store when component is initialized', () => {
@@ -117,8 +104,8 @@ describe('EnclosureDashboardComponent (unlicensed)', () => {
     ],
     componentProviders: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: jest.fn(),
-        isLoading: jest.fn(),
+        selectedEnclosure: signal(undefined),
+        isLoading: signal(false),
         initiate: jest.fn(),
         listenForDiskUpdates: jest.fn(() => of()),
         selectEnclosure: jest.fn(),

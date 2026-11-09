@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { EnclosureDiskStatus, EnclosureElementType, EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -47,12 +48,12 @@ describe('DisksOverviewComponent', () => {
     component: DisksOverviewComponent,
     providers: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => fakeSelectedEnclosure,
-        selectedView: () => EnclosureView.DiskStatus,
+        selectedEnclosure: signal(fakeSelectedEnclosure),
+        selectedView: signal(EnclosureView.DiskStatus),
         selectView: jest.fn(),
-        selectedEnclosureSlots: () => {
-          return Object.values(fakeSelectedEnclosure.elements[EnclosureElementType.ArrayDeviceSlot]);
-        },
+        selectedEnclosureSlots: signal(
+          Object.values(fakeSelectedEnclosure.elements[EnclosureElementType.ArrayDeviceSlot]),
+        ),
       }),
     ],
   });

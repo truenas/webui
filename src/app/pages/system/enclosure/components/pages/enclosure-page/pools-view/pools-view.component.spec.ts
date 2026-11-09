@@ -40,11 +40,11 @@ describe('PoolsViewComponent', () => {
     providers: [
       mockProvider(EnclosureStore, {
         selectedSlot,
-        selectedEnclosure: () => ({}) as DashboardEnclosure,
-        selectedEnclosureSlots: () => ([]) as DashboardEnclosureSlot[],
-        selectedSide: () => EnclosureSide.Front,
-        hasMoreThanOneSide: () => true,
-        poolColors: () => ({
+        selectedEnclosure: signal({} as DashboardEnclosure),
+        selectedEnclosureSlots: signal([] as DashboardEnclosureSlot[]),
+        selectedSide: signal(EnclosureSide.Front),
+        hasMoreThanOneSide: signal(true),
+        poolColors: signal({
           pool1: 'red',
           pool2: 'green',
         }),

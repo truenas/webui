@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
@@ -29,11 +30,11 @@ describe('StatusViewComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => ({}) as DashboardEnclosure,
-        selectedSlot: () => ({}) as DashboardEnclosureSlot,
-        selectedEnclosureSlots: () => ([]) as DashboardEnclosureSlot[],
-        selectedSide: () => EnclosureSide.Front,
-        hasMoreThanOneSide: () => true,
+        selectedEnclosure: signal({} as DashboardEnclosure),
+        selectedSlot: signal({} as DashboardEnclosureSlot),
+        selectedEnclosureSlots: signal([] as DashboardEnclosureSlot[]),
+        selectedSide: signal(EnclosureSide.Front),
+        hasMoreThanOneSide: signal(true),
       }),
     ],
   });

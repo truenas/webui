@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import {
   createRoutingFactory,
   mockProvider,
@@ -27,8 +28,8 @@ describe('ElementsComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        enclosureLabel: () => 'M40',
-        selectedEnclosure: () => ({
+        enclosureLabel: signal('M40'),
+        selectedEnclosure: signal({
           elements: {
             [EnclosureElementType.VoltageSensor]: {
               45: {

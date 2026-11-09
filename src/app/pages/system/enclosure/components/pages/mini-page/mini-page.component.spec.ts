@@ -39,14 +39,16 @@ describe('MiniPageComponent', () => {
     { dev: 'ada2', is_front: true },
   ] as DashboardEnclosureSlot[];
 
-  const selectedEnclosure = signal({
+  const selectedSlot = signal<DashboardEnclosureSlot | null>(null);
+  const miniEnclosure = {
     elements: {
       [EnclosureElementType.ArrayDeviceSlot]: {
         1: slots[0],
         2: slots[1],
       },
     } as DashboardEnclosureElements,
-  } as DashboardEnclosure);
+  } as DashboardEnclosure;
+  const selectedEnclosure = signal(miniEnclosure);
 
   const createComponent = createComponentFactory({
     component: MiniPageComponent,
@@ -66,16 +68,18 @@ describe('MiniPageComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        isLoading: jest.fn(() => false),
+        isLoading: signal(false),
         selectedEnclosure,
-        enclosureLabel: () => 'MINI-X',
-        selectedSlot: jest.fn((): DashboardEnclosureSlot | null => null),
+        enclosureLabel: signal('MINI-X'),
+        selectedSlot,
       }),
       mockProvider(Router),
     ],
   });
 
   beforeEach(() => {
+    selectedSlot.set(null);
+    selectedEnclosure.set(miniEnclosure);
     spectator = createComponent();
   });
 
@@ -109,8 +113,8 @@ describe('MiniPageComponent', () => {
 
   describe('when a slot is selected', () => {
     it('shows drive details and drive stats components', () => {
-      spectator.inject(EnclosureStore).selectedSlot.mockReturnValue(slots[0]);
-      spectator.detectComponentChanges();
+      selectedSlot.set(slots[0]);
+      spectator.detectChanges();
 
       const driveDetails = spectator.query(MiniDriveDetailsComponent);
       expect(driveDetails).toExist();
@@ -125,7 +129,7 @@ describe('MiniPageComponent', () => {
     selectedEnclosure.set({
       id: '123',
       model: EnclosureModel.M40,
-      elements: {},
+      elements: { [EnclosureElementType.ArrayDeviceSlot]: {} } as DashboardEnclosureElements,
     } as DashboardEnclosure);
     spectator.detectChanges();
 
