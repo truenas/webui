@@ -62,7 +62,7 @@ describe('EnclosurePageComponent', () => {
         selectedView,
         selectedSlot,
         isLoading,
-        enclosureLabel: () => 'M40',
+        enclosureLabel: signal('M40'),
         enclosures,
       }),
     ],

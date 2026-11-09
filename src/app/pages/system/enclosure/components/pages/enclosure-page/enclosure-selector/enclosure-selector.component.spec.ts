@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import {
   createComponentFactory,
   mockProvider,
@@ -27,8 +28,8 @@ describe('EnclosureSelectorComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => ({ id: '1' }),
-        enclosures: () => enclosures,
+        selectedEnclosure: signal({ id: '1' }),
+        enclosures: signal(enclosures),
         selectEnclosure: jest.fn(),
       }),
     ],

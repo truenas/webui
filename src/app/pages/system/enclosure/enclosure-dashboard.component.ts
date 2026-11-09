@@ -43,7 +43,7 @@ export class EnclosureDashboardComponent {
   protected readonly isLoading = this.enclosureStore.isLoading;
 
   constructor() {
-    this.enclosureStore.initiate(null);
+    this.enclosureStore.initiate();
     this.enclosureStore.listenForDiskUpdates().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
 
     this.route.paramMap
