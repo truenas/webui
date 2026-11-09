@@ -101,7 +101,6 @@ describe.each<[string, ComponentType<SpikeForm>]>([
 
   beforeEach(() => {
     api = TestBed.inject(SpikeApi);
-    Element.prototype.scrollIntoView = jest.fn();
   });
 
   const hostedForm = (): SpikeForm => fixture.debugElement.query(

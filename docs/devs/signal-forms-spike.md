@@ -115,8 +115,9 @@ This changes the epic's original order, which started with simple forms, because
 1. **Library support (NAS-145170).**
 2. **Infrastructure (NAS-145112):** a real `<ix-form>` path, a server-error service, resolver keys, a harness pattern.
 3. **Pilot (NAS-145171):** 3-5 conditional forms that already have bugs or `revalidateAfterRender`, run through the E2E
-   suite on a real appliance. Stop here if the results don't justify going on. A partial migration keeps both form
-   systems and the extra bundle cost, so decide whether that end state is acceptable.
+   suite on a real appliance. E2E doesn't start on its own for a form PR, so run `gh workflow run e2e.yml --ref <branch>`
+   on each pilot branch. Stop here if the results don't justify going on. A partial migration keeps both form systems
+   and the extra bundle cost, so decide whether that end state is acceptable.
 4. **If the pilot pays off:** use signal forms for new forms (NAS-145117), then the remaining conditional forms
    (NAS-145114), list forms with object rows (NAS-145115), and wizards one at a time (NAS-145116).
 5. **Simple forms and dialogs (NAS-145113):** only if they are being changed anyway.
