@@ -100,6 +100,21 @@ describe('TruenasConnectButtonComponent', () => {
     expect(badge?.style.background).toBe('var(--red)');
   });
 
+  it('adds the registration failure detail from status_reason to the tooltip', () => {
+    configSignal.set({
+      enabled: true,
+      status: TruenasConnectStatus.RegistrationFinalizationFailed,
+      status_reason: 'System limit exceeded',
+      tier: null,
+    } as TruenasConnectConfig);
+    spectator.detectChanges();
+
+    expect(spectator.query('tn-icon-button button')).toHaveAttribute(
+      'aria-label',
+      'Registration finalization failed\nSystem limit exceeded',
+    );
+  });
+
   it('does not show a badge for the Disabled status', () => {
     configSignal.set({
       enabled: true,
