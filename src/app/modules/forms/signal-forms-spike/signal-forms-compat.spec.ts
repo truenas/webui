@@ -64,12 +64,13 @@ function serverError(message: string, field: unknown): ValidationError.WithOptio
 class BasicControlsHostComponent {
   readonly options = [{ label: 'HTTP', value: 'http' }, { label: 'HTTPS', value: 'https' }];
   readonly locked = signal(false);
+  readonly nameOptional = signal(false);
   readonly model = signal({
     name: '', protocol: 'http', enabled: false, toggle: false,
   });
 
   readonly form = form(this.model, (path) => {
-    required(path.name);
+    required(path.name, { when: () => !this.nameOptional() });
     disabled(path.name, { when: () => this.locked() });
     disabled(path.protocol, { when: () => this.locked() });
     disabled(path.enabled, { when: () => this.locked() });
@@ -384,9 +385,15 @@ describe('signal forms against unmodified tn-* controls (NAS-145110)', () => {
       expect(await field.hasError()).toBe(false);
     });
 
-    it('still reads `required` once, so the asterisk is right at first render only', async () => {
-      const { loader } = await render(BasicControlsHostComponent);
+    it('gap: reads `required` once, so the asterisk stays when a field stops being required', async () => {
+      const { fixture, loader } = await render(BasicControlsHostComponent);
       const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
+      expect(await field.isRequired()).toBe(true);
+
+      fixture.componentInstance.nameOptional.set(true);
+      await fixture.whenStable();
+
+      expect(fixture.componentInstance.form.name().required()).toBe(false);
       expect(await field.isRequired()).toBe(true);
     });
 

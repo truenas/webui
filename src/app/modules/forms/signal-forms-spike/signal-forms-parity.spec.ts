@@ -7,7 +7,9 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnFormListHarness, TnFormListItemHarness, TnIconTesting,
   TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
-import { of, Subject, throwError } from 'rxjs';
+import {
+  defer, of, Subject, throwError,
+} from 'rxjs';
 import {
   provideTnFormFieldDismissibleErrors, provideTnFormFieldErrors,
 } from 'app/core/providers/tn-form-field-errors.provider';
@@ -438,15 +440,29 @@ describe.each<[string, ComponentType<SpikeForm>]>([
     it('blocks Save when the load fails and recovers on retry', async () => {
       const response$ = new Subject<SpikeFormValue>();
       let attempts = 0;
-      jest.spyOn(api, 'load').mockImplementation(() => {
+      // Cold like ApiService.call: retryLoad re-subscribes to the same observable rather than calling load() again.
+      jest.spyOn(api, 'load').mockReturnValue(defer(() => {
         attempts += 1;
         return attempts === 1 ? throwError(() => new Error('Load failed')) : response$;
-      });
+      }));
       await open({ isEdit: true });
 
       expect(hostedForm().hasLoadFailed()).toBe(true);
       expect(await isSaveEnabled()).toBe(false);
       expect(TestBed.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledTimes(1);
+
+      await (await loader.getHarness(TnButtonHarness.with({ label: 'Retry' }))).click();
+      expect(attempts).toBe(2);
+      expect(hostedForm().hasLoadFailed()).toBe(false);
+      expect(await isSaveEnabled()).toBe(false);
+
+      response$.next(config);
+      response$.complete();
+      await fixture.whenStable();
+
+      expect(hostedForm().hasLoadFailed()).toBe(false);
+      expect(await (await input('Name')).getValue()).toBe('stored');
+      expect(await isSaveEnabled()).toBe(true);
     });
   });
 });
