@@ -42,7 +42,7 @@ behaviour is reachable, but it mutates an Angular object, so it isn't the fix to
 |---|---|---|
 | Side-panel Save (`canSubmit`, `submit`, `isBusy`, `isSubmitting`) | Plain callables, so it fits as is | None |
 | `<ix-form>` | Works **unchanged** given an empty `FormGroup`, with validity through `[extraDisabled]` and `hasUnsavedChanges` overridden. Snackbar, loading, retry and close all keep working | A shim. It needs a real API before wide use, and `changedValues` is empty on this path |
-| `FormErrorHandlerService` | Takes a `FormGroup`, so it needs a signal equivalent | About 75 lines (`SignalServerErrors`) |
+| `FormErrorHandlerService` | Takes a `FormGroup`, so it needs a signal equivalent | About 75 lines (`SignalServerErrors`), for top-level fields only. Nested and row paths aren't covered, so the real service (NAS-145112) will be larger |
 | `ix-form-renderer` | A schema can be generated, and `visibleWhen` maps to `hidden()`. Definitions carry `ValidatorFn`s, which need adapting | Moderate. Only the schema shape was tried, not the component |
 
 Angular's own `submit()` errors are not a drop-in: they clear only when their own field changes. That brings back the
@@ -79,7 +79,7 @@ From the same form written both ways:
 
 - **Less form code:** 69 lines against 49 (-29%), not counting the shared bridge code above.
 - **Less wiring:** 7 `pipe`/`subscribe`/`toSignal`/`enable`/`disable` calls against 0. `hidden()` replaces the
-  `valueChanges` plus enable/disable pattern, and removes the need for the `revalidateAfterRender` workaround (5 files).
+  `valueChanges` plus enable/disable pattern, and removes the need for the `revalidateAfterRender` workaround (4 forms).
 - **Reactive state:** `fields().invalid()` is a signal, so zoneless forms need no `statusChanges` bridge.
 
 No user-visible behaviour improved. That is the core of the recommendation: the gain is in maintainability, and it is
