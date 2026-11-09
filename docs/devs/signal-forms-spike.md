@@ -2,17 +2,19 @@
 
 Part of epic NAS-145108. Tested on Angular 22.2.1 and `@truenas/ui-components` 0.8.17.
 
-## Recommendation: defer
+## Decision: adopt in stages, pilot first
 
-Don't start the migration stories (NAS-145112 to NAS-145117) yet. Signal forms work, and they make conditional forms
-nicer to write, but today they fix no user-visible problem and need a library release, a compiler-setting change and
-about 25 engineer-weeks across existing forms. Reactive Forms is not deprecated, so nothing forces the move.
+Signal forms work, and they make conditional forms nicer to write, but they fix no user-visible problem today. A full
+migration up front isn't justified: it needs a library release and about 25 engineer-weeks across existing forms, and
+Reactive Forms is not deprecated. The spike's first recommendation was to defer on those grounds. We decided to go ahead
+in stages instead, so the cost only grows if a pilot on real forms shows it's worth paying.
 
-- **Now:** change nothing in production. NAS-145111 (`Required<>` casts) doesn't depend on this decision and can go ahead.
-- **Revisit** when the [prerequisites](#prerequisites) are met. Then pilot on 3-5 painful conditional forms and compare
-  real bug counts and diff sizes before committing to more.
-- **Don't plan** to migrate simple forms, or to add the Reactive Forms guard (NAS-145117). The epic rules out rewrites
-  with no benefit, and a simple form gains nothing. Without those forms, a guard could never turn on.
+- **First:** ship library support (NAS-145170), then the webui infrastructure (NAS-145112).
+- **Then decide:** pilot on 3-5 painful conditional forms (NAS-145171), and compare real bug counts and diff sizes before
+  committing to more.
+- **Don't plan** a bulk migration of simple forms (NAS-145113), or a full ban on Reactive Forms. The epic rules out
+  rewrites with no benefit, and a simple form gains nothing. NAS-145117 is rescoped to cover new forms only.
+- **Independent:** NAS-145111 (`Required<>` casts) doesn't depend on any of this.
 
 ## The questions
 
@@ -96,28 +98,29 @@ concentrated in conditional forms.
 | **API still moving** | Stable since 22.0, yet `hidden(path, fn)` and `disabled(path, fn)` are already deprecated in 22.2 in favour of `{ when }` |
 | **`SignalFormControl`** | Works under `formControlName`, keeping chrome and `data-test`, but fails strict templates under `[formControl]`. It is a cheap bridge, but gains little alone since the form is still a `FormGroup` |
 
-## Prerequisites
+## Blockers and how each is handled
 
-Before any migration story starts:
+1. **`tn-*` chrome (must be fixed first):** `@truenas/ui-components` makes `tn-form-field`, `controlTestId` and error
+   dismissal work with `[formField]`, and gives `tn-form-list` a signal path (NAS-145170).
+2. **Field-targeted errors (can be contained):** a shared helper holds the cast until `strictNullChecks` is on across the
+   app (528 files are listed today, out of about 2,060) or Angular fixes the types. Cross-field rules in individual forms
+   still need a cast until then.
+3. **Frozen rows (can be contained):** clone store data into the model when loading the form. This is a rule people have
+   to remember, so forms with store-backed rows need a spec covering it.
 
-1. `@truenas/ui-components` makes `tn-form-field`, `controlTestId` and error dismissal work with `[formField]`, and gives
-   `tn-form-list` a signal path.
-2. Field-targeted errors compile without casts: `strictNullChecks` on across the app (528 files are listed today, out of
-   about 2,060), or an Angular type fix.
-3. Frozen rows have an answer: an Angular fix, or a rule to clone store data into the model.
+## Migration order
 
-## Migration order if the prerequisites are met
+This changes the epic's original order, which started with simple forms, because those give the least back.
 
-This changes the epic's order, which starts with simple forms, because those give the least back.
-
-1. **Infrastructure (NAS-145112):** a real `<ix-form>` path, a server-error service, resolver keys, a harness pattern.
-2. **New forms** where they fit, so there is no rewrite cost.
-3. **Pilot (NAS-145114):** 3-5 conditional forms that already have bugs or `revalidateAfterRender`. Stop here if the
-   results don't justify going on.
-4. **Remaining conditional forms**, only when touched for other work.
-5. **List forms with object rows (NAS-145115).**
-6. **Wizards (NAS-145116),** one at a time, because they are the largest.
-7. **Simple forms and dialogs (NAS-145113):** only if they are being changed anyway.
+1. **Library support (NAS-145170).**
+2. **Infrastructure (NAS-145112):** a real `<ix-form>` path, a server-error service, resolver keys, a harness pattern.
+3. **Pilot (NAS-145171):** 3-5 conditional forms that already have bugs or `revalidateAfterRender`, run through the E2E
+   suite on a real appliance. Stop here if the results don't justify going on. A partial migration keeps both form
+   systems and the extra bundle cost, so decide whether that end state is acceptable.
+4. **If the pilot pays off:** use signal forms for new forms (NAS-145117), then the remaining conditional forms
+   (NAS-145114), list forms with object rows (NAS-145115), and wizards one at a time (NAS-145116).
+5. **Simple forms and dialogs (NAS-145113):** only if they are being changed anyway.
+6. **`ix-dynamic-form` (NAS-145172):** evaluate separately. It may stay on Reactive Forms.
 
 ## Evidence
 
