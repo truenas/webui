@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
@@ -28,12 +29,12 @@ describe('DatasetsManagementComponent', () => {
   let router: Router;
   let location: Location;
 
-  const datasets$ = new BehaviorSubject([
+  const initialDatasets = [
     { id: 'first', name: 'First Dataset' },
     { id: 'second', name: 'Second Dataset' },
-  ] as DatasetDetails[]);
-
-  const error$ = new BehaviorSubject<unknown>(null);
+  ] as DatasetDetails[];
+  const datasets = signal(initialDatasets);
+  const error = signal<unknown>(null);
   const tierJobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
 
   const createComponent = createRoutingFactory({
@@ -57,12 +58,13 @@ describe('DatasetsManagementComponent', () => {
         mockCall('systemdataset.config', { pool: 'Second Dataset' } as CallResponse<WebUiApiDirectory, 'systemdataset.config'>),
       ]),
       mockProvider(DatasetTreeStore, {
-        datasets$,
-        error$,
-        loadDatasets: () => {},
+        datasets,
+        error,
+        loadDatasets: jest.fn(),
         refreshDatasets: jest.fn(),
-        selectedBranch$: of(false),
-        isLoading$: of(false),
+        selectedBranch: signal(null),
+        selectedDataset: signal(null),
+        isLoading: signal(false),
         selectDatasetById: () => {},
       }),
       mockSharingTierService({ jobUpdates$: tierJobUpdates$ }),
@@ -70,6 +72,8 @@ describe('DatasetsManagementComponent', () => {
   });
 
   beforeEach(() => {
+    datasets.set(initialDatasets);
+    error.set(null);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     router = spectator.inject(Router);
@@ -100,12 +104,12 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('should display error when datasets loading fails', async () => {
-    error$.next(new ApiCallError({
+    error.set(new ApiCallError({
       data: {
         reason: 'Network Error',
       },
     } as JsonRpcError));
-    datasets$.next([]);
+    datasets.set([]);
 
     spectator.detectChanges();
 
@@ -118,8 +122,8 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('should display empty state when no datasets', async () => {
-    error$.next(null);
-    datasets$.next([]);
+    error.set(null);
+    datasets.set([]);
     spectator.detectChanges();
 
     const empty = await loader.getHarness(TnEmptyHarness);
@@ -138,8 +142,8 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('filters the tree while no dataset is selected', async () => {
-    error$.next(null);
-    datasets$.next([{ id: 'first', name: 'First Dataset' }] as DatasetDetails[]);
+    error.set(null);
+    datasets.set([{ id: 'first', name: 'First Dataset' }] as DatasetDetails[]);
     spectator.detectChanges();
     const search = await loader.getHarness(BasicSearchHarness);
 
@@ -158,8 +162,8 @@ describe('DatasetsManagementComponent', () => {
     }
 
     beforeEach(() => {
-      error$.next(null);
-      datasets$.next([
+      error.set(null);
+      datasets.set([
         { id: 'pool', name: 'pool', children: [{ id: 'pool/child' }] },
         { id: 'pool/child', name: 'pool/child', children: [] },
       ] as DatasetDetails[]);

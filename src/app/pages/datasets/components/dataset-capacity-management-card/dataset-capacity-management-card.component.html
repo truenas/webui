@@ -101,20 +101,21 @@
         </div>
       }
       @if (hasInheritedQuotas()) {
+        @let inheritedDataset = inheritedQuotasDataset()!;
         <div class="details-item">
           <div class="label">{{ 'Inherited Quotas' | translate }}:</div>
           <div class="value" tnTestIdType="text" [tnTestId]="'space-management-inherited-quotas'">
             {{
               '{n} from {dataset}' | translate : {
-                n: inheritedQuotasDataset.quota.parsed | ixFileSize,
-                dataset: inheritedQuotasDataset.name
+                n: inheritedDataset.quota.parsed | ixFileSize,
+                dataset: inheritedDataset.name
               }
             }}
           </div>
           <a
             tnTestIdType="link"
-            [tnTestId]="[inheritedQuotasDataset.id, 'go-to-dataset']"
-            [routerLink]="['/', 'datasets', inheritedQuotasDataset.id]"
+            [tnTestId]="[inheritedDataset.id, 'go-to-dataset']"
+            [routerLink]="['/', 'datasets', inheritedDataset.id]"
           >
             {{ 'Go To Dataset' }}
           </a>

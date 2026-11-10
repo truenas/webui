@@ -1,4 +1,4 @@
-@if (!isLoading && dataSource.data.length === 0) {
+@if (!isLoading() && dataSource.data.length === 0) {
   <ng-container [ngTemplateOutlet]="empty"></ng-container>
 } @else {
   <div class="container">
@@ -15,7 +15,7 @@
       @if (!showMobileDetails) {
         <ix-fake-progress-bar
           class="loader-bar"
-          [loading]="!!(isLoading$ | async)"
+          [loading]="isLoading()"
         ></ix-fake-progress-bar>
       }
       <div class="item-search">
@@ -61,7 +61,7 @@
             CdkTree.ngOnDestroy to disconnect the data source, which permanently kills its
             debounced filter subscription and breaks the search after the first no-results.
           -->
-          @let noSearchResults = searchQuery() && !dataSource.filteredData.length && !isLoading;
+          @let noSearchResults = searchQuery() && !dataSource.filteredData.length && !isLoading();
 
           @if (noSearchResults) {
             <ng-container [ngTemplateOutlet]="empty"></ng-container>
@@ -114,7 +114,7 @@
       </div>
     </div>
 
-    @let dataset = selectedDataset$ | async;
+    @let dataset = selectedDataset();
     @let showDetails = !searchQuery() || dataset?.name.toLowerCase().includes(searchQuery().toLowerCase());
 
     @if (dataset && showDetails) {
@@ -126,7 +126,7 @@
         @if (showMobileDetails) {
           <ix-fake-progress-bar
             class="loader-bar"
-            [loading]="!!(isLoading$ | async)"
+            [loading]="isLoading()"
           ></ix-fake-progress-bar>
         }
         <ix-dataset-details-panel

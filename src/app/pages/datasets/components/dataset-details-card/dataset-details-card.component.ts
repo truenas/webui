@@ -6,7 +6,7 @@ import {
   TnTooltipDirective, TnDialog, TnCardComponent, TnButtonComponent, TnCardFooterActionsDirective,
   TnTestIdDirective, type TnCardAction, type TnMenuItem,
 } from '@truenas/ui-components';
-import { filter, first, switchMap } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
@@ -130,15 +130,11 @@ export class DatasetDetailsCardComponent {
   private deleteDataset(): void {
     this.tnDialog.open(DeleteDatasetDialog, { data: this.dataset() })
       .closed
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          this.datasetStore.datasetUpdated();
-          return this.datasetStore.selectedParentDataset$.pipe(first());
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((parent) => {
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        // Read before reloading: the store reports no parent while a load is in flight.
+        const parent = this.datasetStore.selectedParentDataset();
+        this.datasetStore.datasetUpdated();
         this.router.navigate(['/datasets', parent?.id]);
       });
   }

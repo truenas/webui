@@ -1,112 +1,117 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { firstValueFrom } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
-import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
+import { NEVER, of, Subject, throwError } from 'rxjs';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import {
-  DatasetTreeState,
-  DatasetTreeStore,
-} from 'app/pages/datasets/store/dataset-store.service';
+import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 
 describe('DatasetTreeStore', () => {
   let spectator: SpectatorService<DatasetTreeStore>;
-  let testScheduler: TestScheduler;
-  const datasets = [{ id: 'parent' }, { id: 'parent/child' }] as Dataset[];
+  let api: ApiService;
+  const datasets = [{ id: 'parent' }, { id: 'parent/child' }] as DatasetDetails[];
+  const tree = [
+    {
+      id: 'parent1',
+      children: [
+        { id: 'parent1/child1' },
+        {
+          id: 'parent1/child2',
+          children: [{ id: 'parent1/child2/child1' }],
+        },
+      ],
+    },
+  ] as DatasetDetails[];
+
   const createService = createServiceFactory({
     service: DatasetTreeStore,
     providers: [mockProvider(ApiService)],
   });
 
+  /** Each call to `pool.dataset.details` gets the next subject, answered by the test. */
+  function mockAnswers(count: number): Subject<DatasetDetails[]>[] {
+    const answers = Array.from({ length: count }, () => new Subject<DatasetDetails[]>());
+    const mock = jest.spyOn(api, 'call');
+    answers.forEach((answer$) => mock.mockReturnValueOnce(answer$));
+    return answers;
+  }
+
+  function respond(answer$: Subject<DatasetDetails[]>, value: DatasetDetails[]): void {
+    answer$.next(value);
+    answer$.complete();
+  }
+
   beforeEach(() => {
     spectator = createService();
-    testScheduler = getTestScheduler();
+    api = spectator.inject(ApiService);
   });
 
   it('loads datasets and sets loading indicators when loadDatasets is called', () => {
-    testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(ApiService);
-      jest
-        .spyOn(mockedApi, 'call')
-        .mockReturnValue(cold('-b|', { b: datasets }));
+    const [load$] = mockAnswers(1);
 
-      spectator.service.loadDatasets();
+    spectator.service.loadDatasets();
 
-      expect(mockedApi.call).toHaveBeenCalledWith('pool.dataset.details');
-      expectObservable(spectator.service.state$).toBe('ab', {
-        a: {
-          error: null,
-          isLoading: true,
-          selectedDatasetId: null,
-          datasets: [],
-        },
-        b: {
-          error: null,
-          isLoading: false,
-          selectedDatasetId: null,
-          datasets,
-        },
-      });
-    });
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.details');
+    expect(spectator.service.isLoading()).toBe(true);
+    expect(spectator.service.datasets()).toEqual([]);
+
+    respond(load$, datasets);
+
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.error()).toBeNull();
+    expect(spectator.service.datasets()).toEqual(datasets);
+  });
+
+  it('records the error when a load fails', () => {
+    const error = new Error('Network Error');
+    jest.spyOn(api, 'call').mockReturnValue(throwError(() => error));
+
+    spectator.service.loadDatasets();
+
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.error()).toBe(error);
   });
 
   describe('refreshDatasets', () => {
     it('replaces the datasets without entering the loading state', () => {
-      testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
-        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-b|', { b: datasets }));
+      const [refresh$] = mockAnswers(1);
 
-        spectator.service.refreshDatasets();
+      spectator.service.refreshDatasets();
 
-        expect(mockedApi.call).toHaveBeenCalledWith('pool.dataset.details');
-        expectObservable(spectator.service.state$).toBe('ab', {
-          a: {
-            error: null, isLoading: false, selectedDatasetId: null, datasets: [],
-          },
-          b: {
-            error: null, isLoading: false, selectedDatasetId: null, datasets,
-          },
-        });
-      });
+      expect(api.call).toHaveBeenCalledWith('pool.dataset.details');
+      expect(spectator.service.isLoading()).toBe(false);
+
+      respond(refresh$, datasets);
+
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.datasets()).toEqual(datasets);
     });
 
     it('keeps the datasets already shown when the refresh fails', () => {
-      testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
-        const shown = [{ id: 'parent' }] as DatasetDetails[];
-        spectator.service.patchState({ datasets: shown });
-        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, new Error('Network Error')));
+      const shown = [{ id: 'parent' }] as DatasetDetails[];
+      jest.spyOn(api, 'call')
+        .mockReturnValueOnce(of(shown))
+        .mockReturnValueOnce(throwError(() => new Error('Network Error')));
+      spectator.service.loadDatasets();
 
-        spectator.service.refreshDatasets();
+      spectator.service.refreshDatasets();
 
-        expectObservable(spectator.service.state$).toBe('a', {
-          a: {
-            error: null, isLoading: false, selectedDatasetId: null, datasets: shown,
-          },
-        });
-      });
+      expect(spectator.service.datasets()).toEqual(shown);
+      expect(spectator.service.error()).toBeNull();
     });
   });
 
   it('clears a load error once a later refresh succeeds', () => {
-    testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(ApiService);
-      const loadError = new Error('Network Error');
-      jest.spyOn(mockedApi, 'call')
-        .mockReturnValueOnce(cold('-#', {}, loadError))
-        .mockReturnValueOnce(cold('---r|', { r: datasets }));
+    const loadError = new Error('Network Error');
+    jest.spyOn(api, 'call')
+      .mockReturnValueOnce(throwError(() => loadError))
+      .mockReturnValueOnce(of(datasets));
 
-      spectator.service.loadDatasets();
-      // Subscribed a frame after the load fails, i.e. while its error is latched.
-      cold('--t').subscribe(() => spectator.service.refreshDatasets());
+    spectator.service.loadDatasets();
+    expect(spectator.service.error()).toBe(loadError);
 
-      expectObservable(spectator.service.select((state) => state.error)).toBe('ab---c', {
-        a: null,
-        b: loadError,
-        c: null,
-      });
-    });
+    spectator.service.refreshDatasets();
+    expect(spectator.service.error()).toBeNull();
+    expect(spectator.service.datasets()).toEqual(datasets);
   });
 
   describe('when a load and a refresh overlap', () => {
@@ -114,237 +119,147 @@ describe('DatasetTreeStore', () => {
     const after = [{ id: 'after' }] as DatasetDetails[];
 
     it('lets a later load cancel an in-flight refresh, so an older answer cannot land last', () => {
-      testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
-        jest.spyOn(mockedApi, 'call')
-          .mockReturnValueOnce(cold('----r|', { r: before }))
-          .mockReturnValueOnce(cold('-l|', { l: after }));
+      const [refresh$, load$] = mockAnswers(2);
 
-        spectator.service.refreshDatasets();
-        spectator.service.loadDatasets();
+      spectator.service.refreshDatasets();
+      spectator.service.loadDatasets();
+      respond(load$, after);
+      respond(refresh$, before);
 
-        expectObservable(spectator.service.select((state) => state.datasets)).toBe('ab', { a: [], b: after });
-      });
+      expect(spectator.service.datasets()).toEqual(after);
     });
 
     it('does not let a refresh cancel a load in flight; it runs once the load has answered', () => {
-      testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
-        jest.spyOn(mockedApi, 'call')
-          .mockReturnValueOnce(cold('----l|', { l: before }))
-          .mockReturnValueOnce(cold('-r|', { r: after }));
+      const [load$, refresh$] = mockAnswers(2);
 
-        spectator.service.loadDatasets();
-        spectator.service.refreshDatasets();
+      spectator.service.loadDatasets();
+      spectator.service.refreshDatasets();
+      expect(api.call).toHaveBeenCalledTimes(1);
+      expect(spectator.service.isLoading()).toBe(true);
 
-        expectObservable(spectator.service.state$).toBe('a---bc', {
-          a: {
-            error: null, isLoading: true, selectedDatasetId: null, datasets: [],
-          },
-          b: {
-            error: null, isLoading: false, selectedDatasetId: null, datasets: before,
-          },
-          c: {
-            error: null, isLoading: false, selectedDatasetId: null, datasets: after,
-          },
-        });
-      });
+      respond(load$, before);
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.datasets()).toEqual(before);
+      expect(api.call).toHaveBeenCalledTimes(2);
+
+      respond(refresh$, after);
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.datasets()).toEqual(after);
     });
 
     it('runs a single follow-up however many refreshes arrive during a fetch', () => {
-      testScheduler.run(({ cold, flush }) => {
-        const mockedApi = spectator.inject(ApiService);
-        jest.spyOn(mockedApi, 'call').mockReturnValue(cold('----r|', { r: after }));
+      const [first$, followUp$] = mockAnswers(2);
 
-        spectator.service.refreshDatasets();
-        spectator.service.refreshDatasets();
-        spectator.service.refreshDatasets();
-        spectator.service.refreshDatasets();
-        flush();
+      spectator.service.refreshDatasets();
+      spectator.service.refreshDatasets();
+      spectator.service.refreshDatasets();
+      spectator.service.refreshDatasets();
+      respond(first$, after);
+      respond(followUp$, after);
 
-        // The first, and one more for everything that queued behind it.
-        expect(mockedApi.call).toHaveBeenCalledTimes(2);
-      });
+      // The first, and one more for everything that queued behind it.
+      expect(api.call).toHaveBeenCalledTimes(2);
     });
 
     it('still runs a refresh queued behind a fetch that a load then replaces', () => {
-      testScheduler.run(({ cold, expectObservable }) => {
-        const mockedApi = spectator.inject(ApiService);
-        jest.spyOn(mockedApi, 'call')
-          .mockReturnValueOnce(cold('------x|', { x: [] }))
-          .mockReturnValueOnce(cold('--l|', { l: before }))
-          .mockReturnValueOnce(cold('-r|', { r: after }));
+      const [, secondLoad$, refresh$] = mockAnswers(3);
 
-        spectator.service.loadDatasets();
-        spectator.service.refreshDatasets();
-        spectator.service.loadDatasets();
+      spectator.service.loadDatasets();
+      spectator.service.refreshDatasets();
+      spectator.service.loadDatasets();
 
-        expectObservable(spectator.service.select((state) => state.datasets)).toBe('a-bc', {
-          a: [],
-          b: before,
-          c: after,
-        });
-      });
+      respond(secondLoad$, before);
+      expect(spectator.service.datasets()).toEqual(before);
+
+      respond(refresh$, after);
+      expect(spectator.service.datasets()).toEqual(after);
     });
 
     it('recovers on the next load from a fetch that is never answered', () => {
-      testScheduler.run(({ cold, flush }) => {
-        const mockedApi = spectator.inject(ApiService);
-        jest.spyOn(mockedApi, 'call')
-          .mockReturnValueOnce(cold('-'))
-          .mockReturnValue(cold('-r|', { r: after }));
+      jest.spyOn(api, 'call')
+        .mockReturnValueOnce(NEVER)
+        .mockReturnValue(of(after));
 
-        spectator.service.refreshDatasets();
-        spectator.service.refreshDatasets();
-        spectator.service.loadDatasets();
-        flush();
-        // The load, and the refresh that had queued behind the fetch it replaced.
-        expect(mockedApi.call).toHaveBeenCalledTimes(3);
+      spectator.service.refreshDatasets();
+      spectator.service.refreshDatasets();
+      spectator.service.loadDatasets();
+      // The load, and the refresh that had queued behind the fetch it replaced.
+      expect(api.call).toHaveBeenCalledTimes(3);
 
-        spectator.service.refreshDatasets();
-        flush();
-        expect(mockedApi.call).toHaveBeenCalledTimes(4);
-      });
+      spectator.service.refreshDatasets();
+      expect(api.call).toHaveBeenCalledTimes(4);
     });
   });
 
   it('reports a failed refresh when there are no datasets on screen to keep', () => {
-    testScheduler.run(({ cold, expectObservable }) => {
-      const mockedApi = spectator.inject(ApiService);
-      const refreshError = new Error('Network Error');
-      jest.spyOn(mockedApi, 'call').mockReturnValue(cold('-#', {}, refreshError));
+    const refreshError = new Error('Network Error');
+    jest.spyOn(api, 'call').mockReturnValue(throwError(() => refreshError));
 
-      spectator.service.refreshDatasets();
+    spectator.service.refreshDatasets();
 
-      expectObservable(spectator.service.select((state) => state.error)).toBe('ab', {
-        a: null,
-        b: refreshError,
-      });
-    });
+    expect(spectator.service.error()).toBe(refreshError);
   });
 
-  describe('selectDatasetById', () => {
-    it('updates selectedDatasetId in state', () => {
-      testScheduler.run(({ expectObservable }) => {
-        spectator.service.selectDatasetById('parent/child');
-        expectObservable(spectator.service.state$).toBe('a', {
-          a: {
-            error: null,
-            isLoading: false,
-            selectedDatasetId: 'parent/child',
-            datasets: [],
-          },
-        });
-      });
-    });
+  it('resetDatasets clears the datasets and the selection', () => {
+    jest.spyOn(api, 'call').mockReturnValue(of(tree));
+    spectator.service.loadDatasets();
+    spectator.service.selectDatasetById('parent1/child1');
+
+    spectator.service.resetDatasets();
+
+    expect(spectator.service.datasets()).toEqual([]);
+    expect(spectator.service.selectedBranch()).toBeNull();
+    expect(spectator.service.isLoading()).toBe(false);
   });
 
-  describe('selectedBranch$', () => {
-    it('returns an array of datasets going from parent to child matching selected id', async () => {
-      spectator.service.setState({
-        datasets: [
-          {
-            id: 'parent1',
-            children: [
-              { id: 'parent1/child1' },
-              {
-                id: 'parent1/child2',
-                children: [{ id: 'parent1/child2/child1' }],
-              },
-            ],
-          },
-        ] as DatasetDetails[],
-        selectedDatasetId: 'parent1/child2/child1',
-      } as DatasetTreeState);
+  it('datasetUpdated reloads the datasets', () => {
+    jest.spyOn(api, 'call').mockReturnValue(of(datasets));
 
-      const selectedBranch = await firstValueFrom(
-        spectator.service.selectedBranch$,
-      );
-      expect(selectedBranch).toEqual([
+    spectator.service.datasetUpdated();
+
+    expect(api.call).toHaveBeenCalledWith('pool.dataset.details');
+    expect(spectator.service.datasets()).toEqual(datasets);
+  });
+
+  describe('selection', () => {
+    beforeEach(() => {
+      jest.spyOn(api, 'call').mockReturnValue(of(tree));
+      spectator.service.loadDatasets();
+    });
+
+    it('selectedBranch returns the datasets going from parent to child matching selected id', () => {
+      spectator.service.selectDatasetById('parent1/child2/child1');
+
+      expect(spectator.service.selectedBranch()).toEqual([
         expect.objectContaining({ id: 'parent1' }),
         expect.objectContaining({ id: 'parent1/child2' }),
         expect.objectContaining({ id: 'parent1/child2/child1' }),
       ]);
     });
-  });
 
-  describe('selectedDataset$', () => {
-    it('returns null when isLoading is true to prevent stale data', async () => {
-      spectator.service.setState({
-        datasets: [
-          {
-            id: 'parent1',
-            children: [{ id: 'parent1/child1' }],
-          },
-        ] as DatasetDetails[],
-        selectedDatasetId: 'parent1/child1',
-        isLoading: true,
-      } as DatasetTreeState);
+    it('selectedBranch is null for an id that is not in the tree', () => {
+      spectator.service.selectDatasetById('missing');
 
-      const selectedDataset = await firstValueFrom(
-        spectator.service.selectedDataset$,
-      );
-      expect(selectedDataset).toBeNull();
+      expect(spectator.service.selectedBranch()).toBeNull();
+      expect(spectator.service.selectedDataset()).toBeNull();
     });
 
-    it('returns the selected dataset when isLoading is false', async () => {
-      spectator.service.setState({
-        datasets: [
-          {
-            id: 'parent1',
-            children: [{ id: 'parent1/child1' }],
-          },
-        ] as DatasetDetails[],
-        selectedDatasetId: 'parent1/child1',
-        isLoading: false,
-      } as DatasetTreeState);
+    it('returns the selected dataset and its parent when not loading', () => {
+      spectator.service.selectDatasetById('parent1/child1');
 
-      const selectedDataset = await firstValueFrom(
-        spectator.service.selectedDataset$,
-      );
-      expect(selectedDataset).toEqual(
-        expect.objectContaining({ id: 'parent1/child1' }),
-      );
-    });
-  });
-
-  describe('selectedParentDataset$', () => {
-    it('returns null when isLoading is true to prevent stale data', async () => {
-      spectator.service.setState({
-        datasets: [
-          {
-            id: 'parent1',
-            children: [{ id: 'parent1/child1' }],
-          },
-        ] as DatasetDetails[],
-        selectedDatasetId: 'parent1/child1',
-        isLoading: true,
-      } as DatasetTreeState);
-
-      const selectedParentDataset = await firstValueFrom(
-        spectator.service.selectedParentDataset$,
-      );
-      expect(selectedParentDataset).toBeNull();
+      expect(spectator.service.selectedDataset()).toEqual(expect.objectContaining({ id: 'parent1/child1' }));
+      expect(spectator.service.selectedParentDataset()).toEqual(expect.objectContaining({ id: 'parent1' }));
     });
 
-    it('returns the parent dataset when isLoading is false', async () => {
-      spectator.service.setState({
-        datasets: [
-          {
-            id: 'parent1',
-            children: [{ id: 'parent1/child1' }],
-          },
-        ] as DatasetDetails[],
-        selectedDatasetId: 'parent1/child1',
-        isLoading: false,
-      } as DatasetTreeState);
+    it('returns null for the selected dataset and its parent while loading, to prevent stale data', () => {
+      spectator.service.selectDatasetById('parent1/child1');
+      jest.spyOn(api, 'call').mockReturnValue(NEVER);
 
-      const selectedParentDataset = await firstValueFrom(
-        spectator.service.selectedParentDataset$,
-      );
-      expect(selectedParentDataset).toEqual(
-        expect.objectContaining({ id: 'parent1' }),
-      );
+      spectator.service.loadDatasets();
+
+      expect(spectator.service.selectedDataset()).toBeNull();
+      expect(spectator.service.selectedParentDataset()).toBeNull();
+      expect(spectator.service.selectedBranch()).toHaveLength(2);
     });
   });
 });
