@@ -5,7 +5,7 @@
     </h3>
 
     @if (!hasPendingInterfaceChanges()) {
-      <ix-add-nic-menu [defaultBridge]="defaultBridge()"></ix-add-nic-menu>
+      <ix-add-nic-menu></ix-add-nic-menu>
     }
   </mat-card-header>
 
@@ -19,16 +19,6 @@
     @if (isLoadingDevices()) {
       <ngx-skeleton-loader></ngx-skeleton-loader>
     } @else {
-      @if (showDefaultBridge()) {
-        <div
-          class="device default-device"
-          [matTooltip]="'Default network interface, always active' | translate"
-        >
-          <span class="device-description">
-            {{ defaultBridge() }} ({{ 'Default' | translate }})
-          </span>
-        </div>
-      }
       @for (device of shownDevices(); track device.id) {
         <div class="device">
           <span class="device-description">{{ getDeviceDescription(device) }}</span>
@@ -43,9 +33,30 @@
           }
         </div>
       } @empty {
-        @if (!showDefaultBridge()) {
-          <div class="no-devices">{{ 'No NIC devices added.' | translate }}</div>
-        }
+        <div class="no-network">
+          <p class="no-network-title" ixTest="no-network">
+            {{ helptext.network.noNicTitle | translate }}
+          </p>
+          <p class="no-network-message">{{ helptext.network.noNicMessage | translate }}</p>
+
+          @if (!hasPendingInterfaceChanges()) {
+            <span
+              *ixRequiresRoles="requiredRoles"
+              [matTooltip]="isContainerActive() ? (helptext.deviceRequiresStoppedTooltip | translate) : ''"
+              [matTooltipDisabled]="!isContainerActive()"
+            >
+              <button
+                mat-stroked-button
+                type="button"
+                ixTest="add-default-nic"
+                [disabled]="isContainerActive()"
+                (click)="addDefaultNic()"
+              >
+                {{ helptext.network.addDefaultNicLabel | translate: { bridge: defaultBridge() } }}
+              </button>
+            </span>
+          }
+        </div>
       }
     }
   </mat-card-content>

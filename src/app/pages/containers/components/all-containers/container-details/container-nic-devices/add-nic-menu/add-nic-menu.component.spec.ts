@@ -55,7 +55,7 @@ describe('AddNicMenuComponent', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({ props: { defaultBridge: null } });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -130,7 +130,7 @@ describe('AddNicMenuComponent', () => {
   });
 });
 
-describe('AddNicMenuComponent - Default Bridge Filtering', () => {
+describe('AddNicMenuComponent - Default Bridge', () => {
   let spectator: Spectator<AddNicMenuComponent>;
   let loader: HarnessLoader;
 
@@ -158,18 +158,19 @@ describe('AddNicMenuComponent - Default Bridge Filtering', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({ props: { defaultBridge: 'truenasbr0' } });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('excludes default bridge from available choices when no NICs are explicitly configured', async () => {
+  // Middleware no longer adds a hidden NIC on the default bridge, so the bridge is a normal choice.
+  it('offers the default bridge like any other bridge', async () => {
     const menu = await loader.getHarness(MatMenuHarness.with({ triggerText: 'Add' }));
     await menu.open();
 
     const menuItems = await menu.getItems();
     const itemTexts = await Promise.all(menuItems.map((item) => item.getText()));
 
-    expect(itemTexts).not.toContain('truenasbr0');
+    expect(itemTexts).toContain('truenasbr0');
     expect(itemTexts).toContain('ens1');
   });
 });
@@ -198,7 +199,7 @@ describe('AddNicMenuComponent - No NICs Available', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({ props: { defaultBridge: null } });
+    spectator = createComponent();
   });
 
   it('shows "No NIC devices available" when there are no NICs to add', () => {
@@ -234,7 +235,7 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
   });
 
   beforeEach(() => {
-    spectator = createComponent({ props: { defaultBridge: null } });
+    spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 

@@ -56,6 +56,13 @@
           ></ix-select>
         }
 
+        @if (!isEditMode()) {
+          <ix-checkbox
+            formControlName="add_nic"
+            [label]="helptext.network.addNicLabel | translate"
+            [tooltip]="helptext.network.addNicTooltip | translate: { bridge: defaultBridge() }"
+          ></ix-checkbox>
+        }
       </ix-fieldset>
 
       @if (isAdvancedMode) {
