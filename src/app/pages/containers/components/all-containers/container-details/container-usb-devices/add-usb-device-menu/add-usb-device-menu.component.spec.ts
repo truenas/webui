@@ -74,15 +74,15 @@ describe('AddUsbDeviceMenuComponent', () => {
           selectedContainer,
         }),
         mockProvider(ContainerDevicesStore, {
-          devices: () => [
+          devices: signal([
             {
               dtype: ContainerDeviceType.Usb,
               usb: null,
               device: 'usb_1_1',
             } as ContainerDevice,
-          ] as ContainerDevice[],
+          ] as ContainerDevice[]),
           loadDevices: jest.fn(),
-          isLoading: () => false,
+          isLoading: signal(false),
         }),
         mockProvider(SnackbarService),
       ],
@@ -154,7 +154,7 @@ describe('AddUsbDeviceMenuComponent', () => {
           selectedContainer,
         }),
         mockProvider(ContainerDevicesStore, {
-          devices: () => [
+          devices: signal([
             {
               dtype: ContainerDeviceType.Usb,
               usb: {
@@ -163,8 +163,8 @@ describe('AddUsbDeviceMenuComponent', () => {
               },
               device: null,
             } as ContainerDevice,
-          ] as ContainerDevice[],
-          isLoading: () => false,
+          ] as ContainerDevice[]),
+          isLoading: signal(false),
         }),
         mockProvider(SnackbarService),
       ],
@@ -205,11 +205,11 @@ describe('AddUsbDeviceMenuComponent', () => {
             }),
           ]),
           mockProvider(ContainersStore, {
-            selectedContainer: () => ({ id: 123, status: { state } }),
+            selectedContainer: signal({ id: 123, status: { state } }),
           }),
           mockProvider(ContainerDevicesStore, {
-            devices: () => [] as ContainerDevice[],
-            isLoading: () => false,
+            devices: signal([] as ContainerDevice[]),
+            isLoading: signal(false),
           }),
           mockProvider(SnackbarService),
         ],
@@ -240,8 +240,8 @@ describe('AddUsbDeviceMenuComponent', () => {
           selectedContainer,
         }),
         mockProvider(ContainerDevicesStore, {
-          devices: () => [] as ContainerDevice[],
-          isLoading: () => false,
+          devices: signal([] as ContainerDevice[]),
+          isLoading: signal(false),
         }),
         mockProvider(SnackbarService),
       ],

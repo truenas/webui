@@ -46,7 +46,7 @@ describe('ContainerListComponent', () => {
   const defaultSort = { active: ContainerSortField.Name, direction: SortDirection.Asc };
   // Mirrors the real store contract: `sort()` reflects the last `setSort()`. The component's
   // cleared-sort fallback reads it, so a static mock would hide regressions there.
-  let currentSort = defaultSort;
+  const currentSort = signal(defaultSort);
 
   const metrics: Record<number, ContainerStats> = {
     1: {
@@ -63,15 +63,13 @@ describe('ContainerListComponent', () => {
       mockAuth(),
       mockProvider(ContainersStore, {
         containers: containersSignal,
-        metrics: jest.fn(() => metrics),
-        isLoading: jest.fn(() => false),
-        selectedContainer: jest.fn(() => runningContainer),
+        metrics: signal(metrics),
+        isLoading: signal(false),
+        selectedContainer: signal(runningContainer),
         selectContainer: jest.fn(),
         reload: jest.fn(),
-        sort: jest.fn(() => currentSort),
-        setSort: jest.fn((sort: typeof defaultSort) => {
-          currentSort = sort;
-        }),
+        sort: currentSort,
+        setSort: jest.fn((sort: typeof defaultSort) => currentSort.set(sort)),
       }),
       mockProvider(Router, { events: of() }),
       mockProvider(LayoutService, {
@@ -102,7 +100,7 @@ describe('ContainerListComponent', () => {
 
   beforeEach(() => {
     containersSignal.set([runningContainer]);
-    currentSort = defaultSort;
+    currentSort.set(defaultSort);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

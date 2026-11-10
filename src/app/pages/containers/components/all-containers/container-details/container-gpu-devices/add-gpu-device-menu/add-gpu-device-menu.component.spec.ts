@@ -52,17 +52,17 @@ describe('AddGpuDeviceMenuComponent', () => {
           selectedContainer,
         }),
         mockProvider(ContainerDevicesStore, {
-          devices: () => [
+          devices: signal([
             {
               dtype: ContainerDeviceType.Gpu,
               gpu_type: containerGpuType.Nvidia,
               pci_address: '0000:19:00.0',
             } as ContainerDevice,
-          ] as ContainerDevice[],
-          gpuChoices: () => gpuChoices,
-          isLoadingGpuChoices: () => false,
+          ] as ContainerDevice[]),
+          gpuChoices: signal(gpuChoices),
+          isLoadingGpuChoices: signal(false),
           reload: jest.fn(),
-          isLoading: () => false,
+          isLoading: signal(false),
         }),
         mockProvider(SnackbarService),
       ],
@@ -124,10 +124,10 @@ describe('AddGpuDeviceMenuComponent', () => {
           selectedContainer,
         }),
         mockProvider(ContainerDevicesStore, {
-          devices: () => [] as ContainerDevice[],
-          gpuChoices: () => ({}),
-          isLoadingGpuChoices: () => false,
-          isLoading: () => false,
+          devices: signal([] as ContainerDevice[]),
+          gpuChoices: signal({}),
+          isLoadingGpuChoices: signal(false),
+          isLoading: signal(false),
         }),
         mockProvider(SnackbarService),
       ],

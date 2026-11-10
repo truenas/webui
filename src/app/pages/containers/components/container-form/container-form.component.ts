@@ -1,8 +1,8 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, OnInit, signal, inject, input, untracked,
 } from '@angular/core';
-import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray,
   NonNullableFormBuilder,
@@ -27,7 +27,7 @@ import {
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
-  catchError, filter, forkJoin, map, Observable, of, shareReplay, switchMap, take, tap,
+  catchError, filter, forkJoin, map, Observable, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { slashRootNode } from 'app/constants/basic-root-nodes.constant';
 import {
@@ -185,7 +185,19 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
   /** The bridge `add_nic` attaches the new container's NIC to. */
   protected readonly defaultBridge = computed(() => getDefaultNicBridge(this.containerConfigStore.config()));
 
-  private config$ = toObservable(this.containerConfigStore.config);
+  /**
+   * Once the global config loads, require a pool unless a preferred one is set. Runs once and only
+   * for Add: the per-component config store starts empty, so this cannot fire before `ngOnInit`
+   * has decided whether the form is editing.
+   */
+  private readonly setupValidatorsOnConfig = effect(() => {
+    const config = this.containerConfigStore.config();
+    if (config === null || this.isEditMode() || this.hasSetupValidators) {
+      return;
+    }
+    this.hasSetupValidators = true;
+    untracked(() => this.setupValidatorsForCreation());
+  });
 
   protected readonly helptext = containersHelptext;
 
@@ -250,15 +262,6 @@ export class ContainerFormComponent extends IxFormHostForm implements OnInit {
     this.editingContainer = this.editContainer() ?? null;
 
     this.containerConfigStore.initialize();
-
-    this.config$.pipe(
-      filter((config) => config !== null && !this.isEditMode() && !this.hasSetupValidators),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.hasSetupValidators = true;
-      this.setupValidatorsForCreation();
-    });
 
     if (!this.editingContainer) {
       this.setupForCreation();

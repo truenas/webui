@@ -1,7 +1,7 @@
 import { Router, NavigationEnd } from '@angular/router';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
 import { CollectionChangeType } from 'app/enums/api.enum';
 import { ContainerStatus } from 'app/enums/container.enum';
 import { Container, ContainerMetrics } from 'app/interfaces/container.interface';
@@ -9,6 +9,7 @@ import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ContainerSortField, ContainersStore } from 'app/pages/containers/stores/containers.store';
 import { fakeContainer } from 'app/pages/containers/utils/fake-container.utils';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ContainersStore', () => {
   let spectator: SpectatorService<ContainersStore>;
@@ -40,6 +41,7 @@ describe('ContainersStore', () => {
         url: '/containers/view/instance1',
         navigate: jest.fn(),
       }),
+      mockProvider(ErrorHandlerService),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
       }),
@@ -48,17 +50,17 @@ describe('ContainersStore', () => {
 
   beforeEach(() => {
     spectator = createService();
+    // The stub is shared by every test, so undo answers a previous test swapped in.
+    jest.mocked(spectator.inject(ApiService).query).mockReturnValue(of(containers));
   });
 
   it('should have initial state', () => {
-    expect(spectator.service.state()).toEqual({
-      isLoading: false,
-      selectedContainer: undefined,
-      selectedContainerId: null,
-      containers: undefined,
-      metrics: {},
-      sort: defaultSort,
-    });
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.selectedContainer()).toBeUndefined();
+    expect(spectator.service.selectedContainerId()).toBeNull();
+    expect(spectator.service.containers()).toEqual([]);
+    expect(spectator.service.metrics()).toEqual({});
+    expect(spectator.service.sort()).toEqual(defaultSort);
     expect(spectator.service.hasLoaded()).toBe(false);
   });
 
@@ -66,21 +68,38 @@ describe('ContainersStore', () => {
     spectator.service.initialize();
 
     expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('container.query');
-    expect(spectator.service.state()).toEqual({
-      containers,
-      selectedContainer: undefined,
-      selectedContainerId: null,
-      isLoading: false,
-      metrics: {},
-      sort: defaultSort,
-    });
+    expect(spectator.service.containers()).toEqual(containers);
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.selectedContainer()).toBeUndefined();
+  });
+
+  it('navigates to the first container when nothing is selected', () => {
+    spectator.service.initialize();
+
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/containers', 'view', 1]);
   });
 
   it('should not make duplicate API calls when initialize is called while loading', () => {
-    spectator.service.patchState({ isLoading: true });
+    jest.mocked(spectator.inject(ApiService).query).mockReturnValue(new Subject());
+    spectator.service.initialize();
     spectator.service.initialize();
 
-    expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears the list, shows the error and can be called again when loading fails', () => {
+    jest.mocked(spectator.inject(ApiService).query).mockReturnValueOnce(throwError(() => new Error('API error')));
+
+    spectator.service.initialize();
+
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.hasLoaded()).toBe(true);
+    expect(spectator.service.containers()).toEqual([]);
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+
+    spectator.service.initialize();
+
+    expect(spectator.service.containers()).toEqual(containers);
   });
 
   it('should make API call when reload is called after initialization', () => {
@@ -91,45 +110,67 @@ describe('ContainersStore', () => {
   });
 
   it('should make API call when reload is called even while loading', () => {
-    spectator.service.patchState({ isLoading: true });
+    jest.mocked(spectator.inject(ApiService).query).mockReturnValueOnce(new Subject());
+    spectator.service.initialize();
     spectator.service.reload();
 
-    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('container.query');
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledTimes(2);
+  });
+
+  it('refreshes the selected container on reload', () => {
+    spectator.service.initialize();
+    spectator.service.selectContainer(1);
+    const renamed = { ...containers[0], name: 'renamed' };
+    jest.mocked(spectator.inject(ApiService).query).mockReturnValue(of([renamed, containers[1]]));
+
+    spectator.service.reload();
+
+    expect(spectator.service.selectedContainer()).toEqual(renamed);
+    expect(spectator.service.isLoading()).toBe(false);
+  });
+
+  it('keeps the list and can be called again when reload fails', () => {
+    spectator.service.initialize();
+    jest.mocked(spectator.inject(ApiService).query).mockReturnValueOnce(throwError(() => new Error('API error')));
+
+    spectator.service.reload();
+
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.containers()).toEqual(containers);
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+
+    spectator.service.reload();
+
+    expect(spectator.inject(ApiService).query).toHaveBeenCalledTimes(3);
+  });
+
+  it('selects the container picked before the list loaded once initialize finishes', () => {
+    spectator.service.selectContainer(2);
+    expect(spectator.service.selectedContainer()).toBeUndefined();
+
+    spectator.service.initialize();
+
+    expect(spectator.service.selectedContainerId()).toBe(2);
+    expect(spectator.service.selectedContainer()).toEqual(containers[1]);
   });
 
   it('should select container when method is called', () => {
     spectator.service.initialize();
     spectator.service.selectContainer(1);
-    expect(spectator.service.state()).toEqual({
-      containers,
-      isLoading: false,
-      selectedContainer: containers[0],
-      selectedContainerId: 1,
-      metrics: {},
-      sort: defaultSort,
-    });
+
+    expect(spectator.service.selectedContainerId()).toBe(1);
+    expect(spectator.service.selectedContainer()).toEqual(containers[0]);
   });
 
   it('resets selected container', () => {
     spectator.service.initialize();
     spectator.service.selectContainer(1);
-    expect(spectator.service.state()).toEqual({
-      containers,
-      isLoading: false,
-      selectedContainer: containers[0],
-      selectedContainerId: 1,
-      metrics: {},
-      sort: defaultSort,
-    });
+    expect(spectator.service.selectedContainer()).toEqual(containers[0]);
+
     spectator.service.resetContainer();
-    expect(spectator.service.state()).toEqual({
-      containers,
-      isLoading: false,
-      selectedContainer: null,
-      selectedContainerId: 1,
-      metrics: {},
-      sort: defaultSort,
-    });
+
+    expect(spectator.service.selectedContainer()).toBeNull();
+    expect(spectator.service.selectedContainerId()).toBe(1);
   });
 
   describe('selectors', () => {
@@ -237,11 +278,11 @@ describe('ContainersStore', () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       // Set up containers with duplicate names
-      const duplicateNameContainers = [
+      jest.mocked(spectator.inject(ApiService).query).mockReturnValue(of([
         fakeContainer({ id: 1, name: 'duplicate' }),
         fakeContainer({ id: 2, name: 'duplicate' }),
-      ];
-      spectator.service.patchState({ containers: duplicateNameContainers });
+      ]));
+      spectator.service.reload();
 
       event$.next({
         id: 'duplicate',
@@ -300,8 +341,8 @@ describe('ContainersStore', () => {
     } as Partial<Container>);
 
     beforeEach(() => {
+      jest.mocked(spectator.inject(ApiService).query).mockReturnValue(of([bravoRunning, alphaStopped]));
       spectator.service.initialize();
-      spectator.service.patchState({ containers: [bravoRunning, alphaStopped] });
     });
 
     it('sorts by name descending', () => {
@@ -328,7 +369,8 @@ describe('ContainersStore', () => {
       const charlieRunning = fakeContainer({
         id: 3, name: 'charlie', autostart: false, status: { state: ContainerStatus.Running },
       } as Partial<Container>);
-      spectator.service.patchState({ containers: [bravoRunning, alphaStopped, charlieRunning] });
+      jest.mocked(spectator.inject(ApiService).query).mockReturnValue(of([bravoRunning, alphaStopped, charlieRunning]));
+      spectator.service.reload();
       spectator.service.setSort({ active: ContainerSortField.Status, direction: SortDirection.Desc });
 
       // Stopped sorts first (descending), then the two Running containers stay A→Z (bravo, charlie)

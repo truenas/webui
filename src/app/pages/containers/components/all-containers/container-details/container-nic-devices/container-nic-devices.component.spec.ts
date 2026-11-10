@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
@@ -33,12 +34,12 @@ const sharedProviders = [
   mockAuth(),
   mockProvider(SnackbarService),
   mockProvider(ContainerConfigStore, {
-    config: () => ({ bridge: null } as ContainerGlobalConfig),
+    config: signal({ bridge: null } as ContainerGlobalConfig),
   }),
 ];
 
 const defaultContainersStoreProvider = mockProvider(ContainersStore, {
-  selectedContainer: () => ({
+  selectedContainer: signal({
     id: 5,
     status: { state: ContainerStatus.Stopped },
   }),
@@ -72,8 +73,8 @@ describe('ContainerNicDevicesComponent', () => {
     providers: [
       ...sharedProviders,
       mockProvider(ContainerDevicesStore, {
-        isLoading: () => false,
-        devices: () => devices,
+        isLoading: signal(false),
+        devices: signal(devices),
       }),
       defaultContainersStoreProvider,
       noPendingChangesProvider,
@@ -117,11 +118,11 @@ describe('ContainerNicDevicesComponent', () => {
       providers: [
         ...sharedProviders,
         mockProvider(ContainerDevicesStore, {
-          isLoading: () => false,
-          devices: () => devices,
+          isLoading: signal(false),
+          devices: signal(devices),
         }),
         mockProvider(ContainersStore, {
-          selectedContainer: () => ({
+          selectedContainer: signal({
             status: { state },
           }),
         }),
@@ -149,7 +150,7 @@ describe('ContainerNicDevicesComponent', () => {
       providers: [
         ...sharedProviders,
         mockProvider(ContainerDevicesStore, {
-          isLoading: () => false,
+          isLoading: signal(false),
           devices: (): ContainerDevice[] => [],
           reload: jest.fn(),
         }),
@@ -188,11 +189,11 @@ describe('ContainerNicDevicesComponent', () => {
       providers: [
         ...sharedProviders,
         mockProvider(ContainerDevicesStore, {
-          isLoading: () => false,
+          isLoading: signal(false),
           devices: (): ContainerDevice[] => [],
         }),
         mockProvider(ContainersStore, {
-          selectedContainer: () => ({ id: 5, status: { state: ContainerStatus.Running } }),
+          selectedContainer: signal({ id: 5, status: { state: ContainerStatus.Running } }),
         }),
         noPendingChangesProvider,
       ],
@@ -214,10 +215,10 @@ describe('ContainerNicDevicesComponent', () => {
         mockAuth(),
         mockProvider(SnackbarService),
         mockProvider(ContainerConfigStore, {
-          config: () => ({ bridge: 'br5' } as ContainerGlobalConfig),
+          config: signal({ bridge: 'br5' } as ContainerGlobalConfig),
         }),
         mockProvider(ContainerDevicesStore, {
-          isLoading: () => false,
+          isLoading: signal(false),
           devices: (): ContainerDevice[] => [],
         }),
         defaultContainersStoreProvider,
