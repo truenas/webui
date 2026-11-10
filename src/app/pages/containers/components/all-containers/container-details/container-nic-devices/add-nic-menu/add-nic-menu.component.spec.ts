@@ -1,6 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { byText } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
@@ -33,7 +34,7 @@ describe('AddNicMenuComponent', () => {
         mockCall('container.device.create', null),
       ]),
       mockProvider(ContainersStore, {
-        selectedContainer: () => ({ id: 123 }),
+        selectedContainer: signal({ id: 123 }),
         reload: jest.fn(),
       }),
       mockProvider(TnDialog, {
@@ -43,15 +44,15 @@ describe('AddNicMenuComponent', () => {
         } as unknown as DialogRef)),
       }),
       mockProvider(ContainerDevicesStore, {
-        devices: () => [
+        devices: signal([
           {
             dtype: ContainerDeviceType.Nic,
             nic_attach: 'already-added',
           },
-        ] as ContainerDevice[],
+        ] as ContainerDevice[]),
         loadDevices: jest.fn(),
         reload: jest.fn(),
-        isLoading: () => false,
+        isLoading: signal(false),
       }),
       mockProvider(SnackbarService),
     ],
@@ -152,12 +153,12 @@ describe('AddNicMenuComponent - Default Bridge', () => {
         }),
       ]),
       mockProvider(ContainersStore, {
-        selectedContainer: () => ({ id: 123 }),
+        selectedContainer: signal({ id: 123 }),
         reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
-        devices: () => [] as ContainerDevice[],
-        isLoading: () => false,
+        devices: signal([] as ContainerDevice[]),
+        isLoading: signal(false),
       }),
       mockProvider(TnDialog),
       mockProvider(SnackbarService),
@@ -193,12 +194,12 @@ describe('AddNicMenuComponent - No NICs Available', () => {
         mockCall('container.device.nic_attach_choices', { BRIDGE: [], MACVLAN: [] }),
       ]),
       mockProvider(ContainersStore, {
-        selectedContainer: () => ({ id: 123 }),
+        selectedContainer: signal({ id: 123 }),
         reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
-        devices: () => [] as ContainerDevice[],
-        isLoading: () => false,
+        devices: signal([] as ContainerDevice[]),
+        isLoading: signal(false),
       }),
       mockProvider(TnDialog),
       mockProvider(SnackbarService),
@@ -229,12 +230,12 @@ describe('AddNicMenuComponent - NIC Deduplication', () => {
         }),
       ]),
       mockProvider(ContainersStore, {
-        selectedContainer: () => ({ id: 123 }),
+        selectedContainer: signal({ id: 123 }),
         reload: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
-        devices: () => [] as ContainerDevice[],
-        isLoading: () => false,
+        devices: signal([] as ContainerDevice[]),
+        isLoading: signal(false),
       }),
       mockProvider(TnDialog),
       mockProvider(SnackbarService),

@@ -43,7 +43,7 @@ describe('AllContainersComponent', () => {
       mockAuth(),
       mockProvider(ContainerConfigStore, {
         initialize: jest.fn(),
-        config: () => ({
+        config: signal({
           bridge: null as string | null,
           v4_network: null as string | null,
           v6_network: null as string | null,
@@ -51,11 +51,11 @@ describe('AllContainersComponent', () => {
         }),
       }),
       mockProvider(ContainersStore, {
-        selectedContainer: jest.fn(() => ({})),
+        selectedContainer: signal({}),
         initialize: jest.fn(),
-        containers: jest.fn(() => [] as Container[]),
-        isLoading: jest.fn(() => false),
-        sort: jest.fn(() => ({ active: ContainerSortField.Name, direction: SortDirection.Asc })),
+        containers: signal([] as Container[]),
+        isLoading: signal(false),
+        sort: signal({ active: ContainerSortField.Name, direction: SortDirection.Asc }),
       }),
     ],
   });
