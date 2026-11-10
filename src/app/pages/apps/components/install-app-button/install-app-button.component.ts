@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, input, ViewContainerRef,
 } from '@angular/core';
-import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialog } from '@truenas/ui-components';
@@ -44,7 +44,7 @@ export class InstallAppButtonComponent {
   protected readonly appInstallRole = [Role.AppsWrite];
   protected readonly selectPoolRole = [Role.DockerWrite];
 
-  protected readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
+  protected readonly selectedPool = this.dockerStore.selectedPool;
 
   private showAgreementWarning(): Observable<unknown> {
     return this.authService.user$.pipe(

@@ -1,11 +1,9 @@
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, input,
+  ChangeDetectionStrategy, Component, inject, input,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
-import { map } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
@@ -23,29 +21,20 @@ import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.se
 export class InstalledAppBadgeComponent {
   private installedAppsStore = inject(InstalledAppsStore);
   private router = inject(Router);
-  private destroyRef = inject(DestroyRef);
 
   readonly app = input.required<AvailableApp>();
 
   navigateToAllInstalledPage(event?: Event): void {
     event?.preventDefault();
 
-    this.installedAppsStore.installedApps$.pipe(
-      map((apps) => {
-        return apps.filter((app) => {
-          return app.name === this.app().name
-            && app.metadata.train === this.app().train;
-        });
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (apps) => {
-        if (apps.length) {
-          this.router.navigate(['/apps', 'installed', apps[0].metadata.train, apps[0].name]);
-        } else {
-          this.router.navigate(['/apps', 'installed']);
-        }
-      },
+    const installedApp = this.installedAppsStore.installedApps().find((app) => {
+      return app.name === this.app().name && app.metadata.train === this.app().train;
     });
+
+    if (installedApp) {
+      this.router.navigate(['/apps', 'installed', installedApp.metadata.train, installedApp.name]);
+    } else {
+      this.router.navigate(['/apps', 'installed']);
+    }
   }
 }

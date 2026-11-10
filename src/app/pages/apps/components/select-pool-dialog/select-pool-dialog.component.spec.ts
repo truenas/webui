@@ -1,6 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
@@ -25,7 +26,7 @@ describe('SelectPoolDialogComponent', () => {
       mockAuth(),
       mockProvider(DockerStore, {
         setDockerPool: jest.fn(() => of({ pool: 'pool' })),
-        selectedPool$: of(null),
+        selectedPool: signal(null),
       }),
       mockProvider(ApplicationsService, {
         getPoolList: jest.fn(() => of([{ name: 'pool1' }, { name: 'pool2' }])),
@@ -98,7 +99,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     const spectator = createMigrateTestComponent({
       providers: [
         mockProvider(DockerStore, {
-          selectedPool$: of('pool1'),
+          selectedPool: signal('pool1'),
           setDockerPool: setDockerPoolMock,
         }),
       ],
@@ -121,7 +122,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     const spectator = createMigrateTestComponent({
       providers: [
         mockProvider(DockerStore, {
-          selectedPool$: of(null),
+          selectedPool: signal(null),
           setDockerPool: jest.fn(),
         }),
       ],
@@ -143,7 +144,7 @@ describe('SelectPoolDialogComponent Migrate Checkbox', () => {
     const spectator = createMigrateTestComponent({
       providers: [
         mockProvider(DockerStore, {
-          selectedPool$: of('pool1'),
+          selectedPool: signal('pool1'),
           setDockerPool: setDockerPoolMock,
         }),
       ],

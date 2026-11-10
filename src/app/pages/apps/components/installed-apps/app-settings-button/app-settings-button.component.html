@@ -17,7 +17,7 @@
     (itemClick)="onChoosePool()"
   ></tn-menu-item>
 
-  @if (!!(dockerStore.selectedPool$ | async)) {
+  @if (dockerStore.selectedPool()) {
     <tn-menu-item
       *ixRequiresRoles="updateDockerRoles"
       testId="unset-pool"
@@ -36,10 +36,10 @@
     testId="docker-registries"
     tnTooltipPosition="right"
     [label]="'Sign in to a Docker registry' | translate"
-    [tnTooltip]="!(dockerStore.selectedPool$ | async)
+    [tnTooltip]="!dockerStore.selectedPool()
       ? ('Choose pool first' | translate)
       : (helptext.dockerRegistries.tooltip | translate)"
-    [disabled]="!(dockerStore.selectedPool$ | async)"
+    [disabled]="!dockerStore.selectedPool()"
     (itemClick)="goTo(['/apps', 'docker-registries'])"
   ></tn-menu-item>
 

@@ -1,6 +1,6 @@
 import { AsyncPipe, TitleCasePipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, inject,
+  ChangeDetectionStrategy, Component, DestroyRef, OnDestroy, OnInit, computed, inject,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -15,8 +15,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  BehaviorSubject,
-  combineLatest, debounceTime, distinctUntilChanged, map, Observable, take,
+  BehaviorSubject, debounceTime, distinctUntilChanged, map,
 } from 'rxjs';
 import { noSearchResultsConfig } from 'app/constants/empty-configs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -64,20 +63,17 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
 
   protected readonly category = toSignal(this.activatedRoute.params.pipe(map((params) => params['category'] as string)));
   protected pageTitle$ = new BehaviorSubject('Category');
-  protected apps$ = this.appsFilterStore.searchedFilteredApps$;
-  protected searchQuery$ = this.appsFilterStore.searchQuery$;
+  protected readonly apps = this.appsFilterStore.searchedFilteredApps;
+  protected readonly searchQuery = this.appsFilterStore.searchQuery;
 
   /**
    * Both stores have to be counted in: the catalog load, and the category fetch `applyFilters()`
    * kicks off. Watching only the catalog leaves the page blank - no skeletons, no cards, just the
    * "Back to Discover Page" button - for as long as the category request is in flight.
    */
-  protected isLoading$: Observable<boolean> = combineLatest([
-    this.applicationsStore.isLoading$,
-    this.appsFilterStore.isFiltering$,
-  ]).pipe(
-    map(([isCatalogLoading, isFiltering]) => isCatalogLoading || isFiltering),
-  );
+  protected readonly isLoading = computed(() => {
+    return this.applicationsStore.isLoading() || this.appsFilterStore.isFiltering();
+  });
 
   protected searchControl = this.fb.nonNullable.control('');
 
@@ -115,20 +111,15 @@ export class CategoryViewComponent implements OnInit, OnDestroy {
    * grid and the address bar never disagree.
    */
   private setUpSearch(): void {
-    this.appsFilterStore.searchQuery$.pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((storedQuery) => {
-      const paramQuery = this.activatedRoute.snapshot.queryParamMap.get(categorySearchParam);
-      const searchQuery = paramQuery ?? storedQuery;
+    const paramQuery = this.activatedRoute.snapshot.queryParamMap.get(categorySearchParam);
+    const searchQuery = paramQuery ?? this.appsFilterStore.searchQuery();
 
-      this.searchControl.setValue(searchQuery, { emitEvent: false });
-      this.appsFilterStore.applySearchQuery(searchQuery);
+    this.searchControl.setValue(searchQuery, { emitEvent: false });
+    this.appsFilterStore.applySearchQuery(searchQuery);
 
-      if (paramQuery === null && searchQuery) {
-        this.writeSearchQueryToUrl(searchQuery);
-      }
-    });
+    if (paramQuery === null && searchQuery) {
+      this.writeSearchQueryToUrl(searchQuery);
+    }
 
     this.searchControl.valueChanges.pipe(
       debounceTime(searchDebounceMs),

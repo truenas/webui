@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnSpinnerComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
@@ -12,7 +11,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
   styleUrls: ['./docker-status.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     TnTooltipDirective,
     TnIconComponent,
     TranslateModule,
@@ -27,6 +25,6 @@ export class DockerStatusComponent {
   readonly DockerStatus = DockerStatus;
   readonly dockerStatusLabels = dockerStatusLabels;
 
-  status$ = this.store.status$;
-  statusDescription$ = this.store.statusDescription$;
+  protected readonly status = this.store.status;
+  protected readonly statusDescription = this.store.statusDescription;
 }

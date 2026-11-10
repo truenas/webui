@@ -1,15 +1,14 @@
 import {
-  DestroyRef, inject, Injectable, OnDestroy,
+  computed, DestroyRef, inject, Injectable,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ComponentStore } from '@ngrx/component-store';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import {
-  EMPTY, Observable, Subscription, catchError,
-  combineLatest, filter, of, switchMap, tap,
+  EMPTY, Observable, Subscription, filter, pipe, switchMap, tap,
 } from 'rxjs';
-import { tapOnce } from 'app/helpers/operators/tap-once.operator';
 import { App } from 'app/interfaces/app.interface';
-import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppQueryEvent, ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -47,7 +46,7 @@ const initialState: InstalledAppsState = {
 };
 
 @Injectable()
-export class InstalledAppsStore extends ComponentStore<InstalledAppsState> implements OnDestroy {
+export class InstalledAppsStore {
   private appsService = inject(ApplicationsService);
   private appsStore = inject(AppsStore);
   private appsStats = inject(AppsStatsService);
@@ -55,74 +54,72 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private errorHandler = inject(ErrorHandlerService);
   private destroyRef = inject(DestroyRef);
 
-  readonly installedApps$ = this.select((state) => state.installedApps);
-  readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly searchQuery$ = this.select((state) => state.searchQuery);
-  readonly sortingInfo$ = this.select((state) => state.sortingInfo);
-  private installedAppsSubscription: Subscription;
+  private readonly state = signalState(initialState);
+
+  readonly installedApps = this.state.installedApps;
+  readonly isLoading = this.state.isLoading;
+  readonly searchQuery = this.state.searchQuery;
+  readonly sortingInfo = this.state.sortingInfo;
+
+  /**
+   * Whether Docker is running, once `DockerStore` has loaded and knows. Apps are (re)loaded every time
+   * this changes, so that starting Docker brings the list in without a page reload.
+   */
+  private readonly isDockerStarted$ = toObservable(computed(() => {
+    return this.dockerStore.isLoading() ? null : this.dockerStore.isDockerStarted();
+  })).pipe(filter((isDockerStarted) => isDockerStarted !== null));
+
+  private installedAppsSubscription: Subscription | undefined;
+  private isSubscribedToStats = false;
+
+  readonly initialize = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, { ...initialState, isLoading: true })),
+    switchMap(() => this.isDockerStarted$),
+    switchMap((isDockerStarted) => this.loadInstalledApps(isDockerStarted)),
+  ));
 
   constructor() {
-    super(initialState);
     this.initialize();
-    this.getStats();
   }
 
-  readonly initialize = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      tap(() => {
-        this.setState({
-          ...initialState,
-          isLoading: true,
-        });
-      }),
-      switchMap(() => this.loadInstalledApps()),
-      catchError((error: unknown) => {
-        this.handleError(error);
-        return EMPTY;
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-  });
-
-  readonly getStats = this.effect(() => {
-    return this.installedApps$.pipe(
-      filter((apps) => apps.length > 0),
-      tapOnce(() => this.appsStats.subscribeToUpdates()),
-      catchError((error: unknown) => {
-        this.handleError(error);
-        return EMPTY;
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
-  });
-
-  private handleError(error: unknown): void {
-    this.errorHandler.showErrorModal(error);
-    this.patchState({
-      isLoading: false,
-    });
+  setSearchQuery(searchQuery: string): void {
+    patchState(this.state, { searchQuery });
   }
 
-  private loadInstalledApps(): Observable<App[]> {
-    return combineLatest([
-      this.dockerStore.isLoading$,
-      this.dockerStore.isDockerStarted$,
-    ]).pipe(
-      filter(([isLoading, isDockerStarted]) => !isLoading && isDockerStarted !== null),
-      tap(() => this.patchState({ isLoading: true })),
-      switchMap(([, isDockerStarted]) => {
-        if (!isDockerStarted) {
-          return of([]);
-        }
+  setSortingInfo(sortingInfo: AppsSort): void {
+    patchState(this.state, { sortingInfo });
+  }
 
-        return this.appsService.getAllApps().pipe(
-          tap((installedApps) => this.patchState({ installedApps })),
-          tap(() => this.subscribeToInstalledAppsUpdates()),
-        );
+  private loadInstalledApps(isDockerStarted: boolean): Observable<unknown> {
+    if (!isDockerStarted) {
+      patchState(this.state, { isLoading: false });
+      return EMPTY;
+    }
+
+    // Raised here rather than before `switchMap`, which finalizes the request it replaces first.
+    patchState(this.state, { isLoading: true });
+    return this.appsService.getAllApps().pipe(
+      tapResponse({
+        next: (installedApps: App[]) => {
+          this.setInstalledApps(installedApps);
+          this.subscribeToInstalledAppsUpdates();
+        },
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+        finalize: () => patchState(this.state, { isLoading: false }),
       }),
-      tap(() => this.patchState({ isLoading: false })),
-      takeUntilDestroyed(this.destroyRef),
     );
+  }
+
+  /**
+   * Stats are only worth subscribing to once there is an installed app to show them for.
+   */
+  private setInstalledApps(installedApps: App[]): void {
+    patchState(this.state, { installedApps });
+
+    if (installedApps.length && !this.isSubscribedToStats) {
+      this.isSubscribedToStats = true;
+      this.appsStats.subscribeToUpdates();
+    }
   }
 
   private subscribeToInstalledAppsUpdates(): void {
@@ -131,12 +128,11 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
     }
 
     this.installedAppsSubscription = this.appsService.getInstalledAppsUpdates().pipe(
-      tap((apiEvent) => {
-        this.handleApiEvent(apiEvent);
-        this.patchState({ isLoading: false });
-      }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    ).subscribe((apiEvent) => {
+      this.handleApiEvent(apiEvent);
+      patchState(this.state, { isLoading: false });
+    });
   }
 
   private handleApiEvent(apiEvent: AppQueryEvent): void {
@@ -150,26 +146,8 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
   private handleRemovedEvent(apiEvent: Extract<AppQueryEvent, { msg: 'removed' }>): void {
     const appId = apiEvent.id;
 
-    this.patchState((state: InstalledAppsState): InstalledAppsState => ({
-      ...state,
-      installedApps: state.installedApps.filter((app) => app.name !== appId),
-    }));
-
-    const updateApps = (updatedAppName: string, allApps: AvailableApp[]): AvailableApp[] => {
-      return allApps.map((app) => {
-        if (app.name === updatedAppName) {
-          return { ...app, installed: false };
-        }
-        return app;
-      });
-    };
-
-    this.appsStore.patchState((state) => ({
-      ...state,
-      availableApps: updateApps(appId, state.availableApps),
-      recommendedApps: updateApps(appId, state.recommendedApps),
-      latestApps: updateApps(appId, state.latestApps),
-    }));
+    this.setInstalledApps(this.state.installedApps().filter((app) => app.name !== appId));
+    this.appsStore.setAppInstalled(appId, false);
   }
 
   private handleAddedOrUpdatedEvent(apiEvent: Exclude<AppQueryEvent, { msg: 'removed' }>): void {
@@ -179,36 +157,15 @@ export class InstalledAppsStore extends ComponentStore<InstalledAppsState> imple
       return;
     }
 
-    this.patchState((state: InstalledAppsState): InstalledAppsState => {
-      if (apiEvent.msg === 'added') {
-        return { ...state, installedApps: [...state.installedApps, app] };
-      }
+    const installedApps = this.state.installedApps();
+    if (apiEvent.msg === 'added') {
+      this.setInstalledApps([...installedApps, app]);
+    } else {
+      this.setInstalledApps(installedApps.map(
+        (installedApp) => (installedApp.name === apiEvent.id ? { ...installedApp, ...app } : installedApp),
+      ));
+    }
 
-      return {
-        ...state,
-        installedApps: state.installedApps.map(
-          (installedApp) => (installedApp.name === apiEvent.id ? { ...installedApp, ...app } : installedApp),
-        ),
-      };
-    });
-
-    const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map(
-      (availableApp) => (availableApp.name === app.id ? { ...availableApp, installed: true } : availableApp),
-    );
-
-    this.appsStore.patchState((state) => ({
-      ...state,
-      availableApps: updateApps(state.availableApps),
-      recommendedApps: updateApps(state.recommendedApps),
-      latestApps: updateApps(state.latestApps),
-    }));
-  }
-
-  setSearchQuery(searchQuery: string): void {
-    this.patchState({ searchQuery });
-  }
-
-  setSortingInfo(sortingInfo: AppsSort): void {
-    this.patchState({ sortingInfo });
+    this.appsStore.setAppInstalled(app.id, true);
   }
 }

@@ -1,10 +1,11 @@
-import { DestroyRef, inject, Injectable } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ComponentStore } from '@ngrx/component-store';
+import { computed, inject, Injectable } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { deburr, some, toLower } from 'lodash-es';
 import {
-  EMPTY, Observable, combineLatest, map,
+  Observable, map, pipe, switchMap,
 } from 'rxjs';
 import { AppExtraCategory, appExtraCategoryLabels } from 'app/enums/app-extra-category.enum';
 import { AppsFiltersSort, AppsFiltersValues } from 'app/interfaces/apps-filters-values.interface';
@@ -35,146 +36,124 @@ const initialState: AppsFilterState = {
 };
 
 @Injectable()
-export class AppsFilterStore extends ComponentStore<AppsFilterState> {
+export class AppsFilterStore {
   private appsStore = inject(AppsStore);
   private appsService = inject(ApplicationsService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
-  private destroyRef = inject(DestroyRef);
 
   readonly appsPerCategory = 6;
 
-  readonly filteredApps$ = this.select((state) => state.filteredApps);
-  readonly isFiltering$ = this.select((state) => state.isLoading);
+  private readonly state = signalState(initialState);
 
-  readonly searchedApps$: Observable<AppsByCategory[]> = combineLatest([
-    this.appsStore.availableApps$,
-    this.appsStore.appsCategories$,
-    this.appsStore.recommendedApps$,
-    this.appsStore.latestApps$,
-    this.state$,
-  ]).pipe(
-    map(([
-      availableApps,
-      appsCategories,
-      recommendedApps,
-      latestApps,
-      state,
-    ]) => {
-      const allApps: AvailableApp[] = state.filteredApps?.length ? [...state.filteredApps] : [...availableApps];
-      const filteredApps: AvailableApp[] = allApps
-        .filter((app) => this.doesAppContainString(state.searchQuery, app))
-        .sort(this.sortAppsByTitleAndSearchQuery);
+  readonly filteredApps = this.state.filteredApps;
+  readonly isFiltering = this.state.isLoading;
+  readonly isFilterApplied = this.state.isFilterApplied;
+  readonly searchQuery = this.state.searchQuery;
+  readonly filterValues = this.state.filter;
 
-      if (state.filter.sort === AppsFiltersSort.Title) {
-        return this.sortAppsByTitle(filteredApps);
-      }
-      if (state.filter.sort === AppsFiltersSort.LastUpdate) {
-        return this.sortAppsByLastUpdate(filteredApps);
-      }
-      if (state.filter.sort === AppsFiltersSort.PopularityRank) {
-        return this.sortAppsByPopularityRank(filteredApps);
-      }
+  readonly searchedApps = computed<AppsByCategory[]>(() => {
+    const searchQuery = this.searchQuery();
+    const filterValues = this.filterValues();
+    const stateFilteredApps = this.filteredApps();
+    const allApps: AvailableApp[] = stateFilteredApps.length
+      ? [...stateFilteredApps]
+      : [...this.appsStore.availableApps()];
+    const filteredApps: AvailableApp[] = allApps
+      .filter((app) => this.doesAppContainString(searchQuery, app))
+      .sort(this.sortAppsByTitleAndSearchQuery);
 
-      return this.sortAppsByCategory(
-        filteredApps,
-        state.searchQuery.length ? [] : recommendedApps,
-        state.searchQuery.length ? [] : latestApps,
-        appsCategories,
-        state.filter.categories || [],
+    if (filterValues.sort === AppsFiltersSort.Title) {
+      return this.sortAppsByTitle(filteredApps);
+    }
+    if (filterValues.sort === AppsFiltersSort.LastUpdate) {
+      return this.sortAppsByLastUpdate(filteredApps);
+    }
+    if (filterValues.sort === AppsFiltersSort.PopularityRank) {
+      return this.sortAppsByPopularityRank(filteredApps);
+    }
+
+    return this.sortAppsByCategory(
+      filteredApps,
+      searchQuery.length ? [] : this.appsStore.recommendedApps(),
+      searchQuery.length ? [] : this.appsStore.latestApps(),
+      this.appsStore.appsCategories(),
+      filterValues.categories || [],
+    );
+  });
+
+  readonly appsByCategories = computed<AppsByCategory[]>(() => {
+    return this.sortAppsByCategory(
+      this.appsStore.availableApps(),
+      this.appsStore.recommendedApps(),
+      this.appsStore.latestApps(),
+      this.appsStore.appsCategories(),
+      this.filterValues().categories || [],
+    );
+  });
+
+  /**
+   * The apps a category view shows: the server-filtered list narrowed down by the search query.
+   * Unlike {@link searchedApps} it stays a flat list, because a category view renders one grid.
+   */
+  readonly searchedFilteredApps = computed<AvailableApp[]>(() => {
+    const filteredApps = this.filteredApps();
+    const searchQuery = this.searchQuery();
+    if (!searchQuery) {
+      return filteredApps;
+    }
+
+    return filteredApps
+      .filter((app) => this.doesAppContainString(searchQuery, app))
+      .sort(this.sortAppsByTitleAndSearchQuery);
+  });
+
+  readonly applyFilters = rxMethod<AppsFiltersValues>(pipe(
+    switchMap((filter) => {
+      patchState(this.state, { isLoading: true });
+
+      return this.requestFilteredApps(filter).pipe(
+        tapResponse({
+          next: (filteredApps) => {
+            patchState(this.state, {
+              filter,
+              filteredApps,
+              isFilterApplied: true,
+            });
+          },
+          error: (error: unknown) => this.errorHandler.showErrorModal(error),
+          finalize: () => patchState(this.state, { isLoading: false }),
+        }),
       );
     }),
-  );
+  ));
 
-  readonly appsByCategories$: Observable<AppsByCategory[]> = combineLatest([
-    this.appsStore.availableApps$,
-    this.appsStore.appsCategories$,
-    this.appsStore.recommendedApps$,
-    this.appsStore.latestApps$,
-    this.state$,
-  ]).pipe(
-    map(([
-      availableApps,
-      appsCategories,
-      recommendedApps,
-      latestApps,
-      state,
-    ]) => {
-      return this.sortAppsByCategory(
-        availableApps,
-        recommendedApps,
-        latestApps,
-        appsCategories,
-        state.filter.categories || [],
-      );
-    }),
-  );
-
-  resetFilters = this.updater((state: AppsFilterState): AppsFilterState => {
-    return {
-      ...state,
+  resetFilters(): void {
+    patchState(this.state, {
       isFilterApplied: false,
       searchQuery: '',
       filteredApps: [],
       filter: filterInitialValues,
-    };
-  });
+    });
+  }
 
   /**
    * Drops the category/sort filters but keeps the search query, so that it survives the trip
    * between the Discover page and a category view in either direction.
    */
-  resetFiltersKeepingSearch = this.updater((state: AppsFilterState): AppsFilterState => {
-    return {
-      ...state,
+  resetFiltersKeepingSearch(): void {
+    patchState(this.state, {
       isFilterApplied: false,
       filteredApps: [],
       filter: filterInitialValues,
-    };
-  });
-
-  applySearchQuery = this.updater((state: AppsFilterState, searchQuery: string): AppsFilterState => {
-    return {
-      ...state,
-      searchQuery,
-    };
-  });
-
-  readonly isFilterApplied$ = this.select((state) => state.isFilterApplied);
-
-  readonly searchQuery$ = this.select((state) => state.searchQuery);
-  readonly filterValues$ = this.select((state) => state.filter);
-
-  /**
-   * The apps a category view shows: the server-filtered list narrowed down by the search query.
-   * Unlike {@link searchedApps$} it stays a flat list, because a category view renders one grid.
-   */
-  readonly searchedFilteredApps$: Observable<AvailableApp[]> = this.select(
-    this.filteredApps$,
-    this.searchQuery$,
-    (filteredApps, searchQuery) => {
-      if (!searchQuery) {
-        return filteredApps;
-      }
-
-      return filteredApps
-        .filter((app) => this.doesAppContainString(searchQuery, app))
-        .sort(this.sortAppsByTitleAndSearchQuery);
-    },
-  );
-
-  constructor() {
-    super(initialState);
+    });
   }
 
-  applyFilters(filter: AppsFiltersValues): void {
-    this.patchState((state) => {
-      return {
-        ...state,
-        isLoading: true,
-      };
-    });
+  applySearchQuery(searchQuery: string): void {
+    patchState(this.state, { searchQuery });
+  }
 
+  private requestFilteredApps(filter: AppsFiltersValues): Observable<AvailableApp[]> {
     let request$: Observable<AvailableApp[]> = this.appsService.getAvailableApps({
       ...filter,
       categories: filter.categories?.filter((category) => !category.includes(AppExtraCategory.Recommended)) || [],
@@ -195,34 +174,18 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
       });
     }
 
-    request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (filteredApps) => {
-        this.patchState((state: AppsFilterState): AppsFilterState => {
-          if (filter.categories?.some((category) => category.includes(AppExtraCategory.Recommended))) {
-            filteredApps = [
-              ...filteredApps,
-              ...filteredApps.filter(
-                (app) => app.recommended,
-              ).map(
-                (app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] }),
-              ),
-            ];
-          }
+    if (!filter.categories?.some((category) => category.includes(AppExtraCategory.Recommended))) {
+      return request$;
+    }
 
-          return {
-            ...state,
-            filter,
-            filteredApps,
-            isFilterApplied: true,
-            isLoading: false,
-          };
-        });
-      },
-      error: (error: unknown) => {
-        this.handleError(error);
-        return EMPTY;
-      },
-    });
+    return request$.pipe(
+      map((filteredApps) => [
+        ...filteredApps,
+        ...filteredApps
+          .filter((app) => app.recommended)
+          .map((app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] })),
+      ]),
+    );
   }
 
   private doesAppContainString = (searchQuery: string, app: AvailableApp): boolean => {
@@ -363,18 +326,8 @@ export class AppsFilterStore extends ComponentStore<AppsFilterState> {
     return appsByCategory;
   }
 
-  private handleError(error: unknown): void {
-    this.errorHandler.showErrorModal(error);
-    this.patchState((state: AppsFilterState): AppsFilterState => {
-      return {
-        ...state,
-        isLoading: false,
-      };
-    });
-  }
-
   private sortAppsByTitleAndSearchQuery = (a: AvailableApp, b: AvailableApp): number => {
-    const searchQuery = this.state().searchQuery.toLocaleLowerCase();
+    const searchQuery = this.state.searchQuery().toLocaleLowerCase();
     const aStartsWithQuery = a.title.toLocaleLowerCase().startsWith(searchQuery);
     const bStartsWithQuery = b.title.toLocaleLowerCase().startsWith(searchQuery);
 

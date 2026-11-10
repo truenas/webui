@@ -562,16 +562,9 @@ export class AppWizardComponent implements OnInit, OnDestroy {
   }
 
   private checkIfPoolIsSet(): void {
-    this.dockerStore.selectedPool$.pipe(
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (pool) => {
-        if (!pool) {
-          this.router.navigate(['/apps/available', this.train, this.appId]);
-        }
-      },
-    });
+    if (!this.dockerStore.selectedPool()) {
+      this.router.navigate(['/apps/available', this.train, this.appId]);
+    }
   }
 
   private handleSearchControl(): void {

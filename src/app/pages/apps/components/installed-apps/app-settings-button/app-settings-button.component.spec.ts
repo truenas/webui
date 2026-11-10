@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ViewContainerRef } from '@angular/core';
+import { signal, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
@@ -66,7 +66,7 @@ describe('AppSettingsButtonComponent', () => {
       mockProvider(FormErrorHandlerService),
       mockProvider(SnackbarService),
       mockProvider(DockerStore, {
-        selectedPool$: of('pool'),
+        selectedPool: signal('pool'),
         setDockerPool: jest.fn(() => of({})),
       }),
       mockProvider(AppsStore, {

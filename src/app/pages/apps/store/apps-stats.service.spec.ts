@@ -57,15 +57,14 @@ describe('AppsStatsService', () => {
   });
 
   describe('getStatsForApp()', () => {
-    it('returns an observable with stats for an app', () => {
+    it('returns the latest stats for an app', () => {
+      expect(spectator.service.getStatsForApp('plex')).toBeUndefined();
+
       spectator.service.subscribeToUpdates();
       spectator.inject(MockApiService).emitEvent('app.stats', { msg: 'added', fields: [plexStats, minioStats] });
-      const plexStats$ = spectator.service.getStatsForApp('plex');
 
-      let plexStatsUpdate: AppStats | undefined = undefined;
-      plexStats$.subscribe((stats) => plexStatsUpdate = stats);
-
-      expect(plexStatsUpdate).toEqual(plexStats);
+      expect(spectator.service.getStatsForApp('plex')).toEqual(plexStats);
+      expect(spectator.service.getStatsForApp('minio')).toEqual(minioStats);
     });
   });
 });

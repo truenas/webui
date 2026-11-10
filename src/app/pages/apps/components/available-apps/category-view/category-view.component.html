@@ -1,6 +1,6 @@
 <ix-page-header
   [pageTitle]="pageTitle$ | async | titlecase | translate"
-  [loading]="!!(isLoading$ | async)"
+  [loading]="isLoading()"
 >
   <ix-custom-app-button></ix-custom-app-button>
 </ix-page-header>
@@ -14,20 +14,20 @@
   ></tn-input>
 </div>
 
-@if (isLoading$ | async) {
+@if (isLoading()) {
   <ngx-skeleton-loader
     class="fake-apps"
     [count]="9"
     [animation]="false"
   ></ngx-skeleton-loader>
 } @else {
-  @if (searchQuery$ | async; as searchQuery) {
+  @if (searchQuery(); as searchQuery) {
     <h3 class="section-title">
       {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
     </h3>
   }
 
-  @if (apps$ | async; as apps) {
+  @if (apps(); as apps) {
     @if (apps.length) {
       <div class="apps">
         @for (app of apps; track trackByAppId($index, app)) {
@@ -40,7 +40,7 @@
           </a>
         }
       </div>
-    } @else if (searchQuery$ | async) {
+    } @else if (searchQuery()) {
       <ix-empty tnTestId="no-search-results" tnTestIdType="text" [conf]="noSearchResultsConfig"></ix-empty>
     }
   }

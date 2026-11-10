@@ -5,20 +5,20 @@
 <ix-available-apps-header></ix-available-apps-header>
 
 <div class="available-apps-list" [ixUiSearch]="searchableElements.elements.available">
-  @if ((isLoading$ | async) || (isFiltering$ | async)) {
+  @if (isLoading() || isFiltering()) {
     <ix-fake-progress-bar
       class="loader-bar"
       [loading]="true"
     ></ix-fake-progress-bar>
   }
 
-  @if (appsFilterStore.searchQuery$ | async; as searchQuery) {
+  @if (appsFilterStore.searchQuery(); as searchQuery) {
     <h3 class="section-title">
       {{ 'Search Results for «{query}»' | translate: { query: searchQuery } }}
     </h3>
   }
 
-  @if (isLoading$ | async) {
+  @if (isLoading()) {
     <ngx-skeleton-loader
       class="fake-apps"
       [count]="6"
@@ -26,9 +26,9 @@
     ></ngx-skeleton-loader>
   }
 
-  @if (!(isLoading$ | async)) {
-    @if (!(isFilterOrSearch$ | async)) {
-      @for (appSection of (appsFilterStore.appsByCategories$ | async); track appSection.title) {
+  @if (!isLoading()) {
+    @if (!isFilterOrSearch()) {
+      @for (appSection of appsFilterStore.appsByCategories(); track appSection.title) {
         <ng-container
           [ngTemplateOutlet]="apps"
           [ngTemplateOutletContext]="{ $implicit: appSection }"
@@ -36,9 +36,9 @@
       }
     }
 
-    @if (isFilterOrSearch$ | async) {
+    @if (isFilterOrSearch()) {
       <div>
-        @for (appSection of (appsFilterStore.searchedApps$ | async); track appSection.title) {
+        @for (appSection of appsFilterStore.searchedApps(); track appSection.title) {
           <ng-container
             [ngTemplateOutlet]="apps"
             [ngTemplateOutletContext]="{ $implicit: appSection }"
@@ -69,13 +69,13 @@
     </section>
   }
 
-  @if ((appSection.totalApps > appsFilterStore.appsPerCategory) && (showViewMoreButton$ | async)) {
+  @if ((appSection.totalApps > appsFilterStore.appsPerCategory) && showViewMoreButton()) {
     <div class="view-all">
       <tn-button
         [testId]="[appSection.title, 'view-all']"
         [label]="('View All' | translate) + ' ' + (appSection.title | translate)"
         [routerLink]="['/apps', 'available', appSection.category]"
-        [queryParams]="(searchQueryParams$ | async) || {}"
+        [queryParams]="searchQueryParams()"
       ></tn-button>
     </div>
   }
