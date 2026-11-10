@@ -11,7 +11,7 @@ import {
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -51,6 +51,7 @@ import {
   DatasetAclEditorComponent,
 } from 'app/pages/datasets/modules/permissions/containers/dataset-acl-editor/dataset-acl-editor.component';
 import { DatasetAclEditorStore } from 'app/pages/datasets/modules/permissions/stores/dataset-acl-editor.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 
@@ -170,7 +171,7 @@ describe('DatasetAclEditorComponent', () => {
 
     it('sets returnUrl to null when not provided', () => {
       const store = spectator.inject(DatasetAclEditorStore);
-      expect(store.state().returnUrl).toBeNull();
+      expect(store.returnUrl()).toBeNull();
     });
 
     describe('preset modal', () => {
@@ -201,6 +202,14 @@ describe('DatasetAclEditorComponent', () => {
         expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
       });
 
+      it('fills the owner fields from the dataset once the ACL has loaded', () => {
+        expect(spectator.component.ownerFormGroup.getRawValue()).toEqual(expect.objectContaining({
+          owner: 'john',
+          ownerGroup: 'johns',
+        }));
+        expect(spectator.inject(Router).navigate).not.toHaveBeenCalledWith(['/sharing']);
+      });
+
       it('shows loaded acl', () => {
         const items = spectator.queryAll('ix-permissions-item');
         expect(items).toHaveLength(3);
@@ -219,7 +228,7 @@ describe('DatasetAclEditorComponent', () => {
         expect(form).toExist();
         // The fake client answers with a copy of the fixture, so identity is checked against what the store
         // loaded: the form must edit that entry, not a copy of it.
-        expect(form.ace).toBe(spectator.inject(DatasetAclEditorStore).state().acl.acl[0]);
+        expect(form.ace).toBe(spectator.inject(DatasetAclEditorStore).acl().acl[0]);
         expect(form.ace).toEqual(acl.acl[0]);
       });
     });
@@ -317,6 +326,24 @@ describe('DatasetAclEditorComponent', () => {
     });
   });
 
+  describe('when the ACL cannot be read', () => {
+    it('shows the error and leaves for the sharing page', async () => {
+      spectator = createComponent({
+        detectChanges: false,
+        providers: [mockProvider(ErrorHandlerService)],
+      });
+      const error = new Error('No access');
+      jest.spyOn(spectator.inject(MockApiService), 'call').mockReturnValue(throwError(() => error));
+      jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
+
+      spectator.detectChanges();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(error);
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/sharing']);
+    });
+  });
+
   describe('homeShare query param', () => {
     it('does not load home share preset when homeShare is false', () => {
       spectator = createComponent({
@@ -365,7 +392,7 @@ describe('DatasetAclEditorComponent', () => {
 
     it('sets returnUrl from query params when provided', () => {
       const store = spectator.inject(DatasetAclEditorStore);
-      expect(store.state().returnUrl).toBe('/sharing');
+      expect(store.returnUrl()).toBe('/sharing');
     });
 
     it('navigates after stripping the ACL - with returnUrl', () => {

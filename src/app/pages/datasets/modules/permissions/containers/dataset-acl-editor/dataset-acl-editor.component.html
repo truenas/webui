@@ -1,11 +1,11 @@
 <tn-card class="card" [padContent]="false">
-  @if (isLoading) {
+  @if (isLoading()) {
     <tn-spinner
       class="spinner"
       mode="indeterminate"
       [diameter]="40"
     ></tn-spinner>
-  } @else {
+  } @else if (acl()) {
     <div class="header">
       <div class="title-row">
         <h3 class="header-title">
@@ -62,8 +62,8 @@
       <div class="columns">
         <div class="column-left">
           <ix-acl-editor-list
-            [acl]="acl"
-            [selectedAceIndex]="selectedAceIndex"
+            [acl]="acl()"
+            [selectedAceIndex]="selectedAceIndex()"
             [acesWithError]="acesWithError()"
             [owner]="ownerFormGroup.controls['owner'].value"
             [ownerGroup]="ownerFormGroup.controls['ownerGroup'].value"
@@ -82,11 +82,11 @@
           <div class="controls-container">
             <div class="controls">
               <ix-acl-editor-save-controls
-                [canBeSaved]="acesWithError().length === 0 && !!acl?.acl.length && ownerFormGroup.valid"
+                [canBeSaved]="acesWithError().length === 0 && !!acl()?.acl?.length && ownerFormGroup.valid"
                 [ownerValues]="ownerFormGroup.getRawValue()"
               ></ix-acl-editor-save-controls>
               <div class="control-buttons">
-                @if (acl?.trivial) {
+                @if (acl()?.trivial) {
                   <tn-button
                     class="action"
                     testId="edit-permissions"
@@ -125,7 +125,7 @@
           </div>
         </div>
         <div class="column-right">
-          @if (acl?.acl[selectedAceIndex]; as selectedAce) {
+          @if (acl()?.acl?.[selectedAceIndex()]; as selectedAce) {
             @if (isNfsAcl) {
               <ix-edit-nfs-ace
                 [ace]="selectedAce | cast"

@@ -1,10 +1,9 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, output } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject, output, signal, untracked,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
-import { filter, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -33,7 +32,6 @@ import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils
   styleUrls: ['./dataset-details-panel.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    AsyncPipe,
     MobileBackButtonComponent,
     TranslateModule,
     DatasetIconComponent,
@@ -64,7 +62,7 @@ export class DatasetDetailsPanelComponent {
   protected readonly requiredRoles = [Role.DatasetWrite];
   protected readonly searchableElements = datasetDetailsPanelElements;
 
-  selectedParentDataset$ = this.datasetStore.selectedParentDataset$;
+  protected readonly selectedParentDataset = this.datasetStore.selectedParentDataset;
 
   protected readonly hasRoles = computed(() => {
     return this.dataset().type === DatasetType.Filesystem && !isIocageMounted(this.dataset());
@@ -81,6 +79,23 @@ export class DatasetDetailsPanelComponent {
   protected readonly ownName = computed(() => this.dataset().name.split('/').slice(-1)[0]);
 
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
+
+  /** A dataset or zvol just added, to open once the reload that brings it into the tree has answered. */
+  private readonly pendingDatasetId = signal<string | null>(null);
+
+  constructor() {
+    effect(() => {
+      const id = this.pendingDatasetId();
+      if (!id || this.datasetStore.isLoading()) {
+        return;
+      }
+
+      untracked(() => {
+        this.pendingDatasetId.set(null);
+        this.router.navigate(['/datasets', id]);
+      });
+    });
+  }
 
   onAddDataset(): void {
     this.formPanel.open<Dataset>(DatasetFormComponent, {
@@ -101,14 +116,7 @@ export class DatasetDetailsPanelComponent {
 
   private switchToNewDateset(id: string): void {
     this.datasetStore.datasetUpdated();
-
-    this.datasetStore.isLoading$.pipe(
-      filter((isLoading) => !isLoading),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.router.navigate(['/datasets', id]);
-    });
+    this.pendingDatasetId.set(id);
   }
 
   onCloseMobileDetails(): void {

@@ -1,13 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { union, without, omit } from 'lodash-es';
 import {
-  EMPTY, forkJoin, Observable, of, Subject,
+  EMPTY, forkJoin, Observable, of, pipe, Subject,
 } from 'rxjs';
 import {
-  catchError, filter, map, mergeMap, switchMap, tap, withLatestFrom,
+  catchError, filter, map, mergeMap, switchMap, tap,
 } from 'rxjs/operators';
 import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
@@ -50,7 +52,7 @@ const initialState: DatasetAclEditorState = {
 @Injectable({
   providedIn: 'root',
 })
-export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState> {
+export class DatasetAclEditorStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private errorParser = inject(ErrorParserService);
@@ -59,222 +61,79 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
   private translate = inject(TranslateService);
   private storageService = inject(StorageService);
 
+  private readonly state = signalState(initialState);
+
+  readonly isLoading = this.state.isLoading;
+  readonly mountpoint = this.state.mountpoint;
+  readonly acl = this.state.acl;
+  readonly stat = this.state.stat;
+  readonly selectedAceIndex = this.state.selectedAceIndex;
+  readonly acesWithError = this.state.acesWithError;
+  readonly returnUrl = this.state.returnUrl;
+
   readonly saveSucceeded$ = new Subject<void>();
 
-  constructor() {
-    super(initialState);
-  }
-
-  readonly loadAcl = this.effect((mountpoints$: Observable<string>) => {
-    return mountpoints$.pipe(
-      tap((mountpoint) => {
-        this.setState({
-          ...initialState,
-          mountpoint,
-          isLoading: true,
-        });
-      }),
-      switchMap((mountpoint) => {
-        return forkJoin([
-          this.api.call('filesystem.getacl', [mountpoint, true, true]).pipe(map(toAcl)),
-          this.api.call('filesystem.stat', [mountpoint]),
-        ]).pipe(
-          tap(([acl, stat]) => {
-            this.patchState({
-              acl,
-              stat,
-              isLoading: false,
-            });
-          }),
-          catchError((error: unknown) => {
+  private readonly load = rxMethod<string>(pipe(
+    tap((mountpoint) => patchState(this.state, { ...initialState, mountpoint, isLoading: true })),
+    switchMap((mountpoint) => {
+      return forkJoin([
+        this.api.call('filesystem.getacl', [mountpoint, true, true]).pipe(map(toAcl)),
+        this.api.call('filesystem.stat', [mountpoint]),
+      ]).pipe(
+        tapResponse({
+          next: ([acl, stat]) => patchState(this.state, { acl, stat, isLoading: false }),
+          error: (error: unknown) => {
             this.errorHandler.showErrorModal(error);
-
-            this.patchState({
-              isLoading: false,
-            });
-
-            return EMPTY;
-          }),
-        );
-      }),
-    );
-  });
-
-  readonly removeAce = this.updater((state: DatasetAclEditorState, indexToRemove: number) => {
-    let selectedAceIndex = state.selectedAceIndex;
-
-    if (selectedAceIndex && selectedAceIndex >= indexToRemove) {
-      selectedAceIndex = Math.max(0, selectedAceIndex - 1);
-    }
-
-    const newAcesWithError = without(state.acesWithError, indexToRemove).map((aceWithErrorIndex) => {
-      if (aceWithErrorIndex <= indexToRemove) {
-        return aceWithErrorIndex;
-      }
-
-      return aceWithErrorIndex - 1;
-    });
-
-    return {
-      ...state,
-      selectedAceIndex,
-      acl: {
-        ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((ace, index) => index !== indexToRemove),
-      },
-      acesWithError: newAcesWithError,
-    } as DatasetAclEditorState;
-  });
-
-  readonly addAce = this.updater((state) => {
-    const newAce = state.acl.acltype === AclType.Nfs4
-      ? { ...newNfsAce } as NfsAclItem
-      : { ...newPosixAce } as PosixAclItem;
-
-    return {
-      ...state,
-      acl: {
-        ...state.acl,
-        acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
-      },
-      selectedAceIndex: state.acl.acl.length,
-    } as DatasetAclEditorState;
-  });
-
-  readonly selectAce = this.updater((state: DatasetAclEditorState, index: number | null) => {
-    return {
-      ...state,
-      selectedAceIndex: index,
-    };
-  });
-
-  readonly updateSelectedAce = this.updater((
-    state: DatasetAclEditorState,
-    updatedAce: NfsAclItem | PosixAclItem,
-  ) => {
-    const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
-      if (index !== state.selectedAceIndex) {
-        return ace;
-      }
-
-      return {
-        ...ace,
-        ...updatedAce,
-      };
-    });
-
-    return {
-      ...state,
-      acl: {
-        ...state.acl,
-        acl: updatedAces,
-      } as Acl,
-    };
-  });
-
-  readonly updateSelectedAceValidation = this.updater((state: DatasetAclEditorState, isValid: boolean) => {
-    return {
-      ...state,
-      acesWithError: isValid
-        ? without(state.acesWithError, state.selectedAceIndex)
-        : union(state.acesWithError, [state.selectedAceIndex]),
-    };
-  });
-
-  /**
-   * Records the validity of an entry that may no longer be selected, for a check that outlived its selection.
-   * The entry is found by identity: once it has been edited or removed, the verdict is about a version of it that
-   * no longer exists, and is dropped.
-   */
-  readonly updateAceValidation = this.updater((
-    state: DatasetAclEditorState,
-    { ace, isValid }: { ace: NfsAclItem | PosixAclItem; isValid: boolean },
-  ) => {
-    const index = (state.acl?.acl as (NfsAclItem | PosixAclItem)[] | undefined)?.indexOf(ace) ?? -1;
-    if (index === -1) {
-      return state;
-    }
-
-    return {
-      ...state,
-      acesWithError: isValid
-        ? without(state.acesWithError, index)
-        : union(state.acesWithError, [index]),
-    };
-  });
+            patchState(this.state, { isLoading: false });
+          },
+        }),
+      );
+    }),
+  ));
 
   /**
    * Waits for an entry's verdict here rather than in the form that asked, and records it against that entry.
    * The form cannot see it through: selecting another entry either patches that entry in, which cancels the check,
    * or (from the list) tears the form down first. Either way the entry would keep the error it had before.
    */
-  readonly settleAceValidation = this.effect((
-    checks$: Observable<{ ace: NfsAclItem | PosixAclItem; isValid$: Observable<boolean> }>,
-  ) => {
-    return checks$.pipe(
-      mergeMap(({ ace, isValid$ }) => isValid$.pipe(
-        tap((isValid) => this.updateAceValidation({ ace, isValid })),
-      )),
-    );
-  });
+  private readonly settleValidation = rxMethod<{ ace: NfsAclItem | PosixAclItem; isValid$: Observable<boolean> }>(
+    mergeMap(({ ace, isValid$ }) => isValid$.pipe(
+      tap((isValid) => this.updateAceValidation({ ace, isValid })),
+    )),
+  );
 
-  readonly saveAcl = this.effect((saveParams$: Observable<AclSaveFormParams>) => {
-    return saveParams$.pipe(
+  private readonly save = rxMethod<AclSaveFormParams>(
+    switchMap((saveParams) => {
       // Warn user about risks when changing top level dataset
-      switchMap(() => {
-        if (this.storageService.isDatasetTopLevel(this.get().mountpoint.replace('mnt/', ''))) {
-          return this.dialogService.confirm({
+      const confirmed$ = this.storageService.isDatasetTopLevel(this.state.mountpoint().replace('mnt/', ''))
+        ? this.dialogService.confirm({
             title: this.translate.instant(helptextAcl.warningTitle),
             message: this.translate.instant(helptextAcl.topLevelDialogMessage),
-          });
-        }
+          })
+        : of(true);
 
-        return of(true);
-      }),
-      filter(Boolean),
+      return confirmed$.pipe(
+        filter(Boolean),
+        map(() => this.prepareSetAcl(this.state(), saveParams)),
+        switchMap((setAcl) => this.makeSaveRequest(setAcl)),
+      );
+    }),
+  );
 
-      // Prepare request
-      withLatestFrom(saveParams$),
-      map(([, saveParams]) => this.prepareSetAcl(this.get(), saveParams)),
-
-      // Save
-      switchMap((setAcl) => this.makeSaveRequest(setAcl)),
-    );
-  });
-
-  readonly usePreset = this.updater((state: DatasetAclEditorState, preset: AclTemplateByPath) => {
-    return {
-      ...state,
-      acl: {
-        ...state.acl,
-        acl: preset.acl,
-      } as Acl,
-      isLoading: false,
-      acesWithError: [],
-      selectedAceIndex: 0,
-    };
-  });
-
-  readonly loadHomeSharePreset = this.effect((trigger$: Observable<void>) => {
-    return trigger$.pipe(
-      tap(() => {
-        this.patchState({
-          isLoading: true,
-        });
-      }),
-      switchMap(() => {
-        return this.api.call('filesystem.acltemplate.by_path', [{
-          path: this.get().mountpoint,
-          'format-options': {
-            resolve_names: true,
-          },
-        }]).pipe(
-          map((presets) => presets.map(toAclTemplateByPath)),
-          tap((presets) => {
-            this.patchState({
-              isLoading: false,
-            });
-            const homePresetName = this.get().acl.acltype === AclType.Nfs4
+  private readonly loadHomePreset = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, { isLoading: true })),
+    switchMap(() => {
+      return this.api.call('filesystem.acltemplate.by_path', [{
+        path: this.state.mountpoint(),
+        'format-options': {
+          resolve_names: true,
+        },
+      }]).pipe(
+        map((presets) => presets.map(toAclTemplateByPath)),
+        tapResponse({
+          next: (presets) => {
+            patchState(this.state, { isLoading: false });
+            const homePresetName = this.state.acl().acltype === AclType.Nfs4
               ? DefaultAclType.Nfs4Home
               : DefaultAclType.PosixHome;
 
@@ -285,11 +144,145 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
             }
 
             this.usePreset(homePreset);
-          }),
-        );
-      }),
-    );
-  });
+          },
+          error: (error: unknown) => {
+            this.errorHandler.showErrorModal(error);
+            patchState(this.state, { isLoading: false });
+          },
+        }),
+      );
+    }),
+  ));
+
+  loadAcl(mountpoint: string): void {
+    this.load(mountpoint);
+  }
+
+  /** Where to go once the ACL is saved or stripped. Set after `loadAcl`, which clears it. */
+  setReturnUrl(returnUrl: string | null): void {
+    patchState(this.state, { returnUrl });
+  }
+
+  removeAce(indexToRemove: number): void {
+    patchState(this.state, (state) => {
+      let selectedAceIndex = state.selectedAceIndex;
+
+      if (selectedAceIndex && selectedAceIndex >= indexToRemove) {
+        selectedAceIndex = Math.max(0, selectedAceIndex - 1);
+      }
+
+      const acesWithError = without(state.acesWithError, indexToRemove).map((aceWithErrorIndex) => {
+        if (aceWithErrorIndex <= indexToRemove) {
+          return aceWithErrorIndex;
+        }
+
+        return aceWithErrorIndex - 1;
+      });
+
+      return {
+        selectedAceIndex,
+        acl: {
+          ...state.acl,
+          acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).filter((ace, index) => index !== indexToRemove),
+        } as Acl,
+        acesWithError,
+      };
+    });
+  }
+
+  addAce(): void {
+    patchState(this.state, (state) => {
+      const newAce = state.acl.acltype === AclType.Nfs4
+        ? { ...newNfsAce } as NfsAclItem
+        : { ...newPosixAce } as PosixAclItem;
+
+      return {
+        acl: {
+          ...state.acl,
+          acl: (state.acl.acl as (NfsAclItem | PosixAclItem)[]).concat(newAce),
+        } as Acl,
+        selectedAceIndex: state.acl.acl.length,
+      };
+    });
+  }
+
+  selectAce(index: number | null): void {
+    patchState(this.state, { selectedAceIndex: index });
+  }
+
+  updateSelectedAce(updatedAce: NfsAclItem | PosixAclItem): void {
+    patchState(this.state, (state) => {
+      const updatedAces = (state.acl.acl as (NfsAclItem | PosixAclItem)[]).map((ace, index) => {
+        if (index !== state.selectedAceIndex) {
+          return ace;
+        }
+
+        return {
+          ...ace,
+          ...updatedAce,
+        };
+      });
+
+      return {
+        acl: {
+          ...state.acl,
+          acl: updatedAces,
+        } as Acl,
+      };
+    });
+  }
+
+  updateSelectedAceValidation(isValid: boolean): void {
+    patchState(this.state, (state) => ({
+      acesWithError: isValid
+        ? without(state.acesWithError, state.selectedAceIndex)
+        : union(state.acesWithError, [state.selectedAceIndex]),
+    }));
+  }
+
+  /**
+   * Records the validity of an entry that may no longer be selected, for a check that outlived its selection.
+   * The entry is found by identity: once it has been edited or removed, the verdict is about a version of it that
+   * no longer exists, and is dropped.
+   */
+  updateAceValidation({ ace, isValid }: { ace: NfsAclItem | PosixAclItem; isValid: boolean }): void {
+    patchState(this.state, (state) => {
+      const index = (state.acl?.acl as (NfsAclItem | PosixAclItem)[] | undefined)?.indexOf(ace) ?? -1;
+      if (index === -1) {
+        return {};
+      }
+
+      return {
+        acesWithError: isValid
+          ? without(state.acesWithError, index)
+          : union(state.acesWithError, [index]),
+      };
+    });
+  }
+
+  settleAceValidation(check: { ace: NfsAclItem | PosixAclItem; isValid$: Observable<boolean> }): void {
+    this.settleValidation(check);
+  }
+
+  saveAcl(saveParams: AclSaveFormParams): void {
+    this.save(saveParams);
+  }
+
+  usePreset(preset: AclTemplateByPath): void {
+    patchState(this.state, (state): Partial<DatasetAclEditorState> => ({
+      acl: {
+        ...state.acl,
+        acl: preset.acl,
+      } as Acl,
+      isLoading: false,
+      acesWithError: [],
+      selectedAceIndex: 0,
+    }));
+  }
+
+  loadHomeSharePreset(): void {
+    this.loadHomePreset();
+  }
 
   private makeSaveRequest(setAcl: SetAcl): Observable<Job> {
     return this.runSetAclJob(setAcl).pipe(
@@ -346,10 +339,10 @@ export class DatasetAclEditorStore extends ComponentStore<DatasetAclEditorState>
 
   private onSaveSucceeded(): void {
     this.saveSucceeded$.next();
-    const returnUrl = this.state().returnUrl;
+    const returnUrl = this.state.returnUrl();
     const returnRoute = returnUrl
       ? [returnUrl]
-      : ['datasets', this.get()?.mountpoint?.replace(`${mntPath}/`, '')];
+      : ['datasets', this.state.mountpoint()?.replace(`${mntPath}/`, '')];
     this.router.navigate(returnRoute);
   }
 

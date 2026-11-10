@@ -52,7 +52,7 @@ export class UsageCardComponent {
   protected readonly smbRequiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
   protected readonly webShareRequiredRoles = [Role.SharingWrite];
 
-  readonly selectedBranch = toSignal(this.datasetStore.selectedBranch$);
+  readonly selectedBranch = this.datasetStore.selectedBranch;
 
   readonly isApplications = computed(() => {
     return this.dataset().name?.endsWith(ixAppsDataset);

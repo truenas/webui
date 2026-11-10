@@ -6,10 +6,7 @@ import { TnCardComponent, TnTestIdDirective, type TnCardAction } from '@truenas/
 import { maxBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { forkJoin, Subject } from 'rxjs';
-import {
-  map, take, switchMap, tap,
-  filter,
-} from 'rxjs/operators';
+import { map, switchMap, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
@@ -74,7 +71,13 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   });
 
   refreshQuotas$ = new Subject<void>();
-  inheritedQuotasDataset: DatasetDetails;
+  /** The dataset with the largest quota among the selected dataset and its ancestors. */
+  protected readonly inheritedQuotasDataset = computed<DatasetDetails | undefined>(() => {
+    const datasetsWithQuotas = (this.datasetStore.selectedBranch() || [])
+      .filter((dataset) => Boolean(dataset?.quota?.parsed));
+    return maxBy(datasetsWithQuotas, (dataset) => dataset.quota.parsed);
+  });
+
   isLoadingQuotas = false;
   userQuotas: number;
   groupQuotas: number;
@@ -100,7 +103,8 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   });
 
   protected hasInheritedQuotas = computed(() => {
-    return this.inheritedQuotasDataset?.quota?.parsed && this.inheritedQuotasDataset?.id !== this.dataset()?.id;
+    const inheritedQuotasDataset = this.inheritedQuotasDataset();
+    return inheritedQuotasDataset?.quota?.parsed && inheritedQuotasDataset.id !== this.dataset()?.id;
   });
 
   protected readonly editAction = computed<TnCardAction | undefined>(() => {
@@ -115,7 +119,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
   });
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
-    this.getInheritedQuotas();
     const selectedDatasetHasChanged = changes?.dataset?.previousValue?.id !== changes?.dataset?.currentValue?.id;
     if (selectedDatasetHasChanged && this.checkQuotas()) {
       this.refreshQuotas$.next();
@@ -181,26 +184,6 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.isLoadingQuotas = false;
         this.errorHandler.showErrorModal(error);
         this.cdr.markForCheck();
-      },
-    });
-  }
-
-  private getInheritedQuotas(): void {
-    this.datasetStore.selectedBranch$.pipe(
-      filter((branch): branch is DatasetDetails[] => !!(branch)),
-      map((datasets) => {
-        const datasetWithQuotas = datasets.filter((dataset) => Boolean(dataset?.quota?.parsed));
-        return maxBy(datasetWithQuotas, (dataset) => dataset.quota.parsed);
-      }),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: (dataset) => {
-        this.inheritedQuotasDataset = dataset;
-        this.cdr.markForCheck();
-      },
-      error: (error: unknown) => {
-        this.errorHandler.showErrorModal(error);
       },
     });
   }

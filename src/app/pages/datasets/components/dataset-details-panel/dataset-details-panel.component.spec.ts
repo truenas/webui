@@ -1,14 +1,15 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
-import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetType } from 'app/enums/dataset.enum';
-import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetDetails } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { MobileBackButtonComponent } from 'app/modules/buttons/mobile-back-button/mobile-back-button.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -31,6 +32,7 @@ import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 describe('DatasetDetailsPanelComponent', () => {
   let spectator: Spectator<DatasetDetailsPanelComponent>;
+  const isLoading = signal(false);
   let loader: HarnessLoader;
 
   const dataset = {
@@ -71,8 +73,9 @@ describe('DatasetDetailsPanelComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(DatasetTreeStore, {
-        selectedDataset$: of(datasetDetails),
-        selectedParentDataset$: of(parentDatasetDetails),
+        isLoading,
+        selectedParentDataset: signal(parentDatasetDetails),
+        datasetUpdated: jest.fn(() => isLoading.set(true)),
       }),
       provideMockStore({
         selectors: [
@@ -89,6 +92,7 @@ describe('DatasetDetailsPanelComponent', () => {
   });
 
   beforeEach(() => {
+    isLoading.set(false);
     spectator = createComponent({
       props: {
         dataset,
@@ -114,6 +118,24 @@ describe('DatasetDetailsPanelComponent', () => {
         inputs: { params: { datasetId: 'root/parent/child', isNew: true } },
       },
     );
+  });
+
+  it('opens a new dataset once the reload that brings it in has answered', async () => {
+    const router = spectator.inject(Router);
+    jest.spyOn(router, 'navigate').mockResolvedValue(true);
+    jest.spyOn(spectator.inject(FormSidePanelService), 'open')
+      .mockReturnValue(SlideInResult.success({ id: 'root/parent/child/new' } as Dataset));
+
+    const addDatasetButton = await loader.getHarness(TnButtonHarness.with({ label: 'Add Dataset' }));
+    await addDatasetButton.click();
+
+    expect(spectator.inject(DatasetTreeStore).datasetUpdated).toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
+
+    isLoading.set(false);
+    await spectator.fixture.whenStable();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'root/parent/child/new']);
   });
 
   it('opens a zvol form when Add Zvol is pressed', async () => {

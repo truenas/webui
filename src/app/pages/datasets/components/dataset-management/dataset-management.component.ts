@@ -4,8 +4,11 @@ import {
   BreakpointObserver,
 } from '@angular/cdk/layout';
 import { CdkTreeNodePadding, CdkTreeNodeDef } from '@angular/cdk/tree';
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, OnInit, AfterViewInit, TrackByFunction, computed, inject, signal, viewChild } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, ElementRef, Injector, OnInit, AfterViewInit,
+  TrackByFunction, computed, effect, inject, signal, untracked, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   ActivatedRoute, NavigationSkipped, NavigationStart, Router,
@@ -17,11 +20,7 @@ import {
   TnTreeFlatDataSource, TnTreeFlattener, type TnTreeExpansion, createFlatTreeControl,
 } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
-import {
-  filter,
-  map,
-  switchMap,
-} from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { datasetEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { ContentVirtualScrollableDirective } from 'app/directives/content-virtual-scrollable/content-virtual-scrollable.directive';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
@@ -44,7 +43,6 @@ import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
   selector: 'ix-dataset-management',
@@ -63,7 +61,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CdkTreeNodePadding,
     DetailsHeightDirective,
     DatasetDetailsPanelComponent,
-    AsyncPipe,
     TranslateModule,
     TnTreeVirtualScrollViewComponent,
     TnTreeNodeComponent,
@@ -79,12 +76,12 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   private datasetStore = inject(DatasetTreeStore);
   private router = inject(Router);
   protected translate = inject(TranslateService);
-  private errorHandler = inject(ErrorHandlerService);
   private breakpointObserver = inject(BreakpointObserver);
   private searchDirectives = inject(UiSearchDirectivesService);
   private layoutService = inject(LayoutService);
   private window = inject<Window>(WINDOW);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
   private sharingTierService = inject(SharingTierService);
   private authService = inject(AuthService);
 
@@ -119,14 +116,16 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   protected readonly searchableElements = datasetManagementElements;
   protected readonly searchQuery = signal('');
 
-  isLoading$ = this.datasetStore.isLoading$;
-  selectedDataset$ = this.datasetStore.selectedDataset$;
+  protected readonly isLoading = this.datasetStore.isLoading;
+  protected readonly selectedDataset = this.datasetStore.selectedDataset;
   showMobileDetails = false;
   isMobileView = false;
   systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
-  isLoading = true;
 
-  error = toSignal(this.datasetStore.error$);
+  protected readonly error = this.datasetStore.error;
+  private readonly routeDatasetId = toSignal(
+    this.activatedRoute.params.pipe(map((params) => params.datasetId as string | undefined)),
+  );
 
   emptyConfig = computed<EmptyConfig>(() => {
     const error = this.error();
@@ -218,6 +217,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.datasetStore.loadDatasets();
+    // The effects below are created after the load starts: the store outlives this page, and their
+    // first run should see this visit's load rather than whatever the last visit left behind.
     this.setupTree();
     this.listenForRouteChanges();
     this.listenForLoading();
@@ -258,14 +259,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   private listenForLoading(): void {
-    this.isLoading$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isLoading) => {
-      this.isLoading = isLoading;
-      this.cdr.markForCheck();
-
-      if (!isLoading) {
-        setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2);
+    effect(() => {
+      if (!this.isLoading()) {
+        untracked(() => setTimeout(() => this.handlePendingGlobalSearchElement(), searchDelayConst * 2));
       }
-    });
+    }, { injector: this.injector });
   }
 
   protected isSystemDataset(dataset: DatasetDetails): boolean {
@@ -356,15 +354,15 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   private setupTree(): void {
-    this.datasetStore.datasets$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (datasets) => {
+    effect(() => {
+      const datasets = this.datasetStore.datasets();
+      untracked(() => {
         this.createDataSource(datasets);
         this.expandDatasetBranch();
         this.updateTreeContentWidth();
         this.cdr.markForCheck();
-      },
-      error: (error: unknown) => this.errorHandler.showErrorModal(error),
-    });
+      });
+    }, { injector: this.injector });
 
     this.treeControl.expansionModel.changed
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -373,21 +371,23 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
         this.cdr.markForCheck();
       });
 
-    this.datasetStore.selectedBranch$
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (selectedBranch: DatasetDetails[]) => {
-          selectedBranch.forEach((datasetFromSelectedBranch) => {
-            const expandedDataset = this.treeControl.dataNodes
-              .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
+    effect(() => {
+      const selectedBranch = this.datasetStore.selectedBranch();
+      if (!selectedBranch) {
+        return;
+      }
 
-            if (expandedDataset) {
-              this.treeControl.expand(expandedDataset);
-            }
-          });
-        },
-        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+      untracked(() => {
+        selectedBranch.forEach((datasetFromSelectedBranch) => {
+          const expandedDataset = this.treeControl.dataNodes
+            .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
+
+          if (expandedDataset) {
+            this.treeControl.expand(expandedDataset);
+          }
+        });
       });
+    }, { injector: this.injector });
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
@@ -434,25 +434,22 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   private listenForRouteChanges(): void {
-    this.activatedRoute.params
-      .pipe(
-        switchMap((params) => {
-          return this.datasetStore.datasets$.pipe(
-            map((datasets) => {
-              const selectedDataset = datasets.find((dataset) => dataset.id === params.datasetId);
-              if (!selectedDataset && datasets.length) {
-                this.router.navigate(['/datasets', datasets[0]?.id], { replaceUrl: true });
-              }
-              return selectedDataset ? params.datasetId as string : datasets[0]?.id;
-            }),
-          );
-        }),
-        filter(Boolean),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((datasetId) => {
-        this.datasetStore.selectDatasetById(datasetId);
+    effect(() => {
+      const routeDatasetId = this.routeDatasetId();
+      const datasets = this.datasetStore.datasets();
+
+      untracked(() => {
+        const selectedDataset = datasets.find((dataset) => dataset.id === routeDatasetId);
+        if (!selectedDataset && datasets.length) {
+          this.router.navigate(['/datasets', datasets[0]?.id], { replaceUrl: true });
+        }
+
+        const datasetId = selectedDataset ? routeDatasetId : datasets[0]?.id;
+        if (datasetId) {
+          this.datasetStore.selectDatasetById(datasetId);
+        }
       });
+    }, { injector: this.injector });
   }
 
   private handlePendingGlobalSearchElement(): void {

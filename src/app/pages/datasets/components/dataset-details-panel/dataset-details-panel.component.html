@@ -54,7 +54,7 @@
       <ix-zfs-encryption-card
         [dataset]="dataset()"
         [ixUiSearch]="searchableElements.elements.datasetZfsEncryptionCard"
-          [parentDataset]="selectedParentDataset$ | async"
+          [parentDataset]="selectedParentDataset()"
       ></ix-zfs-encryption-card>
     }
     <ix-data-protection-card

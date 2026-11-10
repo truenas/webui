@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Injector, OnInit, effect, inject, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
@@ -73,20 +73,24 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   private tnDialog = inject(TnDialog);
   private formBuilder = inject(NonNullableFormBuilder);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
   private unsavedChangesService = inject(UnsavedChangesService);
 
   datasetPath: string;
-  isLoading: boolean;
-  acl: Acl | null;
-  selectedAceIndex: number;
+
+  protected readonly isLoading = this.store.isLoading;
+  protected readonly acl = this.store.acl;
+  protected readonly selectedAceIndex = this.store.selectedAceIndex;
 
   /**
-   * A signal because the entry form, which comes after the list in this template, reports the selected
+   * Read as a signal because the entry form, which comes after the list in this template, reports the selected
    * entry's validity from its ngOnChanges while this template is still being checked — after the list's
    * error markers and the Save binding have already been read. A signal written then has Angular check
    * this view again in the same pass; a plain field plus markForCheck() waited for the next browser event.
    */
-  readonly acesWithError = signal<number[]>([]);
+  protected readonly acesWithError = this.store.acesWithError;
+
+  private hasLoaded = false;
 
   private initialAcl: (NfsAclItem | PosixAclItem)[] | null = null;
   private initialOwnerValues: { owner: string; ownerGroup: string } | null = null;
@@ -100,7 +104,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   });
 
   get isNfsAcl(): boolean {
-    return this.acl?.acltype === AclType.Nfs4;
+    return this.acl()?.acltype === AclType.Nfs4;
   }
 
   get isHomeShare(): boolean {
@@ -115,40 +119,15 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
     this.datasetPath = this.route.snapshot.queryParamMap.get('path');
     this.store.loadAcl(this.datasetPath);
 
-    const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
-    this.store.setState((state) => ({ ...state, returnUrl }));
+    this.store.setReturnUrl(this.route.snapshot.queryParamMap.get('returnUrl'));
 
-    this.store.state$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((state) => {
-        if (this.acl === null && state.acl === null) {
-          this.router.navigate(['/sharing']);
-          return;
-        }
-
-        const isFirstLoad = !this.acl && state.acl;
-        this.isLoading = state.isLoading;
-        this.acl = state.acl;
-        this.selectedAceIndex = state.selectedAceIndex;
-        this.acesWithError.set(state.acesWithError);
-
-        if (isFirstLoad) {
-          this.onFirstLoad();
-
-          this.ownerFormGroup.patchValue({
-            owner: state.stat.user,
-            ownerGroup: state.stat.group,
-          });
-
-          this.initialOwnerValues = {
-            owner: state.stat.user,
-            ownerGroup: state.stat.group,
-          };
-          this.initialAcl = structuredClone(state.acl.acl);
-        }
-
-        this.cdr.markForCheck();
-      });
+    // Created after the load starts: the store outlives this page, and the first run should see this
+    // visit's load rather than the ACL the last visit left behind.
+    effect(() => {
+      const acl = this.store.acl();
+      const isLoading = this.store.isLoading();
+      untracked(() => this.onAclChanged(acl, isLoading));
+    }, { injector: this.injector });
 
     // saveSucceeded$ is a synchronous Subject, so dirty state is reset
     // before the router guard runs during the navigation in makeSaveRequest.
@@ -170,7 +149,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
     };
 
     const hasOwnerChanges = !isEqual(this.initialOwnerValues, currentOwner);
-    const hasAclChanges = !isEqual(this.initialAcl, this.acl?.acl);
+    const hasAclChanges = !isEqual(this.initialAcl, this.acl()?.acl);
 
     return hasOwnerChanges || hasAclChanges
       ? this.unsavedChangesService.showConfirmDialog()
@@ -179,7 +158,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
 
   onCancel(): void {
     this.skipDeactivateCheck = true;
-    const returnUrl = this.store.state().returnUrl;
+    const returnUrl = this.store.returnUrl();
     const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
     this.router.navigate(returnRoute).then((success) => {
       if (!success) {
@@ -206,7 +185,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
         }
 
         this.resetDirtyState();
-        const returnUrl = this.store.state().returnUrl;
+        const returnUrl = this.store.returnUrl();
         const returnRoute = returnUrl ? [returnUrl] : ['/datasets', this.datasetPath];
         this.router.navigate(returnRoute);
       });
@@ -215,7 +194,7 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
   onSavePreset(): void {
     this.tnDialog.open(SaveAsPresetModalComponent, {
       data: {
-        aclType: this.acl.acltype,
+        aclType: this.acl().acltype,
         datasetPath: this.datasetPath,
       } as SaveAsPresetModalConfig,
     });
@@ -228,6 +207,36 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
         datasetPath: this.datasetPath,
       } as SelectPresetModalConfig,
     });
+  }
+
+  /** Fills the owner fields once the ACL arrives, and leaves the page if it could not be read. */
+  private onAclChanged(acl: Acl | null, isLoading: boolean): void {
+    if (!acl) {
+      if (!isLoading) {
+        this.router.navigate(['/sharing']);
+      }
+      return;
+    }
+
+    if (this.hasLoaded) {
+      return;
+    }
+
+    this.hasLoaded = true;
+    const stat = this.store.stat();
+    this.onFirstLoad();
+
+    this.ownerFormGroup.patchValue({
+      owner: stat.user,
+      ownerGroup: stat.group,
+    });
+
+    this.initialOwnerValues = {
+      owner: stat.user,
+      ownerGroup: stat.group,
+    };
+    this.initialAcl = structuredClone(acl.acl);
+    this.cdr.markForCheck();
   }
 
   private resetDirtyState(): void {
@@ -247,7 +256,8 @@ export class DatasetAclEditorComponent implements OnInit, CanComponentDeactivate
    * Prompt for empty acl, user navigating from trivial form
    */
   private showPresetModalIfNeeded(): void {
-    const needModal = !this.acl.acl.length || this.acl.trivial;
+    const acl = this.acl();
+    const needModal = !acl.acl.length || acl.trivial;
 
     if (!needModal) {
       return;

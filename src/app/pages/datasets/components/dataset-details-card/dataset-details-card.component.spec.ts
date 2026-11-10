@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
@@ -79,7 +80,7 @@ describe('DatasetDetailsCardComponent', () => {
     providers: [
       mockProvider(DatasetTreeStore, {
         datasetUpdated: jest.fn(),
-        selectedParentDataset$: of({ id: 'pool' }),
+        selectedParentDataset: signal({ id: 'pool' } as DatasetDetails),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -221,6 +222,8 @@ describe('DatasetDetailsCardComponent', () => {
       await deleteButton.click();
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeleteDatasetDialog, { data: dataset });
+      expect(spectator.inject(DatasetTreeStore).datasetUpdated).toHaveBeenCalled();
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'pool']);
     });
   });
 

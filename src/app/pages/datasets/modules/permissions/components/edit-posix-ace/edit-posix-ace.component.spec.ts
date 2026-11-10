@@ -278,7 +278,8 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
 
   /** Hands the form the store's selected entry, as the editor's template does on every render. */
   function renderSelectedAce(): void {
-    const { acl, selectedAceIndex } = store.state();
+    const acl = store.acl();
+    const selectedAceIndex = store.selectedAceIndex();
     spectator.setInput('ace', acl.acl[selectedAceIndex] as PosixAclItem);
   }
 
@@ -294,11 +295,11 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store = spectator.inject(DatasetAclEditorStore);
-    store.setState((state) => ({
-      ...state,
-      acl: { acltype: AclType.Posix1e, acl: [userWithoutName, mask] } as PosixAcl,
-      selectedAceIndex: 0,
-    }));
+    // The editor loads the entries through the store; selecting the first is part of that load.
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation(((method: string) => {
+      return of(method === 'filesystem.getacl' ? { acltype: AclType.Posix1e, acl: [userWithoutName, mask] } as PosixAcl : {});
+    }) as ApiService['call']);
+    store.loadAcl('/mnt/pool/dataset');
     renderSelectedAce();
 
     const userField = await loader.getHarness(
@@ -311,7 +312,7 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
   });
 
   it('starts with the first entry marked invalid and its check pending', () => {
-    expect(store.state().acesWithError).toEqual([0]);
+    expect(store.acesWithError()).toEqual([0]);
     expect(spectator.component.form.pending).toBe(true);
   });
 
@@ -321,8 +322,8 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
     userExists$.next(true);
     await waitForExistenceCheck();
 
-    expect(store.state().selectedAceIndex).toBe(2);
-    expect(store.state().acesWithError).toEqual([]);
+    expect(store.selectedAceIndex()).toBe(2);
+    expect(store.acesWithError()).toEqual([]);
   });
 
   it('clears the error on the earlier entry once its check passes after picking another in the list', async () => {
@@ -334,7 +335,7 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
     userExists$.next(true);
     await waitForExistenceCheck();
 
-    expect(store.state().acesWithError).toEqual([]);
+    expect(store.acesWithError()).toEqual([]);
   });
 
   it('keeps the earlier entry marked invalid when its user does not exist', async () => {
@@ -343,6 +344,6 @@ describe('EditPosixAceComponent leaving an entry while its user is still being c
     userExists$.next(false);
     await waitForExistenceCheck();
 
-    expect(store.state().acesWithError).toEqual([0]);
+    expect(store.acesWithError()).toEqual([0]);
   });
 });
