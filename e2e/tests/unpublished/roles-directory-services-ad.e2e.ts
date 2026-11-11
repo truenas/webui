@@ -120,6 +120,11 @@ test.describe('restricted administrators on a joined Active Directory domain', (
   test.beforeAll(async ({ api, config }) => {
     // Every story here needs the appliance in a real domain, and only a run given one has it.
     test.skip(!config.activeDirectory, 'no Active Directory domain for this run (TN_AD_DOMAIN unset)');
+    // CI found no domain controller answering: the shared test domain is down, not the UI.
+    test.skip(
+      !!config.activeDirectory?.unreachable,
+      'the Active Directory domain controllers did not answer from the runner (TN_AD_UNREACHABLE)',
+    );
     const ad = domainOf(config);
 
     for (const account of accounts) {

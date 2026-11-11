@@ -165,13 +165,18 @@ async function waitForLeave(page: Page): Promise<void> {
 }
 
 /**
- * Skips a run with no domain. Otherwise points the nameservers at the domain,
+ * Skips a run with no domain, or with one CI could not reach. Otherwise points the nameservers at the domain,
  * leaves anything a previous run left joined — which needs the domain's DNS —
  * and clears the configuration. Returns the nameservers as it found them.
  */
 async function startOffTheDomain(api: E2eApiClient, config: TargetConfig): Promise<NetworkSettings> {
   // Every story here joins a real domain, and only a run given one has it.
   test.skip(!config.activeDirectory, 'no Active Directory domain for this run (TN_AD_DOMAIN unset)');
+  // CI found no domain controller answering: the shared test domain is down, not the UI.
+  test.skip(
+    !!config.activeDirectory?.unreachable,
+    'the Active Directory domain controllers did not answer from the runner (TN_AD_UNREACHABLE)',
+  );
   const ad = domainOf(config);
   return withActiveDirectoryRedacted(ad, async () => {
     const before = await readNetworkConfig(api);

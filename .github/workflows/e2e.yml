@@ -245,7 +245,13 @@ jobs:
       # port here is the reason a join fails, said before the suite rather
       # than as a timeout inside it. A warning, not a failure: only those
       # tests need the domain. Skipped when the secrets are not there.
+      #
+      # When no controller answers on every port, `unreachable` tells the
+      # suite to skip the domain journeys rather than fail them: the domain is
+      # shared infrastructure outside this repository, and its outage says
+      # nothing about the UI. The warnings above the skip keep it visible.
       - name: Check the domain controllers are reachable
+        id: ad-probe
         env:
           TN_AD_DC1: ${{ secrets.E2EUI_AD_DC1 }}
           TN_AD_DC2: ${{ secrets.E2EUI_AD_DC2 }}
@@ -255,13 +261,21 @@ jobs:
             exit 0
           fi
           # DNS, Kerberos, LDAP, SMB and kpasswd: what a join and a leave use.
+          usable=0
           for dc in "$TN_AD_DC1" ${TN_AD_DC2:+"$TN_AD_DC2"}; do
+            answers=1
             for port in 53 88 389 445 464; do
               if ! timeout 5 bash -c ">/dev/tcp/$dc/$port" 2> /dev/null; then
-                echo "::warning::A domain controller does not answer on TCP $port; the Active Directory tests will fail"
+                echo "::warning::A domain controller does not answer on TCP $port"
+                answers=0
               fi
             done
+            [ "$answers" = 1 ] && usable=1
           done
+          if [ "$usable" = 0 ]; then
+            echo "::warning::No domain controller answers on every port; the Active Directory tests will skip"
+            echo "unreachable=true" >> "$GITHUB_OUTPUT"
+          fi
 
       # As the `shipped` profile with TN_UI_BASE_URL pointing at the served
       # UI: it *is* the production build at /ui/ over https, just not from
@@ -286,6 +300,7 @@ jobs:
           TN_AD_USERNAME: ${{ secrets.E2EUI_AD_USERNAME }}
           TN_AD_PASSWORD: ${{ secrets.E2EUI_AD_PASSWORD }}
           TN_AD_COMPUTER_OU: ${{ secrets.E2EUI_AD_COMPUTER_OU }}
+          TN_AD_UNREACHABLE: ${{ steps.ad-probe.outputs.unreachable }}
         with:
           shard: ${{ matrix.shard }}/${{ needs.plan.outputs.total }}
           grep: ${{ inputs.grep }}
@@ -299,6 +314,7 @@ jobs:
             TN_AD_USERNAME
             TN_AD_PASSWORD
             TN_AD_COMPUTER_OU
+            TN_AD_UNREACHABLE
 
       # What the appliance says, when anything failed or the job ran out of
       # time: its serial console, then from inside it Docker's and
