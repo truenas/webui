@@ -1,19 +1,9 @@
 /**
- * Puts the run's flaky tests where CI shows them, rather than only in the log.
- *
- * A test that fails and then passes on its CI retry leaves the job green and
- * is a clean pass in `junit.xml`; the `N flaky` tally near the end of a long
- * log (`list-reporter.ts`) was the only place it showed. This reporter adds,
- * for each one, a GitHub Actions warning annotation on the test's line, which
- * the run's page lists, and a table for the job summary.
- *
- * Annotations are workflow commands on stdout, which Actions reads from the
- * Playwright container's output as from any step's. The summary has to be a
- * file the runner appends to `GITHUB_STEP_SUMMARY` (the `e2e-run` action):
- * the container is not given the runner's own paths. It goes outside
- * `test-results/`, which is published.
- *
- * Only in CI, and silent when nothing was flaky.
+ * Surfaces flaky tests (failed, then passed on the CI retry) where CI shows them: they leave the job green and
+ * pass cleanly in `junit.xml`. Adds a GitHub Actions warning annotation per test via stdout workflow commands,
+ * plus a job-summary table written to a file the `e2e-run` action appends to `GITHUB_STEP_SUMMARY`, since the
+ * container can't see the runner's paths. That file lives outside the published `test-results/`.
+ * CI only, and silent when nothing was flaky.
  */
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, relative } from 'node:path';

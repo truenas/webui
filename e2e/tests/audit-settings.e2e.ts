@@ -1,17 +1,8 @@
 /**
- * Stories: an admin changes the audit settings from the Audit card on
- * System > Advanced Settings, and the appliance keeps what they saved.
- *
- * Each save is asserted twice, the way the other Advanced Settings specs do it:
- * the card's readouts say the screen believed it, `audit.config` says the
- * appliance did it.
- *
- * One test changes every field, starting from the defaults, and sets a
- * reservation and a quota. The other starts with both set and takes them away
- * again, which the card shows as `None`. Between them, every field is changed.
- *
- * The settings are one config record, so there is nothing to delete afterwards.
- * Teardown writes middleware's defaults back. See `fixtures/audit.ts`.
+ * Stories: an admin changes the audit settings from the Audit card on System > Advanced Settings, checked on the
+ * card's readouts and through `audit.config`. One test changes every field from the defaults and sets a
+ * reservation and quota; the other starts with both set and removes them (shown as `None`). Teardown writes
+ * middleware's defaults back (see `fixtures/audit.ts`).
  */
 import { auditBaseline, readAuditSettings, setAuditSettings } from '../fixtures/audit';
 import { fillAuditForm, openAuditForm, saveAuditForm } from '../flows/audit';

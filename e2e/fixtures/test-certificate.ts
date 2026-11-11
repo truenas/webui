@@ -1,15 +1,9 @@
 /**
- * A fixed, test-only self-signed certificate and its private key, for the
- * Import Certificate journey.
+ * A fixed, test-only self-signed certificate and private key, for the Import Certificate journey.
  *
- * Checked in rather than generated per run because Node's crypto can make a key
- * pair but cannot sign an X.509 certificate without a library. Neither is a
- * credential for anything: the key signs only this certificate, and the
- * certificate names a host under `example.com`.
- *
- * RSA 2048, SHA256, valid from 2026-01-01 to 2076-01-01. The key is unencrypted
- * PKCS#8, the form middleware re-exports an imported key in, so the key the
- * appliance hands back is the one imported here apart from a trailing newline.
+ * Checked in because Node's crypto can't sign X.509 without a library. Not a credential: the key signs only
+ * this certificate, for a host under `example.com`. RSA 2048, SHA256, valid 2026-01-01 to 2076-01-01; the key is
+ * unencrypted PKCS#8, as middleware re-exports it, so the appliance returns it unchanged but a trailing newline.
  */
 
 /** The certificate's subject common name, and its one SAN. */

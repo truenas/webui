@@ -1,21 +1,9 @@
 /**
- * Stories: an admin adds, edits and deletes a sysctl variable from the Tunable
- * card on System > Advanced Settings, and the appliance holds what they did.
- *
- * Each save is asserted twice, the way the share specs do it: the card's row
- * says the screen believed it, `tunable.query` says the appliance did it — and
- * carries what the card shows differently or not at all, like the type.
- *
- * Edit and delete each run beside a second tunable that must come through
- * untouched: the row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug changes the wrong
- * tunable without failing anything else.
- *
- * Every variable is a TCP keepalive or timeout setting that nothing in a test
- * run depends on, and every value is a step or two below its kernel default. An
- * enabled tunable sets its variable the moment it is saved, and middleware puts
- * the old value back only when the tunable is deleted or disabled, so a run that
- * dies before its teardown leaves one changed until the next run's cleanup.
+ * Stories: an admin adds, edits and deletes a sysctl variable from the Tunable card on Advanced Settings; checked
+ * on the row and in `tunable.query`. Edit and delete run beside a second tunable that must stay untouched, to catch
+ * row-targeting bugs. Variables are TCP keepalive or timeout settings nothing in a run depends on, set a step below
+ * default: a saved tunable applies at once and middleware restores the old value only on delete or disable, so a
+ * run that dies before teardown leaves one changed until the next run's cleanup.
  */
 import { ensureTunableAbsent, ensureTunablePresent, findTunable } from '../fixtures/tunable';
 import {

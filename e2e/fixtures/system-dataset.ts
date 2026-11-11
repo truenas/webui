@@ -1,16 +1,9 @@
 /**
- * The system dataset's pool and the priority resilvering window: preconditions,
- * cleanup and readback, over the API.
+ * The system dataset's pool and the priority resilvering window: preconditions, cleanup and readback.
  *
- * Both are single config records behind the Storage card on System > Advanced
- * Settings, so there is nothing to create or delete. A spec records them before
- * its first test and writes them back afterwards.
- *
- * Every write here is conditional on a difference. Moving the system dataset
- * copies `.system` and restarts what depends on it — the tiering daemon among
- * them, which has already hit systemd's start limit from churn like this (see
- * `establishTierBaseline` in `fixtures/tiering.ts`) — so a move that would
- * change nothing is not made.
+ * Both are config records behind System > Advanced Settings > Storage; a spec records them before its first test
+ * and writes them back after. Writes happen only on a difference: moving the system dataset restarts the tiering
+ * daemon, which has hit systemd's start limit from such churn (see `establishTierBaseline` in `fixtures/tiering.ts`).
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

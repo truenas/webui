@@ -1,18 +1,9 @@
 /**
- * Stories: an admin opens the UPS form from its row on System > Services, saves
- * a Slave configuration and a Master configuration with a driver, and the form
- * will not take an identifier with a space in it.
- *
- * The form swaps fields by mode: Master shows Driver, Slave shows Remote Host and
- * Remote Port. Each save switches mode, so the fields of the mode it leaves are
- * on screen and filled when the test starts. The page has no readout of the UPS
- * settings, so each save is asserted through `ups.config` alone, as the whole
- * record less the monitor password.
- *
- * Nothing starts the UPS service. With no UPS attached it would fail and raise
- * an alert. It is stopped, and its settings put back to the baseline, before and
- * after every test. See `fixtures/service-config.ts` for why the baseline is
- * Slave mode and not the stock configuration.
+ * Stories: an admin saves Slave and Master (with driver) UPS configurations from System > Services, and the form
+ * refuses an identifier with a space. Each save switches mode, so the fields of the mode it leaves start filled, and
+ * is checked against the whole `ups.config` record less the monitor password. Nothing starts UPS: with none attached
+ * it would fail and raise an alert. It's stopped and reset to the baseline before and after every test; see
+ * `fixtures/service-config.ts` for why the baseline is Slave mode.
  */
 import {
   findUpsDriverKey, pickUpsSerialPort, readUpsSettings, setUpsSettings, upsBaseline, type UpsReadback,

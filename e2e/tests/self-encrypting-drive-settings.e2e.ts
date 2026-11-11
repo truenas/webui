@@ -1,19 +1,9 @@
 /**
- * Stories: an admin sets, mistypes and clears the global SED password from the
- * Self-Encrypting Drive card on System > Advanced Settings.
- *
- * Each save is asserted twice: the card's readout, which shows one `*` per
- * character or `–` when empty, and `system.advanced.sed_global_password_is_set`.
- * The CI appliance has no SED drives, so whether the password unlocks one is out
- * of scope; the stored setting is the claim.
- *
- * Runs only where the password can be put back. That means an appliance that
- * started with none set, since restoring one means sending it in clear text —
- * see `fixtures/self-encrypting-drive.ts`. Every test starts and ends with the
- * password cleared and read back as cleared.
- *
- * The card is rendered, and middleware takes a non-empty password, unless the
- * `SED` entitlement is explicitly denied.
+ * Stories: an admin sets, mistypes and clears the global SED password on Advanced Settings' Self-Encrypting Drive
+ * card; checked on the card (one `*` per character, `–` when empty) and in
+ * `system.advanced.sed_global_password_is_set`. CI has no SED drives, so the stored setting is the claim.
+ * Runs only where the appliance started with no password, since restoring one means sending it in clear text (see
+ * `fixtures/self-encrypting-drive.ts`); each test starts and ends cleared. The card renders unless `SED` is denied.
  */
 import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';
 import {

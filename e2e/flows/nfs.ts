@@ -108,19 +108,12 @@ export async function addNfsNetwork(
 }
 
 /**
- * Picks a user or group in one of the Access section's mapping fields.
+ * Picks a user or group in one of the Access section's mapping fields. Clicking the row commits the value.
  *
- * The field is an autocomplete over a middleware query. Clicking the row is what
- * commits the value — the text alone does not.
- *
- * Focusing the field shows the directory's first page at once, and the typed
- * text is only sent after a debounce. `name` can be on that first page, so its
- * row is visible before the search has been answered — and when the answer
- * lands it redraws the list under the pointer, and the click commits whichever
- * row now sits there (`truenas_container_unpriv_root` for `root`, E2E run
- * 39751172401). So the click waits for the search's own answer: middleware
- * matches the name anywhere in it, so every row it returns contains `name`, and
- * the unsearched first page does not.
+ * Focusing shows the directory's first page at once and the search is debounced, so `name`'s row can be
+ * visible before the search answers; the answer then redraws the list and the click commits the wrong row
+ * (E2E run 39751172401). So the click waits for the search's answer, whose rows all contain `name`
+ * (middleware matches anywhere in it), unlike the unsearched first page.
  */
 export async function pickNfsMappingPrincipal(
   page: Page,

@@ -1,16 +1,8 @@
 /**
- * Stories: an admin saves an LDAP configuration with Enable Service unticked,
- * and it is stored as entered without contacting any server; reopening the form
- * shows those values again; and Clear Config removes the configuration.
- *
- * Middleware validates a credential only for an enabled service, so a disabled
- * LDAP Plain configuration is the one directory service the CI appliance can
- * store with no server behind it. Active Directory and IPA refuse Kerberos user
- * credentials while disabled, which is `directory-services-refusals.e2e.ts`.
- *
- * The page keeps its disabled state for a configuration that is not enabled, so
- * the form is the only place the saved values show. The last two journeys seed
- * the configuration over the API and drive only the form.
+ * Stories: an admin saves an LDAP configuration with Enable Service unticked, stored as entered without contacting
+ * a server; reopening the form shows it; and Clear Config removes it. Middleware validates credentials only when
+ * enabled, so disabled LDAP Plain is the one config CI can store with no server (AD and IPA refusals are
+ * `directory-services-refusals.e2e.ts`). The page stays in its disabled state, so the form is where values show.
  */
 import {
   ensureDirectoryServicesCleared,

@@ -1,27 +1,9 @@
 /**
- * Stories: on the Storage dashboard, an admin turns a pool's Auto TRIM on and
- * off from the Advanced Actions menu in its header, and sets and removes its
- * dedup table quota from Set Quota on the Storage Health card's Deduplication
- * Table line. The app refuses a Custom quota with no value.
- *
- * Both dialogs save through `pool.update`, so every test reads the pool back
- * from `pool.query`, as well as what the card says afterwards.
- *
- * ## Two pools
- *
- * Auto TRIM is set on the worker-scoped `pool` other specs share. This file
- * records its Auto TRIM before the first test and writes that back before and
- * after every test.
- *
- * The Deduplication Table line, and Set Quota on it, need a dedup vdev, which
- * that pool does not have. Those tests build their own pool, as
- * `pool-dedup-prune.e2e.ts` does, and destroy it before and after each one,
- * unconditionally: it holds four disks, and `fresh-install` needs nine alike.
- * Its quota goes with it. Set Quota needs only the vdev, not a table with
- * something in it, so nothing waits for the seed write.
- *
- * Not covered: Prune (`pool-dedup-prune.e2e.ts`), whether TRIM runs, and
- * whether the quota is enforced on writes.
+ * Stories: on the Storage dashboard an admin toggles a pool's Auto TRIM from Advanced Actions, and sets and removes
+ * its dedup table quota from the Storage Health card; a Custom quota with no value is refused. Both save through
+ * `pool.update`, checked through `pool.query` and the card. Auto TRIM uses the shared `pool`, restored before and
+ * after every test. Quota tests need a dedup vdev, so they build their own pool, as `pool-dedup-prune.e2e.ts` does,
+ * and destroy it before and after unconditionally: it holds four disks, and `fresh-install` needs nine alike.
  */
 import {
   ensureDedupPoolPresent, readAutotrim, readDedupTableQuota, setAutotrim, setDedupTableQuota,

@@ -1,26 +1,9 @@
 /**
- * Stories: an admin creates a pool with a mirrored special vdev and a mirrored dedup vdev through
- * the pool wizard, and the appliance holds both; the wizard warns when a special vdev has less
- * redundancy than the data vdev; and it warns about a stripe dedup vdev.
- *
- * Losing a special or dedup vdev destroys the pool, which is why the wizard gives these two
- * warnings (`validateRedundancyMismatch`, `validateStripeVdevsWarning`). Both are warnings, not
- * errors: Create Pool stays enabled.
- *
- * The Special step's own name is `metadata`, so its buttons and its warning say `metadata` while
- * its Review row, preview row and topology key say `special`.
- *
- * A stripe special or dedup vdev is offered only while the data vdev is a stripe too
- * (`resolveParityLock`), so the stripe test builds a stripe data vdev first. The wizard then warns
- * about both stripes, and the test checks the dedup one.
- *
- * Every test owns its pool by name. Each name is removed before and after every test, whatever
- * happened, because a pool left behind holds its disks. The warning tests stop at Review and create
- * nothing.
- *
- * Not covered: adding a special or dedup vdev to an existing pool from Add VDEV, and its
- * mixed-layout warnings; the Force checkbox on Review; tier labels, which belong to the tiering
- * specs.
+ * Stories: an admin creates a pool with mirrored special and dedup vdevs; the wizard warns when special has less
+ * redundancy than data, and about a stripe dedup vdev. Both are warnings, not errors. The Special step is named
+ * `metadata` (buttons, warning) but `special` on Review, preview and topology. A stripe special or dedup vdev is
+ * offered only while data is a stripe too (`resolveParityLock`), so the stripe test builds one first. Each pool
+ * name is removed before and after every test; the warning tests stop at Review and create nothing.
  */
 import type { Page } from '@playwright/test';
 import { readPoolTopology, type TopologyVdev } from '../fixtures/pool';

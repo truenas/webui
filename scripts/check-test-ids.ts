@@ -1,63 +1,12 @@
 #!/usr/bin/env tsx
 
 /**
- * Fails when something a test has to click carries no `data-test`.
- *
- * Six accepted tickets in a row (NAS-141047, NAS-141484, NAS-142069, NAS-141791, NAS-141186,
- * NAS-143804) were the same defect: a migration dropped a test id and nobody noticed until a
- * downstream suite broke. `e2e/CLAUDE.md` already binds the *test author* to `[data-test]`
- * selectors; nothing bound the PR that removed the attribute. This does.
- *
- * Six rules, all deliberately shallow — these read templates as text, not as an Angular AST:
- *
- * 1. **Table rows.** `ix-table-body` tagged every `<tr>` from the column model's `uniqueRowTag`;
- *    `tn-table` writes nothing on the row of its own, so a migrated list lost that id. Every list
- *    now binds `[rowTestId]`, which puts it back, and this asks for exactly that — not for "some
- *    element in the row is tagged", because a tag on a cell or an action button leaves with the
- *    column or button it sits on, while the row's own id is what a suite selects a row by.
- * 2. **Table columns.** A column whose cell body renders no id is a value no suite can read: the
- *    row is addressable, that column of it is not, and `e2e/CLAUDE.md` allows no CSS or text
- *    selector to reach the cell. Asks that each `tnCellDef` body resolve an id somewhere.
- * 3. **Clickables.** A plain element carrying a `(click)`/`(keydown)` handler is something a test
- *    has to click, so it needs an id on itself or on a descendant that receives the click.
- *    A handler is not the only way an element acts, so three more shapes count: a link that
- *    navigates (`href`/`routerLink` — the browser does the work, there is no handler to find), a
- *    native `<button>` with no handler of its own (a tooltip trigger, a form's submit), and a drag
- *    source or drop zone (`dnd*`, `cdkDrag*`, `mousedown`). Each was invisible while the rule
- *    asked only about clicks, which is how eleven external links, a tooltip trigger and six drag
- *    targets in the pool-manager layout ended up with no id.
- *    "Somewhere in its subtree" is the whole test, so an outer `<div (click)>` wrapping tagged
- *    children passes even though the wrapper itself is unaddressable — a green run means no
- *    clickable is *completely* unreachable, not that every click target has its own id.
- * 4. **Interactive library components.** Rule 3 is scoped to hyphen-free tags, so no `tn-*` tag was
- *    ever examined — and a library component writes an id only where the consumer passes one.
- *    Nothing derives it: `[testId]` unset, the id is simply absent (a *form control* falls back to
- *    its `formControlName`, so only a control bound anonymously through `[ngModel]` /
- *    `[formControl]` is at risk). That gap held a clickable `tn-banner`, five `tn-nested-tree-node`
- *    rows, five `tn-tab`s and an anonymous `tn-slide-toggle`, none of them reachable. Same subtree
- *    test as rule 3, and the same exemption map.
- *
- * 5. **Inert ids.** `tnTestId` is a directive, not an attribute Angular knows: write it in a
- *    template whose component does not import `TnTestIdDirective` and it emits *nothing at all*,
- *    silently — the same failure the retired directive left behind, and the one a template check
- *    cannot see because the attribute is right there in the markup. So every template that writes
- *    it must be declared by a component that imports the directive.
- * 6. **Value readouts.** A value rendered outside a table — a card's detail line, a dialog's
- *    message, a status pill — that has no id of its own and no tagged ancestor holding just that
- *    value. This was a `--report` count while areas were closed one ticket at a time (545 when it
- *    was first measured); once every area reached zero it became a gate, with its own exemption
- *    map, {@link allowedReadouts}, for the few readouts that are not automation targets.
- *
- * What none of them see is a *changed* id: a renamed `testId` still resolves to something. That
- * stays a reviewer's job, as does whether a value matches what the column resolved pre-migration.
- *
- * A false negative is the acceptable failure here and a false positive is not, so anything that
- * plausibly resolves an id counts, and the handful of elements that are genuinely not automation
- * targets are listed in {@link allowedClickables} or {@link allowedReadouts} with the reason.
- *
- * `--report` prints per-column coverage and the per-area count of unreadable value readouts instead
- * of gating, for tracking both numbers over time. Add a path — `--report src/app/pages/sharing` — to
- * also list that area's readouts one per line, which is the working list for closing one.
+ * Fails when something a test has to click or read carries no `data-test`, since migrations kept dropping ids
+ * unnoticed. Six shallow, text-based rules: table rows bind `[rowTestId]`; each `tnCellDef` resolves an id;
+ * clickables, links, buttons and drag targets have an id in their subtree; interactive `tn-*` components get
+ * one; templates using `tnTestId` import `TnTestIdDirective`; value readouts are addressable. A false negative
+ * is acceptable and a false positive is not; exemptions live in {@link allowedClickables} and
+ * {@link allowedReadouts}. Renamed ids aren't caught. `--report [path]` prints coverage instead of gating.
  */
 
 import { existsSync, readdirSync, readFileSync } from 'fs';
@@ -77,14 +26,8 @@ const anyTestId = /\btestId\b|\btnTestId\b|data-test/;
 const retiredDirective = /\bixTest/g;
 
 /**
- * Blanks out HTML comments, keeping every newline so reported line numbers still line up.
- *
- * Rule 3 used to tolerate matching inside a comment, because a false positive there needed a
- * `(click)` in the same span to be reported at all. That stopped being true once a bare `<button>`
- * became an offender on its own: two templates explain in prose what the `<button>` they replaced
- * used to render, and both were reported. So rule 3 reads the comment-stripped source too, as
- * {@link retiredDirective} already did — it has no second condition either, and a comment quoting
- * the retired name would otherwise read as a revived directive.
+ * Blanks out HTML comments, keeping newlines so line numbers still line up. Rule 3 needs it since a bare
+ * `<button>` became an offender on its own: prose describing old markup was reported.
  */
 function withoutComments(src: string): string {
   return src.replace(/<!--[\s\S]*?-->/g, (comment) => comment.replace(/[^\n]/g, ' '));
@@ -104,35 +47,18 @@ const rowTagInTemplate = [
 ];
 
 /**
- * Plain elements, i.e. every native tag. A component selector always contains a hyphen
- * (`tn-button`, `ix-icon`, `ng-container`), so "no hyphen" is the whole rule — an allowlist of
- * native tags would silently exempt the next `<pre (click)>` or `<nav (click)>` that shows up.
- *
- * Quoted attribute values are consumed whole, so a `>` inside a binding — `[class.wide]="n > 3"`,
- * a `@if` guard — does not end the tag. Stopping at the first bare `>` skipped the element
- * entirely: everything after that binding, `(click)` included, fell outside the captured
- * attributes, and `matchAll` resumed past it, so no later match saw the handler either. That is a
- * false NEGATIVE, the direction this script cannot afford.
- *
- * Text, not an AST — so the caller passes the comment-stripped source (see
- * {@link withoutComments}): prose describing markup is not markup.
+ * Native elements: component selectors always contain a hyphen, so "no hyphen" is the rule; an allowlist of
+ * native tags would miss the next `<pre (click)>`. Quoted attribute values are consumed whole so a `>` inside
+ * a binding doesn't end the tag, which would hide the handler (a false negative). Callers pass
+ * comment-stripped source (see {@link withoutComments}).
  */
 const clickableElements = /<([a-z][a-z0-9]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>/gs;
 const clickHandler = /\((click|keydown[^)]*)\)/;
 
 /**
- * Acting without a handler.
- *
- * `<a href>` / `<a routerLink>` navigates on its own, so there is no handler for `clickHandler` to
- * find — and a suite still has to click it. `<a>` with neither is a styled span, not a link.
- *
- * A native `<button>` may act through something other than a click binding (a tooltip it triggers
- * on focus, the submit of the form it sits in). `<input>` is deliberately NOT here: the bare
- * `<input>`s in this repo are library host elements — a `tnSliderThumb`, a control's inner input —
- * whose id is on the component wrapping them, which is an ancestor and so not in the subtree this
- * rule inspects. Those are rule 4's business.
- *
- * A drag source and a drop zone are both things a journey does, and neither needs a click.
+ * Elements that act without a click handler: `<a href>` / `<a routerLink>` (an `<a>` with neither is a styled
+ * span), a native `<button>` (tooltip trigger, form submit), and drag sources and drop zones. `<input>` is left
+ * to rule 4, since bare inputs here are library hosts whose id is on the wrapping component.
  */
 const navigates = /\brouterLink\b|\bhref\b/;
 const dragOrPointerHandler = /\((dblclick|mousedown|mouseup|dragstart|dnd[A-Z]\w*|cdkDrag\w*)\)/;
@@ -201,18 +127,10 @@ const derivesFromControlName = /\bformControlName\b/;
 const componentTags = /<([a-z][a-z0-9]*-[a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>/gs;
 
 /**
- * Our own components' templates, by selector, so this rule can ask whether a component resolves an
- * id *inside itself* — `<ix-job-item (click)>` carries no id at its call site and needs none,
- * because its own template tags six elements.
- *
- * Without this, checking `ix-*` at all would have been a false positive machine, and skipping it
- * left the hole that `ix-permissions-item` sat in: no id here, none inside, nothing to notice.
- * "Renders some id" is weak evidence — it does not prove the id is on the element that receives
- * the click — but it is exactly the standard rule 3 already applies to a subtree, and the strong
- * version needs an AST and a resolver this script deliberately does not have.
- *
- * A `tn-*` selector is absent from this map (the library lives in node_modules), so it resolves no
- * internal evidence and must be tagged at the call site. That is the intended asymmetry.
+ * Our own components' templates by selector, so a component that tags elements inside itself needs no id at
+ * its call site (`<ix-job-item (click)>`). "Renders some id" is the same weak evidence rule 3 applies to a
+ * subtree; the strong version needs an AST. `tn-*` selectors aren't here (the library is in node_modules), so
+ * they must be tagged at the call site, by design.
  */
 interface ComponentScan {
   /**
@@ -291,14 +209,8 @@ function scanComponents(): ComponentScan {
 }
 
 /**
- * The body of each `@Component({…})` in a file, cut at the class it decorates.
- *
- * The pairing used to read forward from the `selector:` match to the end of the file, which made
- * it depend on `selector` preceding `templateUrl` inside the decorator. That holds everywhere in
- * this repo today and nothing enforces it: a component written the other way round would drop out
- * of `templateBySelector` entirely, and rule 4 would then report its call sites rather than the
- * cause. Cutting at `class` — a decorator always sits immediately above the class it applies to —
- * scopes the search without needing to balance braces through an inline template.
+ * The body of each `@Component({…})` in a file, cut at the class it decorates, so pairing doesn't depend on
+ * `selector` preceding `templateUrl` and no brace balancing through an inline template is needed.
  */
 function decoratorBodies(src: string): string[] {
   return [...src.matchAll(/@Component\(\s*\{/g)].map((match) => {
@@ -329,22 +241,11 @@ function resolvePath(directory: string, relative: string): string {
 const componentTestIdInput = /TestId\b/;
 
 /**
- * Clickables that are deliberately unaddressable, as `<repo-relative path>:<class>`.
- *
- * Keyed on the full path, not the basename: `overlay` is a generic enough class name that a
- * basename key would silently wave through the next `<div class="overlay" (click)>` added to some
- * other file — the one failure mode this script is meant not to have. An entry that matches
- * nothing is reported too, so a class that gets renamed or deleted takes its exemption with it
- * instead of leaving a stale one behind.
- *
- * A component tag carries no class of its own to key on, so `<path>:<tag>` is accepted as well.
- * That is coarser — it exempts every tag of that name in the file, not one — so prefer a class.
- *
- * Only two shapes belong here: something that is not a target (a scrim closing what is above it,
- * a container listening for Escape), and something already addressable through an ancestor that
- * carries the id. Anything a journey would click belongs in the template with an id, not here —
- * and "the component has no `testId` input" is not a reason, because `[tnTestId]` is a directive
- * and applies to any host element.
+ * Deliberately unaddressable clickables, as `<repo-relative path>:<class>` (or `<path>:<tag>`, which exempts
+ * every such tag in the file, so prefer a class). Full paths so a generic class can't exempt other files; an
+ * entry matching nothing is reported, so exemptions die with their element. Only non-targets (a scrim, an
+ * Escape listener) or elements addressable through a tagged ancestor belong here; "no `testId` input" isn't a
+ * reason, since `[tnTestId]` works on any host.
  */
 const allowedClickables = new Map<string, string>([
   ['src/app/modules/layout/admin-layout/admin-layout.component.html:overlay', 'Scrim behind the secondary menu; a test closes the menu by clicking what opened it.'],
@@ -480,15 +381,9 @@ function untaggedClickables(file: string, src: string): Offender[] {
 }
 
 /**
- * Rule 4. Same shape as {@link untaggedClickables}, over `tn-*` tags instead of native ones, and
- * with a component's own id inputs counting as evidence.
- *
- * A control bound through `[formControlName]` is skipped before anything else: the library derives
- * its id from the control's name, so it is addressable with nothing in the template at all — which
- * is most of the form controls in this repo.
- *
- * Reads the comment-stripped source, for the reason in {@link withoutComments}: a comment
- * explaining a `(itemClick)` is not one.
+ * Rule 4: {@link untaggedClickables} over `tn-*` tags, with a component's own id inputs counting as evidence.
+ * A control bound by `[formControlName]` is skipped, since the library derives its id from the name. Reads
+ * comment-stripped source (see {@link withoutComments}).
  */
 function untaggedComponents(
   file: string,
@@ -597,16 +492,9 @@ function report(title: string, offenders: Offender[], advice: string): void {
 }
 
 /**
- * A value an e2e suite reads: a LEAF element whose own text renders an *interpolation*, since that
- * is what a suite asserts on — a status, a size, a count, a name. A translated literal
- * (`{{ 'Name' | translate }}`) is a label, not a value, and is not counted; anything reading data
- * is — with one indirection counted as the literal it stands for, below.
- *
- * Rule 6. It started as a measurement, not a gate: unlike a table column the set is not bounded,
- * and some members are genuinely not automation targets (a gauge's sublabel, prose inside a
- * tooltip), so gating it at 545 would have meant failing the build for noise or listing hundreds of
- * exemptions. The number was driven down per area instead, the way the 117 untagged columns were
- * closed, and what is left at zero is short enough to name one by one in {@link allowedReadouts}.
+ * Rule 6: a value an e2e suite reads, i.e. a LEAF element whose own text interpolates data. A translated
+ * literal is a label and doesn't count. The set is unbounded and some members aren't automation targets, so it
+ * was driven to zero per area before gating; the rest are named in {@link allowedReadouts}.
  */
 const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*\{\{[^<]*)<\/\1>/gs;
 /**
@@ -619,21 +507,9 @@ const leafValue = /<([a-z][a-z0-9-]*)((?:\s(?:"[^"]*"|'[^']*'|[^>"'])*)?)>([^<]*
 const interpolations = /\{\{((?:[^}]|\}(?!\}))*)\}\}/g;
 
 /**
- * A message hoisted out of the template into a `helptext` constant and translated at the call site.
- *
- * `{{ 'Name' | translate }}` is already excluded as a label; moving that same literal into a
- * constants file does not turn it into a value, and 47 of the 50 in `src` read
- * `{{ helptext.<path> | translate }}` — several of them literally named `.label`. Counting them
- * asked ten paragraphs of dialog prose under `pages/sharing` alone to carry an id no suite would
- * select, which is noise in a number meant to be driven to zero per area.
- *
- * Three conditions, and the third is what the other three of the 50 fail. The root has to be
- * `helptext` (the only such root in `src`, and a naming convention the repo keeps); the value has
- * to go through `translate`, so a dynamic label that merely passes through the pipe —
- * `{{ currentTierLabel | translate }}`, the tier chip in change-tier-dialog — still counts; and
- * that `translate` must carry no arguments. `{{ helptext.pendingCheckinText | translate: { x:
- * checkinRemaining() } }}` is a live countdown interpolated into the message: the constant is
- * static, what it renders is not, and a suite would plausibly assert on it.
+ * A message hoisted into a `helptext` constant, which is a label like `{{ 'Name' | translate }}`, not a value.
+ * It must be rooted at `helptext`, go through `translate`, and pass no arguments: a dynamic label through the
+ * pipe, or `translate: { x: checkinRemaining() }` interpolating a live value, still counts as a readout.
  */
 const helptextConstant = /^helptext\b/;
 const translatePipe = /^translate$/;
@@ -743,15 +619,9 @@ const allowedReadouts = new Map<string, string>([
 const usedReadoutExemptions = new Set<string>();
 
 /**
- * Readouts in this template that no suite can read, discounting the two ways one is already
- * addressable without an id of its own: a tagged ancestor holding just that value (above), and a
- * shared leaf presenter — one value, and an id at every call site, so the value inside needs none
- * and a static id there would repeat on every instance in the page. See {@link taggedCallSites}
- * for why the second half of that is checked rather than assumed.
- *
- * Returns the line of each, not a count, so `--report <path>` can name them. Closing an area means
- * opening each one, and a bare per-area total says only how many are left, not where — every area
- * ticket would otherwise start by re-deriving this list by hand.
+ * Lines of readouts in this template no suite can read, discounting a tagged ancestor holding just that value
+ * and a shared leaf presenter tagged at every call site (see {@link taggedCallSites}). Returns lines, not a
+ * count, so `--report <path>` can name each one.
  */
 function untaggedReadouts(file: string, src: string, isSingleValueComponent: boolean): number[] {
   if (isSingleValueComponent) {
@@ -888,18 +758,10 @@ function taggedCallSites(templates: { file: string; src: string }[]): Set<string
 function unreadableReadouts(templates: { file: string; src: string }[]): Offender[] {
   const { templateBySelector, selectorByTemplate } = scanComponents();
   const tagged = taggedCallSites(templates);
-  // A shared leaf presenter: one value, and every call site puts an id on the tag — which is the
-  // whole reason the value inside needs none. Both halves are load-bearing. "One value" alone
-  // discounted twelve templates under `pages/sharing`, among them three wizards and two panel
-  // forms: a routed page is never written as a tag, so no call site tags it and nothing addresses
-  // the value it renders. Their readouts were hidden rather than absent, which is how this area
-  // read as closed while `ix-target-form` and `ix-s3-bucket-form` still owed ids.
-  //
-  // What earns it today is the table cells — `ix-task-state-cell`, `ix-subsystem-name-cell` and
-  // three more — whose every call site passes a row-scoped id — and `<ix-date>`, `<ix-warning>`,
-  // `<ix-status-badge>` and `<ix-empty>`, whose call sites were all tagged in NAS-143972. Leave one
-  // untagged and the readout inside counts again. That is the condition doing its job, not a false
-  // positive.
+  // A shared leaf presenter: one value, with an id at every call site, so the value inside needs none. Both
+  // halves matter: "one value" alone hid readouts in routed pages, which no call site tags. Today that's the
+  // row-scoped table cells plus `<ix-date>`, `<ix-warning>`, `<ix-status-badge>` and `<ix-empty>`; leave one
+  // call site untagged and its readout counts again, by design.
   const singleValue = new Set(
     [...templateBySelector]
       .filter(([selector, template]) => valueCount(template) === 1 && tagged.has(selector))

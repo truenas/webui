@@ -1,23 +1,9 @@
 /**
- * Stories: an admin creates a dRAID1 pool through the pool wizard, and the appliance builds it
- * with the geometry that was chosen; and the wizard warns about a dRAID with no distributed spare
- * but still allows it.
- *
- * Picking a dRAID layout swaps the Data step's Width for Data Devices, Distributed Hot Spares and
- * Children, and `topologyToPayload` sends the first two as `draid_data_disks` and
- * `draid_spare_disks`. If either were lost or swapped, middleware would still build a dRAID, with
- * the wrong geometry, and distributed spares cannot be added afterwards. So the first test reads
- * the geometry back from the vdev's own name in `pool.query`, which ZFS writes as
- * `draid<parity>:<data>d:<children>c:<spares>s`.
- *
- * Five disks rather than the ten truenas-tests uses, because CI cannot spare ten. That is below
- * the ten per vdev the wizard recommends, so its warning about it is expected and checked.
- *
- * Both tests own their pool by name. Each name is removed before and after every test, whatever
- * happened, because a pool left behind holds its disks.
- *
- * Not covered: dRAID2 and dRAID3, which are the same controls with more disks; Treat Disk Size as
- * Minimum; and extending a dRAID pool from Add VDEV.
+ * Stories: an admin creates a dRAID1 pool with the chosen geometry, and the wizard warns about a dRAID with no
+ * distributed spare but allows it. A lost or swapped `draid_data_disks` or `draid_spare_disks` would still build a
+ * dRAID with the wrong geometry, so the test reads it back from the vdev name in `pool.query`
+ * (`draid<parity>:<data>d:<children>c:<spares>s`). Five disks, not ten, because CI can't spare ten, so the
+ * below-recommended-width warning is expected. Each pool name is removed before and after every test.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import { ensurePoolAbsent, findPool, requireUnusedDisks } from '../fixtures/storage';

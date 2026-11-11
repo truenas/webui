@@ -1,20 +1,9 @@
 /**
- * Stories: an admin adds a recursive periodic snapshot task that excludes one
- * child and takes no empty snapshots, adds one on a custom schedule built in
- * the scheduler dialog, and adds a second task to a dataset that already has
- * one. The appliance holds what they set.
- *
- * The card spec, `periodic-snapshot-tasks.e2e.ts`, leaves every one of these at
- * the form's default. The custom schedule is also the first coverage of the
- * scheduler dialog, which every task form with a schedule shares.
- *
- * Two tasks on one dataset share every id on the card, whose row tag is the
- * dataset alone, so that test works from the full list, whose row tag adds the
- * naming schema.
- *
- * What a task then does on its schedule is middleware's behaviour, not this
- * form's — see "Assert the configuration" in e2e/CLAUDE.md. The seeded task is
- * monthly, so nothing fires while the spec runs.
+ * Stories: an admin adds a recursive task that excludes a child and skips empty snapshots, one on a custom schedule
+ * (the first coverage of the shared scheduler dialog), and a second task on a dataset that already has one. That
+ * last test works from the full list: on the card, two tasks on one dataset share every id. What a task does on its
+ * schedule is middleware's behaviour; see "Assert the configuration" in e2e/CLAUDE.md. The seeded task is monthly,
+ * so nothing fires during the spec.
  */
 import {
   ensureSnapshotTaskPresent,

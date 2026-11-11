@@ -1,31 +1,10 @@
 /**
- * Stories: on the Audit page under System, an admin switches the Service selector, searches the log
- * by username and by an advanced query on the event, mistypes an advanced query, opens a record's
- * details, and exports the log as CSV and as JSON.
- *
- * ## The records
- *
- * Every expected record is read from `audit.query`, never written down. Most tests sign a
- * throwaway administrator in over the API and look for that account's newest record, so the
- * record is one this test made and its user is one no other record names. The admin's own
- * `user.create` for that account lands just before it, under the suite admin's name, and that is
- * what each search has to filter out: every filter assertion first checks the unfiltered list shows
- * something the filter must remove, so it cannot pass on a list that was already narrow.
- *
- * The Service test cannot make a record of another service over the API. It switches to whichever
- * of System, Sudo and SMB already holds records, or to an empty System log when none does, and in
- * both cases checks the newest middleware record leaves the list.
- *
- * ## Export
- *
- * Export runs `audit.export` with the search showing, and the browser receives a gzipped tar
- * holding the report in the chosen format. The test searches for the throwaway account first, so
- * the report is small, and checks a member of the archive names the record's audit id.
- *
- * ## Teardown
- *
- * The throwaway account is deleted before and after every test. Its records stay: the audit log
- * cannot be edited, and they expire with the retention like any other.
+ * Stories: on System > Audit an admin switches the Service selector, searches by username and by an advanced
+ * query, mistypes a query, opens a record's details, and exports CSV and JSON. Expected records come from
+ * `audit.query`; most tests sign in a throwaway admin and look for its newest record. Every filter assertion first
+ * checks the unfiltered list shows something the filter must remove, so it cannot pass on an already-narrow list.
+ * Export checks the downloaded tar names the record's audit id. The throwaway account is deleted before and after
+ * every test; its records stay, since the audit log cannot be edited.
  */
 import { readFile } from 'node:fs/promises';
 import { gunzipSync } from 'node:zlib';

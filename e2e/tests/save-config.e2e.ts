@@ -1,21 +1,9 @@
 /**
- * Stories: on System > Advanced Settings, an admin downloads the system
- * configuration from Manage Configuration > Download File, with and without
- * Export Password Secret Seed.
- *
- * Each test checks the file the browser receives: its name, which the dialog
- * builds from the short hostname, the version and a timestamp, and its format.
- * With the seed it is a tar archive holding the database and `pwenc_secret`;
- * without it, the database alone. Then `core.get_jobs` shows the `config.save`
- * job the dialog started, with the `secretseed` it sent. `core.download` starts
- * that job under its own method name, with the dialog's options as its first
- * argument — read from middleware's source, not yet from a run.
- *
- * Nothing is created and no setting changes, so there is no teardown. The file
- * stays in Playwright's output directory: `core.download` serves it once.
- *
- * Not covered: Upload File and Reset to Defaults, which both reboot the
- * appliance, and the Update page's use of the same dialog.
+ * Stories: an admin downloads the system configuration from Advanced Settings' Manage Configuration, with and
+ * without Export Password Secret Seed. Each test checks the file's name (short hostname, version, timestamp) and
+ * format (a tar with the database and `pwenc_secret`, or the database alone), then the `config.save` job with its
+ * `secretseed` in `core.get_jobs` (that `core.download` starts it under that name is from middleware's source, not
+ * yet a run). Nothing changes, so no teardown; the file stays in Playwright's output, as it's served only once.
  */
 import { readFile } from 'node:fs/promises';
 import { findConfigSaveRuns, lastConfigSaveRunId } from '../fixtures/config-save';

@@ -1,14 +1,8 @@
 /**
- * Reporting > Exporters (`/reportsdashboard/exporters`): the exporter list, and the side panel its
- * Add and Edit open.
- *
- * Every id on a row is built from the list's own `uniqueRowTag`, `reporting-exporter-<name>`, run
- * through `convertStringToId` and then the library's normalizer. The two agree on every name the
- * suite uses, so {@link kebabTestSegment} is the one to use. The tag is keyed on the name alone, so
- * an edit that leaves the name alone never renames the row.
- *
- * Edit and Delete are `tn-icon-button`s on the row, `['edit', row tag, 'row-action']`, so the verb
- * comes first and there is no icon name in the id.
+ * Reporting > Exporters (`/reportsdashboard/exporters`): the list and its Add/Edit side panel. Row ids come from
+ * `uniqueRowTag`, `reporting-exporter-<name>`, via `convertStringToId` then the library normalizer, which agree on
+ * every name the suite uses, so use {@link kebabTestSegment}; keyed on the name alone. Edit and Delete are row
+ * `tn-icon-button`s, `['edit', row tag, 'row-action']`: verb first, no icon name.
  */
 import { kebabTestSegment } from './test-id';
 

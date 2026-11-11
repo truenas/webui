@@ -1,15 +1,8 @@
 /**
- * Stories: the full Kerberos Realms and Kerberos Keytabs pages, reached from the
- * titles of their cards behind Advanced Settings on Credentials > Directory
- * Services.
- *
- * Each page is its card's component with `inCard` off, so the row ids are the
- * card's. What the page adds is a search: over the realm and its three server
- * lists for realms, over the name alone for keytabs.
- *
- * Every realm and host is under `.test` — see `fixtures/kerberos.ts`. Editing a
- * keytab opens the card's form and is covered on the card; Sync renders only
- * while AD is joined, which the CI appliance never is.
+ * Stories: the full Kerberos Realms and Keytabs pages, reached from their card titles under Credentials > Directory
+ * Services > Advanced Settings. Each is its card with `inCard` off, so row ids match; the page adds search (realm and
+ * servers for realms, name for keytabs). Hosts are under `.test` (see `fixtures/kerberos.ts`). Keytab editing is
+ * covered on the card; Sync renders only while AD is joined, which CI never is.
  */
 import {
   buildKeytab,

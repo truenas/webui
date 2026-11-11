@@ -1,24 +1,9 @@
 /**
- * Story: an admin dismisses an alert from the topbar's alerts panel and then
- * reopens it, and the appliance holds what they did.
- *
- * Middleware has no public call that raises an alert, so the spec makes
- * something happen that reports itself as one: an NFS share restricted to as
- * many networks as middleware warns about (see `nfsNetworkListAlertThreshold` in
- * `fixtures/alerts.ts`). Saving it raises a `NFSNetworkListExcessive` warning
- * for its path. Deleting the share deletes the alert, which is the whole of the
- * teardown.
- *
- * The class is chosen for how middleware dismisses it. A dismissed alert of this
- * class is marked dismissed and can be reopened; `RsyncFailed`, which this spec
- * used first, is deleted on dismiss and leaves nothing to reopen.
- *
- * The alert is raised in `beforeEach`, before the test's page exists, so the
- * panel finds it in the `alert.list` the app reads when the bell is pressed. The
- * panel's live updates are not what this covers.
- *
- * Each step is asserted twice: the panel moves the alert between its open and
- * dismissed views, and `alert.list` says whether middleware has it dismissed.
+ * Story: an admin dismisses an alert from the topbar's alerts panel and reopens it. No public call raises an
+ * alert, so `beforeEach` saves an NFS share with `nfsNetworkListAlertThreshold` networks (`fixtures/alerts.ts`),
+ * raising `NFSNetworkListExcessive`; deleting the share is the teardown. This class stays reopenable once
+ * dismissed (`RsyncFailed` is deleted on dismiss). The alert exists before the page loads, so live updates are not
+ * covered. Each step is checked in the panel and through `alert.list`.
  */
 import {
   findNfsNetworkListAlert, listAlerts, nfsNetworkListAlertThreshold, type AlertRecord,

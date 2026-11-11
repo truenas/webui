@@ -1,20 +1,9 @@
 /**
- * Stories: an admin opens Data Protection and sees all five task cards at once —
- * each listing the tasks the appliance holds, or saying it holds none — follows
- * a card to its full list, and switches a task off and on again from its row.
- *
- * Each card's own add, edit and delete journeys are in that card's spec. This
- * one is about the page they share: that every card renders beside the others,
- * that each title leads to its own list and not a neighbour's, and that the
- * Enabled switch writes to the task in the row it sits on.
- *
- * TrueCloud Backup is the one card that never shows a row here. A task needs a
- * Storj account before middleware will store it (see `fixtures/cloud-backup.ts`),
- * so on this appliance its card is always the empty one.
- *
- * Every task is made over the API, on datasets made fresh for each test, and
- * none of them runs: snapshot, rsync and cloud sync tasks are scheduled monthly,
- * and the replication task only runs when asked.
+ * Stories: on Data Protection all five task cards render together, each title leads to its own list, and the
+ * Enabled switch writes to the task in its row; each card's add, edit and delete journeys are in its own spec.
+ * TrueCloud Backup always shows empty here: a task needs a Storj account (see `fixtures/cloud-backup.ts`).
+ * Tasks are made over the API on fresh datasets and never run: snapshot, rsync and cloud sync are monthly, and
+ * replication runs only when asked.
  */
 import { countCloudBackupTasks } from '../fixtures/cloud-backup';
 import {

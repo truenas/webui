@@ -1,20 +1,9 @@
 /**
- * Stories: an admin manages iSCSI portals, initiator groups and authorized
- * access from the full iSCSI page, and changes the global target configuration,
- * and the appliance holds what they did.
- *
- * Everything is read back through the `iscsi.*` queries. An edit or a delete
- * runs beside a second record of the same kind that must come through
- * untouched, since every row has its own Edit and Delete in its own menu.
- *
- * Portals: middleware refuses a listen address another portal already uses, so
- * the two portals a test makes listen on `0.0.0.0` and `::`, the two addresses
- * every appliance offers. Only `0.0.0.0` is ever picked in the UI.
- *
- * Global configuration: the base name and the listen port are never changed —
- * the base name is part of every target's IQN. The iSNS server is the appliance's
- * own HTTPS port on loopback, because Save is refused unless middleware can open
- * a connection to the server. ALUA (HA) and iSER (RDMA) are out of scope.
+ * Stories: on the full iSCSI page an admin manages portals, initiator groups and authorized access, and changes the
+ * global configuration; all read back through the `iscsi.*` queries, with each edit or delete beside an untouched
+ * bystander. Portals listen on `0.0.0.0` and `::`, since middleware refuses a reused address. The base name (part
+ * of every IQN) and port are never changed; the iSNS server is the appliance's own HTTPS port on loopback, since
+ * Save needs a reachable server. ALUA and iSER are out of scope.
  */
 import { findIscsiPortal } from '../fixtures/iscsi';
 import {

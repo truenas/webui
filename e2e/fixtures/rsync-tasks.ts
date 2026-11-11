@@ -1,20 +1,10 @@
 /**
  * Rsync task preconditions, cleanup and readback, over the API.
  *
- * A task has no name. The card identifies a row by its local path and its
- * remote host, so these helpers key on the path — and a spec gives every task
- * a dataset of its own. Creating, updating and deleting a task are plain calls,
- * not jobs.
- *
- * Every task made by {@link ensureRsyncTaskPresent} is in Module mode against
- * `127.0.0.1`, where no rsync daemon listens. Middleware connects to nothing on
- * save in that mode, and a task that fires on its schedule before teardown fails
- * without touching data.
- *
- * The one exception is {@link ensureRsyncSshTaskPresent}, for a spec that runs a
- * task or edits one in SSH mode. It signs in through an SSH connection back to
- * the appliance itself — see `fixtures/ssh-connections.ts` — so a run really
- * copies files and the copy is a directory the spec can read back. Running a task is a `rsynctask.run` job.
+ * Tasks have no name; the card uses local path and remote host, so helpers key on the path, and each task gets
+ * its own dataset. CRUD are plain calls. {@link ensureRsyncTaskPresent} makes Module-mode tasks against
+ * `127.0.0.1`, where no daemon listens, so a scheduled fire fails harmlessly. {@link ensureRsyncSshTaskPresent}
+ * uses a loopback SSH connection (`fixtures/ssh-connections.ts`) so runs (`rsynctask.run` jobs) really copy.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -117,19 +107,12 @@ export async function ensureRsyncTaskPresent(
 }
 
 /**
- * Creates an SSH-mode task on this path, as root, through an SSH connection, if
- * it has none already. A push unless `direction` says otherwise.
+ * Creates an SSH-mode task on this path, as root, through an SSH connection, unless one exists. Push by default.
  *
- * Middleware takes the host, user and key from the connection and ignores
- * `remotehost` in this mode. It is set anyway, to the connection's own
- * `127.0.0.1`, because the card names the row after it.
- *
- * `validate_rpath` is off: it would sign in over SSH on save to check the remote
- * path, and saving this task is setup, not what a spec checks.
- *
- * rsync is given both paths as written, with no trailing slash, so a run copies
- * the source directory itself into the destination: a push writes
- * `<remotePath>/<last segment of path>/`, a pull `<path>/<last segment of remotePath>/`.
+ * Middleware takes host, user and key from the connection; `remotehost` is set to `127.0.0.1` only because the
+ * card names the row after it. `validate_rpath` is off so saving (setup) doesn't sign in over SSH. Paths have no
+ * trailing slash, so a push writes `<remotePath>/<last segment of path>/` and a pull
+ * `<path>/<last segment of remotePath>/`.
  */
 export async function ensureRsyncSshTaskPresent(
   client: E2eApiClient,

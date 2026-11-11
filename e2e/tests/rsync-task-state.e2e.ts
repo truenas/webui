@@ -1,20 +1,9 @@
 /**
- * Story: an admin reads a rsync task's last run from its State on the Data
- * Protection card, and clicks the state to read that run's log — the reason it
- * failed, or what it copied.
- *
- * Every Data Protection card renders its State through the same
- * `ix-task-state-cell`, so rsync stands for all of them. It is the one where both
- * outcomes need no outside service: a Module-mode task against `127.0.0.1` fails,
- * because no rsync daemon listens there, and an SSH-mode task through a
- * connection back to the appliance succeeds — see `fixtures/ssh-connections.ts`.
- *
- * The runs are started over the API. Starting one is "Run job", which
- * `rsync-task-run.e2e.ts` covers, and on the card it also raises its own error
- * dialog when the run fails — which would stand in for the one under test here.
- *
- * What the screen shows is checked against the job itself, read from
- * `core.get_jobs`: its state for the State, and its `logs_excerpt` for the log.
+ * Story: an admin reads a rsync task's last run from its State on the Data Protection card and clicks it to read
+ * the run's log. All cards share `ix-task-state-cell`, so rsync stands for them; it needs no outside service for
+ * either outcome: Module mode against `127.0.0.1` fails, SSH mode back to the appliance succeeds. Runs start over
+ * the API because "Run job" raises its own error dialog on failure, which would stand in for the one under test.
+ * The screen is checked against the job's state and `logs_excerpt` from `core.get_jobs`.
  */
 import { writeFileOnAppliance } from '../fixtures/cloud-sync';
 import {

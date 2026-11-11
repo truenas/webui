@@ -1,21 +1,9 @@
 /**
- * Stories: an admin turns SMB Stateful Failover on and off from the SMB service
- * form, and the form locks it while SMB1 is the minimum protocol or a Legacy
- * share exists — the two conditions middleware refuses it under.
- *
- * Only an HA-licensed system shows the setting at all, so this runs in the HA
- * suite, after the rest of its chain (`playwright.config.ts`) has left the pair
- * licensed and healthy, with `tank` imported on whichever controller holds the
- * VIP. Unlike the links before it, it changes nothing for good: `beforeEach`
- * moves the two fields it touches to a known start and teardown puts back what
- * it found, with the service stopped throughout so a save only rewrites
- * configuration.
- *
- * The EULA's acceptance is kept per controller, and `ha-license` accepted it on
- * controller 1 only. After `ha-failover`, controller 2 holds the VIP, so the app
- * raises the EULA over the first page here. Whichever test opens the form first
- * agrees to it, as an admin signing in there would; that is the one thing this
- * spec does not undo.
+ * Stories: an admin toggles SMB Stateful Failover on the SMB service form, which locks it while SMB1 is the
+ * minimum protocol or a Legacy share exists. HA-licensed only, so it runs last in the HA chain
+ * (`playwright.config.ts`) with `tank` on the VIP holder. It changes nothing for good: `beforeEach` sets the two
+ * fields and teardown restores them, with the service stopped. Except the EULA: accepted only on controller 1,
+ * so after `ha-failover` the first test here accepts it on controller 2, and that isn't undone.
  */
 import type { Page } from '@playwright/test';
 import { expectsEula, isHaLicensed, requireHa } from '../fixtures/ha';

@@ -1,16 +1,9 @@
 /**
- * The Category card on System > Alert Settings, `ix-alert-config-form`: one row
- * per alert class in the chosen category, each with a level and a frequency.
- *
- * A row's ids are built from the class's **title**, untranslated — the template
- * writes `[cls.title, 'level']` — so the Level select of "Pool Status Is Not
- * Healthy" is `select-pool-status-is-not-healthy-level`. There is no row element
- * and no class id in any of them.
- *
- * Both selects take the default option key, the label, run through the library
- * normalizer: levels are labelled by their wire value (`CRITICAL`) and the
- * frequencies by `alert.list_policies` itself (`HOURLY`), so either way the
- * option is the lower-cased value — `option-<title>-level-critical`.
+ * The Category card on System > Alert Settings (`ix-alert-config-form`): one row per alert class with a level and
+ * frequency. Ids are built from the class's untranslated title (`[cls.title, 'level']`), e.g.
+ * `select-pool-status-is-not-healthy-level`; no row element or class id is involved. Both selects key options by
+ * label through the library normalizer, and labels are the wire values (`CRITICAL`, `HOURLY`), so an option is
+ * the lower-cased value: `option-<title>-level-critical`.
  */
 import { kebabTestSegment } from './test-id';
 

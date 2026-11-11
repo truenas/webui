@@ -1,13 +1,9 @@
 /**
- * ACME DNS authenticator preconditions, cleanup and readback, over the API.
+ * ACME DNS authenticator preconditions, cleanup and readback, over the API, keyed on the name the card
+ * builds row ids from. Create, update and delete are plain calls, not jobs.
  *
- * Keyed on the name, which the card builds every id on a row from. Creating,
- * updating and deleting one are plain calls, not jobs.
- *
- * A Cloudflare authenticator saves with a token that has never been near
- * Cloudflare: middleware's `validate_credentials` for it only checks which of
- * token, key and email were given together, and makes no request. So a dummy
- * token is enough, and nothing here needs an outside account.
+ * A dummy Cloudflare token is enough: middleware's `validate_credentials` only checks which of token, key
+ * and email were given together, and makes no request.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

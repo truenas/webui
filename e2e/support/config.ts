@@ -1,19 +1,9 @@
 /**
- * Target configuration — the seam described in R2.11 / T10.
- *
- * The suite can run against two places the UI is served from, and the ONLY
- * difference between them is the UI base URL. Everything else — selectors, the
- * middleware client, authentication — is identical.
- *
+ * Target configuration (R2.11 / T10), and the only place the UI base URL and middleware host are resolved.
+ * The two profiles differ only in the UI base URL:
  *   shipped  UI: https://<host>/ui/         middleware: <host>   (nightly)
  *   branch   UI: http://localhost:4200/     middleware: <host>   (CI, local)
- *
- * The paths differ on purpose. `/ui/` is where the appliance's nginx serves the
- * UI; a locally served build defaults to `/`, because only webui's `build:prod`
- * passes `--base-href /ui/`. The invariant common to both is the trailing slash.
- *
- * This module is deliberately the only place either value is resolved. Nothing
- * else in the suite reads a URL from the environment.
+ * Only `build:prod` passes `--base-href /ui/`; what both share is the trailing slash.
  */
 import { readWebuiRemote } from './webui-environment';
 
@@ -23,24 +13,9 @@ export type ProfileName = 'shipped' | 'branch';
 const profiles: readonly ProfileName[] = ['shipped', 'branch'];
 
 /**
- * Opt-in value for `TN_HOST` that resolves the appliance from webui's own
- * `environment.ts` rather than naming one.
- *
- * Opt-in rather than the default, because this suite is destructive: it exports
- * pools with `destroy: true` (`fixtures/storage.ts`) and deletes users
- * (`fixtures/users.ts`).
- *
- * This used to be the fallback whenever `TN_HOST` was unset, and the setup
- * instructions actively told you to leave it unset. So the documented happy path
- * was a `.env` holding credentials and no target, pointed by inference at
- * whatever appliance the developer's dev server was on — where a run would
- * destroy any pool named `e2e_tank` or `e2e_shared_tank` and delete any user
- * named `bob`. Nothing in
- * the output said which machine that was.
- *
- * The convenience is worth keeping — one `yarn ui remote -i <ip>` configuring
- * both the dev server and the suite is genuinely useful — but it has to be
- * asked for.
+ * Opt-in value for `TN_HOST` that resolves the appliance from webui's own `environment.ts`. It must be asked
+ * for, never a fallback: the suite is destructive (exports pools with `destroy: true`, deletes users), and as
+ * the default it silently aimed runs at whatever box the dev server was pointed at.
  */
 const autoHost = 'auto';
 
@@ -292,21 +267,9 @@ function readProfile(raw: string | undefined, problems: string[]): ProfileName |
 }
 
 /**
- * Validates the UI base URL.
- *
- * The universal invariant is the **trailing slash**, not any particular path.
- * `new URL(path, base)` replaces the last segment when the base lacks one:
- *
- *   new URL('signin', 'http://h/ui')   -> http://h/signin      drops /ui
- *   new URL('signin', 'http://h/ui/')  -> http://h/ui/signin   correct
- *
- * Getting that wrong produces a 404 several steps into a test rather than an
- * error naming the cause, so it is worth catching at startup.
- *
- * The `/ui/` path itself is `shipped`-only — a property of the appliance's nginx
- * configuration, not of webui builds. A locally served build lives wherever it
- * was built to live, by default `/`, since only `build:prod` passes
- * `--base-href /ui/`.
+ * Validates the UI base URL. The invariant is the trailing slash, not a path: without it
+ * `new URL('signin', 'http://h/ui')` gives `http://h/signin`, a 404 several steps into a test, so catch it
+ * at startup. The `/ui/` path itself is `shipped`-only (the appliance's nginx); a local build defaults to `/`.
  */
 function validateUiBaseUrl(
   uiBaseUrl: string,
@@ -330,18 +293,9 @@ function validateUiBaseUrl(
     );
   }
 
-  // Only an assertion about what this suite *derives*. An explicit
-  // `TN_UI_BASE_URL` is the documented way to point at an appliance whose nginx
-  // serves the UI somewhere else, so rejecting it here made the error message
-  // ("Override TN_UI_BASE_URL only if this appliance is configured differently")
-  // advice the validator forbade anyone from taking — the override was the one
-  // thing guaranteed to fail.
-  //
-  // An override is now allowed through and surfaced in the startup banner
-  // instead of warned about here. This function runs on every config load — main
-  // process, each worker, and each worker respawned after a failed test — so a
-  // `console.warn` in it reprints through the output, which is the problem the
-  // banner's own once-per-run guard exists to solve.
+  // Only an assertion about what this suite derives: an explicit `TN_UI_BASE_URL` is the documented way to
+  // reach an appliance serving the UI elsewhere, so it's allowed and surfaced in the startup banner. Don't
+  // `console.warn` here: this runs on every config load (main, each worker, each respawn) and would repeat.
   if (profile === 'shipped' && !wasOverridden && parsed.pathname !== shippedUiPath) {
     problems.push(
       `The shipped profile serves the UI at "${shippedUiPath}", but "${parsed.pathname}" was `
@@ -351,16 +305,9 @@ function validateUiBaseUrl(
 }
 
 /**
- * Rejects the shapes `TN_HOST` is most often given by mistake.
- *
- * `host` or `host:port`, no scheme and no path — the client builds
- * `wss://${host}${path}` itself. The value pasted out of a browser's address bar
- * is the common error, and left unchecked it fails a long way from its cause: in
- * `branch` the run dies 30 seconds later on a socket to `wss://https://…`, and
- * in `shipped` it derives `https://https://host/ui/`, which parses, so the
- * complaint that surfaces is about `TN_UI_BASE_URL` — a variable the user never
- * set. Since the point of requiring `TN_HOST` is to make the target
- * unmistakable, it is worth saying so here instead.
+ * Rejects the shapes `TN_HOST` is most often given by mistake: it must be `host` or `host:port`, no scheme or
+ * path. A URL pasted from the address bar otherwise fails far from its cause: a 30s socket timeout on
+ * `wss://https://…` in `branch`, or a complaint about `TN_UI_BASE_URL` (never set) in `shipped`.
  */
 function validateMiddlewareHost(host: string, source: HostSource, problems: string[]): void {
   const from = source === 'TN_HOST' ? 'TN_HOST' : `the remote in environment.ts (TN_HOST=${autoHost})`;
@@ -510,35 +457,19 @@ export function throughVip(config: TargetConfig): TargetConfig {
 }
 
 /**
- * The subset of {@link TargetConfig} the banner is allowed to see.
- *
- * Deliberately not `TargetConfig` itself. Handing the whole object to something
- * whose job is to build a string for `console.warn` puts `password` one property
- * access away from a log line, and CodeQL is right to treat that as clear-text
- * logging of credentials (`js/clear-text-logging-of-sensitive-data`) whether or
- * not today's implementation reads the field. Narrowing the parameter means the
- * banner *cannot* leak a credential, rather than merely not doing so.
+ * The subset of {@link TargetConfig} the banner may see. Not `TargetConfig` itself, so `password` is not one
+ * property away from a `console.warn`: the banner cannot leak a credential, and CodeQL's
+ * `js/clear-text-logging-of-sensitive-data` stays satisfied.
  */
 export type TargetSummary = Pick<
   TargetConfig, 'profile' | 'uiBaseUrl' | 'middlewareHost' | 'hostSource'
 >;
 
 /**
- * The startup banner, naming the machine this run is about to act on.
- *
- * Printed before anything else happens. The suite destroys pools and deletes
- * users, so which appliance it resolved is the one fact a developer must never
- * have to infer — and it is doubly worth stating when the address was borrowed
- * from webui's configuration rather than named outright.
- *
- * Does not print the account. Knowing the machine is what stops you destroying
- * the wrong one; the username adds nothing to that and is credential-adjacent
- * enough to be worth keeping out of CI logs and terminal scrollback. It is in
- * `.env` if you need it.
- *
- * The TLS line is read from the environment rather than passed in, so the
- * banner reports what is actually in effect for the process rather than what a
- * caller believes it set.
+ * The startup banner naming the machine this run will act on, printed first because the suite destroys
+ * pools and deletes users. It omits the account: the machine is what matters, and the username is
+ * credential-adjacent enough to keep out of logs. TLS is read from the environment so it reports what is
+ * actually in effect.
  */
 export function describeTarget(target: TargetSummary): string {
   const rule = '─'.repeat(72);

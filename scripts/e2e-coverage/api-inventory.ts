@@ -1,15 +1,8 @@
 /**
- * The middleware methods and events the UI's source names at a call site — the inventory half of
- * `scripts/e2e-coverage.ts`, kept in its own module so it can be tested without running the report.
- *
- * Read off the TypeScript AST, with the type checker resolving each call's first argument. That one
- * rule covers a literal (`call('a.b')`), a `const` holding a conditional of literals
- * (`snapshot-details-row`'s hold/release) and a parameter typed as a literal union
- * (`getAppsFetchCall(endPoint: 'app.available' | 'app.latest')`, `alert.effects`'
- * `'alert.dismiss' | 'alert.restore'`). Comments are trivia, not nodes, so a JSDoc example never
- * counts, and a type annotation is not a property assignment, so neither does a parameter typed
- * `method: '…'`. A name built at runtime has type `string` and is skipped, and so is anything typed
- * more loosely than the call site spells it (see {@link namedAtCallSite}).
+ * The middleware methods and events the UI's source names at a call site: the inventory half of
+ * `scripts/e2e-coverage.ts`, separate so it can be tested. Read off the TypeScript AST with the checker
+ * resolving each call's first argument, so literals, conditionals of literals and literal-union parameters
+ * count, while comments and runtime-built names don't (see {@link namedAtCallSite}).
  */
 
 import { readdirSync, statSync } from 'fs';
@@ -52,13 +45,9 @@ function isLiteralUnionNode(type: ts.TypeNode): boolean {
 }
 
 /**
- * Whether the source spells the name out: a literal, a conditional whose branches all are, a
- * `const` with no annotation whose initializer is, or a parameter whose annotation is itself a
- * literal union. Without this the checker also resolves the API layer's own plumbing —
- * `ApiService.subscribe(method)`, `ApiService.query(...args)` and the table data providers'
- * `this.method` are typed with method-union aliases, and would bring in 80-odd names that no
- * feature calls. It is checked all the way down, so `const method = this.method` does not let
- * them back in.
+ * Whether the source spells the name out: a literal, a conditional of literals, an unannotated `const` holding
+ * one, or a parameter typed as a literal union, checked all the way down. Without it, the API layer's own
+ * method-union plumbing (`ApiService.subscribe(method)`, data providers) would add 80-odd names no feature calls.
  */
 function namedAtCallSite(node: ts.Expression, checker: ts.TypeChecker): boolean {
   if (ts.isStringLiteralLike(node)) {

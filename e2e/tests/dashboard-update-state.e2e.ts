@@ -1,33 +1,10 @@
 /**
- * Story: an admin on the Dashboard sees the System Information card say whether an update is
- * offered, and the Update page it opens says the same.
- *
- * The CI appliance reaches the real update server, whose answer moves with every nightly. So the
- * test does not hard-code either state: it reads `update.status` first and asserts the card and the
- * page agree with it. Which branch runs depends on the update server on the day. Both are real code
- * paths and nothing is stubbed.
- *
- * The card shows Check for Updates until its own `update.status` answers, so that label alone
- * would pass before the card knew anything. The test waits for the card's call to be answered
- * before reading it. Hence `recordApiCalls`.
- *
- * The test switches the update profile to Developer first. Middleware offers a release only when
- * the release's profile is at least as permissive as the configured one, and on the CI appliance
- * the configured profile matches nothing on the next train: `update.status` answered `ERROR` "No
- * releases match specified update profile." on every run, so the test never ran. Developer is the
- * least conservative profile and matches every release. It changes which release is offered, not
- * whether the card and the page agree about it.
- *
- * The test writes a layout holding one System Information card and `afterEach` writes back the
- * admin's own, as `dashboard-links.e2e.ts` does and for the same reason. See `fixtures/dashboard.ts`.
- * `afterEach` also writes back the profile the appliance held. Nothing is installed and the train
- * is not touched.
- *
- * If an update is running, the card shows Update in Progress instead of this button. That is not a
- * state the CI appliance is in.
- *
- * Does not need a pool, so it does not ask for the `pool` fixture: System Information and the Update
- * page's update check show nothing from storage.
+ * Story: the Dashboard's System Information card says whether an update is offered, and the Update page agrees.
+ * The real update server's answer moves nightly, so the test reads `update.status` and asserts both agree with it;
+ * it waits for the card's own call (`recordApiCalls`), as Check for Updates shows before the card knows anything.
+ * The profile is switched to Developer, which matches every release: CI's configured one matched nothing and
+ * `update.status` errored. `afterEach` restores the profile and the admin's layout (see `fixtures/dashboard.ts`).
+ * A running update (Update in Progress) is not a state CI is in. No pool needed.
  */
 import { captureDashState, restoreDashState, writeDashState } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';

@@ -1,15 +1,8 @@
 /**
- * Stories: an admin creates a certificate signing request through the Add CSR
- * wizard on Credentials > Certificates, and deletes one from its row on the CSR
- * card, and the appliance holds what they did.
- *
- * Each action is asserted twice: the card's row says the screen believed it,
- * `certificate.query` says the appliance did it — and carries the request itself,
- * which is the evidence that a key pair was generated and a CSR signed with it.
- *
- * The delete runs beside a second CSR that must come through untouched. Every row
- * has its own Delete in its own row menu, so a row-targeting bug deletes the wrong
- * request without failing anything else.
+ * Stories: an admin creates a CSR through the Add CSR wizard on Credentials > Certificates and deletes one from the
+ * CSR card. Each is checked on the row and through `certificate.query`, whose request proves a key pair was made
+ * and a CSR signed. The delete runs beside a bystander CSR that must come through untouched, so a row-targeting
+ * bug fails the test.
  */
 import {
   countCsrs, ensureCertificateAbsent, ensureCsrPresent, findCertificate, type CsrSeed,

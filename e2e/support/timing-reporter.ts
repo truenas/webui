@@ -1,28 +1,9 @@
 /**
- * Records where each test's time went, for `yarn e2e:timings`.
- *
- * JUnit and the list reporter give one number per test, and it is not even the
- * whole of it: Playwright leaves `beforeAll` and `afterAll` hooks, and the
- * worker-scoped fixtures a test is the first to need, out of a test's duration.
- * On a run where the apps specs install their apps in `beforeAll`, that was
- * minutes per shard that no test was charged for. This reads the step tree
- * instead, where those hooks are, and writes per test attempt:
- *
- * - its span, from its first step to its last, beside the duration Playwright
- *   reports;
- * - each hook and fixture it ran before and after the body, by name and with
- *   its own time — the `page` fixture being the sign-in every authenticated
- *   test pays;
- * - the body's span, and how much of it went to browser actions and to
- *   `expect` waits.
- *
- * Only hook and fixture names are kept, never the titles of the steps inside
- * them or in the body. A browser action's title carries what it typed —
- * `Fill "<the password>"` — and this file is published with the run, including
- * for the `unpublished` project. The middleware side is `timings.ts`.
- *
- * Written once, at the end, to `tests.json` in the directory `timings.ts`
- * records into.
+ * Records where each test's time went, for `yarn e2e:timings`, from the step tree: Playwright's duration omits
+ * `beforeAll`/`afterAll` hooks and first-use worker fixtures. Per attempt it writes the span, each hook and
+ * fixture's time, and the body's split between browser actions and `expect` waits. Only hook and fixture names
+ * are kept, never step titles: an action title carries what it typed (`Fill "<the password>"`) and this file
+ * is published, `unpublished` project included. Written once at the end to `tests.json` beside `timings.ts`'s.
  */
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';

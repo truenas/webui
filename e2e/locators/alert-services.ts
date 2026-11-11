@@ -1,17 +1,9 @@
 /**
- * The Alert Services table on System > Alert Settings, its form and its delete dialog.
- *
- * Every id on a row is built from the list's own `uniqueRowTag`,
- * `alert-service-<name>`, run through `convertStringToId` and then the library's
- * normalizer. The two agree on every name the suite uses, so
- * {@link kebabTestSegment} is the one to use throughout. The tag is keyed on the
- * name alone, so an edit that leaves the name alone never renames the row.
- *
- * Every column is an `ix-table-text-cell`, Enabled included — a translated Yes/No
- * rendered as text — so every cell id ends `row-text`, not `row-yesno`.
- *
- * The list asks for `mode="inline"`, so Edit and Delete are icon buttons on the
- * row rather than items in a kebab menu, and their ids have no `more-action`.
+ * The Alert Services table on System > Alert Settings, its form and its delete dialog. Row ids come from
+ * `uniqueRowTag`, `alert-service-<name>`, via `convertStringToId` then the library normalizer, which agree on
+ * every name the suite uses, so use {@link kebabTestSegment}. Keyed on the name alone, so edits keep the row id.
+ * Every column, Enabled included, is an `ix-table-text-cell`, so cells end `row-text`, not `row-yesno`.
+ * `mode="inline"` makes Edit and Delete row icon buttons, so their ids have no `more-action`.
  */
 import { kebabTestSegment } from './test-id';
 

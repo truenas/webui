@@ -1,16 +1,9 @@
 /**
- * Replication settings: preconditions, cleanup and readback, over the API.
+ * Replication settings (`replication.config`, one config record): preconditions, cleanup and readback.
  *
- * The one setting is `replication.config`, a single config record, so — as in
- * `fixtures/audit.ts` — there is nothing to create or delete. Each test writes
- * the limit it starts from.
- *
- * Unlike the other Advanced Settings fixtures, teardown does not write a fixed
- * baseline back. Middleware's schema declares no default for the limit, so what
- * a fresh appliance holds is not knowable from here, and writing a guess would
- * change it for whatever runs next. The spec reads the limit once before its
- * first test and writes that back instead. Every test still starts from a state
- * it chose, so nothing depends on what was read.
+ * Each test writes the limit it starts from. Unlike other Advanced Settings fixtures, teardown does not write a
+ * fixed baseline: the schema declares no default, so a guess could change it for whatever runs next. The spec
+ * reads the limit before its first test and writes that back; no test depends on what was read.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

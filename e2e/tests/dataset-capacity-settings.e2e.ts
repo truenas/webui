@@ -1,14 +1,8 @@
 /**
- * Stories: an admin sets and removes a dataset's own quotas, reservations and quota warning
- * threshold from the Space Management card, and the form refuses a quota below 1 GiB.
- *
- * Every save is asserted on the card and through `pool.dataset.query`. The API check is the
- * stronger one: the sizes are typed as `2 GiB` and have to reach middleware as byte counts, and the
- * form sends only the fields that changed, so a field it dropped would still look right on the
- * card until the next reload.
- *
- * The dataset is the spec's own and is recreated around every test, so no quota or reservation
- * outlives it. A leaked reservation would hold pool space from every later test.
+ * Stories: an admin sets and removes a dataset's quotas, reservations and quota warning threshold from the Space
+ * Management card, and the form refuses a quota below 1 GiB. Saves are checked on the card and through
+ * `pool.dataset.query`, the stronger check: sizes must arrive as bytes, and the form sends only changed fields.
+ * The dataset is recreated around every test, since a leaked reservation would hold pool space from later tests.
  */
 import { readCapacity, setCapacity } from '../fixtures/dataset-capacity';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';

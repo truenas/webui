@@ -1,16 +1,8 @@
 /**
- * Teardown that keeps going.
- *
- * Every step runs even when an earlier one throws, and the failures are
- * reported together. Plain sequential `await`s meant one failing call abandoned
- * the rest, so a `user.delete` that kept failing would wedge the suite: the
- * `afterEach` would leak a pool, and the retry's `beforeEach` would throw at the
- * same first call and never reach the export either.
- *
- * Order still matters — callers list steps in the order things depend on each
- * other (stop the service, then remove what it served, then the storage under
- * that) — this only guarantees that a failure early in the list does not skip
- * the later, usually more expensive, steps.
+ * Teardown that keeps going: every step runs even when an earlier one throws, and failures are reported
+ * together. Otherwise one persistently failing call (say `user.delete`) leaks a pool in `afterEach` and the
+ * retry's `beforeEach` throws at the same call, wedging the suite. Callers still list steps in dependency
+ * order (service, then what it served, then the storage under that).
  */
 
 /**
@@ -22,14 +14,7 @@
 export const keepTestData = process.env.TN_KEEP_TEST_DATA === '1';
 
 /**
- * Whether an `afterEach` should skip its cleanup, saying what it leaves.
- *
- *     test.afterEach(async ({ api }) => {
- *       if (leavingTestData(`bucket "${bucket}" and user "${owner}"`)) {
- *         return;
- *       }
- *       await cleanUp(api);
- *     });
+ * Whether an `afterEach` should skip its cleanup, logging what it leaves behind.
  */
 export function leavingTestData(what: string): boolean {
   if (keepTestData) {

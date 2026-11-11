@@ -1,12 +1,8 @@
 /**
- * Story: creating a dataset that shares itself should offer to turn the service on.
- *
- * A dataset given the SMB preset creates a share alongside itself, and a share
- * on a stopped service serves nothing, so the form offers to start it. The
- * offer is made only for a preset that creates a share (`canCreateSmb`), which
- * the second test holds it to. It also depends on the services store being
- * populated when the save lands: the effect is `take(1)` then `filter(Boolean)`,
- * so an empty store means no prompt at all, silently.
+ * Story: creating a dataset with the SMB preset creates a share, so the form offers to start the stopped service;
+ * the second test holds the offer to presets that create a share (`canCreateSmb`). The offer also needs the
+ * services store populated when the save lands: the effect is `take(1)` then `filter(Boolean)`, so an empty store
+ * silently means no prompt.
  */
 import { queryService } from '../fixtures/services';
 import {

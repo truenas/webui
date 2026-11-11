@@ -1,36 +1,10 @@
 /**
- * S3 bucket and access key locators.
- *
- * See `storage.ts` for the two derivations most of these rest on: a control with
- * no explicit `testId` takes its bound control name (`<tn-checkbox
- * formControlName="object_lock">` is `checkbox-object-lock`), and every segment
- * goes through the library's `kebabTestSegment`.
- *
- * A `tn-select` option is `option-<base>-<label>` — keyed by the text on
- * screen, not the value behind it, unless the select declares an
- * `optionTestIdKey` (none of these do). So `S3Access.ReadOnly`, whose value is
- * `READONLY`, is reached as `option-access-read-only` from its label "Read
- * Only". The option locators below therefore take the label.
- *
- * Two things here normalize through lodash `kebabCase` (`legacyKebabTestSegment`)
- * rather than the library's own:
- *
- * - The grants list's principal picker is still `ix-combobox`, a Material
- *   autocomplete whose ids predate the library, so its options are
- *   `option-xid-<label>` with the label split at letter/digit boundaries.
- * - The access key list's row tag goes through `toUniqueRowTag`, which
- *   pre-normalizes the same way — while the dashboard card's tag does not. Both
- *   ids below were confirmed by mounting the components and reading the
- *   attributes back, because the difference is invisible in the templates.
- *
- * The bucket owner and access key user fields are `ix-user-combobox`, which
- * renders a library `tn-autocomplete`: the input is `autocomplete-<control>`
- * and its rows `option-<control>-<label>` through the library normalizer, plus
- * an `option-<control>-add-new` create row. (Until webui#13982 these were an
- * `ix-user-picker` emitting `input-<control>` through the legacy path.)
- *
- * The parent dataset is a `tn-file-picker`, whose typable
- * inner `<input>` takes the control name — the same shape as the SMB path.
+ * S3 bucket and access key locators; see `storage.ts` for the control-name fallback and `kebabTestSegment`. Select
+ * options are keyed by label, not value (`READONLY` is `option-access-read-only`), so option locators take labels.
+ * Two use lodash (`legacyKebabTestSegment`): the grants principal picker, still `ix-combobox` (`option-xid-<label>`),
+ * and the access key list's `toUniqueRowTag` row tag (the dashboard card's isn't); both confirmed by mounting, as
+ * the templates don't show it. Owner and user fields are `ix-user-combobox` (`autocomplete-<control>`,
+ * `option-<control>-<label>`, `option-<control>-add-new`); the parent dataset is a `tn-file-picker`.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 

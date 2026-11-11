@@ -1,33 +1,10 @@
 /**
- * Story: an admin exports a pool from its Disconnect dialog, and chooses whether
- * the configuration that depends on it goes too.
- *
- * Export is the non-destructive disconnect: the data stays on the disks, so the
- * pool can be imported again. "Delete saved configurations from TrueNAS?"
- * (`cascade`) is what decides whether the shares and tasks on the pool survive,
- * and getting it backwards either deletes a user's shares silently or leaves
- * them pointing at nothing. So each test sets it one way and asks
- * `sharing.smb.query` what became of a share on the pool.
- *
- * The form starts with `cascade` **ticked**. Keeping the configuration is the
- * choice a user has to make, not the default.
- *
- * The rest is settled through the API too: `pool.query` must no longer list the
- * pool, and `disk.details` must report its disk carrying it exported, which is
- * what tells an export from a destroy. Delete Pool is
- * `tests/pool-disconnect.e2e.ts`; importing a pool exported over the API is
- * `tests/pool-import.e2e.ts`.
- *
- * ## Why this spec builds its own pool
- *
- * Exporting the worker-scoped `pool` fixture would take it from under every
- * later spec. `e2e_export_tank` is this spec's own. A disk left carrying it
- * exported is one the pool wizard will not offer, and `fresh-install` needs
- * those, so it is removed before and after each test whatever state it was
- * left in: destroyed if imported, its disk wiped if exported.
- *
- * The SMB service is never started. The share only has to exist as
- * configuration for the dialog to list it and for `cascade` to act on it.
+ * Story: an admin exports a pool from its Disconnect dialog and chooses whether dependent configuration goes too.
+ * `cascade` starts ticked; each test sets it one way and asks `sharing.smb.query` what became of a share on the
+ * pool. `disk.details` reporting the disk as carrying an exported pool tells an export from a destroy.
+ * `e2e_export_tank` is this spec's own; a disk left carrying it exported is one the wizard won't offer and
+ * `fresh-install` needs, so it's removed before and after each test: destroyed if imported, disk wiped if exported.
+ * The SMB service is never started; the share only has to exist as configuration.
  */
 import { ensureExportedPoolGone, findDisksCarryingExportedPool } from '../fixtures/disks';
 import { ensurePoolPresent } from '../fixtures/pool';

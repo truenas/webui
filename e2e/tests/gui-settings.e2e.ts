@@ -1,36 +1,10 @@
 /**
- * Stories: an admin edits the web interface settings from the GUI card on
- * System > General Settings — settings that need no restart, a certificate whose
- * restart they decline, the choices the form offers, and a port it refuses.
- *
- * Each save is asserted twice: the card's readout says the screen believed it,
- * `system.general.config` says the appliance did it.
- *
- * ## The web service is never restarted
- *
- * In CI the UI is not served by the appliance. A separate nginx serves it and
- * proxies the API to the appliance's port 80 over cleartext, while the fixtures'
- * client connects to `wss://`. A web service restart, or a port, address or
- * redirect change taking effect, can cut the run off. So the Restart Web Service
- * prompt is always declined, `system.general.ui_restart` is asserted never sent,
- * and nothing here writes a port, an address or HTTPS redirect.
- *
- * The certificate is the restart-raising field this file changes, because the
- * UI's traffic does not go over TLS in CI: even applied at once it cannot cut the
- * run off. `system.general.update` restarts middleware's `ssl` service and not
- * the web server, so the save alone does not apply it either.
- *
- * ## Setup and teardown
- *
- * `system.general` is one config record, so there is nothing to delete but the
- * imported certificate. Before and after every test the fields this file can
- * change are written back to what the appliance held before the first test, as
- * `replication-settings.e2e.ts` does. Only then is the certificate removed:
- * middleware will not delete the certificate the UI uses.
- *
- * Every setup write happens before the page signs in. The form takes its values,
- * and the "before" side of its restart check, from the store's general config,
- * which loads at sign-in and never sees a later API write.
+ * Stories: an admin edits the GUI card on System > General Settings: settings needing no restart, a certificate
+ * whose restart they decline, the offered choices, and a refused port. Saves are checked on the card and through
+ * `system.general.config`. In CI a separate nginx proxies cleartext to port 80, so a web service restart or a port,
+ * address or redirect change can cut the run off: the restart prompt is always declined, `ui_restart` is asserted
+ * unsent, and none of those is written. Before and after every test changed fields are restored, then the imported
+ * certificate removed. Setup writes precede sign-in, as the form reads the general config loaded at sign-in.
  */
 import { ensureCertificateAbsent, ensureImportedCertificatePresent, findCertificate } from '../fixtures/certificates';
 import {

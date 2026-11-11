@@ -1,13 +1,9 @@
 /**
  * Init/shutdown script preconditions and cleanup, over the API.
  *
- * A script has no name. The card identifies a row by its command and its When,
- * so these helpers key on the command — and a spec keeps its commands distinct
- * from anything an appliance might already carry.
- *
- * Every script made here is a harmless `echo`: an enabled script really runs
- * at the next boot or shutdown of the appliance, and a run that dies before its
- * teardown leaves one behind.
+ * A script has no name; the card identifies a row by command and When, so helpers key on a command kept
+ * distinct from anything an appliance might carry. Every script is a harmless `echo`: enabled scripts really
+ * run at the next boot or shutdown, and a dead run leaves one behind.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

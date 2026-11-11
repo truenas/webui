@@ -71,14 +71,9 @@ export const smbLocators = {
      */
     purpose: '[data-test="select-purpose"]',
     /**
-     * A purpose option, by the label shown on screen — `tn-select` derives an
-     * option's id from its label, not its value. The two agree for some
-     * purposes and not for others: `Time Machine Share` is `time-machine-share`
-     * here, while its stored value, `TIMEMACHINE_SHARE`, would give
-     * `timemachine-share`.
-     *
-     * The picker does not offer every purpose: `Legacy Share` is left out for a
-     * new share, and `Veeam Repository Share` without the entitlement.
+     * A purpose option, by its on-screen label: `tn-select` derives ids from labels, not values (`Time Machine
+     * Share` is `time-machine-share`; its value `TIMEMACHINE_SHARE` would give `timemachine-share`). `Legacy
+     * Share` isn't offered for a new share, nor `Veeam Repository Share` without the entitlement.
      */
     purposeOption: (label: string): string => `[data-test="option-purpose-${kebabTestSegment(label)}"]`,
 
@@ -110,14 +105,10 @@ export const smbLocators = {
     advancedToggle: '[data-test="button-toggle-advanced-options"]',
 
     /**
-     * Three advanced controls chosen for how they move between purposes.
-     *
-     * `aaplNameMangling` belongs to Default (and most others) but **not** to
-     * Time Machine; `autoSnapshot` and `timeMachineQuota` are the reverse. So
-     * the pair makes the swap observable in both directions, which is what
-     * stops a test passing against a form that only ever adds fields.
-     * `hostsAllow` is enabled for nearly every purpose and is the control that
-     * should *not* move.
+     * Three advanced controls chosen for how they move between purposes. `aaplNameMangling` belongs to Default
+     * but not Time Machine; `autoSnapshot` and `timeMachineQuota` the reverse, so the swap is observable both
+     * ways and a form that only adds fields can't pass. `hostsAllow` is on for nearly every purpose and should
+     * not move.
      */
     aaplNameMangling: '[data-test="checkbox-aapl-name-mangling"]',
     autoSnapshot: '[data-test="checkbox-auto-snapshot"]',

@@ -1,18 +1,8 @@
 /**
- * Stories: an admin creates a zvol from the Datasets page, edits one, and deletes one, and the
- * appliance holds what they did.
- *
- * Each change is asserted on screen and through `pool.dataset.query`. The second check is the
- * stronger one. Sync is a ZFS property, and a property the form never sent reads back as
- * inherited, so `source: 'LOCAL'` is what proves the form sent it. The size is checked in bytes,
- * because the form takes `64 MiB` and has to turn that into a number itself.
- *
- * Edit and delete both act beside a bystander zvol that must come through untouched. Both are
- * reached from the details card, which acts on whatever the tree has selected, so a selection bug
- * would act on the wrong zvol and still look right on screen.
- *
- * `datasets-deletion.e2e.ts` already covers the delete dialog's gates for a zvol. Here the
- * deletion is confirmed properly and has to actually happen.
+ * Stories: an admin creates, edits and deletes a zvol from the Datasets page; checked on screen and, more strongly,
+ * in `pool.dataset.query`: Sync reads `source: 'LOCAL'` only if the form sent it, and size is checked in bytes since
+ * the form converts `64 MiB` itself. Edit and delete run beside a bystander zvol, since the details card acts on
+ * the tree's selection and a selection bug would still look right on screen.
  */
 import { ensureDatasetAbsent, ensureZvolPresent, findDataset } from '../fixtures/storage';
 import {

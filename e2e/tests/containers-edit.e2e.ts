@@ -1,21 +1,9 @@
 /**
- * Stories: an admin edits a stopped container from Edit on its General Info
- * card — changes its description, CPU set and autostart, removes an environment
- * variable — and the form refuses a Shutdown Timeout below its minimum.
- *
- * Each test seeds its container over the API, stopped, so every field here can
- * change: middleware refuses only a rename while a container runs, and renaming
- * is not covered. Seeding downloads the image's rootfs the first time it is used
- * on the pool, as in `containers.e2e.ts`.
- *
- * ## Setup and teardown
- *
- * Each test starts with the worker's `pool` as the preferred pool and no
- * container named `e2e-ct-edit`. Teardown deletes the container, then writes
- * back the containers settings the appliance held before the first test. Once
- * the file is done it removes `<pool>/.truenas_containers`, which holds the
- * downloaded image and which no container removes, before the worker exports the
- * pool.
+ * Stories: an admin edits a stopped container's description, CPU set, autostart and environment from its General
+ * Info card, and is refused a Shutdown Timeout below its minimum. Containers are seeded stopped, since middleware
+ * refuses only a rename while running. Each test starts with the worker's `pool` preferred and no `e2e-ct-edit`;
+ * teardown deletes it and restores the containers settings. After the file, `<pool>/.truenas_containers` (the
+ * downloaded image, which no container removes) is removed before the worker exports the pool.
  */
 import {
   type ContainerSettings, containersDataset, containerSettingsBaseline, ensureContainerAbsent, findContainer,

@@ -1,30 +1,10 @@
 /**
- * Stories: an admin changes the appliance's hostname, domain, search domains, host
- * entries, service announcements and outbound network activity from the Network
- * Configuration card on System > Network, and middleware refuses a nameserver or
- * a default gateway that would leave the appliance unable to resolve or route.
- *
- * Every save is asserted on the card and through `network.configuration.config`.
- * The refusals are checked where the form shows them, and by the config being
- * unchanged afterwards.
- *
- * ## What is left alone
- *
- * The CI appliance is reached through qemu's user-mode NAT on DHCP, so a real
- * change to its nameservers, gateway or interface cuts the suite off. No test
- * saves one on purpose. The refused values are refused before middleware writes
- * anything, and every address used is reserved for documentation (RFC 5737).
- *
- * No test picks Deny All or Allow Specific either. Both would cut the appliance's
- * outbound traffic, which the apps tests pull images over, until the restore.
- * Allow All Except denies one service the suite never uses.
- *
- * ## Setup and teardown
- *
- * `beforeAll` reads the config, and `afterEach` writes it back if anything
- * differs, pass or fail. The form's own save stores the DHCP nameserver and
- * gateway as static values (see `fixtures/network-config.ts`), so the restore
- * runs after every successful save, not only after a failure.
+ * Stories: from the Network Configuration card on System > Network an admin changes hostname, domain, search
+ * domains, host entries, service announcements and outbound activity, and middleware refuses a nameserver or
+ * gateway that would break resolving or routing; saves are checked on the card and `network.configuration.config`.
+ * CI is reached via qemu NAT on DHCP, so no test saves a real nameserver, gateway or interface change (addresses are
+ * RFC 5737), nor Deny All or Allow Specific, which would cut image pulls. The form's save stores DHCP values as
+ * static (`fixtures/network-config.ts`), so `afterEach` restores the config after every test, pass or fail.
  */
 import {
   findActivityLabel, type NetworkSettings, readNetworkConfig, restoreNetworkConfig,

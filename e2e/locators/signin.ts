@@ -1,15 +1,7 @@
 /**
- * Sign-in page locators.
- *
- * Values are the emitted `data-test` attributes, which are type-prefixed by
- * `@truenas/ui-components`: the component declares `tnTestIdType` and the
- * directive composes `${type}-${base}`. So a template writing
- * `<tn-input [testId]="'username'">` emits `data-test="input-username"` on the
- * inner `<input>`.
- *
- * Note this contradicts `truenas-ui-components/docs/test_ids.md`, which still
- * describes values as rendered verbatim. The code is authoritative; the doc
- * predates `tnTestIdType`.
+ * Sign-in page locators. Values are emitted `data-test` attributes, type-prefixed by `@truenas/ui-components` as
+ * `${type}-${base}`: `<tn-input [testId]="'username'">` emits `input-username` on the inner `<input>`. This
+ * contradicts `truenas-ui-components/docs/test_ids.md`, which predates `tnTestIdType`; the code is authoritative.
  */
 export const signinLocators = {
   /** `<tn-input [testId]="'username'">` in signin-form.component.html */
@@ -36,14 +28,9 @@ export const signinLocators = {
    */
   insecureConnectionBanner: '[data-test="banner-insecure-connection"]',
   /**
-   * The failure message under the submit button.
-   *
-   * Inline, and *not* a form-field error: the component renders a plain block
-   * holding whatever `SigninStore.getLoginErrorMessage` returned. A toast
-   * carries the same words, but it clears itself after four seconds, so the
-   * inline copy is the one an assertion can rely on. The two-factor step
-   * renders its own failure block under the same id, so this matches whichever
-   * step failed.
+   * The inline failure message under submit, a plain block holding `SigninStore.getLoginErrorMessage`. A toast
+   * says the same but clears after four seconds, so assert on this. The two-factor step renders its own failure
+   * under the same id, so this matches whichever step failed.
    */
   error: '[data-test="text-login-error"]',
   /**

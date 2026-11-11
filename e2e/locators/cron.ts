@@ -1,19 +1,9 @@
 /**
- * The Cron Jobs card on System > Advanced Settings, its form and its delete dialog.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `card-cron-<command>-<user>`, a plain concatenation with no pre-normalizing —
- * so the row, its cells and its action menu all go through the library's
- * normalizer, and {@link kebabTestSegment} is the one to use throughout. The tag
- * carries the command, so **editing the command renames every id on the row**;
- * a spec that edits it looks the row up again under the new value. The
- * description is not in the tag at all, so two jobs running one command as one
- * user share every id, and the specs keep their commands distinct.
- *
- * The form is a hand-written template whose controls fall back to their
- * `formControlName`, so the field ids read like the API's own keys — `stdout`
- * and `stderr` included, though the screen labels them "Hide Standard Output"
- * and "Hide Standard Error".
+ * The Cron Jobs card on System > Advanced Settings, its form and its delete dialog. Row ids come from
+ * `uniqueRowTag`, `card-cron-<command>-<user>`, with no pre-normalizing, so use {@link kebabTestSegment}. Editing
+ * the command renames every id on the row (look it up again); the description isn't in the tag, so two jobs
+ * with one command and user share ids, and the specs keep commands distinct. Form fields fall back to their
+ * `formControlName`, so `stdout`/`stderr` keep the API names despite the "Hide Standard ..." labels.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
@@ -26,17 +16,10 @@ import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 export const hourlyScheduleLabel = 'Hourly At the start of each hour';
 
 /**
- * `ix-scheduler`'s select, and the custom schedule dialog, `ix-scheduler-modal`,
- * that it opens from its "Create Custom schedule" option — cron jobs, rsync,
- * cloud sync, replication and periodic snapshot tasks alike.
- *
- * The select is `[testId]="[controlName, 'presets']"`, so its ids carry the
- * form control the scheduler is bound to: `schedule` on most task forms, but
- * `cloudsync_picker` on cloud sync and `schedule_picker` on replication.
- *
- * The dialog's inputs set no `testId` and fall back to their `formControlName`.
- * Its checkboxes are `[testId]="['scheduler', label]"`, keyed by the translated
- * short label (`Sun`, `Jan`), and Done is `testId="done"`.
+ * `ix-scheduler`'s select and the `ix-scheduler-modal` custom schedule dialog, shared by every task form. The
+ * select is `[testId]="[controlName, 'presets']"`: `schedule` on most forms, `cloudsync_picker` on cloud sync,
+ * `schedule_picker` on replication. Dialog inputs fall back to `formControlName`; checkboxes are
+ * `[testId]="['scheduler', label]"` keyed by the translated short label (`Sun`, `Jan`); Done is `testId="done"`.
  */
 export const schedulerLocators = {
   presets: (control: string): string => `[data-test="select-${kebabTestSegment(control)}-presets"]`,

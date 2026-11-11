@@ -1,14 +1,9 @@
 /**
  * Cron job preconditions, cleanup and readback, over the API.
  *
- * A cron job has no name. The card identifies a row by its command and its
- * user, so these helpers key on the command — and a spec keeps its commands
- * distinct from anything an appliance might already carry.
- *
- * A job a spec keeps runs a harmless command, an `echo` or a short `sleep`: an
- * enabled job really runs on its schedule, and a run that dies before its
- * teardown leaves one behind. `runCommandOnAppliance` is the exception, since it
- * removes its job as soon as the command has run, and schedules it once a year.
+ * A job has no name; the card identifies a row by command and user, so helpers key on a command kept distinct
+ * from anything an appliance might carry. Kept jobs run something harmless (`echo`, short `sleep`): enabled
+ * jobs really run, and a dead run leaves one behind. `runCommandOnAppliance` removes its job once run.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -145,14 +140,9 @@ export async function startCronRun(client: E2eApiClient, cronjobId: number): Pro
 /**
  * Every `cronjob.run` job middleware remembers for one cron job, by job id.
  *
- * "Run job" on the card calls `cronjob.run`, which middleware runs as a job of
- * its own — so `core.get_jobs` is where a run that really happened shows up,
- * and its state says whether the command exited cleanly. Matched on the cron
- * job's id, which is the job's first argument.
- *
- * `error` is middleware's reason for a failed run, and `logs` the job log's
- * excerpt: what the command printed. Both are empty until the run has ended,
- * and `error` stays empty for a run that succeeded.
+ * Run job is a middleware job, so `core.get_jobs` shows real runs and whether the command exited cleanly.
+ * Matched on the cron job's id, the job's first argument. `error` is the failure reason and `logs` what the
+ * command printed; both are empty until the run ends, and `error` stays empty on success.
  */
 export async function findCronRuns(
   client: E2eApiClient,

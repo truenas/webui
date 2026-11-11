@@ -1,18 +1,8 @@
 /**
- * Stories: an admin creates an API key for a user and deletes one, from the
- * API Keys page under Credentials > Users, and the appliance holds what they did.
- *
- * Each is asserted twice, the way the other list specs do it: the row says the
- * screen believed it, `api_key.query` says the appliance did it — and carries
- * what the list shows differently or not at all, like the expiry and who the
- * key belongs to.
- *
- * Both run beside a second key on the same account that must come through
- * untouched. It is also what gets either test to the page at all: the Access
- * card links to a user's keys only once the user has one.
- *
- * The account is an administrator because the form's user picker lists only
- * local users holding a role; a plain account would never be offered.
+ * Stories: an admin creates and deletes an API key on Credentials > Users > API Keys. Each is checked on the row
+ * and through `api_key.query`, which carries what the list omits, like expiry and owner. Both run beside a
+ * bystander key on the same account that must come through untouched; it also makes the Access card link to
+ * the page at all. The account is an administrator because the user picker lists only local users with a role.
  */
 import { ensureApiKeyAbsent, ensureApiKeyPresent, findApiKey } from '../fixtures/api-keys';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';

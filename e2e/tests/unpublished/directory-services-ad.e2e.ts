@@ -1,32 +1,10 @@
 /**
- * Stories: joining an Active Directory domain through the Directory Services
- * form, leaving it from the card's Leave dialog, and a join refused because one
- * of the appliance's nameservers cannot resolve the domain. While joined, the
- * domain's accounts in the UI: a domain user found on the Users list and kept
- * or dropped by its Filter by Type, a domain group on the Groups list with
- * nothing offered that would change it, an ACL entry naming a domain group
- * picked in the editor, and Sync on the Kerberos Keytab card, which renders
- * only while joined.
- *
- * The accounts are the one the domain is joined with and `domain users`, which
- * every domain has, listed by the appliance under the domain's NetBIOS name.
- *
- * Needs a real domain (`TN_AD_*`), and skips without one. In CI that is the
- * internal test domain from the `E2EUI_AD_*` repository secrets, so this spec
- * is in `tests/unpublished/`, whose project publishes nothing: its
- * credentials are typed into the form, and a trace would keep them. For the
- * same reason no `TN_AD_*` value goes into a title or a step name, and every
- * hook and test runs inside `withActiveDirectoryRedacted`: JUnit is published,
- * and a failure's message would otherwise name the domain or a controller.
- *
- * The domain is shared and outlives the run. Every join is under a fresh
- * `e2eui-` computer name, with DNS updates off, and teardown leaves the domain
- * — which deletes the computer account — before anything else. The join and
- * leave stories share one join; see `joining and leaving`.
- *
- * The appliance resolves through qemu's DNS, which knows nothing of an internal
- * domain, so each test first points the nameservers at the domain controllers,
- * and teardown puts back what was there.
+ * Stories: joining an AD domain, leaving it, a join refused because a nameserver can't resolve the domain, and,
+ * while joined, domain accounts on the Users and Groups lists, a domain group in the ACL editor, and Keytab Sync.
+ * Needs a real domain (`TN_AD_*`), skipping without one, and lives in `tests/unpublished/` because credentials typed
+ * into the form would stay in a trace; no `TN_AD_*` value goes in a title or step, and every hook and test runs in
+ * `withActiveDirectoryRedacted` because JUnit is published. Joins use a fresh `e2eui-` name with DNS updates off;
+ * nameservers are pointed at the controllers, and teardown leaves the domain first, then restores them.
  */
 import type { Page } from '@playwright/test';
 import { escapeRegExp } from 'lodash-es';
@@ -276,18 +254,10 @@ async function syncKeytabJobsSince(api: E2eApiClient, after: number): Promise<st
 }
 
 /**
- * The join test leaves the appliance in the domain, and the leave test leaves
- * that join: a join takes minutes of middleware time, and both tests paying it
- * once each doubled the spec. So the domain's nameservers, and the join, last
- * from `beforeAll` to `afterAll` rather than one test, and the stories that need
- * the appliance joined run between the two.
- *
- * Serial, so a failure retries the group from the join rather than the one test.
- * Playwright ends the worker on any failure, which runs `afterAll` and leaves the
- * domain, so a retry rejoins either way. One test at a time, each failing test
- * paid its own rejoin, and a run with three of them left the join unhealthy. Each
- * test still joins over the API when it finds the appliance out of the domain, so
- * it can run on its own.
+ * The join and leave tests share one join, held from `beforeAll` to `afterAll` with the stories needing it between:
+ * a join takes minutes, and paying it per test doubled the spec. Serial, so a failure retries the group from the
+ * join (Playwright ends the worker, `afterAll` leaves, the retry rejoins); per-test rejoins after three failures
+ * left the join unhealthy. Each test still joins over the API if it finds the appliance out, so it can run alone.
  */
 test.describe('joining and leaving', () => {
   test.describe.configure({ mode: 'serial' });

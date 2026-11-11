@@ -1,18 +1,8 @@
 /**
- * Stories: an admin adds a NIC to a virtual machine, edits one, deletes a disk together with its
- * zvol, and deletes a NIC, all from the VM's Devices page, and the appliance holds what they did.
- *
- * The page is reached the way a user reaches it: the sidebar, the VM's row, then its Devices
- * button. No test starts the VM, and none needs to: every device here is added, changed and
- * removed on a stopped machine.
- *
- * Each change is asserted through `vm.device.query`, by device id where one exists, because the
- * list shows a device's type and order and nothing a change here touches. The disk's zvol is
- * checked through `pool.dataset.query` as well, since deleting the device and deleting its zvol
- * are separate choices in the dialog.
- *
- * The zvol goes under a dataset of this spec's own, below the shared pool, and the teardown
- * removes the VM before that dataset, so a VM's disk is never removed from under it.
+ * Stories: from a VM's Devices page, an admin adds and edits a NIC, deletes a disk with its zvol, and deletes a NIC,
+ * all on a stopped machine. Changes are checked in `vm.device.query` (the list shows only type and order), and the
+ * zvol also in `pool.dataset.query`, since deleting the device and its zvol are separate choices. The zvol sits
+ * under this spec's own dataset, and teardown removes the VM before it, so a VM's disk is never removed from under it.
  */
 import {
   ensureDatasetAbsent, ensureDatasetPresent, ensureZvolPresent, findDataset,

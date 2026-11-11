@@ -1,33 +1,10 @@
 /**
- * Stories: an admin edits a replication task in the full replication form, sets
- * a snapshot retention policy, picks snapshots by naming schema rather than by a
- * regular expression, or turns on encryption of the target — and the appliance
- * saves it, and running the task does what was set.
- *
- * Edit opens the full form, `ix-replication-form`, which is the only place these
- * options are offered for an existing task; the wizard is for creating one. Each
- * test seeds one local task over the API, edits it from the full list, reads the
- * task back through `replication.query`, then runs it from the list. The list,
- * not the card, so a busy appliance cannot push the row behind the card's pager.
- *
- * What a run did is read through `pool.snapshot.query` and `pool.dataset.query`,
- * since none of it appears on the screen:
- *
- * - Retention. The target first receives two snapshots over the API, under the
- *   seeded policy of None. The older one is then deleted on the source, and
- *   the edit sets Same as Source. Middleware runs retention after a task
- *   finishes, in a pass of its own, so the target losing that snapshot is
- *   polled for rather than read once.
- * - Naming schema. The seeded task picks snapshots by a regular expression that
- *   matches nothing. The edit switches it to a naming schema that matches one of
- *   the source's two snapshots. The target holding that one and not the other
- *   is the schema being followed.
- * - Encryption. The edit sets a HEX key the test chooses, stored on this
- *   appliance. The target the run makes is then encrypted, as its own
- *   encryption root, with a HEX key.
- *
- * Every source dataset is made fresh for each test. No target is: replication
- * creates its own, so a target that exists afterwards is evidence of a run.
+ * Stories: in the full replication form (`ix-replication-form`, the only place to edit these), an admin sets
+ * retention, picks snapshots by naming schema, or encrypts the target, and running the task does what was set.
+ * Each test seeds a local task, edits and runs it from the full list (not the card, whose pager a busy appliance
+ * can push the row behind), and reads results from `pool.snapshot.query` and `pool.dataset.query`. Retention runs
+ * in its own pass after the task, so the target losing its snapshot is polled for. Sources are made fresh for
+ * each test; no target is, since replication creates its own and a target afterwards is evidence of a run.
  */
 import type { Page } from '@playwright/test';
 import {

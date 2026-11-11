@@ -15,20 +15,11 @@ import type { TargetConfig } from '../config';
 import { connectMethod, recordSpan, timeMiddleware } from '../timings';
 
 /**
- * The API surface the suite is written against.
- *
- * Unparameterised, the client defaults to v25.10.0, whose curated directory is
- * missing most of what the fixtures call.
- *
- * Raising this needs both ceilings to allow it: the appliance has to advertise
- * the version and `@truenas/api-client` has to implement it
- * (`MAX_SUPPORTED_VERSION`, `CLIENT_BY_VERSION_KEY`). Name a surface the client
- * cannot select and its methods compile, then fail at runtime as unknown.
- *
- * Everything else here derives from this one line — the client type below, and
- * the response shapes fixtures ask for with
- * `CallResponse<E2eApiDirectory, 'some.method'>`, which is how they name a shape
- * the package declares without exporting.
+ * The API surface the suite is written against; unparameterised, the client defaults to v25.10.0,
+ * which lacks most of what the fixtures call. Raising it needs the appliance to advertise the version
+ * and `@truenas/api-client` to implement it (`MAX_SUPPORTED_VERSION`, `CLIENT_BY_VERSION_KEY`), or
+ * methods compile and then fail at runtime as unknown. The client type and the
+ * `CallResponse<E2eApiDirectory, 'some.method'>` shapes fixtures use all derive from this line.
  */
 export type E2eApiDirectory = ApiDirectoryV28_0_0;
 
@@ -36,15 +27,9 @@ export type E2eApiDirectory = ApiDirectoryV28_0_0;
 export type E2eApiClient = TrueNasApiClient<E2eApiDirectory>;
 
 /**
- * The same version again, for the runtime check below.
- *
- * The package maps no directory to its version, so this cannot be derived from
- * {@link E2eApiDirectory} — change one and you must change the other, or the
- * check inverts: warning on every correctly-negotiated run and going quiet on
- * the fallback it exists to catch.
- *
- * `satisfies` at least holds the label to a version the package supports, so a
- * typo or a version ahead of the client fails to compile.
+ * The same version again, for the runtime check below. It can't be derived from {@link E2eApiDirectory},
+ * so change both together, or the check inverts: failing every correct run and missing the fallback
+ * it exists to catch. `satisfies` makes a typo or a version ahead of the client fail to compile.
  */
 const expectedApiVersion = {
   year: 28,
@@ -61,24 +46,11 @@ const connectTimeoutMs = 30_000;
 const loginTimeoutMs = 30_000;
 
 /**
- * Connects to middleware and authenticates.
- *
- * Note on TLS: the client speaks `wss://` exclusively (`truenas-connection.ts`
- * builds `wss://${hostname}${path}`), and test VMs present self-signed
- * certificates, which Node rejects by default. This applies in **both**
- * profiles — the profile changes where the browser loads the UI from, not where
- * this client connects. `playwright.config.ts` relaxes verification for the
- * runner process accordingly. A deliberate, documented concession for internal
- * test appliances (R2.9), not something to widen further.
- *
- * Be aware when debugging: a certificate rejection here does not surface as a
- * certificate error. Version discovery's `fetch` fails first, is classified as a
- * network error, and silently falls back to `FALLBACK_VERSION`; the visible
- * symptom is this function timing out on the socket 30 seconds later.
- *
- * @throws if the socket cannot be opened, or if login does not end in an
- * authenticated session — which includes outcomes the client itself does not
- * treat as errors, such as a two-factor challenge.
+ * Connects to middleware and authenticates. The client is `wss://`-only and test VMs are self-signed in
+ * both profiles, so `playwright.config.ts` relaxes TLS verification for the runner (R2.9; don't widen it).
+ * A rejected certificate doesn't surface as such: discovery falls back to `FALLBACK_VERSION` and this
+ * times out on the socket 30 seconds later.
+ * @throws if the socket can't open or login doesn't end authenticated, including a two-factor challenge.
  */
 export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClient> {
   const start = Date.now();
@@ -114,15 +86,9 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
     );
   }
 
-  // Outside the try deliberately: raised in it, this would be caught and
-  // re-wrapped by the handler for transport failures, and the socket closed
-  // twice.
-  //
-  // The client only *throws* on `AUTH_ERR`. `OTP_REQUIRED`, `EXPIRED` and
-  // `REDIRECT` all resolve normally with the session still unauthenticated, so
-  // treating a non-throwing emission as success returns a client that looks
-  // connected and fails on its first real call — a minute later, as an
-  // authorization error naming neither the account nor the reason.
+  // Outside the try so the transport handler doesn't re-wrap it and close the socket twice.
+  // The client only throws on `AUTH_ERR`; `OTP_REQUIRED`, `EXPIRED` and `REDIRECT` resolve unauthenticated,
+  // and accepting them yields a client that fails its first real call with an unhelpful auth error.
   const outcome = String(auth.response_type);
 
   if (outcome !== 'SUCCESS') {
@@ -137,16 +103,9 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
     );
   }
 
-  // The only check that the negotiated surface is the one the types assume.
-  // A rejected certificate makes version discovery's `fetch` fail, get
-  // classified as a network error, and fall back to the oldest supported API —
-  // whose directory is missing most of what the fixtures call. Continuing from
-  // there buys a run that dies later on unknown methods with nothing naming the
-  // cause, so this fails here instead.
-  //
-  // It also fails the other way: discovery takes the newest year the appliance
-  // advertises and the installed package implements, so bumping the package to a
-  // release with a newer directory, without moving the pins, lands here too.
+  // The only check that the negotiated surface is the one the types assume. A rejected certificate makes
+  // discovery fall back to the oldest API, and the run would die later on unknown methods with no cause named.
+  // It also catches the reverse: bumping the package to a newer directory without moving the pins.
   if (client.version.year !== expectedApiVersion.year) {
     client.close();
     const hint = client.version.year > expectedApiVersion.year
@@ -167,18 +126,10 @@ export async function connectAndLogin(config: TargetConfig): Promise<E2eApiClien
 }
 
 /**
- * Makes one attempt to sign in with an API key over a fresh connection, and
- * says whether middleware accepted it. The connection is always closed.
- *
- * A refusal is an answer, not an error: the client throws `AuthError` with
- * `API_KEY_AUTH_FAILED` on `AUTH_ERR` and resolves on every other outcome, and
- * both read as `false` unless the outcome is `SUCCESS`. Anything else that
- * fails — a socket that never opens, a login that never answers, a rate
- * limit — still throws: a key cannot be judged without middleware judging it,
- * and reading that as "refused" would pass a revocation check for nothing.
- *
- * The connection is `wss://`, like every other one here. Middleware revokes a
- * key sent over plain `ws://`, so never add a plaintext path.
+ * One API-key sign-in attempt over a fresh connection, always closed; says whether middleware accepted it.
+ * A refusal (`AuthError` `API_KEY_AUTH_FAILED`, or any non-`SUCCESS` outcome) reads as `false`. Transport
+ * failures and rate limits still throw: reading those as "refused" would pass a revocation check for nothing.
+ * Stay on `wss://`: middleware revokes a key sent over plain `ws://`.
  */
 export async function signsInWithApiKey(
   config: TargetConfig,

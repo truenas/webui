@@ -1,21 +1,8 @@
 /**
- * Stories: on a pool's VDEVs page, an admin extends a single-disk vdev into a
- * mirror, from Extend on the disk's ZFS Info card, and detaches a disk from a
- * mirror, from Detach in the same card's menu.
- *
- * Each change is asserted on the page and through `pool.query`, which holds the
- * type of each data vdev and the disks in it.
- *
- * ## Why this spec builds its own pool
- *
- * Both tests change a pool's topology, so neither may use the worker-scoped
- * `pool` fixture other specs share. Each test builds the pool it starts from: one
- * disk for Extend, a two-disk mirror for Detach. The pool is destroyed before and
- * after each test, unconditionally: it holds two disks at some point either way,
- * and `fresh-install` needs nine alike.
- *
- * Not covered: extending a RAIDZ vdev, which is a different dialog, and extending
- * a log, special or dedup vdev.
+ * Stories: on a pool's VDEVs page, an admin extends a single-disk vdev into a mirror and detaches a disk from a
+ * mirror, both from the disk's ZFS Info card; each change is checked on the page and in `pool.query`.
+ * Both change topology, so each test builds its own pool (one disk for Extend, a two-disk mirror for Detach) and
+ * destroys it before and after, unconditionally: `fresh-install` needs nine disks alike.
  */
 import { ensurePoolPresent } from '../fixtures/pool';
 import {

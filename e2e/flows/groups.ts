@@ -51,15 +51,9 @@ export async function saveGroupForm(page: Page): Promise<void> {
 /**
  * Expands a group's row to reveal its actions.
  *
- * **Clicking a row toggles it**, so this collapses a row that is already open
- * rather than leaving it that way — call it once per visit to the list. That is
- * why {@link openGroupMembers} is built out of this plus
- * {@link openMembersFromExpandedRow}, and why a test that is already looking at
- * an open row reaches for the latter.
- *
- * Waits on Members rather than on the panel: it is the one action every local
- * group renders, so it is the signal that the detail row is really there —
- * Edit and Delete are each conditional.
+ * **Clicking a row toggles it**, so call this once per visit to the list; a test already looking at an open
+ * row uses {@link openMembersFromExpandedRow}. Waits on Members rather than the panel: it is the one action
+ * every local group renders (Edit and Delete are conditional).
  */
 export async function expandGroupRow(page: Page, group: string): Promise<void> {
   await page.locator(groupsLocators.row(group)).click();

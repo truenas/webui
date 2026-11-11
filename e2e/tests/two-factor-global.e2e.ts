@@ -1,26 +1,10 @@
 /**
- * Stories: an admin changes global two-factor authentication from its card on
- * System > Advanced Settings while it is on, and turns it off.
- *
- * Turning it on from the card is covered by `unauthenticated/two-factor.e2e.ts`,
- * which goes on to sign in with a code. These start from it on, which is where
- * the form behaves differently: a save that keeps it on asks for confirmation
- * first, and one that turns it off does not.
- *
- * Each save is asserted twice: the card's readouts say the screen believed it,
- * `auth.twofactor.config` says the appliance did it.
- *
- * Starting with it on takes care. While it is on, the admin layout puts an
- * account with no secret — this suite's admin — through a full-screen setup
- * dialog on its first route, and holds that route until the dialog closes. The
- * token sign-in waits for the shell, so it would spend its whole budget behind
- * that dialog. So each test signs in with two-factor off, turns it on over the
- * API and reloads: the app starts again, reads the setting afresh, raises the
- * dialog, and the test skips it. The suite's admin is never given a secret.
- *
- * Global two-factor is turned off before each test and after it,
- * unconditionally and deliberately not skipped under `TN_KEEP_TEST_DATA`: left
- * on, every later spec would open behind that dialog.
+ * Stories: an admin changes global two-factor from its Advanced Settings card while it's on (a save that keeps it on
+ * asks for confirmation) and turns it off; checked on the card and in `auth.twofactor.config`. While it's on, the
+ * layout holds a secretless account's first route behind a setup dialog the token sign-in would wait out, so each
+ * test signs in with it off, enables it over the API, reloads and skips the dialog; the admin never gets a secret.
+ * It's turned off before and after every test, unconditionally and not skipped under `TN_KEEP_TEST_DATA`: left on,
+ * every later spec would open behind that dialog.
  */
 import { disableGlobalTwoFactor, readGlobalTwoFactor, type GlobalTwoFactorConfig } from '../fixtures/two-factor';
 import { goToAdvancedSettings } from '../flows/navigation';

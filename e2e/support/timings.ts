@@ -1,39 +1,9 @@
 /**
- * Times every middleware request and job the suite makes, for `yarn e2e:timings`.
- *
- * A test's duration alone does not say where it went: signing in, a fixture
- * provisioning over the API, a job the test waits on, or the UI itself. The
- * reporter (`timing-reporter.ts`) records the phases of each test; this records
- * the middleware side, so the script can say which calls a phase spent its time
- * in.
- *
- * Each worker appends one JSON line per call to its own file in the directory
- * {@link timingsDirVar} names, which `playwright.config.ts` sets to
- * `test-results/e2e-timings/`. Unset, nothing is recorded: Jest runs `runJob`
- * too (`e2e-run-job.spec.ts`), and compiles to CommonJS, where the
- * `import.meta.dirname` that would locate the directory here does not parse.
- * A line names the method and when it ran, never
- * its parameters or result, so the file is safe to publish with the rest of a
- * run — including the `unpublished` project's, whose parameters carry the
- * Active Directory credentials. Calls are matched to tests afterwards by time
- * and parallel index: a call is attributed to whatever was running then, which
- * is how a `beforeAll` hook's calls are found at all, since Playwright leaves
- * that hook out of a test's reported duration.
- *
- * Two kinds are recorded:
- *
- * - `call`: a request until its reply, or until the caller stopped waiting.
- *   Starting a job counts as one, up to the job id.
- * - `job`: a job from its start until `runJob` saw it finish. Not `trackJob`
- *   on its own: `runJob` follows every job with it, to end its waits early,
- *   and the span would be the same job twice. The suite starts no job any
- *   other way.
- *
- * Opening a connection and signing it in is a `call` named
- * {@link connectMethod}, since `withClient` pays it every time.
- *
- * A job's polls are calls inside its span, so the two overlap; the script
- * reports them apart and never adds them together.
+ * Times every middleware request (`call`, including the connect-and-sign-in {@link connectMethod}) and job
+ * (`job`, start until `runJob` saw it finish) for `yarn e2e:timings`; matched to tests later by time and parallel
+ * index, which is how `beforeAll` calls are found. One JSON line per call into {@link timingsDirVar}; unset
+ * records nothing, as Jest also runs `runJob` and can't parse `import.meta.dirname`. Lines hold method names and
+ * times only, never params or results, so they're safe to publish. A job's polls overlap its span; never sum them.
  */
 import { appendFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';

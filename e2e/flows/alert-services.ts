@@ -88,15 +88,11 @@ export async function saveAlertServiceForm(page: Page): Promise<void> {
 }
 
 /**
- * Presses Send Test Alert and waits for middleware's answer to have arrived and
- * the form to have acted on it.
+ * Presses Send Test Alert and waits for middleware's answer and the form's reaction to it.
  *
- * `alertservice.test` answers `true` and `false` alike as an ordinary result, and
- * the form reports them differently: a snackbar with no `data-test` for `true`,
- * the warn dialog for `false`. So this waits on the answer itself, which needs
- * `test.use({ recordApiCalls: true })` in the spec, and then on the button coming
- * back, which happens after the form has raised whichever it was. What the
- * caller then asserts on is the dialog — as `verifyCloudCredential` does.
+ * `alertservice.test` answers `true` and `false` alike as a result; the form shows a snackbar with no
+ * `data-test` for `true` and the warn dialog for `false`. So this waits on the answer itself (needs
+ * `test.use({ recordApiCalls: true })`), then on the button coming back. Callers assert on the dialog.
  */
 export async function sendTestAlert(page: Page): Promise<void> {
   const method = 'alertservice.test';

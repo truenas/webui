@@ -1,22 +1,9 @@
 /**
- * Stories: an admin adds, edits and deletes a Graphite exporter on Reporting > Exporters, and the
- * form refuses a name already in use.
- *
- * Each save is asserted twice: the row says the screen believed it, `reporting.exporters.query`
- * says the appliance did it, and carries the destination, which the list does not show.
- *
- * Edit and delete each run beside a second exporter that must come through untouched. Every row
- * carries its own Edit and Delete buttons, so a row-targeting bug changes the wrong exporter
- * without failing anything else.
- *
- * Every exporter points at `127.0.0.1`, where nothing listens. Middleware stores an exporter without
- * contacting its destination, so nothing leaves the appliance. See `fixtures/reporting-exporters.ts`.
- *
- * Creating or deleting an exporter takes middleware about 16 seconds, as it regenerates netdata's
- * configuration, and seeding and removing one per test was most of this spec's time. So one exporter
- * is carried through the stories — the add test creates it, the edit test changes it, the delete test
- * removes it — and the bystander lasts the whole file. Each test that needs an exporter still makes
- * sure it is there, over the API, so a retry or a test run on its own pays for the seeding instead.
+ * Stories: an admin adds, edits and deletes a Graphite exporter, and the form refuses a duplicate name; each save
+ * is checked on the row and in `reporting.exporters.query`. Exporters point at `127.0.0.1`, which middleware never
+ * contacts (see `fixtures/reporting-exporters.ts`). Each create or delete takes about 16 seconds, so one exporter
+ * is carried through add, edit and delete and a bystander lasts the whole file; each test still ensures its
+ * exporter exists over the API, so a retry or a lone run pays for the seeding.
  */
 import {
   countExporters, ensureExporterAbsent, ensureGraphiteExporterPresent, findExporter,

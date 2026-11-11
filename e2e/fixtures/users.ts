@@ -12,20 +12,12 @@ import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 /**
- * The administrator both unauthenticated journeys create, sign in as, and delete.
+ * The administrator both unauthenticated journeys create, sign in as, and delete: one identity, so one constant
+ * (`admin-user.e2e.ts` and `fresh-install.e2e.ts` both remove it in `beforeEach` and `afterEach`).
  *
- * One constant rather than the same literal in two specs, because it is one
- * identity: `admin-user.e2e.ts` and `fresh-install.e2e.ts` each remove this user
- * in `beforeEach` and `afterEach`, so two copies were two specs sharing state
- * while reading as though they did not.
- *
- * Fixed rather than run-scoped, which departs from R3.3. That holds under the
- * current execution model and only that one: runs are serial (`workers: 1`,
- * R3.4) against an appliance the run owns, and scaling out means sharding across
- * appliances rather than workers (D2). Two runs against a single appliance would
- * collide here — and equally on the `e2e_tank` pool and on SMB service state,
- * which is why the answer is run-scoped naming across the suite rather than a
- * second username here. Tracked under "Known gaps" in `docs/status.md`.
+ * Fixed rather than run-scoped, departing from R3.3. Holds only while runs are serial (`workers: 1`, R3.4) on an
+ * appliance the run owns, scaling by sharding across appliances (D2). Two runs on one appliance would collide here
+ * and on `e2e_tank` and SMB state, so the fix is suite-wide run-scoped naming; see Known gaps in `docs/status.md`.
  */
 export const testAdmin = {
   username: 'bob',
@@ -34,17 +26,12 @@ export const testAdmin = {
 };
 
 /**
- * Removes a user if present, by username. Succeeds when the user does not exist.
+ * Removes a user if present, by username. Idempotent: runs before a test (a leftover must not fail creation, R3.5)
+ * and after one (leave the appliance clean, R3.2).
  *
- * Idempotent on purpose: it runs both before a test (so a leftover from an
- * interrupted run does not fail creation, R3.5) and after one (so the appliance
- * is left clean, R3.2).
- *
- * Takes an existing client rather than opening its own. Each connection costs a
- * sign-in, and middleware rate-limits *unauthenticated* calls at 20 per method
- * per IP per 60 seconds — so connections, not queries, are the scarce resource.
- * Connecting per call also modelled something no user does: signing in twice
- * just to delete an account.
+ * Takes an existing client rather than opening its own: each connection costs a sign-in, and middleware
+ * rate-limits *unauthenticated* calls at 20 per method per IP per 60 seconds, so connections are the scarce
+ * resource.
  */
 export async function ensureUserAbsent(client: E2eApiClient, username: string): Promise<void> {
   // `query`, not `queryOne`. `queryOne` sends `get: true`, and middleware
@@ -89,17 +76,9 @@ export async function findUser(
 /**
  * A user record with its primary group and its id narrowed.
  *
- * Two fields, for two different reasons. `group` because the generated
- * `UserEntry` types it as an open record. `id` because the generated result
- * declares it optional, so a record read back out of a query cannot be handed
- * to anything that wants a number — which forced callers to re-check a field
- * every row certainly has. `fixtures/groups.ts` narrows `GroupRecord` the same
- * way and for the same reason; the two files should not answer this
- * differently.
- *
- * Nothing else is named here. Everything the specs read — `uid`, `roles`,
- * `locked` — the package already describes, and re-declaring those would
- * restate the API from memory while quietly promoting more optional fields.
+ * `group` because the generated `UserEntry` types it as an open record; `id` because it is optional there, so a
+ * queried record can't be passed where a number is needed. `fixtures/groups.ts` narrows `GroupRecord` the same
+ * way. Nothing else is re-declared: that would restate the API from memory.
  */
 type UserEntry = Extract<CallResponse<E2eApiDirectory, 'user.query'>, unknown[]>[number];
 
@@ -108,14 +87,8 @@ export type UserRecord = UserEntry & { id: number; group: { bsdgrp_group: string
 /**
  * Creates a plain local user if absent, for S3 to run as.
  *
- * The S3 bucket owner and access-key user pickers list non-builtin accounts
- * only, so a test that needs "some user" cannot fall back on root. The account
- * is a precondition, not the thing under test, so it is made over the API and
- * never through the user form.
- *
- * Password-disabled, on purpose: nothing signs in as it, and a password would be
- * one more secret to keep out of logs. S3 clients authenticate with an access
- * key, which the journey mints separately.
+ * S3's owner and access-key pickers list non-builtin accounts only, so root won't do; it is a precondition, so made
+ * over the API. Password-disabled on purpose: nothing signs in as it, and S3 clients use an access key.
  */
 export async function ensureUserPresent(
   client: E2eApiClient,
@@ -179,14 +152,10 @@ export async function ensureSmbUserPresent(
 }
 
 /**
- * Creates an administrator who can sign in, if absent.
+ * Creates an administrator who can sign in, if absent, for user details journeys about signing in afterwards.
  *
- * For the journeys on the user details page whose claim is about signing in as
- * the account afterwards — locking it, or handing it a one-time password. Both
- * need a password, and the second needs the account to hold a role: the Password
- * card disables Generate One-Time Password for a user without one. A throwaway
- * account, never the suite's own admin, so a lock that does not come off again
- * strands nobody.
+ * Locking and one-time passwords need a password, and the Password card disables Generate One-Time Password for
+ * a user without a role. A throwaway account, never the suite's admin, so a lock that sticks strands nobody.
  */
 export async function ensureSignInAdministratorPresent(
   client: E2eApiClient,
@@ -271,17 +240,11 @@ export async function setUserIdmap(
 }
 
 /**
- * Gives a user a freshly generated SSH public key, and returns it.
+ * Gives a user a freshly generated SSH public key, and returns it, so the Access card offers "Download Public Key".
  *
- * The Access card offers "Download Public Key" only while `sshpubkey` is set, so
- * this is the precondition for that link, made over the API. Generated by
- * middleware rather than written here, so the key is one it accepts.
- *
- * Middleware writes the key into the user's home and refuses it ("Home directory
- * is not writable") unless that home is on a dataset — and an account made by
- * {@link ensureUserPresent} has none. So the user is first given a home under
- * `homeParent` by {@link giveUserHome}. That is its own update, before the key's,
- * because an update changing both writes the key into the *old* home.
+ * Middleware generates it, so it is a key it accepts. It writes the key into the home and refuses ("Home directory
+ * is not writable") without a dataset home, which {@link ensureUserPresent} accounts lack, so {@link giveUserHome}
+ * adds one under `homeParent` first, as its own update: an update changing both writes into the *old* home.
  */
 export async function giveUserPublicKey(
   client: E2eApiClient,
@@ -444,16 +407,11 @@ async function builtinAdministratorsId(client: E2eApiClient): Promise<number> {
 }
 
 /**
- * Creates a local user who can actually sign in, if absent.
+ * Creates a local user who can actually sign in, if absent; the counterpart to password-disabled
+ * {@link ensureUserPresent}.
  *
- * The counterpart to {@link ensureUserPresent}, which deliberately makes
- * password-disabled accounts because nothing signs in as them. These exist to
- * be signed in as, so they carry a password — and `smb: false` keeps them out
- * of the SMB user database, which nothing here needs them in.
- *
- * `groups` takes group row ids, not gids. Membership is where an account's roles
- * come from, so this is also how `fixtures/role-admins.ts` makes a restricted
- * administrator.
+ * `smb: false` keeps them out of the SMB user database. `groups` takes group row ids, not gids; membership is
+ * where roles come from, which is how `fixtures/role-admins.ts` makes a restricted administrator.
  */
 export async function ensureSignInCapableUser(
   client: E2eApiClient,

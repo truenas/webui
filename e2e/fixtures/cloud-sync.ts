@@ -1,22 +1,9 @@
 /**
- * Cloud sync task preconditions, cleanup and readback, over the API — and the
- * SFTP credential they all sync through.
+ * Cloud sync task preconditions, cleanup and readback, over the API, and the loopback SFTP credential.
  *
- * ## The remote is the appliance itself
- *
- * Every task syncs to an SFTP credential pointing at `127.0.0.1`, so no outside
- * service is involved and the "remote" is a directory a test can read back with
- * `filesystem.listdir`. Middleware runs rclone on the appliance, so the address
- * is the appliance's own loopback, which needs nothing forwarded to the runner.
- *
- * Root signs in with a key — see `fixtures/loopback-ssh.ts`. So
- * {@link ensureLoopbackSftpCredentialPresent} authorizes a keypair for root,
- * makes sure SSH is running, and creates the credential on that keypair.
- * {@link ensureLoopbackSftpCredentialAbsent} undoes each part.
- *
- * A task has no name. The card identifies a row by its description, so these
- * helpers key on that. Creating, updating and deleting a task are plain calls;
- * running one is a `cloudsync.sync` job.
+ * Tasks sync to SFTP at `127.0.0.1`: rclone runs on the appliance, so the remote is a local directory readable
+ * with `filesystem.listdir`. Root signs in with a key (see `fixtures/loopback-ssh.ts`). Tasks have no name, so
+ * helpers key on the description, as the card does. CRUD are plain calls; a run is a `cloudsync.sync` job.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -160,17 +147,11 @@ export async function ensureCloudSyncTasksAbsent(client: E2eApiClient, descripti
 }
 
 /**
- * Creates a push task from a local directory to a directory on the loopback
- * remote, if no task has this description already.
+ * Creates a push task from a local directory to the loopback remote, unless one has this description.
  *
- * For the task an edit, a run, a restore or a delete acts on, and for a
- * bystander. Never for the task under test in a create — that one goes through
- * the wizard. Everything not passed is left to middleware's defaults, which are
- * also the wizard's: COPY, enabled, no bandwidth limit.
- *
- * `bwlimit` is how a run is made slow enough to stop: middleware hands it to
- * rclone as `--bwlimit`, so a large file over loopback takes minutes rather than
- * a second.
+ * For tasks an edit, run, restore or delete acts on, and bystanders; never the task a create tests, which goes
+ * through the wizard. Unset fields keep middleware's (and the wizard's) defaults. `bwlimit` is how a run is
+ * made slow enough to stop: rclone's `--bwlimit` makes a large loopback file take minutes.
  */
 export async function ensureCloudSyncTaskPresent(
   client: E2eApiClient,
@@ -221,15 +202,9 @@ export async function findCloudSyncRunJobIds(client: E2eApiClient): Promise<numb
 /**
  * Every `cloudsync.sync` job for one task that is not in `earlier`.
  *
- * "Run job" on the card calls `cloudsync.sync`, which middleware runs as a job,
- * so `core.get_jobs` is where a run that really happened shows up and its state
- * says whether it worked. Matched on the task's id, which is the job's first
- * argument — the same reading as `findReplicationRuns`.
- *
- * Dry Run calls the same method with `{ dry_run: true }` as its second
- * argument, so `dryRun` is what tells the two apart. `logs` is the job's
- * `logs_excerpt`, rclone's own account of what it did, or empty before the job
- * has finished.
+ * Run job is a middleware job, so `core.get_jobs` shows real runs and whether they worked. Matched on the
+ * task id, the job's first argument, as in `findReplicationRuns`. `dryRun` reflects `{ dry_run: true }` in the
+ * second argument; `logs` is rclone's `logs_excerpt`, empty until the job finishes.
  */
 export async function findCloudSyncRuns(
   client: E2eApiClient,
@@ -386,13 +361,9 @@ export async function findFileNames(client: E2eApiClient, directory: string): Pr
 /**
  * Writes a small file on the appliance, for a sync to have something to copy.
  *
- * The API has no public call that writes file contents — `filesystem.file_receive`
- * is private and `filesystem.put` is an HTTP upload — so `runCommandOnAppliance`
- * runs the write. `name` must be a plain file name and `directory` a path without
- * spaces: the command goes to a shell as written.
- *
- * With `sizeBytes`, the file is that many zero bytes instead of one short line —
- * for a run that has to last long enough to be stopped.
+ * No public call writes file contents, so `runCommandOnAppliance` runs it through a shell: `name` must be a
+ * plain file name and `directory` free of spaces. With `sizeBytes`, the file is that many zero bytes, for a
+ * run that must last long enough to be stopped.
  */
 export async function writeFileOnAppliance(
   client: E2eApiClient,

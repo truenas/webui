@@ -1,20 +1,8 @@
 /**
- * Stories: an admin creates a dataset from the Datasets page, and edits one,
- * and the appliance holds what they did.
- *
- * Each save is asserted twice. The tree or the details card shows that the
- * screen believed it, and `pool.dataset.query` shows that the appliance did it.
- * That second check is the stronger one here: every field the form offers is
- * one ZFS property, and a property that was never sent reads back as inherited,
- * so `source: 'LOCAL'` is what proves the form sent it.
- *
- * Both tests go through Other Options, the advanced half of the form. Adding opens
- * in basic mode and the test switches it. Editing always opens in advanced mode.
- *
- * The edit acts beside a sibling dataset that must come through untouched. The
- * edit form is opened from the details card, which acts on whichever node the
- * tree has selected, so a selection bug would edit the wrong dataset and still
- * look right on the card.
+ * Stories: an admin creates and edits a dataset from the Datasets page, through Other Options (the form's advanced
+ * half). Each save is checked on screen and through `pool.dataset.query`, where `source: 'LOCAL'` proves the form
+ * sent a property, since an unsent one reads back as inherited. The edit runs beside a sibling that must come
+ * through untouched: the details card acts on the tree's selected node, so a selection bug would still look right.
  */
 import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
 import {

@@ -1,14 +1,8 @@
 /**
- * Authentication token helper (R4.1, R4.4).
- *
- * webui's `scripts/playwright-helpers/generate-token.ts` does something similar
- * but hardcodes `http://localhost:${port}` as the base URL, which the `shipped`
- * profile cannot use. That is why the suite owns this one.
- *
- * Uses `auth.generate_token`, not the `reconnect_token` webui asks for via
- * `login_options`: that field only exists from v27.0.0, while
- * `auth.generate_token` works across every version the client supports and
- * takes an explicit TTL rather than the server's default (R4.3).
+ * Authentication token helper (R4.1, R4.4). The suite owns this because webui's
+ * `scripts/playwright-helpers/generate-token.ts` hardcodes a localhost base URL the `shipped` profile can't use.
+ * Uses `auth.generate_token` rather than `login_options.reconnect_token`, which only exists from v27.0.0;
+ * it works on every supported version and takes an explicit TTL (R4.3).
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../api/client';
@@ -52,14 +46,9 @@ export async function generateAuthToken(
 }
 
 /**
- * Builds the URL that logs the browser in.
- *
- * We target `/signin` directly rather than a deep link. webui reads the token
- * in `signin.store.ts` via `queryParamMap.get('token')`, so the token must be
- * on the signin route's URL. Deep links do work — a guard redirects and
- * preserves the query param — but relying on that preservation is an extra
- * moving part in the one flow every other test depends on.
- *
+ * Builds the URL that logs the browser in. Targets `/signin` directly because `signin.store.ts` reads the
+ * `token` query param there; deep links work via a guard redirect, but that's an extra moving part in the
+ * one flow every other test depends on.
  * @param uiBaseUrl absolute base URL ending in `/ui/` (see config.ts)
  */
 export function buildTokenLoginUrl(uiBaseUrl: string, token: string): string {

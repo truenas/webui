@@ -1,13 +1,8 @@
 /**
- * Sessions middleware holds, read over the API with `auth.sessions`.
+ * Sessions middleware holds, read with `auth.sessions` as the Access card reads them (no `internal` ones).
  *
- * Read the way the Access card reads them, `internal` ones left out, and
- * reduced to what a spec needs to find a session's row and check it again
- * afterwards: its `id`, the username the card shows, and its `origin`.
- *
- * `current` is true only for the session of the client that asked. Asked
- * through the worker `api`, that is the worker client's own session, not the
- * browser's.
+ * Reduced to what a spec needs to find a row and recheck it: `id`, the username the card shows, and `origin`.
+ * `current` is true only for the asking client's session; through the worker `api`, that is not the browser's.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

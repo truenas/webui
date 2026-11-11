@@ -1,23 +1,9 @@
 /**
- * Story: the built-in sharing administrator starts and stops FTP from System >
- * Services and edits a dataset, while SSH, deleting the dataset, adding a user or
- * a periodic snapshot task, and the power menu stay locked to them.
- *
- * What `SHARING_ADMIN` grants and withholds outside the share cards, which
- * `roles-share-admin-shares.e2e.ts` covers. A service row is gated on the roles
- * that manage that service: FTP's take `SHARING_FTP_WRITE`, which this account
- * holds, and SSH's take only `SERVICE_WRITE`, which it does not. The dataset card
- * renders Edit on `DATASET_WRITE` and Delete on `DATASET_DELETE`, and the account
- * holds the first and not the second, so Delete is not rendered at all.
- *
- * Users, Periodic Snapshot Tasks and the power menu are the controls the
- * read-only specs lock. Checking a few of them here is what says the account is
- * not being treated as a full admin.
- *
- * Two tests, so the account signs in twice: every sign-in spends from the
- * unauthenticated rate limit (see `flows/roles.ts`). Nothing locked is ever
- * clicked. FTP is stopped first, so the start is the UI's doing, and goes back to
- * how the spec found it afterwards. SSH is only read.
+ * Story: the sharing administrator starts and stops FTP and edits a dataset, while SSH, dataset Delete, adding a
+ * user or snapshot task, and the power menu stay locked. FTP rows need `SHARING_FTP_WRITE` (held), SSH only
+ * `SERVICE_WRITE` (not); Delete isn't rendered without `DATASET_DELETE`. The read-only locks checked here show the
+ * account isn't treated as a full admin. Two sign-ins (see `flows/roles.ts`); nothing locked is clicked. FTP is
+ * stopped first so the start is the UI's doing, and restored afterwards.
  */
 import {
   ensureRoleAdminAbsent, ensureRoleAdminPresent, roleAdmins,

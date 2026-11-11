@@ -1,19 +1,9 @@
 /**
- * The Localization card on System > General Settings, and its form.
- *
- * The card shows the appliance's timezone and console keyboard map. Its readouts
- * are tagged `tnTestIdType="text"`, so their ids are static, and each holds the
- * value alone, without its label.
- *
- * The form is built by `ix-form-renderer` from `localization.form-config.ts`, so
- * every field's id is its control name — see `locators/tunable.ts`. Timezone is a
- * `combobox`, which the renderer draws as a library `tn-autocomplete`: the input
- * is `autocomplete-timezone` and its rows are `option-timezone-<label>`, the same
- * shape as the user pickers in `locators/api-keys.ts`.
- *
- * Language and date format are not on this card. They moved to the Preferences
- * form, where they are the signed-in account's rather than the appliance's — see
- * `locators/preferences.ts`.
+ * The Localization card on System > General Settings (timezone and console keymap, static `text` readouts holding
+ * the value alone), and its form. The form is `ix-form-renderer` from `localization.form-config.ts`, so ids are
+ * control names (see `locators/tunable.ts`). Timezone is a `tn-autocomplete`: `autocomplete-timezone` with
+ * `option-timezone-<label>` rows, as in `locators/api-keys.ts`. Language and date format are per-account now,
+ * in `locators/preferences.ts`.
  */
 import { kebabTestSegment } from './test-id';
 

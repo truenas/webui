@@ -1,22 +1,9 @@
 /**
- * Stories: an admin is refused a container name the form cannot take, creates a
- * container from an image picked in the image browser with a description, a CPU
- * set and an environment variable, and deletes a container.
- *
- * Creating a container downloads the image's rootfs from
- * `images.sys.truenas.net`, so the appliance needs outbound internet access (see
- * `docs/05-ci.md`). Middleware keeps the download on the pool and clones every
- * later container from it, so only the first create in a run pays for it. The
- * image is the first Debian one the registry lists, whatever its release.
- *
- * ## Setup and teardown
- *
- * Each test starts with the worker's `pool` as the preferred pool and no
- * container named `e2e-ct`. Teardown deletes the container, then writes back
- * the containers settings the appliance held before the first test. Once the
- * file is done it removes `<pool>/.truenas_containers`, which holds the
- * downloaded image and which no container removes, before the worker exports the
- * pool.
+ * Stories: an admin is refused an invalid container name, creates one from the image browser with a description,
+ * CPU set and environment variable, and deletes one. Creating downloads the rootfs from `images.sys.truenas.net`,
+ * so the appliance needs internet (see `docs/05-ci.md`); only the first create in a run pays for it. Each test
+ * starts with the worker's `pool` preferred and no `e2e-ct`; teardown deletes it and restores the settings. After
+ * the file, `<pool>/.truenas_containers`, which no container removes, goes before the worker exports the pool.
  */
 import {
   type ContainerSettings, containerCreateTimeoutMs, containersDataset, containerSettingsBaseline,

@@ -59,14 +59,11 @@ export async function saveTunableForm(page: Page): Promise<void> {
 }
 
 /**
- * Deletes a tunable from its row menu, through webui's shared confirm, and
- * waits for its row to go. Delete raises no first-time warning.
+ * Deletes a tunable from its row menu through webui's shared confirm, and waits for its row to go.
  *
- * `confirmDelete` does not pass `hideCheckbox`, so Delete stays **disabled**
- * until the box is ticked — asserted on the way, so a dialog that lost its gate
- * fails here rather than passing a test that never needed it. The delete is a
- * job that runs behind its own progress dialog after the confirm closes, and the
- * card reloads only once that finishes, so the row is what is waited on.
+ * `confirmDelete` does not pass `hideCheckbox`, so Delete stays **disabled** until ticked; asserted, so a
+ * dialog that lost its gate fails here. The delete is a job behind its own progress dialog, and the card
+ * reloads only once it finishes, so the row is what is waited on. No first-time warning.
  */
 export async function deleteTunable(page: Page, variable: string): Promise<void> {
   await openRowMenu(page, variable);
