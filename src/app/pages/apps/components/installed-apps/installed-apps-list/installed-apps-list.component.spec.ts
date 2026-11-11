@@ -204,14 +204,18 @@ describe('InstalledAppsListComponent', () => {
     expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
   });
 
-  it('does not bring back a ticked app hidden by a search after a bulk action', async () => {
+  it('leaves a ticked app hidden by a search out of a bulk action, and does not bring it back', async () => {
     const table = await loader.getHarness(TnTableHarness);
+    // test-app-1 is the running one, so Stop would reach it if hidden ticks counted.
     await table.toggleRowSelection(0);
 
     searchQuery$.next('test-app-2');
     spectator.detectChanges();
     await table.toggleRowSelection(0);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
+    expect(applicationsService.stopApplication).not.toHaveBeenCalled();
 
     searchQuery$.next('');
     spectator.detectChanges();

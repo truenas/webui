@@ -154,9 +154,11 @@ export class InstalledAppsListComponent implements OnInit {
   // read current state/upgrade_available for the selected ids instead of a
   // detached snapshot that could drift if the row objects are replaced.
   private readonly checkedAppIds = signal<Set<string>>(new Set());
+  // Only the ticked apps the search leaves on screen: the keyed selection keeps a tick on a
+  // row the search hides, and a bulk action must not reach an app the user cannot see.
   readonly checkedApps = computed(() => {
     const ids = this.checkedAppIds();
-    return this.dataSource().filter((app) => ids.has(app.id));
+    return this.filteredApps().filter((app) => ids.has(app.id));
   });
 
   sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
