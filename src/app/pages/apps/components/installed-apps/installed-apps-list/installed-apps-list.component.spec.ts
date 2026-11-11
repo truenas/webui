@@ -272,6 +272,21 @@ describe('InstalledAppsListComponent', () => {
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
   });
 
+  it('leaves a ticked app hidden by a search out of a bulk update', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(0);
+
+    searchQuery$.next('test-app-2');
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, {
+      data: [expect.objectContaining({ name: 'test-app-2' })],
+    });
+  });
+
   it('removes several applications', async () => {
     jest.spyOn(spectator.inject(TnDialog), 'open').mockReturnValue({
       closed: of({ removeVolumes: true, removeImages: true }),

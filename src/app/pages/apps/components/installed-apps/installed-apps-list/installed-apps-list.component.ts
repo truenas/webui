@@ -485,9 +485,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkUpdate(updateAll = false): void {
-    const apps = this.dataSource().filter((app) => (
-      updateAll ? app.upgrade_available : this.checkedAppIds().has(app.id)
-    ));
+    const apps = updateAll
+      ? this.dataSource().filter((app) => app.upgrade_available)
+      : this.checkedApps();
     this.tnDialog.open(AppBulkUpdateComponent, { data: apps })
       .closed
       .pipe(takeUntilDestroyed(this.destroyRef))
