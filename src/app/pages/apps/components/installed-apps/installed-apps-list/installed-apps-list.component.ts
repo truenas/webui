@@ -154,9 +154,11 @@ export class InstalledAppsListComponent implements OnInit {
   // read current state/upgrade_available for the selected ids instead of a
   // detached snapshot that could drift if the row objects are replaced.
   private readonly checkedAppIds = signal<Set<string>>(new Set());
+  // Only the ticked apps the search leaves on screen: the keyed selection keeps a tick on a
+  // row the search hides, and a bulk action must not reach an app the user cannot see.
   readonly checkedApps = computed(() => {
     const ids = this.checkedAppIds();
-    return this.dataSource().filter((app) => ids.has(app.id));
+    return this.filteredApps().filter((app) => ids.has(app.id));
   });
 
   sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
@@ -167,6 +169,9 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly trackByAppId = (_: number, app: App): string => app.id;
+  // Without a key tn-table tracks ticks by object identity and clears them whenever the list
+  // re-emits, which the app status and stats events do every few seconds.
+  protected readonly appSelectionKey = (app: App): string => app.id;
 
   protected readonly uniqueRowTag = (row: App): string => toUniqueRowTag(`app-${row.name}`);
 
@@ -249,10 +254,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private clearSelection(): void {
-    // selection.clear() resets the table's own SelectionModel without emitting
-    // (selectionChange) (that output only fires on user interaction), so mirror
-    // the cleared state into checkedAppIds ourselves. Matches docker-images-list.
-    this.table()?.selection.clear();
+    // clearSelection(), not selection.clear(): with a selectionKey the latter only drops the
+    // rows on screen, so an app ticked and then hidden by a search would come back ticked.
+    this.table()?.clearSelection();
     this.checkedAppIds.set(new Set());
     this.cdr.markForCheck();
   }
@@ -481,9 +485,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   onBulkUpdate(updateAll = false): void {
-    const apps = this.dataSource().filter((app) => (
-      updateAll ? app.upgrade_available : this.checkedAppIds().has(app.id)
-    ));
+    const apps = updateAll
+      ? this.dataSource().filter((app) => app.upgrade_available)
+      : this.checkedApps();
     this.tnDialog.open(AppBulkUpdateComponent, { data: apps })
       .closed
       .pipe(takeUntilDestroyed(this.destroyRef))

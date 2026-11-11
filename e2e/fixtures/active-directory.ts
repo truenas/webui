@@ -237,7 +237,9 @@ export async function leaveTheDomain(
   ad: ActiveDirectoryTarget | undefined,
   before: NetworkSettings | undefined,
 ): Promise<void> {
-  if (!ad || leavingTestData('the Active Directory join and the nameservers pointing at the domain')) {
+  // An unreachable domain skipped the setup, so there is no join to leave and no nameserver to
+  // put back, and a leave would only wait on controllers that do not answer.
+  if (!ad || ad.unreachable || leavingTestData('the Active Directory join and the nameservers pointing at the domain')) {
     return;
   }
 

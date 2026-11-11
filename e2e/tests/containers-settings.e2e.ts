@@ -108,12 +108,15 @@ test('an admin clears the preferred pool', async ({ page, api, pool }) => {
   expect((await readContainerConfig(api)).preferred_pool).toBeNull();
 });
 
-test('the settings form will not save without a network', async ({ page, api }) => {
+test('the settings form will not save without both networks', async ({ page, api }) => {
   const form = containersLocators.settings;
 
+  // The automatic bridge is built from both networks, and `lxc.update` refuses either one empty.
   await openContainerSettings(page, baselineV4Address);
   await page.locator(form.v4Address).fill('');
-  // The IPv6 network alone is enough, so Save is still there to take.
+  await expect(page.locator(containersLocators.save)).toBeDisabled();
+
+  await page.locator(form.v4Address).fill(baselineV4Address);
   await expect(page.locator(containersLocators.save)).toBeEnabled();
 
   await page.locator(form.v6Address).fill('');

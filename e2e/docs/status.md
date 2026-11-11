@@ -55,7 +55,9 @@ artifact of an E2E run. The narrative is in git history up to its removal.
 - **An Active Directory domain it can reach and join**, for
   `tests/unpublished/directory-services-ad.e2e.ts` and
   `tests/unpublished/roles-directory-services-ad.e2e.ts`, named by the `TN_AD_*` variables
-  (`.env.example`); without `TN_AD_DOMAIN` those files skip. The domain
+  (`.env.example`); without `TN_AD_DOMAIN` those files skip, and in CI they
+  also skip, under a job warning, when no domain controller answers on every
+  port a join uses (`TN_AD_UNREACHABLE`). The domain
   controllers must serve its DNS, since the specs point the nameservers at
   them, and the account must be allowed to create and delete computer objects
   in `TN_AD_COMPUTER_OU`. CI uses the internal test domain (`docs/05-ci.md`).
