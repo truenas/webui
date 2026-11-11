@@ -192,6 +192,18 @@ describe('InstalledAppsListComponent', () => {
     expect(locationSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps the ticked apps when the list refreshes with new app objects', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(1);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+
+    installedApps$.next(apps.map((app) => ({ ...app })));
+    spectator.detectChanges();
+
+    expect(await table.isRowSelected(1)).toBe(true);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+  });
+
   it('starts application', async () => {
     const startButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'play-circle' }));
     await startButton.click();

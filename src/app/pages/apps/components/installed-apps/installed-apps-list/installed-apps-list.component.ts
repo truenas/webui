@@ -167,6 +167,9 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly imagePlaceholder = appImagePlaceholder;
   protected readonly trackByAppId = (_: number, app: App): string => app.id;
+  // Without a key tn-table tracks ticks by object identity and clears them whenever the list
+  // re-emits, which the app status and stats events do every few seconds.
+  protected readonly appSelectionKey = (app: App): string => app.id;
 
   protected readonly uniqueRowTag = (row: App): string => toUniqueRowTag(`app-${row.name}`);
 
