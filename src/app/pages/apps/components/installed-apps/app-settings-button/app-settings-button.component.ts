@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, ViewContainerRef,
 } from '@angular/core';
@@ -40,7 +39,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     RequiresRolesDirective,
     TnMenuItemComponent,
     TnTooltipDirective,
-    AsyncPipe,
   ],
 })
 export class AppSettingsButtonComponent {

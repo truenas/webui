@@ -1,24 +1,25 @@
 import { DestroyRef, inject, Injectable } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ComponentStore } from '@ngrx/component-store';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { patchState, signalState } from '@ngrx/signals';
 import { AppStats } from 'app/interfaces/app.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
-type State = Record<string, AppStats>;
+interface AppsStatsState {
+  statsByApp: Record<string, AppStats>;
+}
 
 @Injectable()
-export class AppsStatsService extends ComponentStore<State> {
+export class AppsStatsService {
   private api = inject(ApiService);
   private destroyRef = inject(DestroyRef);
 
-  constructor() {
-    super({});
-  }
+  private readonly state = signalState<AppsStatsState>({ statsByApp: {} });
 
-  getStatsForApp(appName: string): Observable<AppStats> {
-    return this.state$.pipe(map((stats) => stats[appName]));
+  /**
+   * Reads the signal, so a template or `computed()` calling this re-renders when new stats arrive.
+   */
+  getStatsForApp(appName: string): AppStats | undefined {
+    return this.state.statsByApp()[appName];
   }
 
   subscribeToUpdates(): void {
@@ -37,6 +38,6 @@ export class AppsStatsService extends ComponentStore<State> {
       return acc;
     }, {} as Record<string, AppStats>);
 
-    this.setState(statsByApp);
+    patchState(this.state, { statsByApp });
   }
 }

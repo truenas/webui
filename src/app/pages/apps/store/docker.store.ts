@@ -1,9 +1,11 @@
-import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { Injectable, computed, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   filter,
-  forkJoin, map, Observable, switchMap, tap,
+  forkJoin, map, Observable, pipe, switchMap, tap,
 } from 'rxjs';
 import { DockerStatus } from 'app/enums/docker-status.enum';
 import {
@@ -33,45 +35,41 @@ const initialState: DockerConfigState = {
 };
 
 @Injectable()
-export class DockerStore extends ComponentStore<DockerConfigState> {
+export class DockerStore {
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private errorHandler = inject(ErrorHandlerService);
 
-  readonly isLoading$ = this.select((state) => state.isLoading);
-  readonly dockerConfig$ = this.select((state) => state.dockerConfig);
-  readonly selectedPool$ = this.select((state) => state.dockerConfig?.pool || null);
-  readonly isDockerStarted$ = this.select((state) => {
-    return state.statusData.status == null ? null : DockerStatus.Running === state.statusData.status;
+  private readonly state = signalState(initialState);
+
+  readonly isLoading = this.state.isLoading;
+  readonly dockerConfig = this.state.dockerConfig;
+  readonly selectedPool = computed(() => this.state.dockerConfig()?.pool || null);
+  readonly status = computed(() => this.state.statusData().status);
+  readonly statusDescription = computed(() => this.state.statusData().description);
+  readonly isDockerStarted = computed(() => {
+    const status = this.status();
+    return status == null ? null : DockerStatus.Running === status;
   });
 
-  readonly status$ = this.select((state) => state.statusData.status);
-  readonly statusDescription$ = this.select((state) => state.statusData.description);
-
-  constructor() {
-    super(initialState);
-  }
-
-  initialize = this.effect((trigger$: Observable<void>) => {
-    return trigger$.pipe(
-      tap(() => this.patchState({ isLoading: true })),
-      switchMap(() => forkJoin([
+  readonly initialize = rxMethod<void>(pipe(
+    // The flag is raised inside the projection: `switchMap` finalizes the request it replaces first,
+    // and that would otherwise clear the flag of the request that has just started.
+    switchMap(() => {
+      patchState(this.state, { isLoading: true });
+      return forkJoin([
         this.getDockerConfig(),
         this.getDockerStatus(),
-      ])),
-      tap(
-        ([dockerConfig, statusData]: [DockerConfig, DockerStatusData]) => {
-          this.patchState({
-            dockerConfig,
-            statusData,
-            isLoading: false,
-          });
-        },
-      ),
-      this.errorHandler.withErrorHandler(),
-    );
-  });
+      ]).pipe(
+        tapResponse({
+          next: ([dockerConfig, statusData]) => patchState(this.state, { dockerConfig, statusData }),
+          error: (error: unknown) => this.errorHandler.showErrorModal(error),
+          finalize: () => patchState(this.state, { isLoading: false }),
+        }),
+      );
+    }),
+  ));
 
   private getDockerConfig(): Observable<DockerConfig> {
     return this.api.call('docker.config');
@@ -101,7 +99,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
   reloadDockerConfig(): Observable<DockerConfig> {
     return this.getDockerConfig().pipe(
       tap((dockerConfig) => {
-        this.patchState({ dockerConfig });
+        patchState(this.state, { dockerConfig });
       }),
     );
   }
@@ -117,7 +115,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
       filter((event) => event.msg === 'changed'),
       map((event) => toDockerStatusData(event.fields)),
       tap((statusData) => {
-        this.patchState({ statusData });
+        patchState(this.state, { statusData });
       }),
     );
   }
@@ -128,7 +126,7 @@ export class DockerStore extends ComponentStore<DockerConfigState> {
         filter((event) => event.msg !== 'removed' && event.fields.method === 'docker.update' && !!event.fields.result),
         // The job's result is what `docker.update` returns; the generated job entry types it `unknown`.
         map((event) => (event as { fields: { result: DockerConfig } }).fields.result),
-        tap((dockerConfig) => this.patchState({ dockerConfig })),
+        tap((dockerConfig) => patchState(this.state, { dockerConfig })),
       );
   }
 }

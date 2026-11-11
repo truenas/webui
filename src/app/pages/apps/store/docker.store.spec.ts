@@ -60,17 +60,15 @@ describe('DockerStore', () => {
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.config');
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('docker.status');
 
-      expect(spectator.service.state()).toEqual({
-        dockerConfig: {
-          enable_image_updates: true,
-          pool: 'pewl',
-        },
-        isLoading: false,
-        statusData: {
-          description: 'Docker is running',
-          status: DockerStatus.Running,
-        },
+      expect(spectator.service.dockerConfig()).toEqual({
+        enable_image_updates: true,
+        pool: 'pewl',
       });
+      expect(spectator.service.selectedPool()).toBe('pewl');
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.status()).toBe(DockerStatus.Running);
+      expect(spectator.service.statusDescription()).toBe('Docker is running');
+      expect(spectator.service.isDockerStarted()).toBe(true);
     });
   });
 
@@ -88,7 +86,7 @@ describe('DockerStore', () => {
       await settleApi();
 
       expect(mockedApi.call).toHaveBeenCalledWith('docker.config');
-      expect(spectator.service.state().dockerConfig).toEqual(newDockerConfig);
+      expect(spectator.service.dockerConfig()).toEqual(newDockerConfig);
     });
   });
 
@@ -122,14 +120,15 @@ describe('DockerStore', () => {
 
       const mockedApi = spectator.inject(MockApiService);
       mockedApi.emitEvent('docker.state', { msg: 'added', id: 1 });
-      expect(spectator.service.state().statusData).toEqual({
-        status: DockerStatus.Running, description: 'Docker is running',
-      });
+      expect(spectator.service.status()).toBe(DockerStatus.Running);
+      expect(spectator.service.statusDescription()).toBe('Docker is running');
 
       mockedApi.emitEvent('docker.state', {
         msg: 'changed', id: 1, fields: { status: DockerStatus.Stopped, description: '' },
       } as EventUnion<WebUiApiDirectory, 'docker.state'>);
-      expect(spectator.service.state().statusData).toEqual({ status: DockerStatus.Stopped, description: '' });
+      expect(spectator.service.status()).toBe(DockerStatus.Stopped);
+      expect(spectator.service.statusDescription()).toBe('');
+      expect(spectator.service.isDockerStarted()).toBe(false);
     });
   });
 
@@ -145,10 +144,10 @@ describe('DockerStore', () => {
 
       mockedApi.emitEvent('core.get_jobs', job('docker.update', null));
       mockedApi.emitEvent('core.get_jobs', job('pool.scrub', { pool: 'wrong' }));
-      expect(spectator.service.state().dockerConfig).toBeNull();
+      expect(spectator.service.dockerConfig()).toBeNull();
 
       mockedApi.emitEvent('core.get_jobs', job('docker.update', { pool: 'new-pool' }));
-      expect(spectator.service.state().dockerConfig).toEqual({ pool: 'new-pool' });
+      expect(spectator.service.dockerConfig()).toEqual({ pool: 'new-pool' });
     });
   });
 });

@@ -1,9 +1,10 @@
-import { Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { Injectable, computed, inject } from '@angular/core';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
-  Observable, catchError, combineLatest, of, switchMap, tap,
+  Observable, catchError, combineLatest, of, pipe, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -38,51 +39,61 @@ const initialState: AppsState = {
 };
 
 @Injectable()
-export class AppsStore extends ComponentStore<AppsState> {
+export class AppsStore {
   private errorHandler = inject(ErrorHandlerService);
   private appsService = inject(ApplicationsService);
   private api = inject(ApiService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
 
-  readonly isLoading$ = this.select((state) => state.isLoading);
+  private readonly state = signalState(initialState);
 
-  readonly recommendedApps$ = this.select((state) => state.recommendedApps);
-  readonly latestApps$ = this.select((state) => state.latestApps);
-  readonly appsCategories$ = this.select((state) => [
-    ...state.categories,
+  readonly isLoading = this.state.isLoading;
+  readonly recommendedApps = this.state.recommendedApps;
+  readonly latestApps = this.state.latestApps;
+  readonly availableApps = this.state.availableApps;
+  readonly appsCategories = computed(() => [
+    ...this.state.categories(),
     AppExtraCategory.NewAndUpdated,
     AppExtraCategory.Recommended,
   ]);
 
-  readonly availableApps$ = this.select((state) => state.availableApps);
+  readonly initialize = rxMethod<void>(pipe(
+    switchMap(() => this.loadCatalog()),
+  ));
 
   constructor() {
-    super(initialState);
     this.initialize();
+  }
+
+  /**
+   * Flips the `installed` flag of every catalog entry for `appName`, so that the catalog
+   * reflects an app being installed or removed without a reload.
+   */
+  setAppInstalled(appName: string, installed: boolean): void {
+    const updateApps = (apps: AvailableApp[]): AvailableApp[] => apps.map(
+      (app) => (app.name === appName ? { ...app, installed } : app),
+    );
+
+    patchState(this.state, (state) => ({
+      availableApps: updateApps(state.availableApps),
+      recommendedApps: updateApps(state.recommendedApps),
+      latestApps: updateApps(state.latestApps),
+    }));
   }
 
   private handleError(error: unknown): void {
     this.errorHandler.showErrorModal(error);
-    this.patchState((state: AppsState): AppsState => {
-      return {
-        ...state,
-        isLoading: false,
-        isSyncingCatalog: false,
-      };
+    patchState(this.state, {
+      isLoading: false,
+      isSyncingCatalog: false,
     });
   }
-
-  readonly initialize = this.effect((triggers$: Observable<void>) => {
-    return triggers$.pipe(
-      switchMap(() => this.loadCatalog()),
-    );
-  });
 
   loadCatalog(): Observable<unknown> {
     return of(null).pipe(
       tap(() => {
-        this.patchState({
+        patchState(this.state, {
           ...initialState,
           isLoading: true,
         });
@@ -92,7 +103,7 @@ export class AppsStore extends ComponentStore<AppsState> {
       tap(() => {
         // Clear loading only if sync didn't start (catalog wasn't empty)
         // If sync is running, it will clear loading when it completes
-        if (!this.get().isSyncingCatalog) {
+        if (!this.state.isSyncingCatalog()) {
           this.setLoadingState(false);
         }
       }),
@@ -108,25 +119,23 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Shows a progress dialog to inform the user about the sync operation.
    */
   private syncCatalogIfEmpty(): Observable<unknown> {
-    const state = this.get();
-
     // Defensive check: Prevent concurrent sync operations.
     // While the RxJS pipeline itself is sequential, this guard is necessary because:
     // 1. Multiple components could call loadCatalog() simultaneously on first load
     // 2. User could manually trigger refresh while auto-sync is running
     // 3. It provides explicit state validation for future maintainability
-    if (state.isSyncingCatalog) {
+    if (this.state.isSyncingCatalog()) {
       return of(null);
     }
 
-    const catalogIsEmpty = state.availableApps.length === 0 && state.categories.length === 0;
+    const catalogIsEmpty = this.state.availableApps().length === 0 && this.state.categories().length === 0;
 
     if (!catalogIsEmpty) {
       return of(null);
     }
 
     // Set flag in state to prevent concurrent sync operations and turn on loading indicator
-    this.patchState({ isSyncingCatalog: true, isLoading: true });
+    patchState(this.state, { isSyncingCatalog: true, isLoading: true });
 
     return this.dialogService.jobDialog(
       this.api.job('catalog.sync'),
@@ -149,7 +158,7 @@ export class AppsStore extends ComponentStore<AppsState> {
       tap(() => {
         // Always clear loading and sync flags after everything completes
         this.setLoadingState(false);
-        this.patchState({ isSyncingCatalog: false });
+        patchState(this.state, { isSyncingCatalog: false });
       }),
       catchError(() => this.handleSyncError()),
     );
@@ -172,7 +181,7 @@ export class AppsStore extends ComponentStore<AppsState> {
    */
   private handleSyncError(): Observable<never> {
     this.setLoadingState(false);
-    this.patchState({ isSyncingCatalog: false });
+    patchState(this.state, { isSyncingCatalog: false });
 
     this.errorHandler.showErrorModal(
       new Error(this.translate.instant('Failed to sync catalog. Please try clicking "Refresh Catalog" manually.')),
@@ -185,7 +194,7 @@ export class AppsStore extends ComponentStore<AppsState> {
    * Updates the loading state in the store.
    */
   private setLoadingState(isLoading: boolean): void {
-    this.patchState({ isLoading });
+    patchState(this.state, { isLoading });
   }
 
   private loadCatalogData(): Observable<unknown> {
@@ -203,11 +212,8 @@ export class AppsStore extends ComponentStore<AppsState> {
         return of([]);
       }),
       tap((latestApps: AvailableApp[]) => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            latestApps,
-          };
+        patchState(this.state, {
+          latestApps,
         });
       }),
     );
@@ -220,14 +226,11 @@ export class AppsStore extends ComponentStore<AppsState> {
         return of([]);
       }),
       tap((availableApps: AvailableApp[]) => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            availableApps: [...availableApps],
-            recommendedApps: availableApps
-              .filter((app) => app.recommended)
-              .map((app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] })),
-          };
+        patchState(this.state, {
+          availableApps: [...availableApps],
+          recommendedApps: availableApps
+            .filter((app) => app.recommended)
+            .map((app) => ({ ...app, categories: [...app.categories, AppExtraCategory.Recommended] })),
         });
       }),
     );
@@ -240,11 +243,8 @@ export class AppsStore extends ComponentStore<AppsState> {
         return of([]);
       }),
       tap((categories: string[]) => {
-        this.patchState((state) => {
-          return {
-            ...state,
-            categories: [...categories],
-          };
+        patchState(this.state, {
+          categories: [...categories],
         });
       }),
     );

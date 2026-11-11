@@ -2,6 +2,7 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, inject, OnInit, signal,
 } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
@@ -80,6 +81,7 @@ type AppsSettingsFormValue = ReturnType<ReturnType<typeof createAppsSettingsForm
 })
 export class AppsSettingsComponent extends IxFormHostForm<boolean, AppsSettingsFormValue> implements OnInit {
   private dockerStore = inject(DockerStore);
+  private readonly dockerConfig$ = toObservable(this.dockerStore.dockerConfig).pipe(filter(Boolean), take(1));
   private api = inject(ApiService);
   private store$ = inject<Store<AppState>>(Store);
   private fb = inject(FormBuilder);
@@ -115,7 +117,7 @@ export class AppsSettingsComponent extends IxFormHostForm<boolean, AppsSettingsF
     this.loadFormConfig(
       combineLatest([
         this.api.call('catalog.config'),
-        this.dockerStore.dockerConfig$.pipe(filter(Boolean), take(1)),
+        this.dockerConfig$,
         this.api.call('system.advanced.nvidia_present'),
         this.api.call('system.advanced.config'),
       ]),

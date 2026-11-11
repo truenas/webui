@@ -1,6 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, inject,
+  ChangeDetectionStrategy, Component, computed, inject,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -8,7 +7,6 @@ import {
   TnButtonComponent, TnIconButtonComponent, TnMenuComponent, TnMenuItemComponent,
   TnMenuTriggerDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { map } from 'rxjs';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -31,7 +29,6 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     TranslateModule,
     TnMenuComponent,
     TnMenuItemComponent,
-    AsyncPipe,
     TnIconButtonComponent,
     TnMenuTriggerDirective,
   ],
@@ -45,9 +42,7 @@ export class CustomAppButtonComponent {
   protected readonly requiredRoles = [Role.AppsWrite];
   protected readonly searchableElements = customAppButtonElements;
 
-  customAppDisabled$ = this.dockerStore.selectedPool$.pipe(
-    map((pool) => !pool),
-  );
+  protected readonly customAppDisabled = computed(() => !this.dockerStore.selectedPool());
 
   openAppWizardCreation(): void {
     this.router.navigate(['/apps', 'available', customAppTrain, customApp, 'install']);

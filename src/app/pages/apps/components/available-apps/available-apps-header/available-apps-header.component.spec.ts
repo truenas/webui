@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { byText } from '@ngneat/spectator';
 import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -42,22 +43,22 @@ describe('AvailableAppsHeaderComponent', () => {
         mockJob('catalog.sync', { state: JobState.Success }),
       ]),
       mockProvider(InstalledAppsStore, {
-        installedApps$: of([{}, {}, {}] as App[]),
+        installedApps: signal([{}, {}, {}] as App[]),
         initialize: jest.fn(),
       }),
       mockProvider(AppsFilterStore, {
-        isFilterApplied$: of(false),
-        filterValues$: of({
+        isFilterApplied: signal(false),
+        filterValues: signal({
           sort: null,
           categories: ['storage', 'crypto', 'media', 'torrent'],
         }),
-        searchQuery$: of(''),
+        searchQuery: signal(''),
         applyFilters: jest.fn(),
         applySearchQuery: jest.fn(),
       }),
       mockProvider(AppsStore, {
-        isLoading$: of(false),
-        availableApps$: of([{
+        isLoading: signal(false),
+        availableApps: signal([{
           categories: ['storage', 'crypto'],
           last_update: { $date: 452 },
           name: 'chia',
@@ -66,7 +67,7 @@ describe('AvailableAppsHeaderComponent', () => {
           last_update: { $date: 343 },
           name: 'qbittorent',
         }] as AvailableApp[]),
-        appsCategories$: of(['storage', 'crypto', 'media', 'torrent']),
+        appsCategories: signal(['storage', 'crypto', 'media', 'torrent']),
         initialize: jest.fn(),
       }),
       mockProvider(DialogService, {

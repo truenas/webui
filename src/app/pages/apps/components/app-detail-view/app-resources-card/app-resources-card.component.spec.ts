@@ -1,7 +1,7 @@
+import { signal } from '@angular/core';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import { EventUnion } from '@truenas/api-client';
-import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
@@ -26,7 +26,7 @@ describe('AppResourcesCardComponent', () => {
         mockCall('app.available_space', 2500),
       ]),
       mockProvider(DockerStore, {
-        selectedPool$: of('pool'),
+        selectedPool: signal('pool'),
       }),
     ],
   });

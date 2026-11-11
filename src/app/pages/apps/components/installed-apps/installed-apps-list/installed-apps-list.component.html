@@ -87,7 +87,7 @@
     <ng-container [tnColumnDef]="'cpu'" [width]="'6%'">
       <ng-template tnHeaderCellDef>{{ 'CPU' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        @let cpuStats = getAppStats(row.name) | async;
+        @let cpuStats = getAppStats(row.name);
         <span tnTestIdType="text"
           [tnTestId]="['CPU', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="'Percentage of total core utilization' | translate">
@@ -103,7 +103,7 @@
     <ng-container [tnColumnDef]="'ram'" [width]="'12%'">
       <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        @let ramStats = getAppStats(row.name) | async;
+        @let ramStats = getAppStats(row.name);
         <span tnTestIdType="text"
           [tnTestId]="['RAM', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, ramStats)
@@ -122,7 +122,7 @@
     <ng-container [tnColumnDef]="'io'" [width]="'12%'">
       <ng-template tnHeaderCellDef>{{ 'Block I/O' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        @let ioStats = getAppStats(row.name) | async;
+        @let ioStats = getAppStats(row.name);
         <span tnTestIdType="text"
           [tnTestId]="['Block I/O', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, ioStats)
@@ -144,7 +144,7 @@
     <ng-container [tnColumnDef]="'network'" [width]="'15%'">
       <ng-template tnHeaderCellDef>{{ 'Network' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        @let networkStats = getAppStats(row.name) | async;
+        @let networkStats = getAppStats(row.name);
         <span tnTestIdType="text"
           [tnTestId]="['Network', uniqueRowTag(row), 'row-text']"
           [tnTooltip]="hasStats(row, networkStats) && networkStats.networks?.length

@@ -1,6 +1,6 @@
-import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -10,9 +10,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
-import {
-  Observable, combineLatest, filter, map,
-} from 'rxjs';
+import { filter } from 'rxjs';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -37,7 +35,6 @@ import { AppsStore } from 'app/pages/apps/store/apps-store.service';
     CustomAppButtonComponent,
     AvailableAppsHeaderComponent,
     FakeProgressBarComponent,
-    AsyncPipe,
     TranslateModule,
     NgTemplateOutlet,
     NgxSkeletonLoaderModule,
@@ -56,31 +53,26 @@ export class AvailableAppsComponent implements OnInit {
 
   protected readonly searchableElements = availableAppsElements;
 
-  showViewMoreButton$: Observable<boolean> = this.appsFilterStore.filterValues$.pipe(
-    map((appsFilter) => {
-      return !appsFilter.sort && !appsFilter.categories?.length;
-    }),
-  );
+  protected readonly showViewMoreButton = computed(() => {
+    const appsFilter = this.appsFilterStore.filterValues();
+    return !appsFilter.sort && !appsFilter.categories?.length;
+  });
 
-  isFilterOrSearch$: Observable<boolean> = combineLatest([
-    this.appsFilterStore.searchQuery$,
-    this.appsFilterStore.isFilterApplied$,
-  ]).pipe(
-    map(([searchQuery, isFilterApplied]) => {
-      return !!searchQuery || isFilterApplied;
-    }),
-  );
+  protected readonly isFilterOrSearch = computed(() => {
+    return !!this.appsFilterStore.searchQuery() || this.appsFilterStore.isFilterApplied();
+  });
 
-  isLoading$ = this.applicationsStore.isLoading$;
-  isFiltering$ = this.appsFilterStore.isFiltering$;
+  protected readonly isLoading = this.applicationsStore.isLoading;
+  protected readonly isFiltering = this.appsFilterStore.isFiltering;
 
   /**
    * Carries the search term into the category view the "View All" buttons link to, so that
    * drilling into a category does not throw the search away.
    */
-  protected searchQueryParams$: Observable<Params> = this.appsFilterStore.searchQuery$.pipe(
-    map((searchQuery) => (searchQuery ? { [categorySearchParam]: searchQuery } : {})),
-  );
+  protected readonly searchQueryParams = computed<Params>(() => {
+    const searchQuery = this.appsFilterStore.searchQuery();
+    return searchQuery ? { [categorySearchParam]: searchQuery } : {};
+  });
 
   ngOnInit(): void {
     // For clicking the breadcrumbs link to this page

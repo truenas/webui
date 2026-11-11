@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
@@ -7,7 +8,6 @@ import { createRoutingFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
-import { Observable, of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -30,14 +30,14 @@ const categoryApps = [{
 
 function mockFilterStore(searchQuery: string, apps: AvailableApp[]): ReturnType<typeof mockProvider> {
   return mockProvider(AppsFilterStore, {
-    filterValues$: of({
+    filterValues: signal({
       sort: null,
       categories: [],
     }),
-    isFilterApplied$: of(false),
-    isFiltering$: of(false),
-    searchQuery$: of(searchQuery),
-    searchedFilteredApps$: of(apps) as Observable<AvailableApp[]>,
+    isFilterApplied: signal(false),
+    isFiltering: signal(false),
+    searchQuery: signal(searchQuery),
+    searchedFilteredApps: signal(apps),
     applySearchQuery: jest.fn(),
     applyFilters: jest.fn(),
     resetFilters: jest.fn(),
@@ -46,9 +46,9 @@ function mockFilterStore(searchQuery: string, apps: AvailableApp[]): ReturnType<
 }
 
 const appsStoreProvider = mockProvider(AppsStore, {
-  isLoading$: of(false),
-  appsCategories$: of(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),
-  availableApps$: of([{
+  isLoading: signal(false),
+  appsCategories: signal(['storage', 'crypto', 'media', 'torrent', 'new-and-updated']),
+  availableApps: signal([{
     categories: ['storage', 'crypto', 'new-and-updated'],
     last_update: { $date: 452 },
     name: 'chia',
@@ -70,7 +70,7 @@ const sharedOptions = {
   ],
   providers: [
     mockProvider(DockerStore, {
-      selectedPool$: of('pool'),
+      selectedPool: signal('pool'),
     }),
     appsStoreProvider,
   ],
@@ -205,11 +205,11 @@ describe('CategoryViewComponent - category still being fetched', () => {
     providers: [
       ...sharedOptions.providers,
       mockProvider(AppsFilterStore, {
-        filterValues$: of({ sort: null, categories: [] }),
-        isFilterApplied$: of(false),
-        isFiltering$: of(true),
-        searchQuery$: of('plex'),
-        searchedFilteredApps$: of([]) as Observable<AvailableApp[]>,
+        filterValues: signal({ sort: null, categories: [] }),
+        isFilterApplied: signal(false),
+        isFiltering: signal(true),
+        searchQuery: signal('plex'),
+        searchedFilteredApps: signal([]),
         applySearchQuery: jest.fn(),
         applyFilters: jest.fn(),
         resetFilters: jest.fn(),

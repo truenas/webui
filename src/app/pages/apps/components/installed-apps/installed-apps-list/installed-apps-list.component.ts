@@ -1,7 +1,7 @@
-import { AsyncPipe, Location } from '@angular/common';
+import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef,
-  inject, input, OnInit, output, signal, viewChild,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect,
+  inject, input, OnInit, output, signal, untracked, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -23,7 +23,7 @@ import {
 } from '@truenas/ui-components';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  combineLatest, filter, forkJoin, map, Observable, shareReplay, switchMap,
+  filter, forkJoin, map, Observable, switchMap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { installedAppsEmptyConfig } from 'app/constants/empty-configs';
@@ -87,7 +87,6 @@ function doSortCompare(a: number | string, b: number | string, isAsc: boolean): 
     BasicSearchComponent,
     TnIconComponent,
     TnTooltipDirective,
-    AsyncPipe,
     TnTableComponent,
     TnTableColumnDirective,
     TnHeaderCellDefDirective,
@@ -142,11 +141,11 @@ export class InstalledAppsListComponent implements OnInit {
   protected readonly tableMinColumnWidth = computed(() => (this.isMobileView() ? '84px' : ''));
 
   protected readonly searchableElements = installedAppsElements;
-  readonly isLoading = toSignal(this.installedAppsStore.isLoading$, { requireSync: true });
+  readonly isLoading = this.installedAppsStore.isLoading;
 
   readonly dataSource = signal<App[]>([]);
   selectedApp: App | undefined;
-  searchQuery = toSignal(this.installedAppsStore.searchQuery$, { requireSync: true });
+  readonly searchQuery = this.installedAppsStore.searchQuery;
   appJobs = new Map<string, Job<unknown, AppStartQueryParams>>();
   // Track the selection as ids and derive checkedApps from the live dataSource
   // rather than storing the App objects tn-table emits. The table is keyed by
@@ -161,7 +160,7 @@ export class InstalledAppsListComponent implements OnInit {
     return this.filteredApps().filter((app) => ids.has(app.id));
   });
 
-  sortingInfo = toSignal(this.installedAppsStore.sortingInfo$, { requireSync: true });
+  readonly sortingInfo = this.installedAppsStore.sortingInfo;
 
   protected readonly table = viewChild(TnTableComponent);
 
@@ -231,8 +230,16 @@ export class InstalledAppsListComponent implements OnInit {
     );
   }
 
+  constructor() {
+    effect(() => {
+      const pool = this.dockerStore.selectedPool();
+      const isDockerStarted = this.dockerStore.isDockerStarted();
+      const apps = this.installedAppsStore.installedApps();
+      untracked(() => this.onInstalledAppsChanged(pool, isDockerStarted, apps));
+    });
+  }
+
   ngOnInit(): void {
-    this.loadInstalledApps();
     this.listenForStatusUpdates();
   }
 
@@ -340,55 +347,30 @@ export class InstalledAppsListComponent implements OnInit {
     this.entityEmptyConf.type = type;
   }
 
-  private loadInstalledApps(): void {
-    this.cdr.markForCheck();
+  private onInstalledAppsChanged(pool: string | null, isDockerStarted: boolean | null, apps: App[]): void {
+    if (!pool || !isDockerStarted || !apps.length) {
+      this.dataSource.set([]);
+      if (!pool) {
+        this.showLoadStatus(EmptyType.FirstUse);
+      } else if (!isDockerStarted) {
+        this.showLoadStatus(EmptyType.Errors);
+      } else {
+        this.showLoadStatus(EmptyType.NoPageData);
+      }
+      this.cdr.markForCheck();
+      this.redirectToInstalledApps();
+      return;
+    }
 
-    combineLatest([
-      this.dockerStore.selectedPool$,
-      this.dockerStore.isDockerStarted$,
-      this.installedAppsStore.installedApps$,
-    ]).pipe(
-      filter(([pool]) => {
-        if (!pool) {
-          this.dataSource.set([]);
-          this.showLoadStatus(EmptyType.FirstUse);
-          this.cdr.markForCheck();
-          this.redirectToInstalledApps();
-        }
-        return !!pool;
-      }),
-      filter(([,dockerStarted]) => {
-        if (!dockerStarted) {
-          this.dataSource.set([]);
-          this.showLoadStatus(EmptyType.Errors);
-          this.cdr.markForCheck();
-          this.redirectToInstalledApps();
-        }
-        return !!dockerStarted;
-      }),
-      filter(([,, apps]) => {
-        if (!apps.length) {
-          this.dataSource.set([]);
-          this.showLoadStatus(EmptyType.NoPageData);
-          this.cdr.markForCheck();
-          this.redirectToInstalledApps();
-        }
-        return !!apps.length;
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: ([,, apps]) => {
-        this.setDatasourceWithSort(this.sortingInfo(), apps);
-        // Preserve the user's current selection across data refreshes (e.g. after
-        // start/stop, which re-emits installedApps$). viewDetails() updates the URL
-        // via replaceState without touching the route params, so this.appId() only
-        // reflects the initial deep-link — falling back to it on every refresh would
-        // snap the selection back to the wrong app (or selectFirstApp) and rewrite
-        // the URL. Only use it when nothing is selected yet.
-        this.selectAppForDetails(this.selectedApp?.id ?? this.appId() ?? null);
-        this.cdr.markForCheck();
-      },
-    });
+    this.setDatasourceWithSort(this.sortingInfo(), apps);
+    // Preserve the user's current selection across data refreshes (e.g. after
+    // start/stop, which changes installedApps). viewDetails() updates the URL
+    // via replaceState without touching the route params, so this.appId() only
+    // reflects the initial deep-link — falling back to it on every refresh would
+    // snap the selection back to the wrong app (or selectFirstApp) and rewrite
+    // the URL. Only use it when nothing is selected yet.
+    this.selectAppForDetails(this.selectedApp?.id ?? this.appId() ?? null);
+    this.cdr.markForCheck();
   }
 
   start(name: string): void {
@@ -637,20 +619,7 @@ export class InstalledAppsListComponent implements OnInit {
       });
   }
 
-  private readonly statsCache = new Map<string, Observable<AppStats>>();
-
-  // De-dupes the per-row stats subscription across the CPU/RAM/I-O/Network cells that
-  // each read `getAppStats(row.name) | async`. `refCount: true` tears the shared
-  // subscription down once a row leaves the list (search filtering, app removal) and
-  // re-attaches cheaply from the backing ComponentStore state on the next render.
-  // The Map entry itself is retained (an idle shareReplay factory, not a live
-  // subscription); growth is bounded by the number of distinct app names ever rendered.
-  getAppStats(name: string): Observable<AppStats> {
-    let stats$ = this.statsCache.get(name);
-    if (!stats$) {
-      stats$ = this.appsStats.getStatsForApp(name).pipe(shareReplay({ bufferSize: 1, refCount: true }));
-      this.statsCache.set(name, stats$);
-    }
-    return stats$;
+  protected getAppStats(name: string): AppStats | undefined {
+    return this.appsStats.getStatsForApp(name);
   }
 }

@@ -1,13 +1,13 @@
   <div
     class="custom-app-wrapper"
     [tnTooltip]="'Set Up Pool To Create Custom App' | translate"
-    [tnTooltipDisabled]="!(customAppDisabled$ | async)"
+    [tnTooltipDisabled]="!customAppDisabled()"
   >
     <tn-button
       *ixRequiresRoles="requiredRoles"
       color="primary"
       testId="custom-app"
-      [disabled]="customAppDisabled$ | async"
+      [disabled]="customAppDisabled()"
       [ixUiSearch]="searchableElements.elements.customApp"
       [label]="'Custom App' | translate"
       (onClick)="openAppWizardCreation()"
@@ -26,7 +26,7 @@
         *ixRequiresRoles="requiredRoles"
         testId="custom-app-yaml"
         [label]="'Install via YAML' | translate"
-        [disabled]="customAppDisabled$ | async"
+        [disabled]="customAppDisabled()"
         [ixUiSearch]="searchableElements.elements.customAppYaml"
         (itemClick)="openCustomAppYamlCreation()"
       ></tn-menu-item>
