@@ -189,6 +189,38 @@ describe('InstalledAppsListComponent', () => {
     expect(locationSpy).not.toHaveBeenCalled();
   });
 
+  it('keeps the ticked apps when the list refreshes with new app objects', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(1);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+
+    installedApps$.next(apps.map((app) => ({ ...app })));
+    spectator.detectChanges();
+
+    expect(await table.isRowSelected(1)).toBe(true);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+  });
+
+  it('leaves a ticked app hidden by a search out of a bulk action, and does not bring it back', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    // test-app-1 is the running one, so Stop would reach it if hidden ticks counted.
+    await table.toggleRowSelection(0);
+
+    searchQuery$.next('test-app-2');
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
+    expect(applicationsService.stopApplication).not.toHaveBeenCalled();
+
+    searchQuery$.next('');
+    spectator.detectChanges();
+
+    expect(await table.getSelectedRowCount()).toBe(0);
+    expect(spectator.component.checkedApps()).toEqual([]);
+  });
+
   it('starts application', async () => {
     const startButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'play-circle' }));
     await startButton.click();
@@ -235,6 +267,21 @@ describe('InstalledAppsListComponent', () => {
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
+  });
+
+  it('leaves a ticked app hidden by a search out of a bulk update', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(0);
+
+    searchQuery$.next('test-app-2');
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, {
+      data: [expect.objectContaining({ name: 'test-app-2' })],
+    });
   });
 
   it('removes several applications', async () => {

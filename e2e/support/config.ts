@@ -115,6 +115,12 @@ export interface ActiveDirectoryTarget {
   readonly password: string;
   /** The OU computer accounts are created in. Unset, the domain's default `Computers`. */
   readonly computerOu?: string;
+  /**
+   * Set by CI (`TN_AD_UNREACHABLE=true`) when no controller answered on every port the join
+   * uses. The domain is shared infrastructure outside this repository, so its outage skips the
+   * domain journeys instead of failing them; the job's warnings say which ports were closed.
+   */
+  readonly unreachable: boolean;
 }
 
 /**
@@ -189,6 +195,7 @@ function readActiveDirectoryTarget(env: NodeJS.ProcessEnv, problems: string[]): 
     username,
     password,
     computerOu: env.TN_AD_COMPUTER_OU || undefined,
+    unreachable: env.TN_AD_UNREACHABLE === 'true',
   };
 }
 

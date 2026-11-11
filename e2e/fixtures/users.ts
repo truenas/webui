@@ -325,12 +325,13 @@ export const refusedAccounts = {
     password: 'E2E-NoPriv-Passw0rd!',
   },
   /**
-   * Can sign in; holds a privilege whose single role grants no UI access.
+   * Can sign in; holds a privilege with no roles at all.
    *
-   * `SHARING_SMB_WRITE` is chosen because it is unmistakably not an
-   * administration role — it is the kind of grant a share-managing service
-   * account would hold — so an appliance that started treating it as UI access
-   * would be the thing worth failing on.
+   * Middleware lets in any account whose group a privilege names, and
+   * `webui_access` is true only when one of the privilege's roles is a
+   * predefined group role (FULL_ADMIN, READONLY_ADMIN, …). Those are now the
+   * only roles `privilege.create` grants (NAS-145039), so an empty role list is
+   * the one privilege it still creates that signs in without UI access.
    */
   noWebUiAccess: {
     username: 'e2e_no_webui_access',
@@ -339,7 +340,6 @@ export const refusedAccounts = {
     // identical name would leave two groups for the name-keyed lookups here.
     groupName: 'e2e_no_webui_access_grp',
     privilegeName: 'e2e_no_webui_access',
-    role: 'SHARING_SMB_WRITE',
   },
 } as const;
 
@@ -360,8 +360,8 @@ export async function ensureNoPrivilegeAccountPresent(client: E2eApiClient): Pro
 /**
  * Creates an account middleware will authenticate and the UI must still refuse.
  *
- * Three objects in a chain — a group, a privilege naming that group and one
- * non-UI role, and a user in the group — because a privilege attaches to groups
+ * Three objects in a chain — a group, a privilege naming that group with no
+ * roles, and a user in the group — because a privilege attaches to groups
  * rather than to users. {@link ensureRefusedAccountsAbsent} unwinds them in the
  * reverse order, which is the order that matters: a group cannot be deleted
  * while a privilege still names it.
@@ -388,7 +388,7 @@ export async function ensureNoWebUiAccessAccountPresent(client: E2eApiClient): P
         // Passing the wrong one creates a privilege attached to some other
         // group, or to none, and the account then signs in perfectly well.
         local_groups: [group.gid],
-        roles: [account.role],
+        roles: [],
         web_shell: false,
       }]).pipe(timeout(slowCallTimeoutMs)),
     );
