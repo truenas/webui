@@ -252,10 +252,9 @@ export class InstalledAppsListComponent implements OnInit {
   }
 
   private clearSelection(): void {
-    // selection.clear() resets the table's own SelectionModel without emitting
-    // (selectionChange) (that output only fires on user interaction), so mirror
-    // the cleared state into checkedAppIds ourselves. Matches docker-images-list.
-    this.table()?.selection.clear();
+    // clearSelection(), not selection.clear(): with a selectionKey the latter only drops the
+    // rows on screen, so an app ticked and then hidden by a search would come back ticked.
+    this.table()?.clearSelection();
     this.checkedAppIds.set(new Set());
     this.cdr.markForCheck();
   }

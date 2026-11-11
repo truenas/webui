@@ -204,6 +204,22 @@ describe('InstalledAppsListComponent', () => {
     expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
   });
 
+  it('does not bring back a ticked app hidden by a search after a bulk action', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(0);
+
+    searchQuery$.next('test-app-2');
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
+
+    searchQuery$.next('');
+    spectator.detectChanges();
+
+    expect(await table.getSelectedRowCount()).toBe(0);
+    expect(spectator.component.checkedApps()).toEqual([]);
+  });
+
   it('starts application', async () => {
     const startButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'play-circle' }));
     await startButton.click();
