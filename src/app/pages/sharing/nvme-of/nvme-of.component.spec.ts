@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnButtonHarness } from '@truenas/ui-components';
@@ -53,10 +54,10 @@ describe('NvmeOfComponent', () => {
       }),
       mockAuth(),
       mockProvider(NvmeOfStore, {
-        subsystems: () => [{ id: 2 }] as NvmeOfSubsystemDetails[],
-        isLoading: () => false,
-        ports: () => [] as NvmeOfPort[],
-        hosts: () => [] as NvmeOfHost[],
+        subsystems: signal([{ id: 2 }] as NvmeOfSubsystemDetails[]),
+        isLoading: signal(false),
+        ports: signal<NvmeOfPort[]>([]),
+        hosts: signal<NvmeOfHost[]>([]),
         initialize: jest.fn(),
       }),
       provideMockStore({

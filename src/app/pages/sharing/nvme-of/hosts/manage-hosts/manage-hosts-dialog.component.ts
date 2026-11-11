@@ -1,20 +1,22 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, computed, inject,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCellDefDirective, TnDialog, TnDialogShellComponent, TnHeaderCellDefDirective,
   TnTableColumnDirective, TnTableComponent, TnTestIdDirective, tnIconMarker,
 } from '@truenas/ui-components';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
+import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { NvmeOfHost, PortOrHostDeleteDialogData, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
-import { dataProviderLoading, dataProviderRows, toUniqueRowTag } from 'app/modules/tn-table/utils';
+import { toUniqueRowTag } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { HostFormComponent } from 'app/pages/sharing/nvme-of/hosts/host-form/host-form.component';
@@ -43,7 +45,7 @@ interface NvmeOfHostAndUsage extends NvmeOfHost {
     TableActionsCellComponent,
   ],
 })
-export class ManageHostsDialog implements OnInit {
+export class ManageHostsDialog {
   private nvmeOfStore = inject(NvmeOfStore);
   private translate = inject(TranslateService);
   protected emptyService = inject(EmptyService);
@@ -77,26 +79,18 @@ export class ManageHostsDialog implements OnInit {
     },
   ];
 
-  protected dataProvider = new AsyncDataProvider(
-    this.nvmeOfStore.state$.pipe(
-      map((state) => {
-        return state.hosts.map((host) => ({
-          ...host,
-          usedInSubsystems: state.subsystems
-            .filter((subsystem) => subsystem.hosts.some((subsystemHost) => subsystemHost === host.id))
-            .length,
-        }));
-      }),
-    ),
-  );
+  protected readonly rows = computed((): NvmeOfHostAndUsage[] => {
+    const subsystems = this.nvmeOfStore.subsystems();
+    return this.nvmeOfStore.hosts().map((host) => ({
+      ...host,
+      usedInSubsystems: subsystems
+        .filter((subsystem) => subsystem.hosts.some((subsystemHost) => subsystemHost.id === host.id))
+        .length,
+    }));
+  });
 
-  protected readonly rows = dataProviderRows(this.dataProvider);
-  protected readonly isLoading = dataProviderLoading(this.dataProvider);
-  protected readonly emptyType = toSignal(this.dataProvider.emptyType$);
-
-  ngOnInit(): void {
-    this.dataProvider.load();
-  }
+  protected readonly isLoading = this.nvmeOfStore.isLoading;
+  protected readonly emptyType = computed(() => (this.isLoading() ? EmptyType.Loading : EmptyType.NoPageData));
 
   onAdd(): void {
     // The panel stacks above this dialog (tn-side-panel attaches through CDK's Overlay, so open
@@ -120,8 +114,8 @@ export class ManageHostsDialog implements OnInit {
   }
 
   onDelete(host: NvmeOfHostAndUsage): void {
-    const subsystemsInUse = this.nvmeOfStore?.subsystems?.()
-      .filter((subsystem) => subsystem.hosts.some((subSystemHost) => subSystemHost.id === host.id)) || [];
+    const subsystemsInUse = this.nvmeOfStore.subsystems()
+      .filter((subsystem) => subsystem.hosts.some((subSystemHost) => subSystemHost.id === host.id));
 
     this.tnDialog.open(
       SubsystemPortOrHostDeleteDialogComponent,
