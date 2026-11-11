@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -42,8 +43,8 @@ describe('NvmeOfCardComponent', () => {
   ];
 
   const mockNvmeOfStore = {
-    isLoading: () => false,
-    subsystems: () => mockSubsystems,
+    isLoading: signal(false),
+    subsystems: signal(mockSubsystems),
     initialize: jest.fn(),
   };
 
