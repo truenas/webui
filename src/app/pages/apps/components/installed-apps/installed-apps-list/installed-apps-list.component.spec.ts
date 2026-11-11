@@ -194,7 +194,7 @@ describe('InstalledAppsListComponent', () => {
     await table.toggleRowSelection(1);
     expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
 
-    installedApps$.next(apps.map((app) => ({ ...app })));
+    installedApps.set(apps.map((app) => ({ ...app })));
     spectator.detectChanges();
 
     expect(await table.isRowSelected(1)).toBe(true);
@@ -206,7 +206,7 @@ describe('InstalledAppsListComponent', () => {
     // test-app-1 is the running one, so Stop would reach it if hidden ticks counted.
     await table.toggleRowSelection(0);
 
-    searchQuery$.next('test-app-2');
+    spectator.inject(InstalledAppsStore).setSearchQuery('test-app-2');
     spectator.detectChanges();
     await table.toggleRowSelection(0);
     expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
@@ -214,7 +214,7 @@ describe('InstalledAppsListComponent', () => {
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
     expect(applicationsService.stopApplication).not.toHaveBeenCalled();
 
-    searchQuery$.next('');
+    spectator.inject(InstalledAppsStore).setSearchQuery('');
     spectator.detectChanges();
 
     expect(await table.getSelectedRowCount()).toBe(0);
@@ -273,7 +273,7 @@ describe('InstalledAppsListComponent', () => {
     const table = await loader.getHarness(TnTableHarness);
     await table.toggleRowSelection(0);
 
-    searchQuery$.next('test-app-2');
+    spectator.inject(InstalledAppsStore).setSearchQuery('test-app-2');
     spectator.detectChanges();
     await table.toggleRowSelection(0);
 
