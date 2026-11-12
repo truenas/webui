@@ -161,7 +161,8 @@ export class DiskListComponent {
 
   /**
    * The pool the page was opened for (a pool's "View Disks"). It narrows the rows before the
-   * search box does, and is cleared from its chip, never by editing the search.
+   * search box does, and is cleared from its chip, never by editing the search. It follows the
+   * route too (see `followScopeInRoute`), since reaching the page again reuses this component.
    */
   protected readonly scopePool = signal<string | null>(this.route.snapshot.queryParamMap.get('pool') || null);
   protected readonly scopeLabel = computed(() => `${this.translate.instant('Pool')}: ${this.scopePool()}`);
@@ -364,6 +365,7 @@ export class DiskListComponent {
 
   constructor() {
     this.clearSelectionWhenRowsChange();
+    this.followScopeInRoute();
 
     this.dataProvider.load();
 
@@ -449,6 +451,21 @@ export class DiskListComponent {
     effect(() => {
       this.rows();
       untracked(() => this.selectedIdentifiers.set(new Set()));
+    });
+  }
+
+  /**
+   * Re-scopes the list when the route's `pool` changes under this same component: the Storage
+   * header's Disks button, or Back and Forward between a scoped and an unscoped URL.
+   */
+  private followScopeInRoute(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const pool = params.get('pool') || null;
+      if (pool === this.scopePool()) {
+        return;
+      }
+      this.scopePool.set(pool);
+      this.onListFiltered(this.searchQuery());
     });
   }
 

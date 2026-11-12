@@ -11,7 +11,7 @@ import {
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import {
-  NEVER, of, Subject, throwError,
+  BehaviorSubject, NEVER, of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
@@ -126,8 +126,9 @@ describe('DiskListComponent', () => {
     { name: 'sdc', devname: 'sdc', sed_status: SedStatus.Locked },
   ] as DetailsDisk[];
 
-  // Read when the component is built, so a test can open the page with a query of its own.
-  let routeQueryParams: Record<string, string> = {};
+  // The route's query, set before a component is built to open the page with it, or later to
+  // navigate the same component to another one.
+  const routeQueryParams$ = new BehaviorSubject(convertToParamMap({}));
 
   const createComponent = createComponentFactory({
     component: DiskListComponent,
@@ -141,7 +142,10 @@ describe('DiskListComponent', () => {
       mockAuth(),
       {
         provide: ActivatedRoute,
-        useValue: { snapshot: { get queryParamMap() { return convertToParamMap(routeQueryParams); } } },
+        useValue: {
+          snapshot: { get queryParamMap() { return routeQueryParams$.value; } },
+          queryParamMap: routeQueryParams$,
+        },
       },
       mockProvider(Location),
       mockProvider(FormSidePanelService, {
@@ -170,7 +174,7 @@ describe('DiskListComponent', () => {
   });
 
   beforeEach(async () => {
-    routeQueryParams = {};
+    routeQueryParams$.next(convertToParamMap({}));
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
@@ -553,7 +557,7 @@ describe('DiskListComponent', () => {
         unused: [],
         used: [{ name: 'sdc', devname: 'sdc', exported_zpool: 'tank' }] as DetailsDisk[],
       });
-      routeQueryParams = { pool: 'tank' };
+      routeQueryParams$.next(convertToParamMap({ pool: 'tank' }));
       spectator = createComponent();
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
       table = await loader.getHarness(TnTableHarness);
@@ -578,6 +582,15 @@ describe('DiskListComponent', () => {
 
       expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['sda', 'sdb', 'sdc']);
       expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/storage/disks');
+      expect(await loader.getHarnessOrNull(TnChipHarness)).toBeNull();
+    });
+
+    it('drops the scope when the same page is reached again without a pool', async () => {
+      // The Storage header's Disks button, or Back: Angular reuses the component for the new URL.
+      routeQueryParams$.next(convertToParamMap({}));
+      spectator.detectChanges();
+
+      expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['sda', 'sdb', 'sdc']);
       expect(await loader.getHarnessOrNull(TnChipHarness)).toBeNull();
     });
   });
@@ -734,7 +747,10 @@ describe('DiskListComponent - without SED license', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: convertToParamMap({}) } }),
+      mockProvider(ActivatedRoute, {
+        snapshot: { queryParamMap: convertToParamMap({}) },
+        queryParamMap: of(convertToParamMap({})),
+      }),
       mockProvider(Location),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -812,7 +828,10 @@ describe('DiskListComponent when the SED entitlement resolves late', () => {
     ],
     providers: [
       mockAuth(),
-      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: convertToParamMap({}) } }),
+      mockProvider(ActivatedRoute, {
+        snapshot: { queryParamMap: convertToParamMap({}) },
+        queryParamMap: of(convertToParamMap({})),
+      }),
       mockProvider(Location),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
