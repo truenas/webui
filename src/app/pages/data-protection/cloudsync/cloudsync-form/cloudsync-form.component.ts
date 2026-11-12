@@ -717,39 +717,50 @@ export class CloudSyncFormComponent implements OnInit {
   }
 
   getPayload(): CloudSyncTaskUpdate {
-    const formValue = this.form.value as Required<FormValue>;
+    // `form.value` leaves out disabled controls, so the fields read from it below are only sent while
+    // they apply. Everything kept in `alwaysEnabled` is never disabled.
+    const formValue = this.form.value;
+    const {
+      /* eslint-disable @typescript-eslint/naming-convention */
+      path_source, path_destination, folder_source, folder_destination, cloudsync_picker,
+      bucket, bucket_input, bucket_policy_only, task_encryption, storage_class, fast_list, chunk_size,
+      acknowledge_abuse, snapshot, filename_encryption, encryption_password, encryption_salt,
+      /* eslint-enable @typescript-eslint/naming-convention */
+      ...alwaysEnabled
+    } = this.form.getRawValue();
     const attributes: CloudSyncTaskUpdate['attributes'] = {};
 
-    const bwlimit = prepareBwlimit(formValue.bwlimit);
+    const bwlimit = prepareBwlimit(alwaysEnabled.bwlimit);
     // attempt to find any NaNs that made it through despite the validator.
     // this should **not** happen; however, if it somehow does, throw an error.
     bwlimit.forEach((limit, i) => {
       if (Number.isNaN(limit.bandwidth)) {
-        throw new Error(`Specified bandwidth limit ${formValue.bwlimit[i]} is invalid`);
+        throw new Error(`Specified bandwidth limit ${alwaysEnabled.bwlimit[i]} is invalid`);
       }
     });
 
+    // Only sent while Encryption is on; the controls are disabled otherwise.
+    const encryptionOptions = {
+      filename_encryption: formValue.filename_encryption,
+      encryption_password: formValue.encryption_password,
+      encryption_salt: formValue.encryption_salt,
+    };
+
     const value: CloudSyncTaskUpdate = {
-      ...formValue,
+      ...alwaysEnabled,
+      ...encryptionOptions,
       attributes,
       include: [],
       path: undefined,
       bwlimit,
-      schedule: formValue.cloudsync_picker ? crontabToSchedule(formValue.cloudsync_picker) : {},
-      snapshot: formValue.direction === Direction.Pull ? false : formValue.snapshot,
+      schedule: cloudsync_picker ? crontabToSchedule(cloudsync_picker) : {},
+      snapshot: alwaysEnabled.direction === Direction.Pull ? false : formValue.snapshot,
     };
 
     const attributesToFill = [
       'bucket', 'bucket_input', 'bucket_policy_only', 'task_encryption',
       'storage_class', 'fast_list', 'chunk_size', 'acknowledge_abuse',
     ] as const;
-
-    ([
-      'path_source', 'path_destination', 'folder_source',
-      'folder_destination', 'cloudsync_picker', ...attributesToFill,
-    ] as const).forEach((key) => {
-      delete (value as unknown as FormValue)[key];
-    });
 
     if (formValue.direction === Direction.Pull) {
       value.path = isArray(formValue.path_destination) ? formValue.path_destination[0] : formValue.path_destination;
