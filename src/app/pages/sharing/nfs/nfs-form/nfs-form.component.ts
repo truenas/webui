@@ -190,7 +190,8 @@ export class NfsFormComponent extends IxFormHostForm implements OnInit {
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
-    const nfsShare = { ...this.form.value as Required<typeof this.form.value> };
+    // No control in this form is ever disabled, so the raw value is the full payload.
+    const nfsShare = this.form.getRawValue();
 
     if (!this.hasNfsSnapshots()) {
       delete nfsShare.expose_snapshots;

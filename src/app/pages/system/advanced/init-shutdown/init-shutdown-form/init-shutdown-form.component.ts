@@ -14,7 +14,7 @@ import { InitShutdownScriptWhen, initShutdownScriptWhenLabels } from 'app/enums/
 import { Role } from 'app/enums/role.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextInitShutdown } from 'app/helptext/system/init-shutdown';
-import { InitShutdownScript } from 'app/interfaces/init-shutdown-script.interface';
+import { InitShutdownScript, InitShutdownScriptCreate } from 'app/interfaces/init-shutdown-script.interface';
 import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
 import { FilePickerSourcePipe } from 'app/modules/forms/file-picker/file-picker-source.pipe';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -119,9 +119,11 @@ export class InitShutdownFormComponent extends IxFormHostForm implements OnInit 
   }
 
   protected handleSubmit = (event: FormSubmitEvent): SubmitResult => {
-    // `form.value`, not the event's `allValues`: `command` and `script` disable each other by type,
-    // and only the enabled one belongs in the payload.
-    const values = this.form.value as Required<typeof this.form.value>;
+    // `command` and `script` disable each other by type, and only the enabled one belongs in the payload.
+    const { command, script, ...always } = this.form.getRawValue();
+    const values: InitShutdownScriptCreate = always.type === InitShutdownScriptType.Command
+      ? { ...always, command }
+      : { ...always, script };
     const editingScript = this.editingScript;
 
     return {
