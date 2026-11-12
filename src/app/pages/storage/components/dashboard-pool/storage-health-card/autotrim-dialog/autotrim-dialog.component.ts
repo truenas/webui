@@ -6,6 +6,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
+import { tap } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
@@ -59,16 +60,17 @@ export class AutotrimDialog implements OnInit {
     this.api.job('pool.update', [this.pool.id, { autotrim: this.autotrimControl.value ? OnOff.On : OnOff.Off }])
       .pipe(
         this.loader.withLoader(),
+        tap({
+          complete: () => {
+            this.snackbar.success(
+              this.translate.instant('Pool options for {poolName} successfully saved.', { poolName: this.pool.name }),
+            );
+            this.dialogRef.close(true);
+          },
+        }),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe({
-        complete: () => {
-          this.snackbar.success(
-            this.translate.instant('Pool options for {poolName} successfully saved.', { poolName: this.pool.name }),
-          );
-          this.dialogRef.close(true);
-        },
-      });
+      .subscribe();
   }
 }
