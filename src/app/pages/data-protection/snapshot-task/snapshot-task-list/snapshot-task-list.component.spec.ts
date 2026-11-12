@@ -1,9 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
-import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
+import { createComponentFactory, mockProvider, SpectatorFactory } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
-import { TnButtonHarness, TnSelectHarness, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnChipHarness, TnSelectHarness, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent, MockPipe } from 'ng-mocks';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -67,7 +71,8 @@ describe('SnapshotTaskListComponent', () => {
     } as PeriodicSnapshotTaskUi,
   ];
 
-  const createComponent = createComponentFactory({
+  type Factory = SpectatorFactory<SnapshotTaskListComponent>;
+  const createFactory = (tasks: PeriodicSnapshotTaskUi[]): Factory => createComponentFactory({
     component: SnapshotTaskListComponent,
     imports: [
       MockComponent(PageHeaderComponent),
@@ -93,7 +98,7 @@ describe('SnapshotTaskListComponent', () => {
       mockApi([
         mockQuery(
           'pool.snapshottask.query',
-          snapshotTasksList as unknown as WebUiQueryEntity<'pool.snapshottask.query'>[],
+          tasks as unknown as WebUiQueryEntity<'pool.snapshottask.query'>[],
         ),
         mockCall('pool.snapshottask.delete', true),
         mockCall('pool.snapshottask.delete_will_change_retention_for', {}),
@@ -105,6 +110,7 @@ describe('SnapshotTaskListComponent', () => {
         open: jest.fn(() => SlideInResult.empty()),
       }),
       mockProvider(LocaleService),
+      mockProvider(Location),
       mockProvider(TaskService, {
         getTaskNextRun: jest.fn(() => 'in about 10 hours'),
       }),
@@ -119,103 +125,162 @@ describe('SnapshotTaskListComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
-    spectator = createComponent();
-    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    table = await loader.getHarness(TnTableHarness);
+  describe('opened for every dataset', () => {
+    const createComponent = createFactory(snapshotTasksList);
+
+    beforeEach(async () => {
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    });
+
+    it('should show table rows', async () => {
+      expect(await table.getHeaderTexts()).toEqual([
+        'Pool/Dataset', 'Recursive', 'Naming Schema', 'When', 'Frequency', 'Enabled', 'State',
+      ]);
+      expect(await table.getAllRowTexts()).toEqual([
+        [
+          'm60pool/manual-2024-02-05_11-19-clone',
+          'No',
+          'auto-%Y-%m-%d_%H-%M',
+          'From 00:00 to 23:59',
+          'At 12:00 AM, every day',
+          'Yes',
+          'Pending',
+        ],
+      ]);
+    });
+
+    it('expands the detail row when the row itself is clicked', async () => {
+      expect(await table.isRowExpanded(0)).toBe(false);
+
+      await table.clickRow(0);
+
+      expect(await table.isRowExpanded(0)).toBe(true);
+    });
+
+    // A detail row prints text, so every column whose cell formats its value in the template has to
+    // say how to print it — otherwise Frequency reads `[object Object]` and State reads `PENDING`.
+    it('prints the hidden Frequency and State columns the way their cells render them', async () => {
+      const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
+      await picker.open();
+      await picker.selectOption('Frequency');
+      await picker.selectOption('State');
+      spectator.detectChanges();
+
+      await table.toggleRowExpansion(0);
+
+      const detailsRow = spectator.query('ix-table-details-row');
+      expect(detailsRow).toHaveText('Frequency:At 12:00 AM, every day');
+      expect(detailsRow).toHaveText('State:Pending');
+    });
+
+    it('shows form to edit an existing task when Edit button is pressed', async () => {
+      await table.toggleRowExpansion(0);
+
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+      await editButton.click();
+
+      expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
+        SnapshotTaskFormComponent,
+        {
+          title: 'Edit Periodic Snapshot Task',
+          wide: true,
+          inputs: { taskToEdit: snapshotTasksList[0] },
+        },
+      );
+
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.snapshottask.query');
+    });
+
+    it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
+      jest.spyOn(spectator.inject(DialogService), 'confirm');
+
+      await table.toggleRowExpansion(0);
+
+      const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+      await deleteButton.click();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+        title: 'Confirmation',
+        message: 'Delete Periodic Snapshot Task <b>"m60pool/manual-2024-02-05_11-19-clone - auto-%Y-%m-%d_%H-%M"</b>?',
+        buttonColor: 'warn',
+        buttonText: 'Delete',
+        secondaryCheckbox: false,
+        secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
+      });
+
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
+    });
+
+    it('reloads the data provider when an event is received from pool.snapshottask.query', () => {
+      const api = spectator.inject(ApiService);
+      expect(api.subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
+
+      jest.spyOn(spectator.component.dataProvider, 'load');
+
+      spectator.inject(MockApiService).emitEvent('pool.snapshottask.query', {
+        msg: 'changed',
+        id: snapshotTasksList[0].id,
+        fields: { state: { state: TaskState.Finished } } as WebUiQueryEntity<'pool.snapshottask.query'>,
+      });
+
+      expect(spectator.component.dataProvider.load).toHaveBeenCalled();
+    });
   });
 
-  it('should show table rows', async () => {
-    expect(await table.getHeaderTexts()).toEqual([
-      'Pool/Dataset', 'Recursive', 'Naming Schema', 'When', 'Frequency', 'Enabled', 'State',
-    ]);
-    expect(await table.getAllRowTexts()).toEqual([
-      [
-        'm60pool/manual-2024-02-05_11-19-clone',
-        'No',
-        'auto-%Y-%m-%d_%H-%M',
-        'From 00:00 to 23:59',
-        'At 12:00 AM, every day',
-        'Yes',
-        'Pending',
-      ],
-    ]);
-  });
-
-  it('expands the detail row when the row itself is clicked', async () => {
-    expect(await table.isRowExpanded(0)).toBe(false);
-
-    await table.clickRow(0);
-
-    expect(await table.isRowExpanded(0)).toBe(true);
-  });
-
-  // A detail row prints text, so every column whose cell formats its value in the template has to
-  // say how to print it — otherwise Frequency reads `[object Object]` and State reads `PENDING`.
-  it('prints the hidden Frequency and State columns the way their cells render them', async () => {
-    const picker = await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-table-column-picker' }));
-    await picker.open();
-    await picker.selectOption('Frequency');
-    await picker.selectOption('State');
-    spectator.detectChanges();
-
-    await table.toggleRowExpansion(0);
-
-    const detailsRow = spectator.query('ix-table-details-row');
-    expect(detailsRow).toHaveText('Frequency:At 12:00 AM, every day');
-    expect(detailsRow).toHaveText('State:Pending');
-  });
-
-  it('shows form to edit an existing task when Edit button is pressed', async () => {
-    await table.toggleRowExpansion(0);
-
-    const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
-    await editButton.click();
-
-    expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(
-      SnapshotTaskFormComponent,
+  describe('opened for a dataset', () => {
+    // The route names `tank/a`. Its child is in scope; a sibling whose name starts with it is
+    // not, and neither is a task elsewhere whose naming schema holds it.
+    const scopedTasks = [
+      { ...snapshotTasksList[0], id: 11, dataset: 'tank/a' },
+      { ...snapshotTasksList[0], id: 12, dataset: 'tank/a/child' },
+      { ...snapshotTasksList[0], id: 13, dataset: 'tank/ab' },
       {
-        title: 'Edit Periodic Snapshot Task',
-        wide: true,
-        inputs: { taskToEdit: snapshotTasksList[0] },
+        ...snapshotTasksList[0], id: 14, dataset: 'tank/other', naming_schema: 'tank/a-%Y-%m-%d_%H-%M',
       },
-    );
+    ] as PeriodicSnapshotTaskUi[];
 
-    expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.snapshottask.query');
-  });
+    async function shownDatasets(): Promise<string[]> {
+      const rows = await table.getAllRowTexts();
+      return rows.map((row) => row[0]).sort((a, b) => a.localeCompare(b));
+    }
 
-  it('deletes a Cloud Sync with confirmation when Delete button is pressed', async () => {
-    jest.spyOn(spectator.inject(DialogService), 'confirm');
+    const createComponent = createFactory(scopedTasks);
 
-    await table.toggleRowExpansion(0);
-
-    const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
-    await deleteButton.click();
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
-      title: 'Confirmation',
-      message: 'Delete Periodic Snapshot Task <b>"m60pool/manual-2024-02-05_11-19-clone - auto-%Y-%m-%d_%H-%M"</b>?',
-      buttonColor: 'warn',
-      buttonText: 'Delete',
-      secondaryCheckbox: false,
-      secondaryCheckboxText: helptextSnapshotForm.keepSnapshotsLabel,
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => 'tank/a' } } } },
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshottask.delete', [1, { fixate_removal_date: false }]);
-  });
-
-  it('reloads the data provider when an event is received from pool.snapshottask.query', () => {
-    const api = spectator.inject(ApiService);
-    expect(api.subscribe).toHaveBeenCalledWith('pool.snapshottask.query');
-
-    jest.spyOn(spectator.component.dataProvider, 'load');
-
-    spectator.inject(MockApiService).emitEvent('pool.snapshottask.query', {
-      msg: 'changed',
-      id: snapshotTasksList[0].id,
-      fields: { state: { state: TaskState.Finished } } as WebUiQueryEntity<'pool.snapshottask.query'>,
+    it('starts with an empty search box', () => {
+      expect(spectator.query(BasicSearchComponent)?.query()).toBe('');
     });
 
-    expect(spectator.component.dataProvider.load).toHaveBeenCalled();
+    it('shows the dataset and its children, never a task matched only by its naming schema', async () => {
+      expect(await shownDatasets()).toEqual(['tank/a', 'tank/a/child']);
+    });
+
+    it('shows only the dataset itself once Include child datasets is off', async () => {
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Include child datasets' }));
+      await toggle.toggle();
+      spectator.detectChanges();
+
+      expect(await shownDatasets()).toEqual(['tank/a']);
+    });
+
+    it('lists every task, and drops the dataset from the URL, once the scope chip is cleared', async () => {
+      const chip = await loader.getHarness(TnChipHarness.with({ label: 'tank/a' }));
+      await chip.close();
+      spectator.detectChanges();
+
+      expect(await shownDatasets()).toEqual(['tank/a', 'tank/a/child', 'tank/ab', 'tank/other']);
+      expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/data-protection/snapshot');
+    });
   });
 });

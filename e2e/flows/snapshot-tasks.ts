@@ -176,8 +176,8 @@ export async function openSnapshotTaskList(page: Page): Promise<void> {
  * Snapshot Tasks" link, starting from the sidebar.
  *
  * The link puts the dataset in the route, `/data-protection/snapshot/<dataset>`,
- * and the list copies it into its search box rather than filtering by route. So
- * this arrives at the same page {@link openSnapshotTaskList} does, searched.
+ * and the list scopes its rows to that dataset (and, by default, its children),
+ * shown as a chip in the page header. The search box starts empty.
  */
 export async function openSnapshotTaskListForDataset(page: Page, dataset: string): Promise<void> {
   await selectDataset(page, dataset);
