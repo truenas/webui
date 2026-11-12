@@ -405,18 +405,28 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
 
   private submitUserRequest(payload: UserUpdate): Observable<User> {
     const editingUser = this.editingUser();
-    return editingUser
-      ? this.userFormStore.updateUser(editingUser.id, payload)
-      : this.userFormStore.createUser();
+    if (editingUser) {
+      return this.userFormStore.updateUser(editingUser.id, payload);
+    }
+
+    // `createUser()` builds its payload from the store, so hand it what this submit worked out.
+    this.userFormStore.updateUserConfig({ password_disabled: payload.password_disabled, locked: payload.locked });
+    return this.userFormStore.createUser();
   }
 
   protected handleSubmit = (): SubmitResult<User, User> => {
     const values = { ...this.formValues };
     let payload = { ...this.userFormStore.userConfig() };
 
-    const disablePassword = this.isStigMode() && this.isNewUser()
+    const isStigCreate = this.isStigMode() && this.isNewUser();
+    const disablePassword = isStigCreate
       ? values.stig_password === UserStigPasswordOption.DisablePassword
       : values.password_disabled;
+
+    if (isStigCreate) {
+      // The store decides from this whether to ask for a one-time password once the user exists.
+      this.userFormStore.updateSetupDetails({ stigPassword: values.stig_password });
+    }
 
     payload = {
       ...payload,
