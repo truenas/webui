@@ -12,6 +12,10 @@
  * really ran leaves `disk.details` reporting no pool on it. Only Quick is used.
  * The other methods write all of a disk.
  *
+ * A pool's View Disks, on its Disk Health card, opens the page scoped to that
+ * pool's disks; the worker's `pool` fixture is the pool, and an unused disk is
+ * the one the scope leaves out.
+ *
  * Ticking a row and opening one by its chevron are covered here too, as the
  * cheapest proof of the ids `tn-table` gives those controls (`locators/table.ts`).
  *
@@ -26,6 +30,7 @@ import {
   ensureExportedPoolGone,
   findDisksCarryingExportedPool,
   listDisks,
+  listPoolDiskNames,
   pickUnusedDisk,
   readDiskSettings,
   resetDiskSettings,
@@ -34,9 +39,11 @@ import { getSelectableDisks } from '../fixtures/storage';
 import {
   chooseAdvPowerManagement,
   chooseHddStandby,
+  clearPoolScope,
   expandDisk,
   openDiskForm,
   openDisksPage,
+  openPoolDisksPage,
   openWipeDialog,
   saveDiskForm,
   wipeDisk,
@@ -77,6 +84,26 @@ test('the Disks page lists every disk on the appliance, and search narrows it to
   await page.locator(diskListLocators.search).fill(targetSerial);
   await expect(page.locator(diskListLocators.row(target))).toBeVisible();
   await expect(page.locator(diskListLocators.row(other ?? ''))).toBeHidden();
+});
+
+test('a pool\'s View Disks lists only that pool\'s disks, and clearing the scope lists them all', async ({ page, api, pool }) => {
+  const poolDisks = await listPoolDiskNames(api, pool);
+  const [first] = poolDisks;
+  expect(first, `pool "${pool}" reports no disks.`).toBeDefined();
+  // In no pool, so the scope has to leave it out.
+  const outside = await pickUnusedDisk(api);
+
+  await openPoolDisksPage(page, pool, first ?? '');
+  await expect(page.locator(diskListLocators.poolScope)).toContainText(pool);
+  await expect(page.locator(diskListLocators.search)).toHaveValue('');
+  for (const disk of poolDisks) {
+    await expect(page.locator(diskListLocators.row(disk))).toBeVisible();
+  }
+  await expect(page.locator(diskListLocators.row(outside))).toBeHidden();
+
+  await clearPoolScope(page);
+  await expect(page.locator(diskListLocators.row(outside))).toBeVisible();
+  await expect(page.locator(diskListLocators.row(first ?? ''))).toBeVisible();
 });
 
 test('ticking a disk\'s row brings up the batch bar for it, and clearing it takes the bar away', async ({ page, api }) => {

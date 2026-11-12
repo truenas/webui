@@ -1,11 +1,13 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Location } from '@angular/common';
 import { signal } from '@angular/core';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnDialog, TnEmptyHarness, TnSelectHarness, TnTableHarness,
+  TnButtonHarness, TnChipHarness, TnDialog, TnEmptyHarness, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import {
@@ -124,6 +126,9 @@ describe('DiskListComponent', () => {
     { name: 'sdc', devname: 'sdc', sed_status: SedStatus.Locked },
   ] as DetailsDisk[];
 
+  // Read when the component is built, so a test can open the page with a query of its own.
+  let routeQueryParams: Record<string, string> = {};
+
   const createComponent = createComponentFactory({
     component: DiskListComponent,
     imports: [
@@ -134,6 +139,11 @@ describe('DiskListComponent', () => {
     ],
     providers: [
       mockAuth(),
+      {
+        provide: ActivatedRoute,
+        useValue: { snapshot: { get queryParamMap() { return convertToParamMap(routeQueryParams); } } },
+      },
+      mockProvider(Location),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -160,6 +170,7 @@ describe('DiskListComponent', () => {
   });
 
   beforeEach(async () => {
+    routeQueryParams = {};
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
@@ -526,6 +537,51 @@ describe('DiskListComponent', () => {
     expect(rows[0]).toEqual(['sda', 'serial1', '40 GiB', 'new-pool', 'Unsupported']);
   });
 
+  describe('opened for a pool', () => {
+    // `tank2` starts with the scope, and the third disk belongs to an exported pool called `tank`,
+    // which the Pool column shows as "tank (Exported)": only the first disk is in `tank`.
+    const scopedDisks = [
+      { ...fakeDisks[0], pool: 'tank' },
+      { ...fakeDisks[1], pool: 'tank2' },
+      { ...fakeDisks[2], pool: null },
+    ] as Disk[];
+
+    beforeEach(async () => {
+      const api = spectator.inject(MockApiService);
+      api.mockQuery('disk.query', scopedDisks as unknown as WebUiQueryEntity<'disk.query'>[]);
+      api.mockCall('disk.details', {
+        unused: [],
+        used: [{ name: 'sdc', devname: 'sdc', exported_zpool: 'tank' }] as DetailsDisk[],
+      });
+      routeQueryParams = { pool: 'tank' };
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    });
+
+    it('shows only that pool\'s disks, with the scope in a chip and the search box empty', async () => {
+      expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['sda']);
+      expect(await (await loader.getHarness(TnChipHarness)).getLabel()).toBe('Pool: tank');
+      expect(await (await loader.getHarness(BasicSearchHarness)).getValue()).toBe('');
+    });
+
+    it('applies the search within the pool, never instead of it', async () => {
+      await (await loader.getHarness(BasicSearchHarness)).setValue('sdb');
+      spectator.detectChanges();
+
+      expect(await loader.getAllHarnesses(TnTableHarness)).toHaveLength(0);
+    });
+
+    it('shows every disk, and drops the pool from the URL, once the chip is cleared', async () => {
+      await (await loader.getHarness(TnChipHarness)).close();
+      spectator.detectChanges();
+
+      expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['sda', 'sdb', 'sdc']);
+      expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/storage/disks');
+      expect(await loader.getHarnessOrNull(TnChipHarness)).toBeNull();
+    });
+  });
+
   it('sorts Disk Size by the raw byte count, not by the formatted text', async () => {
     await table.clickSortHeader('size');
 
@@ -678,6 +734,8 @@ describe('DiskListComponent - without SED license', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: convertToParamMap({}) } }),
+      mockProvider(Location),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
@@ -754,6 +812,8 @@ describe('DiskListComponent when the SED entitlement resolves late', () => {
     ],
     providers: [
       mockAuth(),
+      mockProvider(ActivatedRoute, { snapshot: { queryParamMap: convertToParamMap({}) } }),
+      mockProvider(Location),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),

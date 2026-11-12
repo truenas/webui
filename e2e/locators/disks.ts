@@ -42,6 +42,21 @@ export const diskListLocators = {
    */
   entry: '[data-test="link-disks"]',
 
+  /**
+   * "View Disks" on a pool's Disk Health card, which opens the page scoped to that pool. Every
+   * card's button is `link-view-disks`, so it is reached through the card,
+   * `[tnTestId]="[poolState().name, 'disk-health']"`.
+   */
+  poolEntry: (pool: string): string => (
+    `[data-test="card-${kebabTestSegment(pool)}-disk-health"] [data-test="link-view-disks"]`
+  ),
+
+  /**
+   * The chip naming the pool a pool's View Disks scoped the page to, `tn-chip [testId]="'pool-scope'"`.
+   * Its close button has no id of its own; Delete on the focused chip clears it the same way.
+   */
+  poolScope: '[data-test="chip-pool-scope"]',
+
   /** `ix-basic-search`, which filters on name, pool, serial and size. */
   search: '[data-test="input-search"]',
 
