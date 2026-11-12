@@ -1,4 +1,4 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -8,6 +8,7 @@ import { Choices } from 'app/interfaces/choices.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('UserFormStore', () => {
   let spectator: SpectatorService<UserFormStore>;
@@ -26,6 +27,7 @@ describe('UserFormStore', () => {
           '/usr/bin/zsh': 'zsh',
         } as Choices),
       ]),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -199,6 +201,18 @@ describe('UserFormStore', () => {
       await settleApi();
 
       expect(spectator.service.isStigMode()).toBe(true);
+    });
+
+    it('logs a failed STIG lookup instead of opening an error modal, and stays non-STIG', async () => {
+      spectator.inject(MockApiService).mockCallError('system.security.config');
+
+      spectator.service.loadStigMode();
+      await settleApi();
+
+      const errorHandler = spectator.inject(ErrorHandlerService);
+      expect(errorHandler.handleError).toHaveBeenCalled();
+      expect(errorHandler.showErrorModal).not.toHaveBeenCalled();
+      expect(spectator.service.isStigMode()).toBe(false);
     });
   });
 

@@ -48,6 +48,8 @@ export class AuthSectionComponent implements OnInit {
   protected sshAccess = this.userStore.sshAccess;
   protected smbAccess = this.userStore.smbAccess;
   protected isStigMode = this.userStore.isStigMode;
+  /** Creating a user on a STIG system: the password inputs give way to the STIG password options. */
+  protected isStigCreate = computed(() => this.isStigMode() && !this.editingUser());
 
   form = this.formBuilder.group({
     password: ['', [Validators.required]],
@@ -151,8 +153,17 @@ export class AuthSectionComponent implements OnInit {
     });
 
     effect(() => {
+      if (this.isStigCreate()) {
+        // The inputs are not rendered, so their `required` must not hold the form invalid and block Save.
+        this.form.controls.password.disable({ emitEvent: false });
+        this.form.controls.password_confirm.disable({ emitEvent: false });
+        this.form.updateValueAndValidity();
+        return;
+      }
+
       if (this.smbAccess()) {
         this.form.controls.password.enable({ emitEvent: false });
+        this.form.controls.password_confirm.enable({ emitEvent: false });
         this.form.controls.password_disabled.disable({ emitEvent: false });
         this.form.patchValue({ password_disabled: false });
       } else {
@@ -160,6 +171,7 @@ export class AuthSectionComponent implements OnInit {
         // Ensure password field state is consistent when SMB is disabled
         if (!this.form.value.password_disabled) {
           this.form.controls.password.enable({ emitEvent: false });
+          this.form.controls.password_confirm.enable({ emitEvent: false });
         }
       }
     });
@@ -270,8 +282,10 @@ export class AuthSectionComponent implements OnInit {
       this.form.controls.ssh_password_enabled.setValue(false, { emitEvent: false });
       this.form.controls.ssh_password_enabled.disable({ emitEvent: false });
     } else {
-      this.form.controls.password.enable({ emitEvent: false });
-      this.form.controls.password_confirm.enable({ emitEvent: false });
+      if (!this.isStigCreate()) {
+        this.form.controls.password.enable({ emitEvent: false });
+        this.form.controls.password_confirm.enable({ emitEvent: false });
+      }
       this.form.controls.ssh_password_enabled.enable({ emitEvent: false });
     }
   }

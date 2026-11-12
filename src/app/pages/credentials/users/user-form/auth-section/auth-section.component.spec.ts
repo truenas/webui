@@ -285,6 +285,22 @@ describe('AuthSectionComponent', () => {
       ]);
     });
 
+    it('keeps the form valid on a STIG system, where the password inputs are replaced by options', async () => {
+      isStigMode.set(true);
+      spectator.detectChanges();
+
+      expect(await getInputOrNull('password')).toBeNull();
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
+    it('keeps the form valid on a STIG system after Disable Password was preset off', () => {
+      isStigMode.set(true);
+      spectator.setInput('preset', { values: { password_disabled: false } });
+      spectator.detectChanges();
+
+      expect(spectator.component.form.valid).toBe(true);
+    });
+
     it('shows a per-option tooltip for the STIG password options', async () => {
       isStigMode.set(true);
       spectator.detectChanges();

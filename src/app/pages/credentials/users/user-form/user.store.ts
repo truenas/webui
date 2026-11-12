@@ -92,7 +92,8 @@ export class UserFormStore {
     switchMap(() => this.api.call('system.security.config').pipe(
       tapResponse({
         next: (config) => patchState(this.state, { isStigMode: config.enable_gpos_stig }),
-        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+        // The form works without the flag, so a failed lookup is logged and the form stays non-STIG.
+        error: (error: unknown) => this.errorHandler.handleError(error),
       }),
     )),
   ));
