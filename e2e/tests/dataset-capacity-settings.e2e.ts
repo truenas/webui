@@ -1,6 +1,7 @@
 /**
  * Stories: an admin sets and removes a dataset's own quotas, reservations and quota warning
- * threshold from the Space Management card, and the form refuses a quota below 1 GiB.
+ * threshold from the Space Management card, removes the quotas by entering 0, and the form refuses
+ * a quota between 0 and 1 GiB.
  *
  * Every save is asserted on the card and through `pool.dataset.query`. The API check is the
  * stronger one: the sizes are typed as `2 GiB` and have to reach middleware as byte counts, and the
@@ -116,6 +117,35 @@ test('an admin removes the quotas and reservations, and the threshold is inherit
     refreservation: 0,
     reservation: 0,
     refquotaWarning: inheritedWarning,
+  });
+});
+
+test('an admin removes both quotas by entering 0, as the tooltip says', async ({ page, api, pool }) => {
+  const dataset = `${pool}/${datasetLeaf}`;
+  await setCapacity(api, dataset, configured);
+
+  await openCapacitySettings(page, dataset);
+  // Seen first, so that its going away below is the save and not a card still loading.
+  await expect(page.locator(card.appliedQuota)).toBeVisible();
+
+  await page.locator(form.refquota).fill('0');
+  await page.locator(form.quota).fill('0');
+  await page.locator(form.quota).blur();
+
+  // Both fail while 0 is refused: the field shows the message and Save stays disabled.
+  await expect(page.locator(form.refquotaField)).not.toContainText(quotaTooSmallMessage);
+  await expect(page.locator(form.save)).toBeEnabled();
+  await saveDatasetForm(page);
+
+  await expect(page.locator(card.appliedQuota)).toBeHidden();
+
+  // The reservations were not touched, so they keep their seeded values.
+  expect(await readCapacity(api, dataset)).toEqual({
+    refquota: 0,
+    quota: 0,
+    refreservation: configured.refreservation,
+    reservation: configured.reservation,
+    refquotaWarning: String(configured.refquotaWarning),
   });
 });
 
