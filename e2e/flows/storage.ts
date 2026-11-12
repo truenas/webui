@@ -2,10 +2,11 @@
  * Pools and datasets, driven through the UI.
  */
 import { expect, type Download, type Page } from '@playwright/test';
+import { expandDatasetNode, selectDatasetNode } from './dataset-tree';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
 import {
-  autotrimLocators, datasetDetailsLocators, datasetLocators, dedupQuotaLocators, deleteDatasetDialogLocators,
+  autotrimLocators, datasetLocators, dedupQuotaLocators, deleteDatasetDialogLocators,
   downloadKeyDialogLocators, expandPoolLocators, manualDiskSelectionLocators, poolDisconnectLocators,
   poolImportLocators, poolScrubLocators, poolWizardLocators, pruneDedupLocators, scheduledScrubLocators,
   type VdevCategory, zvolLocators,
@@ -374,7 +375,7 @@ export async function createSmbDataset(page: Page, pool: string, name: string): 
 
   // Select the pool's root in the tree first — "Add Dataset" acts on whatever
   // is currently selected.
-  await page.locator(datasetLocators.treeNode(pool)).click();
+  await expandDatasetNode(page, pool);
 
   await page.locator(datasetLocators.addDataset).click();
   await expect(page.locator(datasetLocators.name)).toBeVisible();
@@ -394,7 +395,8 @@ export async function createSmbDataset(page: Page, pool: string, name: string): 
 }
 
 /**
- * Selects `parent` in the tree and opens the Add Dataset form under it.
+ * Selects and opens `parent` in the tree, so the new dataset shows under it, and opens the Add
+ * Dataset form there.
  *
  * Waits for the form's own Parent Path to name `parent`. The form loads the
  * parent before it will save, and this is the readback that it loaded the one
@@ -402,10 +404,7 @@ export async function createSmbDataset(page: Page, pool: string, name: string): 
  */
 export async function openAddDatasetForm(page: Page, parent: string): Promise<void> {
   await goToDatasets(page);
-
-  const node = page.locator(datasetLocators.treeNode(parent));
-  await expect(node).toBeVisible();
-  await node.click();
+  await expandDatasetNode(page, parent);
 
   await page.locator(datasetLocators.addDataset).click();
   await expect(page.locator(datasetLocators.parentPath)).toHaveText(parent);
@@ -424,11 +423,7 @@ export async function openAddDatasetForm(page: Page, parent: string): Promise<vo
  */
 export async function openEditDatasetForm(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
-
-  const node = page.locator(datasetLocators.treeNode(name));
-  await expect(node).toBeVisible();
-  await node.click();
-  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
+  await selectDatasetNode(page, name);
 
   const edit = page.locator(datasetLocators.editDataset);
   await expect(edit).toBeVisible();
@@ -448,7 +443,8 @@ export async function saveDatasetForm(page: Page): Promise<void> {
 }
 
 /**
- * Selects `parent` in the tree and opens the Add Zvol form under it.
+ * Selects and opens `parent` in the tree, so the new zvol shows under it, and opens the Add Zvol
+ * form there.
  *
  * Waits for the Sync readout to show something. The form loads the parent before it knows what
  * a new zvol inherits, and the readout stays empty until then. A field changed before that would
@@ -456,11 +452,7 @@ export async function saveDatasetForm(page: Page): Promise<void> {
  */
 export async function openAddZvolForm(page: Page, parent: string): Promise<void> {
   await goToDatasets(page);
-
-  const node = page.locator(datasetLocators.treeNode(parent));
-  await expect(node).toBeVisible();
-  await node.click();
-  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(parent);
+  await expandDatasetNode(page, parent);
 
   await page.locator(zvolLocators.add).click();
   // An empty element has no size, so Playwright does not count it as visible.
@@ -476,11 +468,7 @@ export async function openAddZvolForm(page: Page, parent: string): Promise<void>
  */
 export async function openEditZvolForm(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
-
-  const node = page.locator(datasetLocators.treeNode(name));
-  await expect(node).toBeVisible();
-  await node.click();
-  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(name);
+  await selectDatasetNode(page, name);
 
   const edit = page.locator(zvolLocators.edit);
   await expect(edit).toBeVisible();
@@ -513,10 +501,7 @@ export async function setZvolSync(page: Page, label: string): Promise<void> {
  */
 export async function openDeleteDatasetDialog(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
-
-  const node = page.locator(datasetLocators.treeNode(name));
-  await expect(node).toBeVisible();
-  await node.click();
+  await selectDatasetNode(page, name);
 
   const open = page.locator(deleteDatasetDialogLocators.open);
   await expect(open).toBeVisible();

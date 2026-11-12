@@ -92,7 +92,8 @@
                   Navigation lives on the projected content, not the tn-tree-node host:
                   the library node's cdkTreeNodeToggle stops click propagation, so a host
                   (click) never fires. Handling it here (and stopping propagation) gives
-                  row-click = open details, while the chevron alone still expands/collapses.
+                  row-click = open details, or toggle when the row is already selected;
+                  the chevron expands/collapses any row.
                 -->
                 <div
                   class="dataset-node-click"

@@ -35,6 +35,7 @@ describe('DatasetsManagementComponent', () => {
   ] as DatasetDetails[];
   const datasets = signal(initialDatasets);
   const error = signal<unknown>(null);
+  const selectedBranch = signal<DatasetDetails[] | null>(null);
   const tierJobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
 
   const createComponent = createRoutingFactory({
@@ -62,7 +63,7 @@ describe('DatasetsManagementComponent', () => {
         error,
         loadDatasets: jest.fn(),
         refreshDatasets: jest.fn(),
-        selectedBranch: signal(null),
+        selectedBranch,
         selectedDataset: signal(null),
         isLoading: signal(false),
         selectDatasetById: () => {},
@@ -74,6 +75,7 @@ describe('DatasetsManagementComponent', () => {
   beforeEach(() => {
     datasets.set(initialDatasets);
     error.set(null);
+    selectedBranch.set(null);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     router = spectator.inject(Router);
@@ -153,6 +155,88 @@ describe('DatasetsManagementComponent', () => {
     expect(spectator.query('.details-container')).not.toExist();
   });
 
+  describe('expanding the selected branch', () => {
+    function makeTree(): DatasetDetails[] {
+      return [
+        { id: 'pool', name: 'pool', children: [{ id: 'pool/a' }] },
+        { id: 'pool/a', name: 'pool/a', children: [{ id: 'pool/a/b' }] },
+        { id: 'pool/a/b', name: 'pool/a/b', children: [{ id: 'pool/a/b/c' }] },
+        { id: 'pool/a/b/c', name: 'pool/a/b/c', children: [] },
+      ] as DatasetDetails[];
+    }
+
+    function branchTo(id: string): DatasetDetails[] {
+      return datasets().filter((dataset) => id === dataset.id || id.startsWith(`${dataset.id}/`));
+    }
+
+    function isExpanded(id: string): boolean {
+      const { treeControl } = spectator.component;
+      return treeControl.isExpanded(treeControl.dataNodes.find((dataset) => dataset.id === id)!);
+    }
+
+    // white-box: the virtual scroll viewport has no height in jsdom, so it renders no rows to click.
+    // This calls the rows' (click) handler directly.
+    function clickRow(id: string): void {
+      const dataset = spectator.component.treeControl.dataNodes.find((node) => node.id === id)!;
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['viewDetails'](dataset);
+      spectator.detectChanges();
+    }
+
+    beforeEach(() => {
+      spectator.setRouteParam('datasetId', 'pool');
+      datasets.set(makeTree());
+      spectator.detectChanges();
+    });
+
+    it('opens the first pool when the page is entered with nothing selected', () => {
+      spectator.setRouteParam('datasetId', undefined);
+      datasets.set(makeTree());
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(true);
+      expect(isExpanded('pool/a')).toBe(false);
+    });
+
+    it('expands the ancestors of a deep-linked dataset, but not the dataset itself', () => {
+      selectedBranch.set(branchTo('pool/a/b'));
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(true);
+      expect(isExpanded('pool/a')).toBe(true);
+      expect(isExpanded('pool/a/b')).toBe(false);
+    });
+
+    it('toggles the selected row when it is clicked, and only selects another row', () => {
+      selectedBranch.set(branchTo('pool'));
+      spectator.detectChanges();
+      expect(isExpanded('pool')).toBe(false);
+
+      clickRow('pool');
+      expect(isExpanded('pool')).toBe(true);
+
+      clickRow('pool');
+      expect(isExpanded('pool')).toBe(false);
+
+      clickRow('pool');
+      clickRow('pool/a');
+      expect(isExpanded('pool/a')).toBe(false);
+    });
+
+    it('keeps a selected dataset the user collapsed collapsed after a reload', () => {
+      selectedBranch.set(branchTo('pool/a'));
+      spectator.detectChanges();
+      expect(isExpanded('pool')).toBe(true);
+
+      spectator.component.treeControl.collapse(spectator.component.treeControl.dataNodes[0]);
+      datasets.set(makeTree());
+      selectedBranch.set(branchTo('pool/a'));
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(false);
+    });
+  });
+
   describe('horizontal scroll width', () => {
     // The tree is virtualized, so the scroll range must not be measured from the rendered
     // rows - scrolling vertically would then reset the horizontal position (NAS-144025).
@@ -163,6 +247,8 @@ describe('DatasetsManagementComponent', () => {
 
     beforeEach(() => {
       error.set(null);
+      // Selected, so the page does not open the first pool as it does when entered with nothing selected.
+      spectator.setRouteParam('datasetId', 'pool');
       datasets.set([
         { id: 'pool', name: 'pool', children: [{ id: 'pool/child' }] },
         { id: 'pool/child', name: 'pool/child', children: [] },

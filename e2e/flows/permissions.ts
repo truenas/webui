@@ -3,6 +3,7 @@
  * NFSv4 and POSIX entries, presets and owner, driven through the ACL editor.
  */
 import { expect, type Page } from '@playwright/test';
+import { expandDatasetNode, selectDatasetNode } from './dataset-tree';
 import { goToDatasets } from './navigation';
 import { confirmDestructiveAction, selectOption } from './storage';
 import { datasetMountPath } from '../fixtures/storage';
@@ -10,7 +11,7 @@ import { confirmDialogLocators, errorDialogLocators } from '../locators/dialogs'
 import {
   permissionsLocators, type AccessRight, type AccessWho, type PosixPermissionLabel,
 } from '../locators/permissions';
-import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
+import { datasetDetailsLocators } from '../locators/storage';
 
 /** Saving runs `filesystem.setperm` as a job behind a progress dialog. */
 const saveTimeoutMs = 90_000;
@@ -46,9 +47,9 @@ export async function openAclEditor(page: Page, dataset: string): Promise<void> 
 /**
  * The part both editors share: select `dataset`, press Edit, and wait for the path.
  *
- * The page opens with the pool expanded, and expands a node only once it is selected
- * (`selectedBranch$` in `dataset-management`). So a dataset nested deeper than the pool's
- * children is reached by selecting each dataset above it first, as a user opens the tree.
+ * The page opens with the pool expanded, and selecting a dataset does not open it. So a dataset
+ * nested deeper than the pool's children is reached by opening each dataset above it first, as a
+ * user opens the tree.
  */
 async function editFromPermissionsCard(page: Page, dataset: string): Promise<void> {
   await selectDataset(page, dataset);
@@ -62,15 +63,10 @@ export async function selectDataset(page: Page, dataset: string): Promise<void> 
 
   const segments = dataset.split('/');
   for (let depth = 2; depth < segments.length; depth++) {
-    const ancestor = page.locator(datasetLocators.treeNode(segments.slice(0, depth).join('/')));
-    await expect(ancestor).toBeVisible();
-    await ancestor.click();
+    await expandDatasetNode(page, segments.slice(0, depth).join('/'));
   }
 
-  const node = page.locator(datasetLocators.treeNode(dataset));
-  await expect(node).toBeVisible();
-  await node.click();
-  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(dataset);
+  await selectDatasetNode(page, dataset);
 }
 
 /**

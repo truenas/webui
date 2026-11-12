@@ -12,10 +12,10 @@
  */
 import { ensureEncryptedDatasetPresent, lockDataset, unlockDataset } from '../fixtures/encryption';
 import { ensureDatasetAbsent, findDataset } from '../fixtures/storage';
+import { expandDatasetNode, selectDatasetNode } from '../flows/dataset-tree';
 import { openEncryptionOptions, saveEncryptionOptions, selectDataset } from '../flows/encryption';
 import { selectOption } from '../flows/storage';
 import { encryptionCardLocators, encryptionOptionsLocators } from '../locators/encryption';
-import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
@@ -102,10 +102,10 @@ test.describe('dataset encryption options', () => {
     await ensureEncryptedDatasetPresent(api, child, childPassphrase);
     expect(await findDataset(api, child)).toMatchObject({ encryption_root: child });
 
-    // Selecting the parent expands its branch, which is what puts the child in the tree.
+    // Opening the parent is what puts the child in the tree.
     await selectDataset(page, parent);
-    await page.locator(datasetLocators.treeNode(child)).click();
-    await expect(page.locator(datasetDetailsLocators.path)).toHaveText(child);
+    await expandDatasetNode(page, parent);
+    await selectDatasetNode(page, child);
     await expect(page.locator(card.encryptionRoot)).toBeHidden();
 
     await openEncryptionOptions(page);
