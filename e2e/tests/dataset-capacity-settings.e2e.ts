@@ -132,7 +132,8 @@ test('an admin removes both quotas by entering 0, as the tooltip says', async ({
   await page.locator(form.quota).fill('0');
   await page.locator(form.quota).blur();
 
-  // Both fail while 0 is refused: the field shows the message and Save stays disabled.
+  // A refused 0 would show the message here and disable Save. The quota field has no id of its own,
+  // so Save, which an error in either field disables, stands for it.
   await expect(page.locator(form.refquotaField)).not.toContainText(quotaTooSmallMessage);
   await expect(page.locator(form.save)).toBeEnabled();
   await saveDatasetForm(page);
