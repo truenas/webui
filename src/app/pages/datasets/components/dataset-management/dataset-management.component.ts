@@ -471,6 +471,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       untracked(() => {
         const selectedDataset = datasets.find((dataset) => dataset.id === routeDatasetId);
         if (!selectedDataset && datasets.length) {
+          // Landing on the first pool this way opens it too, as `expandDatasetBranch` does.
+          this.treeControl.expand(datasets[0]);
           this.router.navigate(['/datasets', datasets[0]?.id], { replaceUrl: true });
         }
 

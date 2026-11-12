@@ -47,9 +47,8 @@ export async function openAclEditor(page: Page, dataset: string): Promise<void> 
 /**
  * The part both editors share: select `dataset`, press Edit, and wait for the path.
  *
- * The page opens with the pool expanded, and selecting a dataset does not open it. So a dataset
- * nested deeper than the pool's children is reached by opening each dataset above it first, as a
- * user opens the tree.
+ * Selecting a dataset does not open it, so a dataset is reached by opening each one above it
+ * first, the pool included, as a user opens the tree.
  */
 async function editFromPermissionsCard(page: Page, dataset: string): Promise<void> {
   await selectDataset(page, dataset);
@@ -62,7 +61,7 @@ export async function selectDataset(page: Page, dataset: string): Promise<void> 
   await goToDatasets(page);
 
   const segments = dataset.split('/');
-  for (let depth = 2; depth < segments.length; depth++) {
+  for (let depth = 1; depth < segments.length; depth++) {
     await expandDatasetNode(page, segments.slice(0, depth).join('/'));
   }
 

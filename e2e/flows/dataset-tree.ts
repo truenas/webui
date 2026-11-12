@@ -31,15 +31,21 @@ export async function selectDatasetNode(page: Page, name: string): Promise<void>
 }
 
 /**
- * Selects `name` and opens it, so its children are in view.
+ * Selects `name` and opens it, so its children are in view. A dataset with no children is only
+ * selected: there is nothing to open.
  *
- * The tree node carries `aria-expanded`. Once the row is selected, a click on it toggles it.
+ * The tree node carries `aria-expanded` only when it has children. Once the row is selected, a
+ * click on it toggles it.
  */
 export async function expandDatasetNode(page: Page, name: string): Promise<void> {
   await selectDatasetNode(page, name);
 
   const node = page.locator(datasetLocators.treeNode(name));
-  if (await node.getAttribute('aria-expanded') !== 'true') {
+  const expanded = await node.getAttribute('aria-expanded');
+  if (expanded === null) {
+    return;
+  }
+  if (expanded !== 'true') {
     await node.click();
   }
   await expect(node).toHaveAttribute('aria-expanded', 'true');

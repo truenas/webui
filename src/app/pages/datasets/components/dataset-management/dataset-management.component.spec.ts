@@ -198,6 +198,16 @@ describe('DatasetsManagementComponent', () => {
       expect(isExpanded('pool/a')).toBe(false);
     });
 
+    it('opens the first pool when a deep link names a dataset that does not exist', () => {
+      expect(isExpanded('pool')).toBe(false);
+
+      spectator.setRouteParam('datasetId', 'pool/gone');
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(true);
+      expect(isExpanded('pool/a')).toBe(false);
+    });
+
     it('expands the ancestors of a deep-linked dataset, but not the dataset itself', () => {
       selectedBranch.set(branchTo('pool/a/b'));
       spectator.detectChanges();
