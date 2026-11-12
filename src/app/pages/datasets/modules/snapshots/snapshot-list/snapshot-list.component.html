@@ -1,4 +1,19 @@
-<ix-page-header [pageTitle]="pageTitle">
+<ix-page-header [pageTitle]="pageTitle()">
+  @if (scopeDataset(); as scope) {
+    <tn-chip
+      color="secondary"
+      [label]="scope"
+      [testId]="'dataset-scope'"
+      (onClose)="clearScope()"
+    ></tn-chip>
+
+    <tn-slide-toggle
+      [formControl]="includeChildrenControl"
+      [testId]="'include-child-datasets'"
+      [label]="'Include child datasets' | translate"
+    ></tn-slide-toggle>
+  }
+
   @if (loadingExtraColumns()) {
     <tn-spinner
       mode="indeterminate"
