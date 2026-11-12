@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, input, OnInit, signal, viewChild, inject,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, Injector, OnInit, signal, untracked,
+  viewChild, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
@@ -28,7 +29,9 @@ import { selectUsers } from 'app/pages/credentials/users/store/user.selectors';
 import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/user-form/additional-details-section/additional-details-section.component';
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
-import { defaultHomePath, UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
+import {
+  AllowedAccessConfig, defaultHomePath, UserFormStore, UserStigPasswordOption,
+} from 'app/pages/credentials/users/user-form/user.store';
 import { UserService } from 'app/services/user.service';
 import { AppState } from 'app/store';
 
@@ -60,6 +63,7 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
   private dialog = inject(DialogService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   /** Record being edited, supplied by the `<tn-side-panel>` host via the `editUser` input. */
   readonly editUser = input<User | undefined>(undefined);
@@ -184,6 +188,7 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
 
   constructor() {
     super();
+    this.userFormStore.loadStigMode();
     this.setupUsernameUpdate();
   }
 
@@ -290,13 +295,11 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
       },
     });
 
-    this.userFormStore.state$.pipe(
-      map((state) => state?.userConfig?.username),
-      filter(Boolean),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((username) => {
-      this.form.patchValue({ username });
+    effect(() => {
+      const username = this.userFormStore.username();
+      if (username) {
+        untracked(() => this.form.patchValue({ username }));
+      }
     });
   }
 
@@ -304,19 +307,11 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
    * Setup watchers for all access types to reload form validation when access changes
    */
   private setupAccessWatchers(): void {
-    // Watch for changes in all access configurations
-    this.userFormStore.state$.pipe(
-      map((state) => state?.setupDetails?.allowedAccess),
-      distinctUntilChanged((prev, curr) => prev?.shellAccess === curr?.shellAccess
-        && prev?.sshAccess === curr?.sshAccess
-        && prev?.smbAccess === curr?.smbAccess
-        && prev?.webshareAccess === curr?.webshareAccess
-        && prev?.truenasAccess === curr?.truenasAccess),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      // Force form validation recalculation for all forms
-      this.reloadFormValidationState();
-    });
+    // `allowedAccess` only changes when one of the access flags does, so this reruns on real changes only.
+    effect(() => {
+      const allowedAccess = this.userFormStore.allowedAccess();
+      untracked(() => this.reloadFormValidationState(allowedAccess));
+    }, { injector: this.injector });
   }
 
   /**
@@ -370,11 +365,7 @@ export class UserFormComponent extends IxFormHostForm<User> implements OnInit {
   /**
    * Reload validation state for all forms to ensure proper validation after access changes
    */
-  private reloadFormValidationState(): void {
-    // Get current access state to determine which fields should be cleared
-    const allowedAccess = this.userFormStore.state()?.setupDetails?.allowedAccess;
-    if (!allowedAccess) return;
-
+  private reloadFormValidationState(allowedAccess: AllowedAccessConfig): void {
     // Collect field names that should have their validation errors cleared based on hidden sections
     const fieldsToClear: string[] = [];
 

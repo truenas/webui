@@ -1,9 +1,11 @@
 import { computed, Injectable, signal, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TnDialog } from '@truenas/ui-components';
-import { merge } from 'lodash-es';
+import { isEqual, merge } from 'lodash-es';
 import {
-  combineLatest, map, Observable, of, switchMap, tap,
+  map, Observable, of, pipe, switchMap,
 } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -11,6 +13,7 @@ import {
 } from 'app/interfaces/user.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { OneTimePasswordCreatedDialog } from 'app/pages/credentials/users/one-time-password-created-dialog/one-time-password-created-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export enum UserStigPasswordOption {
   DisablePassword = 'disable_password',
@@ -61,45 +64,41 @@ const initialState: UserFormState = {
 };
 
 @Injectable()
-export class UserFormStore extends ComponentStore<UserFormState> {
+export class UserFormStore {
   private api = inject(ApiService);
   private tnDialog = inject(TnDialog);
+  private errorHandler = inject(ErrorHandlerService);
 
-  readonly isStigMode = computed(() => this.state().isStigMode);
-  readonly homeModeOldValue = computed(() => this.state().setupDetails.homeModeOldValue);
+  private readonly state = signalState(initialState);
 
-  readonly smbAccess = computed(() => this.state().setupDetails.allowedAccess.smbAccess);
-  readonly webshareAccess = computed(() => this.state().setupDetails.allowedAccess.webshareAccess);
-  readonly shellAccess = computed(() => this.state().setupDetails.allowedAccess.shellAccess);
-  readonly truenasAccess = computed(() => this.state().setupDetails.allowedAccess.truenasAccess);
-  readonly sshAccess = computed(() => this.state().setupDetails.allowedAccess.sshAccess);
+  readonly isStigMode = this.state.isStigMode;
+  readonly userConfig = this.state.userConfig;
+  readonly setupDetails = this.state.setupDetails;
+  readonly homeModeOldValue = computed(() => this.setupDetails().homeModeOldValue);
+  readonly role = computed(() => this.setupDetails().role);
+  readonly username = computed(() => this.userConfig()?.username);
 
-  readonly role = computed(() => this.state().setupDetails.role);
+  /** Compared by value: every access-section change writes a fresh object, even when no flag moved. */
+  readonly allowedAccess = computed<AllowedAccessConfig>(() => this.setupDetails().allowedAccess, { equal: isEqual });
+  readonly smbAccess = computed(() => this.allowedAccess().smbAccess);
+  readonly webshareAccess = computed(() => this.allowedAccess().webshareAccess);
+  readonly shellAccess = computed(() => this.allowedAccess().shellAccess);
+  readonly truenasAccess = computed(() => this.allowedAccess().truenasAccess);
+  readonly sshAccess = computed(() => this.allowedAccess().sshAccess);
 
-  readonly userConfig = computed(() => this.state().userConfig);
   readonly isNewUser = signal<boolean>(true);
 
-  readonly initialize = this.effect((trigger$) => {
-    return trigger$.pipe(
-      switchMap(() => combineLatest([
-        this.setStigMode(),
-      ])),
-    );
-  });
-
-  constructor() {
-    super(initialState);
-  }
-
-  private setStigMode(): Observable<boolean> {
-    return this.api.call('system.security.config').pipe(
-      map((config) => config.enable_gpos_stig),
-      tap((isStigMode) => this.patchState({ isStigMode })),
-    );
-  }
+  readonly loadStigMode = rxMethod<void>(pipe(
+    switchMap(() => this.api.call('system.security.config').pipe(
+      tapResponse({
+        next: (config) => patchState(this.state, { isStigMode: config.enable_gpos_stig }),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
+      }),
+    )),
+  ));
 
   private generateOneTimePasswordIfNeeded(user: User): Observable<User> {
-    if (this.isNewUser() && this.state().setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword) {
+    if (this.isNewUser() && this.setupDetails().stigPassword === UserStigPasswordOption.OneTimePassword) {
       return this.api.call('auth.generate_onetime_password', [{ username: this.userConfig()?.username }]).pipe(
         switchMap((password) => {
           this.tnDialog.open(OneTimePasswordCreatedDialog, { data: password });
@@ -111,9 +110,8 @@ export class UserFormStore extends ComponentStore<UserFormState> {
   }
 
   createUser(): Observable<User> {
-    const state = this.state();
-    const oneTimePassword = state.setupDetails.stigPassword === UserStigPasswordOption.OneTimePassword;
-    let payload = { ...state.userConfig };
+    const oneTimePassword = this.setupDetails().stigPassword === UserStigPasswordOption.OneTimePassword;
+    let payload = { ...this.userConfig() };
     payload = {
       ...payload,
       full_name: payload.full_name || payload.username,
@@ -153,31 +151,25 @@ export class UserFormStore extends ComponentStore<UserFormState> {
     return this.api.call('user.update', [id, payload]).pipe(map(toUser));
   }
 
-  updateUserConfig = this.updater((state, userConfig: UserUpdate) => {
-    return {
-      ...state,
-      userConfig: {
-        ...state.userConfig,
-        ...userConfig,
-      },
-    };
-  });
+  updateUserConfig(userConfig: UserUpdate): void {
+    patchState(this.state, (state) => ({
+      userConfig: { ...state.userConfig, ...userConfig },
+    }));
+  }
 
-  setAllowedAccessConfig = this.updater((state, config: AllowedAccessConfig) => {
-    return merge({}, state, {
-      setupDetails: {
-        allowedAccess: config,
-      },
-    });
-  });
-
-  updateSetupDetails = this.updater((state, setupDetails: Partial<UserFormSetupDetails>) => {
-    return {
-      ...state,
+  setAllowedAccessConfig(config: AllowedAccessConfig): void {
+    patchState(this.state, (state) => ({
       setupDetails: {
         ...state.setupDetails,
-        ...setupDetails,
+        // `merge` skips `undefined`, so a partial config never blanks a flag that is already known.
+        allowedAccess: merge({}, state.setupDetails.allowedAccess, config),
       },
-    };
-  });
+    }));
+  }
+
+  updateSetupDetails(setupDetails: Partial<UserFormSetupDetails>): void {
+    patchState(this.state, (state) => ({
+      setupDetails: { ...state.setupDetails, ...setupDetails },
+    }));
+  }
 }
