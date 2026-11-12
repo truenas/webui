@@ -223,7 +223,6 @@ export class SupportCardComponent implements OnInit {
 
         return this.api.job('truenas.set_production', [newStatus, attachDebug]).pipe(
           this.loader.withLoader(),
-          this.errorHandler.withErrorHandler(),
           tap({
             complete: () => {
               this.snackbar.success(
@@ -231,6 +230,7 @@ export class SupportCardComponent implements OnInit {
               );
             },
           }),
+          this.errorHandler.withErrorHandler(),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
