@@ -9,13 +9,14 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
+  TnDialog, TnFormFieldComponent, TnFormFieldHarness, TnInputComponent, TnInputHarness,
 } from '@truenas/ui-components';
 import { MockComponents, MockInstance } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
-import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { mockApi, mockCall, mockQuery, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Choices } from 'app/interfaces/choices.interface';
 import { User, UserFormPreset } from 'app/interfaces/user.interface';
@@ -30,7 +31,7 @@ import { AdditionalDetailsSectionComponent } from 'app/pages/credentials/users/u
 import { AllowedAccessSectionComponent } from 'app/pages/credentials/users/user-form/allowed-access-section/allowed-access-section.component';
 import { AuthSectionComponent } from 'app/pages/credentials/users/user-form/auth-section/auth-section.component';
 import { UserFormComponent } from 'app/pages/credentials/users/user-form/user-form.component';
-import { UserFormStore } from 'app/pages/credentials/users/user-form/user.store';
+import { UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('UserFormComponent', () => {
@@ -147,7 +148,9 @@ describe('UserFormComponent', () => {
         mockCall('user.update', { username: 'test' } as unknown as CallResponse<WebUiApiDirectory, 'user.update'>),
         mockCall('system.security.config', { enable_gpos_stig: false } as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>),
         mockCall('user.get_next_uid', 1005),
+        mockCall('auth.generate_onetime_password', 'one-time-secret'),
       ]),
+      mockProvider(TnDialog),
       UserFormStore,
       mockProvider(ErrorHandlerService),
       mockProvider(DialogService, {
@@ -457,6 +460,49 @@ describe('UserFormComponent', () => {
         await spectator.fixture.whenStable();
 
         expect(emitSpy).toHaveBeenCalledWith(expect.objectContaining({ username: 'new-user' }));
+      });
+
+      describe('on a STIG system', () => {
+        async function submitWithStigOption(option: UserStigPasswordOption): Promise<void> {
+          spectator.inject(MockApiService).mockCall('system.security.config', {
+            enable_gpos_stig: true,
+          } as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>);
+          // UserFormStore is provided at the component level, so reload STIG mode on that instance.
+          spectator.fixture.debugElement.injector.get(UserFormStore).loadStigMode();
+          await settleApi();
+
+          authForm.controls.stig_password.setValue(option);
+          const usernameInput = await loader.getHarness(TnInputHarness.with({ name: 'username' }));
+          await usernameInput.setValue('stiguser');
+          await spectator.fixture.whenStable();
+
+          spectator.component.submit();
+          await spectator.fixture.whenStable();
+        }
+
+        afterEach(() => authForm.controls.stig_password.setValue(''));
+
+        it('creates the user with the password disabled when "Disable Password" is picked', async () => {
+          await submitWithStigOption(UserStigPasswordOption.DisablePassword);
+
+          const api = spectator.inject(ApiService);
+          expect(api.call).toHaveBeenCalledWith('user.create', [
+            expect.objectContaining({ username: 'stiguser', password: null, password_disabled: true }),
+          ]);
+          expect(api.call).not.toHaveBeenCalledWith('auth.generate_onetime_password', expect.anything());
+        });
+
+        it('creates the user with a random password and issues a one-time password', async () => {
+          await submitWithStigOption(UserStigPasswordOption.OneTimePassword);
+
+          const api = spectator.inject(ApiService);
+          expect(api.call).toHaveBeenCalledWith('user.create', [
+            expect.objectContaining({
+              username: 'stiguser', password: null, password_disabled: false, random_password: true,
+            }),
+          ]);
+          expect(api.call).toHaveBeenCalledWith('auth.generate_onetime_password', [{ username: 'stiguser' }]);
+        });
       });
     });
 
