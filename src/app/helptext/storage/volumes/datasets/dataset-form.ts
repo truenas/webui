@@ -25,7 +25,7 @@ export const helptextDatasetForm = {
  when they are read. Choose <i>Off</i> to prevent\
  producing log traffic when reading files. This can\
  result in significant performance gains.'),
-  refquotaTooltip: T('Specify a maximum allowed space for this dataset.'),
+  refquotaTooltip: T('Specify a maximum allowed space for this dataset. Enter <i>0</i> to remove the quota.'),
   aclTypeChangeWarning: T('Changes to ACL type affect how on-disk ZFS ACL is\
  written and read.\nWhen the ACL type is changed from POSIX to NFSv4,\
  no migration is performed for default and access ACLs encoded in the\
@@ -91,7 +91,7 @@ export const helptextDatasetForm = {
  SMB sharing, but can require further optimizations. For example, configuring an rsync task with this\
  dataset could require adding <i>--no-perms</i> in the task <i>Auxiliary Parameters</i> field.'),
 
-  quotaTooSmall: T('Quota size is too small. Enter a value of 1 GiB or larger.'),
+  quotaTooSmall: T('Enter 0 to remove the quota, or a value of 1 GiB or larger.'),
 
   specialSmallBlocksTooltip: T('This value represents the threshold block size\
  for including small file blocks into the special allocation class. Blocks smaller than or\
