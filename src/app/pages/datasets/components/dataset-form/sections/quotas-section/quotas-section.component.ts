@@ -9,10 +9,9 @@ import {
 } from '@truenas/ui-components';
 import { pickBy } from 'lodash-es';
 import { startWith } from 'rxjs';
-import { GiB } from 'app/constants/bytes.constant';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
+import { datasetQuotaValidator } from 'app/pages/datasets/utils/dataset-quota.validator';
 
 const warning = 80;
 const critical = 95;
@@ -33,7 +32,6 @@ const critical = 95;
 })
 export class QuotasSectionComponent implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private validators = inject(IxValidatorsService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
@@ -41,20 +39,16 @@ export class QuotasSectionComponent implements OnInit {
 
   protected readonly InputType = InputType;
 
+  private readonly quotaValidator = datasetQuotaValidator(this.translate.instant(helptextDatasetForm.quotaTooSmall));
+
   readonly form = this.formBuilder.nonNullable.group({
-    refquota: [null as number | null, this.validators.withMessage(
-      Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.quotaTooSmall),
-    )],
+    refquota: [null as number | null, this.quotaValidator],
     refquota_warning: [warning, [Validators.min(0), Validators.max(100)]],
     refquota_warning_inherit: [true],
     refquota_critical: [critical, [Validators.min(0), Validators.max(100)]],
     refquota_critical_inherit: [true],
     refreservation: [null as number | null],
-    quota: [null as number | null, this.validators.withMessage(
-      Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.quotaTooSmall),
-    )],
+    quota: [null as number | null, this.quotaValidator],
     quota_warning: [warning, [Validators.min(0), Validators.max(100)]],
     quota_warning_inherit: [true],
     quota_critical: [critical, [Validators.min(0), Validators.max(100)]],
