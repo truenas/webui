@@ -118,6 +118,13 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   protected readonly isLoading = this.datasetStore.isLoading;
   protected readonly selectedDataset = this.datasetStore.selectedDataset;
+  private readonly selectedDatasetId = computed(() => {
+    const selectedBranch = this.datasetStore.selectedBranch();
+    return selectedBranch ? selectedBranch[selectedBranch.length - 1].id : null;
+  });
+
+  /** The selection whose ancestors were last expanded; see {@link revealSelectedDataset}. */
+  private revealedDatasetId: string | null = null;
   showMobileDetails = false;
   isMobileView = false;
   systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
@@ -343,6 +350,11 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
   }
 
   protected viewDetails(dataset: DatasetDetails): void {
+    // Navigating to the URL already shown does nothing, so a click on the selected row toggles it instead.
+    if (dataset.id === this.selectedDatasetId() && this.isExpandable(dataset)) {
+      this.treeControl.toggle(dataset);
+    }
+
     this.layoutService.navigatePreservingScroll(this.router, ['/datasets', dataset.id]);
 
     if (this.isMobileView) {
@@ -373,21 +385,36 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
     effect(() => {
       const selectedBranch = this.datasetStore.selectedBranch();
-      if (!selectedBranch) {
-        return;
+      if (selectedBranch) {
+        untracked(() => this.revealSelectedDataset(selectedBranch));
       }
-
-      untracked(() => {
-        selectedBranch.forEach((datasetFromSelectedBranch) => {
-          const expandedDataset = this.treeControl.dataNodes
-            .find((dataset) => dataset.id === datasetFromSelectedBranch.id);
-
-          if (expandedDataset) {
-            this.treeControl.expand(expandedDataset);
-          }
-        });
-      });
     }, { injector: this.injector });
+  }
+
+  /**
+   * Expands the selected dataset's ancestors so its row is visible, but not the dataset itself.
+   * Runs once per selection: `selectedBranch` is rebuilt on every reload, and expanding again
+   * then would undo a collapse the user made since.
+   */
+  private revealSelectedDataset(selectedBranch: DatasetDetails[]): void {
+    const selectedId = selectedBranch[selectedBranch.length - 1].id;
+    if (selectedId === this.revealedDatasetId) {
+      return;
+    }
+
+    const ancestors = selectedBranch.slice(0, -1).map((ancestor) => {
+      return this.treeControl.dataNodes.find((dataset) => dataset.id === ancestor.id);
+    });
+    ancestors.forEach((ancestor) => {
+      if (ancestor) {
+        this.treeControl.expand(ancestor);
+      }
+    });
+
+    // Not marked revealed while the tree lacks an ancestor, so a later run can finish the job.
+    if (ancestors.every(Boolean)) {
+      this.revealedDatasetId = selectedId;
+    }
   }
 
   private createDataSource(datasets: DatasetDetails[]): void {
@@ -428,6 +455,9 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     } else {
       const firstNode = this.treeControl.dataNodes[0];
       if (firstNode) {
+        // Arriving with nothing selected opens the first pool, so its datasets are in view.
+        // Selecting a dataset expands only its ancestors; see `revealSelectedDataset`.
+        this.treeControl.expand(firstNode);
         this.router.navigate(['/datasets', firstNode.id]);
       }
     }
@@ -441,6 +471,8 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       untracked(() => {
         const selectedDataset = datasets.find((dataset) => dataset.id === routeDatasetId);
         if (!selectedDataset && datasets.length) {
+          // Landing on the first pool this way opens it too, as `expandDatasetBranch` does.
+          this.treeControl.expand(datasets[0]);
           this.router.navigate(['/datasets', datasets[0]?.id], { replaceUrl: true });
         }
 

@@ -14,9 +14,9 @@ import {
   ensureEncryptedDatasetPresent, ensureKeyEncryptedDatasetPresent, exportDatasetKey,
 } from '../fixtures/encryption';
 import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
+import { expandDatasetNode, selectDatasetNode } from '../flows/dataset-tree';
 import { downloadDatasetKey, openExportKeyDialog, selectDataset } from '../flows/encryption';
 import { encryptionCardLocators, exportKeyDialogLocators } from '../locators/encryption';
-import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -135,10 +135,10 @@ test.describe('exporting a dataset key', () => {
     await expect(page.locator(card.lock)).toBeEnabled();
     await expect(page.locator(card.exportKey)).toHaveCount(0);
 
-    // An inheriting child. Selecting its root expands the branch, which is what puts it in the tree.
+    // An inheriting child. Opening its root is what puts it in the tree.
     await selectDataset(page, keyRoot);
-    await page.locator(datasetLocators.treeNode(child)).click();
-    await expect(page.locator(datasetDetailsLocators.path)).toHaveText(child);
+    await expandDatasetNode(page, keyRoot);
+    await selectDatasetNode(page, child);
     await expect(page.locator(card.encryptionRoot)).toHaveText(`/${keyRoot}`);
     await expect(page.locator(card.exportKey)).toHaveCount(0);
     await expect(page.locator(card.lock)).toHaveCount(0);

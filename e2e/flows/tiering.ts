@@ -4,9 +4,9 @@
  * Change Storage Tier from the dataset details card or from a share's row.
  */
 import { expect, type Page } from '@playwright/test';
+import { expandDatasetNode, selectDatasetNode } from './dataset-tree';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { datasetLocators } from '../locators/storage';
 import {
   changeTierDialogLocators, datasetTierLocators, migrationStatusDialogLocators, tierConfigLocators,
 } from '../locators/tiering';
@@ -41,12 +41,10 @@ export async function saveTierConfig(page: Page): Promise<void> {
  * Selects a dataset in the tree, so its details card — and the tier row on it —
  * is the one on screen.
  *
- * Opens its pool first. The page selects the first pool on arrival and expands
- * only the selected branch, so with the shared pool present as well — any full
- * run — the tier pool sits collapsed and its datasets are not rendered at all.
- * Selecting a node expands it (`selectedBranch$` in `dataset-management`), so
- * clicking the pool is how a user opens it too. Searching does not help: the
- * filter keeps the pool row but leaves it collapsed.
+ * Opens its pool first. The page opens only the first pool on arrival, so with
+ * the shared pool present as well — any full run — the tier pool sits collapsed
+ * and its datasets are not rendered at all. Searching does not help: the filter
+ * keeps the pool row but leaves it collapsed.
  *
  * `name` is the full dataset id; see `openDeleteDatasetDialog`.
  */
@@ -57,11 +55,8 @@ export async function selectDataset(page: Page, name: string): Promise<void> {
     throw new Error(`"${name}" is not a dataset under a pool: expected "<pool>/<dataset>".`);
   }
   const pool = name.slice(0, name.indexOf('/'));
-  await page.locator(datasetLocators.treeNode(pool)).click();
-
-  const node = page.locator(datasetLocators.treeNode(name));
-  await expect(node).toBeVisible();
-  await node.click();
+  await expandDatasetNode(page, pool);
+  await selectDatasetNode(page, name);
 
   await expect(page.locator(datasetTierLocators.change)).toBeVisible();
 }

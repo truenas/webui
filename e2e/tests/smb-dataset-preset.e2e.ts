@@ -13,6 +13,7 @@ import {
   ensureSmbServiceStopped, ensureSmbShareAbsent, findSmbShare, smbServiceName,
 } from '../fixtures/smb';
 import { ensureDatasetAbsent, findDataset } from '../fixtures/storage';
+import { expandDatasetNode, selectDatasetNode } from '../flows/dataset-tree';
 import { goToDatasets } from '../flows/navigation';
 import { smbLocators } from '../locators/smb';
 import { datasetLocators } from '../locators/storage';
@@ -60,7 +61,7 @@ test('a dataset that shares itself offers to start the service it needs', async 
   expect((await queryService(api, smbServiceName))?.state).toBe('STOPPED');
 
   await goToDatasets(page);
-  await page.locator(datasetLocators.treeNode(pool)).click();
+  await selectDatasetNode(page, pool);
   await page.locator(datasetLocators.addDataset).click();
   await expect(page.locator(datasetLocators.name)).toBeVisible({ timeout: 60_000 });
 
@@ -90,7 +91,8 @@ test('a dataset that shares itself offers to start the service it needs', async 
 
 test('a dataset with no share to serve does not offer anything', async ({ page, api, pool }) => {
   await goToDatasets(page);
-  await page.locator(datasetLocators.treeNode(pool)).click();
+  // Opened as well, so the new dataset shows under it once saved.
+  await expandDatasetNode(page, pool);
   await page.locator(datasetLocators.addDataset).click();
   await expect(page.locator(datasetLocators.name)).toBeVisible({ timeout: 60_000 });
 
