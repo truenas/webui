@@ -118,8 +118,8 @@ jobs:
           name: webui-dist
           path: webui-dist
           if-no-files-found: error
-          # A pull request's E2E run downloads it within minutes, and most
-          # pull requests run no E2E at all; master's is what the nightly reuses.
+          # A pull request's E2E run downloads it within minutes; master's is
+          # what the nightly reuses.
           retention-days: ${{ github.event_name == 'pull_request' && 1 || 7 }}
 
   # Build above runs on x64, so it only proves the linux-x64 checksum in

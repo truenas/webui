@@ -38,14 +38,16 @@ on:
   # UI built from the checkout, so a run on master is a run on master's code.
   schedule:
     - cron: '0 3 * * *'
-  # Every merged change to the UI or the suite. Pull requests that change
-  # the UI are the next step, once the pool's capacity is measured; until
-  # then a PR that wants a run asks for one with `workflow_dispatch` on its
-  # branch.
+  # Every merged change to the UI or the suite.
   push:
     branches: [master]
-    paths:
+    paths: &e2e-paths
       - 'src/**'
+      # Translations alone change no behaviour the suite checks, and the
+      # update-translations workflow touches only these.
+      - '!src/assets/i18n/**'
+      # Unit specs are never part of the built UI the suite drives.
+      - '!src/**/*.spec.ts'
       - 'e2e/**'
       - '!e2e/docs/**'
       - '!e2e/CLAUDE.md'
@@ -57,20 +59,15 @@ on:
       # to every local profile — they serve the UI from the dev server or the
       # appliance — so this job is the only thing that can catch one.
       - 'docker/nginx.conf'
+      - '.github/actions/**'
       - '.github/workflows/e2e.yml'
-  # Pull requests that change the suite or the pipeline itself.
+  # Every same-repo pull request that changes the same files, so a break is
+  # caught before it merges rather than by the next master run. It costs a
+  # runner pair per push; if the pool cannot keep up, narrow this rather than
+  # turning it off. Evaluated against every file the PR changes, not the
+  # latest push, so the exclusions only spare PRs that touch nothing else.
   pull_request:
-    paths:
-      - 'e2e/**'
-      # A documentation-only pull request should not take a runner.
-      # Evaluated against every file the PR changes, not the latest push, so
-      # this only helps PRs that touch nothing but docs.
-      - '!e2e/docs/**'
-      - '!e2e/CLAUDE.md'
-      - '!e2e/README.md'
-      - 'playwright.config.ts'
-      - 'docker/nginx.conf'
-      - '.github/workflows/e2e.yml'
+    paths: *e2e-paths
   # The opt-in for any other branch: `gh workflow run e2e.yml --ref <branch>`.
   workflow_dispatch:
     inputs:
