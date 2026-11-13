@@ -1,6 +1,6 @@
 import { ExistingProvider, FactoryProvider } from '@angular/core';
 import {
-  JobMethod, JobResult, QueryEntity, QueryMethod,
+  JobMethod, JobResult, QueryMethod, QueryRow,
 } from '@truenas/api-client';
 import { FakeApiErrorOverrides, JobUpdate } from '@truenas/api-client/testing';
 import {
@@ -61,7 +61,7 @@ export function mockCallError(
 
 export function mockQuery<M extends QueryMethod<D['call']>>(
   method: M,
-  rows: QueryEntity<D['call'], M>[],
+  rows: QueryRow<D['call'], M>[],
 ): MockApiResponse {
   return (api) => api.mockQuery(method, rows);
 }

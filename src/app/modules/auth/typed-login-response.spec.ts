@@ -44,6 +44,7 @@ describe('typed login response', () => {
     const refusedCodes = [
       AuthErrorCode.PasswordAuthFailed,
       AuthErrorCode.OtpAuthFailed,
+      AuthErrorCode.OtpLoginNotPending,
       AuthErrorCode.ApiKeyAuthFailed,
       AuthErrorCode.TokenAuthFailed,
     ];
