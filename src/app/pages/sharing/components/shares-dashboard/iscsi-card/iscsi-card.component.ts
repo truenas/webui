@@ -16,7 +16,6 @@ import {
 import { iscsiCardEmptyConfig } from 'app/constants/empty-configs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { IscsiTargetMode, iscsiTargetModeNames } from 'app/enums/iscsi.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
@@ -44,8 +43,8 @@ import { ServiceStateButtonComponent } from 'app/pages/sharing/components/shares
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { EntitlementsService } from 'app/services/entitlements.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 import { ServicesState } from 'app/store/services/services.reducer';
 import { selectService } from 'app/store/services/services.selectors';
 
@@ -86,7 +85,7 @@ export class IscsiCardComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private iscsiService = inject(IscsiService);
   private cdr = inject(ChangeDetectorRef);
-  private entitlements = inject(EntitlementsService);
+  private license = inject(LicenseService);
   private destroyRef = inject(DestroyRef);
 
   service$ = this.store$.select(selectService(ServiceName.Iscsi));
@@ -98,8 +97,7 @@ export class IscsiCardComponent implements OnInit {
 
   targets = signal<IscsiTarget[] | null>(null);
 
-  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
-  protected readonly hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
+  protected readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
   protected readonly searchableElements = iscsiCardElements;
   protected readonly emptyConfig = iscsiCardEmptyConfig;
