@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { combineLatest, shareReplay } from 'rxjs';
-import { map } from 'rxjs/operators';
+import {
+  catchError, combineLatest, defer, of, shareReplay,
+} from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
 import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { AppState } from 'app/store';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
@@ -20,6 +23,7 @@ import {
 })
 export class LicenseService {
   private store$ = inject<Store<AppState>>(Store);
+  private api = inject(ApiService);
   private truenasConnectService = inject(TruenasConnectService);
   private entitlements = inject(EntitlementsService);
 
@@ -28,6 +32,23 @@ export class LicenseService {
 
   /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
+
+  /**
+   * Middleware's `fc.capable`: the licence allows Fibre Channel and an FC HBA is present.
+   * Errors map to `false`, and `refCount: true` keeps that from sticking.
+   */
+  readonly isFcCapable$ = defer(() => this.api.call('fc.capable')).pipe(
+    catchError(() => of(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /**
+   * Gates every Fibre Channel control. The entitlement alone is not enough: a licensed system with no
+   * FC HBA (a VM, say) is entitled but cannot do Fibre Channel. Emits nothing until entitlements load.
+   */
+  readonly hasFibreChannel$ = this.entitlements.entitled$(EntitlementFeature.FibreChannel).pipe(
+    switchMap((isEntitled) => (isEntitled ? this.isFcCapable$ : of(false))),
+  );
 
   /**
    * WebShare (a TrueNAS Connect feature) is offered on every system that isn't TrueNAS appliance hardware.
