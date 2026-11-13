@@ -2,6 +2,16 @@
 
 Part of epic NAS-145108. Tested on Angular 22.2.1 and `@truenas/ui-components` 0.8.17.
 
+> **Update (NAS-145170):** `@truenas/ui-components` 0.8.24 closes the four library gaps in the table below: errors
+> show, `required` is followed both ways, `input-<name>` comes back, and errors can be dismissed. `tn-form-errors` and
+> `tn-form-list` take a signal field as `control`. The `gap:` tests in `signal-forms-compat.spec.ts` that pinned them
+> now assert the fixed behaviour.
+>
+> **Update (NAS-145112):** the webui infrastructure is in: `<ix-form [fieldTree]>`, `SignalFormErrors` (row and nested
+> paths included), the `minLength`/`maxLength` resolver keys and the helpers. The pattern is in
+> [signal-forms.md](signal-forms.md). The signal form in the fixtures now uses it, with no bridge and no empty
+> `FormGroup`, and passes the same 25-test contract as the Reactive one.
+
 ## Decision: adopt in stages, pilot first
 
 Signal forms work, and they make conditional forms nicer to write, but they fix no user-visible problem today. A full
@@ -35,6 +45,10 @@ in stages instead, so the cost only grows if a pilot on real forms shows it's wo
 The library fix looks small: the interop getters are signal-backed, so an `effect` in `tn-form-field` can replace the
 subscription, and the field name is available for `controlTestId`. `SignalFieldBridgeDirective` (20 lines) proves the
 behaviour is reachable, but it mutates an Angular object, so it isn't the fix to ship.
+
+That is how NAS-145170 shipped it, in 0.8.24. One difference from the bridge: signal forms errors can't be deleted,
+so dismissing hides the error the user closed until the field reports a new one, and emits `(dismiss)`. Retiring the
+failure itself so Save works again is the app's job, which is NAS-145112's server-error service.
 
 ### How do ix-form, the Save button and server errors map?
 
@@ -100,7 +114,7 @@ concentrated in conditional forms.
 
 ## Blockers and how each is handled
 
-1. **`tn-*` chrome (must be fixed first):** `@truenas/ui-components` makes `tn-form-field`, `controlTestId` and error
+1. **`tn-*` chrome (fixed in 0.8.24):** `@truenas/ui-components` makes `tn-form-field`, `controlTestId` and error
    dismissal work with `[formField]`, and gives `tn-form-list` a signal path (NAS-145170).
 2. **Field-targeted errors (can be contained):** a shared helper holds the cast until `strictNullChecks` is on across the
    app (528 files are listed today, out of about 2,060) or Angular fixes the types. Cross-field rules in individual forms
@@ -112,11 +126,11 @@ concentrated in conditional forms.
 
 This changes the epic's original order, which started with simple forms, because those give the least back.
 
-1. **Library support (NAS-145170).**
-2. **Infrastructure (NAS-145112):** a real `<ix-form>` path, a server-error service, resolver keys, a harness pattern.
+1. **Library support (NAS-145170).** Done in 0.8.24.
+2. **Infrastructure (NAS-145112).** Done; see [signal-forms.md](signal-forms.md).
 3. **Pilot (NAS-145171):** 3-5 conditional forms that already have bugs or `revalidateAfterRender`, run through the E2E
-   suite on a real appliance. E2E doesn't start on its own for a form PR, so run `gh workflow run e2e.yml --ref <branch>`
-   on each pilot branch. Stop here if the results don't justify going on. A partial migration keeps both form systems
+   suite on a real appliance. E2E now runs on every same-repo PR that changes `src/`, so a pilot PR gets a run of its
+   own. Stop here if the results don't justify going on. A partial migration keeps both form systems
    and the extra bundle cost, so decide whether that end state is acceptable.
 4. **If the pilot pays off:** use signal forms for new forms (NAS-145117), then the remaining conditional forms
    (NAS-145114), list forms with object rows (NAS-145115), and wizards one at a time (NAS-145116).
@@ -131,7 +145,8 @@ Nothing under `src/app/modules/forms/signal-forms-spike/` is imported by the app
   side-panel container, Save button and `<ix-form>`, with the real `FormErrorHandlerService` on the reactive side.
 - `signal-forms-compat.spec.ts`: 46 tests on what the unmodified stack does. Tests named `gap:` assert a current gap, so
   a failure after an Angular or library bump means the gap may have closed.
-- `signal-forms-spike.fixtures.ts`: the form written both ways, plus the prototype bridge and server-error helper.
+- `signal-forms-spike.fixtures.ts`: the form written both ways. The signal one started on a prototype bridge and
+  server-error helper; since NAS-145112 it uses the real infrastructure instead, and the prototypes are gone.
 
 Also checked, by hand:
 

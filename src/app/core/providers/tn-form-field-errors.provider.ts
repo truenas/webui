@@ -60,6 +60,7 @@ function translateError(
   translate: TranslateService,
   key: string,
   errors: ValidationErrors,
+  control: AbstractControl | null,
 ): string | null {
   switch (key as DefaultValidationError) {
     case DefaultValidationError.Min:
@@ -125,6 +126,9 @@ function translateError(
           actualLength: detail(errors, key).actualLength,
         },
       );
+    case DefaultValidationError.SignalMinLength:
+    case DefaultValidationError.SignalMaxLength:
+      return signalLengthMessage(translate, key, detail(errors, key), Array.isArray(control?.value));
     case DefaultValidationError.MinArrayLength: {
       const minLength = detail(errors, key).requiredLength as number;
       return translate.instant(
@@ -146,6 +150,40 @@ function translateError(
     default:
       return null;
   }
+}
+
+/**
+ * Signal forms report one `minLength` / `maxLength` kind for strings and arrays, carrying the bound
+ * as `minLength` / `maxLength` where Reactive Forms has `requiredLength`. Same wording as the Reactive
+ * keys, picking the list sentences for an array field.
+ */
+function signalLengthMessage(
+  translate: TranslateService,
+  key: string,
+  error: ErrorDetail,
+  isList: boolean,
+): string {
+  if ((key as DefaultValidationError) === DefaultValidationError.SignalMinLength) {
+    const minLength = error.minLength as number;
+    if (!isList) {
+      return translate.instant(T('The length of the field should be at least {minLength}'), { minLength });
+    }
+    return translate.instant(
+      minLength === 1 ? T('List should have at least {minLength} item') : T('List should have at least {minLength} items'),
+      { minLength },
+    );
+  }
+
+  const maxLength = error.maxLength as number;
+  if (!isList) {
+    return translate.instant(T('The length of the field should be no more than {maxLength}'), { maxLength });
+  }
+  return translate.instant(
+    maxLength === 1
+      ? T('List should have no more than {maxLength} item')
+      : T('List should have no more than {maxLength} items'),
+    { maxLength },
+  );
 }
 
 /**
@@ -174,7 +212,7 @@ export function provideTnFormFieldErrors(): Provider {
           }
         }
 
-        return translateError(translate, errorKey, control?.errors ?? { [errorKey]: errorValue });
+        return translateError(translate, errorKey, control?.errors ?? { [errorKey]: errorValue }, control);
       };
     },
   };

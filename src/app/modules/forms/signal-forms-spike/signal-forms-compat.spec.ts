@@ -360,7 +360,7 @@ describe('signal forms against unmodified tn-* controls (NAS-145110)', () => {
     });
   });
 
-  describe('tn-form-field error state (GAP: needs a library change)', () => {
+  describe('tn-form-field error state (closed by NAS-145170 in @truenas/ui-components)', () => {
     it('reactive baseline: the required error appears once the field is touched', async () => {
       const { fixture, loader } = await render(ReactiveBaselineHostComponent);
       const { group } = fixture.componentInstance;
@@ -371,7 +371,7 @@ describe('signal forms against unmodified tn-* controls (NAS-145110)', () => {
       expect(await (await loader.getHarness(TnFormFieldHarness)).getErrorMessage()).toBeTruthy();
     });
 
-    it('never shows an error: InteropNgControl has no `events`/`statusChanges` for it to re-sync from', async () => {
+    it('shows the error once a [formField] control is touched, though InteropNgControl has no `events`', async () => {
       const { fixture, loader } = await render(BasicControlsHostComponent);
       const nameField = fixture.componentInstance.form.name;
       const nameInput = await loader.getHarness(TnInputHarness);
@@ -382,10 +382,10 @@ describe('signal forms against unmodified tn-* controls (NAS-145110)', () => {
 
       expect(nameField().touched()).toBe(true);
       expect(nameField().invalid()).toBe(true);
-      expect(await field.hasError()).toBe(false);
+      expect(await field.hasError()).toBe(true);
     });
 
-    it('gap: reads `required` once, so the asterisk stays when a field stops being required', async () => {
+    it('follows `required`, so the asterisk goes when a field stops being required', async () => {
       const { fixture, loader } = await render(BasicControlsHostComponent);
       const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }));
       expect(await field.isRequired()).toBe(true);
@@ -394,10 +394,10 @@ describe('signal forms against unmodified tn-* controls (NAS-145110)', () => {
       await fixture.whenStable();
 
       expect(fixture.componentInstance.form.name().required()).toBe(false);
-      expect(await field.isRequired()).toBe(true);
+      expect(await field.isRequired()).toBe(false);
     });
 
-    it('a server-side error set by submit() does not reach the field either', async () => {
+    it('shows a server-side error set by submit() on the field', async () => {
       const { fixture, loader } = await render(BasicControlsHostComponent);
       const host = fixture.componentInstance;
       const nameInput = await loader.getHarness(TnInputHarness);
@@ -407,19 +407,20 @@ describe('signal forms against unmodified tn-* controls (NAS-145110)', () => {
       await fixture.whenStable();
 
       expect(host.form.name().errors().map((error) => error.message)).toEqual(['Name is taken']);
-      expect(await (await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }))).hasError()).toBe(false);
+      expect(await (await loader.getHarness(TnFormFieldHarness.with({ label: 'Name' }))).getErrorMessage())
+        .toBe('Name is taken');
     });
   });
 
-  describe('data-test selectors (GAP: e2e breaking without a library change)', () => {
+  describe('data-test selectors (closed by NAS-145170 in @truenas/ui-components)', () => {
     it('reactive baseline: tn-input derives `input-name` from formControlName', async () => {
       const { fixture } = await render(ReactiveBaselineHostComponent);
       expect(fixture.nativeElement.querySelector('input').getAttribute('data-test')).toBe('input-name');
     });
 
-    it('[formField] leaves the same control with no data-test at all', async () => {
+    it('[formField] gives the same control the same `input-name` as formControlName does', async () => {
       const { fixture } = await render(BasicControlsHostComponent);
-      expect(fixture.nativeElement.querySelector('input').getAttribute('data-test')).toBeNull();
+      expect(fixture.nativeElement.querySelector('input').getAttribute('data-test')).toBe('input-name');
     });
 
     it('overwrites the `name` input with the generated field name', async () => {
