@@ -26,7 +26,7 @@ import {
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { DeleteTargetDialog } from 'app/pages/sharing/iscsi/target/delete-target-dialog/delete-target-dialog.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
-import { EntitlementsService } from 'app/services/entitlements.service';
+import { LicenseService } from 'app/services/license.service';
 import { selectServices } from 'app/store/services/services.selectors';
 
 describe('IscsiCardComponent', () => {
@@ -68,9 +68,7 @@ describe('IscsiCardComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockProvider(EntitlementsService, {
-        entitled$: () => of(true),
-      }),
+      mockProvider(LicenseService, { hasFibreChannel$: of(true) }),
       mockProvider(TnDialog, {
         open: jest.fn(() => ({
           closed: of(true),
