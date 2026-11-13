@@ -5,7 +5,7 @@ import {
   applyEach, disabled, FieldTree, form, hidden,
 } from '@angular/forms/signals';
 import {
-  activeValue, fieldAt, isFieldTree, toFormModel,
+  activeValue, fieldAt, isFieldTree, patchModelValue, toFormModel,
 } from 'app/modules/forms/signal-forms/signal-forms.utils';
 
 interface Model {
@@ -67,6 +67,26 @@ describe('signal forms utils', () => {
       expect(fieldAt(tree, ['rows', 0, 'host'])?.().value()).toBe('h');
       expect(fieldAt(tree, ['rows', 3])).toBeNull();
       expect(fieldAt(tree, ['mystery'])).toBeNull();
+    });
+  });
+
+  describe('patchModelValue', () => {
+    const model = {
+      name: 'n', ssh: { port: 22, enabled: false }, tags: ['a', 'b'], note: null as string | null,
+    };
+
+    it('merges nested groups deeply, like patchValue', () => {
+      expect(patchModelValue(model, { ssh: { port: 2222 } }))
+        .toEqual({ ...model, ssh: { port: 2222, enabled: false } });
+    });
+
+    it('leaves a group alone when the patch has null for it', () => {
+      expect(patchModelValue(model, { ssh: null, name: 'm' })).toEqual({ ...model, name: 'm' });
+    });
+
+    it('ignores keys the model does not have, takes arrays whole and sets leaves to null', () => {
+      expect(patchModelValue(model, { id: 7, tags: ['c'], note: 'x' })).toEqual({ ...model, tags: ['c'], note: 'x' });
+      expect(patchModelValue({ ...model, note: 'x' }, { note: null })).toEqual(model);
     });
   });
 

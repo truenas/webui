@@ -24,6 +24,31 @@ export function toFormModel<T>(value: T): T {
 }
 
 /**
+ * `FormGroup.patchValue` for a model: `patch` laid over `current`, only for keys `current` already has.
+ * Plain-object groups merge deeply and a `null` patch leaves a group alone, as `patchValue` does for a
+ * nested `FormGroup`. Anything else, arrays included, is taken whole. Copy store data first (`toFormModel`).
+ */
+export function patchModelValue<T>(current: T, patch: unknown): T {
+  if (!isPlainObject(current) || !isPlainObject(patch)) {
+    return patch as T;
+  }
+  const result = { ...current } as Record<string, unknown>;
+  for (const [key, next] of Object.entries(patch as Record<string, unknown>)) {
+    if (!(key in result)) {
+      continue;
+    }
+    if (isPlainObject(result[key])) {
+      if (next != null) {
+        result[key] = patchModelValue(result[key], next);
+      }
+      continue;
+    }
+    result[key] = next;
+  }
+  return result as T;
+}
+
+/**
  * Narrows a field tree to the type a validation error's `fieldTree` expects.
  *
  * Targeting an error at another field (`{ kind, fieldTree: fieldTree.name }`) only type-checks under

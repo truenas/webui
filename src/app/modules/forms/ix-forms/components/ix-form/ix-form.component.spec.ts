@@ -1207,6 +1207,7 @@ describe('IxFormComponent with [fieldTree]', () => {
     mode: 'plain' | 'advanced';
     level: number;
     rows: { host: string }[];
+    ssh: { port: number; enabled: boolean };
   }
 
   let submitHandlerSpy: jest.Mock<SubmitResult<unknown>, [FormSubmitEvent<Model>]>;
@@ -1235,7 +1236,7 @@ describe('IxFormComponent with [fieldTree]', () => {
     serverErrors = inject(SignalFormErrors);
 
     model = signal<Model>({
-      name: '', mode: 'plain', level: 1, rows: [],
+      name: '', mode: 'plain', level: 1, rows: [], ssh: { port: 22, enabled: false },
     });
 
     fields = signalForm(this.model, (path) => {
@@ -1293,9 +1294,24 @@ describe('IxFormComponent with [fieldTree]', () => {
     const event = submitHandlerSpy.mock.lastCall[0];
     expect(event.isEdit).toBe(false);
     expect(event.allValues).toEqual({
-      name: 'abc', mode: 'plain', level: 1, rows: [],
+      name: 'abc', mode: 'plain', level: 1, rows: [], ssh: { port: 22, enabled: false },
     });
-    expect(event.changedValues).toEqual({ name: 'abc', mode: 'plain', rows: [] });
+    expect(event.changedValues).toEqual({
+      name: 'abc', mode: 'plain', rows: [], ssh: { port: 22, enabled: false },
+    });
+  });
+
+  it('hands the handler a copy, so reshaping allValues in place leaves the model alone', async () => {
+    submitHandlerSpy.mockImplementation((event) => {
+      delete (event.allValues as Partial<Model>).ssh;
+      return { request$: of(undefined), successMessage: 'Saved!' as TranslatedString };
+    });
+    await setup();
+    await (await loader.getHarness(TnFormControlHarness.with({ label: 'Name' }))).setValue('abc');
+
+    spectator.component.ixForm().submit();
+
+    expect(spectator.component.model().ssh).toEqual({ port: 22, enabled: false });
   });
 
   it('does not submit while the form is invalid', async () => {
@@ -1306,14 +1322,15 @@ describe('IxFormComponent with [fieldTree]', () => {
 
   it('patches frozen editData into the model, only the keys it has, and stays pristine', async () => {
     const editData = Object.freeze({
-      name: 'stored', rows: Object.freeze([Object.freeze({ host: 'h1' })]), id: 7,
+      name: 'stored', rows: Object.freeze([Object.freeze({ host: 'h1' })]), ssh: Object.freeze({ port: 2222 }), id: 7,
     }) as unknown as Partial<Model>;
     await setup(editData);
     const ixForm = spectator.component.ixForm();
 
     // As JSON: signal forms stamp each row with a tracking symbol that `toEqual` would see.
+    // `ssh.enabled` survives a partial nested patch, as it does under `patchValue`.
     expect(JSON.parse(JSON.stringify(spectator.component.model()))).toEqual({
-      name: 'stored', mode: 'plain', level: 1, rows: [{ host: 'h1' }],
+      name: 'stored', mode: 'plain', level: 1, rows: [{ host: 'h1' }], ssh: { port: 2222, enabled: false },
     });
     expect(ixForm.hasUnsavedChanges()).toBe(false);
     expect(ixForm.isEdit()).toBe(true);

@@ -22,7 +22,7 @@ import { forkJoin, map, Observable, startWith, take, timer } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { SignalFormErrors } from 'app/modules/forms/signal-forms/signal-form-errors.service';
-import { fieldAt, toFormModel } from 'app/modules/forms/signal-forms/signal-forms.utils';
+import { fieldAt, patchModelValue, toFormModel } from 'app/modules/forms/signal-forms/signal-forms.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -399,16 +399,12 @@ export class IxFormComponent<
   }
 
   /**
-   * `patchValue` for a model: only the keys the model already has, so an entity's extra fields stay
-   * out of it. Copied first, because `editData` is often frozen store state (see `toFormModel`).
+   * `patchValue` for a model (see `patchModelValue`): deep, only keys the model has. Copied first, because
+   * `editData` is often frozen store state (see `toFormModel`).
    */
   private patchModel(tree: FieldTree<unknown>, patch: Partial<T>): void {
     const state = tree();
-    const current = state.value() as Record<string, unknown>;
-    const known = Object.fromEntries(
-      Object.entries(toFormModel(patch)).filter(([key]) => key in current),
-    );
-    state.value.set({ ...current, ...known });
+    state.value.set(patchModelValue(state.value(), toFormModel(patch)));
     state.reset();
     this.internalSnapshot.set(toFormModel(state.value()) as Partial<T>);
   }
@@ -420,7 +416,8 @@ export class IxFormComponent<
     }
 
     const tree = this.anyFieldTree();
-    const allValues = (tree ? tree().value() : this.reactiveGroup().getRawValue()) as T;
+    // A copy on both paths, so a handler reshaping `allValues` in place can't reach past the model's signals.
+    const allValues = (tree ? toFormModel(tree().value()) : this.reactiveGroup().getRawValue()) as T;
 
     // `changedValues` is diffed on first read and cached, so a handler that builds its payload from
     // `allValues` pays neither the diff nor the nested-group advisory — which only matter to
