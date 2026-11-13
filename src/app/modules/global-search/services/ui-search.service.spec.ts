@@ -30,6 +30,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
+            isFcCapable$: of(true),
           }),
           mockProvider(EntitlementsService, { entitled$: () => of(true) }),
         ],
@@ -71,6 +72,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
+            isFcCapable$: of(true),
           }),
           mockProvider(EntitlementsService, { entitled$: () => of(true) }),
         ],
@@ -102,6 +104,7 @@ describe('UiSearchProvider with mocked uiElements', () => {
           mockProvider(LicenseService, {
             hasFailover$: of(true),
             hasEnclosure$: of(true),
+            isFcCapable$: of(true),
           }),
           mockProvider(EntitlementsService, { entitled$: () => of(true) }),
         ],
