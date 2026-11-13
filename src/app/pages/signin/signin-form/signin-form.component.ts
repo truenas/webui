@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, input, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   Validators, FormsModule, ReactiveFormsModule, NonNullableFormBuilder,
 } from '@angular/forms';
@@ -9,12 +9,7 @@ import {
   tnIconMarker,
 } from '@truenas/ui-components';
 import { isEqual } from 'lodash-es';
-import {
-  distinctUntilChanged, firstValueFrom,
-} from 'rxjs';
-import {
-  filter, take,
-} from 'rxjs/operators';
+import { distinctUntilChanged } from 'rxjs';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { WINDOW } from 'app/helpers/window.helper';
 import { LoginExResponse, LoginRedirectResponse } from 'app/interfaces/auth.interface';
@@ -69,7 +64,7 @@ export class SigninFormComponent implements OnInit {
     otp: ['', Validators.required],
   });
 
-  protected isLoading = toSignal(this.signinStore.isLoading$);
+  protected isLoading = this.signinStore.isLoading;
   readonly isFormDisabled = computed(() => this.disabled() || this.isLoading());
 
   /**
@@ -79,7 +74,7 @@ export class SigninFormComponent implements OnInit {
    * gated on `hasSubmitted` because `isLoading` is also true while the page boots.
    */
   private hasSubmitted = signal(false);
-  protected isSubmitting = computed(() => this.hasSubmitted() && Boolean(this.isLoading()));
+  protected isSubmitting = computed(() => this.hasSubmitted() && this.isLoading());
 
   protected readonly otpErrorMessages = {
     required: this.translate.instant('{field} is required', {
@@ -100,15 +95,14 @@ export class SigninFormComponent implements OnInit {
       this.showSecurityWarning.set(true);
     }
 
-    this.signinStore.isLoading$.pipe(
-      filter((isLoading) => !isLoading),
-      take(1),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      next: () => {
-        performance.mark('Login page ready');
-        performance.measure('Getting to login page', 'index.html', 'Login page ready');
-      },
+    const pageReadyRef = effect(() => {
+      if (this.isLoading()) {
+        return;
+      }
+
+      pageReadyRef.destroy();
+      performance.mark('Login page ready');
+      performance.measure('Getting to login page', 'index.html', 'Login page ready');
     });
   }
 
@@ -123,9 +117,9 @@ export class SigninFormComponent implements OnInit {
     });
   }
 
-  protected async login(event?: Event): Promise<void> {
+  protected login(event?: Event): void {
     event?.preventDefault();
-    if (await firstValueFrom(this.signinStore.isLoading$)) {
+    if (this.isLoading()) {
       return;
     }
     performance.mark('Login Start');

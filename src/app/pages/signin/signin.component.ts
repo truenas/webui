@@ -1,12 +1,13 @@
 import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, effect, inject, untracked,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnCardComponent, TnIconComponent, TnProgressBarComponent } from '@truenas/ui-components';
-import { combineLatest, Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
-  delay,
-  filter, map, switchMap, take, pairwise, distinctUntilChanged,
+  delay, filter, switchMap, take,
 } from 'rxjs/operators';
 import { WINDOW } from 'app/helpers/window.helper';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -55,30 +56,29 @@ export class SigninComponent implements OnInit {
     return this.authService.hasAuthToken;
   }
 
-  protected isTokenWithinTimeline$ = this.tokenLastUsedService.isTokenWithinTimeline$;
+  protected readonly isTokenWithinTimeline = toSignal(this.tokenLastUsedService.isTokenWithinTimeline$, {
+    initialValue: false,
+  });
 
-  readonly wasAdminSet$ = this.signinStore.wasAdminSet$;
-  readonly isLoggingIn$ = this.signinStore.isLoggingIn$;
-  readonly isLoggingInWithQueryToken$ = this.signinStore.isLoggingInWithQueryToken$;
-  readonly canLogin$ = this.signinStore.canLogin$;
-  readonly isConnected$ = this.wsStatus.isConnected$;
-  isConnectedDelayed$: Observable<boolean> = of(null).pipe(
+  protected readonly wasAdminSet = this.signinStore.wasAdminSet;
+  protected readonly isLoggingIn = this.signinStore.isLoggingIn;
+  protected readonly isLoggingInWithQueryToken = this.signinStore.isLoggingInWithQueryToken;
+  protected readonly canLogin = this.signinStore.canLogin;
+  private readonly isConnected$ = this.wsStatus.isConnected$;
+  protected readonly isConnected = toSignal(this.isConnected$, { initialValue: false });
+  protected isConnectedDelayed$: Observable<boolean> = of(null).pipe(
     delay(1000),
     switchMap(() => this.isConnected$),
   );
 
-  readonly hasLoadingIndicator$ = combineLatest([
-    this.signinStore.isLoading$.pipe(distinctUntilChanged()),
-    this.wsStatus.isConnected$.pipe(distinctUntilChanged()),
-    this.isTokenWithinTimeline$.pipe(distinctUntilChanged()),
-  ]).pipe(
-    map(([isLoading, isConnected, isTokenWithinTimeline]) => {
-      return isLoading || !isConnected || (isTokenWithinTimeline && this.hasAuthToken);
-    }),
-    distinctUntilChanged(),
-  );
+  protected readonly hasLoadingIndicator = computed(() => {
+    return this.signinStore.isLoading()
+      || !this.isConnected()
+      || (this.isTokenWithinTimeline() && this.hasAuthToken);
+  });
 
-  protected hasLoadingIndicator = toSignal(this.hasLoadingIndicator$, { initialValue: false });
+  /** What `hasLoadingIndicator` was on the effect's previous run, to spot it switching off. */
+  private hadLoadingIndicator = false;
 
   constructor() {
     this.wsStatus.isFailoverRestart$
@@ -91,41 +91,30 @@ export class SigninComponent implements OnInit {
         this.wsStatus.setFailoverStatus(false);
       });
 
-    this.signinStore.loginBanner$.pipe(
-      filter(Boolean),
-      filter(() => this.window.sessionStorage.getItem('loginBannerDismissed') !== 'true'),
-      switchMap((text) => {
-        return this.dialog.fullScreenDialog({
-          message: text as TranslatedString,
-          showClose: true,
-          pre: true,
-        }).pipe(take(1));
-      }),
-      filter(Boolean),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.focusFirstInput();
+    effect(() => {
+      const loginBanner = this.signinStore.loginBanner();
+      if (!loginBanner || this.window.sessionStorage.getItem('loginBannerDismissed') === 'true') {
+        return;
+      }
+
+      untracked(() => this.showLoginBanner(loginBanner));
     });
 
-    this.signinStore.isLoggingIn$.pipe(
-      filter(Boolean),
-      // Let the message render before reaching for it.
-      delay(0),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.window.document.querySelector<HTMLElement>('.logging-in')?.focus();
+    effect(() => {
+      if (this.isLoggingIn()) {
+        // Let the message render before reaching for it.
+        setTimeout(() => this.window.document.querySelector<HTMLElement>('.logging-in')?.focus());
+      }
     });
 
-    this.hasLoadingIndicator$
-      .pipe(
-        delay(0),
-        pairwise(),
-        filter(([prev, curr]) => prev && !curr),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe(() => {
-        this.focusFirstInput();
-      });
+    effect(() => {
+      const hasLoadingIndicator = this.hasLoadingIndicator();
+      if (this.hadLoadingIndicator && !hasLoadingIndicator) {
+        // Let the form render before reaching for it.
+        setTimeout(() => this.focusFirstInput());
+      }
+      this.hadLoadingIndicator = hasLoadingIndicator;
+    });
   }
 
   ngOnInit(): void {
@@ -142,6 +131,20 @@ export class SigninComponent implements OnInit {
 
         this.signinStore.init();
       });
+  }
+
+  private showLoginBanner(text: string): void {
+    this.dialog.fullScreenDialog({
+      message: text as TranslatedString,
+      showClose: true,
+      pre: true,
+    }).pipe(
+      take(1),
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.focusFirstInput();
+    });
   }
 
   private focusFirstInput(): void {

@@ -1,11 +1,14 @@
-import { Injectable, inject } from '@angular/core';
+import { DestroyRef, Injectable, inject } from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ComponentStore } from '@ngrx/component-store';
 import { Actions, ofType } from '@ngrx/effects';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { Store } from '@ngrx/store';
 import { TranslateService } from '@ngx-translate/core';
 import {
-  EMPTY, forkJoin, Observable, of, from,
+  forkJoin, Observable, of, from, pipe,
 } from 'rxjs';
 import {
   catchError, filter, map, switchMap, take, tap,
@@ -57,7 +60,7 @@ const initialState: SigninState = {
 const tokenParam = 'token' as const;
 
 @Injectable()
-export class SigninStore extends ComponentStore<SigninState> {
+export class SigninStore {
   private api = inject(ApiService);
   private translate = inject(TranslateService);
   private tokenLastUsedService = inject(TokenLastUsedService);
@@ -73,14 +76,17 @@ export class SigninStore extends ComponentStore<SigninState> {
   private window = inject<Window>(WINDOW);
   private store$ = inject<Store<AppState>>(Store);
   private sessionTimeoutService = inject(SessionTimeoutService);
+  private destroyRef = inject(DestroyRef);
 
-  loginBanner$ = this.select((state) => state.loginBanner);
-  wasAdminSet$ = this.select((state) => state.wasAdminSet);
-  isLoading$ = this.select((state) => state.isLoading);
-  isLoggingIn$ = this.select((state) => state.isLoggingIn);
-  isLoggingInWithQueryToken$ = this.select((state) => state.isLoggingInWithQueryToken);
+  private readonly state = signalState(initialState);
 
-  canLogin$ = this.wsStatus.isConnected$;
+  readonly loginBanner = this.state.loginBanner;
+  readonly wasAdminSet = this.state.wasAdminSet;
+  readonly isLoading = this.state.isLoading;
+  readonly isLoggingIn = this.state.isLoggingIn;
+  readonly isLoggingInWithQueryToken = this.state.isLoggingInWithQueryToken;
+
+  readonly canLogin = toSignal(this.wsStatus.isConnected$, { initialValue: false });
 
   private handleLoginResult = (loginResult: LoginResult): void => {
     if (loginResult !== LoginResult.Success) {
@@ -106,19 +112,28 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   constructor() {
-    super(initialState);
+    this.actions$.pipe(ofType(loginBannerUpdated), takeUntilDestroyed(this.destroyRef)).subscribe(({ loginBanner }) => {
+      this.window.sessionStorage.removeItem('loginBannerDismissed');
+      patchState(this.state, { loginBanner });
+    });
   }
 
-  setLoadingState = this.updater((state, isLoading: boolean) => ({ ...state, isLoading }));
+  setLoadingState(isLoading: boolean): void {
+    patchState(this.state, { isLoading });
+  }
 
-  setLoggingInState = this.updater((state, isLoggingIn: boolean) => ({ ...state, isLoggingIn }));
+  setLoggingInState(isLoggingIn: boolean): void {
+    patchState(this.state, { isLoggingIn });
+  }
 
-  init = this.effect((trigger$: Observable<void>) => trigger$.pipe(
+  readonly init = rxMethod<void>(pipe(
     map(() => this.activatedRoute.snapshot.queryParamMap.get(tokenParam)),
     tap((queryToken) => {
       // Set initial state with loading already true to avoid double emission
-      this.setState({ ...initialState, isLoading: true, isLoggingInWithQueryToken: Boolean(queryToken) });
+      patchState(this.state, { ...initialState, isLoading: true, isLoggingInWithQueryToken: Boolean(queryToken) });
     }),
+    // Everything runs inside the switchMap, so a failure ends only this run and a later `init()`
+    // (a failover restart, a reconnect) still works.
     switchMap((queryToken) => this.updateService.hardRefreshIfNeeded().pipe(
       switchMap(() => forkJoin([
         this.checkIfAdminPasswordSet(),
@@ -132,29 +147,28 @@ export class SigninStore extends ComponentStore<SigninState> {
 
         return this.handleLoginWithToken();
       }),
+      tap((result) => {
+        if (result !== LoginResult.Success) {
+          patchState(this.state, { isLoading: false, isLoggingInWithQueryToken: false });
+        }
+      }),
+      // Handle successful token login by performing the post-login tasks
+      filter((result) => result === LoginResult.Success),
+      switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
+      switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
+      tapResponse({
+        next: (hasNavigated) => {
+          // Still on this page, so the form has to come back: see `handleSuccessfulLogin`.
+          if (!hasNavigated) {
+            patchState(this.state, { isLoggingInWithQueryToken: false });
+          }
+        },
+        error: (error: unknown) => {
+          patchState(this.state, { isLoading: false, isLoggingInWithQueryToken: false });
+          this.errorHandler.showErrorModal(error);
+        },
+      }),
     )),
-    tap((result) => {
-      if (result !== LoginResult.Success) {
-        this.setLoadingState(false);
-        this.patchState({ isLoggingInWithQueryToken: false });
-      }
-    }),
-    // Handle successful token login by performing the post-login tasks
-    filter((result) => result === LoginResult.Success),
-    switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
-    switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
-    tap((hasNavigated) => {
-      // Still on this page, so the form has to come back: see `handleSuccessfulLogin`.
-      if (!hasNavigated) {
-        this.patchState({ isLoggingInWithQueryToken: false });
-      }
-    }),
-    catchError((error: unknown) => {
-      this.setLoadingState(false);
-      this.patchState({ isLoggingInWithQueryToken: false });
-      this.errorHandler.showErrorModal(error);
-      return EMPTY;
-    }),
   ));
 
   private withFailoverValidation = () => (source$: Observable<LoginResult>) => {
@@ -169,7 +183,7 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   };
 
-  handleSuccessfulLogin = this.effect((trigger$: Observable<void>) => trigger$.pipe(
+  readonly handleSuccessfulLogin = rxMethod<void>(pipe(
     tap(() => {
       this.setLoadingState(true);
       // The post-login sequence (failover checks, session init, boot calls, navigation) can take
@@ -178,27 +192,28 @@ export class SigninStore extends ComponentStore<SigninState> {
       this.setLoggingInState(true);
       this.snackbar.dismiss();
     }),
-    // Perform failover checks before completing login
-    switchMap(() => this.performFailoverChecksAndCompleteLogin()),
-    filter((result) => result === LoginResult.Success),
-    // Wait for user to be loaded
-    switchMap(() => this.authService.user$.pipe(filter(Boolean))),
-    switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
-    tap((hasNavigated) => {
-      // A navigation that does not land leaves this page mounted, so nothing else will take the
-      // "Logging in..." card down. Logging out of the Password Change Required dialog is one:
-      // the guard holds the navigation while the dialog is open, and the logout supersedes it.
-      if (!hasNavigated) {
-        this.setLoadingState(false);
-        this.setLoggingInState(false);
-      }
-    }),
-    catchError((error: unknown) => {
-      this.setLoadingState(false);
-      this.setLoggingInState(false);
-      this.errorHandler.showErrorModal(error);
-      return EMPTY;
-    }),
+    // Perform failover checks before completing login. Inside one switchMap, so a failure ends only
+    // this attempt and the next submitted login still runs.
+    switchMap(() => this.performFailoverChecksAndCompleteLogin().pipe(
+      filter((result) => result === LoginResult.Success),
+      // Wait for user to be loaded
+      switchMap(() => this.authService.user$.pipe(filter(Boolean), take(1))),
+      switchMap(() => from(this.router.navigateByUrl(this.getRedirectUrl()))),
+      tapResponse({
+        next: (hasNavigated) => {
+          // A navigation that does not land leaves this page mounted, so nothing else will take the
+          // "Logging in..." card down. Logging out of the Password Change Required dialog is one:
+          // the guard holds the navigation while the dialog is open, and the logout supersedes it.
+          if (!hasNavigated) {
+            patchState(this.state, { isLoading: false, isLoggingIn: false });
+          }
+        },
+        error: (error: unknown) => {
+          patchState(this.state, { isLoading: false, isLoggingIn: false });
+          this.errorHandler.showErrorModal(error);
+        },
+      }),
+    )),
   ));
 
   getRedirectUrl(): string {
@@ -230,10 +245,8 @@ export class SigninStore extends ComponentStore<SigninState> {
   }
 
   private checkForLoginBanner(): Observable<string> {
-    this.subscribeToLoginBannerUpdates();
-
     return this.api.callUnauthenticated('system.advanced.login_banner').pipe(
-      tap((loginBanner) => this.patchState({ loginBanner })),
+      tap((loginBanner) => patchState(this.state, { loginBanner })),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(initialState.loginBanner);
@@ -241,16 +254,9 @@ export class SigninStore extends ComponentStore<SigninState> {
     );
   }
 
-  private subscribeToLoginBannerUpdates(): void {
-    this.actions$.pipe(ofType(loginBannerUpdated)).subscribe(({ loginBanner }) => {
-      this.window.sessionStorage.removeItem('loginBannerDismissed');
-      this.patchState({ loginBanner });
-    });
-  }
-
   private checkIfAdminPasswordSet(): Observable<boolean> {
     return this.api.callUnauthenticated('user.has_local_administrator_set_up').pipe(
-      tap((wasAdminSet) => this.patchState({ wasAdminSet })),
+      tap((wasAdminSet) => patchState(this.state, { wasAdminSet })),
       catchError((error: unknown) => {
         this.errorHandler.showErrorModal(error);
         return of(initialState.wasAdminSet);
@@ -320,16 +326,14 @@ export class SigninStore extends ComponentStore<SigninState> {
           return this.completeLogin();
         }
 
-        this.setLoadingState(false);
-        this.setLoggingInState(false);
+        patchState(this.state, { isLoading: false, isLoggingIn: false });
         this.snackbar.error(
           (result.error as TranslatedString) || this.translate.instant('Failover validation failed.'),
         );
         return of(LoginResult.NoAccess);
       }),
       catchError(() => {
-        this.setLoadingState(false);
-        this.setLoggingInState(false);
+        patchState(this.state, { isLoading: false, isLoggingIn: false });
         const errorMsg = this.translate.instant(
           'Unable to check failover status. Please try again later or contact the system administrator.',
         );
@@ -346,14 +350,12 @@ export class SigninStore extends ComponentStore<SigninState> {
           // Don't call handleSuccessfulLogin here - it would create a recursive loop
           // The navigation and cleanup is already handled in the handleSuccessfulLogin effect
         } else {
-          this.setLoadingState(false);
-          this.setLoggingInState(false);
+          patchState(this.state, { isLoading: false, isLoggingIn: false });
           this.snackbar.error(this.translate.instant('Failed to initialize session.'));
         }
       }),
       catchError(() => {
-        this.setLoadingState(false);
-        this.setLoggingInState(false);
+        patchState(this.state, { isLoading: false, isLoggingIn: false });
         this.snackbar.error(this.translate.instant('Failed to initialize session.'));
         return of(LoginResult.NoAccess);
       }),

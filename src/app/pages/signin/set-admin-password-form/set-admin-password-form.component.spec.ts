@@ -1,9 +1,10 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnBannerHarness, TnButtonHarness, TnInputHarness } from '@truenas/ui-components';
-import { BehaviorSubject, of, Subject } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { LoginResult } from 'app/enums/login-result.enum';
 import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interface';
@@ -18,7 +19,7 @@ import { SigninStore } from 'app/pages/signin/store/signin.store';
 describe('SetAdminPasswordFormComponent', () => {
   let spectator: Spectator<SetAdminPasswordFormComponent>;
   let loader: HarnessLoader;
-  const isLoading$ = new BehaviorSubject(false);
+  const isLoading = signal(false);
   const createComponent = createComponentFactory({
     component: SetAdminPasswordFormComponent,
     imports: [
@@ -31,9 +32,9 @@ describe('SetAdminPasswordFormComponent', () => {
       ]),
       mockProvider(SigninStore, {
         // Kept live, like the real store, so the submit button's in-flight label can be asserted.
-        setLoadingState: jest.fn((isLoading: boolean) => isLoading$.next(isLoading)),
+        setLoadingState: jest.fn((value: boolean) => isLoading.set(value)),
         handleSuccessfulLogin: jest.fn(),
-        isLoading$,
+        isLoading,
       }),
       mockProvider(AuthService, {
         login: jest.fn(() => of({
@@ -46,7 +47,7 @@ describe('SetAdminPasswordFormComponent', () => {
   });
 
   beforeEach(() => {
-    isLoading$.next(false);
+    isLoading.set(false);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

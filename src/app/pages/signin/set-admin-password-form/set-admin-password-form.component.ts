@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormBuilder, Validators, FormsModule, ReactiveFormsModule,
 } from '@angular/forms';
@@ -44,7 +44,7 @@ export class SetAdminPasswordFormComponent {
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
-  protected isLoading = toSignal(this.signinStore.isLoading$, { initialValue: false });
+  protected isLoading = this.signinStore.isLoading;
 
   protected isPasswordVisible = signal(false);
   protected isPassword2Visible = signal(false);

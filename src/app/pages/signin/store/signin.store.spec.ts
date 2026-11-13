@@ -109,39 +109,25 @@ describe('SigninStore', () => {
     });
   });
 
-  describe('selectors', () => {
-    const initialState = {
-      wasAdminSet: true,
-      isLoading: false,
-      isLoggingIn: false,
-      loginBanner: '',
-    };
-    beforeEach(() => {
-      spectator.service.setState(initialState);
+  describe('signals', () => {
+    it('starts with no login banner, the admin set and nothing loading', () => {
+      expect(spectator.service.loginBanner()).toBeNull();
+      expect(spectator.service.wasAdminSet()).toBe(true);
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.isLoggingIn()).toBe(false);
+      expect(spectator.service.isLoggingInWithQueryToken()).toBe(false);
     });
 
-    it('loginBanner$', async () => {
-      expect(await firstValueFrom(spectator.service.loginBanner$)).toBe('');
+    it('canLogin follows the websocket connection', () => {
+      expect(spectator.service.canLogin()).toBe(true);
     });
 
-    it('hasRootPassword$', async () => {
-      expect(await firstValueFrom(spectator.service.wasAdminSet$)).toBe(true);
-    });
-
-    it('isLoading$', async () => {
-      expect(await firstValueFrom(spectator.service.isLoading$)).toBe(false);
-    });
-
-    it('canLogin$', async () => {
-      expect(await firstValueFrom(spectator.service.canLogin$)).toBe(true);
-    });
-
-    it('isLoggingIn$', async () => {
-      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
-
+    it('setLoadingState and setLoggingInState update their signals', () => {
+      spectator.service.setLoadingState(true);
       spectator.service.setLoggingInState(true);
 
-      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(true);
+      expect(spectator.service.isLoading()).toBe(true);
+      expect(spectator.service.isLoggingIn()).toBe(true);
     });
   });
 
@@ -165,7 +151,7 @@ describe('SigninStore', () => {
       expect(spectator.service.handleSuccessfulLogin).toBeDefined();
     });
 
-    it('clears the "logging in" state when failover validation rejects the login', async () => {
+    it('clears the "logging in" state when failover validation rejects the login', () => {
       // Navigation is mocked so that a `from(undefined)` throw can't clear the flag through the
       // catchError and hide a missing reset on the failure path.
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
@@ -175,22 +161,22 @@ describe('SigninStore', () => {
 
       spectator.service.handleSuccessfulLogin();
 
-      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
+      expect(spectator.service.isLoggingIn()).toBe(false);
       expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failover check failed');
     });
 
-    it('clears the "logging in" state when the session cannot be initialized', async () => {
+    it('clears the "logging in" state when the session cannot be initialized', () => {
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
       jest.spyOn(spectator.inject(AuthService), 'initializeSession')
         .mockReturnValueOnce(of(LoginResult.NoAccess));
 
       spectator.service.handleSuccessfulLogin();
 
-      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(false);
+      expect(spectator.service.isLoggingIn()).toBe(false);
       expect(spectator.inject(SnackbarService).error).toHaveBeenCalledWith('Failed to initialize session.');
     });
 
-    it('keeps the "logging in" state up until the dashboard takes over', async () => {
+    it('keeps the "logging in" state up until the dashboard takes over', () => {
       jest.spyOn(spectator.inject(Router), 'navigateByUrl').mockResolvedValue(true);
       Object.defineProperty(spectator.inject(AuthService), 'user$', {
         value: of(mockLoggedInUser),
@@ -198,7 +184,7 @@ describe('SigninStore', () => {
 
       spectator.service.handleSuccessfulLogin();
 
-      expect(await firstValueFrom(spectator.service.isLoggingIn$)).toBe(true);
+      expect(spectator.service.isLoggingIn()).toBe(true);
     });
 
     it('stays in the "logging in" state once the navigation to the dashboard lands', async () => {
@@ -211,8 +197,8 @@ describe('SigninStore', () => {
       spectator.service.handleSuccessfulLogin();
       await jest.advanceTimersByTimeAsync(0);
 
-      expect(spectator.service.state().isLoading).toBe(true);
-      expect(spectator.service.state().isLoggingIn).toBe(true);
+      expect(spectator.service.isLoading()).toBe(true);
+      expect(spectator.service.isLoggingIn()).toBe(true);
     });
 
     it('shows the form again when the navigation to the dashboard does not land', async () => {
@@ -226,9 +212,31 @@ describe('SigninStore', () => {
       spectator.service.handleSuccessfulLogin();
       await jest.advanceTimersByTimeAsync(0);
 
-      expect(spectator.service.state().isLoading).toBe(false);
-      expect(spectator.service.state().isLoggingIn).toBe(false);
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.isLoggingIn()).toBe(false);
       expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    });
+
+    it('still handles a later login after one whose navigation failed', async () => {
+      jest.useFakeTimers();
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigateByUrl')
+        .mockRejectedValueOnce(new Error('Navigation failed'))
+        .mockResolvedValueOnce(true);
+      Object.defineProperty(spectator.inject(AuthService), 'user$', {
+        value: of(mockLoggedInUser),
+      });
+
+      spectator.service.handleSuccessfulLogin();
+      await jest.advanceTimersByTimeAsync(0);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalled();
+      expect(spectator.service.isLoggingIn()).toBe(false);
+
+      spectator.service.handleSuccessfulLogin();
+      await jest.advanceTimersByTimeAsync(0);
+
+      expect(router.navigateByUrl).toHaveBeenCalledTimes(2);
+      expect(spectator.service.isLoggingIn()).toBe(true);
     });
 
     it('redirects user to url stored in sessionStorage', () => {
@@ -283,12 +291,9 @@ describe('SigninStore', () => {
       });
 
       // Check that the state was updated correctly
-      const state = await firstValueFrom(spectator.service.state$);
-      expect(state).toMatchObject({
-        wasAdminSet: true,
-        loginBanner: 'HELLO USER',
-        isLoading: false,
-      });
+      expect(spectator.service.wasAdminSet()).toBe(true);
+      expect(spectator.service.loginBanner()).toBe('HELLO USER');
+      expect(spectator.service.isLoading()).toBe(false);
     }, 10000);
 
     it('checks if root password is set', async () => {
@@ -312,8 +317,7 @@ describe('SigninStore', () => {
       expect(api.callUnauthenticated).toHaveBeenCalledWith('system.advanced.login_banner');
 
       // Verify the state was updated
-      const state = await firstValueFrom(spectator.service.state$);
-      expect(state.isLoading).toBe(false);
+      expect(spectator.service.isLoading()).toBe(false);
     }, 10000);
 
     it('logs in with token if it is present in local storage (via AuthService.token)', async () => {
@@ -389,12 +393,12 @@ describe('SigninStore', () => {
         jest.spyOn(spectator.inject(ActivatedRoute).snapshot.queryParamMap, 'get').mockReturnValueOnce('token');
       });
 
-      it('is logging in with it from the start, before the login is even sent', async () => {
+      it('is logging in with it from the start, before the login is even sent', () => {
         jest.spyOn(authService, 'loginWithToken').mockReturnValueOnce(NEVER);
 
         spectator.service.init();
 
-        expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(true);
+        expect(spectator.service.isLoggingInWithQueryToken()).toBe(true);
       });
 
       it('stops logging in with it when the token is refused, so the form comes back', async () => {
@@ -406,7 +410,7 @@ describe('SigninStore', () => {
         });
 
         expect(authService.loginWithToken).toHaveBeenCalled();
-        expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(false);
+        expect(spectator.service.isLoggingInWithQueryToken()).toBe(false);
       });
 
       it('stops logging in with it when the navigation after it does not land', async () => {
@@ -420,14 +424,14 @@ describe('SigninStore', () => {
         });
 
         expect(spectator.inject(Router).navigateByUrl).toHaveBeenCalled();
-        expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(false);
+        expect(spectator.service.isLoggingInWithQueryToken()).toBe(false);
       });
     });
 
-    it('is not logging in with a query token when the URL has none', async () => {
+    it('is not logging in with a query token when the URL has none', () => {
       spectator.service.init();
 
-      expect(await firstValueFrom(spectator.service.isLoggingInWithQueryToken$)).toBe(false);
+      expect(spectator.service.isLoggingInWithQueryToken()).toBe(false);
     });
 
     it('should navigate after successful token login', async () => {
@@ -488,8 +492,7 @@ describe('SigninStore', () => {
       });
 
       expect(errorHandlerSpy).toHaveBeenCalledWith(navigationError);
-      const state = await firstValueFrom(spectator.service.state$);
-      expect(state.isLoading).toBe(false);
+      expect(spectator.service.isLoading()).toBe(false);
     });
 
     it('should not login with token when hasAuthToken is false', async () => {
@@ -513,8 +516,7 @@ describe('SigninStore', () => {
       expect(loginWithTokenSpy).not.toHaveBeenCalled();
 
       // Verify the state shows loading stopped
-      const state = await firstValueFrom(spectator.service.state$);
-      expect(state.isLoading).toBe(false);
+      expect(spectator.service.isLoading()).toBe(false);
     });
   });
 
@@ -724,12 +726,12 @@ describe('SigninStore', () => {
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         of({ success: false, error: 'Failover check failed', isHaLicensed: true }),
       );
-      jest.spyOn(spectator.service, 'setLoadingState');
+      spectator.service.setLoadingState(true);
       const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
       const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
       expect(result).toBe(LoginResult.NoAccess);
-      expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
+      expect(spectator.service.isLoading()).toBe(false);
       expect(snackbarSpy).toHaveBeenCalledWith('Failover check failed');
     });
 
@@ -738,12 +740,12 @@ describe('SigninStore', () => {
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         throwError(() => new Error('Network error')),
       );
-      jest.spyOn(spectator.service, 'setLoadingState');
+      spectator.service.setLoadingState(true);
       const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
       const result = await firstValueFrom(spectator.service.performFailoverChecksAndCompleteLogin());
       expect(result).toBe(LoginResult.NoAccess);
-      expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
+      expect(spectator.service.isLoading()).toBe(false);
       expect(snackbarSpy).toHaveBeenCalledWith(
         'Unable to check failover status. Please try again later or contact the system administrator.',
       );
@@ -778,7 +780,7 @@ describe('SigninStore', () => {
       jest.spyOn(failoverValidation, 'validateFailover').mockReturnValue(
         of({ success: false, error: 'Failover check failed', isHaLicensed: true }),
       );
-      jest.spyOn(spectator.service, 'setLoadingState');
+      spectator.service.setLoadingState(true);
       const snackbarSpy = jest.spyOn(spectator.inject(SnackbarService), 'error');
 
       spectator.service.handleSuccessfulLogin();
@@ -788,7 +790,7 @@ describe('SigninStore', () => {
         setTimeout(() => resolve(), 100);
       });
 
-      expect(spectator.service.setLoadingState).toHaveBeenCalledWith(false);
+      expect(spectator.service.isLoading()).toBe(false);
       expect(snackbarSpy).toHaveBeenCalledWith('Failover check failed');
     });
   });
