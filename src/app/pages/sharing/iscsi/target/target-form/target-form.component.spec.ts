@@ -11,7 +11,6 @@ import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-error
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiAuthMethod, IscsiTargetMode } from 'app/enums/iscsi.enum';
 import {
   IscsiAuthAccess, IscsiInitiatorGroup, IscsiPortal, IscsiTarget,
@@ -30,6 +29,7 @@ import {
 } from 'app/pages/sharing/iscsi/fibre-channel-ports/fc-mpio-info-banner/fc-mpio-info-banner.component';
 import { TargetFormComponent } from 'app/pages/sharing/iscsi/target/target-form/target-form.component';
 import { FibreChannelService } from 'app/services/fibre-channel.service';
+import { LicenseService } from 'app/services/license.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 /** The groups `tn-form-list`, addressed by its form array rather than by tag name. */
@@ -140,7 +140,7 @@ describe('TargetFormComponent', () => {
       FcMpioInfoBannerComponent,
     ],
     providers: [
-      mockEntitlements(),
+      mockProvider(LicenseService, { hasFibreChannel$: of(true) }),
       provideMockStore({
         selectors: [
           {
@@ -363,6 +363,22 @@ describe('TargetFormComponent', () => {
         { label: '55', value: 55 },
         { label: '66', value: 66 },
       ]);
+    });
+  });
+
+  describe('without Fibre Channel (not entitled, or entitled with no FC HBA)', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          targetData: existingTarget,
+        },
+        providers: [mockProvider(LicenseService, { hasFibreChannel$: of(false) })],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('does not offer the Mode radio group', async () => {
+      expect(await loader.getAllHarnesses(TnRadioGroupHarness)).toHaveLength(0);
     });
   });
 
