@@ -23,4 +23,8 @@ export enum DefaultValidationError {
   ExactLength = 'exactLength',
   MinArrayLength = 'minArrayLength',
   MaxArrayLength = 'maxArrayLength',
+  /** Signal forms' `minLength()`: the camel-cased kind, for strings and arrays alike. */
+  SignalMinLength = 'minLength',
+  /** Signal forms' `maxLength()`: the camel-cased kind, for strings and arrays alike. */
+  SignalMaxLength = 'maxLength',
 }

@@ -15,6 +15,7 @@ import {
 } from '@truenas/ui-components';
 import { Observable } from 'rxjs';
 import { BaseOptionValueType, Option } from 'app/interfaces/option.interface';
+import { injectControlName } from 'app/modules/forms/ix-forms/utils/control-name.utils';
 import { normalizeTestIdParts } from 'app/modules/test-id/normalize-test-id.utils';
 
 interface OrderedOption extends Option {
@@ -46,6 +47,8 @@ interface OrderedOption extends Option {
 })
 export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
   controlDirective = inject(NgControl);
+  /** For `data-test` ids; also right under a signal form `[formField]`, which leaves `controlDirective.name` unset. */
+  private readonly controlName = injectControlName(this.controlDirective);
   private cdr = inject(ChangeDetectorRef);
   private destroyRef = inject(DestroyRef);
 
@@ -133,7 +136,7 @@ export class OrderedListboxComponent implements ControlValueAccessor, OnInit {
     this.options().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((options) => {
       this.sourceItems = options.map((option) => ({
         ...option,
-        testId: normalizeTestIdParts([this.controlDirective.name, option.label]),
+        testId: normalizeTestIdParts([this.controlName(), option.label]),
       }));
       // A fresh set of options replaces the base order wholesale, so whatever the user
       // dragged no longer applies to it — order against the stored value again.

@@ -1,5 +1,5 @@
-// Three host components are needed: one that renders no <ix-form> (fallback paths), and two that
-// render a real one — one for the config-load state, one for the delegating submit paths.
+// Four host components are needed: one that renders no <ix-form> (fallback paths), two that render a
+// real one — one for the config-load state, one for the delegating submit paths — and a signal form.
 /* eslint-disable max-classes-per-file */
 import {
   ChangeDetectionStrategy, Component, inject, signal,
@@ -7,6 +7,7 @@ import {
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { form } from '@angular/forms/signals';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
   defer, EMPTY, NEVER, Observable, of, Subject, throwError,
@@ -356,6 +357,62 @@ describe('IxFormHostForm load state', () => {
     await settle();
 
     expect(spectator.query(IxFormComponent).canSubmit()).toBe(true);
+    expect(spectator.component.canSubmit()).toBe(true);
+  });
+});
+
+interface RowsConfig {
+  name: string;
+  rows: { host: string }[];
+}
+
+@Component({
+  selector: 'ix-test-signal-form-host',
+  template: '<ix-form [fieldTree]="form" [submitHandler]="handleSubmit"></ix-form>',
+  imports: [IxFormComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+class SignalFormHostComponent extends IxFormHostForm<boolean, RowsConfig> {
+  readonly model = signal<RowsConfig>({ name: '', rows: [] });
+  readonly form = form(this.model);
+
+  protected handleSubmit = (): SubmitResult => ({
+    request$: of(true),
+    successMessage: 'Saved' as TranslatedString,
+  });
+
+  load(config$: Observable<RowsConfig>): void {
+    this.loadFormConfig(config$, (config) => this.model.set(config));
+  }
+
+  readSnapshot(): Partial<RowsConfig> | null {
+    return this.initialFormSnapshot();
+  }
+}
+
+describe('IxFormHostForm with a signal form', () => {
+  let spectator: Spectator<SignalFormHostComponent>;
+  const createComponent = createComponentFactory({
+    component: SignalFormHostComponent,
+    providers: [...ixFormTestingProviders(), mockAuth(), mockProvider(ErrorHandlerService)],
+  });
+
+  it('loads a frozen store config into the model without throwing, and leaves it pristine', async () => {
+    spectator = createComponent();
+    const config = Object.freeze({
+      name: 'stored', rows: Object.freeze([Object.freeze({ host: 'h1' })]),
+    }) as RowsConfig;
+
+    spectator.component.load(of(config));
+    await spectator.fixture.whenStable();
+
+    expect(spectator.component.hasLoadFailed()).toBe(false);
+    expect(spectator.component.form.rows[0].host().value()).toBe('h1');
+    expect(spectator.component.model()).not.toBe(config);
+    expect(JSON.parse(JSON.stringify(spectator.component.readSnapshot()))).toEqual({
+      name: 'stored', rows: [{ host: 'h1' }],
+    });
+    expect(spectator.component.hasUnsavedChanges()).toBe(false);
     expect(spectator.component.canSubmit()).toBe(true);
   });
 });

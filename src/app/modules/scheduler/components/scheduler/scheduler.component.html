@@ -6,7 +6,7 @@
   <tn-select
     [formControl]="selectControl"
     [options]="options()"
-    [testId]="[controlDirective.name, 'presets']"
+    [testId]="[controlName(), 'presets']"
     [ariaLabel]="label() || ''"
   ></tn-select>
 </tn-form-field>
