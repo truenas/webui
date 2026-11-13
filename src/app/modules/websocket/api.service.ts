@@ -44,6 +44,7 @@ import {
   WebUiApiDirectory,
   WebUiQueryEntity,
   WebUiQueryMethod,
+  WebUiQueryRow,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DuplicateCallTrackerService } from 'app/modules/websocket-debug-panel/services/duplicate-call-tracker.service';
 import { ApiCallError } from 'app/services/errors/error.classes';
@@ -243,7 +244,7 @@ export class ApiService {
     method: M,
     filters: TypedQueryFilter<WebUiQueryEntity<M>>[] = [],
     options: { extra?: Record<string, unknown> } = {},
-  ): Observable<WebUiQueryEntity<M>[]> {
+  ): Observable<WebUiQueryRow<M>[]> {
     // The query and event verbs are generic over the directory, which `M` cannot be narrowed
     // through; `followCollection` takes the erased shapes and folds rows by `id` alone.
     interface LooseRow { id?: unknown }
@@ -251,7 +252,7 @@ export class ApiService {
       method: string, filters: unknown, options: unknown,
     ) => Observable<LooseRow[]>;
     const changes$ = this.subscribe(method) as unknown as Observable<{ msg: string; id?: unknown; fields?: LooseRow }>;
-    return followCollection(looseQuery(method, filters, options), changes$) as Observable<WebUiQueryEntity<M>[]>;
+    return followCollection(looseQuery(method, filters, options), changes$) as Observable<WebUiQueryRow<M>[]>;
   }
 
   /** The query verbs' arguments are the method followed by its filters and options. */
