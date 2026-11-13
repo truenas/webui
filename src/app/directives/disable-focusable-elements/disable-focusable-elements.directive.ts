@@ -24,7 +24,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
    */
   readonly keepFocusable = input('');
 
-  /** Live only while the region is disabled — see `watchForLateContent`. */
+  /** Live only while the region is disabled — see `watchForUnlockedControls`. */
   private observer: MutationObserver | undefined;
 
   constructor() {
@@ -45,7 +45,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
 
     this.stopWatching();
     if (disabled) {
-      this.watchForLateContent();
+      this.watchForUnlockedControls();
     }
 
     timer(0).pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -60,7 +60,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
    * strips `disabled`, which would undo other code's disabling. Only removals of `disabled` count,
    * so the sweep's own writes never trigger it again.
    */
-  private watchForLateContent(): void {
+  private watchForUnlockedControls(): void {
     if (typeof MutationObserver === 'undefined') {
       return;
     }
