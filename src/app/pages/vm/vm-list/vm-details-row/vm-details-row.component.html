@@ -1,11 +1,32 @@
+@if (vmStateInfo().isSuspended) {
+  <tn-banner
+    class="suspended-banner"
+    type="warning"
+    [testId]="['vm-suspended', vm().id]"
+    [heading]="helptext.suspendedBanner.heading | translate"
+    [message]="helptext.suspendedBanner.message | translate"
+  ></tn-banner>
+}
+
 @if (vmStateInfo().isRunning) {
   <tn-button
     *ixRequiresRoles="requiredRoles"
     icon="mdi-stop-circle"
     [label]="'Stop' | translate"
     [ariaLabel]="'Stop' | translate"
+    [tnTooltip]="stopTooltip"
     [testId]="['stop', vm().id]"
     (onClick)="doStop()"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="requiredRoles"
+    icon="mdi-pause-circle"
+    [label]="'Suspend' | translate"
+    [ariaLabel]="'Suspend' | translate"
+    [tnTooltip]="suspendTooltip"
+    [testId]="['suspend', vm().id]"
+    (onClick)="doSuspend()"
   ></tn-button>
 
   <tn-button
@@ -32,6 +53,7 @@
     icon="mdi-power"
     [label]="'Power Off' | translate"
     [ariaLabel]="'Power Off' | translate"
+    [tnTooltip]="powerOffTooltip"
     [testId]="['power_off', vm().id]"
     (onClick)="doPowerOff()"
   ></tn-button>
@@ -50,6 +72,7 @@
     icon="mdi-power"
     [label]="'Power Off' | translate"
     [ariaLabel]="'Power Off' | translate"
+    [tnTooltip]="powerOffTooltip"
     [testId]="['power_off', vm().id]"
     (onClick)="doPowerOff()"
   ></tn-button>

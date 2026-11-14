@@ -8,3 +8,14 @@
     cursor: help;
   }
 }
+
+.status-cell {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.suspended-status {
+  color: var(--orange);
+  font-weight: bold;
+}

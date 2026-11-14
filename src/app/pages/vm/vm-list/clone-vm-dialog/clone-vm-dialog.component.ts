@@ -4,10 +4,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import {
-  TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
+  TnBannerComponent, TnButtonComponent, TnDialogShellComponent, TnFormFieldComponent, TnInputComponent,
 } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
+import { VmState } from 'app/enums/vm.enum';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { LoaderService } from 'app/modules/loader/loader.service';
@@ -21,6 +23,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    TnBannerComponent,
     TnDialogShellComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -41,6 +44,10 @@ export class CloneVmDialogComponent {
 
   nameControl = new FormControl('');
   protected readonly requiredRoles = [Role.VmWrite];
+  protected readonly helptext = helptextVmList;
+
+  /** A clone copies only on-disk data, so a suspended VM's in-memory state is left behind. */
+  protected readonly isSuspended = this.vm.status.state === VmState.Suspended;
 
   onClone(): void {
     const name = this.nameControl.value;

@@ -44,6 +44,42 @@ export const helptextVmList = {
     successMessage: T('VM {vmName} has been reset.'),
   },
 
+  stopButton: {
+    tooltip: T('Graceful shutdown. Asks the guest OS to shut down cleanly; the guest may take time to respond or ignore the request.'),
+  },
+
+  powerOffButton: {
+    tooltip: T('Forced power off. Ends the VM immediately, like pulling the power cord. {warning}'),
+  },
+
+  powerOffDialog: {
+    title: T('Power Off Virtual Machine'),
+    message: T('Powering off {vmName} ends it immediately, like pulling the power cord, instead of asking the guest OS\
+ to shut down. {warning} Use <i>Stop</i> for a graceful shutdown. Are you sure you want to continue?'),
+    buttonMessage: T('Power Off'),
+  },
+
+  suspendButton: {
+    tooltip: T('Pause the VM: its vCPUs stop and its memory stays loaded. Resume continues where it left off.'),
+  },
+
+  suspendedStatus: T('Suspended'),
+
+  suspendedBanner: {
+    heading: T('This VM is suspended'),
+    message: T('Its vCPUs are paused and its memory is still loaded. Resume continues where it left off.\
+ Configuration changes apply only after the VM is fully stopped and started, not on Resume.'),
+  },
+
+  suspendedEditNotice: T('This VM is suspended. Changes saved now apply only after the VM is fully stopped and\
+ started, not on Resume.'),
+
+  suspendedEditSuccess: T('VM updated. It is suspended, so the changes apply only after it is fully stopped and\
+ started, not on Resume.'),
+
+  suspendedCloneWarning: T('This VM is suspended. The clone contains only its on-disk data, not the in-memory state\
+ of the running guest.'),
+
   stop_dialog: {
     forceTooltip: T('Force the VM to stop if it has not already\
  stopped within the specified shutdown timeout. Without this option selected, the VM will\
