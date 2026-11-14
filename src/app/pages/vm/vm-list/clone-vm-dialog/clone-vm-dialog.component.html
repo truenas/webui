@@ -1,5 +1,13 @@
 <tn-dialog-shell testId="clone-vm" [title]="'Clone' | translate">
 <div>
+  @if (isSuspended) {
+    <tn-banner
+      type="warning"
+      testId="clone-vm-suspended"
+      [message]="helptext.suspendedCloneWarning | translate"
+    ></tn-banner>
+  }
+
   <tn-form-field [label]="'Enter a Name (optional)' | translate">
     <tn-input
       testId="name"

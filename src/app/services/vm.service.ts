@@ -123,13 +123,52 @@ export class VmService {
     return this.api.startJob('vm.restart', [vm.id]).pipe(this.loader.withLoader());
   }
 
-  doPowerOff(vm: VirtualMachine): void {
-    this.api.call('vm.poweroff', [vm.id])
-      .pipe(this.loader.withLoader(), take(1))
-      .subscribe({
-        next: () => this.checkMemory(),
-        error: (error: unknown) => this.errorHandler.showErrorModal(error),
-      });
+  /**
+   * Forcibly ends the VM without asking the guest OS to shut down, so confirmation is required first.
+   * `doStop` is the graceful counterpart.
+   */
+  doPowerOff(vm: VirtualMachine): Observable<boolean> {
+    return this.dialogService.confirm({
+      title: this.translate.instant(helptextVmList.powerOffDialog.title),
+      message: this.translate.instant(helptextVmList.powerOffDialog.message, {
+        vmName: vm.name,
+        warning: this.translate.instant(helptextVmList.hardResetWarning),
+      }),
+      buttonText: this.translate.instant(helptextVmList.powerOffDialog.buttonMessage),
+      buttonColor: 'warn',
+    })
+      .pipe(
+        take(1),
+        switchMap((confirmed) => {
+          if (!confirmed) {
+            return of(false);
+          }
+
+          return this.api.call('vm.poweroff', [vm.id]).pipe(
+            this.loader.withLoader(),
+            take(1),
+            tap(() => this.checkMemory()),
+            map(() => true),
+            catchError((error: unknown) => {
+              this.errorHandler.showErrorModal(error);
+              return of(false);
+            }),
+          );
+        }),
+      );
+  }
+
+  /** Pauses a running VM: its vCPUs stop and its memory stays loaded until `vm.resume`. */
+  doSuspend(vm: VirtualMachine): Observable<boolean> {
+    return this.api.call('vm.suspend', [vm.id]).pipe(
+      this.loader.withLoader(),
+      take(1),
+      map(() => true),
+      catchError((error: unknown) => {
+        this.errorHandler.showErrorModal(error);
+        return of(false);
+      }),
+    );
   }
 
   /**

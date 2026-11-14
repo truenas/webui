@@ -266,6 +266,15 @@ export async function resetVmFromRow(page: Page, name: string, id: number): Prom
   await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
 }
 
+/** Forcibly powers off a VM from its row, through webui's shared confirm and its tick box. */
+export async function powerOffVmFromRow(page: Page, name: string, id: number): Promise<void> {
+  await clickVmRowAction(page, name, virtualMachinesLocators.rowAction.powerOff(id));
+  await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
+  await page.locator(confirmDialogLocators.checkbox).click();
+  await page.locator(confirmDialogLocators.confirm).click();
+  await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+}
+
 /**
  * Opens the Edit VM form for a VM.
  *

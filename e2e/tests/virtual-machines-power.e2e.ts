@@ -20,7 +20,7 @@ import {
   ensureVmAbsent, ensureVmPresent, findVm, requireVirtualization, startVm,
 } from '../fixtures/virtual-machines';
 import {
-  clickVmRowAction, expandVmRow, resetVmFromRow, stopVmFromRow,
+  clickVmRowAction, expandVmRow, powerOffVmFromRow, resetVmFromRow, stopVmFromRow,
 } from '../flows/virtual-machines';
 import { virtualMachinesLocators } from '../locators/virtual-machines';
 import type { E2eApiClient } from '../support/api/client';
@@ -116,7 +116,7 @@ test('an admin resets a running VM, then powers it off', async ({ page, api }) =
     .toEqual(['result']);
   expect(await stateOf(api)).toBe('RUNNING');
 
-  await clickVmRowAction(page, vm, virtualMachinesLocators.rowAction.powerOff(id));
+  await powerOffVmFromRow(page, vm, id);
 
   await expect.poll(() => stateOf(api), { timeout: stateTimeoutMs }).toBe('STOPPED');
 });

@@ -6,7 +6,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent,
+  InputType,
+  TnBannerComponent,
+  TnCheckboxComponent,
+  TnFormFieldComponent,
+  TnFormSectionComponent,
+  TnInputComponent,
+  TnSelectComponent,
 } from '@truenas/ui-components';
 import {
   Observable, forkJoin, of, switchMap,
@@ -15,10 +21,11 @@ import { map, shareReplay } from 'rxjs/operators';
 import { MiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
 import {
-  VmBootloader, VmCpuMode, VmDeviceType, VmTime, vmCpuModeLabels, vmTimeNames,
+  VmBootloader, VmCpuMode, VmDeviceType, VmState, VmTime, vmCpuModeLabels, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { VirtualMachine, VirtualMachineUpdate } from 'app/interfaces/virtual-machine.interface';
 import { VmPciPassthroughDevice } from 'app/interfaces/vm-device.interface';
@@ -44,6 +51,7 @@ import { IsolatedGpuValidatorService } from 'app/services/gpu/isolated-gpu-valid
   imports: [
     IxFormComponent,
     ReactiveFormsModule,
+    TnBannerComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
     TnInputComponent,
@@ -134,12 +142,21 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
   private previouslySetGpuPciIds: string[] = [];
   criticalGpus = new Map<string, string>(); // Maps pci_slot to critical_reason
 
+  protected readonly vmListHelptext = helptextVmList;
+
   protected existingVm: VirtualMachine;
+
+  /**
+   * Resume continues the paused guest without rebooting it, so edits saved while suspended wait for
+   * a full stop and start. The form says so before and after Save.
+   */
+  protected isSuspended = false;
 
   ngOnInit(): void {
     // Resolved here rather than in a field initializer: the `vmToEdit` input the side-panel
     // host sets is only populated before ngOnInit.
     this.existingVm = this.vmToEdit();
+    this.isSuspended = this.existingVm.status.state === VmState.Suspended;
 
     this.listenForFormValueChanges();
     this.setupCriticalGpuPrevention();
@@ -191,7 +208,9 @@ export class VmEditFormComponent extends IxFormHostForm implements OnInit {
 
     return {
       request$,
-      successMessage: this.translate.instant('VM updated successfully.'),
+      successMessage: this.isSuspended
+        ? this.translate.instant(helptextVmList.suspendedEditSuccess)
+        : this.translate.instant('VM updated successfully.'),
     };
   };
 

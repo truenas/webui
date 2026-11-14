@@ -28,6 +28,7 @@ import {
   VmDeviceType, VmDisplayType, VmState, vmTimeNames,
 } from 'app/enums/vm.enum';
 import { toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
+import { helptextVmList } from 'app/helptext/vm/vm-list';
 import { helptextVmWizard } from 'app/helptext/vm/vm-wizard/vm-wizard';
 import { toVirtualMachine, VirtualMachine } from 'app/interfaces/virtual-machine.interface';
 import { VmDisplayDevice } from 'app/interfaces/vm-device.interface';
@@ -108,6 +109,7 @@ export class VmListComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.VmWrite];
   protected readonly searchableElements = vmListElements;
+  protected readonly helptext = helptextVmList;
 
   private vmMachines: VirtualMachine[] = [];
   protected readonly searchQuery = signal('');
@@ -144,7 +146,7 @@ export class VmListComponent implements OnInit {
     column({
       title: this.translate.instant('Running'),
       propertyName: 'status',
-      getValue: (row) => this.yesNo(this.isRunning(row)),
+      getValue: (row) => this.runningLabel(row),
       // The table shows this as an <ix-table-toggle-cell>; a details row prints Yes/No, under the
       // suffix that toggle resolves.
       testIdSuffix: 'row-toggle',
@@ -285,6 +287,17 @@ export class VmListComponent implements OnInit {
    */
   protected isRunning(row: VirtualMachine): boolean {
     return row.status.state === VmState.Running;
+  }
+
+  protected isSuspended(row: VirtualMachine): boolean {
+    return row.status.state === VmState.Suspended;
+  }
+
+  /** Yes/No, or Suspended for a paused VM, which is neither running nor stopped. */
+  private runningLabel(row: VirtualMachine): string {
+    return this.isSuspended(row)
+      ? this.translate.instant(helptextVmList.suspendedStatus)
+      : this.yesNo(this.isRunning(row));
   }
 
   protected isAutostartEnabled(row: VirtualMachine): boolean {

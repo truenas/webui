@@ -71,7 +71,10 @@ export const virtualMachinesLocators = {
     restart: (id: number): string => `[data-test="button-restart-${id}"]`,
     /** A hard reset, which asks for confirmation first. */
     reset: (id: number): string => `[data-test="button-reset-${id}"]`,
-    /** `['power_off', id]`; the library normalizer turns the underscore into a dash. No dialog. */
+    /**
+     * `['power_off', id]`; the library normalizer turns the underscore into a dash. A forced power
+     * off, which asks for confirmation first.
+     */
     powerOff: (id: number): string => `[data-test="button-power-off-${id}"]`,
     /**
      * `['open_display', id]`. Shown only while the VM runs and `vm.query` says `display_available`.

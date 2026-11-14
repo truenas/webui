@@ -3,13 +3,13 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { AsyncValidatorFn, ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
+  TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnFormFieldHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
-  VmBootloader, VmCpuMode, VmDeviceType, VmTime,
+  VmBootloader, VmCpuMode, VmDeviceType, VmState, VmTime,
 } from 'app/enums/vm.enum';
 import { GpuPciChoices } from 'app/interfaces/gpu-pci-choice.interface';
 import { VirtualMachine } from 'app/interfaces/virtual-machine.interface';
@@ -17,6 +17,7 @@ import { VmDevice } from 'app/interfaces/vm-device.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormMinSubmitFeedbackMs } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { CpuValidatorService } from 'app/pages/vm/utils/cpu-validator.service';
 import { VmGpuService } from 'app/pages/vm/utils/vm-gpu.service';
@@ -50,6 +51,7 @@ describe('VmEditFormComponent', () => {
     nodeset: '0-1',
     hide_from_msr: false,
     ensure_display_device: true,
+    status: { state: VmState.Stopped },
     devices: [
       {
         vm: 4,
@@ -346,6 +348,33 @@ describe('VmEditFormComponent', () => {
       ['0000:03:00.0'],
     );
     expect(spectator.inject(VmGpuService).updateVmGpus).toHaveBeenCalledWith(existingVm, ['0000:03:00.0']);
+  });
+
+  it('shows no suspended notice for a VM that is not suspended', async () => {
+    expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
+  });
+
+  describe('suspended VM', () => {
+    const suspendedVm = { ...existingVm, status: { state: VmState.Suspended } } as VirtualMachine;
+
+    beforeEach(() => {
+      spectator = createComponent({ props: { vmToEdit: suspendedVm } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('warns that changes apply only after a full stop and start, not on Resume', async () => {
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('apply only after the VM is fully stopped and started, not on Resume');
+    });
+
+    it('repeats the notice in the message shown after saving', async () => {
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
+        expect.stringContaining('the changes apply only after it is fully stopped and started, not on Resume'),
+      );
+    });
   });
 
   describe('GPU API call caching', () => {
