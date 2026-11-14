@@ -1,11 +1,14 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, computed, effect, inject, signal, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
   TnCellDefDirective,
+  TnChipComponent,
   TnDetailRowDefDirective,
   TnDialog,
   TnEmptyComponent,
@@ -63,6 +66,8 @@ import { EntitlementsService } from 'app/services/entitlements.service';
  * every list in the app builds with `translate.instant` at construction.
  */
 interface DiskRow extends Disk {
+  /** The pool as middleware reports it; `pool` holds the display text ("N/A", "name (Exported)"). */
+  poolName: Disk['pool'];
   sizeText: string;
   sedStatusText: string;
   hddStandbyText: string;
@@ -105,7 +110,7 @@ function toPowerLevelOrder(value: DiskPowerLevel | null | undefined): number {
  */
 function rowToDisk(row: DiskRow): Disk {
   const {
-    sizeText, sedStatusText, hddStandbyText, advPowerManagementText, ...disk
+    poolName, sizeText, sedStatusText, hddStandbyText, advPowerManagementText, ...disk
   } = row;
   return disk;
 }
@@ -123,6 +128,7 @@ function rowToDisk(row: DiskRow): Disk {
     TableColumnPickerComponent,
     UiSearchDirective,
     TnButtonComponent,
+    TnChipComponent,
     RequiresRolesDirective,
     TnEmptyComponent,
     TnTableComponent,
@@ -142,6 +148,8 @@ export class DiskListComponent {
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   protected emptyService = inject(EmptyService);
+  private route = inject(ActivatedRoute);
+  private location = inject(Location);
   private destroyRef = inject(DestroyRef);
 
   protected readonly requiredRoles = [Role.DiskWrite];
@@ -150,6 +158,14 @@ export class DiskListComponent {
   private readonly diskUpdates$ = new Subject<DiskFormResponse[number]>();
 
   protected readonly searchQuery = signal('');
+
+  /**
+   * The pool the page was opened for (a pool's "View Disks"). It narrows the rows before the
+   * search box does, and is cleared from its chip, never by editing the search. It follows the
+   * route too (see `followScopeInRoute`), since reaching the page again reuses this component.
+   */
+  protected readonly scopePool = signal<string | null>(this.route.snapshot.queryParamMap.get('pool') || null);
+  protected readonly scopeLabel = computed(() => `${this.translate.instant('Pool')}: ${this.scopePool()}`);
 
   /** Tri-state: the column picker is only mounted once this is known (see the template). */
   protected readonly hasSedEntitlement = this.entitlements.entitled(EntitlementFeature.Sed);
@@ -173,7 +189,7 @@ export class DiskListComponent {
       return this.getSedStatuses([...diskDetails.unused, ...diskDetails.used], disks).pipe(
         map((statuses) => {
           this.disks = disks.map((disk) => this.toRow({ ...disk, sed_status: statuses.get(disk.name) }));
-          return this.disks;
+          return this.scopedDisks();
         }),
       );
     }),
@@ -349,6 +365,7 @@ export class DiskListComponent {
 
   constructor() {
     this.clearSelectionWhenRowsChange();
+    this.followScopeInRoute();
 
     this.dataProvider.load();
 
@@ -359,8 +376,9 @@ export class DiskListComponent {
       // and update it to match the new params.
       this.disks = this.disks.map((disk) => {
         if (disk.identifier === diskUpdate.identifier) {
-          // Rebuild the row so its display-only fields reflect the edited values too.
-          return this.toRow({ ...disk, ...diskUpdate });
+          // Rebuild the row so its display-only fields reflect the edited values too. `toRow` reads
+          // the raw pool, which the row keeps in `poolName`.
+          return this.toRow({ ...disk, pool: disk.poolName, ...diskUpdate });
         }
 
         return disk;
@@ -370,7 +388,7 @@ export class DiskListComponent {
       // ultimately, if this is being called, we've already called the data provider's
       // `load` method and are just waiting for it to come back. this takes some time though (5-10s), so
       // we reconcile the local UI immediately so there is zero inconsistency.
-      this.dataProvider.setRows(this.disks);
+      this.dataProvider.setRows(this.scopedDisks());
     });
   }
 
@@ -433,6 +451,21 @@ export class DiskListComponent {
     effect(() => {
       this.rows();
       untracked(() => this.selectedIdentifiers.set(new Set()));
+    });
+  }
+
+  /**
+   * Re-scopes the list when the route's `pool` changes under this same component: the Storage
+   * header's Disks button, or Back and Forward between a scoped and an unscoped URL.
+   */
+  private followScopeInRoute(): void {
+    this.route.queryParamMap.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((params) => {
+      const pool = params.get('pool') || null;
+      if (pool === this.scopePool()) {
+        return;
+      }
+      this.scopePool.set(pool);
+      this.onListFiltered(this.searchQuery());
     });
   }
 
@@ -510,7 +543,26 @@ export class DiskListComponent {
 
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
-    this.dataProvider.setFilter({ list: this.disks, query, columnKeys: ['name', 'pool', 'serial', 'size'] });
+    this.dataProvider.setFilter({ list: this.scopedDisks(), query, columnKeys: ['name', 'pool', 'serial', 'size'] });
+  }
+
+  /**
+   * Drops the pool scope and shows every disk. The URL loses the pool too, without a navigation
+   * that would rebuild the page and reload the disks.
+   */
+  protected clearScope(): void {
+    this.scopePool.set(null);
+    this.location.replaceState('/storage/disks');
+    this.onListFiltered(this.searchQuery());
+  }
+
+  /**
+   * The disks in the scope pool, matched exactly on the raw pool: `tank` must not match `tank2`,
+   * nor the disks of an exported pool, which have no `pool` and only display under that name.
+   */
+  private scopedDisks(): DiskRow[] {
+    const scope = this.scopePool();
+    return scope ? this.disks.filter((disk) => disk.poolName === scope) : this.disks;
   }
 
   /**
@@ -558,6 +610,7 @@ export class DiskListComponent {
   private toRow(disk: Disk): DiskRow {
     return {
       ...disk,
+      poolName: disk.pool,
       pool: this.getPoolColumn(disk),
       sizeText: buildNormalizedFileSize(disk.size),
       sedStatusText: this.translate.instant(sedStatusLabel(disk)),
