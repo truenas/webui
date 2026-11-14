@@ -147,8 +147,8 @@ export class VmListComponent implements OnInit {
       title: this.translate.instant('Running'),
       propertyName: 'status',
       getValue: (row) => this.runningLabel(row),
-      // The table shows this as an <ix-table-toggle-cell>; a details row prints Yes/No, under the
-      // suffix that toggle resolves.
+      // The table shows this as an <ix-table-toggle-cell>; a details row prints Yes/No (or
+      // Suspended), under the suffix that toggle resolves.
       testIdSuffix: 'row-toggle',
     }),
     column({
