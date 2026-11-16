@@ -1,8 +1,7 @@
 # Feature stores
 
 Feature-level state (a page's list, its loading flag, a selection) lives in an `@Injectable()` class built on
-`@ngrx/signals`. `@ngrx/component-store` is being retired: stores still on it are converted one feature at a time,
-and new stores must not use it.
+`@ngrx/signals`. `@ngrx/component-store` has been removed, and `no-restricted-imports` stops it from coming back.
 
 The store stays a class, so it is provided and injected exactly as before (`providers: [MyStore]`, `inject(MyStore)`)
 and specs keep mocking it with `mockProvider(MyStore, { ... })`.
@@ -37,7 +36,9 @@ export class CertificatesStore {
   values. Consumers read them in templates as `store.isLoading()`; no `| async`, no `subscribe` + `markForCheck`.
 - Change state only through methods on the store, with `patchState`.
 
-### Converting a ComponentStore
+### Coming from ComponentStore
+
+For reference when porting code written against the old API:
 
 | ComponentStore | `@ngrx/signals` |
 |---|---|
