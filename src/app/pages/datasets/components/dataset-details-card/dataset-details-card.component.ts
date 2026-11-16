@@ -106,6 +106,19 @@ export class DatasetDetailsCardComponent {
       : { label: this.translate.instant('Edit Zvol'), testId: 'edit-zvol', handler: () => this.editZvol() };
   });
 
+  // Shown under the same conditions as the share rows' "Change Storage Tier": tier info present, not locked.
+  // The test id keeps `button-change-tier`, which the e2e suite already selects.
+  protected readonly changeTierAction = computed<TnCardAction | undefined>(() => {
+    if (!this.dataset().tier || this.dataset().locked) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Change Storage Tier'),
+      testId: 'change-tier',
+      handler: () => this.changeTier(),
+    };
+  });
+
   protected readonly deleteAction = computed<TnCardAction | undefined>(() => {
     if (this.dataset().id === this.dataset().pool || !this.hasDatasetDelete()) {
       return undefined;
