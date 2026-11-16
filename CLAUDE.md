@@ -30,8 +30,8 @@ The application uses NgRx for state management. Each feature follows this patter
 
 Key state slices: systemConfig, preferences, services, jobs, alerts, networkInterfaces
 
-Page/feature state lives in `@Injectable()` stores built on `@ngrx/signals`, not in the global store. Don't write new
-`@ngrx/component-store` stores; see `docs/devs/signal-stores.md` for the pattern and the conversion table.
+Page/feature state lives in `@Injectable()` stores built on `@ngrx/signals`, not in the global store.
+`@ngrx/component-store` has been removed and is banned by lint; see `docs/devs/signal-stores.md` for the pattern.
 
 ### Service Architecture
 - **ApiService** (`modules/websocket/api.service.ts`): Central WebSocket API communication, typed by `@truenas/api-client` (see `docs/devs/typed-api-client.md`)

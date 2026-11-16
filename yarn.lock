@@ -3423,18 +3423,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ngrx/component-store@npm:~22.0.1":
-  version: 22.0.1
-  resolution: "@ngrx/component-store@npm:22.0.1"
-  dependencies:
-    tslib: "npm:^2.0.0"
-  peerDependencies:
-    "@angular/core": ^22.0.0
-    rxjs: ^6.5.3 || ^7.5.0
-  checksum: 10/3e2081dabcc57160bcb58c9f44802e854c77858971e0ed6d6515e87c7815890818e529290c1f8f357a0e86d397313ebce09b809c9800cbf16a36af88f9b028fb
-  languageName: node
-  linkType: hard
-
 "@ngrx/effects@npm:~22.0.1":
   version: 22.0.1
   resolution: "@ngrx/effects@npm:22.0.1"
@@ -15506,7 +15494,6 @@ __metadata:
     "@mdi/svg": "npm:~7.4.47"
     "@messageformat/core": "npm:~3.3.0"
     "@ngneat/spectator": "npm:~22.1.0"
-    "@ngrx/component-store": "npm:~22.0.1"
     "@ngrx/effects": "npm:~22.0.1"
     "@ngrx/entity": "npm:~22.0.1"
     "@ngrx/operators": "npm:~22.0.1"
