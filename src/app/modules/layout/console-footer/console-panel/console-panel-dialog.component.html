@@ -1,6 +1,6 @@
 <tn-dialog-shell testId="console-panel" [title]="'Console' | translate">
   <div id="console-box">
-    <pre #messageContainer class="messages">{{ lines$ | async }}</pre>
+    <pre #messageContainer class="messages" (scroll)="onScroll()">{{ lines() }}</pre>
   </div>
 
   <div tnDialogAction>
