@@ -9,7 +9,7 @@ import {
 import type { OnInit, Signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import type { AsyncValidatorFn, ControlValueAccessor, ValidationErrors } from '@angular/forms';
-import { NgControl } from '@angular/forms';
+import { AbstractControl, NgControl } from '@angular/forms';
 import { TranslateService } from '@ngx-translate/core';
 import {
   controlTestId, type TnAsyncOptionsHost, type TnOptionsFetchFn, type TnTestIdValue,
@@ -276,11 +276,12 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
    * Commits a value the field chose itself, rather than one the user picked
    * from the dropdown — currently only the freshly created user. Goes through
    * the bound control so the form sees it as a real edit; falls back to the
-   * accessor callbacks when the field is used outside a form.
+   * accessor callbacks outside a form and under a signal form's `[formField]`, whose
+   * interop control has no `setValue` (its change callback marks the field dirty).
    */
   protected writeValueAndNotify(value: PrincipalValue): void {
     const control = this.ngControl?.control;
-    if (control) {
+    if (control instanceof AbstractControl) {
       control.setValue(value);
       control.markAsDirty();
       return;
@@ -296,11 +297,12 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
    * not attached once: the input can flip after init, and the control outlives this field when an `@if`
    * re-creates it, which used to stack duplicate validators. Attaching skips `updateValueAndValidity`,
    * so an edit form doesn't open with loaded values flagged; detaching runs it, so a removed validator's
-   * verdict or PENDING state doesn't linger.
+   * verdict or PENDING state doesn't linger. Reactive only: `[formField]`'s interop control takes no
+   * validators, so a signal form's schema calls `validatePrincipalExists()` instead.
    */
   protected attachExistenceValidator(): void {
     const control = this.ngControl?.control;
-    if (!control) {
+    if (!(control instanceof AbstractControl)) {
       return;
     }
 
@@ -333,7 +335,7 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
 
   private existenceValidator(): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
-      const names = this.namesToCheck(control.value);
+      const names = principalNamesToCheck(control.value, this.multiple);
       if (names.length === 0) {
         return of(null);
       }
@@ -348,91 +350,20 @@ export abstract class DirectoryFieldBase implements ControlValueAccessor {
           // control no longer holds would be a stale error.
           // Compared as JSON rather than joined on a separator: any separator
           // is a character some name could contain.
-          if (JSON.stringify(this.namesToCheck(control.value)) !== JSON.stringify(names)) {
+          if (JSON.stringify(principalNamesToCheck(control.value, this.multiple)) !== JSON.stringify(names)) {
             return of<ValidationErrors | null>(null);
           }
-          return this.findMissing(names).pipe(
-            map((missing) => (missing.length ? this.existenceError(missing) : null)),
+          return findMissingPrincipals(this.directory, this.kind, names).pipe(
+            map((missing) => {
+              if (!missing.length) {
+                return null;
+              }
+              const { kind, message } = missingPrincipalsError(this.translate, this.kind, this.multiple, missing);
+              return { [kind]: { message } };
+            }),
           );
         }),
       );
-    };
-  }
-
-  /** Normalizes either shape of control value to the names worth checking. */
-  private namesToCheck(value: unknown): string[] {
-    let candidates: unknown[] = [value];
-    if (this.multiple) {
-      candidates = Array.isArray(value) ? value : [];
-    }
-    return candidates
-      // Only a typed name can be wrong. A numeric value came from an option the
-      // directory itself returned, so checking it by name would be meaningless.
-      .filter((candidate): candidate is string => typeof candidate === 'string' && candidate.trim() !== '');
-  }
-
-  private findMissing(names: string[]): Observable<string[]> {
-    const checks = names.map((name) => this.exists(name).pipe(
-      // `first()` here, not only inside `forkJoin`: Angular wraps even one async validator in
-      // `forkJoin`, which waits for completion, so a never-completing cached lookup would leave the
-      // control PENDING and Save disabled. Before `catchError`, so an empty completion means "cannot say".
-      first(),
-      // A lookup that fails is not evidence the name is wrong — treat the
-      // transport error as "cannot say" rather than flagging a real user.
-      catchError(() => of(true)),
-      map((exists) => ({ name, exists })),
-    ));
-
-    return checks.length === 1
-      ? checks[0].pipe(map((result) => (result.exists ? [] : [result.name])))
-      : forkJoin(checks).pipe(
-          map((results) => results.filter((result) => !result.exists).map((result) => result.name)),
-        );
-  }
-
-  private exists(name: string): Observable<boolean> {
-    return this.kind === 'user'
-      ? this.directory.userExists(name)
-      : this.directory.groupExists(name);
-  }
-
-  private existenceError(missing: string[]): ValidationErrors {
-    const isUser = this.kind === 'user';
-
-    if (this.multiple && isUser) {
-      return {
-        usersDoNotExist: {
-          message: this.translate.instant(
-            'The following users do not exist: {users}',
-            { users: missing.join(', ') },
-          ),
-        },
-      };
-    }
-
-    if (this.multiple) {
-      return {
-        groupsDoNotExist: {
-          message: this.translate.instant(
-            'The following groups do not exist: {groups}',
-            { groups: missing.join(', ') },
-          ),
-        },
-      };
-    }
-
-    if (isUser) {
-      return {
-        userDoesNotExist: {
-          message: this.translate.instant('User "{username}" does not exist', { username: missing[0] }),
-        },
-      };
-    }
-
-    return {
-      groupDoesNotExist: {
-        message: this.translate.instant('Group "{groupName}" does not exist', { groupName: missing[0] }),
-      },
     };
   }
 }
@@ -559,6 +490,76 @@ export abstract class DirectoryChipsBase extends DirectoryFieldBase implements O
   ngOnInit(): void {
     this.attachExistenceValidator();
   }
+}
+
+/**
+ * The names in a field value worth checking against the directory: the value itself for a single field,
+ * the entries for a list. Only a typed name can be wrong; a numeric value came from an option the
+ * directory itself returned, so checking it by name would be meaningless.
+ */
+export function principalNamesToCheck(value: unknown, multiple: boolean): string[] {
+  let candidates: unknown[] = [value];
+  if (multiple) {
+    candidates = Array.isArray(value) ? value : [];
+  }
+  return candidates
+    .filter((candidate): candidate is string => typeof candidate === 'string' && candidate.trim() !== '');
+}
+
+/**
+ * The names the directory does not know, out of `names`. A lookup that fails is not evidence the name is
+ * wrong, so a transport error counts as "exists". Completes after one answer.
+ */
+export function findMissingPrincipals(
+  directory: UserDirectoryService,
+  kind: PrincipalKind,
+  names: string[],
+): Observable<string[]> {
+  const checks = names.map((name) => (kind === 'user' ? directory.userExists(name) : directory.groupExists(name)).pipe(
+    // `first()` here, not only inside `forkJoin`: Angular wraps even one async validator in
+    // `forkJoin`, which waits for completion, so a never-completing cached lookup would leave the
+    // control PENDING and Save disabled. Before `catchError`, so an empty completion means "cannot say".
+    first(),
+    catchError(() => of(true)),
+    map((exists) => ({ name, exists })),
+  ));
+
+  return checks.length === 1
+    ? checks[0].pipe(map((result) => (result.exists ? [] : [result.name])))
+    : forkJoin(checks).pipe(
+        map((results) => results.filter((result) => !result.exists).map((result) => result.name)),
+      );
+}
+
+/** The error a field shows for names the directory does not know, as an error key and a translated message. */
+export function missingPrincipalsError(
+  translate: TranslateService,
+  kind: PrincipalKind,
+  multiple: boolean,
+  missing: string[],
+): { kind: string; message: string } {
+  if (multiple && kind === 'user') {
+    return {
+      kind: 'usersDoNotExist',
+      message: translate.instant('The following users do not exist: {users}', { users: missing.join(', ') }),
+    };
+  }
+  if (multiple) {
+    return {
+      kind: 'groupsDoNotExist',
+      message: translate.instant('The following groups do not exist: {groups}', { groups: missing.join(', ') }),
+    };
+  }
+  if (kind === 'user') {
+    return {
+      kind: 'userDoesNotExist',
+      message: translate.instant('User "{username}" does not exist', { username: missing[0] }),
+    };
+  }
+  return {
+    kind: 'groupDoesNotExist',
+    message: translate.instant('Group "{groupName}" does not exist', { groupName: missing[0] }),
+  };
 }
 
 /**

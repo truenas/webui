@@ -71,6 +71,7 @@ What each piece does:
 | `activeValue()` | `signal-forms/signal-forms.utils.ts` | The model without hidden or disabled fields. Build payloads from it. |
 | `toFormModel()` | same | An unfrozen copy, for store or API data going into a model. |
 | `errorTarget()` | same | The cast a field-targeted error needs under `strict: false`. |
+| `validatePrincipalExists()` | `signal-forms/validate-principal-exists.ts` | The existence check a user or group picker runs on its own under `formControlName`. Under `[formField]` the picker has no control to attach it to, so the schema calls this. |
 
 ## Rules
 
@@ -136,7 +137,7 @@ compares it with `formControlName`. Values go both ways and mark the field dirty
 |---|---|
 | `ix-code-editor`, `ix-filter-select-list`, `ix-unused-disk-select`, `ix-ssh-credentials-select` / `ix-cloud-credentials-select` | Work, same `data-test` ids |
 | `ix-ip-input-with-netmask`, `ix-scheduler`, `ix-ordered-listbox` | Work. Their ids came from `controlDirective.name`, which a `[formField]` control lacks, so `input-address` and the like vanished; they now go through `injectControlName()` and match |
-| `ix-user-combobox`, `ix-group-combobox` and other `DirectoryFieldBase` pickers | **Broken.** They call `ngControl.control.setValue()` and `addAsyncValidators()`, which the interop control lacks: rendering throws unless `validateExistence` is off, and Add New always throws. Needs a signal path in `directory-field.base.ts` before a pilot form uses one |
+| `ix-user-combobox`, `ix-group-combobox` and other `DirectoryFieldBase` pickers | Work, same `data-test` ids. Add New commits through the accessor. `validateExistence` does nothing under `[formField]`: call `validatePrincipalExists(path.user, { kind: 'user' })` in the schema instead (NAS-145171) |
 | `ix-ip-input-with-netmask`, `ix-code-editor` | `RegisteredControlDirective` never registers them with `IxFormService`, which only matters to Reactive error focus |
 
 Under `[formField]`, Angular also sets a control's `required`, `disabled` and `name` inputs from the field state (read

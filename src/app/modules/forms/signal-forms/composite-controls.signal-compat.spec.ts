@@ -11,7 +11,7 @@ import { createComponentFactory, mockProvider, SpectatorFactory } from '@ngneat/
 import {
   TnAutocompleteHarness, TnDialog, TnSelectHarness, TnSlideToggleHarness,
 } from '@truenas/ui-components';
-import { config, of } from 'rxjs';
+import { of } from 'rxjs';
 import { TiB } from 'app/constants/bytes.constant';
 import { CodeEditorLanguage } from 'app/enums/code-editor-language.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
@@ -37,6 +37,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
 import { IxFormService } from 'app/modules/forms/ix-forms/services/ix-form.service';
 import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { validatePrincipalExists } from 'app/modules/forms/signal-forms/validate-principal-exists';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/scheduler.component';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
@@ -69,6 +70,18 @@ async function render<T>(
   const { fixture } = createComponent();
   await fixture.whenStable();
   return { fixture, host: fixture.componentInstance, loader: TestbedHarnessEnvironment.loader(fixture) };
+}
+
+/**
+ * Lets a `validateAsync` rule answer: its resource starts from an effect, and its debounce is a timer
+ * even at 0, so flush effects, wait a macrotask, then flush the result through.
+ */
+async function settleAsyncValidation(): Promise<void> {
+  TestBed.tick();
+  await new Promise((resolve) => {
+    setTimeout(resolve);
+  });
+  TestBed.tick();
 }
 
 /** Renders the `formControlName` and the `[formField]` host side by side and returns what each stamps. */
@@ -327,7 +340,9 @@ class SignalUserComboboxHostComponent {
 })
 class SignalValidatedUserComboboxHostComponent {
   readonly model = signal({ owner: 'root' as string | null });
-  readonly fields = form(this.model);
+  readonly fields = form(this.model, (path) => {
+    validatePrincipalExists(path.owner, { kind: 'user', debounce: 0 });
+  });
 }
 
 @Component({
@@ -573,7 +588,7 @@ describe('webui composite ControlValueAccessors under [formField] (NAS-145112)',
       queryUsers: (search: string) => of(['root', 'operator']
         .filter((name) => name.startsWith(search))
         .map((name) => ({ label: ignoreTranslation(name), value: name }) as PrincipalOption)),
-      userExists: () => of(true),
+      userExists: (name: string) => of(name !== 'ghost'),
       createUser: () => of({ label: ignoreTranslation('newbie'), value: 'newbie' } as PrincipalOption),
     };
     const providers = [{ provide: UserDirectoryService, useValue: directory }];
@@ -597,33 +612,40 @@ describe('webui composite ControlValueAccessors under [formField] (NAS-145112)',
       expect(host.fields.owner().dirty()).toBe(true);
     });
 
-    // The default `validateExistence: true` calls add/removeAsyncValidators on `ngControl.control`,
-    // which InteropNgControl does not have; writeValueAndNotify (the Add New path) calls setValue/markAsDirty.
-    it('gap: with validateExistence on (the default) it throws on render and again on destroy', () => {
+    // `validateExistence` attaches to a Reactive control only; the interop control takes no validators.
+    it('renders and destroys with validateExistence on (the default)', () => {
       const spectator = createValidated();
-      expect(() => spectator.detectChanges()).toThrow('control.addAsyncValidators is not a function');
-      expect(() => spectator.fixture.destroy()).toThrow('control.removeAsyncValidators is not a function');
+      expect(() => spectator.detectChanges()).not.toThrow();
+      expect(() => spectator.fixture.destroy()).not.toThrow();
     });
 
-    it('gap: Add New throws, since writeValueAndNotify calls ngControl.control.setValue', async () => {
-      const onUnhandledError = jest.fn();
-      config.onUnhandledError = onUnhandledError;
+    it('validatePrincipalExists flags a typed name the directory does not know, and clears it', async () => {
+      const spectator = createValidated();
+      spectator.detectChanges();
+      const { owner } = spectator.component.fields;
+
+      spectator.component.model.set({ owner: 'ghost' });
+      await settleAsyncValidation();
+      expect(owner().errors()).toEqual([
+        expect.objectContaining({ kind: 'userDoesNotExist', message: 'User "ghost" does not exist' }),
+      ]);
+
+      spectator.component.model.set({ owner: 'operator' });
+      await settleAsyncValidation();
+      expect(owner().errors()).toEqual([]);
+      expect(owner().valid()).toBe(true);
+    });
+
+    it('commits a user made with Add New through the accessor and marks the field dirty', async () => {
       const { host, loader } = await render(createSignal);
       const owner = await loader.getHarness(IxUserComboboxHarness);
 
-      try {
-        await owner.focus();
-        await owner.selectOption('Add New');
-        // RxJS reports an error thrown in `next` on a later macrotask.
-        await new Promise((resolve) => {
-          setTimeout(resolve);
-        });
-      } finally {
-        config.onUnhandledError = null;
-      }
+      await owner.focus();
+      await owner.selectOption('Add New');
 
-      expect(onUnhandledError).toHaveBeenCalledWith(new TypeError('control.setValue is not a function'));
-      expect(host.model().owner).toBe('root');
+      expect(host.model().owner).toBe('newbie');
+      expect(host.fields.owner().dirty()).toBe(true);
+      expect(await owner.getInputValue()).toBe('newbie');
     });
 
     it('data-test: same as formControlName (controlTestId falls back to the signal field name)', async () => {
