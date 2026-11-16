@@ -1,37 +1,33 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ReactiveFormsModule } from '@angular/forms';
+import { TestBed } from '@angular/core/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnCheckboxHarness,
-  TnChipInputHarness,
-  TnInputHarness,
-  TnSelectHarness,
-  TnSlideToggleHarness,
-  TnFilePickerHarness,
+  TnChipInputHarness, TnSelectHarness, TnSlideToggleHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { Direction } from 'app/enums/direction.enum';
 import { RsyncMode } from 'app/enums/rsync-mode.enum';
 import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { RsyncTask } from 'app/interfaces/rsync-task.interface';
-import { User } from 'app/interfaces/user.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxFormControlHarness } from 'app/modules/forms/ix-forms/interfaces/ix-form-control-harness.interface';
 import {
-  SshCredentialsSelectComponent,
-} from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+  fillControlValues, getControlValues, indexFormControls,
+} from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
-import { IxUserComboboxHarness } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
+import { SignalFormErrors } from 'app/modules/forms/signal-forms/signal-form-errors.service';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { SchedulerHarness } from 'app/modules/scheduler/components/scheduler/scheduler.harness';
+import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { FilesystemService } from 'app/services/filesystem.service';
-import { UserService } from 'app/services/user.service';
+import { PrincipalOption, UserDirectoryService } from 'app/services/user-directory.service';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 import { RsyncTaskFormComponent } from './rsync-task-form.component';
 
@@ -66,13 +62,10 @@ describe('RsyncTaskFormComponent', () => {
   let spectator: Spectator<RsyncTaskFormComponent>;
   let closedSpy: jest.SpyInstance;
   let loader: HarnessLoader;
+  let form: Record<string, IxFormControlHarness>;
 
   const createComponent = createComponentFactory({
     component: RsyncTaskFormComponent,
-    imports: [
-      ReactiveFormsModule,
-      SshCredentialsSelectComponent,
-    ],
     providers: [
       mockProvider(LocaleService, {
         timezone: 'America/New_York',
@@ -87,12 +80,12 @@ describe('RsyncTaskFormComponent', () => {
         mockCall('rsynctask.update', existingTask as unknown as CallResponse<WebUiApiDirectory, 'rsynctask.update'>),
       ]),
       mockProvider(FilesystemService),
-      mockProvider(UserService, {
-        userQueryDsCache: () => of([
-          { username: 'root' },
-          { username: 'steven' },
-        ] as User[]),
-        getUserByNameCached: (username: string) => of({ username } as User),
+      mockProvider(UserDirectoryService, {
+        pageSize: 50,
+        queryUsers: () => of(['root', 'steven'].map((name) => ({
+          label: ignoreTranslation(name), value: name,
+        }) as PrincipalOption)),
+        userExists: (name: string) => of(name !== 'ghost'),
       }),
       mockProvider(DialogService),
       provideMockStore({
@@ -107,26 +100,30 @@ describe('RsyncTaskFormComponent', () => {
     ],
   });
 
-  const getInput = (name: string): Promise<TnInputHarness> => loader.getHarness(
-    TnInputHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const getSelect = (name: string): Promise<TnSelectHarness> => loader.getHarness(
-    TnSelectHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const getCheckbox = (name: string): Promise<TnCheckboxHarness> => loader.getHarness(
-    TnCheckboxHarness.with({ selector: `[formControlName="${name}"]` }),
-  );
-  const setCheckbox = async (name: string, value: boolean): Promise<void> => {
-    const checkbox = await getCheckbox(name);
-    if (value) {
-      await checkbox.check();
-    } else {
-      await checkbox.uncheck();
+  const setUp = async (taskToEdit?: RsyncTask): Promise<void> => {
+    spectator = createComponent({ props: { taskToEdit } });
+    closedSpy = jest.spyOn(spectator.component.closed, 'emit');
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+    form = await indexFormControls(loader);
+  };
+
+  /** Fills controls by label, re-indexing after each one, since a mode switch adds and removes fields. */
+  const fill = async (values: Record<string, unknown>): Promise<void> => {
+    for (const [label, value] of Object.entries(values)) {
+      await fillControlValues(form, { [label]: value });
+      form = await indexFormControls(loader);
     }
   };
 
-  // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
+  /** The existence check on User runs after a debounce, from an effect. */
+  const settleUserCheck = async (): Promise<void> => {
+    jest.advanceTimersByTime(1000);
+    TestBed.tick();
+    await spectator.fixture.whenStable();
+  };
 
+  // Panel-hosted form: the `<tn-side-panel>` footer owns Save and calls `submit()`.
   const saveForm = async (): Promise<void> => {
     spectator.component.submit();
     await spectator.fixture.whenStable();
@@ -134,39 +131,32 @@ describe('RsyncTaskFormComponent', () => {
   };
 
   describe('adds a new rsync task', () => {
-    beforeEach(() => {
-      spectator = createComponent();
-      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    beforeEach(async () => {
+      await setUp();
     });
 
     it('adds a new rsync task when new form is saved', async () => {
-      await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
-      // `ix-user-combobox` is its own CVA — the control name is on the wrapper,
-      // so it is addressed by that rather than by the field label.
-      const user = await loader.getHarness(IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }));
-      await user.setInputValue('steven');
-      await user.blur();
-      await (await getSelect('direction')).selectOption('Pull');
-      await (await getInput('desc')).setValue('My new task');
-
-      await (await getSelect('mode')).selectOption('Module');
-      await (await getInput('remotehost')).setValue('pentagon.gov');
-      await (await getInput('remotemodule')).setValue('module');
-
+      await fill({
+        Path: '/mnt/new',
+        User: 'steven',
+        Direction: 'Pull',
+        Description: 'My new task',
+        'Rsync Mode': 'Module',
+        'Remote Host': 'pentagon.gov',
+        'Remote Module Name': 'module',
+        Recursive: false,
+        Enabled: true,
+        Times: false,
+        Compress: true,
+        Archive: false,
+        Delete: true,
+        Quiet: true,
+        'Preserve Permissions': true,
+        'Preserve Extended Attributes': false,
+        'Delay Updates': false,
+      });
       await (await loader.getHarness(SchedulerHarness.with({ label: 'Schedule' }))).setValue('0 2 * * *');
-      await setCheckbox('recursive', false);
-      await setCheckbox('enabled', true);
-
-      await setCheckbox('times', false);
-      await setCheckbox('compress', true);
-      await setCheckbox('archive', false);
-      await setCheckbox('delete', true);
-      await setCheckbox('quiet', true);
-      await setCheckbox('preserveperm', true);
-      await setCheckbox('preserveattr', false);
-      await setCheckbox('delayupdates', false);
-      await (await loader.getHarness(TnChipInputHarness.with({ selector: '[formControlName="extra"]' }))).addChip('param=newValue');
+      await (await loader.getHarness(TnChipInputHarness)).addChip('param=newValue');
 
       await saveForm();
 
@@ -197,55 +187,93 @@ describe('RsyncTaskFormComponent', () => {
       expect(closedSpy).toHaveBeenCalledWith(true);
     });
 
-    it('does not leave hidden required fields invalid when switching modes', async () => {
-      const controls = spectator.component.form.controls;
-      expect(controls.remotemodule.hasError('required')).toBe(true);
+    it('does not let a required field the current mode hides block Save', async () => {
+      await fill({
+        Path: '/mnt/new',
+        User: 'steven',
+        Direction: 'Push',
+      });
+      await (await loader.getHarness(SchedulerHarness.with({ label: 'Schedule' }))).setValue('0 2 * * *');
+      // Remote Host and Remote Module Name are required in Module mode and still empty.
+      expect(spectator.component.canSubmit()).toBe(false);
 
-      await (await getSelect('mode')).selectOption('SSH');
-      expect(controls.remotemodule.valid).toBe(true);
+      await fill({
+        'Rsync Mode': 'SSH',
+        'Connect using:': 'SSH connection from the keychain',
+      });
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-ssh-credentials-select' })))
+        .selectOption('ssh01');
 
-      await (await getSelect('sshconnectmode')).selectOption('SSH connection from the keychain');
-      expect(controls.remotehost.valid).toBe(true);
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
 
-      await (await getSelect('sshconnectmode')).selectOption('SSH private key stored in user\'s home directory');
-      expect(controls.ssh_credentials.valid).toBe(true);
+    it('marks a user the directory does not know, and blocks Save on it', async () => {
+      jest.useFakeTimers();
+      try {
+        await fill({ User: 'ghost' });
+        await settleUserCheck();
+        spectator.detectChanges();
+
+        expect(spectator.query('tn-form-field:has(ix-user-combobox)')).toHaveText('User "ghost" does not exist');
+        expect(spectator.component.canSubmit()).toBe(false);
+      } finally {
+        jest.useRealTimers();
+      }
+    });
+
+    it('sends validation errors from the API to the signal form, naming remotehost as remotepath', async () => {
+      const error = new Error('validation');
+      jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(throwError(() => error));
+      const errors = spectator.debugElement.injector.get(SignalFormErrors);
+      jest.spyOn(errors, 'handleValidationErrors');
+
+      await fill({
+        Path: '/mnt/new',
+        User: 'steven',
+        Direction: 'Push',
+        'Remote Host': 'pentagon.gov',
+        'Remote Module Name': 'module',
+      });
+      await (await loader.getHarness(SchedulerHarness.with({ label: 'Schedule' }))).setValue('0 2 * * *');
+      await saveForm();
+
+      expect(errors.handleValidationErrors).toHaveBeenCalledWith(error, { remotehost: 'remotepath' });
+      expect(closedSpy).not.toHaveBeenCalled();
     });
   });
 
   describe('edits rsync task', () => {
-    beforeEach(() => {
-      spectator = createComponent({ props: { taskToEdit: { ...existingTask, id: 1 } } });
-      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    beforeEach(async () => {
+      await setUp({ ...existingTask, id: 1 });
     });
 
     it('shows values for an existing rsync task when it is open for edit', async () => {
-      expect(await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }))).getValue()).toBe('/mnt/x/oooo');
-      expect(await (await loader.getHarness(
-        IxUserComboboxHarness.with({ selector: '[formControlName="user"]' }),
-      )).getInputValue()).toBe('root');
-      expect(await (await getSelect('direction')).getDisplayText()).toBe('Push');
-      expect(await (await getInput('desc')).getValue()).toBe('My rsync task');
-
-      expect(await (await getSelect('mode')).getDisplayText()).toBe('Module');
-      expect(await (await getInput('remotehost')).getValue()).toBe('pentagon.gov');
-      expect(await (await getInput('remotemodule')).getValue()).toBe('module');
-
-      expect(await (await getCheckbox('recursive')).isChecked()).toBe(true);
-      expect(await (await getCheckbox('enabled')).isChecked()).toBe(true);
-      expect(await (await getCheckbox('times')).isChecked()).toBe(true);
-      expect(await (await getCheckbox('compress')).isChecked()).toBe(true);
-      expect(await (await getCheckbox('quiet')).isChecked()).toBe(true);
-      expect(await (await getCheckbox('delayupdates')).isChecked()).toBe(true);
+      expect(await getControlValues(form)).toMatchObject({
+        Path: '/mnt/x/oooo',
+        User: 'root',
+        Direction: 'Push',
+        Description: 'My rsync task',
+        'Rsync Mode': 'Module',
+        'Remote Host': 'pentagon.gov',
+        'Remote Module Name': 'module',
+        Recursive: true,
+        Enabled: true,
+        Times: true,
+        Compress: true,
+        Quiet: true,
+        'Delay Updates': true,
+      });
+      expect(spectator.component.hasUnsavedChanges()).toBe(false);
     });
 
     it('saves updated rsync task when form opened for edit is saved', async () => {
-      await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }))).setValue('/mnt/new');
-      await (await getSelect('direction')).selectOption('Push');
-
-      await setCheckbox('times', false);
-      await setCheckbox('compress', false);
-      await setCheckbox('delayupdates', true);
+      await fill({
+        Path: '/mnt/new',
+        Direction: 'Push',
+        Times: false,
+        Compress: false,
+        'Delay Updates': true,
+      });
 
       await saveForm();
 
@@ -265,13 +293,13 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH private key stored in user\'s home directory', async () => {
-      await (await getSelect('mode')).selectOption('SSH');
-      await (await getInput('remoteport')).setValue('45');
-      await (await getInput('remotepath')).setValue('/mnt/path');
-      await setCheckbox('validate_rpath', true);
-      await (await loader.getHarness(
-        TnSlideToggleHarness.with({ selector: '[formControlName="ssh_keyscan"]' }),
-      )).check();
+      await fill({
+        'Rsync Mode': 'SSH',
+        'Remote SSH Port': '45',
+        'Remote Path': '/mnt/path',
+        'Validate Remote Path': true,
+      });
+      await (await loader.getHarness(TnSlideToggleHarness)).check();
 
       await saveForm();
 
@@ -293,10 +321,13 @@ describe('RsyncTaskFormComponent', () => {
     });
 
     it('shows SSH fields and saves them when Rsync Mode is SSH and Connect using SSH connection from the keychain', async () => {
-      await (await getSelect('mode')).selectOption('SSH');
-      await (await getSelect('sshconnectmode')).selectOption('SSH connection from the keychain');
-      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials"]' }))).selectOption('ssh01');
-      await (await getInput('remotepath')).setValue('/mnt/path');
+      await fill({
+        'Rsync Mode': 'SSH',
+        'Connect using:': 'SSH connection from the keychain',
+        'Remote Path': '/mnt/path',
+      });
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: 'ix-ssh-credentials-select' })))
+        .selectOption('ssh01');
 
       await saveForm();
 
@@ -316,22 +347,8 @@ describe('RsyncTaskFormComponent', () => {
         },
       ]);
     });
-  });
-
-  describe('host-driven submit', () => {
-    beforeEach(() => {
-      spectator = createComponent({
-        props: {
-          taskToEdit: { ...existingTask, id: 1 } as RsyncTask,
-        },
-      });
-      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    });
 
     it('emits closed and updates when saved via the host submit() entry point', async () => {
-      closedSpy = jest.spyOn(spectator.component.closed, 'emit');
-
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
