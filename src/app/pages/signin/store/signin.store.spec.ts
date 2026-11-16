@@ -143,8 +143,7 @@ describe('SigninStore', () => {
       // Clear sessionStorage mock
       jest.spyOn(spectator.inject<Window>(WINDOW).sessionStorage, 'getItem').mockReturnValue(null);
 
-      // The handleSuccessfulLogin effect is async, but we can't easily test it
-      // since it's an effect. This is a limitation of testing ComponentStore effects
+      // handleSuccessfulLogin is an async rxMethod, so this only checks that it can be called.
       spectator.service.handleSuccessfulLogin();
 
       // Just verify the method can be called without errors

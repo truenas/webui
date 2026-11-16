@@ -53,6 +53,11 @@ const restrictedImportPatterns = [
     group: ['@angular/material', '@angular/material/*'],
     message: "Angular Material has been fully replaced by @truenas/ui-components (NAS-141025). Use the `tn-*` equivalent; for dialogs, go through `DialogService` (app/modules/dialog/dialog.service.ts) or inject `TnDialog` from '@truenas/ui-components'.",
   },
+  {
+    // Removed from package.json once every store was converted (NAS-145095).
+    group: ['@ngrx/component-store', '@ngrx/component-store/*'],
+    message: 'ComponentStore has been replaced by @ngrx/signals. Build feature stores with `signalState`, `patchState` and `rxMethod`; see docs/devs/signal-stores.md.',
+  },
 ];
 
 const restrictedImportPaths = [

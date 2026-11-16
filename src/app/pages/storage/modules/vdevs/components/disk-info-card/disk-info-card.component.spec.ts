@@ -60,9 +60,7 @@ describe('DiskInfoCardComponent', () => {
           closed: of(),
         })),
       }),
-      // `reloadList` is a ComponentStore effect assigned at construction, so it is not on the
-      // prototype for mockProvider to auto-stub.
-      mockProvider(VDevsStore, { reloadList: jest.fn() }),
+      mockProvider(VDevsStore),
     ],
   });
 
