@@ -2,9 +2,9 @@ import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-sea
 
 /**
  * Ranks of an element against the term, most significant first; each is 1 when it holds.
- * An element's own terms are the last item of its hierarchy and its synonyms. A match there ranks above
- * one on an ancestor, so a page whose synonym is the term is not buried under every child of a section
- * that happens to share the term's name.
+ * An element's own terms are the last item of its hierarchy and its synonyms. An exact or first-letter match
+ * there ranks above the same kind of match on an ancestor only, so a page whose synonym is the term is not
+ * buried under every child of a section that happens to share the term's name.
  */
 function getRanks(term: string, element: UiSearchableElement): number[] {
   const hierarchy = element.hierarchy?.map((hierarchyItem) => hierarchyItem.toLowerCase()) || [];
