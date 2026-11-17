@@ -94,14 +94,6 @@ const projectOverrides = {
   },
 };
 
-// Keeps one long comment until the open storage store migration lands; then trim it and drop this.
-const commentCapOverrides = {
-  files: ['src/app/pages/storage/pools-dashboard.component.ts'],
-  rules: {
-    'truenas/max-comment-lines': 'off',
-  },
-};
-
 /**
  * The app runs zoneless (see "Zoneless" in CLAUDE.md): a plain field written from an async
  * callback does not re-render the template. The rule's header comment says what it can and
@@ -220,5 +212,4 @@ export default [
   specOverrides,
   zonelessOverrides,
   e2eOverrides,
-  commentCapOverrides,
 ];
