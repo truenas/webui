@@ -216,6 +216,7 @@ describe('VDevsComponent', () => {
         poolName: signal('test'),
         selectedTopologyCategory: signal(VDevType.Data),
         loadNodes: jest.fn(),
+        listenForPoolChanges: jest.fn(() => of()),
         selectNodeByGuid: jest.fn(),
         selectedBranch: signal(selectedBranch),
       }),
