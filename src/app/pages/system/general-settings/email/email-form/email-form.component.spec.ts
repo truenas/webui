@@ -459,6 +459,48 @@ describe('EmailFormComponent', () => {
     });
   });
 
+  describe('middleware without validate_certificate', () => {
+    const legacyEmailConfig: MailConfig = { ...fakeEmailConfig };
+    delete legacyEmailConfig.validate_certificate;
+
+    beforeEach(async () => {
+      spectator = createComponent({ props: { config: legacyEmailConfig } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('hides the option and leaves validate_certificate out of the saved SMTP config', async () => {
+      expect(await loader.getAllHarnesses(
+        TnCheckboxHarness.with({ selector: '[formControlName="validate_certificate"]' }),
+      )).toHaveLength(0);
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.not.objectContaining({ validate_certificate: expect.anything() }),
+      ]);
+    });
+
+    it('leaves validate_certificate out of the saved Outlook config', async () => {
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
+
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Outlook' }));
+      await logInButton.click();
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.not.objectContaining({ validate_certificate: expect.anything() }),
+      ]);
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.objectContaining({ security: 'TLS', outgoingserver: 'smtp-mail.outlook.com' }),
+      ]);
+    });
+  });
+
   describe('Gmail OAuth', () => {
     const fakeGmailEmailConfig = {
       ...fakeEmailConfig,

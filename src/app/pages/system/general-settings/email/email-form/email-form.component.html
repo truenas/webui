@@ -44,7 +44,7 @@
         <tn-input testId="outgoingserver" formControlName="outgoingserver"></tn-input>
       </tn-form-field>
 
-      @if (isEncrypted()) {
+      @if (showCertificateValidation()) {
         <tn-form-field [tooltip]="helptext.validateCertificate.tooltip | translate">
           <tn-checkbox
             testId="validate-certificate"
