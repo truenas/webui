@@ -1318,6 +1318,35 @@
       "System",
       "Advanced Settings",
       "System Security",
+      "Require NTS"
+    ],
+    "synonyms": [
+      "FIPS",
+      "STIG",
+      "Password Policy",
+      "Security",
+      "NTS",
+      "Network Time Security",
+      "Secure Time"
+    ],
+    "requiredRoles": [],
+    "visibleTokens": [
+      "SYSTEM_SECURITY"
+    ],
+    "anchorRouterLink": [
+      "/system",
+      "advanced"
+    ],
+    "routerLink": null,
+    "anchor": "require-nts",
+    "triggerAnchor": null,
+    "section": "ui"
+  },
+  {
+    "hierarchy": [
+      "System",
+      "Advanced Settings",
+      "System Security",
       "System Security Settings"
     ],
     "synonyms": [
@@ -1742,7 +1771,9 @@
       "NTP Server"
     ],
     "synonyms": [
-      "Add NTP Server"
+      "Add NTP Server",
+      "NTS",
+      "Network Time Security"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -1763,6 +1794,8 @@
       "Add NTP Server"
     ],
     "synonyms": [
+      "NTS",
+      "Network Time Security",
       "Create NTP Server",
       "New NTP Server",
       "Time Server"

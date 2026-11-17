@@ -21,6 +21,18 @@
         </ng-template>
       </ng-container>
 
+      <ng-container [tnColumnDef]="'nts'">
+        <ng-template tnHeaderCellDef>{{ 'NTS' | translate }}</ng-template>
+        <ng-template let-row tnCellDef>
+          <ix-table-text-cell
+            [value]="row.nts | yesNo | translate"
+            [title]="'NTS' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [testIdSuffix]="'row-yesno'"
+          ></ix-table-text-cell>
+        </ng-template>
+      </ng-container>
+
       <ng-container [tnColumnDef]="'burst'">
         <ng-template tnHeaderCellDef>{{ 'Burst' | translate }}</ng-template>
         <ng-template let-row tnCellDef>

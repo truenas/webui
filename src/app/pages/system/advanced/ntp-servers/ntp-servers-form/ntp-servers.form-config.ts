@@ -1,6 +1,7 @@
 import { Validators } from '@angular/forms';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateService } from '@ngx-translate/core';
+import { omit } from 'lodash-es';
 import { Role } from 'app/enums/role.enum';
 import { helptextSystemNtpservers as helptext } from 'app/helptext/system/ntp-servers';
 import { CreateNtpServer, NtpServer } from 'app/interfaces/ntp-server.interface';
@@ -29,6 +30,9 @@ export function getNtpServersFormConfig(
       fields: [
         {
           name: 'address', type: 'input', label: helptext.address.label, tooltip: helptext.address.tooltip, required: true,
+        },
+        {
+          name: 'nts', type: 'checkbox', label: helptext.nts.label, tooltip: helptext.nts.tooltip,
         },
         {
           name: 'burst', type: 'checkbox', label: helptext.burst.label, tooltip: helptext.burst.tooltip,
@@ -64,13 +68,25 @@ export function getNtpServersFormConfig(
         },
       ],
     }],
-    submit: (event) => ({
-      request$: editingServer
-        ? api.call('system.ntpserver.update', [editingServer.id, event.allValues])
-        : api.call('system.ntpserver.create', [event.allValues]),
-      successMessage: editingServer
-        ? translate.instant('NTP server updated')
-        : translate.instant('NTP server added'),
-    }),
+    submit: (event) => {
+      const payload = omitUnchangedNts(event.allValues, editingServer);
+      return {
+        request$: editingServer
+          ? api.call('system.ntpserver.update', [editingServer.id, payload])
+          : api.call('system.ntpserver.create', [payload]),
+        successMessage: editingServer
+          ? translate.instant('NTP server updated')
+          : translate.instant('NTP server added'),
+      };
+    },
   };
+}
+
+/**
+ * Sends `nts` only when it changes something: a create defaults it to off and an update leaves an omitted field
+ * as it is. Middleware older than NAS-144162 refuses the field outright, so an unconditional `nts: false` would
+ * break every save there.
+ */
+function omitUnchangedNts(values: CreateNtpServer, editingServer: NtpServer | undefined): CreateNtpServer {
+  return Boolean(values.nts) === Boolean(editingServer?.nts) ? omit(values, 'nts') : values;
 }

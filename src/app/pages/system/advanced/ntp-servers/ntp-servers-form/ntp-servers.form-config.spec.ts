@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { TranslateService } from '@ngx-translate/core';
 import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
@@ -33,6 +33,22 @@ describe('getNtpServersFormConfig', () => {
     definition.submit({ isEdit: false, allValues, changedValues: allValues } as FormSubmitEvent<CreateNtpServer>);
 
     expect(api.call).toHaveBeenCalledWith('system.ntpserver.create', [allValues]);
+  });
+
+  it('leaves nts out when it changes nothing, so middleware without NTS still accepts the save', () => {
+    const definition = getNtpServersFormConfig(api, translate, { id: 7, nts: false } as NtpServer);
+    const values = { ...allValues, nts: false };
+    definition.submit({ isEdit: true, allValues: values, changedValues: values } as FormSubmitEvent<CreateNtpServer>);
+
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.update', [7, allValues]);
+  });
+
+  it('sends nts: false when NTS is turned off on a server that had it', () => {
+    const definition = getNtpServersFormConfig(api, translate, { id: 7, nts: true } as NtpServer);
+    const values = { ...allValues, nts: false };
+    definition.submit({ isEdit: true, allValues: values, changedValues: values } as FormSubmitEvent<CreateNtpServer>);
+
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.update', [7, values]);
   });
 
   it('builds an update request scoped to the edited server id', () => {
@@ -136,5 +152,38 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
     spectator.detectChanges();
 
     expect(spectator.component.canSubmit()).toBe(true);
+  });
+});
+
+describe('NTP server form — NTS', () => {
+  let spectator: Spectator<IxFormRendererComponent<CreateNtpServer>>;
+  let loader: HarnessLoader;
+  const api = { call: jest.fn(() => of({})) } as unknown as ApiService;
+
+  const createComponent = createComponentFactory({
+    component: IxFormRendererComponent<CreateNtpServer>,
+    imports: [ReactiveFormsModule],
+    providers: [
+      ...ixFormTestingProviders(),
+      provideTnFormFieldErrors(),
+      mockAuth(),
+    ],
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    const definition = getNtpServersFormConfig(api, { instant: (key: string) => key } as TranslateService, undefined);
+    spectator = createComponent({ props: { definition } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('sends nts when the NTS checkbox is ticked', async () => {
+    await (await loader.getHarness(TnInputHarness.with({ name: 'address' }))).setValue('time.cloudflare.com');
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'NTS' }))).check();
+    spectator.component.submit();
+
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.create', [
+      expect.objectContaining({ address: 'time.cloudflare.com', nts: true }),
+    ]);
   });
 });

@@ -38,5 +38,9 @@ export const systemSecurityCardElements = {
     passwordHistoryLength: {
       hierarchy: [T('Password History Length')],
     },
+    requireNts: {
+      hierarchy: [T('Require NTS')],
+      synonyms: [T('NTS'), T('Network Time Security'), T('Secure Time')],
+    },
   },
 } satisfies UiSearchableElement;

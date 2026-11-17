@@ -145,5 +145,13 @@
       ></tn-input>
     </tn-form-field>
 
+    <tn-form-field
+      [tooltip]="'Use only NTP servers with Network Time Security (NTS) to adjust the system clock. Servers without NTS, including servers from DHCP, are ignored, and the clock is not adjusted when no NTS server is reachable. Requires at least one NTP server with NTS enabled.' | translate"
+    >
+      <tn-slide-toggle
+        formControlName="require_nts"
+        [label]="'Require NTS' | translate"
+      ></tn-slide-toggle>
+    </tn-form-field>
   </tn-form-section>
 </ix-form>
