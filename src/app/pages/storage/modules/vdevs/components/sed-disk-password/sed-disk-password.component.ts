@@ -64,6 +64,8 @@ export class SedDiskPasswordComponent {
   readonly disk = input<string | null>(null);
   /** Which disk field the host's picker reports (`ix-unused-disk-select`'s `valueField`). */
   readonly diskField = input<'name' | 'identifier'>('name');
+  /** Set by a host that retries after the job failed: the password is on the disk and can't change. */
+  readonly passwordApplied = input(false);
 
   protected readonly SedStatus = SedStatus;
   protected readonly helptext = helptextVolumeStatus.sedDiskPassword;
@@ -151,14 +153,16 @@ export class SedDiskPasswordComponent {
   );
 
   /** Whether {@link prepareDisk} will set up or unlock the disk, rather than leave it to the job. */
-  readonly appliesPassword = computed(() => Boolean(this.sedDisk()) && this.isIndividual());
+  readonly appliesPassword = computed(() => {
+    return Boolean(this.sedDisk()) && this.isIndividual() && !this.passwordApplied();
+  });
 
   /**
    * Whether the host may submit: nothing is asked of the user, or what is asked is filled in.
    * `ix-radio-group` cannot disable a single option, so a missing global password is checked here.
    */
   readonly isValid = computed(() => {
-    if (!this.sedDisk()) {
+    if (!this.sedDisk() || this.passwordApplied()) {
       return true;
     }
     if (!this.isIndividual() && this.isGlobalPasswordMissing()) {
@@ -180,7 +184,7 @@ export class SedDiskPasswordComponent {
     effect(() => {
       const disk = this.sedDisk();
       const { password, passwordConfirm } = this.form.controls;
-      if (disk && this.isIndividual()) {
+      if (disk && this.isIndividual() && !this.passwordApplied()) {
         password.enable();
         if (disk.status === SedStatus.Uninitialized) {
           passwordConfirm.enable();

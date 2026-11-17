@@ -5,7 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  catchError, EMPTY, Observable, of, Subject, throwError,
+  catchError, defer, EMPTY, finalize, Observable, of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
@@ -172,7 +172,7 @@ describe('ExtendDialogComponent', () => {
       .toBeLessThan(jest.mocked(api.job).mock.invocationCallOrder[0]);
   });
 
-  it('shows a loader and blocks a second submit while the extension is in progress', async () => {
+  it('blocks a second submit while the extension is in progress', async () => {
     const jobClosed$ = new Subject<unknown>();
     jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
       afterClosed: () => jobClosed$,
@@ -184,7 +184,6 @@ describe('ExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
     expect(await extendButton.isDisabled()).toBe(true);
 
     spectator.dispatchFakeEvent('form', 'submit');
@@ -209,6 +208,11 @@ describe('ExtendDialogComponent', () => {
 
     const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
     await extendButton.click();
+
+    // The password is on the disk now, so it can no longer be changed for the retry.
+    expect(spectator.query('ix-sed-disk-password .message')).toHaveText('An individual SED password was already applied to sde');
+    expect(spectator.query('ix-sed-disk-password ix-input')).not.toExist();
+
     await extendButton.click();
 
     const unlockCalls = jest.mocked(api.call).mock.calls.filter(([method]) => method === 'disk.unlock_sed');
@@ -238,5 +242,39 @@ describe('ExtendDialogComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sde', password: 'disk-secret' }]);
     expect(spectator.inject(MatDialogRef).close).toHaveBeenCalledWith(true);
+  });
+
+  it('keeps the loader open over the SED step and closes it before the job runs', async () => {
+    let isLoaderOpen = false;
+    let wasLoaderOpenForUnlock = false;
+    jest.spyOn(spectator.inject(LoaderService), 'withLoader').mockImplementation((
+      () => (source$: Observable<unknown>) => defer(() => {
+        isLoaderOpen = true;
+        return source$.pipe(finalize(() => isLoaderOpen = false));
+      })
+    ) as LoaderService['withLoader']);
+
+    const api = spectator.inject(MockApiService);
+    api.mockCall('disk.query', [{ name: 'sde', sed: true, sed_status: SedStatus.Locked } as Disk]);
+    api.mockCall('disk.unlock_sed', () => {
+      wasLoaderOpenForUnlock = isLoaderOpen;
+    });
+    const jobClosed$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
+      afterClosed: () => jobClosed$,
+    } as ReturnType<DialogService['jobDialog']>);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'New Disk': 'sde (10.91 TiB)' });
+    await form.fillForm({ 'SED Password': 'Individual password for this disk' });
+    await form.fillForm({ Password: 'disk-secret' });
+
+    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    await extendButton.click();
+
+    expect(wasLoaderOpenForUnlock).toBe(true);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    // The job dialog is still open here, so the loader must not be wrapped around it.
+    expect(isLoaderOpen).toBe(false);
   });
 });

@@ -75,7 +75,10 @@ export class ExtendDialog {
   });
 
   /** The disk an individual SED password was already applied to, so a retry skips straight to the job. */
-  private preparedDisk: string | null = null;
+  private readonly preparedDisk = signal<string | null>(null);
+  protected readonly isPasswordApplied = computed(() => {
+    return this.preparedDisk() !== null && this.preparedDisk() === this.newDisk();
+  });
 
   readonly helptext = helptextVolumeStatus;
 
@@ -135,7 +138,7 @@ export class ExtendDialog {
    */
   private prepareNewDisk(): Observable<unknown> {
     const disk = this.form.value.newDisk;
-    if (disk === this.preparedDisk) {
+    if (disk === this.preparedDisk()) {
       return of(null);
     }
     const sedDiskPassword = this.sedDiskPassword();
@@ -143,7 +146,7 @@ export class ExtendDialog {
     return sedDiskPassword.prepareDisk().pipe(
       tap(() => {
         if (appliesPassword) {
-          this.preparedDisk = disk;
+          this.preparedDisk.set(disk);
         }
       }),
     );

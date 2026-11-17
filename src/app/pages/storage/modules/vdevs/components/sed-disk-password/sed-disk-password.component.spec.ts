@@ -19,7 +19,7 @@ function sedDisk(status: SedStatus): Disk {
 }
 
 describe('SedDiskPasswordComponent', () => {
-  let spectator: SpectatorHost<SedDiskPasswordComponent>;
+  let spectator: SpectatorHost<SedDiskPasswordComponent, { passwordApplied: boolean }>;
   let loader: HarnessLoader;
   let api: MockApiService;
   let allSed: boolean;
@@ -45,7 +45,9 @@ describe('SedDiskPasswordComponent', () => {
     allSed = options.allSed ?? false;
     disks = options.disks;
     isGlobalPasswordSet = options.isGlobalPasswordSet ?? true;
-    spectator = createHost('<ix-sed-disk-password [poolId]="4" [disk]="\'sdi\'"></ix-sed-disk-password>');
+    const template = '<ix-sed-disk-password [poolId]="4" [disk]="\'sdi\'" [passwordApplied]="passwordApplied">'
+      + '</ix-sed-disk-password>';
+    spectator = createHost(template, { hostProps: { passwordApplied: false } });
     api = spectator.inject(MockApiService);
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
@@ -122,5 +124,25 @@ describe('SedDiskPasswordComponent', () => {
 
     await source.setValue('Global SED password (not set)');
     expect(spectator.component.isValid()).toBe(false);
+  });
+
+  it('hides the password choice and leaves the disk alone once the host says it was applied', async () => {
+    setup({ disks: [sedDisk(SedStatus.Locked)] });
+
+    const source = await loader.getHarness(IxRadioGroupHarness.with({ label: 'SED Password' }));
+    await source.setValue('Individual password for this disk');
+    const [password] = await loader.getAllHarnesses(IxInputHarness);
+    await password.setValue('first-password');
+
+    spectator.setHostInput({ passwordApplied: true });
+
+    expect(spectator.query('.message')).toHaveText('An individual SED password was already applied to sdi');
+    expect(await loader.getAllHarnesses(IxRadioGroupHarness)).toHaveLength(0);
+    expect(await loader.getAllHarnesses(IxInputHarness)).toHaveLength(0);
+    expect(spectator.component.isValid()).toBe(true);
+    expect(spectator.component.appliesPassword()).toBe(false);
+
+    await firstValueFrom(spectator.component.prepareDisk());
+    expect(api.call).not.toHaveBeenCalledWith('disk.unlock_sed', expect.anything());
   });
 });
