@@ -150,6 +150,9 @@ export class SedDiskPasswordComponent {
     { requireSync: true },
   );
 
+  /** Whether {@link prepareDisk} will set up or unlock the disk, rather than leave it to the job. */
+  readonly appliesPassword = computed(() => Boolean(this.sedDisk()) && this.isIndividual());
+
   /**
    * Whether the host may submit: nothing is asked of the user, or what is asked is filled in.
    * `ix-radio-group` cannot disable a single option, so a missing global password is checked here.
@@ -197,7 +200,7 @@ export class SedDiskPasswordComponent {
    */
   prepareDisk(): Observable<unknown> {
     const disk = this.sedDisk();
-    if (!disk || !this.isIndividual()) {
+    if (!disk || !this.appliesPassword()) {
       return of(null);
     }
 

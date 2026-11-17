@@ -74,7 +74,7 @@ export class ExtendDialog {
     return !this.isSubmitting() && this.isFormValid() && this.sedDiskPassword().isValid();
   });
 
-  /** The disk SED setup already succeeded for, so a retry after a failed job skips straight to it. */
+  /** The disk an individual SED password was already applied to, so a retry skips straight to the job. */
   private preparedDisk: string | null = null;
 
   readonly helptext = helptextVolumeStatus;
@@ -129,16 +129,23 @@ export class ExtendDialog {
   }
 
   /**
-   * Runs the SED step once per disk. After it succeeds the disk is unlocked, and running
-   * `disk.setup_sed` again fails because the disk is no longer UNINITIALIZED.
+   * Applies an individual SED password once per disk. After that the disk is unlocked, and running
+   * `disk.setup_sed` again fails because the disk is no longer UNINITIALIZED. With the global
+   * password nothing is applied here, so a retry with an individual one must still run it.
    */
   private prepareNewDisk(): Observable<unknown> {
     const disk = this.form.value.newDisk;
     if (disk === this.preparedDisk) {
       return of(null);
     }
-    return this.sedDiskPassword().prepareDisk().pipe(
-      tap(() => this.preparedDisk = disk),
+    const sedDiskPassword = this.sedDiskPassword();
+    const appliesPassword = sedDiskPassword.appliesPassword();
+    return sedDiskPassword.prepareDisk().pipe(
+      tap(() => {
+        if (appliesPassword) {
+          this.preparedDisk = disk;
+        }
+      }),
     );
   }
 }
