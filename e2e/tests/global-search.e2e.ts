@@ -28,8 +28,8 @@ import { expect, test } from '../support/fixtures';
 const servicesPage = { term: 'Services', hierarchy: ['System', 'Services'] } as const;
 
 /**
- * System > Shell, found by its own name and by "console", which only its synonyms hold. UI lists
- * the first six results before "Show more", so finding it there also means it ranks that high.
+ * System > Shell, found by its own name and by "console", which only its synonyms hold. UI renders
+ * only its first six results until "View More", so finding it there also means it ranks that high.
  */
 const shellPage = { terms: ['shell', 'console'], hierarchy: ['System', 'Shell'] } as const;
 
