@@ -1,11 +1,13 @@
 import { computed, DestroyRef, Injectable, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, NavigationEnd } from '@angular/router';
-import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { isEqual } from 'lodash-es';
 import {
-  of, exhaustMap, tap, EMPTY,
+  EMPTY, exhaustMap, pipe,
 } from 'rxjs';
 import {
   catchError, filter, map, startWith, distinctUntilChanged, switchMap,
@@ -107,21 +109,20 @@ const initialState: ContainersState = {
 };
 
 @Injectable()
-export class ContainersStore extends ComponentStore<ContainersState> {
+export class ContainersStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
   private translate = inject(TranslateService);
 
-  readonly isLoading = computed(() => this.state().isLoading);
-  readonly selectedContainer = computed(() => this.state().selectedContainer);
-  readonly selectedContainerId = computed(() => this.state().selectedContainerId);
-  readonly sort = computed(() => this.state().sort);
-  // Read the raw list through its own computed so the expensive sort below only re-runs when the
-  // list or sort actually change. Frequent metrics patches keep the same `containers`/`sort`
-  // references, so this computed's dependencies stay stable and the sort is skipped on those ticks.
-  private readonly rawContainers = computed(() => this.state().containers);
+  private readonly state = signalState(initialState);
+
+  readonly isLoading = this.state.isLoading;
+  readonly selectedContainer = this.state.selectedContainer;
+  readonly selectedContainerId = this.state.selectedContainerId;
+  readonly sort = this.state.sort;
+  readonly metrics = this.state.metrics;
   readonly containers = computed(() => {
     const sort = this.sort();
     // Cache each container's translated status label so it is resolved once per sort
@@ -135,7 +136,8 @@ export class ContainersStore extends ComponentStore<ContainersState> {
       }
       return label;
     };
-    return (this.rawContainers()?.filter((container) => !!container) ?? [])
+    // `state.containers` is its own signal, so frequent metrics patches do not re-run this sort.
+    return (this.state.containers()?.filter((container) => !!container) ?? [])
       .sort((a, b) => compareContainers(a, b, sort, getStatusLabel));
   });
 
@@ -144,36 +146,33 @@ export class ContainersStore extends ComponentStore<ContainersState> {
    * Use this to differentiate between "not loaded yet" (hasLoaded=false, containers=[])
    * and "loaded with no data" (hasLoaded=true, containers=[]).
    */
-  readonly hasLoaded = computed(() => this.state().containers !== undefined);
-
-  readonly metrics = computed(() => this.state().metrics);
+  readonly hasLoaded = computed(() => this.state.containers() !== undefined);
 
   constructor() {
-    super(initialState);
     this.listenForMetrics();
     this.subscribeToContainerUpdates();
   }
 
-  readonly initialize = this.effect((trigger$) => {
-    return trigger$.pipe(
-      // exhaustMap ignores new triggers while a request is in progress,
-      // preventing duplicate API calls during rapid navigation
-      exhaustMap(() => {
-        // Skip if already loading
-        if (this.state().isLoading) {
-          return EMPTY;
-        }
+  readonly initialize = rxMethod<void>(pipe(
+    // exhaustMap ignores new triggers while a request is in progress,
+    // preventing duplicate API calls during rapid navigation
+    exhaustMap(() => {
+      // Skip if already loading (e.g. a reload() is in flight)
+      if (this.state.isLoading()) {
+        return EMPTY;
+      }
 
-        this.patchState({ isLoading: true });
-        return this.api.query('container.query').pipe(
-          map((containers) => containers.map(toContainer)),
-          tap((containers) => {
+      patchState(this.state, { isLoading: true });
+      return this.api.query('container.query').pipe(
+        map((containers) => containers.map(toContainer)),
+        tapResponse({
+          next: (containers) => {
             const selectedContainerId = this.selectedContainerId();
 
             if (selectedContainerId && Number.isFinite(selectedContainerId)) {
               const updatedSelectedContainer = containers.find((container) => container.id === selectedContainerId);
               if (updatedSelectedContainer) {
-                this.patchState({ selectedContainer: updatedSelectedContainer });
+                patchState(this.state, { selectedContainer: updatedSelectedContainer });
               } else if (containers.length) {
                 this.router.navigate(['/containers', 'view', containers[0].id]);
               } else {
@@ -182,22 +181,18 @@ export class ContainersStore extends ComponentStore<ContainersState> {
             } else if (containers.length) {
               this.router.navigate(['/containers', 'view', containers[0].id]);
             }
-          }),
-          tap((containers) => {
-            this.patchState({
-              containers,
-              isLoading: false,
-            });
-          }),
-          catchError((error: unknown) => {
-            this.patchState({ isLoading: false, containers: [] });
+
+            patchState(this.state, { containers });
+          },
+          error: (error: unknown) => {
+            patchState(this.state, { containers: [] });
             this.errorHandler.showErrorModal(error);
-            return of(undefined);
-          }),
-        );
-      }),
-    );
-  });
+          },
+          finalize: () => patchState(this.state, { isLoading: false }),
+        }),
+      );
+    }),
+  ));
 
   private subscribeToContainerUpdates(): void {
     this.api.subscribe('container.query')
@@ -209,18 +204,15 @@ export class ContainersStore extends ComponentStore<ContainersState> {
    * Force reload containers, bypassing the initialization check.
    * Use this after container creation/update operations.
    */
-  readonly reload = this.effect((trigger$) => {
-    return trigger$.pipe(
-      exhaustMap(() => {
-        this.patchState({ isLoading: true });
-        return this.api.query('container.query').pipe(
-          map((containers) => containers.map(toContainer)),
-          tap((containers) => {
+  readonly reload = rxMethod<void>(pipe(
+    exhaustMap(() => {
+      patchState(this.state, { isLoading: true });
+      return this.api.query('container.query').pipe(
+        map((containers) => containers.map(toContainer)),
+        tapResponse({
+          next: (containers) => {
             const selectedContainerId = this.selectedContainerId();
-            const updates: Partial<ContainersState> = {
-              containers,
-              isLoading: false,
-            };
+            const updates: Partial<ContainersState> = { containers };
 
             if (selectedContainerId) {
               const updatedSelectedContainer = containers.find((container) => container.id === selectedContainerId);
@@ -229,24 +221,21 @@ export class ContainersStore extends ComponentStore<ContainersState> {
               }
             }
 
-            this.patchState(updates);
-          }),
-          catchError((error: unknown) => {
-            this.patchState({ isLoading: false });
-            this.errorHandler.showErrorModal(error);
-            return of(undefined);
-          }),
-        );
-      }),
-    );
-  });
+            patchState(this.state, updates);
+          },
+          error: (error: unknown) => this.errorHandler.showErrorModal(error),
+          finalize: () => patchState(this.state, { isLoading: false }),
+        }),
+      );
+    }),
+  ));
 
   private processContainerUpdateEvent(event: ContainerQueryEvent): void {
     const prevContainers = this.containers();
     const selectedContainer = this.selectedContainer();
     switch (event?.msg) {
       case CollectionChangeType.Added:
-        this.patchState({ containers: [...prevContainers, event.fields] });
+        patchState(this.state, { containers: [...prevContainers, event.fields] });
         break;
       case CollectionChangeType.Changed: {
         // TODO(NAS-XXXXX): remove once middleware always sends container IDs. A status-only update sends
@@ -290,11 +279,11 @@ export class ContainersStore extends ComponentStore<ContainersState> {
           }
         }
 
-        this.patchState(updates);
+        patchState(this.state, updates);
         break;
       }
       case CollectionChangeType.Removed:
-        this.patchState({ containers: prevContainers.filter((container) => container.id !== event.id) });
+        patchState(this.state, { containers: prevContainers.filter((container) => container.id !== event.id) });
         break;
     }
   }
@@ -304,7 +293,7 @@ export class ContainersStore extends ComponentStore<ContainersState> {
    * add/change events stay ordered and no reload is needed.
    */
   setSort(sort: ContainerSort): void {
-    this.patchState({ sort });
+    patchState(this.state, { sort });
   }
 
   containerUpdated(updated: Container): void {
@@ -315,14 +304,14 @@ export class ContainersStore extends ComponentStore<ContainersState> {
       updates.selectedContainer = updated;
     }
 
-    this.patchState(updates);
+    patchState(this.state, updates);
   }
 
   selectContainer(containerId: number): void {
-    this.patchState({ selectedContainerId: containerId });
+    patchState(this.state, { selectedContainerId: containerId });
 
     // If containers aren't loaded yet, just save the ID and let initialize() handle it
-    if (this.state().containers === undefined) {
+    if (this.state.containers() === undefined) {
       return;
     }
 
@@ -337,35 +326,32 @@ export class ContainersStore extends ComponentStore<ContainersState> {
       return;
     }
 
-    this.patchState({ selectedContainer });
+    patchState(this.state, { selectedContainer });
   }
 
   resetContainer(): void {
-    this.patchState({ selectedContainer: null });
+    patchState(this.state, { selectedContainer: null });
   }
 
-  private readonly listenForMetrics = this.effect((trigger$) => {
-    return trigger$.pipe(
-      switchMap(() => this.router.events.pipe(
-        startWith(null),
-        filter((event): event is NavigationEnd | null => !event || event instanceof NavigationEnd),
-        map((event) => (event ? event.urlAfterRedirects : this.router.url)),
-        map((url) => url.includes('/containers/view')),
-        distinctUntilChanged(),
-        switchMap((shouldSubscribe) => {
-          if (!shouldSubscribe) {
-            return EMPTY;
-          }
-          return this.api.subscribe('container.metrics').pipe(
-            // Generated as a dictionary of `unknown`; the UI's `ContainerStats` names what it reads.
-            map((event) => (event.msg === 'added' ? event.fields as unknown as ContainerMetrics : null)),
-            filter((metrics) => metrics !== null),
-          );
-        }),
-        tap((metrics) => this.patchState({ metrics })),
-        catchError(() => EMPTY),
-      )),
+  private listenForMetrics(): void {
+    this.router.events.pipe(
+      startWith(null),
+      filter((event): event is NavigationEnd | null => !event || event instanceof NavigationEnd),
+      map((event) => (event ? event.urlAfterRedirects : this.router.url)),
+      map((url) => url.includes('/containers/view')),
+      distinctUntilChanged(),
+      switchMap((shouldSubscribe) => {
+        if (!shouldSubscribe) {
+          return EMPTY;
+        }
+        return this.api.subscribe('container.metrics').pipe(
+          // Generated as a dictionary of `unknown`; the UI's `ContainerStats` names what it reads.
+          map((event) => (event.msg === 'added' ? event.fields as unknown as ContainerMetrics : null)),
+          filter((metrics) => metrics !== null),
+        );
+      }),
+      catchError(() => EMPTY),
       takeUntilDestroyed(this.destroyRef),
-    );
-  });
+    ).subscribe((metrics) => patchState(this.state, { metrics }));
+  }
 }

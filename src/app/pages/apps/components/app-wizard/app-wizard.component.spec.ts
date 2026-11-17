@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
@@ -242,6 +243,9 @@ const appVersion120 = {
 describe('AppWizardComponent', () => {
   let spectator: Spectator<AppWizardComponent>;
   let loader: HarnessLoader;
+  const selectedPool = signal<string | null>('pool set');
+
+  beforeEach(() => selectedPool.set('pool set'));
 
   const existingCatalogApp = {
     name: 'ipfs',
@@ -324,7 +328,7 @@ describe('AppWizardComponent', () => {
         }),
       ]),
       mockProvider(DockerStore, {
-        selectedPool$: of('pool set'),
+        selectedPool,
       }),
       mockProvider(Router),
       mockAuth(),
@@ -354,8 +358,7 @@ describe('AppWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(DockerStore);
-      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      selectedPool.set(null);
       spectator.component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'stable', 'app_name']);
@@ -420,8 +423,7 @@ describe('AppWizardComponent', () => {
       const router = spectator.inject(Router);
       jest.spyOn(router, 'navigate').mockImplementation();
 
-      const store = spectator.inject(DockerStore);
-      Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+      selectedPool.set(null);
       spectator.component.ngOnInit();
 
       expect(router.navigate).toHaveBeenCalledWith(['/apps/available', 'stable', 'ipfs']);

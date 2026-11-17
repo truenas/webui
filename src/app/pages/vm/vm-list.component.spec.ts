@@ -304,6 +304,20 @@ describe('VmListComponent', () => {
       expect(await toggle.isChecked()).toBe(true);
     });
 
+    // A suspended VM's switch reads off like a stopped one, so the label is what tells them apart.
+    it('labels a suspended VM as Suspended beside its Running switch', async () => {
+      expect(await table.getCellText(1, 'status')).toBe('');
+
+      emitVmEvent({
+        msg: CollectionChangeType.Changed,
+        id: virtualMachines[1].id,
+        fields: { id: virtualMachines[1].id, status: { state: VmState.Suspended } } as Partial<VirtualMachine>,
+      });
+
+      expect(await table.getCellText(1, 'status')).toBe('Suspended');
+      expect(await (await getToggle('running', 'test_refactoring')).isChecked()).toBe(false);
+    });
+
     // Regression: the table is [clickable], and its row handler preventDefaults Enter/Space
     // for any keydown that reaches it — which would cancel the checkbox's own Space
     // activation and expand the row instead of flipping the switch.

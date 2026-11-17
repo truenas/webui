@@ -7,7 +7,7 @@
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
 import { selectRow } from './table';
-import { snapshotLocators, snapshotRowTag } from '../locators/snapshots';
+import { datasetScopeLocators, snapshotLocators, snapshotRowTag } from '../locators/snapshots';
 import { datasetLocators } from '../locators/storage';
 
 /** How long the datasets tree, or the snapshot list, may take to render. */
@@ -53,6 +53,21 @@ export async function openSnapshotList(page: Page, dataset: string): Promise<voi
 
   await page.locator(snapshotLocators.card.viewSnapshots).click();
   await expect(page.locator(snapshotLocators.list.add)).toBeVisible({ timeout: pageSettleTimeoutMs });
+}
+
+/**
+ * Removes the dataset scope from the list that is open, the snapshot list or
+ * the periodic snapshot task list, and waits for its chip to go.
+ *
+ * By the keyboard: a click on the chip focuses its body, whose Delete key is
+ * the chip's own remove shortcut. Its × button has no id of its own.
+ */
+export async function clearDatasetScope(page: Page): Promise<void> {
+  const chip = page.locator(datasetScopeLocators.chip);
+
+  await chip.click();
+  await page.keyboard.press('Delete');
+  await expect(chip).toBeHidden();
 }
 
 /**

@@ -1,8 +1,9 @@
 /**
  * Stories: an admin sets and removes a dataset's quotas, reservations and quota warning threshold from the Space
- * Management card, and the form refuses a quota below 1 GiB. Saves are checked on the card and through
- * `pool.dataset.query`, the stronger check: sizes must arrive as bytes, and the form sends only changed fields.
- * The dataset is recreated around every test, since a leaked reservation would hold pool space from later tests.
+ * Management card, removes quotas by entering 0, and the form refuses a quota between 0 and 1 GiB. Saves are
+ * checked on the card and through `pool.dataset.query`, the stronger check: sizes must arrive as bytes, and the
+ * form sends only changed fields. The dataset is recreated around every test, since a leaked reservation would
+ * hold pool space from later tests.
  */
 import { readCapacity, setCapacity } from '../fixtures/dataset-capacity';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
@@ -28,7 +29,7 @@ const configured = {
 };
 
 /** `helptextDatasetForm.quotaTooSmall`. */
-const quotaTooSmallMessage = 'Quota size is too small. Enter a value of 1 GiB or larger.';
+const quotaTooSmallMessage = 'Enter 0 to remove the quota, or a value of 1 GiB or larger.';
 
 const card = datasetCapacityLocators.card;
 const form = datasetCapacityLocators.form;
@@ -110,6 +111,36 @@ test('an admin removes the quotas and reservations, and the threshold is inherit
     refreservation: 0,
     reservation: 0,
     refquotaWarning: inheritedWarning,
+  });
+});
+
+test('an admin removes both quotas by entering 0, as the tooltip says', async ({ page, api, pool }) => {
+  const dataset = `${pool}/${datasetLeaf}`;
+  await setCapacity(api, dataset, configured);
+
+  await openCapacitySettings(page, dataset);
+  // Seen first, so that its going away below is the save and not a card still loading.
+  await expect(page.locator(card.appliedQuota)).toBeVisible();
+
+  await page.locator(form.refquota).fill('0');
+  await page.locator(form.quota).fill('0');
+  await page.locator(form.quota).blur();
+
+  // A refused 0 would show the message here and disable Save. The quota field has no id of its own,
+  // so Save, which an error in either field disables, stands for it.
+  await expect(page.locator(form.refquotaField)).not.toContainText(quotaTooSmallMessage);
+  await expect(page.locator(form.save)).toBeEnabled();
+  await saveDatasetForm(page);
+
+  await expect(page.locator(card.appliedQuota)).toBeHidden();
+
+  // The reservations were not touched, so they keep their seeded values.
+  expect(await readCapacity(api, dataset)).toEqual({
+    refquota: 0,
+    quota: 0,
+    refreservation: configured.refreservation,
+    reservation: configured.reservation,
+    refquotaWarning: String(configured.refquotaWarning),
   });
 });
 

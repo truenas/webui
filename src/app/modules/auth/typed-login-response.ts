@@ -6,6 +6,8 @@ import { LoginExResponse, LoginExResponseType } from 'app/interfaces/auth.interf
 const refusedCredentialCodes: AuthErrorCode[] = [
   AuthErrorCode.PasswordAuthFailed,
   AuthErrorCode.OtpAuthFailed,
+  // A second code after middleware dropped the login: the user starts over with the password.
+  AuthErrorCode.OtpLoginNotPending,
   AuthErrorCode.ApiKeyAuthFailed,
   AuthErrorCode.TokenAuthFailed,
 ];

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
@@ -9,7 +9,6 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -46,7 +45,6 @@ import { EntitlementsService } from 'app/services/entitlements.service';
 })
 export class PoolsDashboardComponent implements OnInit {
   private formPanel = inject(FormSidePanelService);
-  private cdr = inject(ChangeDetectorRef);
   private store = inject(PoolsDashboardStore);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -72,22 +70,14 @@ export class PoolsDashboardComponent implements OnInit {
    */
   protected readonly emptyMessage = T('Storage features in TrueNAS require at least one Pool to exist. A Pool is a group of disks working together to store and protect your data. Once you have a pool, this page will provide an overview of your pool’s health and status.');
 
-  protected rootDatasets: Record<string, Dataset> = {};
-
   protected readonly pools = this.store.pools;
   protected readonly arePoolsLoading = this.store.arePoolsLoading;
   protected readonly isLoadingPoolDetails = this.store.isLoadingPoolDetails;
+  protected readonly rootDatasets = this.store.rootDatasets;
 
   protected readonly hasNoPools = computed(() => this.pools().length === 0);
 
   ngOnInit(): void {
-    this.store.rootDatasets$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((rootDatasets) => {
-        this.rootDatasets = rootDatasets;
-        this.cdr.markForCheck();
-      });
-
     // Prime the shared tier config so child cards (pool-usage-card, vdevs-card)
     // can read tierService.tierEnabled directly without each subscribing.
     // Fetched again on each visit: tiering can be changed outside this tab.

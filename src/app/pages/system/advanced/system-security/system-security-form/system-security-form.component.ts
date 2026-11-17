@@ -18,6 +18,7 @@ import {
   TnProgressBarComponent, TnSelectComponent, TnSlideToggleComponent,
   TnTestIdDirective,
 } from '@truenas/ui-components';
+import { omit } from 'lodash-es';
 import {
   filter, finalize, map, Observable, of, switchMap, tap, forkJoin, zip,
 } from 'rxjs';
@@ -149,6 +150,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
     // if STIG is enabled, then FIPS mode *must* also be enabled since FIPS is part of STIG
     enable_fips: [false, this.stigValidatorFn],
     enable_gpos_stig: [false],
+    require_nts: [false],
     min_password_age: [
       null as number | null,
       [Validators.min(1), Validators.max(365), this.stigValidatorFn],
@@ -579,7 +581,12 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
   }
 
   private saveSettings(values: SystemSecurityConfig): Observable<unknown> {
-    const valuesToSave = { ...values };
+    // `require_nts` goes out only when it changes: the update leaves an omitted field as it is, and middleware
+    // older than NAS-144162 refuses the field outright.
+    const valuesToSave: Partial<SystemSecurityConfig> = Boolean(values.require_nts)
+      === Boolean(this.systemSecurityConfig()?.require_nts)
+      ? omit(values, 'require_nts')
+      : { ...values };
     if (valuesToSave.password_complexity_ruleset) {
       valuesToSave.password_complexity_ruleset = {
         $set: valuesToSave.password_complexity_ruleset as unknown as PasswordComplexityRuleset[],

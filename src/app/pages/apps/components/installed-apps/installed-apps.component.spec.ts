@@ -1,6 +1,7 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import {
@@ -11,7 +12,7 @@ import { TnTableHarness } from '@truenas/ui-components';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -26,15 +27,13 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppsSort, InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 import { selectAdvancedConfig, selectSystemConfigState } from 'app/store/system-config/system-config.selectors';
 
 describe('InstalledAppsComponent', () => {
   let spectator: Spectator<InstalledAppsComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
-  let searchQuery$: BehaviorSubject<string>;
-  let sortingInfo$: BehaviorSubject<{ active: string; direction: string }>;
 
   const app = {
     id: 'ix-test-app',
@@ -61,21 +60,23 @@ describe('InstalledAppsComponent', () => {
     ],
     providers: [
       mockProvider(DockerStore, {
-        isDockerStarted$: of(true),
-        selectedPool$: of('pool'),
+        isDockerStarted: signal(true),
+        selectedPool: signal('pool'),
+        status: signal(null),
+        statusDescription: signal(null),
       }),
       {
         provide: InstalledAppsStore,
         useFactory: () => {
-          searchQuery$ = new BehaviorSubject('');
-          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' });
+          const searchQuery = signal('');
+          const sortingInfo = signal<AppsSort>({ active: 'application', direction: 'asc' });
           return {
-            isLoading$: of(false),
-            installedApps$: of([app]),
-            searchQuery$: searchQuery$.asObservable(),
-            sortingInfo$: sortingInfo$.asObservable(),
-            setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
-            setSortingInfo: jest.fn((info: { active: string; direction: string }) => sortingInfo$.next(info)),
+            isLoading: signal(false),
+            installedApps: signal([app]),
+            searchQuery,
+            sortingInfo,
+            setSearchQuery: jest.fn((query: string) => searchQuery.set(query)),
+            setSortingInfo: jest.fn((info: AppsSort) => sortingInfo.set(info)),
           };
         },
       },
@@ -83,8 +84,8 @@ describe('InstalledAppsComponent', () => {
         navigatePreservingScroll: jest.fn(() => of()),
       }),
       mockProvider(AppsStore, {
-        isLoading$: of(false),
-        availableApps$: of([]),
+        isLoading: signal(false),
+        availableApps: signal([]),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -117,7 +118,7 @@ describe('InstalledAppsComponent', () => {
       mockApi([]),
       mockAuth(),
       mockProvider(AppsStatsService, {
-        getStatsForApp: jest.fn(() => of(null)),
+        getStatsForApp: jest.fn(),
       }),
     ],
     params: { appId: 'ix-test-app' },

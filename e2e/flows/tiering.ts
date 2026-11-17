@@ -4,9 +4,9 @@
  * Change Storage Tier from the dataset details card or from a share's row.
  */
 import { expect, type Page } from '@playwright/test';
+import { expandDatasetNode, selectDatasetNode } from './dataset-tree';
 import { goToDatasets, goToStorage } from './navigation';
 import { confirmDialogLocators } from '../locators/dialogs';
-import { datasetLocators } from '../locators/storage';
 import {
   changeTierDialogLocators, datasetTierLocators, migrationStatusDialogLocators, tierConfigLocators,
 } from '../locators/tiering';
@@ -37,9 +37,8 @@ export async function saveTierConfig(page: Page): Promise<void> {
  * Selects a dataset in the tree, so its details card and tier row are on screen.
  *
  * Opens its pool first: the page expands only the first pool, so in a full run (shared pool present) the
- * tier pool is collapsed and its datasets are not rendered. Selecting a node expands it, as a user would;
- * searching keeps the pool row but leaves it collapsed. `name` is the full dataset id; see
- * `openDeleteDatasetDialog`.
+ * tier pool is collapsed and its datasets are not rendered. Searching does not help: the filter keeps the
+ * pool row but leaves it collapsed. `name` is the full dataset id; see `openDeleteDatasetDialog`.
  */
 export async function selectDataset(page: Page, name: string): Promise<void> {
   await goToDatasets(page);
@@ -48,11 +47,8 @@ export async function selectDataset(page: Page, name: string): Promise<void> {
     throw new Error(`"${name}" is not a dataset under a pool: expected "<pool>/<dataset>".`);
   }
   const pool = name.slice(0, name.indexOf('/'));
-  await page.locator(datasetLocators.treeNode(pool)).click();
-
-  const node = page.locator(datasetLocators.treeNode(name));
-  await expect(node).toBeVisible();
-  await node.click();
+  await expandDatasetNode(page, pool);
+  await selectDatasetNode(page, name);
 
   await expect(page.locator(datasetTierLocators.change)).toBeVisible();
 }

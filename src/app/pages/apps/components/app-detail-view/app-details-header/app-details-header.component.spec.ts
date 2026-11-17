@@ -1,7 +1,7 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { AppCardLogoComponent } from 'app/pages/apps/components/app-card-logo/app-card-logo.component';
 import {
@@ -33,7 +33,7 @@ describe('AppDetailsHeaderComponent', () => {
     ],
     providers: [
       mockProvider(InstalledAppsStore, {
-        installedApps$: of([application]),
+        installedApps: signal([application]),
       }),
     ],
   });

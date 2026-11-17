@@ -22,6 +22,7 @@ const fakeDataSource: NtpServer[] = [
     prefer: false,
     minpoll: 6,
     maxpoll: 10,
+    nts: false,
   },
   {
     id: 3,
@@ -31,6 +32,7 @@ const fakeDataSource: NtpServer[] = [
     prefer: false,
     minpoll: 6,
     maxpoll: 10,
+    nts: false,
   },
   {
     id: 10,
@@ -40,6 +42,7 @@ const fakeDataSource: NtpServer[] = [
     prefer: false,
     minpoll: 6,
     maxpoll: 10,
+    nts: true,
   },
 ];
 
@@ -81,11 +84,11 @@ describe('NtpServersCardComponent', () => {
 
   it('should show table rows', async () => {
     expect(api.query).toHaveBeenCalledWith('system.ntpserver.query');
-    expect(await table.getHeaderTexts()).toEqual(['Address', 'Burst', 'IBurst', 'Prefer', 'Min Poll', 'Max Poll', '']);
+    expect(await table.getHeaderTexts()).toEqual(['Address', 'NTS', 'Burst', 'IBurst', 'Prefer', 'Min Poll', 'Max Poll', '']);
     expect(await table.getAllRowTexts()).toEqual([
-      ['2.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
-      ['1.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
-      ['0.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
+      ['2.debian.pool.ntp.org', 'No', 'No', 'Yes', 'No', '6', '10', ''],
+      ['1.debian.pool.ntp.org', 'No', 'No', 'Yes', 'No', '6', '10', ''],
+      ['0.debian.pool.ntp.org', 'Yes', 'No', 'Yes', 'No', '6', '10', ''],
     ]);
   });
 

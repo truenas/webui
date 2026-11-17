@@ -7,6 +7,7 @@ import {
   noopLogger,
   QueryEntity,
   QueryMethod,
+  QueryRow,
   TrueNasApiClient,
   v28_0_0,
 } from '@truenas/api-client';
@@ -51,8 +52,17 @@ export type WebUiApiClient = TrueNasApiClient<WebUiApiDirectory>;
 /** A `.query` method of {@link WebUiApiDirectory}, as the query verbs take it. */
 export type WebUiQueryMethod = QueryMethod<WebUiApiDirectory['call']>;
 
-/** The entity a query method returns rows of, e.g. `WebUiQueryEntity<'user.query'>`. */
+/**
+ * The entity a query method is filtered by, e.g. `WebUiQueryEntity<'user.query'>`. Use
+ * {@link WebUiQueryRow} for the rows it returns.
+ */
 export type WebUiQueryEntity<M extends WebUiQueryMethod> = QueryEntity<WebUiApiDirectory['call'], M>;
+
+/**
+ * A row a query method returns: the entity, except that `core.get_jobs` rows are the client's `Job`,
+ * with `state` as `JobState` and the timestamps as `{ $date }`.
+ */
+export type WebUiQueryRow<M extends WebUiQueryMethod> = QueryRow<WebUiApiDirectory['call'], M>;
 
 /**
  * One filter for a query verb, for filters built up before the call rather than

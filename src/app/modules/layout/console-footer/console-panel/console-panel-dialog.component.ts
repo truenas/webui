@@ -1,10 +1,13 @@
 import { DialogRef } from '@angular/cdk/dialog';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  afterRenderEffect, ChangeDetectionStrategy, Component, ElementRef, inject, viewChild,
+} from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent } from '@truenas/ui-components';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
+
+/** How far from the bottom, in pixels, still counts as being at the bottom. */
+const bottomTolerance = 3;
 
 @Component({
   selector: 'ix-console-panel-dialog',
@@ -14,44 +17,37 @@ import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-
   imports: [
     TnDialogShellComponent,
     TnButtonComponent,
-    AsyncPipe,
     TranslateModule,
   ],
 })
-export class ConsolePanelDialog implements OnInit {
+export class ConsolePanelDialog {
   protected dialogRef = inject<DialogRef<boolean, ConsolePanelDialog>>(DialogRef);
   private messagesStore = inject(ConsoleMessagesStore);
-  private destroyRef = inject(DestroyRef);
 
-  private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
+  private readonly messageContainer = viewChild.required('messageContainer', { read: ElementRef<HTMLElement> });
 
-  lines$ = this.messagesStore.lines$;
+  protected readonly lines = this.messagesStore.lines;
 
-  get isScrolledToBottom(): boolean {
-    const delta = 3;
-    const nativeElement = this.messageContainer().nativeElement;
-    return nativeElement.scrollHeight - nativeElement.scrollTop - nativeElement.clientHeight <= delta;
-  }
+  /**
+   * Whether new lines should keep the view pinned to the bottom. Tracked from scroll events rather than measured
+   * when lines arrive, because by the time the view can be scrolled the new lines have already grown it.
+   */
+  private followsNewLines = true;
 
-  ngOnInit(): void {
-    this.scrollToBottomOnNewMessages();
-  }
-
-  private scrollToBottomOnNewMessages(): void {
-    this.lines$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      if (!this.isScrolledToBottom) {
-        // User scrolled up, don't scroll down
-        return;
-      }
-
-      this.scrollToBottom();
+  constructor() {
+    afterRenderEffect({
+      write: () => {
+        this.lines();
+        if (this.followsNewLines) {
+          const element = this.messageContainer().nativeElement;
+          element.scrollTop = element.scrollHeight;
+        }
+      },
     });
   }
 
-  private scrollToBottom(): void {
-    const nativeElement = this.messageContainer().nativeElement;
-    setTimeout(() => {
-      nativeElement.scroll({ top: nativeElement.scrollHeight });
-    });
+  protected onScroll(): void {
+    const element = this.messageContainer().nativeElement;
+    this.followsNewLines = element.scrollHeight - element.scrollTop - element.clientHeight <= bottomTolerance;
   }
 }

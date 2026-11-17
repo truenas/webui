@@ -1,12 +1,14 @@
-import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { allCommands } from 'app/constants/all-commands.constant';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { Role } from 'app/enums/role.enum';
 import { Choices } from 'app/interfaces/choices.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { UserFormStore, UserStigPasswordOption } from 'app/pages/credentials/users/user-form/user.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('UserFormStore', () => {
   let spectator: SpectatorService<UserFormStore>;
@@ -25,6 +27,7 @@ describe('UserFormStore', () => {
           '/usr/bin/zsh': 'zsh',
         } as Choices),
       ]),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -33,27 +36,25 @@ describe('UserFormStore', () => {
   });
 
   it('checks initial value', () => {
-    expect(spectator.service.state()).toEqual({
-      isStigMode: false,
-      setupDetails: {
-        allowedAccess: {
-          shellAccess: false,
-          smbAccess: true,
-          webshareAccess: false,
-          sshAccess: false,
-          truenasAccess: false,
-        },
-        defaultPermissions: true,
-        homeModeOldValue: '',
-        role: null,
-        stigPassword: UserStigPasswordOption.DisablePassword,
+    expect(spectator.service.isStigMode()).toBe(false);
+    expect(spectator.service.userConfig()).toBeNull();
+    expect(spectator.service.setupDetails()).toEqual({
+      allowedAccess: {
+        shellAccess: false,
+        smbAccess: true,
+        webshareAccess: false,
+        sshAccess: false,
+        truenasAccess: false,
       },
-      userConfig: null,
+      defaultPermissions: true,
+      homeModeOldValue: '',
+      role: null,
+      stigPassword: UserStigPasswordOption.DisablePassword,
     });
   });
 
   it('checks payload on submit', () => {
-    spectator.service.initialize();
+    spectator.service.loadStigMode();
     spectator.service.updateUserConfig({
       username: 'operator',
       full_name: 'Operator',
@@ -80,7 +81,7 @@ describe('UserFormStore', () => {
   });
 
   it('checks payload on edit user', () => {
-    spectator.service.initialize();
+    spectator.service.loadStigMode();
     spectator.service.updateUserConfig({
       uid: 1004,
       username: 'test',
@@ -187,7 +188,30 @@ describe('UserFormStore', () => {
     });
 
     it('should return correct isStigMode value', () => {
-      spectator.service.initialize();
+      spectator.service.loadStigMode();
+      expect(spectator.service.isStigMode()).toBe(false);
+    });
+
+    it('turns isStigMode on when the system runs in STIG mode', async () => {
+      spectator.inject(MockApiService).mockCall('system.security.config', {
+        enable_gpos_stig: true,
+      } as unknown as CallResponse<WebUiApiDirectory, 'system.security.config'>);
+
+      spectator.service.loadStigMode();
+      await settleApi();
+
+      expect(spectator.service.isStigMode()).toBe(true);
+    });
+
+    it('logs a failed STIG lookup instead of opening an error modal, and stays non-STIG', async () => {
+      spectator.inject(MockApiService).mockCallError('system.security.config');
+
+      spectator.service.loadStigMode();
+      await settleApi();
+
+      const errorHandler = spectator.inject(ErrorHandlerService);
+      expect(errorHandler.handleError).toHaveBeenCalled();
+      expect(errorHandler.showErrorModal).not.toHaveBeenCalled();
       expect(spectator.service.isStigMode()).toBe(false);
     });
   });
@@ -204,7 +228,7 @@ describe('UserFormStore', () => {
 
       spectator.service.setAllowedAccessConfig(newConfig);
 
-      expect(spectator.service.state().setupDetails.allowedAccess).toEqual(newConfig);
+      expect(spectator.service.setupDetails().allowedAccess).toEqual(newConfig);
     });
   });
 
@@ -214,9 +238,9 @@ describe('UserFormStore', () => {
         defaultPermissions: false,
       });
 
-      expect(spectator.service.state().setupDetails.defaultPermissions).toBe(false);
+      expect(spectator.service.setupDetails().defaultPermissions).toBe(false);
       // Other fields should remain unchanged
-      expect(spectator.service.state().setupDetails.stigPassword).toBe(UserStigPasswordOption.DisablePassword);
+      expect(spectator.service.setupDetails().stigPassword).toBe(UserStigPasswordOption.DisablePassword);
     });
 
     it('should update homeModeOldValue', () => {
@@ -240,7 +264,7 @@ describe('UserFormStore', () => {
         stigPassword: UserStigPasswordOption.OneTimePassword,
       });
 
-      expect(spectator.service.state().setupDetails.stigPassword).toBe(UserStigPasswordOption.OneTimePassword);
+      expect(spectator.service.setupDetails().stigPassword).toBe(UserStigPasswordOption.OneTimePassword);
     });
   });
 
@@ -271,7 +295,7 @@ describe('UserFormStore', () => {
 
   describe('createUser with STIG mode', () => {
     it('should create user with disabled password in STIG mode', () => {
-      spectator.service.initialize();
+      spectator.service.loadStigMode();
       spectator.service.updateSetupDetails({
         stigPassword: UserStigPasswordOption.DisablePassword,
       });
@@ -295,7 +319,7 @@ describe('UserFormStore', () => {
     });
 
     it('should create user with one-time password in STIG mode', () => {
-      spectator.service.initialize();
+      spectator.service.loadStigMode();
       spectator.service.updateSetupDetails({
         stigPassword: UserStigPasswordOption.OneTimePassword,
       });
@@ -320,7 +344,7 @@ describe('UserFormStore', () => {
 
   describe('updateUser with home_create', () => {
     it('should make two API calls when home_create is true', async () => {
-      spectator.service.initialize();
+      spectator.service.loadStigMode();
       spectator.service.updateUserConfig({
         username: 'test',
         home: '/mnt/tank/home/test',
@@ -345,7 +369,7 @@ describe('UserFormStore', () => {
     });
 
     it('should make single API call when home_create is false', () => {
-      spectator.service.initialize();
+      spectator.service.loadStigMode();
       spectator.service.updateUserConfig({
         username: 'test',
         home: '/mnt/tank/home/test',

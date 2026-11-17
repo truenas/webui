@@ -1,14 +1,9 @@
-import { computed, Injectable, inject } from '@angular/core';
-import { toObservable } from '@angular/core/rxjs-interop';
-import { ComponentStore } from '@ngrx/component-store';
+import { Injectable, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import {
-  switchMap, catchError, tap,
-  EMPTY,
-  filter,
-  map,
-  Observable,
-  take,
-  of,
+  filter, map, pipe, switchMap, tap,
 } from 'rxjs';
 import { Container, ContainerDevice, toContainerDeviceEntry } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -31,49 +26,61 @@ const initialState: ContainerDeviceState = {
 };
 
 @Injectable()
-export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> {
+export class ContainerDevicesStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private containersStore = inject(ContainersStore);
 
-  readonly isLoading = computed(() => this.state().isLoading);
-  readonly devices = computed(() => this.state().devices);
-  readonly gpuChoices = computed(() => this.state().gpuChoices);
-  readonly isLoadingGpuChoices = computed(() => this.state().isLoadingGpuChoices);
+  private readonly state = signalState(initialState);
+
+  readonly isLoading = this.state.isLoading;
+  readonly devices = this.state.devices;
+  readonly gpuChoices = this.state.gpuChoices;
+  readonly isLoadingGpuChoices = this.state.isLoadingGpuChoices;
   private readonly selectedContainer = this.containersStore.selectedContainer;
 
-  readonly loadDevices = this.effect((container$: Observable<Container | undefined>) => {
-    return container$.pipe(
-      tap((container) => {
-        if (!container) {
-          this.patchState({ devices: [], isLoading: false });
-        }
+  /**
+   * Loads devices of a container, or clears them when there is none. Both the selection tracking
+   * and `reload()` feed it, so a newer request always replaces an older one still in flight.
+   */
+  private readonly loadDevices = rxMethod<Container | undefined>(pipe(
+    tap((container) => {
+      if (!container) {
+        patchState(this.state, { devices: [], isLoading: false });
+      }
+    }),
+    filter(Boolean),
+    tap(() => patchState(this.state, { isLoading: true })),
+    switchMap((container) => this.api.query('container.device.query', [['container', '=', container.id]]).pipe(
+      map((containerDevices) => containerDeviceEntriesToDevices(containerDevices.map(toContainerDeviceEntry))),
+      tapResponse({
+        next: (devices) => patchState(this.state, { devices }),
+        error: (error: unknown) => {
+          patchState(this.state, { devices: [] });
+          this.errorHandler.showErrorModal(error);
+        },
+        finalize: () => patchState(this.state, { isLoading: false }),
       }),
-      filter(Boolean),
-      switchMap((container) => this.fetchDevicesForContainer(container)),
-    );
-  });
+    )),
+  ));
+
+  private readonly loadGpuChoices = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, { isLoadingGpuChoices: true })),
+    switchMap(() => this.api.call('container.device.gpu_choices').pipe(
+      tapResponse({
+        next: (gpuChoices) => patchState(this.state, { gpuChoices }),
+        error: (error: unknown) => {
+          patchState(this.state, { gpuChoices: {} });
+          this.errorHandler.showErrorModal(error);
+        },
+        finalize: () => patchState(this.state, { isLoadingGpuChoices: false }),
+      }),
+    )),
+  ));
 
   constructor() {
-    super(initialState);
-    this.loadDevices(toObservable(this.selectedContainer));
+    this.loadDevices(this.selectedContainer);
     this.loadGpuChoices();
-  }
-
-  private loadGpuChoices(): void {
-    this.patchState({ isLoadingGpuChoices: true });
-    this.api.call('container.device.gpu_choices').pipe(
-      take(1),
-      catchError((error: unknown) => {
-        this.errorHandler.showErrorModal(error);
-        return of({});
-      }),
-    ).subscribe((gpuChoices) => {
-      this.patchState({
-        gpuChoices,
-        isLoadingGpuChoices: false,
-      });
-    });
   }
 
   /**
@@ -83,26 +90,8 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
   reload(): void {
     const container = this.selectedContainer();
     if (container) {
-      this.fetchDevicesForContainer(container).pipe(take(1)).subscribe();
+      this.loadDevices(container);
     }
-  }
-
-  private fetchDevicesForContainer(container: Container): Observable<ContainerDevice[]> {
-    this.patchState({ isLoading: true });
-    return this.api.query('container.device.query', [['container', '=', container.id]]).pipe(
-      map((containerDevices) => containerDeviceEntriesToDevices(containerDevices.map(toContainerDeviceEntry))),
-      tap((devices) => {
-        this.patchState({
-          devices,
-          isLoading: false,
-        });
-      }),
-      catchError((error: unknown) => {
-        this.patchState({ isLoading: false, devices: [] });
-        this.errorHandler.showErrorModal(error);
-        return EMPTY;
-      }),
-    );
   }
 
   /**
@@ -110,7 +99,8 @@ export class ContainerDevicesStore extends ComponentStore<ContainerDeviceState> 
    * and handles no errors, so calling it early desyncs the UI from the backend.
    */
   deviceDeleted(deviceId: number): void {
-    const devices = this.devices().filter((device) => device.id !== deviceId);
-    this.patchState({ devices });
+    patchState(this.state, (state) => ({
+      devices: state.devices.filter((device) => device.id !== deviceId),
+    }));
   }
 }

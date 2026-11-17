@@ -1,9 +1,7 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, firstValueFrom, filter, throwError } from 'rxjs';
-import { TestScheduler } from 'rxjs/testing';
+import { Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
-import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -13,21 +11,11 @@ import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
-import { AppsState, AppsStore } from 'app/pages/apps/store/apps-store.service';
+import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('AppsStore', () => {
   let spectator: SpectatorService<AppsStore>;
-  let testScheduler: TestScheduler;
-
-  const initialState: AppsState = {
-    availableApps: [],
-    recommendedApps: [],
-    latestApps: [],
-    categories: [],
-    isLoading: false,
-    isSyncingCatalog: false,
-  };
 
   const installedAndRecommendedApp: AvailableApp = {
     catalog: 'TRUENAS',
@@ -90,43 +78,41 @@ describe('AppsStore', () => {
   beforeEach(() => {
     spectator = createService();
     spectator.service.initialize();
-    testScheduler = getTestScheduler();
   });
 
-  it('initializes the correct state', () => {
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.state$).toBe('b', {
-        b: {
-          ...initialState,
-          availableApps: [...availableApps],
-          categories: ['storage', 'media'],
-          latestApps: [{ ...installedAndRecommendedApp }],
-          recommendedApps: [{ ...installedAndRecommendedApp, categories: ['storage', 'recommended'] }],
-
-        } as AppsState,
-      });
-    });
+  it('loads the catalog', () => {
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.availableApps()).toEqual(availableApps);
+    expect(spectator.service.latestApps()).toEqual([installedAndRecommendedApp]);
+    expect(spectator.service.recommendedApps()).toEqual([
+      { ...installedAndRecommendedApp, categories: ['storage', AppExtraCategory.Recommended] },
+    ]);
   });
 
-  it('emits the categories with the extra categories added in', () => {
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.appsCategories$).toBe('a', {
-        a: [
-          'storage',
-          'media',
-          AppExtraCategory.NewAndUpdated,
-          AppExtraCategory.Recommended,
-        ],
-      });
-    });
+  it('adds the extra categories to the catalog categories', () => {
+    expect(spectator.service.appsCategories()).toEqual([
+      'storage',
+      'media',
+      AppExtraCategory.NewAndUpdated,
+      AppExtraCategory.Recommended,
+    ]);
   });
 
-  it('emits the available apps returned by middleware', () => {
-    testScheduler.run(({ expectObservable }) => {
-      expectObservable(spectator.service.availableApps$).toBe('a', {
-        a: [...availableApps],
-      });
-    });
+  it('marks an app as installed or removed everywhere in the catalog', () => {
+    spectator.service.setAppInstalled('plex', true);
+
+    expect(spectator.service.availableApps()).toEqual([{ ...plexApp, installed: true }, installedAndRecommendedApp]);
+
+    spectator.service.setAppInstalled('syncthing', false);
+
+    expect(spectator.service.availableApps()).toEqual([
+      { ...plexApp, installed: true },
+      { ...installedAndRecommendedApp, installed: false },
+    ]);
+    expect(spectator.service.latestApps()).toEqual([{ ...installedAndRecommendedApp, installed: false }]);
+    expect(spectator.service.recommendedApps()).toEqual([
+      { ...installedAndRecommendedApp, installed: false, categories: ['storage', AppExtraCategory.Recommended] },
+    ]);
   });
 
   it('does not trigger catalog sync when data is available', async () => {
@@ -152,8 +138,7 @@ describe('AppsStore', () => {
     expect(jobSpy).not.toHaveBeenCalled();
 
     // Verify loading is false
-    const isLoading = await firstValueFrom(spectator.service.isLoading$);
-    expect(isLoading).toBe(false);
+    expect(spectator.service.isLoading()).toBe(false);
   });
 
   describe('when catalog is empty on first load', () => {
@@ -243,15 +228,8 @@ describe('AppsStore', () => {
       expect(appsServiceMock.getAllAppsCategories).toHaveBeenCalledTimes(2);
     });
 
-    it('sets isLoading to false after sync completes', async () => {
-      // Wait for isLoading to become false using RxJS firstValueFrom
-      const isLoadingFalse = await firstValueFrom(
-        emptySpectator.service.isLoading$.pipe(
-          filter((isLoading) => isLoading === false),
-        ),
-      );
-
-      expect(isLoadingFalse).toBe(false);
+    it('sets isLoading to false after sync completes', () => {
+      expect(emptySpectator.service.isLoading()).toBe(false);
     });
 
     it('does not sync again when catalog has data', () => {
@@ -292,12 +270,7 @@ describe('AppsStore', () => {
       );
 
       // Verify loading state is set to false
-      const isLoading = await firstValueFrom(
-        emptySpectator.service.isLoading$.pipe(
-          filter((loading) => loading === false),
-        ),
-      );
-      expect(isLoading).toBe(false);
+      expect(emptySpectator.service.isLoading()).toBe(false);
     });
 
     it('handles individual service failures during reload after sync', async () => {
@@ -335,12 +308,7 @@ describe('AppsStore', () => {
       );
 
       // Verify loading state is set to false
-      const isLoading = await firstValueFrom(
-        emptySpectator.service.isLoading$.pipe(
-          filter((loading) => loading === false),
-        ),
-      );
-      expect(isLoading).toBe(false);
+      expect(emptySpectator.service.isLoading()).toBe(false);
     });
 
     it('handles getLatestApps failure during reload after sync', async () => {
@@ -378,12 +346,7 @@ describe('AppsStore', () => {
       );
 
       // Verify loading state is set to false
-      const isLoading = await firstValueFrom(
-        emptySpectator.service.isLoading$.pipe(
-          filter((loading) => loading === false),
-        ),
-      );
-      expect(isLoading).toBe(false);
+      expect(emptySpectator.service.isLoading()).toBe(false);
     });
 
     it('handles getAllAppsCategories failure during reload after sync', async () => {
@@ -421,12 +384,7 @@ describe('AppsStore', () => {
       );
 
       // Verify loading state is set to false
-      const isLoading = await firstValueFrom(
-        emptySpectator.service.isLoading$.pipe(
-          filter((loading) => loading === false),
-        ),
-      );
-      expect(isLoading).toBe(false);
+      expect(emptySpectator.service.isLoading()).toBe(false);
     });
   });
 });

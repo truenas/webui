@@ -58,6 +58,25 @@ describe('QuotasSectionComponent', () => {
     expect(emissions).toEqual([true]);
   });
 
+  it('accepts 0 in both quota fields and includes it in the payload', async () => {
+    await (await getInput('refquota')).setValue('0');
+    await (await getInput('quota')).setValue('0');
+
+    expect(spectator.component.form.valid).toBe(true);
+    expect(spectator.component.getPayload()).toEqual({
+      refquota: 0,
+      quota: 0,
+    });
+  });
+
+  it('rejects a quota between 0 and 1 GiB', async () => {
+    await (await getInput('refquota')).setValue('512 MiB');
+
+    expect(spectator.component.form.controls.refquota.errors).toEqual({
+      min: { message: 'Enter 0 to remove the quota, or a value of 1 GiB or larger.' },
+    });
+  });
+
   it('returns create payload when getPayload is called', async () => {
     await (await getCheckbox('refquota_warning_inherit')).uncheck();
     await (await getCheckbox('quota_critical_inherit')).uncheck();

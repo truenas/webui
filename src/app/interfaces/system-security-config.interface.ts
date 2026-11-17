@@ -7,6 +7,7 @@ type D = WebUiApiDirectory;
 export interface SystemSecurityConfig {
   enable_fips: boolean;
   enable_gpos_stig: boolean;
+  require_nts: boolean;
   min_password_age: number | null;
   max_password_age: number | null;
   password_complexity_ruleset: { $set: PasswordComplexityRuleset[] } | null;
@@ -17,7 +18,7 @@ export interface SystemSecurityConfig {
 /**
  * Reads `system.security.config`. Middleware's JSON encoder writes a Python set as a `{ $set: [...] }`
  * envelope, which is how `password_complexity_ruleset` arrives, while the generated model declares a
- * plain list of the rules.
+ * plain list of the rules. `require_nts` is newer than the generated model.
  */
 export function toSystemSecurityConfig(config: CallResponse<D, 'system.security.config'>): SystemSecurityConfig {
   return config as unknown as SystemSecurityConfig;
@@ -25,10 +26,11 @@ export function toSystemSecurityConfig(config: CallResponse<D, 'system.security.
 
 /**
  * `system.security.update` declares `password_complexity_ruleset` as a plain list; the form has always sent
- * the `{ $set }` envelope the config read returns. The request is unchanged.
+ * the `{ $set }` envelope the config read returns. The request is unchanged. The update is partial, so the form
+ * may leave fields out.
  */
 export function toSystemSecurityUpdateArgs(
-  config: SystemSecurityConfig,
+  config: Partial<SystemSecurityConfig>,
 ): JobParams<D, 'system.security.update'>[0] {
   return config as unknown as JobParams<D, 'system.security.update'>[0];
 }

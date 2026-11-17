@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
+  TnBannerHarness, TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { when } from 'jest-when';
 import { of, throwError } from 'rxjs';
@@ -38,6 +38,7 @@ const fakeEmailConfig: MailConfig = {
   pass: '12345678',
   port: 587,
   security: MailSecurity.Tls,
+  validate_certificate: true,
   smtp: true,
   user: 'authuser@ixsystems.com',
 };
@@ -296,6 +297,7 @@ describe('EmailFormComponent', () => {
         outgoingserver: 'smtp-mail.outlook.com',
         port: 587,
         security: 'TLS',
+        validate_certificate: true,
         oauth: {
           client_id: 'new_client_id',
           client_secret: 'new_secret',
@@ -330,6 +332,7 @@ describe('EmailFormComponent', () => {
             outgoingserver: 'smtp-mail.outlook.com',
             port: 587,
             security: 'TLS',
+            validate_certificate: true,
             oauth: {
               client_id: 'new_client_id',
               client_secret: 'new_secret',
@@ -371,6 +374,7 @@ describe('EmailFormComponent', () => {
         outgoingserver: 'smtp.ixsystems.com',
         port: 21,
         security: MailSecurity.Ssl,
+        validate_certificate: true,
         smtp: false,
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
@@ -408,6 +412,7 @@ describe('EmailFormComponent', () => {
             pass: '12345678',
             port: 587,
             security: MailSecurity.Tls,
+            validate_certificate: true,
             smtp: true,
             user: 'authuser@ixsystems.com',
           },
@@ -416,6 +421,83 @@ describe('EmailFormComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'Test email sent.',
       );
+    });
+
+    it('shows Validate Certificate checked for an encrypted connection and hides it for Plain', async () => {
+      expect(await (await getCheckbox('validate_certificate')).isChecked()).toBe(true);
+      expect(await (await getCheckbox('validate_certificate')).getLabelText())
+        .toBe('Validate the SMTP server certificate');
+
+      await (await getSelect('security')).selectOption('Plain (No Encryption)');
+
+      expect(await loader.getAllHarnesses(
+        TnCheckboxHarness.with({ selector: '[formControlName="validate_certificate"]' }),
+      )).toHaveLength(0);
+    });
+
+    it('warns and saves validate_certificate as false when certificate validation is turned off', async () => {
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+
+      await (await getCheckbox('validate_certificate')).uncheck();
+
+      const banner = await loader.getHarness(TnBannerHarness);
+      expect(await banner.getText()).toContain('Certificate validation is disabled.');
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.objectContaining({ validate_certificate: false }),
+      ]);
+    });
+
+    it('hides the warning when security is switched to Plain', async () => {
+      await (await getCheckbox('validate_certificate')).uncheck();
+      await (await getSelect('security')).selectOption('Plain (No Encryption)');
+
+      expect(await loader.getAllHarnesses(TnBannerHarness)).toHaveLength(0);
+    });
+  });
+
+  describe('middleware without validate_certificate', () => {
+    const legacyEmailConfig: MailConfig = { ...fakeEmailConfig };
+    delete legacyEmailConfig.validate_certificate;
+
+    beforeEach(async () => {
+      spectator = createComponent({ props: { config: legacyEmailConfig } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('hides the option and leaves validate_certificate out of the saved SMTP config', async () => {
+      expect(await loader.getAllHarnesses(
+        TnCheckboxHarness.with({ selector: '[formControlName="validate_certificate"]' }),
+      )).toHaveLength(0);
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.not.objectContaining({ validate_certificate: expect.anything() }),
+      ]);
+    });
+
+    it('leaves validate_certificate out of the saved Outlook config', async () => {
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
+
+      const logInButton = await loader.getHarness(TnButtonHarness.with({ label: 'Log In To Outlook' }));
+      await logInButton.click();
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.not.objectContaining({ validate_certificate: expect.anything() }),
+      ]);
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.objectContaining({ security: 'TLS', outgoingserver: 'smtp-mail.outlook.com' }),
+      ]);
     });
   });
 
@@ -518,6 +600,7 @@ describe('EmailFormComponent', () => {
           outgoingserver: 'smtp.gmail.com',
           port: 587,
           security: MailSecurity.Tls,
+          validate_certificate: true,
           smtp: true,
           user: 'authuser@ixsystems.com',
           pass: '12345678',

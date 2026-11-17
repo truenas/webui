@@ -1,6 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnIconButtonHarness, TnInputHarness } from '@truenas/ui-components';
@@ -24,7 +25,13 @@ describe('SaveAsPresetModalComponent', () => {
       ReactiveFormsModule,
     ],
     providers: [
-      DatasetAclEditorStore,
+      mockProvider(DatasetAclEditorStore, {
+        isLoading: signal(false),
+        acl: signal({
+          acl: [] as PosixAclItem[],
+          acltype: AclType.Posix1e,
+        } as Acl),
+      }),
       mockProvider(DialogRef),
       mockProvider(DialogService),
       mockProvider(UserService, {
@@ -113,10 +120,6 @@ describe('SaveAsPresetModalComponent', () => {
     } as Acl));
     const actionsInput = await loader.getHarness(TnInputHarness);
     await actionsInput.setValue('New Preset');
-    spectator.component.acl = {
-      acl: [] as PosixAclItem[],
-      acltype: AclType.Posix1e,
-    } as Acl;
 
     const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
     await saveButton.click();

@@ -241,15 +241,16 @@ TrueNAS appliance of its own under qemu from a disk its scale set attaches,
 and drives the UI built from the change under test rather than the one in the
 appliance image. `docs/05-ci.md` describes the pipeline, what it needs outside
 this repository, and what each early failure taught.
-It runs nightly, on every push to master that touches the UI or the suite,
-and on same-repo pull requests that touch the suite or the pipeline. Any other
-branch can ask for a run:
+It runs nightly, and on every push to master and every same-repo pull request
+that touches the UI, the suite or the pipeline. Any other branch can ask for a
+run:
 
 ```bash
 gh workflow run e2e.yml --ref <your-branch>
 ```
 
-A pull request that only touches documentation does not trigger it; note that
+A pull request that only touches documentation, translations
+(`src/assets/i18n/`) or unit specs (`*.spec.ts`) does not trigger it; note that
 GitHub evaluates the path filter against everything the pull request changes,
 so within a PR that touches code, every push runs it.
 

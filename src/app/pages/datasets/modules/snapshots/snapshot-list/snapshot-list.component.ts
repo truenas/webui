@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import {
   Component, ChangeDetectionStrategy, ChangeDetectorRef, DestroyRef, OnInit,
   computed, inject, signal, viewChild,
@@ -9,7 +10,7 @@ import { Actions, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnTooltipDirective, TnDialog, TnButtonComponent, TnSlideToggleComponent, TnSpinnerComponent,
+  TnTooltipDirective, TnDialog, TnButtonComponent, TnChipComponent, TnSlideToggleComponent, TnSpinnerComponent,
   TnEmptyComponent, TnTableComponent, TnTableColumnDirective, TnHeaderCellDefDirective,
   TnCellDefDirective, TnDetailRowDefDirective, TnTablePagerComponent, TnTestIdDirective, TnSortEvent,
 } from '@truenas/ui-components';
@@ -47,6 +48,7 @@ import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snaps
 import { snapshotPageEntered, snapshotsLoaded } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
+import { isInDatasetScope } from 'app/pages/datasets/utils/dataset-scope.utils';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
 import { waitForPreferences } from 'app/store/preferences/preferences.selectors';
@@ -68,6 +70,7 @@ import { waitForPreferences } from 'app/store/preferences/preferences.selectors'
     ReactiveFormsModule,
     BasicSearchComponent,
     TnButtonComponent,
+    TnChipComponent,
     RequiresRolesDirective,
     TnTooltipDirective,
     TnEmptyComponent,
@@ -95,6 +98,7 @@ export class SnapshotListComponent implements OnInit {
   private store$ = inject<Store<AppState>>(Store);
   private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
+  private location = inject(Location);
   private destroyRef = inject(DestroyRef);
   private fileSize = inject(FileSizePipe);
   private formatDateTime = inject(FormatDateTimePipe);
@@ -192,19 +196,29 @@ export class SnapshotListComponent implements OnInit {
 
   protected readonly emptyType = toSignal(this.emptyType$, { initialValue: EmptyType.Loading });
 
-  get pageTitle(): string {
-    if (this.searchQuery().length) {
-      return this.translate.instant('Snapshots') + ': ' + this.searchQuery();
-    }
-    return this.translate.instant('Snapshots');
-  }
+  /**
+   * The dataset the route opened the list for (a dataset's "View Snapshots"). It narrows the rows
+   * before the search box does, and is cleared from its chip, never by editing the search.
+   */
+  protected readonly scopeDataset = signal<string | null>(this.route.snapshot.paramMap.get('dataset') || null);
+  /** "Include child datasets", on by default, as `zfs list -r -t snapshot` is. */
+  protected readonly includeChildrenControl = new FormControl(true, { nonNullable: true });
+
+  protected readonly pageTitle = computed(() => {
+    const scope = this.scopeDataset();
+    return scope
+      ? this.translate.instant('Snapshots') + ': ' + scope
+      : this.translate.instant('Snapshots');
+  });
 
   constructor() {
-    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
-
     this.showExtraColumnsControl.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((willShow) => this.onToggleExtraColumns(willShow));
+
+    this.includeChildrenControl.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.onListFiltered(this.searchQuery()));
   }
 
   ngOnInit(): void {
@@ -345,35 +359,30 @@ export class SnapshotListComponent implements OnInit {
 
   /**
    * `keepPage` re-runs the same query without moving the user (see `BaseDataProvider.setFilter`); a typed
-   * query starts at page 1. The dataset filter is chosen before applying, not applied and undone, since a
-   * discarded `keepPage` pass would clamp the page against zero rows.
+   * query starts at page 1. The search applies within the dataset scope, never instead of it.
    */
   protected onListFiltered(query: string, { keepPage = false }: { keepPage?: boolean } = {}): void {
     this.searchQuery.set(query);
-    const datasetParam = this.route.snapshot.paramMap.get('dataset');
-    const isDatasetRoute = Boolean(datasetParam) && query === datasetParam;
-
-    this.dataProvider.setFilter(
-      isDatasetRoute && this.hasSnapshotsInDataset(query)
-        ? {
-            list: this.snapshots,
-            query,
-            columnKeys: ['dataset'],
-            exact: true,
-          }
-        : this.buildSearchFilter(query),
-      { keepPage },
-    );
+    this.dataProvider.setFilter(this.buildSearchFilter(query, this.scopedSnapshots()), { keepPage });
   }
 
   /**
-   * Mirrors what the `exact` dataset filter would match — `filterTableRows` compares both
-   * sides lowercased — so the choice above lands on the same branch the discarded pass used
-   * to reveal.
+   * Drops the dataset scope and shows every snapshot. The URL loses the dataset too, without a
+   * navigation that would rebuild the page and reload the snapshots.
    */
-  private hasSnapshotsInDataset(query: string): boolean {
-    const target = query.toLowerCase();
-    return this.snapshots.some((snapshot) => snapshot.dataset?.toLowerCase() === target);
+  protected clearScope(): void {
+    this.scopeDataset.set(null);
+    this.location.replaceState('/datasets/snapshots');
+    this.onListFiltered(this.searchQuery());
+  }
+
+  private scopedSnapshots(): ZfsSnapshot[] {
+    const scope = this.scopeDataset();
+    if (!scope) {
+      return this.snapshots;
+    }
+    const includeChildren = this.includeChildrenControl.value;
+    return this.snapshots.filter((snapshot) => isInDatasetScope(snapshot.dataset, scope, includeChildren));
   }
 
   /**
@@ -381,9 +390,9 @@ export class SnapshotListComponent implements OnInit {
    * `used`, `referenced` and `created` cells by pointing `filterTableRows` at their nested `properties`
    * paths and formatting each value as the cell does. The casts are nominal.
    */
-  private buildSearchFilter(query: string): TableFilter<ZfsSnapshot> {
+  private buildSearchFilter(query: string, list: ZfsSnapshot[]): TableFilter<ZfsSnapshot> {
     if (!this.showExtraColumns()) {
-      return { list: this.snapshots, query, columnKeys: ['name'] };
+      return { list, query, columnKeys: ['name'] };
     }
 
     const usedPath = 'properties.used.parsed';
@@ -397,7 +406,7 @@ export class SnapshotListComponent implements OnInit {
     } as TableFilter<ZfsSnapshot>['preprocessMap'];
 
     return {
-      list: this.snapshots,
+      list,
       query,
       columnKeys: ['name', usedPath, referencedPath, createdPath] as (keyof ZfsSnapshot)[],
       preprocessMap,

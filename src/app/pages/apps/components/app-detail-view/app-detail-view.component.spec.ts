@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
@@ -86,11 +87,11 @@ describe('AppDetailViewComponent', () => {
         hasRole: () => of(true),
       }),
       mockProvider(AppsStore, {
-        availableApps$: of(appsResponse),
-        isLoading$: of(false),
+        availableApps: signal(appsResponse),
+        isLoading: signal(false),
       }),
       mockProvider(DockerStore, {
-        selectedPool$: of('pool'),
+        selectedPool: signal('pool'),
       }),
       mockProvider(AppsStatsService),
     ],

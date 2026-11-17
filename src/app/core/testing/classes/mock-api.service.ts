@@ -1,8 +1,8 @@
 import { inject, Injectable, Injector, OnDestroy } from '@angular/core';
 import { pendingUntilEvent } from '@angular/core/rxjs-interop';
 import {
-  CallMethod, CallParams, CallResponse, EventName, EventSourceName, EventUnion, JobMethod, JobResult, QueryEntity,
-  QueryMethod, SubscriptionArgs,
+  CallMethod, CallParams, CallResponse, EventName, EventSourceName, EventUnion, JobMethod, JobResult, QueryMethod,
+  QueryRow, SubscriptionArgs,
 } from '@truenas/api-client';
 import {
   createFakeClient, fakeApiError, FakeApiErrorOverrides, FakeTrueNasClient, JobUpdate, withSpies,
@@ -150,7 +150,7 @@ export class MockApiService implements OnDestroy {
   }
 
   /** Feeds `query`, `queryOne` (first row) and `queryCount` (row count) from one set of rows. */
-  mockQuery<M extends QueryMethod<D['call']>>(method: M, rows: QueryEntity<D['call'], M>[]): void {
+  mockQuery<M extends QueryMethod<D['call']>>(method: M, rows: QueryRow<D['call'], M>[]): void {
     this.client.mock.query(method, rows);
   }
 

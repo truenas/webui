@@ -18,6 +18,22 @@ export function snapshotRowTag(dataset: string, name: string): string {
   return legacyKebabTestSegment(`snapshot-${dataset}@${name}`);
 }
 
+/**
+ * The dataset scope in the page header of the snapshot list and the periodic
+ * snapshot task list, when a dataset's card opened them. Both lists use the
+ * same ids, and render them only while scoped.
+ */
+export const datasetScopeLocators = {
+  /**
+   * `<tn-chip testId="dataset-scope">`, labelled with the dataset. Its text
+   * also holds the × of its remove button, so read it with `toContainText`.
+   * Removing it lists every dataset's rows again; the search box is left as it was.
+   */
+  chip: '[data-test="chip-dataset-scope"]',
+  /** "Include child datasets", a `tn-slide-toggle`. Starts on. */
+  includeChildDatasets: '[data-test="toggle-include-child-datasets"]',
+} as const;
+
 export const snapshotLocators = {
   /**
    * The Data Protection card in a dataset's details, where both journeys start.
@@ -25,13 +41,13 @@ export const snapshotLocators = {
   card: {
     /** "Take Snapshot" — opens the form with this dataset already chosen. */
     takeSnapshot: '[data-test="button-create-snapshot"]',
-    /** "View Snapshots" — the list, filtered to this dataset. */
+    /** "View Snapshots" — the list, scoped to this dataset. See {@link datasetScopeLocators}. */
     viewSnapshots: '[data-test="link-manage-snapshots"]',
     /** The Snapshot Tasks count, `snapshot_tasks_count` from `pool.dataset.details`. */
     snapshotTasks: '[data-test="text-data-protection-snapshot-tasks"]',
     /**
-     * "View Snapshot Tasks" — the full Periodic Snapshot Tasks list, with this
-     * dataset in its search box. See `snapshotTaskLocators.list`.
+     * "View Snapshot Tasks" — the full Periodic Snapshot Tasks list, scoped to
+     * this dataset. See `snapshotTaskLocators.list` and {@link datasetScopeLocators}.
      */
     viewSnapshotTasks: '[data-test="link-manage-snapshot-tasks"]',
   },

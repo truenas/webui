@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
@@ -21,7 +22,7 @@ describe('AllowedAccessSectionComponent', () => {
       mockProvider(UserFormStore, {
         setAllowedAccessConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
-        role: jest.fn(),
+        role: signal(null),
         updateUserConfig: jest.fn(),
       }),
     ],

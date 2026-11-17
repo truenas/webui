@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { By } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
@@ -9,7 +10,6 @@ import {
 import { TnInputHarness } from '@truenas/ui-components';
 import { LazyLoadImageDirective } from 'ng-lazyload-image';
 import { MockComponent, MockDeclaration } from 'ng-mocks';
-import { of } from 'rxjs';
 import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
@@ -61,19 +61,21 @@ describe('Finding app', () => {
       InstalledAppsStore,
       mockApi([]),
       mockProvider(AppsStore, {
-        isLoading$: of(false),
-        availableApps$: of([]),
-        appsCategories$: of([]),
+        isLoading: signal(false),
+        availableApps: signal([]),
+        appsCategories: signal([]),
       }),
       mockProvider(AppsFilterStore, {
         appsPerCategory: 6,
-        isFilterApplied$: of(false),
-        filterValues$: of({}),
+        isFilterApplied: signal(false),
+        isFiltering: signal(false),
+        filterValues: signal({}),
         applySearchQuery: jest.fn(),
-        searchedApps$: of([{
+        appsByCategories: signal([]),
+        searchedApps: signal([{
           apps: appsResponse, title: 'community', category: 'community', totalApps: 10,
         }]),
-        searchQuery$: of('webdav'),
+        searchQuery: signal('webdav'),
       }),
       mockAuth(),
       mockProvider(AppsStatsService),

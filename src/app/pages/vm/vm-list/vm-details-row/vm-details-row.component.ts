@@ -4,7 +4,9 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { TnButtonComponent, TnDialog, TnTooltipDirective } from '@truenas/ui-components';
+import {
+  TnBannerComponent, TnButtonComponent, TnDialog, TnTooltipDirective,
+} from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VmState } from 'app/enums/vm.enum';
@@ -26,6 +28,7 @@ import { VmService } from 'app/services/vm.service';
   standalone: true,
   imports: [
     RequiresRolesDirective,
+    TnBannerComponent,
     TnButtonComponent,
     TnTooltipDirective,
     TranslateModule,
@@ -65,6 +68,19 @@ export class VirtualMachineDetailsRowComponent {
    * them as a description and the confirmation dialog repeats them where the user has to act.
    */
   protected readonly resetAriaLabel = this.translate.instant(helptextVmList.resetButton.ariaLabel);
+
+  /**
+   * Stop and Power Off both end the VM, so each tooltip says which one asks the guest and which one
+   * does not. Same `tn-button` tooltip caveat as `resetTooltip`.
+   */
+  protected readonly stopTooltip = this.translate.instant(helptextVmList.stopButton.tooltip);
+  protected readonly powerOffTooltip = this.translate.instant(
+    helptextVmList.powerOffButton.tooltip,
+    { warning: this.translate.instant(helptextVmList.hardResetWarning) },
+  );
+
+  protected readonly suspendTooltip = this.translate.instant(helptextVmList.suspendButton.tooltip);
+  protected readonly helptext = helptextVmList;
 
   readonly vmStateInfo = computed(() => {
     const state = this.vm().status.state;
@@ -106,7 +122,15 @@ export class VirtualMachineDetailsRowComponent {
   }
 
   protected doPowerOff(): void {
-    this.vmService.doPowerOff(this.vm());
+    this.vmService.doPowerOff(this.vm()).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
+  }
+
+  protected doSuspend(): void {
+    this.vmService.doSuspend(this.vm()).pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe();
   }
 
   protected openDisplay(): void {

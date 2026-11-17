@@ -4,11 +4,11 @@ import {
 } from 'rxjs';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
-  TypedQueryFilter, WebUiQueryEntity, WebUiQueryMethod,
+  TypedQueryFilter, WebUiQueryEntity, WebUiQueryMethod, WebUiQueryRow,
 } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 export interface GlobalStoreMembers<M extends WebUiQueryMethod> {
-  call: Observable<WebUiQueryEntity<M>[]>;
+  call: Observable<WebUiQueryRow<M>[]>;
   invalidate: () => void;
 }
 
@@ -23,15 +23,15 @@ export function globalStore<M extends WebUiQueryMethod>(
   @Injectable({ providedIn: 'root' })
   class GlobalStore implements GlobalStoreMembers<M> {
     private api = inject(ApiService);
-    private callResult$ = new BehaviorSubject<WebUiQueryEntity<M>[] | undefined>(undefined);
-    private callInFlight$: Observable<WebUiQueryEntity<M>[]> | null = null;
+    private callResult$ = new BehaviorSubject<WebUiQueryRow<M>[] | undefined>(undefined);
+    private callInFlight$: Observable<WebUiQueryRow<M>[]> | null = null;
 
-    get call(): Observable<WebUiQueryEntity<M>[]> {
+    get call(): Observable<WebUiQueryRow<M>[]> {
       return this.callResult$.pipe(
         switchMap((callResult) => {
           if (callResult === undefined) {
             if (!this.callInFlight$) {
-              const callInFlight$: Observable<WebUiQueryEntity<M>[]> = this.api
+              const callInFlight$: Observable<WebUiQueryRow<M>[]> = this.api
                 .query(method, filters)
                 .pipe(
                   tap({

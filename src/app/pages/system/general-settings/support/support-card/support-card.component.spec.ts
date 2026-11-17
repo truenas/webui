@@ -14,7 +14,9 @@ import { TnBannerActionDirective,
   TnTooltipDirective,
   TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of, throwError } from 'rxjs';
+import {
+  catchError, EMPTY, Observable, of, throwError,
+} from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -27,11 +29,13 @@ import { FeedbackType } from 'app/modules/feedback/interfaces/feedback.interface
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { LicenseComponent } from 'app/pages/system/general-settings/support/license/license.component';
 import { ProactiveComponent } from 'app/pages/system/general-settings/support/proactive/proactive.component';
 import { SupportCardComponent } from 'app/pages/system/general-settings/support/support-card/support-card.component';
 import { SysInfoComponent } from 'app/pages/system/general-settings/support/sys-info/sys-info.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
 
 const systemInfo = {
@@ -93,6 +97,13 @@ describe('SupportCardComponent', () => {
         mockCall('support.is_available', true),
         mockCall('support.is_available_and_enabled', false),
       ]),
+      mockProvider(SnackbarService),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: <T>() => (source$: Observable<T>) => source$.pipe(catchError((error: unknown) => {
+          spectator.inject(ErrorHandlerService).showErrorModal(error);
+          return EMPTY;
+        })),
+      }),
       provideMockStore({
         selectors: [
           {
@@ -301,6 +312,31 @@ describe('SupportCardComponent', () => {
         await updateLicenseButton.click();
 
         expect(formPanel.open).toHaveBeenCalledWith(LicenseComponent, { title: 'License' });
+      });
+    });
+
+    describe('Production status', () => {
+      async function turnOffProduction(): Promise<void> {
+        // The toggle renders inside SysInfoComponent, which this spec mocks, so set the protected control directly.
+        // eslint-disable-next-line @typescript-eslint/dot-notation
+        spectator.component['isProductionControl'].setValue(false);
+        await spectator.fixture.whenStable();
+      }
+
+      it('saves the new status and shows a success message', async () => {
+        await turnOffProduction();
+
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('truenas.set_production', [false, false]);
+        expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
+      });
+
+      it('shows the error and no success message when saving fails', async () => {
+        jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(throwError(() => new Error('Refused')));
+
+        await turnOffProduction();
+
+        expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(new Error('Refused'));
+        expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
       });
     });
   });

@@ -1,13 +1,14 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { NvmeOfTransportType } from 'app/enums/nvme-of.enum';
-import { NvmeOfPort, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfPort, NvmeOfSubsystemDetails, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -37,19 +38,10 @@ describe('ManagePortsDialog', () => {
   ] as NvmeOfPort[];
 
   const subsystems = [
-    {
-      id: 1,
-      ports: [1],
-    },
-    {
-      id: 1,
-      ports: [1],
-    },
-    {
-      id: 1,
-      ports: [2],
-    },
-  ] as NvmeOfSubsystem[];
+    { id: 1, ports: [ports[0]] },
+    { id: 2, ports: [ports[0]] },
+    { id: 3, ports: [ports[1]] },
+  ] as NvmeOfSubsystemDetails[];
 
   const createComponent = createComponentFactory({
     component: ManagePortsDialog,
@@ -64,10 +56,9 @@ describe('ManagePortsDialog', () => {
         })),
       }),
       mockProvider(NvmeOfStore, {
-        state$: of({
-          ports,
-          subsystems,
-        }),
+        ports: signal(ports),
+        subsystems: signal(subsystems),
+        isLoading: signal(false),
         reloadPorts: jest.fn(),
       }),
       mockProvider(FormSidePanelService, {
@@ -118,7 +109,7 @@ describe('ManagePortsDialog', () => {
           usedInSubsystems: 2,
         },
         name: '10.120.120.120:7000',
-        subsystemsInUse: [],
+        subsystemsInUse: [subsystems[0], subsystems[1]],
       },
       minWidth: '500px',
     });

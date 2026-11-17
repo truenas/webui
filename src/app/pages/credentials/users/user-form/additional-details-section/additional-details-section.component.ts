@@ -1,5 +1,8 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, OnInit, inject, signal, Signal, viewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, input, Injector, OnInit, inject,
+  signal, Signal, untracked, viewChild,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
   AbstractControl, ReactiveFormsModule, ValidationErrors, Validators, FormBuilder, FormControl,
@@ -18,7 +21,6 @@ import {
   startWith,
   tap,
   take,
-  withLatestFrom,
   catchError,
   EMPTY,
 } from 'rxjs';
@@ -89,6 +91,7 @@ export class AdditionalDetailsSectionComponent implements OnInit {
   private sudoCommandsValidator = inject(SudoCommandsValidatorService);
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
+  private injector = inject(Injector);
 
   editingUser = input<User>();
   protected readonly InputType = InputType;
@@ -286,35 +289,12 @@ export class AdditionalDetailsSectionComponent implements OnInit {
         },
       });
 
-    this.userFormStore.state$.pipe(
-      map((state) => state.setupDetails.role),
-      distinctUntilChanged(),
-      withLatestFrom(this.groupOptions$),
-      tap(([selectedRole, groupOptions]) => {
-        if (selectedRole === null) {
-          this.form.patchValue({
-            groups: this.form.controls.groups.value.filter((groupId) => {
-              const groupName = groupOptions.find((group) => group.value === groupId)?.label as string;
-
-              if (Array.from(this.roleGroupMap.values()).includes(groupName)) {
-                return false;
-              }
-
-              return true;
-            }),
-          });
-
-          return;
-        }
-
-        const groupLabel = this.roleGroupMap.get(selectedRole);
-        const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
-        if (groupId) {
-          this.form.patchValue({ groups: [groupId] });
-        }
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe();
+    // Reruns on role changes only; the group list is read, not tracked, and a role picked before it loads is skipped.
+    const groupOptions = toSignal(this.groupOptions$);
+    effect(() => {
+      const selectedRole = this.userFormStore.role();
+      untracked(() => this.applyRoleGroups(selectedRole, groupOptions()));
+    });
 
     effect(() => {
       if (this.editingUser()) {
@@ -594,6 +574,28 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     });
   }
 
+  private applyRoleGroups(selectedRole: Role | null, groupOptions: Option[] | undefined): void {
+    if (!groupOptions) {
+      return;
+    }
+
+    if (selectedRole === null) {
+      this.form.patchValue({
+        groups: this.form.controls.groups.value.filter((groupId) => {
+          const groupName = groupOptions.find((group) => group.value === groupId)?.label as string;
+          return !Array.from(this.roleGroupMap.values()).includes(groupName);
+        }),
+      });
+      return;
+    }
+
+    const groupLabel = this.roleGroupMap.get(selectedRole);
+    const groupId = groupOptions.find((group) => group.label === groupLabel)?.value;
+    if (groupId) {
+      this.form.patchValue({ groups: [groupId as number] });
+    }
+  }
+
   private setupShellUpdate(): void {
     combineLatest([
       this.form.controls.group.valueChanges.pipe(startWith(this.form.controls.group.value)),
@@ -608,19 +610,27 @@ export class AdditionalDetailsSectionComponent implements OnInit {
     // Handle shell changes when shell access is toggled.
     // For new users, setFirstShellOption() on enable is handled by the effect
     // in the constructor to avoid duplicate API calls.
-    this.userFormStore.state$.pipe(
-      map((state) => state.setupDetails.allowedAccess.shellAccess),
-      distinctUntilChanged(),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((shellAccess) => {
-      if (shellAccess) {
-        if (this.editingUser() && this.form.value.shell?.includes('nologin')) {
-          this.setFirstShellOption();
-        }
-      } else {
-        this.setNoLoginShell();
+    // Handled now, before the edit-user effect fills the form, and then again on each change.
+    let handledShellAccess = this.shellAccess();
+    this.onShellAccessChange(handledShellAccess);
+    effect(() => {
+      const shellAccess = this.shellAccess();
+      if (shellAccess === handledShellAccess) {
+        return;
       }
-    });
+      handledShellAccess = shellAccess;
+      untracked(() => this.onShellAccessChange(shellAccess));
+    }, { injector: this.injector });
+  }
+
+  private onShellAccessChange(shellAccess: boolean): void {
+    if (shellAccess) {
+      if (this.editingUser() && this.form.value.shell?.includes('nologin')) {
+        this.setFirstShellOption();
+      }
+    } else {
+      this.setNoLoginShell();
+    }
   }
 
   private updateShellOptions(group: number, groups: number[]): void {

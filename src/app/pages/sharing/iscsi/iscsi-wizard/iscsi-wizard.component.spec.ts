@@ -11,11 +11,11 @@ import {
   TnInputHarness,
   TnSelectHarness,
   TnFilePickerHarness,
+  TnRadioGroupHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { IscsiExtentType, IscsiExtentUsefor } from 'app/enums/iscsi.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -33,6 +33,7 @@ import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi
 import { ExtentWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/extent-wizard-step/extent-wizard-step.component';
 import { ProtocolOptionsWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/protocol-options-wizard-step/protocol-options-wizard-step.component';
 import { TargetWizardStepComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/steps/target-wizard-step/target-wizard-step.component';
+import { LicenseService } from 'app/services/license.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -42,6 +43,7 @@ describe('IscsiWizardComponent', () => {
   let spectator: Spectator<IscsiWizardComponent>;
   let loader: HarnessLoader;
   let store$: Store<AppState>;
+  const hasFibreChannel$ = new BehaviorSubject(true);
 
   const createComponent = createComponentFactory({
     component: IscsiWizardComponent,
@@ -92,7 +94,7 @@ describe('IscsiWizardComponent', () => {
           },
         ] as FibreChannelHost[]),
       ]),
-      mockEntitlements(),
+      mockProvider(LicenseService, { hasFibreChannel$ }),
       provideMockStore({
         selectors: [
           {
@@ -140,6 +142,7 @@ describe('IscsiWizardComponent', () => {
   };
 
   beforeEach(() => {
+    hasFibreChannel$.next(true);
     spectator = createComponent();
 
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -249,6 +252,19 @@ describe('IscsiWizardComponent', () => {
     expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Iscsi }));
 
     expect(createdTarget).toEqual({ id: 15 } as IscsiTarget);
+  });
+
+  it('offers iSCSI and Fibre Channel modes on the target step when Fibre Channel is available', async () => {
+    const modeGroup = await loader.getHarness(TnRadioGroupHarness);
+
+    expect(await modeGroup.getOptionLabels()).toEqual(['iSCSI', 'Fibre Channel']);
+  });
+
+  it('offers no target mode when Fibre Channel is unavailable (not entitled, or no FC HBA)', async () => {
+    hasFibreChannel$.next(false);
+    spectator.detectChanges();
+
+    expect(await loader.getAllHarnesses(TnRadioGroupHarness)).toHaveLength(0);
   });
 
   it('fibre channel: creates a Fibre Channel target when wizard is submitted', async () => {

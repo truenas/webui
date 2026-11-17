@@ -1,19 +1,20 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, viewChild,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnTestIdDirective } from '@truenas/ui-components';
-import { map, of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, Observable, of } from 'rxjs';
+import { finalize, switchMap, tap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
@@ -47,6 +48,7 @@ export class ExtendDialog {
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   protected dialogRef = inject<DialogRef<unknown, ExtendDialog>>(DialogRef);
   private poolExtendJobService = inject(PoolExtendJobService);
@@ -68,7 +70,18 @@ export class ExtendDialog {
     { initialValue: this.form.valid },
   );
 
-  protected readonly canSubmit = computed(() => this.isFormValid() && this.sedDiskPassword().isValid());
+  /** Set from the click until the job dialog closes, so a second click can't repeat the SED setup. */
+  protected readonly isSubmitting = signal(false);
+
+  protected readonly canSubmit = computed(() => {
+    return !this.isSubmitting() && this.isFormValid() && this.sedDiskPassword().isValid();
+  });
+
+  /** The disk an individual SED password was already applied to, so a retry skips straight to the job. */
+  private readonly preparedDisk = signal<string | null>(null);
+  protected readonly isPasswordApplied = computed(() => {
+    return this.preparedDisk() !== null && this.preparedDisk() === this.newDisk();
+  });
 
   readonly helptext = helptextVolumeStatus;
 
@@ -76,14 +89,25 @@ export class ExtendDialog {
 
   onSubmit(event?: SubmitEvent): void {
     event?.preventDefault();
+    if (this.isSubmitting()) {
+      return;
+    }
+    this.isSubmitting.set(true);
 
-    // Check for existing pool.attach jobs for this pool
+    // `disk.setup_sed` can take several seconds, so the loader covers everything before the job dialog.
     this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(
       switchMap((hasExistingJob) => {
         if (hasExistingJob) {
           this.snackbar.error(
             this.translate.instant('A VDEV extension operation is already in progress for this pool. Please wait for it to complete.'),
           );
+          return of(false);
+        }
+        return this.prepareNewDisk().pipe(map(() => true));
+      }),
+      this.loader.withLoader(),
+      switchMap((canAttach) => {
+        if (!canAttach) {
           return of(null);
         }
 
@@ -94,14 +118,13 @@ export class ExtendDialog {
           target_vdev: this.data.targetVdevGuid,
         } as PoolAttachParams;
 
-        return this.sedDiskPassword().prepareDisk().pipe(
-          switchMap(() => this.dialogService.jobDialog(
-            this.api.job('pool.attach', [this.data.poolId, payload]),
-            { title: this.translate.instant('Extending VDEV'), canMinimize: true },
-          ).afterClosed()),
-        );
+        return this.dialogService.jobDialog(
+          this.api.job('pool.attach', [this.data.poolId, payload]),
+          { title: this.translate.instant('Extending VDEV'), canMinimize: true },
+        ).afterClosed();
       }),
       this.errorHandler.withErrorHandler(),
+      finalize(() => this.isSubmitting.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((result) => {
       if (result) {
@@ -109,5 +132,26 @@ export class ExtendDialog {
         this.dialogRef.close(true);
       }
     });
+  }
+
+  /**
+   * Applies an individual SED password once per disk. After that the disk is unlocked, and running
+   * `disk.setup_sed` again fails because the disk is no longer UNINITIALIZED. With the global
+   * password nothing is applied here, so a retry with an individual one must still run it.
+   */
+  private prepareNewDisk(): Observable<unknown> {
+    const disk = this.form.getRawValue().newDisk;
+    if (disk === this.preparedDisk()) {
+      return of(null);
+    }
+    const sedDiskPassword = this.sedDiskPassword();
+    const appliesPassword = sedDiskPassword.appliesPassword();
+    return sedDiskPassword.prepareDisk().pipe(
+      tap(() => {
+        if (appliesPassword) {
+          this.preparedDisk.set(disk);
+        }
+      }),
+    );
   }
 }

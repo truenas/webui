@@ -1,6 +1,6 @@
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, ElementRef, OnInit, Signal, viewChild, inject } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  afterRenderEffect, ChangeDetectionStrategy, Component, ElementRef, OnInit, inject, viewChild,
+} from '@angular/core';
 import { TnDialog, TnTestIdDirective } from '@truenas/ui-components';
 import { ConsoleMessagesStore } from 'app/modules/layout/console-footer/console-messages.store';
 import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-panel/console-panel-dialog.component';
@@ -10,31 +10,32 @@ import { ConsolePanelDialog } from 'app/modules/layout/console-footer/console-pa
   templateUrl: './console-footer.component.html',
   styleUrls: ['./console-footer.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [AsyncPipe, TnTestIdDirective],
+  imports: [TnTestIdDirective],
 })
 export class ConsoleFooterComponent implements OnInit {
   private tnDialog = inject(TnDialog);
   private messagesStore = inject(ConsoleMessagesStore);
-  private destroyRef = inject(DestroyRef);
 
-  private readonly messageContainer: Signal<ElementRef<HTMLElement>> = viewChild.required('messageContainer', { read: ElementRef });
+  private readonly messageContainer = viewChild.required('messageContainer', { read: ElementRef<HTMLElement> });
 
-  lastThreeLogLines$ = this.messagesStore.lastThreeLogLines$;
+  protected readonly lastThreeLogLines = this.messagesStore.lastThreeLogLines;
+
+  constructor() {
+    // Runs after the new lines are in the DOM, so scrollHeight already includes them.
+    afterRenderEffect({
+      write: () => {
+        this.lastThreeLogLines();
+        const element = this.messageContainer().nativeElement;
+        element.scrollTop = element.scrollHeight;
+      },
+    });
+  }
 
   ngOnInit(): void {
     this.messagesStore.subscribeToMessageUpdates();
-    this.scrollToBottomOnNewMessages();
   }
 
-  onShowConsolePanel(): void {
+  protected onShowConsolePanel(): void {
     this.tnDialog.open(ConsolePanelDialog);
-  }
-
-  private scrollToBottomOnNewMessages(): void {
-    this.lastThreeLogLines$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-      try {
-        this.messageContainer().nativeElement.scroll({ top: this.messageContainer().nativeElement.scrollHeight });
-      } catch {}
-    });
   }
 }

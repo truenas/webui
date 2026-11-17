@@ -25,7 +25,7 @@ describe('IdentifyLightComponent', () => {
       ]),
       mockProvider(EnclosureStore, {
         selectedSlot,
-        selectedEnclosure: () => ({ id: 'enclosure1' }),
+        selectedEnclosure: signal({ id: 'enclosure1' }),
         changeLightStatus: jest.fn(),
       }),
     ],

@@ -2,9 +2,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ChangeDetectionStrategy, Component, inject, signal, viewChild } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import {
   FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators,
 } from '@angular/forms';
+import {
+  applyEach, form as signalForm, hidden, required,
+} from '@angular/forms/signals';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { TnFormFieldComponent, TnInputComponent } from '@truenas/ui-components';
 import {
@@ -15,6 +19,9 @@ import { Role } from 'app/enums/role.enum';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
+import { signalFormImports } from 'app/modules/forms/signal-forms/ix-signal-error-dismiss.directive';
+import { SignalFormErrors } from 'app/modules/forms/signal-forms/signal-form-errors.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import {
@@ -1191,5 +1198,165 @@ describe('IxFormComponent', () => {
       expect(warn).not.toHaveBeenCalledWith(expect.stringContaining('null successMessage'));
       warn.mockRestore();
     });
+  });
+});
+
+describe('IxFormComponent with [fieldTree]', () => {
+  interface Model {
+    name: string;
+    mode: 'plain' | 'advanced';
+    level: number;
+    rows: { host: string }[];
+    ssh: { port: number; enabled: boolean };
+  }
+
+  let submitHandlerSpy: jest.Mock<SubmitResult<unknown>, [FormSubmitEvent<Model>]>;
+
+  @Component({
+    template: `
+      <ix-form [fieldTree]="fields" [editData]="editData" [submitHandler]="handleSubmit">
+        <tn-form-field [label]="'Name'">
+          <tn-input [formField]="fields.name"></tn-input>
+        </tn-form-field>
+        @for (row of fields.rows; track row) {
+          <tn-form-field [label]="'Host'">
+            <tn-input [formField]="row.host"></tn-input>
+          </tn-form-field>
+        }
+      </ix-form>
+    `,
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    selector: 'ix-signal-test-host',
+    imports: [signalFormImports, IxFormComponent, TnFormFieldComponent, TnInputComponent],
+    providers: [SignalFormErrors],
+  })
+  class SignalHostComponent {
+    ixForm = viewChild.required(IxFormComponent);
+    editData: Partial<Model> | null = null;
+    serverErrors = inject(SignalFormErrors);
+
+    model = signal<Model>({
+      name: '', mode: 'plain', level: 1, rows: [], ssh: { port: 22, enabled: false },
+    });
+
+    fields = signalForm(this.model, (path) => {
+      required(path.name);
+      hidden(path.level, { when: ({ valueOf }) => valueOf(path.mode) !== 'advanced' });
+      applyEach(path.rows, (row) => required(row.host));
+      this.serverErrors.apply(path);
+    });
+
+    handleSubmit = (event: FormSubmitEvent<Model>): SubmitResult<unknown> => submitHandlerSpy(event);
+  }
+
+  let spectator: Spectator<SignalHostComponent>;
+  let loader: HarnessLoader;
+
+  const createComponent = createComponentFactory({
+    component: SignalHostComponent,
+    detectChanges: false,
+    providers: [...ixFormTestingProviders(), mockAuth()],
+  });
+
+  async function setup(editData: Partial<Model> | null = null): Promise<void> {
+    spectator = createComponent();
+    spectator.component.editData = editData;
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  }
+
+  beforeEach(() => {
+    submitHandlerSpy = jest.fn(() => ({
+      request$: of(undefined),
+      successMessage: 'Saved!' as TranslatedString,
+    }));
+  });
+
+  it('follows the field tree for validity and unsaved changes', async () => {
+    await setup();
+    const ixForm = spectator.component.ixForm();
+    expect(ixForm.canSubmit()).toBe(false);
+    expect(ixForm.hasUnsavedChanges()).toBe(false);
+
+    await (await loader.getHarness(TnFormControlHarness.with({ label: 'Name' }))).setValue('abc');
+
+    expect(ixForm.canSubmit()).toBe(true);
+    expect(ixForm.hasUnsavedChanges()).toBe(true);
+  });
+
+  it('submits the whole model, and leaves hidden fields out of changedValues', async () => {
+    await setup();
+    await (await loader.getHarness(TnFormControlHarness.with({ label: 'Name' }))).setValue('abc');
+
+    spectator.component.ixForm().submit();
+
+    const event = submitHandlerSpy.mock.lastCall[0];
+    expect(event.isEdit).toBe(false);
+    expect(event.allValues).toEqual({
+      name: 'abc', mode: 'plain', level: 1, rows: [], ssh: { port: 22, enabled: false },
+    });
+    expect(event.changedValues).toEqual({
+      name: 'abc', mode: 'plain', rows: [], ssh: { port: 22, enabled: false },
+    });
+  });
+
+  it('hands the handler a copy, so reshaping allValues in place leaves the model alone', async () => {
+    submitHandlerSpy.mockImplementation((event) => {
+      delete (event.allValues as Partial<Model>).ssh;
+      return { request$: of(undefined), successMessage: 'Saved!' as TranslatedString };
+    });
+    await setup();
+    await (await loader.getHarness(TnFormControlHarness.with({ label: 'Name' }))).setValue('abc');
+
+    spectator.component.ixForm().submit();
+
+    expect(spectator.component.model().ssh).toEqual({ port: 22, enabled: false });
+  });
+
+  it('does not submit while the form is invalid', async () => {
+    await setup();
+    spectator.component.ixForm().submit();
+    expect(submitHandlerSpy).not.toHaveBeenCalled();
+  });
+
+  it('patches frozen editData into the model, only the keys it has, and stays pristine', async () => {
+    const editData = Object.freeze({
+      name: 'stored', rows: Object.freeze([Object.freeze({ host: 'h1' })]), ssh: Object.freeze({ port: 2222 }), id: 7,
+    }) as unknown as Partial<Model>;
+    await setup(editData);
+    const ixForm = spectator.component.ixForm();
+
+    // As JSON: signal forms stamp each row with a tracking symbol that `toEqual` would see.
+    // `ssh.enabled` survives a partial nested patch, as it does under `patchValue`.
+    expect(JSON.parse(JSON.stringify(spectator.component.model()))).toEqual({
+      name: 'stored', mode: 'plain', level: 1, rows: [{ host: 'h1' }], ssh: { port: 2222, enabled: false },
+    });
+    expect(ixForm.hasUnsavedChanges()).toBe(false);
+    expect(ixForm.isEdit()).toBe(true);
+    expect(await (await loader.getHarness(TnFormControlHarness.with({ label: 'Host' }))).getValue()).toBe('h1');
+
+    await (await loader.getHarness(TnFormControlHarness.with({ label: 'Name' }))).setValue('renamed');
+    ixForm.submit();
+    expect(submitHandlerSpy.mock.lastCall[0].changedValues).toEqual({ name: 'renamed' });
+  });
+
+  it('sends a failed save to the form\'s SignalFormErrors', async () => {
+    const error = new Error('Validation');
+    submitHandlerSpy.mockReturnValue({ request$: throwError(() => error), successMessage: null });
+    await setup();
+    const handle = jest.spyOn(spectator.component.serverErrors, 'handleValidationErrors').mockImplementation();
+    await (await loader.getHarness(TnFormControlHarness.with({ label: 'Name' }))).setValue('abc');
+
+    spectator.component.ixForm().submit();
+
+    expect(handle).toHaveBeenCalledWith(error);
+    expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).not.toHaveBeenCalled();
+  });
+
+  it('refuses to start without a form', () => {
+    const bare = TestBed.createComponent(IxFormComponent);
+    bare.componentRef.setInput('submitHandler', () => null);
+    expect(() => bare.detectChanges()).toThrow('<ix-form> needs exactly one of [formGroup] and [fieldTree].');
   });
 });

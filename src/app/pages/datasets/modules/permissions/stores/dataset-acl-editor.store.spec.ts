@@ -1,13 +1,17 @@
 import { Router } from '@angular/router';
 import { SpectatorService, createServiceFactory } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, of, Subject, throwError } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
-import { AclType } from 'app/enums/acl-type.enum';
+import {
+  mockApi, mockCall, mockJob, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
+import { AclType, DefaultAclType } from 'app/enums/acl-type.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { NfsAclTag, NfsAclType, NfsBasicPermission } from 'app/enums/nfs-acl.enum';
-import { NfsAcl, SetAcl } from 'app/interfaces/acl.interface';
+import {
+  AclTemplateByPath, NfsAcl, NfsAclItem, SetAcl,
+} from 'app/interfaces/acl.interface';
 import { FileSystemStat } from 'app/interfaces/filesystem-stat.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -50,6 +54,11 @@ describe('DatasetAclEditorStore', () => {
         mockCall('filesystem.getacl', mockAcl as unknown as CallResponse<WebUiApiDirectory, 'filesystem.getacl'>),
         mockCall('filesystem.stat', mockStat as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
         mockJob('filesystem.setacl', { state: JobState.Success }),
+        mockCall('filesystem.acltemplate.by_path', [{
+          name: DefaultAclType.Nfs4Home,
+          acltype: AclType.Nfs4,
+          acl: [{ tag: NfsAclTag.Everyone, who: 'everyone@' }],
+        }] as unknown as CallResponse<WebUiApiDirectory, 'filesystem.acltemplate.by_path'>),
       ]),
       {
         provide: DialogService,
@@ -82,6 +91,133 @@ describe('DatasetAclEditorStore', () => {
     api = spectator.inject(ApiService);
     // Saving navigates away; the testing router has no routes to match.
     jest.spyOn(spectator.inject(Router), 'navigate').mockResolvedValue(true);
+  });
+
+  describe('loadAcl', () => {
+    it('loads the ACL and stat for a mountpoint, clearing the previous edit', async () => {
+      store.loadAcl('/mnt/pool/dataset');
+      expect(store.isLoading()).toBe(true);
+      expect(store.mountpoint()).toBe('/mnt/pool/dataset');
+
+      await settleApi();
+
+      expect(api.call).toHaveBeenCalledWith('filesystem.getacl', ['/mnt/pool/dataset', true, true]);
+      expect(api.call).toHaveBeenCalledWith('filesystem.stat', ['/mnt/pool/dataset']);
+      expect(store.isLoading()).toBe(false);
+      expect(store.acl()).toEqual(expect.objectContaining({ acltype: AclType.Nfs4 }));
+      expect(store.stat()).toEqual(mockStat);
+      expect(store.selectedAceIndex()).toBe(0);
+      expect(store.acesWithError()).toEqual([]);
+      expect(store.returnUrl()).toBeNull();
+    });
+
+    it('shows the error and stops loading when the ACL cannot be read', () => {
+      const error = new Error('No access');
+      jest.spyOn(api, 'call').mockReturnValue(throwError(() => error));
+
+      store.loadAcl('/mnt/pool/dataset');
+
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(error);
+      expect(store.isLoading()).toBe(false);
+      expect(store.acl()).toBeNull();
+    });
+  });
+
+  describe('editing entries', () => {
+    const aces = (): NfsAclItem[] => store.acl().acl as NfsAclItem[];
+
+    beforeEach(async () => {
+      store.loadAcl('/mnt/pool/dataset');
+      await settleApi();
+    });
+
+    it('addAce appends a blank entry and selects it', () => {
+      store.addAce();
+
+      expect(aces()).toHaveLength(2);
+      expect(store.selectedAceIndex()).toBe(1);
+    });
+
+    it('selectAce selects an entry', () => {
+      store.addAce();
+      store.selectAce(0);
+
+      expect(store.selectedAceIndex()).toBe(0);
+    });
+
+    it('updateSelectedAce merges changes into the selected entry only', () => {
+      store.addAce();
+      store.updateSelectedAce({ who: 'jane' } as NfsAclItem);
+
+      expect(aces()[0].who).toBe('john');
+      expect(aces()[1].who).toBe('jane');
+    });
+
+    it('removeAce removes an entry and shifts the selection and errors after it', () => {
+      store.addAce();
+      store.addAce();
+      store.updateSelectedAceValidation(false);
+
+      store.removeAce(1);
+
+      expect(aces()).toHaveLength(2);
+      expect(store.selectedAceIndex()).toBe(1);
+      expect(store.acesWithError()).toEqual([1]);
+    });
+
+    it('updateSelectedAceValidation adds and clears an error for the selected entry', () => {
+      store.updateSelectedAceValidation(false);
+      expect(store.acesWithError()).toEqual([0]);
+
+      store.updateSelectedAceValidation(true);
+      expect(store.acesWithError()).toEqual([]);
+    });
+
+    it('updateAceValidation records a verdict for the entry it was asked about, found by identity', () => {
+      const first = aces()[0];
+      store.addAce();
+
+      store.updateAceValidation({ ace: first, isValid: false });
+      expect(store.acesWithError()).toEqual([0]);
+
+      store.updateAceValidation({ ace: { ...first }, isValid: true });
+      expect(store.acesWithError()).toEqual([0]);
+    });
+
+    it('settleAceValidation records the verdict once the check answers', () => {
+      const isValid$ = new Subject<boolean>();
+      store.settleAceValidation({ ace: aces()[0], isValid$ });
+      expect(store.acesWithError()).toEqual([]);
+
+      isValid$.next(false);
+      expect(store.acesWithError()).toEqual([0]);
+    });
+
+    it('usePreset replaces the entries and resets selection and errors', () => {
+      store.addAce();
+      store.updateSelectedAceValidation(false);
+
+      store.usePreset({ acl: [{ tag: NfsAclTag.Everyone }] } as AclTemplateByPath);
+
+      expect(aces()).toEqual([{ tag: NfsAclTag.Everyone }]);
+      expect(store.selectedAceIndex()).toBe(0);
+      expect(store.acesWithError()).toEqual([]);
+      expect(store.acl().acltype).toBe(AclType.Nfs4);
+    });
+
+    it('loadHomeSharePreset applies the home preset for the ACL type', async () => {
+      store.loadHomeSharePreset();
+      expect(store.isLoading()).toBe(true);
+
+      await settleApi();
+
+      expect(api.call).toHaveBeenCalledWith('filesystem.acltemplate.by_path', [{
+        path: '/mnt/pool/dataset',
+        'format-options': { resolve_names: true },
+      }]);
+      expect(store.isLoading()).toBe(false);
+      expect(aces()).toEqual([{ tag: NfsAclTag.Everyone, who: 'everyone@' }]);
+    });
   });
 
   describe('prepareSetAcl', () => {
@@ -252,7 +388,7 @@ describe('DatasetAclEditorStore', () => {
     });
 
     it('navigates to returnUrl when set in state after save', async () => {
-      store.setState((state) => ({ ...state, returnUrl: '/sharing' }));
+      store.setReturnUrl('/sharing');
 
       const saveParams = {
         recursive: true,

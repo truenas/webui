@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { TnBannerHarness, TnButtonHarness } from '@truenas/ui-components';
@@ -61,15 +62,15 @@ describe('ContainerGpuDevicesComponent', () => {
       }),
       mockProvider(SnackbarService),
       mockProvider(ContainersStore, {
-        selectedContainer: () => fakeContainer({
+        selectedContainer: signal(fakeContainer({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
-        }),
+        })),
       }),
       mockProvider(ContainerDevicesStore, {
-        isLoading: () => false,
-        devices: () => devices,
-        gpuChoices: () => ({
+        isLoading: signal(false),
+        devices: signal(devices),
+        gpuChoices: signal({
           '0000:19:00.0': containerGpuType.Nvidia,
           '0000:1a:00.0': containerGpuType.Amd,
         }),

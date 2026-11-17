@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -12,24 +13,20 @@ import { EnclosureSide } from 'app/pages/system/enclosure/utils/supported-enclos
 describe('EnclosureSideSwitchComponent', () => {
   let spectator: Spectator<EnclosureSideSwitchComponent>;
   let loader: HarnessLoader;
-  let hasMoreThanOneSide: boolean;
+  const hasMoreThanOneSide = signal(true);
 
   const createComponent = createComponentFactory({
     component: EnclosureSideSwitchComponent,
     providers: [
       mockProvider(EnclosureStore, {
         selectSide: jest.fn(),
-        hasMoreThanOneSide: () => hasMoreThanOneSide,
+        hasMoreThanOneSide,
       }),
     ],
   });
 
-  /**
-   * `hasMoreThanOneSide` is read once at render time, so it has to be set before the
-   * component is created rather than flipped between tests.
-   */
   function setup(enclosure: Partial<DashboardEnclosure>, moreThanOneSide = true): void {
-    hasMoreThanOneSide = moreThanOneSide;
+    hasMoreThanOneSide.set(moreThanOneSide);
     spectator = createComponent({ props: { enclosure: enclosure as DashboardEnclosure } });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }

@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponents } from 'ng-mocks';
 import { NgxSkeletonLoaderComponent } from 'ngx-skeleton-loader';
@@ -71,14 +72,14 @@ describe('ContainerUsbDevicesComponent', () => {
         }),
       ]),
       mockProvider(ContainersStore, {
-        selectedContainer: () => fakeContainer({
+        selectedContainer: signal(fakeContainer({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
-        }),
+        })),
       }),
       mockProvider(ContainerDevicesStore, {
-        isLoading: () => false,
-        devices: () => devices,
+        isLoading: signal(false),
+        devices: signal(devices),
         loadDevices: jest.fn(),
       }),
     ],

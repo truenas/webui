@@ -3,8 +3,10 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormGroup } from '@angular/forms';
+import { FieldTree } from '@angular/forms/signals';
 import { Observable, Subscription, take } from 'rxjs';
 import { IxFormComponent, IxFormLoadState } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { isFieldTree, toFormModel } from 'app/modules/forms/signal-forms/signal-forms.utils';
 import { SidePanelHostForm } from 'app/modules/slide-ins/side-panel-form.directive';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -26,8 +28,11 @@ implements SidePanelHostForm<R> {
   private readonly hostDestroyRef = inject(DestroyRef);
   private readonly hostErrorHandler = inject(ErrorHandlerService);
 
-  /** The form group the subclass renders inside its `<ix-form>`. */
-  protected abstract readonly form: FormGroup;
+  /**
+   * The form the subclass renders inside its `<ix-form>`: a `FormGroup` bound with `[formGroup]`, or a
+   * signal form's field tree bound with `[fieldTree]`.
+   */
+  protected abstract readonly form: FormGroup | FieldTree<V>;
 
   /**
    * Emitted on a successful submit (or with the created record for a richer `R`) when hosted in a
@@ -109,7 +114,7 @@ implements SidePanelHostForm<R> {
    * captures {@link initialFormSnapshot}. If the request errors or `patch` throws, it latches
    * {@link loadFailed} so Save can't submit unseen defaults. A new call cancels the previous one and
    * {@link retryLoad} replays it, so `patch` must be idempotent (clear a `FormArray` before pushing rows)
-   * and must not wire subscriptions or validators.
+   * and must not wire subscriptions or validators. A signal form's `patch` gets a copy (see `toFormModel`).
    */
   protected loadFormConfig<C>(config$: Observable<C>, patch: (config: C) => void): void {
     this.loadSubscription?.unsubscribe();
@@ -126,17 +131,12 @@ implements SidePanelHostForm<R> {
         try {
           // Wrapped so a throwing `patch` takes the same path as a failed request, instead of
           // escaping as an unhandled RxJS error that leaves the form enabled on defaults.
-          patch(config);
+          patch(isFieldTree(this.form) ? toFormModel(config) : config);
         } catch (error: unknown) {
           this.handleLoadFailure(error);
           return;
         }
-        this.loadedSnapshot.set(this.form.getRawValue() as object);
-        // Defensive, same guard `<ix-form>` applies after patching `editData`: no `patch` today
-        // dirties the group (patchValue and FormArray.push both leave it pristine), but this is the
-        // shared entry point for every config form, and `hasUnsavedChanges()` is just the group's
-        // `dirty` — one that did would make the panel demand a discard confirmation on open.
-        this.form.markAsPristine();
+        this.captureLoadedForm();
         this.dataLoading.set(false);
       },
       error: (error: unknown) => this.handleLoadFailure(error),
@@ -146,6 +146,24 @@ implements SidePanelHostForm<R> {
       // means the load is over, and the emit/error paths have already cleared the flag.
       complete: () => this.dataLoading.set(false),
     });
+  }
+
+  /**
+   * Takes the post-load baseline and leaves the form pristine. Pristine is defensive, the same guard
+   * `<ix-form>` applies after patching `editData`: no `patch` today dirties the form (patchValue,
+   * FormArray.push and setting a model all leave it pristine), but this is the shared entry point for
+   * every config form, and `hasUnsavedChanges()` is just `dirty` — one that did would make the panel
+   * demand a discard confirmation on open.
+   */
+  private captureLoadedForm(): void {
+    const form = this.form;
+    if (form instanceof FormGroup) {
+      this.loadedSnapshot.set(form.getRawValue() as object);
+      form.markAsPristine();
+      return;
+    }
+    this.loadedSnapshot.set(toFormModel(form().value()) as object);
+    form().reset();
   }
 
   private handleLoadFailure(error: unknown): void {

@@ -8,6 +8,11 @@ export const helptextSystemNtpservers = {
     tooltip: T('Enter the hostname or IP address of the <b>NTP</b> server.'),
   },
 
+  nts: {
+    label: T('NTS'),
+    tooltip: T('Use Network Time Security (NTS) to authenticate this server. The server must support NTS key establishment on TCP port 4460, and its TLS certificate must be trusted and match <i>Address</i>. While at least one NTS server is configured, servers without NTS (including servers from DHCP) are ignored.'),
+  },
+
   burst: {
     label: T('Burst'),
     tooltip: T('Recommended when <i>Max. Poll</i> is greater than 10. Only use on personal NTP servers or those under direct control. <b>Do not</b> enable when using public NTP servers.'),
@@ -35,6 +40,6 @@ export const helptextSystemNtpservers = {
 
   force: {
     label: T('Force'),
-    tooltip: T('Forces the addition of the <b>NTP</b> server, even if it is currently unreachable.'),
+    tooltip: T('Skip the connection checks before saving. Without this option, the server must be reachable and, when <i>NTS</i> is enabled, NTS key establishment with the server must succeed.'),
   },
 };

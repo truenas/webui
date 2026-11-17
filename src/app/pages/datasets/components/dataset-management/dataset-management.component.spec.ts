@@ -1,12 +1,13 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { BehaviorSubject, Subject, of } from 'rxjs';
+import { Subject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
@@ -28,12 +29,13 @@ describe('DatasetsManagementComponent', () => {
   let router: Router;
   let location: Location;
 
-  const datasets$ = new BehaviorSubject([
+  const initialDatasets = [
     { id: 'first', name: 'First Dataset' },
     { id: 'second', name: 'Second Dataset' },
-  ] as DatasetDetails[]);
-
-  const error$ = new BehaviorSubject<unknown>(null);
+  ] as DatasetDetails[];
+  const datasets = signal(initialDatasets);
+  const error = signal<unknown>(null);
+  const selectedBranch = signal<DatasetDetails[] | null>(null);
   const tierJobUpdates$ = new Subject<ZfsTierRewriteJobEntry>();
 
   const createComponent = createRoutingFactory({
@@ -57,12 +59,13 @@ describe('DatasetsManagementComponent', () => {
         mockCall('systemdataset.config', { pool: 'Second Dataset' } as CallResponse<WebUiApiDirectory, 'systemdataset.config'>),
       ]),
       mockProvider(DatasetTreeStore, {
-        datasets$,
-        error$,
-        loadDatasets: () => {},
+        datasets,
+        error,
+        loadDatasets: jest.fn(),
         refreshDatasets: jest.fn(),
-        selectedBranch$: of(false),
-        isLoading$: of(false),
+        selectedBranch,
+        selectedDataset: signal(null),
+        isLoading: signal(false),
         selectDatasetById: () => {},
       }),
       mockSharingTierService({ jobUpdates$: tierJobUpdates$ }),
@@ -70,6 +73,9 @@ describe('DatasetsManagementComponent', () => {
   });
 
   beforeEach(() => {
+    datasets.set(initialDatasets);
+    error.set(null);
+    selectedBranch.set(null);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     router = spectator.inject(Router);
@@ -100,12 +106,12 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('should display error when datasets loading fails', async () => {
-    error$.next(new ApiCallError({
+    error.set(new ApiCallError({
       data: {
         reason: 'Network Error',
       },
     } as JsonRpcError));
-    datasets$.next([]);
+    datasets.set([]);
 
     spectator.detectChanges();
 
@@ -118,8 +124,8 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('should display empty state when no datasets', async () => {
-    error$.next(null);
-    datasets$.next([]);
+    error.set(null);
+    datasets.set([]);
     spectator.detectChanges();
 
     const empty = await loader.getHarness(TnEmptyHarness);
@@ -138,8 +144,8 @@ describe('DatasetsManagementComponent', () => {
   });
 
   it('filters the tree while no dataset is selected', async () => {
-    error$.next(null);
-    datasets$.next([{ id: 'first', name: 'First Dataset' }] as DatasetDetails[]);
+    error.set(null);
+    datasets.set([{ id: 'first', name: 'First Dataset' }] as DatasetDetails[]);
     spectator.detectChanges();
     const search = await loader.getHarness(BasicSearchHarness);
 
@@ -147,6 +153,98 @@ describe('DatasetsManagementComponent', () => {
 
     expect(await search.getValue()).toBe('first');
     expect(spectator.query('.details-container')).not.toExist();
+  });
+
+  describe('expanding the selected branch', () => {
+    function makeTree(): DatasetDetails[] {
+      return [
+        { id: 'pool', name: 'pool', children: [{ id: 'pool/a' }] },
+        { id: 'pool/a', name: 'pool/a', children: [{ id: 'pool/a/b' }] },
+        { id: 'pool/a/b', name: 'pool/a/b', children: [{ id: 'pool/a/b/c' }] },
+        { id: 'pool/a/b/c', name: 'pool/a/b/c', children: [] },
+      ] as DatasetDetails[];
+    }
+
+    function branchTo(id: string): DatasetDetails[] {
+      return datasets().filter((dataset) => id === dataset.id || id.startsWith(`${dataset.id}/`));
+    }
+
+    function isExpanded(id: string): boolean {
+      const { treeControl } = spectator.component;
+      return treeControl.isExpanded(treeControl.dataNodes.find((dataset) => dataset.id === id)!);
+    }
+
+    // white-box: the virtual scroll viewport has no height in jsdom, so it renders no rows to click.
+    // This calls the rows' (click) handler directly.
+    function clickRow(id: string): void {
+      const dataset = spectator.component.treeControl.dataNodes.find((node) => node.id === id)!;
+      // eslint-disable-next-line @typescript-eslint/dot-notation
+      spectator.component['viewDetails'](dataset);
+      spectator.detectChanges();
+    }
+
+    beforeEach(() => {
+      spectator.setRouteParam('datasetId', 'pool');
+      datasets.set(makeTree());
+      spectator.detectChanges();
+    });
+
+    it('opens the first pool when the page is entered with nothing selected', () => {
+      spectator.setRouteParam('datasetId', undefined);
+      datasets.set(makeTree());
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(true);
+      expect(isExpanded('pool/a')).toBe(false);
+    });
+
+    it('opens the first pool when a deep link names a dataset that does not exist', () => {
+      expect(isExpanded('pool')).toBe(false);
+
+      spectator.setRouteParam('datasetId', 'pool/gone');
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(true);
+      expect(isExpanded('pool/a')).toBe(false);
+    });
+
+    it('expands the ancestors of a deep-linked dataset, but not the dataset itself', () => {
+      selectedBranch.set(branchTo('pool/a/b'));
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(true);
+      expect(isExpanded('pool/a')).toBe(true);
+      expect(isExpanded('pool/a/b')).toBe(false);
+    });
+
+    it('toggles the selected row when it is clicked, and only selects another row', () => {
+      selectedBranch.set(branchTo('pool'));
+      spectator.detectChanges();
+      expect(isExpanded('pool')).toBe(false);
+
+      clickRow('pool');
+      expect(isExpanded('pool')).toBe(true);
+
+      clickRow('pool');
+      expect(isExpanded('pool')).toBe(false);
+
+      clickRow('pool');
+      clickRow('pool/a');
+      expect(isExpanded('pool/a')).toBe(false);
+    });
+
+    it('keeps a selected dataset the user collapsed collapsed after a reload', () => {
+      selectedBranch.set(branchTo('pool/a'));
+      spectator.detectChanges();
+      expect(isExpanded('pool')).toBe(true);
+
+      spectator.component.treeControl.collapse(spectator.component.treeControl.dataNodes[0]);
+      datasets.set(makeTree());
+      selectedBranch.set(branchTo('pool/a'));
+      spectator.detectChanges();
+
+      expect(isExpanded('pool')).toBe(false);
+    });
   });
 
   describe('horizontal scroll width', () => {
@@ -158,8 +256,10 @@ describe('DatasetsManagementComponent', () => {
     }
 
     beforeEach(() => {
-      error$.next(null);
-      datasets$.next([
+      error.set(null);
+      // Selected, so the page does not open the first pool as it does when entered with nothing selected.
+      spectator.setRouteParam('datasetId', 'pool');
+      datasets.set([
         { id: 'pool', name: 'pool', children: [{ id: 'pool/child' }] },
         { id: 'pool/child', name: 'pool/child', children: [] },
       ] as DatasetDetails[]);

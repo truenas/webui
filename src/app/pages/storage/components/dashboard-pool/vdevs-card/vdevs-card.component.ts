@@ -18,6 +18,7 @@ import { PoolCardIconType } from 'app/enums/pool-card-icon-type.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyWarning, VDevType } from 'app/enums/v-dev-type.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { Disk, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import {
@@ -63,7 +64,7 @@ interface TopologyWarningState {
 }
 
 export type EmptyDiskObject = Record<
-  string, string | number | boolean | string[] | EnclosureAndSlot
+  string, string | number | boolean | string[] | EnclosureAndSlot | ApiTimestamp
 >;
 
 @Component({

@@ -2,13 +2,14 @@ import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { Location } from '@angular/common';
+import { signal, WritableSignal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockDeclaration } from 'ng-mocks';
 import { ImgFallbackDirective } from 'ngx-img-fallback';
 import { NgxPopperjsContentComponent, NgxPopperjsDirective, NgxPopperjsLooseDirective } from 'ngx-popperjs';
-import { BehaviorSubject, of } from 'rxjs';
+import { of } from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
@@ -29,15 +30,13 @@ import { ApplicationsService } from 'app/pages/apps/services/applications.servic
 import { AppsStatsService } from 'app/pages/apps/store/apps-stats.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
-import { AppsSortDirection, InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { AppsSort, AppsSortDirection, InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
 
 describe('InstalledAppsListComponent', () => {
   let spectator: Spectator<InstalledAppsListComponent>;
   let applicationsService: ApplicationsService;
   let loader: HarnessLoader;
-  let searchQuery$: BehaviorSubject<string>;
-  let sortingInfo$: BehaviorSubject<{ active: string; direction: AppsSortDirection }>;
-  let installedApps$: BehaviorSubject<App[]>;
+  let installedApps: WritableSignal<App[]>;
 
   const apps = [
     {
@@ -79,30 +78,28 @@ describe('InstalledAppsListComponent', () => {
     ],
     providers: [
       mockProvider(DockerStore, {
-        isDockerStarted$: of(true),
-        selectedPool$: of('pool'),
+        isDockerStarted: signal(true),
+        selectedPool: signal('pool'),
       }),
       {
         provide: InstalledAppsStore,
         useFactory: () => {
-          searchQuery$ = new BehaviorSubject('');
-          sortingInfo$ = new BehaviorSubject({ active: 'application', direction: 'asc' as AppsSortDirection });
-          installedApps$ = new BehaviorSubject(apps);
+          const searchQuery = signal('');
+          const sortingInfo = signal<AppsSort>({ active: 'application', direction: 'asc' });
+          installedApps = signal(apps);
           return {
-            isLoading$: of(false),
-            installedApps$: installedApps$.asObservable(),
-            searchQuery$: searchQuery$.asObservable(),
-            sortingInfo$: sortingInfo$.asObservable(),
-            setSearchQuery: jest.fn((query: string) => searchQuery$.next(query)),
-            setSortingInfo: jest.fn(
-              (info: { active: string; direction: AppsSortDirection }) => sortingInfo$.next(info),
-            ),
+            isLoading: signal(false),
+            installedApps,
+            searchQuery,
+            sortingInfo,
+            setSearchQuery: jest.fn((query: string) => searchQuery.set(query)),
+            setSortingInfo: jest.fn((info: AppsSort) => sortingInfo.set(info)),
           };
         },
       },
       mockProvider(AppsStore, {
-        isLoading$: of(false),
-        availableApps$: of([]),
+        isLoading: signal(false),
+        availableApps: signal([]),
       }),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -135,7 +132,7 @@ describe('InstalledAppsListComponent', () => {
       ]),
       mockAuth(),
       mockProvider(AppsStatsService, {
-        getStatsForApp: jest.fn(() => of(null)),
+        getStatsForApp: jest.fn(),
       }),
     ],
     params: { appId: 'webdav', train: 'community' },
@@ -184,12 +181,44 @@ describe('InstalledAppsListComponent', () => {
 
     const locationSpy = jest.spyOn(spectator.inject(Location), 'replaceState');
 
-    // Simulate the installedApps$ re-emission that follows a start/stop.
-    installedApps$.next([...apps]);
+    // Simulate the installedApps update that follows a start/stop.
+    installedApps.set([...apps]);
     spectator.detectChanges();
 
     expect(spectator.component.selectedApp).toEqual(apps[1]);
     expect(locationSpy).not.toHaveBeenCalled();
+  });
+
+  it('keeps the ticked apps when the list refreshes with new app objects', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(1);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+
+    installedApps.set(apps.map((app) => ({ ...app })));
+    spectator.detectChanges();
+
+    expect(await table.isRowSelected(1)).toBe(true);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+  });
+
+  it('leaves a ticked app hidden by a search out of a bulk action, and does not bring it back', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    // test-app-1 is the running one, so Stop would reach it if hidden ticks counted.
+    await table.toggleRowSelection(0);
+
+    spectator.inject(InstalledAppsStore).setSearchQuery('test-app-2');
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+    expect(spectator.component.checkedApps().map((app) => app.name)).toEqual(['test-app-2']);
+
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkStop.emit();
+    expect(applicationsService.stopApplication).not.toHaveBeenCalled();
+
+    spectator.inject(InstalledAppsStore).setSearchQuery('');
+    spectator.detectChanges();
+
+    expect(await table.getSelectedRowCount()).toBe(0);
+    expect(spectator.component.checkedApps()).toEqual([]);
   });
 
   it('starts application', async () => {
@@ -238,6 +267,21 @@ describe('InstalledAppsListComponent', () => {
     spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
 
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, { data: apps });
+  });
+
+  it('leaves a ticked app hidden by a search out of a bulk update', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowSelection(0);
+
+    spectator.inject(InstalledAppsStore).setSearchQuery('test-app-2');
+    spectator.detectChanges();
+    await table.toggleRowSelection(0);
+
+    spectator.query(InstalledAppsListBulkActionsComponent)!.bulkUpdate.emit();
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AppBulkUpdateComponent, {
+      data: [expect.objectContaining({ name: 'test-app-2' })],
+    });
   });
 
   it('removes several applications', async () => {

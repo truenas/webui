@@ -11,7 +11,7 @@ import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import {
-  forkJoin, Observable, of, take,
+  Observable, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
@@ -91,13 +91,12 @@ export class SelectPoolDialog implements OnInit {
   }
 
   private loadPools(): void {
-    forkJoin([
-      this.dockerStore.selectedPool$.pipe(take(1)),
-      this.appService.getPoolList(),
-    ])
+    const selectedPool = this.dockerStore.selectedPool();
+
+    this.appService.getPoolList()
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: ([selectedPool, pools]) => {
+        next: (pools) => {
           this.form.patchValue({
             pool: selectedPool || '',
           });

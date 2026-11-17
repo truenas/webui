@@ -5,6 +5,14 @@
   [submitHandler]="handleSubmit"
   (closed)="closed.emit($event)"
 >
+  @if (isSuspended) {
+    <tn-banner
+      type="warning"
+      testId="edit-vm-suspended"
+      [message]="vmListHelptext.suspendedEditNotice | translate"
+    ></tn-banner>
+  }
+
   <tn-form-section>
     <tn-form-field
       [label]="'Name' | translate"

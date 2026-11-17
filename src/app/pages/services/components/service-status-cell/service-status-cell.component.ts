@@ -4,7 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
 import {
-  filter, Observable, switchMap, take,
+  filter, last, Observable, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
@@ -66,11 +66,14 @@ export class ServiceStatusCellComponent {
   protected startService(): void {
     this.api.job('service.control', [ServiceOperation.Start, this.service().service, { silent: false }]).pipe(
       observeJob(),
+      last(),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      complete: () => this.snackbar.success(this.translate.instant('Service started')),
+    ).subscribe((job) => {
+      if (job.result === true) {
+        this.snackbar.success(this.translate.instant('Service started'));
+      }
     });
   }
 
@@ -83,13 +86,16 @@ export class ServiceStatusCellComponent {
   }
 
   private stopService(): void {
-    this.api.job('service.control', [ServiceOperation.Stop, this.service().service]).pipe(
+    this.api.job('service.control', [ServiceOperation.Stop, this.service().service, { silent: false }]).pipe(
       observeJob(),
+      last(),
       this.loader.withLoader(),
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe({
-      complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
+    ).subscribe((job) => {
+      if (job.result === true) {
+        this.snackbar.success(this.translate.instant('Service stopped'));
+      }
     });
   }
 

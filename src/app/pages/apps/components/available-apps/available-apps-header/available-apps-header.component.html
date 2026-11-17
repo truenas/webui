@@ -23,11 +23,11 @@
         class="filters-caret"
         library="mdi"
         aria-hidden="true"
-        [name]="showFilters ? 'chevron-up' : 'chevron-down'"
+        [name]="showFilters() ? 'chevron-up' : 'chevron-down'"
       ></tn-icon>
     </span>
   </div>
-  @if (showFilters) {
+  @if (showFilters()) {
     <div class="filters-container">
       <div class="filters">
         <ix-filter-select-list
@@ -41,7 +41,7 @@
             <tn-chip-input
               testId="categories"
               [formControl]="form.controls.categories"
-              [suggestions]="categorySuggestions()"
+              [suggestions]="applicationsStore.appsCategories()"
               [allowCustomValue]="false"
             ></tn-chip-input>
           </tn-form-field>
@@ -55,13 +55,13 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Available Apps' | translate }}</div>
     <a class="header-link" tnTestId="available-apps-section" tnTestIdType="link">
-      @if (areLoaded$ | async) {
+      @if (areLoaded()) {
         <a
           tnTestId="available-apps"
           tnTestIdType="link"
           [routerLink]="['/apps/available', AppExtraCategory.All]"
         >
-          <h2>{{ (availableApps$ | async)?.length }}</h2>
+          <h2>{{ applicationsStore.availableApps().length }}</h2>
         </a>
       } @else {
         <ngx-skeleton-loader></ngx-skeleton-loader>
@@ -81,8 +81,8 @@
   <div class="header-number">
     <div class="header-number-title">{{ 'Installed Apps' | translate }}</div>
     <a class="header-link" tnTestId="manage-installed-apps" tnTestIdType="link" [routerLink]="['/apps/installed']">
-      @if (areLoaded$ | async) {
-        <h2>{{ (installedApps$ | async)?.length }}</h2>
+      @if (areLoaded()) {
+        <h2>{{ installedAppsStore.installedApps().length }}</h2>
       } @else {
         <ngx-skeleton-loader></ngx-skeleton-loader>
       }

@@ -67,7 +67,7 @@ export class NtpServersCardComponent implements OnInit {
 
   dataProvider: AsyncDataProvider<NtpServer>;
 
-  protected readonly displayedColumns = ['address', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
+  protected readonly displayedColumns = ['address', 'nts', 'burst', 'iburst', 'prefer', 'minpoll', 'maxpoll', 'actions'];
 
   protected readonly trackByNtpId = (_: number, row: NtpServer): number => row.id;
 

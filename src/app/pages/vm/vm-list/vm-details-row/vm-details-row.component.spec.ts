@@ -3,7 +3,9 @@ import { TestbedHarnessEnvironment, UnitTestElement } from '@angular/cdk/testing
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
+import {
+  TnBannerHarness, TnButtonHarness, TnDialog, TnTooltipHarness,
+} from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { fakeFile } from 'app/core/testing/utils/fake-file.uitls';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -57,7 +59,8 @@ describe('VirtualMachineDetailsRowComponent', () => {
         doStartResume: jest.fn(() => of()),
         doStop: jest.fn(() => of()),
         doRestart: jest.fn(() => of()),
-        doPowerOff: jest.fn(() => of()),
+        doPowerOff: jest.fn(() => of(true)),
+        doSuspend: jest.fn(() => of(true)),
         doReset: jest.fn(() => of(true)),
         openDisplay: jest.fn(() => of()),
       }),
@@ -82,6 +85,32 @@ describe('VirtualMachineDetailsRowComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
+  /** Hovers the button with this label and returns the text of the tooltip it opens. */
+  async function hoverForTooltip(label: RegExp): Promise<string> {
+    const button = await loader.getHarness(TnButtonHarness.with({ label }));
+    const host = await button.host();
+
+    // tn-tooltip opens on a setTimeout, which whenStable() does not wait for.
+    jest.useFakeTimers();
+    try {
+      let isHovered = false;
+      const hovered = host.hover().finally(() => {
+        isHovered = true;
+      });
+      while (!isHovered) {
+        await jest.advanceTimersByTimeAsync(10);
+      }
+      await hovered;
+      await jest.runOnlyPendingTimersAsync();
+    } finally {
+      jest.useRealTimers();
+    }
+
+    const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
+      .getHarness(TnTooltipHarness);
+    return tooltip.getText();
+  }
+
   // White-box: TnButtonHarness exposes no test-id getter yet, so the resolved data-test values
   // are read off the native buttons tn-button renders (library request pending — see the
   // NAS-141021 follow-ups). Order-insensitive on purpose: this guards ID preservation across
@@ -92,6 +121,7 @@ describe('VirtualMachineDetailsRowComponent', () => {
 
     expect(testIds).toEqual(expect.arrayContaining([
       'button-stop-2',
+      'button-suspend-2',
       'button-restart-2',
       'button-reset-2',
       'button-power-off-2',
@@ -191,6 +221,30 @@ describe('VirtualMachineDetailsRowComponent', () => {
     expect(spectator.inject(VmService).doPowerOff).toHaveBeenCalledWith(virtualMachine);
   });
 
+  it('should call service to suspend the VM', async () => {
+    const suspendButton = await loader.getHarness(TnButtonHarness.with({ label: /Suspend/ }));
+    expect(await suspendButton.getIconName()).toBe('mdi-pause-circle');
+
+    await suspendButton.click();
+
+    expect(spectator.inject(VmService).doSuspend).toHaveBeenCalledWith(virtualMachine);
+  });
+
+  it('describes Stop as a graceful shutdown in its tooltip', async () => {
+    expect(await hoverForTooltip(/^Stop$/)).toContain('Graceful shutdown');
+  });
+
+  it('describes Power Off as a forced power off that may lose data in its tooltip', async () => {
+    const tooltip = await hoverForTooltip(/Power Off/);
+
+    expect(tooltip).toContain('Forced power off');
+    expect(tooltip).toContain('may result in data loss');
+  });
+
+  it('shows no suspended banner for a running VM', async () => {
+    expect(await loader.hasHarness(TnBannerHarness)).toBe(false);
+  });
+
   it('should call service to reset the VM', async () => {
     const resetButton = await loader.getHarness(TnButtonHarness.with({ label: /Reset/ }));
     expect(await resetButton.getIconName()).toBe('mdi-restart-alert');
@@ -243,14 +297,25 @@ describe('VirtualMachineDetailsRowComponent', () => {
       expect(spectator.inject(VmService).doStartResume).toHaveBeenCalledWith(suspendedVirtualMachine);
     });
 
-    it('should not show Stop, Restart or Reset buttons for suspended VM', async () => {
+    it('should not show Stop, Suspend, Restart or Reset buttons for suspended VM', async () => {
       const stopButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Stop/ }));
+      const suspendButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Suspend/ }));
       const restartButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Restart/ }));
       const resetButtons = await loader.getAllHarnesses(TnButtonHarness.with({ label: /Reset/ }));
 
       expect(stopButtons).toHaveLength(0);
+      expect(suspendButtons).toHaveLength(0);
       expect(restartButtons).toHaveLength(0);
       expect(resetButtons).toHaveLength(0);
+    });
+
+    it('says the VM is suspended, what that means, and that edits wait for a full stop and start', async () => {
+      const banner = await loader.getHarness(TnBannerHarness);
+      const text = await banner.getText();
+
+      expect(text).toContain('This VM is suspended');
+      expect(text).toContain('memory is still loaded');
+      expect(text).toContain('not on Resume');
     });
 
     it('should not show Display button for suspended VM', async () => {

@@ -10,6 +10,7 @@ import {
 } from 'app/enums/truenas-connect-status.enum';
 import { TruenasConnectTier } from 'app/enums/truenas-connect-tier.enum';
 import { TruenasConnectSpinnerComponent } from 'app/modules/truenas-connect/components/truenas-connect-spinner/truenas-connect-spinner.component';
+import { getTncRegistrationFailureDetail } from 'app/modules/truenas-connect/truenas-connect-status.utils';
 import { tierDisplayConfig } from 'app/modules/truenas-connect/truenas-connect-tier.utils';
 
 @Component({
@@ -28,9 +29,16 @@ export class TruenasConnectStatusDisplayComponent {
   readonly TncStatus = TncStatus;
   readonly TruenasConnectStatusReason = TruenasConnectStatusReason;
 
+  // Finishing setup installs the TrueNAS Connect certificate as the UI certificate, which restarts
+  // the web interface and ends the current session. Warn before it happens, not after.
+  protected readonly logoutNotice = T(
+    'When setup finishes, the web interface restarts to apply the TrueNAS Connect certificate and you will need to log in again.',
+  );
+
   status = input.required<typeof TncStatus[keyof typeof TncStatus]>();
   rawStatus = input.required<TruenasConnectStatus>();
   tier = input<TruenasConnectTier | null>(null);
+  statusReason = input<string | null>(null);
 
   protected tierLabel = computed(() => {
     const tier = this.tier();
@@ -42,7 +50,15 @@ export class TruenasConnectStatusDisplayComponent {
     return tier ? tierDisplayConfig[tier].background : null;
   });
 
+  protected failureDetail = computed(() => {
+    return getTncRegistrationFailureDetail({ status: this.rawStatus(), status_reason: this.statusReason() });
+  });
+
   protected failedDescription = computed(() => {
+    // TrueNAS Connect answered with a reason, so the network hint would be misleading.
+    if (this.failureDetail()) {
+      return T('TrueNAS Connect could not complete the registration. Resolve the issue below, then click Retry Connection.');
+    }
     return TruenasConnectFailureDescription[this.rawStatus()]
       ?? T('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
   });

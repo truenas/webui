@@ -5,6 +5,7 @@ import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Alert } from 'app/interfaces/alert.interface';
+import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { EnclosureAndSlot, TemperatureAgg } from 'app/interfaces/storage.interface';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
@@ -13,7 +14,7 @@ export interface Disk {
   bus: DiskBus;
   description: string;
   devname: string;
-  expiretime: string;
+  expiretime: ApiTimestamp | null;
   hddstandby: DiskStandby;
   identifier: string;
   lunid?: string;

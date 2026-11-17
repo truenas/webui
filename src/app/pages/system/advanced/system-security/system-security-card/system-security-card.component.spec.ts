@@ -18,6 +18,7 @@ import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
   enable_gpos_stig: false,
+  require_nts: true,
   min_password_age: 5,
   max_password_age: 30,
   password_complexity_ruleset: {
@@ -69,6 +70,7 @@ describe('SystemSecurityCardComponent', () => {
       'Password Complexity Ruleset: Upper, Number',
       'Min Password Length: 10 characters',
       'Password History Length: 5 entries',
+      'Require NTS: Yes',
     ]);
   });
 

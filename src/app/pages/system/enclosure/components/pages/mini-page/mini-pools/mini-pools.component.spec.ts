@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent } from 'ng-mocks';
 import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
@@ -17,9 +18,9 @@ describe('MiniPoolsComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => ({} as DashboardEnclosure),
-        selectedSide: () => EnclosureSide.Front,
-        poolColors: () => ({
+        selectedEnclosure: signal({} as DashboardEnclosure),
+        selectedSide: signal(EnclosureSide.Front),
+        poolColors: signal({
           pool1: 'red',
           pool2: 'green',
         }),

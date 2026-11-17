@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
@@ -91,13 +92,13 @@ describe('DatasetCapacityManagementCardComponent', () => {
       mockProvider(DialogService),
       mockProvider(DatasetTreeStore, {
         datasetUpdated: jest.fn(),
-        selectedBranch$: of([{
+        selectedBranch: signal([{
           id: 'quota',
           name: 'quota',
           quota: {
             parsed: 16777216,
           },
-        }]),
+        }] as DatasetDetails[]),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
@@ -258,7 +259,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
         mockProvider(DialogService),
         mockProvider(DatasetTreeStore, {
           datasetUpdated: jest.fn(),
-          selectedBranch$: of([]),
+          selectedBranch: signal([]),
         }),
         mockProvider(FormSidePanelService, { open: jest.fn(() => SlideInResult.empty()) }),
         mockProvider(SharingTierService, {

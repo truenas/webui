@@ -8,15 +8,14 @@ import {
 import { filter, map } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
-import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
 import { IscsiWizardComponent } from 'app/pages/sharing/iscsi/iscsi-wizard/iscsi-wizard.component';
 import { iscsiElements } from 'app/pages/sharing/iscsi/iscsi.elements';
-import { EntitlementsService } from 'app/services/entitlements.service';
 import { IscsiService } from 'app/services/iscsi.service';
+import { LicenseService } from 'app/services/license.service';
 
 @Component({
   selector: 'ix-iscsi',
@@ -38,15 +37,14 @@ export class IscsiComponent {
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private iscsiService = inject(IscsiService);
-  private entitlements = inject(EntitlementsService);
+  private license = inject(LicenseService);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
 
   protected readonly searchableElements = iscsiElements;
   protected readonly requiredRoles = [Role.SharingIscsiWrite];
 
-  // Entitlement alone by design (NAS-143012): `fc.capable` is not consulted here.
-  protected readonly hasFibreChannel = toSignal(this.entitlements.entitled$(EntitlementFeature.FibreChannel));
+  protected readonly hasFibreChannel = toSignal(this.license.hasFibreChannel$);
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(

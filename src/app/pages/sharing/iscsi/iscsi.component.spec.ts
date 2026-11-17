@@ -12,7 +12,7 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { GlobalTargetConfigurationComponent } from 'app/pages/sharing/iscsi/global-target-configuration/global-target-configuration.component';
-import { EntitlementsService } from 'app/services/entitlements.service';
+import { LicenseService } from 'app/services/license.service';
 import { IscsiComponent } from './iscsi.component';
 
 describe('IscsiComponent', () => {
@@ -29,9 +29,7 @@ describe('IscsiComponent', () => {
       MockComponent(PageHeaderComponent),
     ],
     providers: [
-      mockProvider(EntitlementsService, {
-        entitled$: () => hasFibreChannel$,
-      }),
+      mockProvider(LicenseService, { hasFibreChannel$ }),
       mockAuth(),
       mockApi(),
       mockProvider(FormSidePanelService, {
@@ -41,6 +39,7 @@ describe('IscsiComponent', () => {
   });
 
   beforeEach(() => {
+    hasFibreChannel$.next(false);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });

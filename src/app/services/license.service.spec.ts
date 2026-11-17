@@ -2,10 +2,11 @@ import { TestBed } from '@angular/core/testing';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { firstValueFrom, of } from 'rxjs';
-import { mockApi } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { TruenasConnectService } from 'app/modules/truenas-connect/services/truenas-connect.service';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { LicenseService } from 'app/services/license.service';
 import { selectEntitlementFacts } from 'app/store/system-info/system-info.selectors';
@@ -30,6 +31,42 @@ describe('LicenseService', () => {
     });
     return TestBed.inject(LicenseService);
   }
+
+  describe('hasFibreChannel$', () => {
+    function setupFc(isEntitled: boolean, isFcCapable: boolean): LicenseService {
+      TestBed.configureTestingModule({
+        providers: [
+          LicenseService,
+          mockApi([mockCall('fc.capable', isFcCapable)]),
+          mockProvider(TruenasConnectService, { config$: of(null) }),
+          mockProvider(EntitlementsService, {
+            entitled$: (feature: EntitlementFeature) => of(feature === EntitlementFeature.FibreChannel && isEntitled),
+          }),
+          provideMockStore(),
+        ],
+      });
+      return TestBed.inject(LicenseService);
+    }
+
+    it('emits true when entitled and fc.capable is true', async () => {
+      const service = setupFc(true, true);
+
+      await expect(firstValueFrom(service.hasFibreChannel$)).resolves.toBe(true);
+    });
+
+    it('emits false when entitled but fc.capable is false (no FC HBA)', async () => {
+      const service = setupFc(true, false);
+
+      await expect(firstValueFrom(service.hasFibreChannel$)).resolves.toBe(false);
+    });
+
+    it('emits false without the FIBRECHANNEL entitlement and does not ask fc.capable', async () => {
+      const service = setupFc(false, true);
+
+      await expect(firstValueFrom(service.hasFibreChannel$)).resolves.toBe(false);
+      expect(TestBed.inject(ApiService).call).not.toHaveBeenCalledWith('fc.capable');
+    });
+  });
 
   describe('shouldShowWebshare$', () => {
     it('emits true off TrueNAS appliance hardware even without the WEBSHARE entitlement', async () => {

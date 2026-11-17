@@ -6,7 +6,6 @@ import {
   InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent,
   TnInputComponent,
 } from '@truenas/ui-components';
-import { GiB } from 'app/constants/bytes.constant';
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
@@ -15,8 +14,8 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { datasetQuotaValidator } from 'app/pages/datasets/utils/dataset-quota.validator';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
 
 @Component({
@@ -38,8 +37,9 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
   private api = inject(ApiService);
   private formBuilder = inject(NonNullableFormBuilder);
   private translate = inject(TranslateService);
-  private validators = inject(IxValidatorsService);
   private destroyRef = inject(DestroyRef);
+
+  private readonly quotaValidator = datasetQuotaValidator(this.translate.instant(helptextDatasetForm.quotaTooSmall));
 
   readonly requiredRoles = [Role.DatasetWrite];
   protected readonly InputType = InputType;
@@ -51,10 +51,7 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
   readonly datasetToEdit = input.required<DatasetDetails>();
 
   form = this.formBuilder.group({
-    refquota: [null as number | null, this.validators.withMessage(
-      Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.quotaTooSmall),
-    )],
+    refquota: [null as number | null, this.quotaValidator],
     refquota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),
@@ -66,10 +63,7 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
     ]],
     refquota_critical_inherit: [false],
 
-    quota: [null as number | null, this.validators.withMessage(
-      Validators.min(GiB),
-      this.translate.instant(helptextDatasetForm.quotaTooSmall),
-    )],
+    quota: [null as number | null, this.quotaValidator],
     quota_warning: [this.defaultQuotaWarning, [
       Validators.min(0),
       Validators.max(100),

@@ -4,6 +4,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
+import {
+  catchError, EMPTY, Observable, throwError,
+} from 'rxjs';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
@@ -15,6 +18,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import {
   AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('AutotrimDialogComponent', () => {
   let spectator: Spectator<AutotrimDialog>;
@@ -41,6 +45,12 @@ describe('AutotrimDialogComponent', () => {
       mockProvider(SnackbarService),
       mockProvider(DialogService),
       mockProvider(DialogRef),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: <T>() => (source$: Observable<T>) => source$.pipe(catchError((error: unknown) => {
+          spectator.inject(ErrorHandlerService).showErrorModal(error);
+          return EMPTY;
+        })),
+      }),
     ],
   });
 
@@ -64,5 +74,16 @@ describe('AutotrimDialogComponent', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.update', [47, { autotrim: OnOff.Off }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
+  });
+
+  it('shows the error, no success message and keeps the dialog open when saving fails', async () => {
+    jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(throwError(() => new Error('Refused')));
+
+    const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(new Error('Refused'));
+    expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 });

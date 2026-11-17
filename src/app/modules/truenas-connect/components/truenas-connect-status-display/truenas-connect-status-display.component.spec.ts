@@ -42,6 +42,36 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     expect(spectator.query('.failed-description')).toHaveText('Something went wrong! Please check your network connectivity and then click Retry Connection to get started.');
   });
 
+  it('replaces the network hint with the middleware failure detail when registration fails', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
+    spectator.setInput('statusReason', 'System limit exceeded');
+    spectator.detectChanges();
+
+    expect(spectator.query('.failed-description')).toHaveExactTrimmedText(
+      'TrueNAS Connect could not complete the registration. Resolve the issue below, then click Retry Connection.',
+    );
+    expect(spectator.query('.failure-detail')).toHaveExactTrimmedText('Details: System limit exceeded');
+  });
+
+  it('hides the failure detail while status_reason is the generic per-status text', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
+    spectator.setInput('statusReason', 'Registration finalization failed');
+    spectator.detectChanges();
+
+    expect(spectator.query('.failure-detail')).not.toExist();
+  });
+
+  it('does not show status_reason as a failure detail for other failed statuses', () => {
+    spectator.setInput('status', TncStatus.Failed);
+    spectator.setInput('rawStatus', TruenasConnectStatus.CertGenerationFailed);
+    spectator.setInput('statusReason', 'Certificate generation failed');
+    spectator.detectChanges();
+
+    expect(spectator.query('.failure-detail')).not.toExist();
+  });
+
   it('shows a timeout-specific message when the user did not finish authorization in time', () => {
     spectator.setInput('status', TncStatus.Failed);
     spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationTimeout);
@@ -69,6 +99,36 @@ describe('TruenasConnectStatusDisplayComponent', () => {
     expect(spectator.query('ix-truenas-connect-spinner')).toBeTruthy();
     expect(spectator.query('.connecting-header')).toHaveText('Setting up TrueNAS Connect');
     expect(spectator.query('.connecting-description')).toHaveText('Your system is setting up with TrueNAS Connect; this may take a few moments.');
+  });
+
+  describe('logout notice', () => {
+    const notice = 'When setup finishes, the web interface restarts to apply the TrueNAS Connect certificate'
+      + ' and you will need to log in again.';
+
+    it('warns before setup starts that the admin will be logged out', () => {
+      spectator.setInput('status', TncStatus.Waiting);
+      spectator.detectChanges();
+
+      expect(spectator.query('.logout-notice')).toHaveText(notice);
+    });
+
+    it('warns while setup is in progress that the admin will be logged out', () => {
+      spectator.setInput('status', TncStatus.Connecting);
+      spectator.detectChanges();
+
+      expect(spectator.query('.logout-notice')).toHaveText(notice);
+    });
+
+    it('does not show the notice once connected or after a failure', () => {
+      spectator.setInput('status', TncStatus.Active);
+      spectator.detectChanges();
+      expect(spectator.query('.logout-notice')).not.toExist();
+
+      spectator.setInput('status', TncStatus.Failed);
+      spectator.setInput('rawStatus', TruenasConnectStatus.RegistrationFinalizationFailed);
+      spectator.detectChanges();
+      expect(spectator.query('.logout-notice')).not.toExist();
+    });
   });
 
   it('should display disabled state correctly', () => {

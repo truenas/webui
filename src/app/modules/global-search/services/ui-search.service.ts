@@ -51,7 +51,8 @@ export class UiSearchProvider implements GlobalSearchProvider {
           this.visibleUnlessDenied(EntitlementFeature.Vms),
           this.visibleUnlessDenied(EntitlementFeature.Apps),
           this.visibleUnlessDenied(EntitlementFeature.Kmip),
-          this.visibleUnlessDenied(EntitlementFeature.FibreChannel),
+          // `fc.capable` checks the licence as well as the hardware, and answers without waiting on entitlements.
+          this.license.isFcCapable$,
           this.visibleUnlessDenied(EntitlementFeature.Sed),
           this.license.hasSystemSecurity$,
         ]).pipe(

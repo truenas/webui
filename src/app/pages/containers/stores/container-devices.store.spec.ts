@@ -1,4 +1,5 @@
 import { signal } from '@angular/core';
+import { TestBed } from '@angular/core/testing';
 import { createServiceFactory, mockProvider, SpectatorService } from '@ngneat/spectator/jest';
 import { Subject, throwError } from 'rxjs';
 import {
@@ -15,8 +16,6 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ContainerDevicesStore', () => {
   let spectator: SpectatorService<ContainerDevicesStore>;
-  let selectedContainerSignal: ReturnType<typeof signal<Container | undefined>>;
-
   const containers = [
     fakeContainer({ id: 1 }),
     fakeContainer({ id: 2 }),
@@ -37,6 +36,8 @@ describe('ContainerDevicesStore', () => {
     id: 2, dtype: 'FILESYSTEM', source: '/mnt/tank/two', target: '/two',
   };
 
+  const selectedContainer = signal<Container | undefined>(containers[0]);
+
   const gpuChoices = {
     '0000:19:00.0': containerGpuType.Nvidia,
     '0000:1a:00.0': containerGpuType.Amd,
@@ -50,41 +51,42 @@ describe('ContainerDevicesStore', () => {
         mockCall('container.device.gpu_choices', gpuChoices),
       ]),
       mockProvider(ContainersStore, {
-        containers: jest.fn(() => containers),
-        selectedContainer: jest.fn(() => selectedContainerSignal()),
+        containers: signal(containers),
+        selectedContainer,
       }),
       mockProvider(ErrorHandlerService),
     ],
   });
 
   beforeEach(() => {
-    selectedContainerSignal = signal<Container | undefined>(containers[0]);
+    selectedContainer.set(containers[0]);
     spectator = createService();
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.state()).toEqual({
-      isLoading: false,
-      devices: [],
-      gpuChoices,
-      isLoadingGpuChoices: false,
-    });
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.devices()).toEqual([]);
+    expect(spectator.service.gpuChoices()).toEqual(gpuChoices);
+    expect(spectator.service.isLoadingGpuChoices()).toBe(false);
   });
 
-  it('should load devices when loadDevices is called', async () => {
-    spectator.service.reload();
+  it('loads devices of the selected container on its own once the selection is read', async () => {
+    TestBed.tick();
     await settleApi();
 
     expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('container.device.query', [['container', '=', 1]]);
-    expect(spectator.service.state()).toEqual({
-      devices: [
-        device1,
-        device2,
-      ],
-      isLoading: false,
-      gpuChoices,
-      isLoadingGpuChoices: false,
-    });
+    expect(spectator.service.devices()).toEqual([device1, device2]);
+  });
+
+  it('clears devices when the selection is cleared', async () => {
+    spectator.service.reload();
+    await settleApi();
+
+    selectedContainer.set(undefined);
+    TestBed.tick();
+
+    expect(spectator.service.devices()).toEqual([]);
+    expect(spectator.service.isLoading()).toBe(false);
   });
 
   it('loadDevices – loads a list of devices for the selected container', async () => {
@@ -180,6 +182,17 @@ describe('ContainerDevicesStore', () => {
 
       expect(spectator.service.devices()).toEqual([]);
     });
+
+    it('can load devices again after a failed attempt', async () => {
+      jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValueOnce(
+        throwError(() => new Error('API error')),
+      );
+      spectator.service.reload();
+      spectator.service.reload();
+      await settleApi();
+
+      expect(spectator.service.devices()).toEqual([device1, device2]);
+    });
   });
 
   describe('loading state', () => {
@@ -192,6 +205,7 @@ describe('ContainerDevicesStore', () => {
       expect(spectator.service.isLoading()).toBe(true);
 
       delayedResponse$.next(containerDevices);
+      delayedResponse$.complete();
 
       expect(spectator.service.isLoading()).toBe(false);
     });

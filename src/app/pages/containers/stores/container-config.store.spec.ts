@@ -31,10 +31,8 @@ describe('ContainerConfigStore', () => {
   });
 
   it('should have default empty state', () => {
-    expect(spectator.service.state()).toEqual({
-      isLoading: false,
-      config: null,
-    });
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.config()).toBeNull();
   });
 
   it('should load config when initialize is called', async () => {
@@ -42,18 +40,18 @@ describe('ContainerConfigStore', () => {
     await settleApi();
 
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('lxc.config');
-    expect(spectator.service.state()).toEqual({
-      isLoading: false,
-      config,
-    });
+    expect(spectator.service.isLoading()).toBe(false);
+    expect(spectator.service.config()).toEqual(config);
   });
 
-  it('should not make duplicate API calls when initialize is called while loading', async () => {
-    spectator.service.patchState({ isLoading: true });
-    spectator.service.initialize();
-    await settleApi();
+  it('should not make duplicate API calls when initialize is called while loading', () => {
+    const delayedResponse$ = new Subject<ContainerGlobalConfig>();
+    jest.spyOn(spectator.inject(ApiService), 'call').mockReturnValue(delayedResponse$);
 
-    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('lxc.config');
+    spectator.service.initialize();
+    spectator.service.initialize();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledTimes(1);
   });
 
   describe('selectors', () => {
@@ -95,6 +93,17 @@ describe('ContainerConfigStore', () => {
 
       expect(errorHandler.showErrorModal).toHaveBeenCalledWith(error);
     });
+
+    it('can load the config again after a failed attempt', async () => {
+      spectator.service.initialize();
+      await settleApi();
+
+      spectator.inject(MockApiService).mockCall('lxc.config', config);
+      spectator.service.initialize();
+      await settleApi();
+
+      expect(spectator.service.config()).toEqual(config);
+    });
   });
 
   describe('loading state', () => {
@@ -107,6 +116,7 @@ describe('ContainerConfigStore', () => {
       expect(spectator.service.isLoading()).toBe(true);
 
       delayedResponse$.next(config);
+      delayedResponse$.complete();
 
       expect(spectator.service.isLoading()).toBe(false);
     });

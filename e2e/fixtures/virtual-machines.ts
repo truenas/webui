@@ -103,6 +103,10 @@ export async function findVm(client: E2eApiClient, name: string): Promise<VmSumm
   if (!vm) {
     return undefined;
   }
+  // Null only when the query sets `retrieve_status: false`, which this one does not.
+  if (!vm.status) {
+    throw new Error(`Middleware answered vm.query for ${name} without a status.`);
+  }
 
   return {
     id: vm.id,

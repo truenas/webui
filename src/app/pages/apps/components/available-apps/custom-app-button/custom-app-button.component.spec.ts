@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { SpectatorRouting } from '@ngneat/spectator';
@@ -30,6 +31,7 @@ describe('CustomAppButtonComponent', () => {
   let loader: HarnessLoader;
   let button: TnButtonHarness;
   let formPanel: FormSidePanelService;
+  const selectedPool = signal<string | null>('selected pool');
 
   const createComponent = createRoutingFactory({
     component: CustomAppButtonComponent,
@@ -42,7 +44,7 @@ describe('CustomAppButtonComponent', () => {
     providers: [
       mockAuth(),
       mockProvider(DockerStore, {
-        selectedPool$: of('selected pool'),
+        selectedPool,
       }),
       // Dependencies of the CustomAppForm rendered inside the side panel.
       mockApi([
@@ -66,6 +68,7 @@ describe('CustomAppButtonComponent', () => {
   });
 
   beforeEach(async () => {
+    selectedPool.set('selected pool');
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
@@ -88,8 +91,7 @@ describe('CustomAppButtonComponent', () => {
   });
 
   it('disables Custom App button if pool is not set', () => {
-    const store = spectator.inject(DockerStore);
-    Object.defineProperty(store, 'selectedPool$', { value: of(undefined) });
+    selectedPool.set(null);
     spectator.detectChanges();
 
     expect(button.isDisabled()).toBeTruthy();

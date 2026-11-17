@@ -6,7 +6,7 @@ import {
   TnTooltipDirective, TnDialog, TnCardComponent, TnButtonComponent, TnCardFooterActionsDirective,
   TnTestIdDirective, type TnCardAction, type TnMenuItem,
 } from '@truenas/ui-components';
-import { filter, first, switchMap } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
@@ -106,6 +106,19 @@ export class DatasetDetailsCardComponent {
       : { label: this.translate.instant('Edit Zvol'), testId: 'edit-zvol', handler: () => this.editZvol() };
   });
 
+  // Shown under the same conditions as the share rows' "Change Storage Tier": tier info present, not locked.
+  // The test id keeps `button-change-tier`, which the e2e suite already selects.
+  protected readonly changeTierAction = computed<TnCardAction | undefined>(() => {
+    if (!this.dataset().tier || this.dataset().locked) {
+      return undefined;
+    }
+    return {
+      label: this.translate.instant('Change Storage Tier'),
+      testId: 'change-tier',
+      handler: () => this.changeTier(),
+    };
+  });
+
   protected readonly deleteAction = computed<TnCardAction | undefined>(() => {
     if (this.dataset().id === this.dataset().pool || !this.hasDatasetDelete()) {
       return undefined;
@@ -130,15 +143,11 @@ export class DatasetDetailsCardComponent {
   private deleteDataset(): void {
     this.tnDialog.open(DeleteDatasetDialog, { data: this.dataset() })
       .closed
-      .pipe(
-        filter(Boolean),
-        switchMap(() => {
-          this.datasetStore.datasetUpdated();
-          return this.datasetStore.selectedParentDataset$.pipe(first());
-        }),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((parent) => {
+      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        // Read before reloading: the store reports no parent while a load is in flight.
+        const parent = this.datasetStore.selectedParentDataset();
+        this.datasetStore.datasetUpdated();
         this.router.navigate(['/datasets', parent?.id]);
       });
   }

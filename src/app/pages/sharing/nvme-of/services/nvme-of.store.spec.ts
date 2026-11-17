@@ -1,4 +1,5 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
+import { throwError } from 'rxjs';
 import { mockApi, mockQuery, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import {
   NvmeOfHost,
@@ -7,6 +8,7 @@ import {
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { NvmeOfStore } from 'app/pages/sharing/nvme-of/services/nvme-of.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 const mockedSubsystem1 = {
   allow_any_host: true,
@@ -86,13 +88,45 @@ describe('NvmeOfstore', () => {
     expect(api.query).toHaveBeenCalledWith('nvmet.host.query');
     expect(api.query).toHaveBeenCalledWith('nvmet.port.query');
 
-    expect(spectator.service.state()).toEqual({
-      subsystems: mockedSubsystems,
-      namespaces: mockedNameSpaces,
-      hosts: mockedHosts,
-      ports: mockedPorts,
-      isLoading: false,
-    });
+    expect(spectator.service.namespaces()).toEqual(mockedNameSpaces);
+    expect(spectator.service.hosts()).toEqual(mockedHosts);
+    expect(spectator.service.ports()).toEqual(mockedPorts);
+    expect(spectator.service.subsystems().map((subsystem) => subsystem.id)).toEqual([1, 2]);
+    expect(spectator.service.isLoading()).toBe(false);
+  });
+
+  it('clears the loading flag and shows the error when loading fails', async () => {
+    const error = new Error('Boom');
+    jest.spyOn(spectator.inject(ApiService), 'query').mockReturnValue(throwError(() => error));
+    jest.spyOn(spectator.inject(ErrorHandlerService), 'showErrorModal').mockImplementation();
+
+    spectator.service.initialize();
+    await settleApi();
+
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(error);
+    expect(spectator.service.isLoading()).toBe(false);
+  });
+
+  it('reloads only ports with reloadPorts()', async () => {
+    const api = spectator.inject(ApiService);
+
+    spectator.service.reloadPorts();
+    await settleApi();
+
+    expect(api.query).toHaveBeenCalledTimes(1);
+    expect(api.query).toHaveBeenCalledWith('nvmet.port.query');
+    expect(spectator.service.ports()).toEqual(mockedPorts);
+  });
+
+  it('reloads only hosts with reloadHosts()', async () => {
+    const api = spectator.inject(ApiService);
+
+    spectator.service.reloadHosts();
+    await settleApi();
+
+    expect(api.query).toHaveBeenCalledTimes(1);
+    expect(api.query).toHaveBeenCalledWith('nvmet.host.query');
+    expect(spectator.service.hosts()).toEqual(mockedHosts);
   });
 
   describe('subsystems()', () => {

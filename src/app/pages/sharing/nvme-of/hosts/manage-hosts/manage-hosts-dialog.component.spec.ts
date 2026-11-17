@@ -1,12 +1,13 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { NvmeOfHost, NvmeOfSubsystem, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
+import { NvmeOfHost, NvmeOfSubsystemDetails, PortOrHostDeleteType } from 'app/interfaces/nvme-of.interface';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -33,6 +34,13 @@ describe('ManageHostsDialog', () => {
       description: '',
     },
   ] as NvmeOfHost[];
+
+  const subsystems = [
+    { id: 1, hosts: [hosts[0]] },
+    { id: 2, hosts: [hosts[0]] },
+    { id: 3, hosts: [hosts[1]] },
+  ] as NvmeOfSubsystemDetails[];
+
   const createComponent = createComponentFactory({
     component: ManageHostsDialog,
     providers: [
@@ -45,23 +53,9 @@ describe('ManageHostsDialog', () => {
         })),
       }),
       mockProvider(NvmeOfStore, {
-        state$: of({
-          hosts,
-          subsystems: [
-            {
-              id: 1,
-              hosts: [1],
-            },
-            {
-              id: 1,
-              hosts: [1],
-            },
-            {
-              id: 1,
-              hosts: [2],
-            },
-          ] as NvmeOfSubsystem[],
-        }),
+        hosts: signal(hosts),
+        subsystems: signal(subsystems),
+        isLoading: signal(false),
         reloadHosts: jest.fn(),
       }),
       mockProvider(FormSidePanelService, {
@@ -116,7 +110,7 @@ describe('ManageHostsDialog', () => {
           usedInSubsystems: 2,
         },
         name: 'nqn.2014-08.org.nvmexpress',
-        subsystemsInUse: [],
+        subsystemsInUse: [subsystems[0], subsystems[1]],
       },
       minWidth: '500px',
     });

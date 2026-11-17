@@ -1,15 +1,19 @@
+import { Location } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, OnInit, Type, inject, signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnButtonComponent,
   TnCellDefDirective,
+  TnChipComponent,
   TnDetailRowDefDirective,
   TnEmptyComponent,
   TnHeaderCellDefDirective,
+  TnSlideToggleComponent,
   TnTableColumnDirective,
   TnTableComponent,
   TnTablePagerComponent,
@@ -53,6 +57,7 @@ import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/tab
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SnapshotTaskFormComponent } from 'app/pages/data-protection/snapshot-task/snapshot-task-form/snapshot-task-form.component';
 import { snapshotTaskListElements } from 'app/pages/data-protection/snapshot-task/snapshot-task-list/snapshot-task-list.elements';
+import { isInDatasetScope } from 'app/pages/datasets/utils/dataset-scope.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { SnapshotTaskService } from 'app/services/snapshot-task.service';
 import { StorageService } from 'app/services/storage.service';
@@ -71,6 +76,9 @@ import { TaskService } from 'app/services/task.service';
     PageHeaderComponent,
     BasicSearchComponent,
     TnButtonComponent,
+    TnChipComponent,
+    TnSlideToggleComponent,
+    ReactiveFormsModule,
     RouterLink,
     TableColumnPickerComponent,
     RequiresRolesDirective,
@@ -102,6 +110,7 @@ export class SnapshotTaskListComponent implements OnInit {
   private errorHandler = inject(ErrorHandlerService);
   private formPanel = inject(FormSidePanelService);
   private route = inject(ActivatedRoute);
+  private location = inject(Location);
   private loader = inject(LoaderService);
   private scheduleDescription = inject(ScheduleDescriptionPipe);
 
@@ -271,8 +280,18 @@ export class SnapshotTaskListComponent implements OnInit {
     return `${row.lifetime_value} ${row.lifetime_unit}(S)`.toLowerCase();
   }
 
+  /**
+   * The dataset the route opened the list for (a dataset's "View Snapshot Tasks"). It narrows the
+   * rows by `dataset` before the search box does, and is cleared from its chip.
+   */
+  protected readonly scopeDataset = signal<string | null>(this.route.snapshot.paramMap.get('dataset') || null);
+  /** "Include child datasets", on by default, matching the snapshot list. */
+  protected readonly includeChildrenControl = new FormControl(true, { nonNullable: true });
+
   constructor() {
-    this.searchQuery.set(this.route.snapshot.paramMap.get('dataset') || '');
+    this.includeChildrenControl.valueChanges
+      .pipe(takeUntilDestroyed())
+      .subscribe(() => this.onListFiltered(this.searchQuery()));
   }
 
   ngOnInit(): void {
@@ -292,9 +311,26 @@ export class SnapshotTaskListComponent implements OnInit {
     this.dataProvider.load();
   }
 
+  /** The search applies within the dataset scope, never instead of it. */
   protected onListFiltered(query: string): void {
     this.searchQuery.set(query);
-    this.dataProvider.setFilter({ list: this.snapshotTasks, query, columnKeys: ['dataset', 'naming_schema'] });
+    this.dataProvider.setFilter({ list: this.scopedTasks(), query, columnKeys: ['dataset', 'naming_schema'] });
+  }
+
+  /** Drops the dataset scope, from the route as well, without a navigation that would reload the list. */
+  protected clearScope(): void {
+    this.scopeDataset.set(null);
+    this.location.replaceState('/data-protection/snapshot');
+    this.onListFiltered(this.searchQuery());
+  }
+
+  private scopedTasks(): PeriodicSnapshotTaskUi[] {
+    const scope = this.scopeDataset();
+    if (!scope) {
+      return this.snapshotTasks;
+    }
+    const includeChildren = this.includeChildrenControl.value;
+    return this.snapshotTasks.filter((task) => isInDatasetScope(task.dataset, scope, includeChildren));
   }
 
   // SnapshotTaskFormComponent structurally provides the host surface (closed/canSubmit/submit/

@@ -4,7 +4,7 @@
     type="text"
     tnTestIdType="input"
     [required]="required()"
-    [tnTestId]="testId() ?? controlDirective.name"
+    [tnTestId]="testId() ?? controlName()"
     [disabled]="isDisabled"
     [value]="address"
     [attr.aria-label]="ariaLabel()"

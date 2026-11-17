@@ -34,7 +34,7 @@ describe('PoolsDashboardComponent', () => {
     arePoolsLoading,
     isLoadingPoolDetails: signal(false),
     disksByPool: signal<Record<string, unknown[]>>({}),
-    rootDatasets$: of({}),
+    rootDatasets: signal({}),
     loadDashboard: jest.fn(),
   };
 

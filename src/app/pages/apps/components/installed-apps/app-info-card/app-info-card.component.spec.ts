@@ -1,7 +1,7 @@
 import { DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Spectator } from '@ngneat/spectator';
 import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
@@ -90,7 +90,7 @@ describe('AppInfoCardComponent', () => {
         getApp: jest.fn(() => of([{ ...fakeApp, custom_app: true }])),
       }),
       mockProvider(InstalledAppsStore, {
-        installedApps$: of([]),
+        installedApps: signal([]),
       }),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),

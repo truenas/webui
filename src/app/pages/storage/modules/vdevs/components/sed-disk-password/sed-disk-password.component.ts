@@ -61,6 +61,8 @@ export class SedDiskPasswordComponent {
   readonly disk = input<string | null>(null);
   /** Which disk field the host's picker reports (`ix-unused-disk-select`'s `valueField`). */
   readonly diskField = input<'name' | 'identifier'>('name');
+  /** Set by a host that retries after the job failed: the password is on the disk and can't change. */
+  readonly passwordApplied = input(false);
 
   protected readonly InputType = InputType;
   protected readonly SedStatus = SedStatus;
@@ -142,8 +144,13 @@ export class SedDiskPasswordComponent {
     { requireSync: true },
   );
 
+  /** Whether {@link prepareDisk} will set up or unlock the disk, rather than leave it to the job. */
+  readonly appliesPassword = computed(() => {
+    return Boolean(this.sedDisk()) && this.isIndividual() && !this.passwordApplied();
+  });
+
   /** Whether the host may submit: nothing is asked of the user, or what is asked is filled in. */
-  readonly isValid = computed(() => !this.sedDisk() || this.formStatus() !== 'INVALID');
+  readonly isValid = computed(() => !this.sedDisk() || this.passwordApplied() || this.formStatus() !== 'INVALID');
 
   constructor() {
     // Without a global password the individual one is the only way the disk can be prepared.
@@ -158,7 +165,7 @@ export class SedDiskPasswordComponent {
     effect(() => {
       const disk = this.sedDisk();
       const { password, passwordConfirm } = this.form.controls;
-      if (disk && this.isIndividual()) {
+      if (disk && this.isIndividual() && !this.passwordApplied()) {
         password.enable();
         if (disk.status === SedStatus.Uninitialized) {
           passwordConfirm.enable();
@@ -178,7 +185,7 @@ export class SedDiskPasswordComponent {
    */
   prepareDisk(): Observable<unknown> {
     const disk = this.sedDisk();
-    if (!disk || !this.isIndividual()) {
+    if (!disk || !this.appliesPassword()) {
       return of(null);
     }
 

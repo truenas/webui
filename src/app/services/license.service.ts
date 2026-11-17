@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import {
   catchError, combineLatest, defer, of, shareReplay,
 } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { HardwareType } from 'app/enums/hardware-type.enum';
 import { TruenasConnectStatus } from 'app/enums/truenas-connect-status.enum';
@@ -32,6 +32,23 @@ export class LicenseService {
 
   /** Not an entitlement — iX hardware detection. */
   hasEnclosure$ = this.store$.select(selectHasEnclosureSupport);
+
+  /**
+   * Middleware's `fc.capable`: the licence allows Fibre Channel and an FC HBA is present.
+   * Errors map to `false`, and `refCount: true` keeps that from sticking.
+   */
+  readonly isFcCapable$ = defer(() => this.api.call('fc.capable')).pipe(
+    catchError(() => of(false)),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
+
+  /**
+   * Gates every Fibre Channel control. The entitlement alone is not enough: a licensed system with no
+   * FC HBA (a VM, say) is entitled but cannot do Fibre Channel. Emits nothing until entitlements load.
+   */
+  readonly hasFibreChannel$ = this.entitlements.entitled$(EntitlementFeature.FibreChannel).pipe(
+    switchMap((isEntitled) => (isEntitled ? this.isFcCapable$ : of(false))),
+  );
 
   /**
    * Whether the hardware supports FIPS, the condition `AdvancedSettingsComponent.isSystemLicensed` uses.

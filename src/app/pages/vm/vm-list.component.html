@@ -78,15 +78,25 @@
     <ng-container [tnColumnDef]="'status'" [sortable]="true">
       <ng-template tnHeaderCellDef>{{ 'Running' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
-        <ix-table-toggle-cell
-          #runningToggle
-          [title]="'Running' | translate"
-          [uniqueRowTag]="uniqueRowTag(row)"
-          [ariaLabel]="ariaLabel(row, 'Running' | translate)"
-          [checked]="isRunning(row)"
-          [requiredRoles]="requiredRoles"
-          (toggled)="handleVmStatusToggle(row, $event, runningToggle)"
-        ></ix-table-toggle-cell>
+        <div class="status-cell">
+          <ix-table-toggle-cell
+            #runningToggle
+            [title]="'Running' | translate"
+            [uniqueRowTag]="uniqueRowTag(row)"
+            [ariaLabel]="ariaLabel(row, 'Running' | translate)"
+            [checked]="isRunning(row)"
+            [requiredRoles]="requiredRoles"
+            (toggled)="handleVmStatusToggle(row, $event, runningToggle)"
+          ></ix-table-toggle-cell>
+          @if (isSuspended(row)) {
+            <!-- A suspended VM's switch reads off, like a stopped one, so the label tells them apart. -->
+            <span
+              class="suspended-status"
+              tnTestIdType="text"
+              [tnTestId]="['Running', uniqueRowTag(row), 'suspended']"
+            >{{ helptext.suspendedStatus | translate }}</span>
+          }
+        </div>
       </ng-template>
     </ng-container>
 

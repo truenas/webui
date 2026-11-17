@@ -1,6 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { ViewContainerRef } from '@angular/core';
+import { signal, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnDialog } from '@truenas/ui-components';
@@ -43,7 +43,7 @@ describe('InstallAppButtonComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: { app: application },
-        providers: [mockProvider(DockerStore, { selectedPool$: of(null) })],
+        providers: [mockProvider(DockerStore, { selectedPool: signal(null) })],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });
@@ -61,7 +61,7 @@ describe('InstallAppButtonComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         props: { app: application },
-        providers: [mockProvider(DockerStore, { selectedPool$: of('pool') })],
+        providers: [mockProvider(DockerStore, { selectedPool: signal('pool') })],
       });
       loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     });

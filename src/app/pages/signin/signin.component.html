@@ -1,6 +1,6 @@
 <div class="page-wrap login-form">
   <div class="session-form-hold">
-    @if (!(isConnected$ | async) && (isConnectedDelayed$ | async) !== null) {
+    @if (!isConnected() && (isConnectedDelayed$ | async) !== null) {
       <tn-card [padContent]="false">
         <tn-progress-bar
           class="session-progress"
@@ -9,11 +9,11 @@
         ></tn-progress-bar>
         <ix-disconnected-message></ix-disconnected-message>
       </tn-card>
-    } @else if (isConnected$ | async) {
-        @if ((hasAuthToken && (isTokenWithinTimeline$ | async)) || (isLoggingInWithQueryToken$ | async)) {
+    } @else if (isConnected()) {
+        @if ((hasAuthToken && isTokenWithinTimeline()) || isLoggingInWithQueryToken()) {
           <ng-container [ngTemplateOutlet]="loggingInCard"></ng-container>
         } @else {
-          @if (isLoggingIn$ | async) {
+          @if (isLoggingIn()) {
             <ng-container [ngTemplateOutlet]="loggingInCard"></ng-container>
           }
 
@@ -25,7 +25,7 @@
           <tn-card
             class="form-card"
             [padContent]="false"
-            [class.hidden]="isLoggingIn$ | async"
+            [class.hidden]="isLoggingIn()"
           >
             <tn-progress-bar
               class="session-progress"
@@ -39,8 +39,8 @@
 
               <div class="card-bottom">
                 <div class="form-container">
-                  @if (wasAdminSet$ | async) {
-                    <ix-signin-form [disabled]="!(canLogin$ | async)"></ix-signin-form>
+                  @if (wasAdminSet()) {
+                    <ix-signin-form [disabled]="!canLogin()"></ix-signin-form>
                   } @else {
                     <ix-set-admin-password-form></ix-set-admin-password-form>
                   }

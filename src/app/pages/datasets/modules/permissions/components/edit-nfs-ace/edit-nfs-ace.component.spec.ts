@@ -345,7 +345,8 @@ describe('EditNfsAceComponent leaving an entry while its user is still being che
 
   /** Hands the form the store's selected entry, as the editor's template does on every render. */
   function renderSelectedAce(): void {
-    const { acl, selectedAceIndex } = store.state();
+    const acl = store.acl();
+    const selectedAceIndex = store.selectedAceIndex();
     spectator.setInput('ace', acl.acl[selectedAceIndex] as NfsAclItem);
   }
 
@@ -354,11 +355,11 @@ describe('EditNfsAceComponent leaving an entry while its user is still being che
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     store = spectator.inject(DatasetAclEditorStore);
-    store.setState((state) => ({
-      ...state,
-      acl: { acltype: AclType.Nfs4, acl: [userWithoutName, everyone] } as NfsAcl,
-      selectedAceIndex: 0,
-    }));
+    // The editor loads the entries through the store; selecting the first is part of that load.
+    jest.spyOn(spectator.inject(ApiService), 'call').mockImplementation(((method: string) => {
+      return of(method === 'filesystem.getacl' ? { acltype: AclType.Nfs4, acl: [userWithoutName, everyone] } as NfsAcl : {});
+    }) as ApiService['call']);
+    store.loadAcl('/mnt/pool/dataset');
     renderSelectedAce();
 
     const userField = await loader.getHarness(
@@ -371,7 +372,7 @@ describe('EditNfsAceComponent leaving an entry while its user is still being che
   });
 
   it('clears the error on the earlier entry once its check passes after Add Item', async () => {
-    expect(store.state().acesWithError).toEqual([0]);
+    expect(store.acesWithError()).toEqual([0]);
     expect(spectator.component.form.pending).toBe(true);
 
     store.addAce();
@@ -383,7 +384,7 @@ describe('EditNfsAceComponent leaving an entry while its user is still being che
     });
 
     // The new entry is a User entry with no user yet, so only it is still marked.
-    expect(store.state().acesWithError).toEqual([2]);
+    expect(store.acesWithError()).toEqual([2]);
   });
 
   it('clears the error on the earlier entry once its check passes after picking another in the list', async () => {
@@ -397,6 +398,6 @@ describe('EditNfsAceComponent leaving an entry while its user is still being che
       setTimeout(resolve, defaultDebounceTimeMs + 100);
     });
 
-    expect(store.state().acesWithError).toEqual([]);
+    expect(store.acesWithError()).toEqual([]);
   });
 });

@@ -33,7 +33,7 @@ export class AppResourcesCardComponent implements OnInit {
   readonly memoryUsed = signal(0);
   readonly memoryTotal = signal(0);
   readonly availableSpace = toSignal(this.api.call('app.available_space'));
-  readonly selectedPool = toSignal(this.dockerStore.selectedPool$);
+  readonly selectedPool = this.dockerStore.selectedPool;
 
   ngOnInit(): void {
     this.getResourcesUsageUpdates();

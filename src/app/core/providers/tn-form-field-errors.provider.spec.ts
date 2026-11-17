@@ -161,6 +161,35 @@ describe('provideTnFormFieldErrors', () => {
     );
   });
 
+  describe('signal forms length errors', () => {
+    // Signal forms name these `minLength` / `maxLength`, and carry the bound under that name, not `requiredLength`.
+    it('translates minLength and maxLength on a text field', () => {
+      const resolve = setup();
+
+      expect(resolve('minLength', { kind: 'minLength', minLength: 3 }, null)).toBe(
+        'The length of the field should be at least {minLength} {"minLength":3}',
+      );
+      expect(resolve('maxLength', { kind: 'maxLength', maxLength: 8 }, null)).toBe(
+        'The length of the field should be no more than {maxLength} {"maxLength":8}',
+      );
+    });
+
+    it('uses the list wording when the field holds an array', () => {
+      const resolve = setup();
+      const control = new FormControl(['a']);
+      control.setErrors({ minLength: { kind: 'minLength', minLength: 2 } });
+
+      expect(resolve('minLength', { kind: 'minLength', minLength: 2 }, control)).toBe(
+        'List should have at least {minLength} items {"minLength":2}',
+      );
+
+      control.setErrors({ maxLength: { kind: 'maxLength', maxLength: 1 } });
+      expect(resolve('maxLength', { kind: 'maxLength', maxLength: 1 }, control)).toBe(
+        'List should have no more than {maxLength} item {"maxLength":1}',
+      );
+    });
+  });
+
   it('tolerates a non-object error value, treating its detail as empty', () => {
     const resolve = setup();
 

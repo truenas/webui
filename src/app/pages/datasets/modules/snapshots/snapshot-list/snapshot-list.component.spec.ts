@@ -1,13 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Location } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnButtonHarness, TnSlideToggleHarness, TnTableHarness, TnTablePagerHarness,
+  TnButtonHarness, TnChipHarness, TnSlideToggleHarness, TnTableHarness, TnTablePagerHarness,
 } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
+import { MockComponent, ngMocks } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
@@ -56,6 +57,7 @@ describe('SnapshotListComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
+      mockProvider(Location),
       provideMockStore({
         selectors: [
           {
@@ -232,88 +234,73 @@ describe('SnapshotListComponent', () => {
     });
   });
 
-  it('should filter snapshots by dataset when route parameter is present', () => {
-    const component = spectator.component;
+  describe('opened for a dataset', () => {
+    // The route names `test-dataset`. A child, a sibling whose name starts with the scope, and
+    // another dataset whose snapshot name contains it: only the first two belong to the scope.
+    const scopedSnapshots = [
+      { name: 'test-dataset@own', dataset: 'test-dataset', snapshot_name: 'own' },
+      { name: 'test-dataset/child@nested', dataset: 'test-dataset/child', snapshot_name: 'nested' },
+      { name: 'test-dataset-2@sibling', dataset: 'test-dataset-2', snapshot_name: 'sibling' },
+      { name: 'dozer/other@test-dataset-backup', dataset: 'dozer/other', snapshot_name: 'test-dataset-backup' },
+    ] as ZfsSnapshot[];
 
-    const testSnapshots = [
-      {
-        id: '1',
-        name: 'test-dataset@snapshot1',
-        dataset: 'test-dataset',
-        snapshot_name: 'snapshot1',
-      } as ZfsSnapshot,
-      {
-        id: '2',
-        name: '/dozer/test2@snapshot2',
-        dataset: '/dozer/test2',
-        snapshot_name: 'snapshot2',
-      } as ZfsSnapshot,
-      {
-        id: '3',
-        name: '/dozer/test3@snapshot3',
-        dataset: '/dozer/test3',
-        snapshot_name: 'snapshot3',
-      } as ZfsSnapshot,
-    ];
+    async function shownSnapshots(): Promise<string[]> {
+      const rowCount = await table.getRowCount();
+      const names: string[] = [];
+      for (let row = 0; row < rowCount; row++) {
+        names.push(await table.getCellText(row, 'snapshot_name'));
+      }
+      return names.sort((a, b) => a.localeCompare(b));
+    }
 
-    setSnapshots(testSnapshots);
+    beforeEach(() => {
+      setSnapshots(scopedSnapshots);
+    });
 
-    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
+    it('starts with an empty search box and titles the page with the dataset', () => {
+      expect(spectator.query(BasicSearchComponent)?.query()).toBe('');
+      expect(ngMocks.input('ix-page-header', 'pageTitle')).toBe('Snapshots: test-dataset');
+    });
 
-    spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
+    it('shows the dataset and its children, not a sibling or a snapshot whose name holds the dataset', async () => {
+      expect(await shownSnapshots()).toEqual(['nested', 'own']);
+    });
 
-    expect(component.searchQuery()).toBe('test-dataset');
+    it('shows only the dataset itself once Include child datasets is off', async () => {
+      const toggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Include child datasets' }));
+      expect(await toggle.isChecked()).toBe(true);
 
-    // One call: the dataset filter is chosen up front, not applied and then reconsidered.
-    expect(setFilterSpy).toHaveBeenCalledTimes(1);
-    expect(setFilterSpy).toHaveBeenCalledWith({
-      list: testSnapshots,
-      query: 'test-dataset',
-      columnKeys: ['dataset'],
-      exact: true,
-    }, { keepPage: false });
-  });
+      await toggle.toggle();
+      spectator.detectChanges();
 
-  it('should fallback to name-based filtering when dataset exact match fails', () => {
-    const component = spectator.component;
+      expect(await shownSnapshots()).toEqual(['own']);
+    });
 
-    const testSnapshots = [
-      {
-        id: '1',
-        name: '/dozer/different-dataset@snapshot1',
-        dataset: '/dozer/different-dataset',
-        snapshot_name: 'snapshot1',
-      } as ZfsSnapshot,
-      {
-        id: '2',
-        name: '/dozer/another-dataset@test-dataset-backup',
-        dataset: '/dozer/another-dataset',
-        snapshot_name: 'test-dataset-backup',
-      } as ZfsSnapshot,
-    ];
+    it('applies the search within the dataset, never instead of it', async () => {
+      spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'nested');
+      spectator.detectChanges();
+      expect(await shownSnapshots()).toEqual(['nested']);
 
-    setSnapshots(testSnapshots);
+      // Only the other dataset's snapshot holds `backup`, and it is outside the scope.
+      spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'backup');
+      spectator.detectChanges();
+      expect(spectator.component.dataProvider.totalRows).toBe(0);
+    });
 
-    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
+    it('shows every snapshot, and drops the dataset from the URL, once the scope chip is cleared', async () => {
+      const chip = await loader.getHarness(TnChipHarness.with({ label: 'test-dataset' }));
+      await chip.close();
+      spectator.detectChanges();
 
-    spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'test-dataset');
-
-    // No snapshot sits in a dataset called `test-dataset`, so the name filter is chosen
-    // directly. The dataset filter is never applied: applying it and undoing it clamped
-    // the page against its own empty result and cost the user their place.
-    expect(setFilterSpy).toHaveBeenCalledTimes(1);
-    expect(setFilterSpy).toHaveBeenCalledWith({
-      list: testSnapshots,
-      query: 'test-dataset',
-      columnKeys: ['name'],
-    }, { keepPage: false });
+      expect(await shownSnapshots()).toEqual(['nested', 'own', 'sibling', 'test-dataset-backup']);
+      expect(spectator.inject(Location).replaceState).toHaveBeenCalledWith('/datasets/snapshots');
+      expect(ngMocks.input('ix-page-header', 'pageTitle')).toBe('Snapshots');
+      expect(await loader.getHarnessOrNull(TnChipHarness)).toBeNull();
+    });
   });
 
   it('filters only by name when the extra columns are hidden', () => {
     const component = spectator.component;
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    jest.spyOn(component['route'].snapshot.paramMap, 'get').mockReturnValue(null);
-
     const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
 
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', '1.49');
@@ -327,9 +314,6 @@ describe('SnapshotListComponent', () => {
 
   it('also filters by the extra columns (used/referenced/created) when they are visible', async () => {
     const component = spectator.component;
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    jest.spyOn(component['route'].snapshot.paramMap, 'get').mockReturnValue(null);
-
     const slideToggle = await loader.getHarness(TnSlideToggleHarness.with({ label: 'Show extra columns' }));
     await slideToggle.toggle();
     spectator.component.loadingExtraColumns$.next(false);
@@ -350,48 +334,6 @@ describe('SnapshotListComponent', () => {
     spectator.triggerEventHandler('ix-basic-search', 'queryChange', '2021-10-18');
     spectator.detectChanges();
     expect(await table.getRowCount()).toBe(2);
-  });
-
-  it('should not show partial matches when using exact dataset filtering', () => {
-    const component = spectator.component;
-
-    // eslint-disable-next-line @typescript-eslint/dot-notation
-    jest.spyOn(component['route'].snapshot.paramMap, 'get').mockReturnValue('dozer/boom');
-
-    const testSnapshots = [
-      {
-        id: '1',
-        name: 'dozer/boom@snapshot1',
-        dataset: 'dozer/boom',
-        snapshot_name: 'snapshot1',
-      } as ZfsSnapshot,
-      {
-        id: '2',
-        name: 'dozer/boom1@snapshot2',
-        dataset: 'dozer/boom1',
-        snapshot_name: 'snapshot2',
-      } as ZfsSnapshot,
-      {
-        id: '3',
-        name: 'dozer/boom2@snapshot3',
-        dataset: 'dozer/boom2',
-        snapshot_name: 'snapshot3',
-      } as ZfsSnapshot,
-    ];
-
-    setSnapshots(testSnapshots);
-
-    const setFilterSpy = jest.spyOn(component.dataProvider, 'setFilter');
-
-    spectator.triggerEventHandler('ix-basic-search', 'queryChange', 'dozer/boom');
-
-    expect(setFilterSpy).toHaveBeenCalledTimes(1);
-    expect(setFilterSpy).toHaveBeenCalledWith({
-      list: testSnapshots,
-      query: 'dozer/boom',
-      columnKeys: ['dataset'],
-      exact: true,
-    }, { keepPage: false });
   });
 });
 
@@ -531,8 +473,8 @@ describe('SnapshotListComponent — paging', () => {
 });
 
 describe('SnapshotListComponent — paging on a dataset route', () => {
-  // The case the dataset fallback exists for: the route names `tank`, which holds no
-  // snapshots of its own, while its children hold enough for three pages.
+  // The route names `tank`, which holds no snapshots of its own, while a child holds enough for
+  // three pages; they are in scope because Include child datasets starts on.
   const childSnapshots: ZfsSnapshot[] = Array.from({ length: 120 }, (_, index) => ({
     id: String(index),
     name: `tank/child@snap-${String(index).padStart(3, '0')}`,
@@ -584,7 +526,7 @@ describe('SnapshotListComponent — paging on a dataset route', () => {
     spectator.detectChanges();
   });
 
-  it('holds the page through a reload when the dataset match falls back to name search', async () => {
+  it('holds the page through a reload when the scope lists only a child dataset\'s snapshots', async () => {
     const store$ = spectator.inject(MockStore);
     expect(await pager.getRangeText()).toBe('51 – 100 of 120');
 
@@ -592,9 +534,8 @@ describe('SnapshotListComponent — paging on a dataset route', () => {
     store$.refreshState();
     spectator.detectChanges();
 
-    // Applying the dataset filter first and undoing it clamped the page against its own
-    // empty result, so the surviving pass started from page 1 — the reported symptom, on
-    // the one route the rest of the paging suite never reaches.
+    // A filter pass that narrowed to the route's own dataset would clamp the page against zero
+    // rows and start over from page 1.
     expect(await pager.getRangeText()).toBe('51 – 100 of 120');
   });
 });

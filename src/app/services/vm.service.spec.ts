@@ -40,6 +40,7 @@ describe('VmService', () => {
         mockCall('vm.start', null),
         mockCall('vm.resume', null),
         mockCall('vm.poweroff', null),
+        mockCall('vm.suspend', null),
         mockCall('vm.reset', null),
         mockCall('vm.get_available_memory', 4096),
         mockJob('vm.stop', { state: JobState.Success }),
@@ -126,10 +127,38 @@ describe('VmService', () => {
     expect(apiService.startJob).toHaveBeenCalledWith('vm.restart', [1]);
   });
 
-  it('should call websocket to poweroff vm', () => {
+  it('should call websocket to poweroff vm after a confirmation that warns about data loss', async () => {
     const vm = mockVm(VmState.Running);
-    spectator.service.doPowerOff(vm);
+    const dialogService = spectator.inject(DialogService);
+    jest.spyOn(dialogService, 'confirm').mockReturnValue(of(true));
+
+    const wasPoweredOff = await firstValueFrom(spectator.service.doPowerOff(vm));
+
+    expect(dialogService.confirm).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Power Off Virtual Machine',
+      message: expect.stringContaining('may result in data loss'),
+    }));
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.poweroff', [1]);
+    expect(wasPoweredOff).toBe(true);
+  });
+
+  it('should not power off vm when confirmation is declined', async () => {
+    const vm = mockVm(VmState.Running);
+    jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(false));
+
+    const wasPoweredOff = await firstValueFrom(spectator.service.doPowerOff(vm));
+
+    expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('vm.poweroff', [1]);
+    expect(wasPoweredOff).toBe(false);
+  });
+
+  it('should call websocket to suspend vm', async () => {
+    const vm = mockVm(VmState.Running);
+
+    const wasSuspended = await firstValueFrom(spectator.service.doSuspend(vm));
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('vm.suspend', [1]);
+    expect(wasSuspended).toBe(true);
   });
 
   it('should call websocket to reset vm after confirmation', async () => {

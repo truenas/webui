@@ -9,6 +9,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnDialog, TnFormFieldComponent, TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
+import { injectControlName } from 'app/modules/forms/ix-forms/utils/control-name.utils';
 import {
   SchedulerModalConfig,
 } from 'app/modules/scheduler/components/scheduler-modal/scheduler-modal-config.interface';
@@ -34,6 +35,8 @@ import { ignoreTranslation, TranslatedString } from 'app/modules/translate/trans
 })
 export class SchedulerComponent implements ControlValueAccessor {
   controlDirective = inject(NgControl);
+  /** For `data-test` ids; also right under a signal form `[formField]`, which leaves `controlDirective.name` unset. */
+  protected readonly controlName = injectControlName(this.controlDirective);
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private crontabExplanation = inject(CrontabExplanationPipe);

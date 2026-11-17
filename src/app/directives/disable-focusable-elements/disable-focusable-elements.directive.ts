@@ -24,7 +24,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
    */
   readonly keepFocusable = input('');
 
-  /** Live only while the region is disabled — see `watchForLateContent`. */
+  /** Live only while the region is disabled — see `watchForUnlockedControls`. */
   private observer: MutationObserver | undefined;
 
   constructor() {
@@ -45,7 +45,7 @@ export class DisableFocusableElementsDirective implements OnChanges {
 
     this.stopWatching();
     if (disabled) {
-      this.watchForLateContent();
+      this.watchForUnlockedControls();
     }
 
     timer(0).pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
@@ -54,25 +54,34 @@ export class DisableFocusableElementsDirective implements OnChanges {
   }
 
   /**
-   * Re-sweeps content rendered after the first pass, so a control revealed later doesn't keep its
-   * tab stop in a disabled region. Only while disabled: the enabled sweep strips `disabled`, which
-   * would undo other code's disabling. Only childList, because the sweep writes attributes itself.
-   * Batches that added no element are skipped, since `*ixHasAccess` gives every caller this observer.
+   * Re-sweeps when content is rendered after the first pass, or when a control's own `[disabled]`
+   * binding turns false: the sweep skips buttons that are already disabled, so without this a
+   * button enabled after it stays usable in a locked region. Only while disabled: the enabled sweep
+   * strips `disabled`, which would undo other code's disabling. Only removals of `disabled` count,
+   * so the sweep's own writes never trigger it again.
    */
-  private watchForLateContent(): void {
+  private watchForUnlockedControls(): void {
     if (typeof MutationObserver === 'undefined') {
       return;
     }
     // The callback only writes attributes, so it never needs change detection.
     this.observer = new MutationObserver((records) => {
-      const addedElement = records.some((record) => {
-        return Array.from(record.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE);
-      });
-      if (addedElement) {
+      if (records.some((record) => this.needsSweep(record))) {
         this.updateTabIndex(-1);
       }
     });
-    this.observer.observe(this.elementRef.nativeElement, { childList: true, subtree: true });
+    this.observer.observe(this.elementRef.nativeElement, {
+      childList: true,
+      subtree: true,
+      attributeFilter: ['disabled'],
+    });
+  }
+
+  private needsSweep(record: MutationRecord): boolean {
+    if (record.type === 'attributes') {
+      return !(record.target as Element).hasAttribute('disabled');
+    }
+    return Array.from(record.addedNodes).some((node) => node.nodeType === Node.ELEMENT_NODE);
   }
 
   private stopWatching(): void {

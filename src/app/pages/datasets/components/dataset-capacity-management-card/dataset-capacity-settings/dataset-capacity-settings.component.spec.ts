@@ -157,6 +157,33 @@ describe('DatasetCapacitySettingsComponent', () => {
     expect(closed).toHaveBeenCalledWith(true);
   });
 
+  it('accepts 0 in both quota fields and sends it as 0 to remove the quotas', async () => {
+    await (await getInput('refquota')).setValue('0');
+    await (await getInput('quota')).setValue('0');
+
+    expect(spectator.component.form.controls.refquota.errors).toBeNull();
+    expect(spectator.component.form.controls.quota.errors).toBeNull();
+
+    save();
+    await spectator.fixture.whenStable();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
+      'root/path',
+      {
+        refquota: 0,
+        quota: 0,
+      },
+    ]);
+  });
+
+  it('rejects a quota between 0 and 1 GiB', async () => {
+    await (await getInput('quota')).setValue('512 MiB');
+
+    expect(spectator.component.form.controls.quota.errors).toEqual({
+      min: { message: 'Enter 0 to remove the quota, or a value of 1 GiB or larger.' },
+    });
+  });
+
   it('only sends updated properties on form submit', async () => {
     await (await getCheckbox('quota_critical_inherit')).uncheck();
     await (await getInput('quota')).setValue('105 GiB');

@@ -1,4 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness, TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
@@ -471,16 +472,17 @@ describe('VDevsListComponent', () => {
       props: { poolId: 2 },
       providers: [
         mockProvider(VDevsStore, {
-          selectedNode$: of(selectedNode),
-          isLoading$: of(false),
+          selectedNode: signal(selectedNode),
+          isLoading: signal(false),
           loadNodes: jest.fn(),
-          nodes$: of(nodes),
-          selectedBranch$: of(selectedBranch),
+          nodes: signal(nodes),
+          selectedBranch: signal(selectedBranch),
         }),
         {
           provide: ActivatedRoute,
           useValue: {
             params: of({ guid: '14429755380210151979' }),
+            snapshot: { paramMap: { get: () => '14429755380210151979' } },
           },
         },
       ],
@@ -544,11 +546,11 @@ describe('VDevsListComponent', () => {
         props: { poolId: 2 },
         providers: [
           mockProvider(VDevsStore, {
-            selectedNode$: of(null),
-            isLoading$: of(false),
+            selectedNode: signal(null),
+            isLoading: signal(false),
             loadNodes: jest.fn(),
-            nodes$: of(faultedNodes),
-            selectedBranch$: of(null),
+            nodes: signal(faultedNodes),
+            selectedBranch: signal(null),
           }),
           {
             provide: ActivatedRoute,

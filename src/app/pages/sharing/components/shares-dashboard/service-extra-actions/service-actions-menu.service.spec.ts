@@ -1,11 +1,15 @@
 import { Router } from '@angular/router';
 import { createServiceFactory, SpectatorService, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
+import {
+  catchError, EMPTY, Observable, of, throwError,
+} from 'rxjs';
 import { mockApi, mockJob, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { Job } from 'app/interfaces/job.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -53,7 +57,7 @@ describe('ServiceActionsMenuService', () => {
     providers: [
       { provide: TranslateService, useClass: MockTranslateService },
       mockApi([
-        mockJob('service.control', { state: JobState.Success }),
+        mockJob('service.control', { state: JobState.Success, result: true }),
       ]),
       mockProvider(SnackbarService),
       mockProvider(Router),
@@ -63,7 +67,10 @@ describe('ServiceActionsMenuService', () => {
         withLoader: jest.fn(() => <T>(source$: T): T => source$),
       }),
       mockProvider(ErrorHandlerService, {
-        withErrorHandler: jest.fn(() => <T>(source$: T): T => source$),
+        withErrorHandler: <T>() => (source$: Observable<T>) => source$.pipe(catchError((error: unknown) => {
+          spectator.inject(ErrorHandlerService).showErrorModal(error);
+          return EMPTY;
+        })),
       }),
     ],
   });
@@ -220,6 +227,43 @@ describe('ServiceActionsMenuService', () => {
         'service.control',
         [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
       );
+    });
+
+    const cases = [
+      { action: 'start', state: ServiceStatus.Stopped, message: 'Service started' },
+      { action: 'stop', state: ServiceStatus.Running, message: 'Service stopped' },
+    ];
+
+    cases.forEach(({ action, state, message }) => {
+      async function toggle(): Promise<void> {
+        spectator.service.toggleServiceState(service({ service: ServiceName.Cifs, state }));
+        await settleApi();
+      }
+
+      it(`shows "${message}" when the ${action} job succeeds`, async () => {
+        await toggle();
+
+        expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(message);
+      });
+
+      it(`shows the error and no success message when the ${action} job fails`, async () => {
+        jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(throwError(() => new Error('Refused')));
+
+        await toggle();
+
+        expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(new Error('Refused'));
+        expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      });
+
+      it(`shows no success message when the ${action} job finishes with result false`, async () => {
+        jest.spyOn(spectator.inject(ApiService), 'job').mockReturnValue(
+          of({ state: JobState.Success, result: false, time_finished: { $date: 1 } } as Job<boolean>),
+        );
+
+        await toggle();
+
+        expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
+      });
     });
   });
 

@@ -1,4 +1,5 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconHarness } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
@@ -23,14 +24,14 @@ import { WebSocketStatusService } from 'app/services/websocket-status.service';
 
 describe('SigninComponent', () => {
   let spectator: Spectator<SigninComponent>;
-  const wasAdminSet$ = new BehaviorSubject<boolean>(true);
-  const canLogin$ = new BehaviorSubject<boolean>(true);
+  const wasAdminSet = signal<boolean>(true);
+  const canLogin = signal<boolean>(true);
   const isConnected$ = new BehaviorSubject<boolean>(true);
-  const loginBanner$ = new BehaviorSubject<string>('');
+  const loginBanner = signal<string>('');
   const isTokenWithinTimeline$ = new BehaviorSubject<boolean>(true);
-  const isLoading$ = new BehaviorSubject<boolean>(false);
-  const isLoggingIn$ = new BehaviorSubject<boolean>(false);
-  const isLoggingInWithQueryToken$ = new BehaviorSubject<boolean>(false);
+  const isLoading = signal<boolean>(false);
+  const isLoggingIn = signal<boolean>(false);
+  const isLoggingInWithQueryToken = signal<boolean>(false);
   const isReconnectAllowed$ = new BehaviorSubject<boolean>(false);
   const isFailoverRestart$ = new BehaviorSubject<boolean>(false);
 
@@ -47,12 +48,12 @@ describe('SigninComponent', () => {
     ],
     componentProviders: [
       mockProvider(SigninStore, {
-        wasAdminSet$,
-        canLogin$,
-        loginBanner$,
-        isLoading$,
-        isLoggingIn$,
-        isLoggingInWithQueryToken$,
+        wasAdminSet,
+        canLogin,
+        loginBanner,
+        isLoading,
+        isLoggingIn,
+        isLoggingInWithQueryToken,
         init: jest.fn(),
       }),
     ],
@@ -77,14 +78,14 @@ describe('SigninComponent', () => {
   });
 
   beforeEach(() => {
-    wasAdminSet$.next(true);
-    canLogin$.next(true);
+    wasAdminSet.set(true);
+    canLogin.set(true);
     isConnected$.next(true);
-    loginBanner$.next('');
+    loginBanner.set('');
     isTokenWithinTimeline$.next(false);
-    isLoading$.next(false);
-    isLoggingIn$.next(false);
-    isLoggingInWithQueryToken$.next(false);
+    isLoading.set(false);
+    isLoggingIn.set(false);
+    isLoggingInWithQueryToken.set(false);
 
     spectator = createComponent();
   });
@@ -113,7 +114,7 @@ describe('SigninComponent', () => {
 
   describe('connected', () => {
     it('shows SetRootPasswordFormComponent when root password is not set', () => {
-      wasAdminSet$.next(false);
+      wasAdminSet.set(false);
       spectator.detectChanges();
 
       expect(spectator.query(SetAdminPasswordFormComponent)).toExist();
@@ -166,7 +167,7 @@ describe('SigninComponent', () => {
       // A first login has no auth token yet, so this state is the only thing covering the
       // post-login sequence - otherwise the sign-in form sits there looking idle.
       isTokenWithinTimeline$.next(false);
-      isLoggingIn$.next(true);
+      isLoggingIn.set(true);
 
       spectator.detectChanges();
 
@@ -182,7 +183,7 @@ describe('SigninComponent', () => {
       // A post-login failure comes back to this form, so it must not lose the entered
       // credentials or a two-factor step the user already passed.
       isTokenWithinTimeline$.next(false);
-      isLoggingIn$.next(true);
+      isLoggingIn.set(true);
 
       spectator.detectChanges();
 
@@ -194,7 +195,7 @@ describe('SigninComponent', () => {
       // A fresh browser has no stored token and no token timeline, so only this state covers it.
       isTokenWithinTimeline$.next(false);
       Object.defineProperty(spectator.inject(AuthService), 'hasAuthToken', { get: () => false });
-      isLoggingInWithQueryToken$.next(true);
+      isLoggingInWithQueryToken.set(true);
 
       spectator.detectChanges();
 
@@ -205,10 +206,10 @@ describe('SigninComponent', () => {
     it('shows the sign-in form once a token from the URL has been refused', () => {
       isTokenWithinTimeline$.next(false);
       Object.defineProperty(spectator.inject(AuthService), 'hasAuthToken', { get: () => false });
-      isLoggingInWithQueryToken$.next(true);
+      isLoggingInWithQueryToken.set(true);
       spectator.detectChanges();
 
-      isLoggingInWithQueryToken$.next(false);
+      isLoggingInWithQueryToken.set(false);
       spectator.detectChanges();
 
       expect(spectator.query('.logging-in')).not.toExist();
@@ -216,7 +217,7 @@ describe('SigninComponent', () => {
     });
 
     it('checks login banner and shows full dialog if set', () => {
-      loginBanner$.next('HELLO USER');
+      loginBanner.set('HELLO USER');
       spectator.detectChanges();
 
       expect(spectator.inject(DialogService).fullScreenDialog).toHaveBeenCalled();

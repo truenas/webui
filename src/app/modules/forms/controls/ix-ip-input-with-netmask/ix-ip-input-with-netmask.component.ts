@@ -6,6 +6,7 @@ import {
   injectTnFormFieldAria, TnSelectComponent, TnSelectOption, TnTestIdDirective, TnTestIdValue,
 } from '@truenas/ui-components';
 import { registeredDirectiveConfig } from 'app/modules/forms/ix-forms/directives/registered-control.directive';
+import { injectControlName } from 'app/modules/forms/ix-forms/utils/control-name.utils';
 import { NetworkService } from 'app/services/network.service';
 
 @Component({
@@ -26,6 +27,8 @@ import { NetworkService } from 'app/services/network.service';
 export class IxIpInputWithNetmaskComponent implements ControlValueAccessor {
   private network = inject(NetworkService);
   controlDirective = inject(NgControl);
+  /** For `data-test` ids; also right under a signal form `[formField]`, which leaves `controlDirective.name` unset. */
+  protected readonly controlName = injectControlName(this.controlDirective);
   private cdr = inject(ChangeDetectorRef);
 
   readonly required = input<boolean>(false);

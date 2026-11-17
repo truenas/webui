@@ -1,6 +1,8 @@
 import { CdkTreeModule } from '@angular/cdk/tree';
-import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, input, output, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, effect, OnInit, input, output, inject, signal,
+  untracked,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import {
@@ -48,7 +50,6 @@ import { collectDescendantWarning } from 'app/pages/storage/modules/vdevs/utils/
     TnIconButtonComponent,
     VDevGroupNodeComponent,
     TranslateModule,
-    AsyncPipe,
     CastPipe,
     CdkTreeModule,
     TnTreeComponent,
@@ -69,12 +70,12 @@ export class VDevsListComponent implements OnInit {
   showDetails = output<{ poolId: number; guid: string }>();
 
   // GUIDs we've already auto-expanded because of a descendant warning. Tracked so a user
-  // collapse sticks across `nodes$` refreshes — we only auto-expand a given node once.
+  // collapse sticks across `nodes` refreshes — we only auto-expand a given node once.
   private readonly autoExpandedGuids = new Set<string>();
 
   searchQuery = signal('');
-  protected isLoading$ = this.vDevsStore.isLoading$;
-  protected selectedNode$ = this.vDevsStore.selectedNode$;
+  protected isLoading = this.vDevsStore.isLoading;
+  protected selectedNode = this.vDevsStore.selectedNode;
 
   protected dataSource: TnNestedTreeDataSource<VDevNestedDataNode>;
 
@@ -92,10 +93,23 @@ export class VDevsListComponent implements OnInit {
 
   protected readonly isVdevGroup = (_: number, node: VDevNestedDataNode): boolean => isVdevGroup(node);
 
+  constructor() {
+    effect(() => {
+      const nodes = this.vDevsStore.nodes();
+      untracked(() => this.onNodesLoaded(nodes));
+    });
+
+    effect(() => {
+      const selectedBranch = this.vDevsStore.selectedBranch();
+      if (selectedBranch) {
+        untracked(() => selectedBranch.forEach((node) => this.treeControl.expand(node)));
+      }
+    });
+  }
+
   ngOnInit(): void {
     this.vDevsStore.loadNodes(this.poolId());
     this.listenForRouteChanges();
-    this.setupTree();
   }
 
   protected onRowGroupSelected(dataNodeSelected: VDevNestedDataNode, _: MouseEvent): void {
@@ -111,33 +125,21 @@ export class VDevsListComponent implements OnInit {
     this.dataSource.filter(query);
   }
 
-  private setupTree(): void {
-    this.vDevsStore.nodes$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(
-        (nodes) => {
-          this.createDataSource(nodes);
-          this.treeControl.dataNodes = nodes;
-          this.openGroupNodes();
-          this.expandNodesWithDescendantWarning(nodes);
-          this.cdr.markForCheck();
+  private onNodesLoaded(nodes: VDevNestedDataNode[]): void {
+    this.createDataSource(nodes);
+    this.treeControl.dataNodes = nodes;
+    this.openGroupNodes();
+    this.expandNodesWithDescendantWarning(nodes);
+    this.cdr.markForCheck();
 
-          if (!nodes.length) {
-            return;
-          }
+    if (!nodes.length) {
+      return;
+    }
 
-          const routeGuid = this.route.snapshot.paramMap.get('guid');
-          if (routeGuid) {
-            this.vDevsStore.selectNodeByGuid(routeGuid);
-          }
-        },
-      );
-
-    this.vDevsStore.selectedBranch$
-      .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe((selectedBranch: VDevNestedDataNode[]) => {
-        selectedBranch.forEach((node) => this.treeControl.expand(node));
-      });
+    const routeGuid = this.route.snapshot.paramMap.get('guid');
+    if (routeGuid) {
+      this.vDevsStore.selectNodeByGuid(routeGuid);
+    }
   }
 
   private createDataSource(dataNodes: VDevNestedDataNode[]): void {

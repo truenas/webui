@@ -1,11 +1,15 @@
 import { computed, Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { produce } from 'immer';
 import {
   filter, flatMap, fromPairs, map, uniq,
 } from 'lodash-es';
-import { Observable, switchMap, tap } from 'rxjs';
-import { debounceTime, finalize } from 'rxjs/operators';
+import {
+  Observable, pipe, switchMap, tap,
+} from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { EnclosureElementType, DriveBayLightStatus } from 'app/enums/enclosure-slot-status.enum';
 import { DashboardEnclosure, EnclosureVdevDisk } from 'app/interfaces/enclosure.interface';
 import { ThemeService } from 'app/modules/theme/theme.service';
@@ -35,14 +39,20 @@ const initialState: EnclosureState = {
 };
 
 @Injectable()
-export class EnclosureStore extends ComponentStore<EnclosureState> {
+export class EnclosureStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
   private theme = inject(ThemeService);
 
-  readonly isLoading = computed(() => this.state().isLoading);
+  private readonly state = signalState(initialState);
+
+  readonly isLoading = this.state.isLoading;
+  readonly selectedView = this.state.selectedView;
+  readonly selectedSide = this.state.selectedSide;
+  readonly enclosures = this.state.enclosures;
+
   readonly selectedSlot = computed(() => {
-    const selectedSlotNumber = this.state().selectedSlotNumber;
+    const selectedSlotNumber = this.state.selectedSlotNumber();
     const selectedEnclosure = this.selectedEnclosure();
     if (selectedSlotNumber === null || !selectedEnclosure) {
       return null;
@@ -53,18 +63,13 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
   });
 
   readonly selectedEnclosure = computed<DashboardEnclosure | undefined>(() => {
-    const state = this.state();
-    return state.enclosures[state.selectedEnclosureIndex];
+    return this.state.enclosures()[this.state.selectedEnclosureIndex()];
   });
 
   readonly selectedEnclosureSlots = computed(() => {
     const slots = this.selectedEnclosure()?.elements?.[EnclosureElementType.ArrayDeviceSlot] || {};
     return Object.values(slots);
   });
-
-  readonly selectedView = computed(() => this.state().selectedView);
-  readonly selectedSide = computed(() => this.state().selectedSide);
-  readonly enclosures = computed(() => this.state().enclosures);
 
   readonly poolColors = computed<Record<string, string>>(() => {
     const enclosures = this.enclosures();
@@ -103,44 +108,33 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     ].filter(Boolean).length > 1;
   });
 
-  constructor() {
-    super(initialState);
-  }
-
-  initiate = this.effect((origin$) => {
-    return origin$.pipe(
-      tap(() => this.setState(initialState)),
-      switchMap(() => {
-        return this.api.call('webui.enclosure.dashboard').pipe(
-          tap((enclosures: DashboardEnclosure[]) => {
-            this.patchState((state) => {
-              return {
-                enclosures,
-                selectedSide: getDefaultSide(enclosures[state.selectedEnclosureIndex]),
-              };
-            });
-          }),
-          this.errorHandler.withErrorHandler(),
-          finalize(() => {
-            this.patchState({ isLoading: false });
-          }),
-        );
+  readonly initiate = rxMethod<void>(pipe(
+    tap(() => patchState(this.state, initialState)),
+    switchMap(() => this.api.call('webui.enclosure.dashboard').pipe(
+      tapResponse({
+        next: (enclosures: DashboardEnclosure[]) => {
+          patchState(this.state, (state) => ({
+            enclosures,
+            selectedSide: getDefaultSide(enclosures[state.selectedEnclosureIndex]),
+            isLoading: false,
+          }));
+        },
+        error: (error: unknown) => {
+          patchState(this.state, { isLoading: false });
+          this.errorHandler.showErrorModal(error);
+        },
       }),
-    );
-  });
+    )),
+  ));
 
-  update = this.effect((origin$) => {
-    return origin$.pipe(
-      switchMap(() => {
-        return this.api.call('webui.enclosure.dashboard').pipe(
-          tap((enclosures: DashboardEnclosure[]) => {
-            this.patchState({ enclosures });
-          }),
-          this.errorHandler.withErrorHandler(),
-        );
+  readonly update = rxMethod<void>(pipe(
+    switchMap(() => this.api.call('webui.enclosure.dashboard').pipe(
+      tapResponse({
+        next: (enclosures: DashboardEnclosure[]) => patchState(this.state, { enclosures }),
+        error: (error: unknown) => this.errorHandler.showErrorModal(error),
       }),
-    );
-  });
+    )),
+  ));
 
   listenForDiskUpdates(): Observable<unknown> {
     return this.api.subscribe('disk.query').pipe(
@@ -149,84 +143,78 @@ export class EnclosureStore extends ComponentStore<EnclosureState> {
     );
   }
 
-  selectEnclosure = this.updater((state, id: string) => {
-    let index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
+  selectEnclosure(id: string): void {
+    patchState(this.state, (state) => {
+      let index = state.enclosures.findIndex((enclosure) => enclosure.id === id);
 
-    if (index === -1) {
-      // This could happen if user navigates to a non-existent enclosure via URL.
-      index = 0;
-    }
+      if (index === -1) {
+        // This could happen if user navigates to a non-existent enclosure via URL.
+        index = 0;
+      }
 
-    if (index === state.selectedEnclosureIndex) {
-      return state;
-    }
+      if (index === state.selectedEnclosureIndex) {
+        return {};
+      }
 
-    return {
-      ...state,
-      selectedEnclosureIndex: index,
-      selectedSlotNumber: null,
-      selectedSide: getDefaultSide(state.enclosures[index]),
-      selectedView: EnclosureView.Pools,
-    };
-  });
+      return {
+        selectedEnclosureIndex: index,
+        selectedSlotNumber: null,
+        selectedSide: getDefaultSide(state.enclosures[index]),
+        selectedView: EnclosureView.Pools,
+      };
+    });
+  }
 
-  renameSelectedEnclosure = this.updater((state, label: string) => {
-    const enclosures = [...state.enclosures];
-    enclosures[state.selectedEnclosureIndex] = {
-      ...enclosures[state.selectedEnclosureIndex],
-      label,
-    };
+  renameSelectedEnclosure(label: string): void {
+    patchState(this.state, (state) => {
+      const enclosures = [...state.enclosures];
+      enclosures[state.selectedEnclosureIndex] = {
+        ...enclosures[state.selectedEnclosureIndex],
+        label,
+      };
 
-    return {
-      ...state,
-      enclosures,
-    };
-  });
+      return { enclosures };
+    });
+  }
 
-  selectSlot = this.updater((state, slotNumber: number | null) => {
-    return {
-      ...state,
-      selectedSlotNumber: slotNumber,
-    };
-  });
+  selectSlot(slotNumber: number | null): void {
+    patchState(this.state, { selectedSlotNumber: slotNumber });
+  }
 
   selectSlotByVdevDisk(vdevDisk: EnclosureVdevDisk): void {
     this.selectEnclosure(vdevDisk.enclosure_id);
     this.selectSlot(vdevDisk.slot);
   }
 
-  selectView = this.updater((state, view: EnclosureView) => {
-    return {
-      ...state,
-      selectedView: view,
-    };
-  });
+  selectView(view: EnclosureView): void {
+    patchState(this.state, { selectedView: view });
+  }
 
-  selectSide = this.updater((state, side: EnclosureSide) => {
-    if (side === state.selectedSide) {
-      return state;
-    }
+  selectSide(side: EnclosureSide): void {
+    patchState(this.state, (state) => {
+      if (side === state.selectedSide) {
+        return {};
+      }
 
-    return {
-      ...state,
-      selectedSide: side,
-      selectedSlotNumber: null,
-    };
-  });
+      return { selectedSide: side, selectedSlotNumber: null };
+    });
+  }
 
-  changeLightStatus = this.updater((state, options: {
+  changeLightStatus(options: {
     enclosureId: string;
     driveBayNumber: number;
     status: DriveBayLightStatus;
-  }) => {
-    return produce(state, (draft) => {
-      const enclosureToUpdate = draft.enclosures.find((enclosure) => enclosure.id === options.enclosureId);
-      if (!enclosureToUpdate) {
-        return;
-      }
+  }): void {
+    patchState(this.state, (state) => ({
+      enclosures: produce(state.enclosures, (draft) => {
+        const enclosureToUpdate = draft.find((enclosure) => enclosure.id === options.enclosureId);
+        if (!enclosureToUpdate) {
+          return;
+        }
 
-      const driveBay = enclosureToUpdate.elements[EnclosureElementType.ArrayDeviceSlot][options.driveBayNumber];
-      driveBay.drive_bay_light_status = options.status;
-    });
-  });
+        const driveBay = enclosureToUpdate.elements[EnclosureElementType.ArrayDeviceSlot][options.driveBayNumber];
+        driveBay.drive_bay_light_status = options.status;
+      }),
+    }));
+  }
 }

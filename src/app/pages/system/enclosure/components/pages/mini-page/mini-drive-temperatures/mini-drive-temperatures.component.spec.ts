@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { of } from 'rxjs';
 import { EnclosureElementType, EnclosureStatus } from 'app/enums/enclosure-slot-status.enum';
@@ -43,8 +44,8 @@ describe('MiniDriveTemperaturesComponent', () => {
     ],
     providers: [
       mockProvider(EnclosureStore, {
-        selectedEnclosure: () => enclosure,
-        selectedSlot: () => null as DashboardEnclosureSlot | null,
+        selectedEnclosure: signal(enclosure),
+        selectedSlot: signal<DashboardEnclosureSlot | null>(null),
         selectSlot: jest.fn(),
       }),
       mockProvider(DiskTemperatureService, {

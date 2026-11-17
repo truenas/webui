@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal, WritableSignal } from '@angular/core';
 import { createHostFactory, SpectatorHost } from '@ngneat/spectator/jest';
 import {
   TnBannerHarness, TnInputHarness, TnRadioGroupHarness, TnRadioHarness,
@@ -20,7 +21,7 @@ function sedDisk(status: SedStatus): WebUiQueryEntity<'disk.query'> {
 }
 
 describe('SedDiskPasswordComponent', () => {
-  let spectator: SpectatorHost<SedDiskPasswordComponent>;
+  let spectator: SpectatorHost<SedDiskPasswordComponent, { passwordApplied: WritableSignal<boolean> }>;
   let loader: HarnessLoader;
   let api: MockApiService;
 
@@ -30,7 +31,10 @@ describe('SedDiskPasswordComponent', () => {
   });
 
   async function setup(options: Parameters<typeof mockSedDiskPasswordCalls>[0]): Promise<void> {
-    spectator = createHost('<ix-sed-disk-password [poolId]="4" [disk]="\'sdi\'"></ix-sed-disk-password>', {
+    const template = '<ix-sed-disk-password [poolId]="4" [disk]="\'sdi\'" [passwordApplied]="passwordApplied()">'
+      + '</ix-sed-disk-password>';
+    spectator = createHost(template, {
+      hostProps: { passwordApplied: signal(false) },
       // Spread: a per-host override takes a flat provider list.
       providers: [
         ...mockApi([
@@ -119,5 +123,27 @@ describe('SedDiskPasswordComponent', () => {
     const source = await loader.getHarness(TnRadioGroupHarness);
     expect(await source.getCheckedLabel()).toBe('Individual password for this disk');
     expect(spectator.component.isValid()).toBe(false);
+  });
+
+  it('hides the password choice and leaves the disk alone once the host says it was applied', async () => {
+    await setup({ disks: [sedDisk(SedStatus.Locked)] });
+
+    const source = await loader.getHarness(TnRadioGroupHarness);
+    await source.select('Individual password for this disk');
+    const password = await loader.getHarness(TnInputHarness);
+    await password.setValue('first-password');
+
+    spectator.hostComponent.passwordApplied.set(true);
+    await spectator.fixture.whenStable();
+
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('An individual SED password was already applied to sdi');
+    expect(await loader.getAllHarnesses(TnRadioGroupHarness)).toHaveLength(0);
+    expect(await loader.getAllHarnesses(TnInputHarness)).toHaveLength(0);
+    expect(spectator.component.isValid()).toBe(true);
+    expect(spectator.component.appliesPassword()).toBe(false);
+
+    await firstValueFrom(spectator.component.prepareDisk());
+    expect(api.call).not.toHaveBeenCalledWith('disk.unlock_sed', expect.anything());
   });
 });

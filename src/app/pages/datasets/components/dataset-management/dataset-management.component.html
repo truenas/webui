@@ -1,4 +1,4 @@
-@if (!isLoading && dataSource.data.length === 0) {
+@if (!isLoading() && dataSource.data.length === 0) {
   <ng-container [ngTemplateOutlet]="empty"></ng-container>
 } @else {
   <div class="container">
@@ -15,7 +15,7 @@
       @if (!showMobileDetails) {
         <ix-fake-progress-bar
           class="loader-bar"
-          [loading]="!!(isLoading$ | async)"
+          [loading]="isLoading()"
         ></ix-fake-progress-bar>
       }
       <div class="item-search">
@@ -61,7 +61,7 @@
             CdkTree.ngOnDestroy to disconnect the data source, which permanently kills its
             debounced filter subscription and breaks the search after the first no-results.
           -->
-          @let noSearchResults = searchQuery() && !dataSource.filteredData.length && !isLoading;
+          @let noSearchResults = searchQuery() && !dataSource.filteredData.length && !isLoading();
 
           @if (noSearchResults) {
             <ng-container [ngTemplateOutlet]="empty"></ng-container>
@@ -92,7 +92,8 @@
                   Navigation lives on the projected content, not the tn-tree-node host:
                   the library node's cdkTreeNodeToggle stops click propagation, so a host
                   (click) never fires. Handling it here (and stopping propagation) gives
-                  row-click = open details, while the chevron alone still expands/collapses.
+                  row-click = open details, or toggle when the row is already selected;
+                  the chevron expands/collapses any row.
                 -->
                 <div
                   class="dataset-node-click"
@@ -114,7 +115,7 @@
       </div>
     </div>
 
-    @let dataset = selectedDataset$ | async;
+    @let dataset = selectedDataset();
     @let showDetails = !searchQuery() || dataset?.name.toLowerCase().includes(searchQuery().toLowerCase());
 
     @if (dataset && showDetails) {
@@ -126,7 +127,7 @@
         @if (showMobileDetails) {
           <ix-fake-progress-bar
             class="loader-bar"
-            [loading]="!!(isLoading$ | async)"
+            [loading]="isLoading()"
           ></ix-fake-progress-bar>
         }
         <ix-dataset-details-panel

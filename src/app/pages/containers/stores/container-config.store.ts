@@ -1,9 +1,8 @@
-import { computed, Injectable, inject } from '@angular/core';
-import { ComponentStore } from '@ngrx/component-store';
-import {
-  of, exhaustMap, tap, EMPTY,
-} from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Injectable, inject } from '@angular/core';
+import { tapResponse } from '@ngrx/operators';
+import { patchState, signalState } from '@ngrx/signals';
+import { rxMethod } from '@ngrx/signals/rxjs-interop';
+import { exhaustMap, pipe } from 'rxjs';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -19,43 +18,28 @@ const initialState: ContainerConfigState = {
 };
 
 @Injectable()
-export class ContainerConfigStore extends ComponentStore<ContainerConfigState> {
+export class ContainerConfigStore {
   private api = inject(ApiService);
   private errorHandler = inject(ErrorHandlerService);
 
-  readonly isLoading = computed(() => this.state().isLoading);
-  readonly config = computed(() => this.state().config);
+  private readonly state = signalState(initialState);
 
-  constructor() {
-    super(initialState);
-  }
+  readonly isLoading = this.state.isLoading;
+  readonly config = this.state.config;
 
-  readonly initialize = this.effect((trigger$) => {
-    return trigger$.pipe(
-      // exhaustMap ignores new triggers while a request is in progress,
-      // preventing duplicate API calls during rapid navigation
-      exhaustMap(() => {
-        // Skip if already loading
-        if (this.state().isLoading) {
-          return EMPTY;
-        }
+  readonly initialize = rxMethod<void>(pipe(
+    // exhaustMap ignores new triggers while a request is in progress,
+    // preventing duplicate API calls during rapid navigation
+    exhaustMap(() => {
+      patchState(this.state, { isLoading: true });
 
-        this.patchState({ isLoading: true });
-
-        return this.api.call('lxc.config').pipe(
-          tap((config) => {
-            this.patchState({
-              config,
-              isLoading: false,
-            });
-          }),
-          catchError((error: unknown) => {
-            this.patchState({ isLoading: false });
-            this.errorHandler.showErrorModal(error);
-            return of(undefined);
-          }),
-        );
-      }),
-    );
-  });
+      return this.api.call('lxc.config').pipe(
+        tapResponse({
+          next: (config) => patchState(this.state, { config }),
+          error: (error: unknown) => this.errorHandler.showErrorModal(error),
+          finalize: () => patchState(this.state, { isLoading: false }),
+        }),
+      );
+    }),
+  ));
 }

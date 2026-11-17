@@ -16,10 +16,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   FormArray, FormControlStatus, FormGroup, ReactiveFormsModule,
 } from '@angular/forms';
+import { FieldTree } from '@angular/forms/signals';
 import { isEqual } from 'lodash-es';
 import { forkJoin, map, Observable, startWith, take, timer } from 'rxjs';
 import { Role } from 'app/enums/role.enum';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
+import { SignalFormErrors } from 'app/modules/forms/signal-forms/signal-form-errors.service';
+import { fieldAt, patchModelValue, toFormModel } from 'app/modules/forms/signal-forms/signal-forms.utils';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 
@@ -43,12 +46,16 @@ export interface FormSubmitEvent<T = Record<string, unknown>> {
   /** Whether this form is in edit mode. */
   isEdit: boolean;
 
-  /** All current form values (formGroup.getRawValue()). */
+  /**
+   * All current form values: `formGroup.getRawValue()`, or the whole model of a `[fieldTree]` form.
+   * Either way it includes disabled fields, and for a signal form hidden ones too; see `activeValue()`.
+   */
   allValues: T;
 
   /**
    * Top-level keys that differ from the initial snapshot (all of them on create), computed lazily.
-   * Disabled controls are excluded, so a hidden field's stale value can't leak in. Nested groups report
+   * Disabled controls (and a signal form's hidden fields) are excluded, so a hidden field's stale value
+   * can't leak in. Nested groups report
    * as one whole entry; use `allValues` for those, paired or derived controls, or reshaped payloads.
    */
   changedValues: Partial<T>;
@@ -126,6 +133,7 @@ export interface IxFormLoadState {
  * `initialFormSnapshot` + `externalLoading` + `isEditMode` instead of `editData`. Projected controls
  * resolve the consumer's `FormGroupDirective`, not the inner `<form>`, so pass a child its group as an
  * input. The input surface is FROZEN: new inputs need team review. Tests use `ixFormTestingProviders()`.
+ * Takes `[formGroup]` or a signal form's `[fieldTree]` (see `docs/devs/signal-forms.md`), never both.
  */
 @Component({
   selector: 'ix-form',
@@ -143,8 +151,31 @@ export class IxFormComponent<
   // Input surface is FROZEN (see class JSDoc): no new top-level inputs without
   // team review; keep outlier forms bespoke.
 
-  /** The reactive FormGroup this form manages. */
-  readonly formGroup = input.required<FormGroup>();
+  /** The reactive FormGroup this form manages. Exactly one of this and {@link fieldTree} is set. */
+  readonly formGroup = input<FormGroup | null>(null);
+
+  /**
+   * The signal form (the result of `form()`) this form manages, instead of a {@link formGroup}. Added to
+   * the frozen surface in NAS-145112 as the one input the signal path needs. Infers `T`, so the submit
+   * handler sees the model's own type.
+   */
+  readonly fieldTree = input<FieldTree<T> | null>(null);
+
+  /** {@link fieldTree}, typed for the helpers that walk any model. */
+  private readonly anyFieldTree = computed(() => this.fieldTree() as unknown as FieldTree<unknown> | null);
+
+  /**
+   * What the inner `<form>` binds: the form's own group, or an empty one on the signal path, which keeps
+   * `ngSubmit` (Enter to save) without a Reactive control in sight.
+   */
+  protected readonly hostGroup = computed(() => this.formGroup() ?? this.emptyGroup);
+
+  private readonly emptyGroup = new FormGroup({});
+
+  /** {@link formGroup} on the Reactive path, where `ngOnInit` has checked it is set. */
+  private reactiveGroup(): FormGroup {
+    return this.formGroup() as FormGroup;
+  }
 
   /**
    * Entity for edit mode (null = create); auto-patched in ngOnInit. Pass
@@ -254,8 +285,17 @@ export class IxFormComponent<
    * change something" on WebShare Edit).
    */
   readonly canSubmit = computed(
-    () => this.formStatus() !== 'INVALID' && !this.isLoading() && !this.isExtraDisabled(),
+    () => !this.isInvalid() && !this.isLoading() && !this.isExtraDisabled(),
   );
+
+  /**
+   * Blocks on errors only, not on pending async validators, on both paths: `invalid()` on a field tree
+   * is false while validators are only pending, like `status !== 'INVALID'` on a group.
+   */
+  private isInvalid(): boolean {
+    const tree = this.anyFieldTree();
+    return tree ? tree().invalid() : this.formStatus() === 'INVALID';
+  }
 
   private readonly internalSnapshot = signal<Partial<T> | null>(null);
 
@@ -267,6 +307,7 @@ export class IxFormComponent<
 
   private minSubmitFeedbackMs = inject(ixFormMinSubmitFeedbackMs);
   private errorHandler = inject(FormErrorHandlerService);
+  private signalErrors = inject(SignalFormErrors, { optional: true });
   private snackbar = inject(SnackbarService);
   private destroyRef = inject(DestroyRef);
 
@@ -299,8 +340,8 @@ export class IxFormComponent<
    * each CD pass.
    */
   protected isSaveDisabled(): boolean {
-    const form = this.formGroup();
-    return form.invalid
+    const tree = this.anyFieldTree();
+    return (tree ? tree().invalid() : this.reactiveGroup().invalid)
       || this.isLoading()
       || this.isExtraDisabled();
   }
@@ -312,15 +353,24 @@ export class IxFormComponent<
 
   /** Whether the form has edits a host should confirm before discarding. */
   hasUnsavedChanges(): boolean {
-    return this.formGroup().dirty;
+    const tree = this.anyFieldTree();
+    return tree ? tree().dirty() : this.reactiveGroup().dirty;
   }
 
   ngOnInit(): void {
-    // Track validity reactively for host-owned Save buttons (side-panel host).
-    this.formGroup().statusChanges.pipe(
-      startWith(this.formGroup().status),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((status) => this.formStatus.set(status));
+    const tree = this.anyFieldTree();
+    if (!tree === !this.formGroup()) {
+      throw new Error('<ix-form> needs exactly one of [formGroup] and [fieldTree].');
+    }
+    if (tree) {
+      this.signalErrors?.connect(tree);
+    } else {
+      // Track validity reactively for host-owned Save buttons (side-panel host).
+      this.reactiveGroup().statusChanges.pipe(
+        startWith(this.reactiveGroup().status),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe((status) => this.formStatus.set(status));
+    }
 
     // onCancel fires on every non-success destroy path.
     this.destroyRef.onDestroy(() => {
@@ -337,11 +387,26 @@ export class IxFormComponent<
     if (data != null) {
       const transform = this.transformEditData();
       const patchData = transform ? transform(data) : (data as Partial<T>);
-      this.formGroup().patchValue(patchData);
+      if (tree) {
+        this.patchModel(tree, patchData);
+        return;
+      }
+      this.reactiveGroup().patchValue(patchData);
       // Defensive: patchValue doesn't mark dirty today, but a setValue swap would.
-      this.formGroup().markAsPristine();
-      this.internalSnapshot.set(this.formGroup().getRawValue() as Partial<T>);
+      this.reactiveGroup().markAsPristine();
+      this.internalSnapshot.set(this.reactiveGroup().getRawValue() as Partial<T>);
     }
+  }
+
+  /**
+   * `patchValue` for a model (see `patchModelValue`): deep, only keys the model has. Copied first, because
+   * `editData` is often frozen store state (see `toFormModel`).
+   */
+  private patchModel(tree: FieldTree<unknown>, patch: Partial<T>): void {
+    const state = tree();
+    state.value.set(patchModelValue(state.value(), toFormModel(patch)));
+    state.reset();
+    this.internalSnapshot.set(toFormModel(state.value()) as Partial<T>);
   }
 
   onFormSubmit(): void {
@@ -350,7 +415,9 @@ export class IxFormComponent<
       return;
     }
 
-    const allValues = this.formGroup().getRawValue() as T;
+    const tree = this.anyFieldTree();
+    // A copy on both paths, so a handler reshaping `allValues` in place can't reach past the model's signals.
+    const allValues = (tree ? toFormModel(tree().value()) : this.reactiveGroup().getRawValue()) as T;
 
     // `changedValues` is diffed on first read and cached, so a handler that builds its payload from
     // `allValues` pays neither the diff nor the nested-group advisory — which only matter to
@@ -410,8 +477,17 @@ export class IxFormComponent<
       },
       error: (error: unknown) => {
         this.isSubmitting.set(false);
-        if (!onError?.(error)) {
-          this.errorHandler.handleValidationErrors(error, this.formGroup());
+        if (onError?.(error)) {
+          return;
+        }
+        if (!tree) {
+          this.errorHandler.handleValidationErrors(error, this.reactiveGroup());
+        } else if (this.signalErrors) {
+          this.signalErrors.handleValidationErrors(error);
+        } else {
+          // No way to pin anything on a signal form without the service; every field error goes to the
+          // modal, which is still better than dropping it.
+          this.errorHandler.handleValidationErrors(error, this.emptyGroup);
         }
       },
       // Safety net: observables that complete without emitting (EMPTY) would
@@ -437,15 +513,7 @@ export class IxFormComponent<
 
   private getChangedValues(current: T): Partial<T> {
     const snapshot = this.snapshot();
-    const controls = this.formGroup().controls;
-
-    if (isDevMode()) {
-      this.warnNestedChangedValues(controls);
-    }
-
-    // Disabled controls (incl. ones hidden by visibleWhen/enabledWhen) are
-    // omitted so a stale value the user can no longer see never reaches the diff.
-    const isActive = (key: keyof T): boolean => !controls[key as string]?.disabled;
+    const isActive = this.activeKeyPredicate();
 
     if (!snapshot) {
       const all: Partial<T> = {};
@@ -467,6 +535,27 @@ export class IxFormComponent<
       }
     }
     return changed;
+  }
+
+  /**
+   * Whether a top-level key belongs in `changedValues`. Disabled controls (incl. ones hidden by
+   * visibleWhen/enabledWhen), and a signal form's hidden or disabled fields, are left out so a stale
+   * value the user can no longer see never reaches the diff.
+   */
+  private activeKeyPredicate(): (key: keyof T) => boolean {
+    const tree = this.anyFieldTree();
+    if (tree) {
+      return (key) => {
+        const field = fieldAt(tree, [key as string]);
+        return !field || (!field().hidden() && !field().disabled());
+      };
+    }
+
+    const controls = this.reactiveGroup().controls;
+    if (isDevMode()) {
+      this.warnNestedChangedValues(controls);
+    }
+    return (key) => !controls[key as string]?.disabled;
   }
 
   /**

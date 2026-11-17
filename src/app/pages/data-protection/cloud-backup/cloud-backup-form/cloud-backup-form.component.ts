@@ -48,8 +48,6 @@ import { ApiService } from 'app/modules/websocket/api.service';
 import { CloudCredentialService } from 'app/services/cloud-credential.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 
-type FormValue = CloudBackupFormComponent['form']['value'];
-
 @Component({
   selector: 'ix-cloud-backup-form',
   templateUrl: './cloud-backup-form.component.html',
@@ -285,7 +283,7 @@ export class CloudBackupFormComponent implements OnInit {
   }
 
   protected handleSubmit = (): SubmitResult<CloudBackup, CloudBackup> => {
-    const payload = this.prepareData(this.form.value as Required<FormValue>);
+    const payload = this.prepareData();
     const request$: Observable<CloudBackup> = this.editingTask
       ? this.api.call('cloud_backup.update', [this.editingTask.id, payload]).pipe(map(toCloudBackup))
       : this.api.call('cloud_backup.create', [payload]).pipe(map(toCloudBackup));
@@ -363,27 +361,29 @@ export class CloudBackupFormComponent implements OnInit {
       });
   }
 
-  private prepareData(formValue: Required<FormValue>): CloudBackupUpdate {
+  private prepareData(): CloudBackupUpdate {
+    // `form.value` leaves out disabled controls: `folder`, `bucket`, `bucket_input` and `absolute_paths`
+    // can be disabled, and a disabled one must not be sent. The rest are never disabled.
+    const formValue = this.form.value;
     const attributes: CloudBackupUpdate['attributes'] = {
       folder: formValue.folder,
-      bucket: this.form.value.bucket_input && this.isNewBucketOptionSelected
-        ? this.form.value.bucket_input
+      bucket: formValue.bucket_input && this.isNewBucketOptionSelected
+        ? formValue.bucket_input
         : formValue.bucket,
     };
 
     const {
       // eslint-disable-next-line @typescript-eslint/naming-convention
-      folder, bucket, bucket_input, ...restOfValues
-    } = formValue;
+      folder, bucket, bucket_input, absolute_paths, schedule, ...alwaysEnabled
+    } = this.form.getRawValue();
 
-    const value: CloudBackupUpdate = {
-      ...restOfValues,
+    return {
+      ...alwaysEnabled,
+      ...(this.form.controls.absolute_paths.enabled ? { absolute_paths } : {}),
       attributes,
       include: [],
-      schedule: crontabToSchedule(formValue.schedule),
+      schedule: crontabToSchedule(schedule),
     };
-
-    return value;
   }
 
   private setFileNodeProvider(): void {

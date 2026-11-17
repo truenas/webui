@@ -1,6 +1,6 @@
+import { signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
 import { InstalledAppBadgeComponent } from 'app/pages/apps/components/installed-app-badge/installed-app-badge.component';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
@@ -19,7 +19,7 @@ describe('InstalledAppBadgeComponent', () => {
     component: InstalledAppBadgeComponent,
     providers: [
       mockProvider(InstalledAppsStore, {
-        installedApps$: of(mockInstalledApps),
+        installedApps: signal(mockInstalledApps),
       }),
       mockProvider(Router, {
         navigate: jest.fn(),

@@ -11,7 +11,7 @@ import {
   TnInputHarness,
   TnFilePickerHarness,
 } from '@truenas/ui-components';
-import { BehaviorSubject, map, throwError } from 'rxjs';
+import { throwError } from 'rxjs';
 import { allCommands } from 'app/constants/all-commands.constant';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -40,10 +40,8 @@ describe('AdditionalDetailsSectionComponent', () => {
   let loader: HarnessLoader;
 
   const shellAccess = signal(false);
-  const shellAccess$ = new BehaviorSubject(false);
   function setShellAccess(value: boolean): void {
     shellAccess.set(value);
-    shellAccess$.next(value);
   }
 
   // Opens the editable for a details item, sets the value on its tn-input, and closes it.
@@ -88,22 +86,14 @@ describe('AdditionalDetailsSectionComponent', () => {
       mockAuth(),
       mockProvider(FilesystemService),
       mockProvider(UserFormStore, {
-        isStigMode: jest.fn(() => false),
+        isStigMode: signal(false),
         updateUserConfig: jest.fn(),
         updateSetupDetails: jest.fn(),
-        isNewUser: jest.fn(() => false),
-        homeModeOldValue: jest.fn(() => ''),
-        userConfig: jest.fn(() => ({})),
-        shellAccess: jest.fn(() => shellAccess()),
-        role: jest.fn(),
-        state$: shellAccess$.pipe(map((sa) => ({
-          setupDetails: {
-            allowedAccess: {
-              shellAccess: sa,
-            },
-            role: null as null,
-          },
-        }))),
+        isNewUser: signal(false),
+        homeModeOldValue: signal(''),
+        userConfig: signal({}),
+        shellAccess,
+        role: signal(null),
       }),
       mockProvider(SnackbarService),
       mockApi([

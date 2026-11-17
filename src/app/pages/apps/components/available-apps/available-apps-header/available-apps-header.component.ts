@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, OnInit, signal,
+  AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, linkedSignal, OnInit,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
@@ -12,8 +12,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {
-  BehaviorSubject,
-  debounceTime, distinctUntilChanged, filter, Observable, of, take,
+  debounceTime, distinctUntilChanged, Observable, of,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
@@ -70,20 +69,25 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   });
 
   searchControl = this.fb.control('');
-  showFilters = false;
-  availableApps$ = this.applicationsStore.availableApps$;
-  areLoaded$ = new BehaviorSubject(false);
-  installedApps$ = this.installedAppsStore.installedApps$;
-  isFilterApplied$ = this.appsFilterStore.isFilterApplied$;
-  appsCategories: string[] = [];
+
+  /** Opens by itself once a filter is applied, and stays open until the user closes it. */
+  protected readonly showFilters = linkedSignal<boolean, boolean>({
+    source: this.appsFilterStore.isFilterApplied,
+    computation: (isFilterApplied, previous) => !!previous?.value || isFilterApplied,
+  });
+
+  /** Latches on the first finished catalog load, so that a later refresh keeps the counts on screen. */
+  protected readonly areLoaded = linkedSignal<boolean, boolean>({
+    source: this.applicationsStore.isLoading,
+    computation: (isLoading, previous) => !!previous?.value || !isLoading,
+  });
+
   sortOptions$: Observable<Option[]> = of([
     { label: this.translate.instant('Category'), value: null },
     { label: this.translate.instant('App Name'), value: AppsFiltersSort.Title },
     { label: this.translate.instant('Updated Date'), value: AppsFiltersSort.LastUpdate },
     { label: this.translate.instant('Popularity'), value: AppsFiltersSort.PopularityRank },
   ]);
-
-  protected categorySuggestions = signal<string[]>([]);
 
   readonly AppExtraCategory = AppExtraCategory;
 
@@ -95,40 +99,14 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
     ).subscribe((searchQuery) => {
       this.appsFilterStore.applySearchQuery(searchQuery || '');
     });
-    this.appsFilterStore.filterValues$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (filterValues) => {
-        if (filterValues.categories?.length) {
-          this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
-        }
-        if (filterValues.sort) {
-          this.form.controls.sort.setValue(filterValues.sort, { emitEvent: false });
-        }
-      },
-    });
-    this.isFilterApplied$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (isFilterApplied) => {
-        this.showFilters = this.showFilters || isFilterApplied;
-        this.cdr.markForCheck();
-      },
-    });
-    this.appsFilterStore.searchQuery$.pipe(take(1), takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (searchQuery) => {
-        this.searchControl.setValue(searchQuery);
-      },
-    });
-    this.applicationsStore.isLoading$.pipe(
-      filter((value) => !value),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => {
-      this.areLoaded$.next(true);
-    });
-    this.applicationsStore.appsCategories$.pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((categories) => {
-      this.appsCategories = [...categories];
-      this.categorySuggestions.set(categories);
-      this.cdr.markForCheck();
-    });
+    const filterValues = this.appsFilterStore.filterValues();
+    if (filterValues.categories?.length) {
+      this.form.controls.categories.setValue(filterValues.categories, { emitEvent: false });
+    }
+    if (filterValues.sort) {
+      this.form.controls.sort.setValue(filterValues.sort, { emitEvent: false });
+    }
+    this.searchControl.setValue(this.appsFilterStore.searchQuery());
   }
 
   ngAfterViewInit(): void {
@@ -162,13 +140,13 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   changeFiltersVisible(): void {
-    this.showFilters = !this.showFilters;
+    this.showFilters.update((showFilters) => !showFilters);
   }
 
   applyFilters(): void {
     this.appsFilterStore.applyFilters({
       sort: this.form.value.sort || null,
-      categories: this.form.value.categories || this.appsCategories,
+      categories: this.form.value.categories || this.applicationsStore.appsCategories(),
     });
   }
 

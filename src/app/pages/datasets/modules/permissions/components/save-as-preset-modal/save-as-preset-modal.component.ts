@@ -1,7 +1,7 @@
 import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { NgClass } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, signal, inject,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
@@ -65,19 +65,10 @@ export class SaveAsPresetModalComponent implements OnInit {
   });
 
   presets: AclTemplateByPath[] = [];
-  protected isFormLoading = signal(false);
-  acl: Acl;
+  protected readonly isFormLoading = this.store.isLoading;
 
   ngOnInit(): void {
     this.loadOptions();
-
-    this.store.state$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((state) => {
-        this.isFormLoading.set(state.isLoading);
-        this.acl = state.acl;
-        this.cdr.markForCheck();
-      });
   }
 
   isCurrentAclType(aclType: AclType): boolean {
@@ -111,11 +102,12 @@ export class SaveAsPresetModalComponent implements OnInit {
   }
 
   onSubmit(): void {
-    this.loadIds(cloneDeep(this.acl)).pipe(
+    const currentAcl = this.store.acl();
+    this.loadIds(cloneDeep(currentAcl)).pipe(
       switchMap((newAcl) => {
         const payload: AclTemplateCreateParams = {
           name: this.form.value.presetName,
-          acltype: this.acl.acltype,
+          acltype: currentAcl.acltype,
           acl: newAcl.acl.map((acl) => {
             delete acl.who;
             return cloneDeep(acl);

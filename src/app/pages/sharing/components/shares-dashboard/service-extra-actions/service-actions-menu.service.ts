@@ -3,6 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
+import { last } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -268,12 +269,15 @@ export class ServiceActionsMenuService {
     this.api.job('service.control', [ServiceOperation.Start, service.service, { silent: false }])
       .pipe(
         observeJob(),
+        last(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe({
-        complete: () => this.snackbar.success(this.translate.instant('Service started')),
+      .subscribe((job) => {
+        if (job.result === true) {
+          this.snackbar.success(this.translate.instant('Service started'));
+        }
       });
   }
 
@@ -281,12 +285,15 @@ export class ServiceActionsMenuService {
     this.api.job('service.control', [ServiceOperation.Stop, service.service, { silent: false }])
       .pipe(
         observeJob(),
+        last(),
         this.loader.withLoader(),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )
-      .subscribe({
-        complete: () => this.snackbar.success(this.translate.instant('Service stopped')),
+      .subscribe((job) => {
+        if (job.result === true) {
+          this.snackbar.success(this.translate.instant('Service stopped'));
+        }
       });
   }
 }

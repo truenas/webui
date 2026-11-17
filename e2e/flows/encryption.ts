@@ -3,13 +3,13 @@
  * unlocking and exporting the key from the Encryption card.
  */
 import { expect, type Download, type Page } from '@playwright/test';
+import { selectDatasetNode } from './dataset-tree';
 import { goToDatasets } from './navigation';
 import { keyDownloadTimeoutMs, selectOption } from './storage';
 import {
   encryptionCardLocators, encryptionFormLocators, encryptionOptionsLocators, exportKeyDialogLocators,
   jobDialogLocators, lockDialogLocators, unlockLocators, unlockSummaryLocators,
 } from '../locators/encryption';
-import { datasetDetailsLocators, datasetLocators } from '../locators/storage';
 
 /**
  * Locking, unlocking and changing a key are jobs behind a progress dialog. The first two also
@@ -25,11 +25,7 @@ const jobTimeoutMs = 90_000;
  */
 export async function selectDataset(page: Page, dataset: string): Promise<void> {
   await goToDatasets(page);
-
-  const node = page.locator(datasetLocators.treeNode(dataset));
-  await expect(node).toBeVisible();
-  await node.click();
-  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(dataset);
+  await selectDatasetNode(page, dataset);
 }
 
 /**

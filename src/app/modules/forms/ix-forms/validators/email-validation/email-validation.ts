@@ -1,13 +1,15 @@
 import { ValidatorFn, FormControl } from '@angular/forms';
 
+// Local part is an RFC 5322 dot-atom, so characters like `=`, `'` and `&` are accepted, matching the backend.
+const atom = '[a-zA-Z0-9!#$%&\'*+/=?^_`{|}~-]+';
+const emailRegex = new RegExp(`^${atom}(\\.${atom})*@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$`);
+
 export function emailValidator(): ValidatorFn {
   return (control: FormControl<string>) => {
-    const regex = /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
-
     if (!control.value) {
       return null;
     }
 
-    return regex.test(control.value) ? null : { email: true };
+    return emailRegex.test(control.value) ? null : { email: true };
   };
 }

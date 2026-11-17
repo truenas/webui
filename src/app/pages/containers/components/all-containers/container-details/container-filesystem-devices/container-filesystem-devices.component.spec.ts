@@ -1,5 +1,6 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
@@ -61,15 +62,15 @@ describe('ContainerFilesystemDevicesComponent', () => {
         open: jest.fn(() => SlideInResult.cancel()),
       }),
       mockProvider(ContainersStore, {
-        selectedContainer: () => fakeContainer({
+        selectedContainer: signal(fakeContainer({
           id: 1,
           status: { state: ContainerStatus.Stopped, pid: 0, domain_state: 'stopped' },
-        }),
+        })),
         containerUpdated: jest.fn(),
       }),
       mockProvider(ContainerDevicesStore, {
-        isLoading: () => false,
-        devices: () => disks,
+        isLoading: signal(false),
+        devices: signal(disks),
         loadDevices: jest.fn(),
         reload: jest.fn(),
       }),
@@ -116,14 +117,14 @@ describe('ContainerFilesystemDevicesComponent', () => {
           mockProvider(FilesystemService),
           mockProvider(FormSidePanelService),
           mockProvider(ContainersStore, {
-            selectedContainer: () => fakeContainer({
+            selectedContainer: signal(fakeContainer({
               id: 1,
               status: { state, pid: 0, domain_state: null },
-            }),
+            })),
           }),
           mockProvider(ContainerDevicesStore, {
-            isLoading: () => false,
-            devices: () => disks,
+            isLoading: signal(false),
+            devices: signal(disks),
           }),
         ],
       });
