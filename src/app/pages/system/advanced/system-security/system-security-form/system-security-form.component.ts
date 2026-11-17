@@ -149,6 +149,7 @@ export class SystemSecurityFormComponent extends IxFormHostForm implements OnIni
     // if STIG is enabled, then FIPS mode *must* also be enabled since FIPS is part of STIG
     enable_fips: [false, this.stigValidatorFn],
     enable_gpos_stig: [false],
+    require_nts: [false],
     min_password_age: [
       null as number | null,
       [Validators.min(1), Validators.max(365), this.stigValidatorFn],

@@ -31,6 +31,9 @@ export function getNtpServersFormConfig(
           name: 'address', type: 'input', label: helptext.address.label, tooltip: helptext.address.tooltip, required: true,
         },
         {
+          name: 'nts', type: 'checkbox', label: helptext.nts.label, tooltip: helptext.nts.tooltip,
+        },
+        {
           name: 'burst', type: 'checkbox', label: helptext.burst.label, tooltip: helptext.burst.tooltip,
         },
         {

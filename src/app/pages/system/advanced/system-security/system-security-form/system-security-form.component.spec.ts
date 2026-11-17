@@ -57,6 +57,7 @@ function queryThroughCall(): jest.Mock {
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
   enable_gpos_stig: false,
+  require_nts: false,
   min_password_age: 10,
   max_password_age: 90,
   password_complexity_ruleset: { $set: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Lower] },
@@ -249,6 +250,7 @@ describe('SystemSecurityFormComponent', () => {
     it('saves full system security config when Save is clicked', async () => {
       await setToggle('enable_fips', true);
       await setToggle('enable_gpos_stig', false);
+      await setToggle('require_nts', true);
       await setInput('min_password_age', 15);
       await setInput('max_password_age', 120);
       await setInput('min_password_length', 10);
@@ -263,6 +265,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
+        require_nts: true,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: { $set: ['UPPER', 'LOWER'] },
@@ -304,6 +307,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
+        require_nts: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: null,
@@ -330,6 +334,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
+        require_nts: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: undefined,
@@ -352,6 +357,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
+        require_nts: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: { $set: [] },
@@ -364,6 +370,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.component.form.value).toEqual({
         enable_fips: false,
         enable_gpos_stig: false,
+        require_nts: false,
         min_password_age: 10,
         max_password_age: 90,
         password_complexity_ruleset: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Lower],

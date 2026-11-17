@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest'; // cspell:ignore ngneat
 import { TranslateService } from '@ngx-translate/core';
 import { TnCheckboxHarness, TnFormFieldHarness, TnInputHarness } from '@truenas/ui-components';
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ApiErrorName, JsonRpcErrorCode } from 'app/enums/api.enum';
@@ -136,5 +136,38 @@ describe('NTP server form — Force clears the unreachable-address error', () =>
     spectator.detectChanges();
 
     expect(spectator.component.canSubmit()).toBe(true);
+  });
+});
+
+describe('NTP server form — NTS', () => {
+  let spectator: Spectator<IxFormRendererComponent<CreateNtpServer>>;
+  let loader: HarnessLoader;
+  const api = { call: jest.fn(() => of({})) } as unknown as ApiService;
+
+  const createComponent = createComponentFactory({
+    component: IxFormRendererComponent<CreateNtpServer>,
+    imports: [ReactiveFormsModule],
+    providers: [
+      ...ixFormTestingProviders(),
+      provideTnFormFieldErrors(),
+      mockAuth(),
+    ],
+  });
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    const definition = getNtpServersFormConfig(api, { instant: (key: string) => key } as TranslateService, undefined);
+    spectator = createComponent({ props: { definition } });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+  });
+
+  it('sends nts when the NTS checkbox is ticked', async () => {
+    await (await loader.getHarness(TnInputHarness.with({ name: 'address' }))).setValue('time.cloudflare.com');
+    await (await loader.getHarness(TnCheckboxHarness.with({ label: 'NTS' }))).check();
+    spectator.component.submit();
+
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.create', [
+      expect.objectContaining({ address: 'time.cloudflare.com', nts: true }),
+    ]);
   });
 });

@@ -109,6 +109,18 @@
         }
       </span>
     </div>
+
+    <div class="details-item" [ixUiSearch]="searchableElements.elements.requireNts">
+      <span class="label">{{ 'Require NTS' | translate }}:</span>
+      <span
+        *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig"
+        class="value"
+        tnTestId="security-require-nts"
+        tnTestIdType="text"
+      >
+        {{ systemSecurityConfig?.require_nts ? ('Yes' | translate) : ('No' | translate) }}
+      </span>
+    </div>
   </div>
 
   <ng-template tnCardFooterActions>
