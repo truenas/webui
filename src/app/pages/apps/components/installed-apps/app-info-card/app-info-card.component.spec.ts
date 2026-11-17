@@ -8,14 +8,17 @@ import { createComponentFactory, mockProvider } from '@ngneat/spectator/jest';
 import {
   TnButtonHarness, TnDialog, TnIconButtonHarness, TnMenuHarness, TnMenuTesting,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { AppState } from 'app/enums/app-state.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { WINDOW } from 'app/helpers/window.helper';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -27,6 +30,8 @@ import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-a
 import { AppUpdateDialog } from 'app/pages/apps/components/installed-apps/app-update-dialog/app-update-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { InstalledAppsStore } from 'app/pages/apps/store/installed-apps-store.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 import { RedirectService } from 'app/services/redirect.service';
 
 describe('AppInfoCardComponent', () => {
@@ -97,6 +102,7 @@ describe('AppInfoCardComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
+        warn: jest.fn(() => of(true)),
       }),
       mockProvider(TnDialog, {
         open: jest.fn(() => mockDialogRef),
@@ -228,6 +234,23 @@ describe('AppInfoCardComponent', () => {
         upgradeSummary,
       },
     });
+  });
+
+  it('shows the reason when an app migration refuses the upgrade', async () => {
+    setupTest(fakeApp);
+    const dialog: DialogService = spectator.inject(DialogService);
+    const error = new FailedJobError({ method: 'app.upgrade' } as Job);
+    error.apiErrorDetails = {
+      errname: ApiErrorName.NotSupported,
+      reason: '[ENOTSUP] Upgrading to v2 is not supported.',
+    } as ApiErrorDetails;
+    (dialog.jobDialog as jest.Mock).mockReturnValueOnce({ afterClosed: () => throwError(() => error) });
+
+    const menu = await openMenu();
+    await menu.clickItem({ label: 'Update' });
+
+    expect(dialog.warn).toHaveBeenCalledWith('Cannot Upgrade App', 'Upgrading to v2 is not supported.');
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
   });
 
   it('converts app to custom when Convert button is pressed', async () => {

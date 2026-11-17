@@ -11,13 +11,17 @@ import {
   TnSelectHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { firstValueFrom, of } from 'rxjs';
+import { firstValueFrom, of, throwError } from 'rxjs';
 import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { ChartFormValue, App, ChartSchemaNodeConf } from 'app/interfaces/app.interface';
 import { CatalogApp, CatalogAppVersion } from 'app/interfaces/catalog.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -28,6 +32,8 @@ import { AppWizardComponent } from 'app/pages/apps/components/app-wizard/app-wiz
 import { DockerHubRateInfoDialog } from 'app/pages/apps/components/dockerhub-rate-limit-info-dialog/dockerhub-rate-limit-info-dialog.component';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { DockerStore } from 'app/pages/apps/store/docker.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 const appVersion121 = {
   healthy: true,
@@ -302,6 +308,7 @@ describe('AppWizardComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({}),
         })),
+        warn: jest.fn(() => of(true)),
       }),
       mockProvider(UnsavedChangesService, {
         showConfirmDialog: jest.fn(() => of(true)),
@@ -389,6 +396,43 @@ describe('AppWizardComponent', () => {
           },
         }],
       );
+    });
+
+    it('shows the reason and stays on the form when the app library rejects the values', async () => {
+      const dialog: DialogService = spectator.inject(DialogService);
+      const error = new FailedJobError({ method: 'app.update' } as Job);
+      error.apiErrorDetails = {
+        errname: ApiErrorName.Validation,
+        reason: '[EINVAL] Invalid port [0]. Valid ports are between 1 and 65535',
+      } as ApiErrorDetails;
+      (dialog.jobDialog as jest.Mock).mockReturnValueOnce({ afterClosed: () => throwError(() => error) });
+      spectator.component.form.patchValue({ timezone: 'Europe/Paris' });
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update' }));
+      await saveButton.click();
+
+      expect(dialog.warn).toHaveBeenCalledWith(
+        'Cannot Update App',
+        'Invalid port [0]. Valid ports are between 1 and 65535',
+      );
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+      expect(spectator.inject(Router).navigate).not.toHaveBeenCalled();
+    });
+
+    it('shows the error modal for validation errors, which are EINVAL as well', async () => {
+      const dialog: DialogService = spectator.inject(DialogService);
+      const error = new FailedJobError({
+        method: 'app.update',
+        exc_info: { type: JobExceptionType.Validation },
+      } as Job);
+      error.apiErrorDetails = { errname: ApiErrorName.Validation, reason: '[EINVAL] values.port: Invalid' } as ApiErrorDetails;
+      (dialog.jobDialog as jest.Mock).mockReturnValueOnce({ afterClosed: () => throwError(() => error) });
+
+      const saveButton = await loader.getHarness(TnButtonHarness.with({ label: 'Update' }));
+      await saveButton.click();
+
+      expect(dialog.warn).not.toHaveBeenCalled();
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).toHaveBeenCalledWith(error);
     });
   });
 

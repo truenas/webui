@@ -7,6 +7,7 @@ export enum ApiErrorName {
   Again = 'EAGAIN',
   Fault = 'EFAULT',
   Validation = 'EINVAL',
+  NotSupported = 'ENOTSUP', // Also `errno.EOPNOTSUPP`, the same number on Linux.
   ConnectionReset = 'ECONNRESET',
   TimedOut = 'ETIMEDOUT',
   NetworkUnreachable = 'ENETUNREACH',
