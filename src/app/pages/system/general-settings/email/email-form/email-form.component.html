@@ -49,6 +49,15 @@
             [options]="securityOptions$"
           ></ix-select>
 
+          @if (showCertificateValidation) {
+            <ix-checkbox
+              formControlName="validate_certificate"
+              [label]="helptext.validateCertificate.label | translate"
+              [tooltip]="helptext.validateCertificate.tooltip | translate"
+              [warning]="isCertificateValidationDisabled ? (helptext.validateCertificate.warning | translate) : ''"
+            ></ix-checkbox>
+          }
+
           <ix-checkbox
             formControlName="smtp"
             [label]="'SMTP Authentication' | translate"
