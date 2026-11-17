@@ -1,24 +1,10 @@
 /**
- * Email settings: preconditions, cleanup and readback, over the API.
+ * Email settings (`mail.config`, one config record): preconditions, cleanup and readback, over the API.
  *
- * The settings are `mail.config`, a single config record, so — as in
- * `fixtures/syslog.ts` — there is nothing to create or delete. Each test starts
- * from a known baseline and teardown writes that baseline back, rather than
- * snapshotting what it found and restoring that.
- *
- * The baseline is middleware's own default except for the sender address: no
- * name, no server, port 25, no encryption, no SMTP authentication and no OAuth.
- * A fresh appliance holds an empty sender, but `mail.update` refuses one
- * (`[EINVAL] fromemail: This field is required`), so no update can write it back.
- * On an appliance someone has set up to send mail, a run clears that setup.
- *
- * The stored username and password are left alone. Middleware ignores them while
- * SMTP authentication is off, and the form does not send them then either.
- *
- * Every address and server is under `example.com`, which RFC 2606 reserves.
- * Saving the settings sends nothing. Only Send Test Mail would. The one test that
- * presses it, in `email-test-mail.e2e.ts`, first leaves no local administrator
- * with an address, so the form stops before `mail.send`.
+ * As in `fixtures/syslog.ts`, tests start from a baseline that teardown writes back: middleware's default, but
+ * with a sender, since `mail.update` refuses an empty one; a run clears any real mail setup. Stored SMTP
+ * username and password are left alone (ignored while auth is off). Addresses are under RFC 2606's `example.com`
+ * and saving sends nothing; `email-test-mail.e2e.ts` presses Send Test Mail with no admin address, so no `mail.send`.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

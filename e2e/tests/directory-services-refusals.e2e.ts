@@ -1,22 +1,10 @@
 /**
- * Stories: a Directory Services save that middleware refuses says why on the
- * form and leaves nothing configured behind — an Active Directory join to a
- * domain that cannot exist, an LDAP bind to a server that cannot be reached, and
- * a disabled Active Directory configuration holding Kerberos user credentials.
- *
- * Middleware checks the credential before its `datastore.update`, so a refused
- * join writes nothing. The form showing an error says nothing about what was
- * stored, so every test asks the appliance afterwards as well.
- *
- * Every name is under `.invalid`, which RFC 2606 reserves and no resolver
- * answers — the CI appliance's qemu DNS included — so each save is refused on
- * any appliance, with no directory server and the nameservers left alone.
- *
- * Where the refusal shows depends on the field middleware files it under. The
- * domain and the server URLs belong to a child form, and `getFieldsMap()` sends
- * both to Configuration Type. The disabled configuration's is filed under
- * `credential.credential_type`, which that map does not name, so the form
- * reports it in the error dialog instead.
+ * Stories: a Directory Services save middleware refuses says why on the form and leaves nothing configured: an AD
+ * join to an impossible domain, an LDAP bind to an unreachable server, and a disabled AD config with Kerberos user
+ * credentials. The form's error says nothing about what was stored, so every test also asks the appliance. Names
+ * are under `.invalid` (RFC 2606), which no resolver answers, so each save is refused on any appliance. Domain and
+ * server URL errors map to Configuration Type via `getFieldsMap()`; `credential.credential_type` is not in that
+ * map, so the disabled config's refusal shows in the error dialog.
  */
 import type { Page } from '@playwright/test';
 import { ensureDirectoryServicesCleared, readDirectoryServices } from '../fixtures/directory-services';

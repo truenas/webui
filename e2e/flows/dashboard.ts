@@ -79,13 +79,9 @@ export async function deleteCardGroup(page: Page, index: number): Promise<void> 
 /**
  * Drags the group at `fromIndex` by its handle onto the handle of the group at `toIndex`.
  *
- * Pointer steps rather than `locator.dragTo`, which goes straight from one point to the other: CDK
- * needs the pointer to pass its drag threshold first, and moves in between to sort the list. Both
- * handles have to be on screen, so a spec gives itself a viewport tall enough for both groups.
- *
- * Returns only once the drop has reached the layout. CDK animates the preview into place first
- * (250 ms, `.cdk-drag-animating` in the dashboard's styles) and emits `dropped` after that, while
- * the card already shows in its new place. A Save clicked in between saves the old order.
+ * Pointer steps, not `locator.dragTo`: CDK needs the drag threshold passed and moves in between to sort.
+ * Both handles must be on screen, so specs use a tall viewport. Returns once the drop reaches the layout:
+ * CDK animates the preview (250 ms) before emitting `dropped`, and a Save in between saves the old order.
  */
 export async function dragCardGroup(page: Page, fromIndex: number, toIndex: number): Promise<void> {
   const handle = page.locator(dashboardLocators.edit.dragHandle(fromIndex));

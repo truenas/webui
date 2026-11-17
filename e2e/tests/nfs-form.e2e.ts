@@ -1,12 +1,7 @@
 /**
- * Story: what the NFS share form accepts, what it refuses, and what the
- * appliance is left holding afterwards.
- *
- * An export is a path plus who may reach it, and most of the second half never
- * appears on the card: read-only, the networks and the hosts are only visible
- * by opening the share again. So saves are asserted through
- * `sharing.nfs.query`. Every save declines the offer to start NFS, because
- * service state is global.
+ * Story: what the NFS share form accepts, what it refuses, and what the appliance holds afterwards. Read-only,
+ * networks and hosts never appear on the card, so saves are checked through `sharing.nfs.query`. Every save
+ * declines the offer to start NFS, because service state is global.
  */
 import { ensureNfsServiceStopped, ensureNfsShareAbsent, findNfsShare } from '../fixtures/nfs';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';

@@ -1,18 +1,9 @@
 /**
- * Story: an admin edits the Dashboard in Configure mode. A card group they add or delete is still
- * there, or still gone, after a reload, and Cancel throws an unsaved edit away.
- *
- * The layout is the admin's own `dashState` attribute. Each test writes the layout it starts from
- * over the API, and `afterEach` writes back the one the account had, because
- * `tests/dashboard.e2e.ts` runs on whatever layout it finds and relies on it holding System
- * Information. See `fixtures/dashboard.ts`.
- *
- * `DashboardStore` reads the layout from the account the app loaded at sign-in, and the `page`
- * fixture signs in before a test writes anything. So each test reloads after opening the
- * Dashboard, which makes the app read `auth.me` again.
- *
- * Does not need a pool, so it does not ask for the `pool` fixture: the layouts it writes and the card
- * it adds are System Information, Help, CPU Model and CPU Overview, none of which shows storage.
+ * Story: an admin edits the Dashboard in Configure mode; an added or deleted card group persists after a reload,
+ * and Cancel discards an unsaved edit. Each test writes its starting `dashState` layout over the API and
+ * `afterEach` restores the account's own, because `tests/dashboard.e2e.ts` relies on it holding System Information
+ * (see `fixtures/dashboard.ts`). `DashboardStore` reads the layout loaded at sign-in, which happens before the test
+ * writes, so each test reloads to make the app read `auth.me` again. No pool: none of these cards shows storage.
  */
 import { captureDashState, readDashState, restoreDashState, writeDashState } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';

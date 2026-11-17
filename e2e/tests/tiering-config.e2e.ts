@@ -1,17 +1,8 @@
 /**
- * Story: an admin configures ZFS tiering from the storage dashboard.
- *
- * Tiering is one global switch plus three limits, edited in the Tiering side
- * panel. Everything else about the feature — the Storage Tier column in every
- * share list, the tier row on a dataset, the dataset form dropping its
- * special-vdev fields — keys off that switch, so this is where the feature
- * starts for a user.
- *
- * Each claim is settled through `zfs.tier.config`: the panel closing says the
- * app believed the save, not that the appliance holds it.
- *
- * The configuration is global, so every test starts from and returns to
- * `tierBaseline` — see `fixtures/tiering.ts`.
+ * Story: an admin configures ZFS tiering (one global switch plus three limits) in the storage dashboard's Tiering
+ * panel; everything else about tiering keys off that switch. Each claim is settled through `zfs.tier.config`, since
+ * the panel closing only says the app believed the save. The config is global, so every test starts from and
+ * returns to `tierBaseline`; see `fixtures/tiering.ts`.
  */
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import { establishTierBaseline, readTierConfig, tierBaseline } from '../fixtures/tiering';

@@ -1,14 +1,7 @@
 /**
- * What the page asked middleware, read off the page's own websocket.
- *
- * For the one claim no screen can make: that a control sent a request at all.
- * A Refresh that re-queries and a Refresh that does nothing leave the same page
- * behind whenever the answer has not changed, so the request and its answer are
- * the only evidence there is.
- *
- * Opt in per spec with `test.use({ recordApiCalls: true })`. It has to be the
- * `page` fixture that starts recording, because the socket opens during the
- * sign-in that fixture performs — before any test body could listen for it.
+ * What the page asked middleware, read off the page's own websocket: the only evidence that a control sent
+ * a request when the answer didn't change what's on screen. Opt in with `test.use({ recordApiCalls: true })`;
+ * the `page` fixture starts recording because the socket opens during its sign-in, before any test body runs.
  */
 import type { Page } from '@playwright/test';
 

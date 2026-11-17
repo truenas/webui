@@ -1,13 +1,7 @@
 /**
- * Stories: the standalone NFS list, reached from the title of the card on the
- * Shares dashboard.
- *
- * The list has its own search and its own Add (`add-nfs-share`, not the card's
- * `nfs-share-add`), and neither is on the card, so the card's specs say nothing
- * about them. Acting on a row from the card is `nfs-list.e2e.ts`.
- *
- * Every share gets its own dataset, since a path is what tells one NFS share
- * from another, and a fixed description, since a row's ids are built from both.
+ * Stories: the standalone NFS list, reached from the card title on the Shares dashboard. Its search and Add
+ * (`add-nfs-share`, not the card's `nfs-share-add`) are not on the card; row actions from the card are
+ * `nfs-list.e2e.ts`. Each share gets its own dataset and a fixed description, since a row's ids are built from both.
  */
 import {
   ensureNfsServiceStopped, ensureNfsShareAbsent, ensureNfsSharePresent, findNfsShare,

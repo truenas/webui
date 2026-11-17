@@ -1,21 +1,10 @@
 /**
- * The Certificates and Certificate Signing Requests cards on Credentials >
- * Certificates, the Import Certificate form, the Edit Certificate form, and the
- * dialog that shows a certificate's or key's PEM.
- *
- * What follows, down to {@link csrLocators}, describes the CSR card; the
- * Certificates card is described at {@link certificateLocators}.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`, `csr-<name>`, a
- * plain concatenation with no pre-normalizing, so {@link kebabTestSegment} is the
- * one to use throughout. A CSR's name may hold only letters, digits, `_` and `-`.
- *
- * Each cell is tagged `[('<Title>' | translate), uniqueRowTag(row), 'row-text']`.
- * The CN column renders two of them, one for the common name and one for the
- * SANs, each only when the row has a value for it.
- *
- * The card does not ask for `mode="inline"` and an admin sees all four of its row
- * actions, so they sit in a kebab menu behind the row's `more-action` trigger.
+ * The Certificates and CSR cards on Credentials > Certificates, the Import and Edit Certificate forms, and the PEM
+ * dialog. This note covers the CSR card down to {@link csrLocators}; see {@link certificateLocators} for the other.
+ * Row ids come from `uniqueRowTag`, `csr-<name>`, with no pre-normalizing, so use {@link kebabTestSegment}; names
+ * hold only letters, digits, `_` and `-`. Cells are `[('<Title>' | translate), uniqueRowTag(row), 'row-text']`;
+ * the CN column renders separate common-name and SAN cells, each only when set. Not `mode="inline"`, and an admin
+ * sees all four actions, so they sit behind the row's `more-action` kebab.
  */
 import { kebabTestSegment } from './test-id';
 

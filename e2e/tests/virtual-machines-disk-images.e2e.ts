@@ -1,21 +1,10 @@
 /**
- * Stories: an admin exports a stopped VM's disk to an image file from its Devices page, and creates
- * a VM in the wizard from an image file, and the appliance holds what they did. The export dialog
- * and the wizard both refuse what could not work, before anything is sent.
- *
- * No test starts a VM. Export to Image is offered only while the VM is stopped, and an imported
- * disk needs no running machine to show where it landed.
- *
- * The export is asserted through `filesystem.stat` and `vm.device.virtual_size`: the file exists,
- * and the disk it holds is the size of the zvol it came from. The import is asserted through
- * `pool.dataset.query`, `core.get_jobs` and `vm.device.query`: one new zvol, at the typed size, a
- * conversion from the image into it that succeeded, and the VM's disk is that zvol and not a
- * second one the wizard made beside it.
- *
- * Everything goes under one dataset of this spec's own, below the shared pool: a plain filesystem,
- * so it is at once a directory an image can be exported into and a Zvol Location the wizard
- * offers. The teardown removes the VMs before it, so a VM's disk is never removed from under it,
- * and its recursive delete takes the image files and every zvol in it.
+ * Stories: an admin exports a stopped VM's disk to an image file, and creates a VM in the wizard from an image file;
+ * both forms refuse what couldn't work. No VM is started. Export is checked in `filesystem.stat` and
+ * `vm.device.virtual_size`; import in `pool.dataset.query`, `core.get_jobs` and `vm.device.query`: one new zvol at
+ * the typed size, a successful conversion, and the VM's disk being that zvol, not a second one. Everything sits
+ * under one plain dataset of this spec's own, both an export directory and a Zvol Location; teardown removes the
+ * VMs first, then the dataset recursively.
  */
 import {
   datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent, ensureZvolPresent, findDataset, listZvolsUnder,

@@ -1,15 +1,8 @@
 /**
- * The Containers page: its header, the Global Configuration form and the Map
- * User/Group IDs dialog its Configuration menu opens, the Create New Container form and its image
- * browser, the list, the Stop Options dialog, the details panel and the delete
- * dialog.
- *
- * The header is `all-containers-header.component.html`, the settings form is
- * `global-config-form.component.html` and the create form is
- * `container-form.component.html`. Both forms open in a side panel, so Save and
- * the close button belong to the panel rather than to either form.
- *
- * See `signin.ts` for a note on the type-prefixing that produces these values.
+ * The Containers page: header, Global Configuration form and Map User/Group IDs dialog, Create New Container form
+ * and image browser, list, Stop Options dialog, details panel and delete dialog. Templates:
+ * `all-containers-header`, `global-config-form` and `container-form`. Both forms open in a side panel, so Save
+ * and close belong to the panel. See `signin.ts` on the type-prefixing behind these values.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 

@@ -1,22 +1,9 @@
 /**
- * Stories: an admin on a dataset opens its periodic snapshot tasks from the
- * dataset's Data Protection card, by "View Snapshot Tasks", and edits and
- * deletes a task from the list that link opens. The appliance holds what they did.
- *
- * The link goes to `/data-protection/snapshot/<dataset>`, the full Periodic
- * Snapshot Tasks list (`snapshot-task-list.e2e.ts` reaches it from the Data
- * Protection dashboard) scoped to that dataset: its rows are the tasks whose
- * dataset is that one or below it, shown as a chip in the page header, and the
- * search box starts empty. Removing the chip lists every task again. The scope
- * has to survive the list reloading after an edit or a delete.
- *
- * Two bystanders: one on a sibling dataset, and one on another dataset whose
- * naming schema holds the target's name. The list once matched the dataset as a
- * substring of either column, which the second one catches.
- *
- * Every task is scheduled monthly on a dataset of its own, made fresh for each
- * test, so none takes a snapshot while the spec runs, and Delete's confirm
- * offers no second box.
+ * Stories: from a dataset's Data Protection card, "View Snapshot Tasks" opens the periodic snapshot tasks list
+ * scoped to that dataset and below it (a header chip; removing it lists every task), where an admin edits and
+ * deletes one. The scope must survive the list reloading after an edit or delete. Bystanders: a sibling dataset's
+ * task, and one whose naming schema holds the target's name, since the list once matched by substring. Tasks
+ * are monthly on fresh datasets, so none snapshots mid-run and Delete's confirm offers no second box.
  */
 import {
   ensureSnapshotTaskPresent,

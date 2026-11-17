@@ -1,15 +1,9 @@
 /**
- * Pool creation wizard, dataset form and SMB share form locators.
- *
- * Two derivations worth knowing when reading these (see `locators/signin.ts`
- * for the type-prefixing rule they build on):
- *
- * 1. A form control with no explicit `testId` falls back to its bound control
- *    name (`controlTestId`). So `<tn-input formControlName="name">` emits
- *    `data-test="input-name"` with nothing declared in the template.
- * 2. Select options are `option-<base>-<key>`, kebab-cased by the library's own
- *    `kebabTestSegment` — which is NOT lodash. `RAIDZ2` normalizes to `raidz2`,
- *    not `raidz-2`. webui's own normalizer does use lodash and would differ.
+ * Pool creation wizard, dataset form and SMB share form locators. Two derivations (building on `locators/signin.ts`):
+ * 1. A control with no explicit `testId` falls back to its control name (`controlTestId`), so
+ *    `<tn-input formControlName="name">` emits `input-name`.
+ * 2. Select options are `option-<base>-<key>` via the library's `kebabTestSegment`, which is NOT lodash: `RAIDZ2`
+ *    is `raidz2`, not `raidz-2`. webui's own normalizer uses lodash and would differ.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
@@ -69,18 +63,10 @@ export const poolWizardLocators = {
    */
   layout: '[data-test="select-layout"]',
   /**
-   * A layout option, by the label the select shows: `Mirror`, `RAIDZ1`.
-   *
-   * `raidz-1`, not `raidz1`. This select passes
-   * `[optionTestIdKey]="optionTestIdByKebabLabel"`, which is
-   * `(option) => kebabCase(option.label)` using **lodash**. lodash splits
-   * letters from digits, so the label `RAIDZ1` becomes `raidz-1` before the
-   * library's own `kebabTestSegment` ever sees it — and that normalizer would
-   * have produced `raidz1`.
-   *
-   * Two normalizers are in play across this codebase and they disagree on
-   * exactly this case. Derive option ids from the extractor a control actually
-   * declares, not from the library default.
+   * A layout option, by its label (`Mirror`, `RAIDZ1`). It's `raidz-1`, not `raidz1`: this select passes
+   * `[optionTestIdKey]="optionTestIdByKebabLabel"`, lodash `kebabCase(option.label)`, which splits letters from
+   * digits before the library's `kebabTestSegment` sees it. The two normalizers disagree on exactly this, so
+   * derive option ids from the extractor a control actually declares.
    */
   layoutOption: (label: string) => `[data-test="option-layout-${legacyKebabTestSegment(label)}"]`,
   /**
@@ -94,18 +80,10 @@ export const poolWizardLocators = {
   /** `[testId]="['size-and-type', type()]"` where type is the vdev category. */
   diskSize: (type: VdevCategory) => `[data-test="select-size-and-type-${type}"]`,
   /**
-   * Any option of a category's disk-size select.
-   *
-   * A prefix match, because the option key encodes a size and media type that
-   * vary per appliance — `option-size-and-type-data-20-gi-b-hdd` on one box,
-   * something else on the next. (`gi-b`, not `gib`: `kebabTestSegment` splits
-   * the letter/digit boundary in `GiB`. See `disk-size-selects.component.spec.ts`,
-   * and note 2 in this file's header.)
-   *
-   * The prefix is what makes it safe to take the first match: sibling vdev
-   * categories carry their own `-log-` and `-spare-` prefixes, so this can only
-   * match *this* select's options and a CDK overlay from a previously closed
-   * select cannot be picked up by mistake.
+   * Any option of a category's disk-size select. A prefix match, because the key encodes a per-appliance size and
+   * media type (`option-size-and-type-data-20-gi-b-hdd`; `gi-b` because `kebabTestSegment` splits `GiB`). Taking
+   * the first match is safe because the prefix is specific to this category (siblings carry `-log-`, `-spare-`),
+   * so a lingering CDK overlay from a closed select can't match.
    */
   diskSizeOptions: (type: VdevCategory) => `[data-test^="option-size-and-type-${type}-"]`,
   /**
@@ -211,15 +189,10 @@ export const poolWizardLocators = {
 } as const;
 
 /**
- * The pool wizard's Manual Disk Selection dialog: unused disks on the left, the step's vdevs on
- * the right, and disks dragged between them (`ngx-drag-drop`).
- *
- * A vdev's ids carry its layout and its 1-based position in the list, `['vdev-error', layout(),
- * position()]`. The layout is the `CreateVdevLayout` value, `MIRROR`, which the library writes as
- * `mirror`. A disk's ids carry its name, `sdb`.
- *
- * Several of these are on plain `<div>`s or on `ix-disk-icon` with no `tnTestIdType`, so they are
- * written with no type prefix.
+ * The pool wizard's Manual Disk Selection dialog: unused disks left, the step's vdevs right, dragged between them
+ * (`ngx-drag-drop`). Vdev ids carry the `CreateVdevLayout` value (written `mirror`) and 1-based position,
+ * `['vdev-error', layout(), position()]`; disk ids carry the name (`sdb`). Several sit on plain `<div>`s or
+ * `ix-disk-icon` with no `tnTestIdType`, so they have no type prefix.
  */
 export const manualDiskSelectionLocators = {
   /** `<tn-dialog-shell testId="manual-disk-selection">`. What to wait on. */
@@ -281,16 +254,9 @@ export const downloadKeyDialogLocators = {
 
 export const datasetLocators = {
   /**
-   * A pool or dataset in the tree.
-   *
-   * `<tn-tree-node [testId]="['dataset', dataset.name]">`, applied via
-   * `hostDirectives` with no `tnTestIdType`, so the value is written verbatim
-   * with no element-type prefix — unlike most controls here.
-   *
-   * The name goes through the library's own normalizer rather than a local
-   * `_` → `-` replacement. That shortcut happened to be right for `e2e_tank`
-   * and wrong for anything else: `MyPool` emits `dataset-my-pool`, not
-   * `dataset-MyPool`.
+   * A pool or dataset in the tree. `<tn-tree-node [testId]="['dataset', dataset.name]">` via `hostDirectives`
+   * with no `tnTestIdType`, so there's no type prefix. The name must go through the library normalizer, not a
+   * `_` → `-` replacement: `MyPool` emits `dataset-my-pool`.
    */
   treeNode: (name: string) => `[data-test="dataset-${kebabTestSegment(name)}"]`,
 
@@ -355,14 +321,10 @@ export const datasetLocators = {
 } as const;
 
 /**
- * The zvol form, opened from "Add Zvol" in the details panel's header or "Edit Zvol" on the
- * details card. It shares the side panel host, and so its Save, with the dataset form.
- *
- * Its ZFS properties are inline editables in a details table rather than form fields. Each one
- * shows its value until clicked, and only then renders the `tn-select`. The editable's own trigger
- * id is built from the value it is showing (`editable.component.ts`), so it changes with the value
- * and cannot be named in advance. The view inside the trigger has a static id, and clicking that
- * opens it the same way.
+ * The zvol form, from "Add Zvol" in the details panel header or "Edit Zvol" on the details card; it shares the
+ * side panel host, and Save, with the dataset form. ZFS properties are inline editables that render a `tn-select`
+ * only when clicked. The editable's trigger id is built from its current value (`editable.component.ts`), so it
+ * can't be named in advance; click the view inside it, which has a static id.
  */
 export const zvolLocators = {
   /** `<tn-button [testId]="'add-zvol'">` in the details panel's header, for a filesystem only. */
@@ -404,15 +366,10 @@ export const datasetDetailsLocators = {
 } as const;
 
 /**
- * The Disconnect Pool dialog, reached from a pool card on the storage dashboard.
- *
- * The most destructive dialog in the app: choosing the "Delete Pool" card runs
- * `pool.export` with `destroy: true`, which wipes every member disk. There is
- * no separate "destroy" tick — `selectOption()` sets `destroy` from which card
- * was picked, and picking Delete is what reveals the name field. It gates on a
- * "Confirm Delete Pool" tick and that name typed back, and its handler had no
- * validity check of any kind, so the Enter that submits this form reached
- * `pool.export` regardless. See `tests/pool-disconnect.e2e.ts`.
+ * The Disconnect Pool dialog, from a pool card on the storage dashboard. The most destructive dialog in the app:
+ * the "Delete Pool" card makes `pool.export` run with `destroy: true`, wiping every member disk (`selectOption()`
+ * sets `destroy`; there's no separate tick), and reveals the name field. It gates on a "Confirm Delete Pool" tick
+ * and the name typed back; Enter once bypassed both. See `tests/pool-disconnect.e2e.ts`.
  */
 export const poolDisconnectLocators = {
   /**
@@ -542,14 +499,9 @@ export const poolScrubLocators = {
 const storageHealthCard = (pool: string): string => `[data-test="card-${kebabTestSegment(pool)}-storage-health"]`;
 
 /**
- * The Scheduled Scrub line on a pool's Storage Health card, and the form it opens
- * in a side panel.
- *
- * The line's link is `link-configure-scrub` on every pool's card, whether it reads
- * Configure or Schedule, so it is scoped inside the pool's card. The form's
- * controls set no `testId` and fall back to their `formControlName`; its schedule
- * is the shared `ix-scheduler`, which `schedulerLocators` in `locators/cron.ts`
- * covers.
+ * The Scheduled Scrub line on a pool's Storage Health card, and its side-panel form. The link is
+ * `link-configure-scrub` on every pool's card, Configure or Schedule, so scope it to the card. Form controls fall
+ * back to `formControlName`; the schedule is `ix-scheduler` (`schedulerLocators` in `locators/cron.ts`).
  */
 export const scheduledScrubLocators = {
   card: {
@@ -677,14 +629,9 @@ export const dedupQuotaLocators = {
 } as const;
 
 /**
- * The delete-dataset dialog, which guards a destructive action with two gates:
- * the dataset's own name typed back, and a Confirm tick box.
- *
- * Both gates are the point. The dialog is reached from the details card's
- * "Delete", and pressing Enter in the name field used to submit the form past
- * both of them — the form has a single text input and, since the tn-dialog
- * migration put the actions outside `<form>`, no submit button at all, which is
- * exactly the shape the HTML spec submits on Enter.
+ * The delete-dataset dialog, gated on the dataset's name typed back and a Confirm tick; both gates are the point.
+ * With one text input and the actions outside `<form>` (no submit button), Enter in the name field once
+ * implicitly submitted past both, per the HTML spec.
  */
 export const deleteDatasetDialogLocators = {
   /**
@@ -703,14 +650,9 @@ export const deleteDatasetDialogLocators = {
   confirm: '[data-test="checkbox-confirm"]',
 
   /**
-   * The dialog's own "Delete Dataset" / "Delete Zvol".
-   *
-   * `dialog-`-namespaced deliberately. It used to declare `testId="delete-dataset"`,
-   * the *same* value the details card behind it emits, so with the dialog open
-   * `[data-test="button-delete-dataset"]` matched two elements and every
-   * locator for either had to guess. Renamed to follow the convention webui's
-   * shared confirm dialog already uses for its actions (`button-dialog-confirm`,
-   * `button-dialog-cancel`).
+   * The dialog's own "Delete Dataset" / "Delete Zvol". `dialog-`-namespaced deliberately, following
+   * `button-dialog-confirm`: the details card behind it emits `button-delete-dataset`, and sharing that id made
+   * every locator for either ambiguous.
    */
   submit: '[data-test="button-dialog-delete-dataset"]',
 } as const;

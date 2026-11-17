@@ -1,20 +1,8 @@
 /**
- * Stories: an admin starts, stops, restarts, resets and powers off a virtual machine from the
- * buttons in its row on the Virtual Machines page, and the appliance holds what they did.
- *
- * The VM has no devices and no operating system, so once started it sits at its firmware. That is
- * enough for every power action, and it is the most a VM can be asked to do here: the CI appliance
- * is itself a VM, so this guest runs nested.
- *
- * Every state is read back from `vm.query`. A restart leaves the state where it was, so it is told
- * from a no-op by the machine's `pid`, which a new process changes. A reset changes nothing
- * `vm.query` can see, so its claim is the page's own `vm.reset` call and middleware's answer.
- *
- * The list closes an open row whenever a VM's state changes, so every button here is clicked
- * through `clickVmRowAction`, which opens the row again when it has to.
- *
- * Not covered: Suspend and Resume, the memory overcommit prompt and the log download. The display
- * is `virtual-machines-display.e2e.ts`'s, and the serial shell `virtual-machines-serial.e2e.ts`'s.
+ * Stories: an admin starts, stops, restarts, resets and powers off a VM from its row; the VM has no devices or OS
+ * and sits at firmware, the most a nested guest on CI can do. States come from `vm.query`; a restart is told from a
+ * no-op by a changed `pid`, and a reset, invisible to `vm.query`, by the page's `vm.reset` call and its answer. The
+ * list closes an open row on any state change, so every click goes through `clickVmRowAction`, which reopens it.
  */
 import {
   ensureVmAbsent, ensureVmPresent, findVm, requireVirtualization, startVm,

@@ -1,19 +1,9 @@
 /**
- * The Cloud Sync Tasks card on Data Protection, its full list, its wizard, its
- * edit form and its restore dialog.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `convertStringToId('card-cloudsync-task-' + description)`, which lowercases
- * the tag and turns its punctuation into hyphens before the library's normalizer
- * sees it. As on the rsync task card, lowercasing first and then running
- * {@link kebabTestSegment} is the same id.
- *
- * The tag carries the description and nothing else, so editing the description
- * renames every id on the row. The specs never edit it.
- *
- * Add opens the wizard, not the form: a Provider step that picks a credential,
- * then What and When. Edit opens the full form. The two share their control
- * names, so most ids are the same in both.
+ * The Cloud Sync Tasks card on Data Protection, its full list, wizard, edit form and restore dialog. Row ids come
+ * from `convertStringToId('card-cloudsync-task-' + description)`; as on rsync, lowercasing then
+ * {@link kebabTestSegment} gives the same id. The tag is the description alone, so editing it renames every id
+ * (the specs never do). Add opens the wizard (Provider, What, When), Edit the full form; they share control
+ * names, so most ids match.
  */
 import { taskListDetailAction } from './data-protection';
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';

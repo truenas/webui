@@ -1,28 +1,10 @@
 /**
- * Story: an admin moves through the Reporting tabs from the Category select, narrows the Disk tab to
- * one disk and one metric, and steps and zooms a report through time.
- *
- * `reporting.e2e.ts` covers the CPU tab; this file covers Memory, Network, Disk, ZFS and System. UPS
- * is left out because the CI guest has no UPS, and the tab is not even offered without one.
- *
- * Report titles are read from `reporting.netdata_graphs` rather than written here, because they are
- * middleware's and every id on a report is keyed by one. Each tab is checked by one graph only that
- * tab draws: `memory`, `interface`, `disk`, `arcsize` (the only ZFS graph webui and middleware both
- * name) and `uptime`. A tab of per-identifier reports (a NIC, a disk) lists them sorted by identifier
- * in a virtual scroll that renders only the first few, so those take the first identifier.
- *
- * "Charts a report" means a Mean in its legend holds a number, as in `reporting.e2e.ts`. Any series
- * rather than the first: the template writes `null` for a series with no value, and an interface's
- * or a disk's first series can have collected nothing in the hour.
- *
- * The step and zoom buttons carry the same ids on every report, so they are selected inside the
- * report's card, which is keyed by its title. They are checked on the CPU tab's `cpu` report, which
- * every appliance draws, by reading the Start and End shown beside the chart. A report opens on the
- * last hour. Zoom In is disabled there and Reset Zoom has nothing to reset, so the zoom test zooms out
- * twice first.
- *
- * Auto Refresh would move the shown period back to the present every few seconds, so the step and
- * zoom tests require it off, which is webui's default. Nothing is created, so there is no teardown.
+ * Story: an admin moves through the Reporting tabs (CPU is `reporting.e2e.ts`; UPS is absent on CI), narrows Disk,
+ * and steps and zooms a report. Titles come from `reporting.netdata_graphs` because every id is keyed by them;
+ * per-identifier tabs virtual-scroll, so tests take the first identifier. A report is charted when any Mean holds a
+ * number, since a first series can be `null`. Step and zoom ids repeat per report, so they're scoped to the `cpu`
+ * card; Zoom In is disabled on the default hour, so the test zooms out twice first. Auto Refresh must be off (the
+ * default) or the period jumps back to now.
  */
 import type { Page } from '@playwright/test';
 import { listBootDisks } from '../fixtures/boot-environments';

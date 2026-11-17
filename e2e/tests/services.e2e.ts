@@ -1,31 +1,10 @@
 /**
- * Stories: an admin starts and stops a service from the Services page under
- * System, sets one to start at boot, searches the list, and saves the SSH and FTP
- * settings and the iSCSI global configuration from the forms its rows open.
- *
- * Start, stop and Start Automatically use FTP. It is stopped on a stock appliance
- * and nothing the suite or CI reaches the appliance through depends on it, so
- * starting it changes nothing else a run relies on. Each state change is asserted
- * through `service.query`, and start and stop also on the row: the switch writes
- * its new state to the store before middleware answers, so only the readback shows
- * the write happened.
- *
- * The page has no readout of a service's settings, so each save is asserted
- * through `ssh.config` or `ftp.config` alone. Each test moves the fields it edits
- * away from the baseline, so a form that dropped any one of them fails.
- *
- * Both forms hide most of their fields behind the footer's Advanced toggle. The
- * advanced tests click it first, so a toggle that revealed nothing fails there.
- * Bind interfaces and the auxiliary parameters are left alone: a wrong value can
- * cut off SSH, which CI may use.
- *
- * FTP goes back to stopped and not starting at boot, and both services' settings
- * to the baseline, before and after every test. See `fixtures/service-config.ts`.
- *
- * The iSCSI and NVMe-oF pencils open those services' global configuration rather
- * than a service form. iSCSI's listen port is saved there with the service
- * stopped, so the change restarts nothing, and written back to what the test
- * found. NVMe-oF is only opened and closed: saving it is `nvme-of.e2e.ts`'s.
+ * Stories: an admin starts, stops and auto-starts a service on System > Services, searches the list, and saves the
+ * SSH, FTP and iSCSI global settings. FTP takes the state changes because nothing the suite relies on needs it; the
+ * switch writes to the store before middleware answers, so `service.query` is the check. Each test moves its fields
+ * off the baseline and opens Advanced first. Bind interfaces and auxiliary parameters are left alone, as a wrong
+ * value can cut off SSH. FTP and settings are reset before and after every test (`fixtures/service-config.ts`).
+ * iSCSI's port is saved with the service stopped and restored; NVMe-oF is only opened (saving is `nvme-of.e2e.ts`'s).
  */
 import { findCertificate } from '../fixtures/certificates';
 import {

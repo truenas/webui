@@ -1,32 +1,9 @@
 /**
- * Story: an admin installs an app from the catalog, stops and starts it from the installed apps
- * list, and deletes it.
- *
- * Each action is the UI's: Discover's Refresh Catalog, search and Install, the install wizard; the
- * row's Stop and Start; the Application Info card's Delete and its dialog. Each is checked on
- * screen and through `app.query`. The app a test does not install is seeded with `app.create`.
- *
- * ## The app
- *
- * IT Tools from the `community` train: one container, no storage, and every field in its wizard
- * has a default, so the wizard needs nothing but a name. Its image is on ghcr.io, which keeps the
- * pull off Docker Hub's anonymous rate limit. The release is named `e2e-it-tools` so that it is
- * never mistaken for an `it-tools` somebody installed by hand.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
- * per worker: moving Apps onto a pool starts Docker and clones the catalog, which takes minutes, and
- * no test here changes it. Teardown deletes the app after every test.
- *
- * `community` is added to the preferred trains if it is missing, since Discover lists only those.
- *
- * The user's agreement to the third-party apps warning is cleared before the file's tests sign in,
- * so the install test meets the warning every time, as a first install does. Both settings are
- * written back to what the appliance held.
- *
- * Not covered: editing an installed app (`apps-edit.e2e.ts`), upgrades and rollback
- * (`apps-upgrade.e2e.ts`), and the Workloads card.
+ * Story: an admin installs IT Tools from the catalog, stops and starts it from the installed list, and deletes it,
+ * each checked on screen and through `app.query`. IT Tools needs only a name, and its image is on ghcr.io, off
+ * Docker Hub's rate limit; the release is `e2e-it-tools` so it is never mistaken for a hand-installed one. Apps
+ * run on the shared `e2e_apps` pool. `community` is added to preferred trains and the third-party apps agreement
+ * is cleared, so the install meets the warning every time; both are written back afterwards.
  */
 import {
   appInstallTimeoutMs,

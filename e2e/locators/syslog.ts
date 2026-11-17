@@ -1,14 +1,7 @@
 /**
- * The Syslog card on System > Advanced Settings, and its form.
- *
- * The card has no rows: each setting is a readout tagged `tnTestIdType="text"`,
- * so its id is static. Each holds a single value, without its label.
- *
- * The form is a hand-written template whose controls fall back to their
- * `formControlName`, so the field ids read like the API's own keys. The servers
- * are a form array, and each member's Host and Transport fall back to `host` and
- * `transport` the same way, **with no index**. Two servers would therefore both
- * be `input-host`, so the specs only ever put one server in the form.
+ * The Syslog card on System > Advanced Settings (static `text` readouts, value only), and its form. Form controls
+ * fall back to their `formControlName`, including each server's Host and Transport in the form array, with no
+ * index: two servers would both be `input-host`, so the specs only ever add one.
  */
 import { kebabTestSegment } from './test-id';
 

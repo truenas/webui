@@ -1,17 +1,9 @@
 /**
- * Stories: an admin edits an API key from the API Keys page under Credentials >
- * Users — renames it, resets it, gives it an expiry and takes it away — and is
- * refused a rename onto a name another key holds.
- *
- * Each is asserted on the row and through `api_key.query`, and every one runs
- * beside a bystander key on the same account that must come through untouched.
- * The bystander is also what lets the Access card link to the page at all.
- *
- * Whether a key still works is asked of middleware directly: one API-key
- * sign-in attempt per key, over a fresh connection. Middleware no longer
- * reports a key's hash in readable form, so that attempt is the only way to
- * tell a reset key from a renamed one.
- *
+ * Stories: an admin renames, resets, sets and clears the expiry of an API key on Credentials > Users > API Keys,
+ * and is refused a rename onto another key's name. Each is checked on the row and through `api_key.query`, beside
+ * a bystander key that must come through untouched and that also makes the Access card link to the page.
+ * Whether a key works is checked by one API-key sign-in per key over a fresh connection: middleware no longer
+ * returns a readable hash, so that is the only way to tell a reset key from a renamed one.
  * `api-keys.e2e.ts` covers create and delete.
  */
 import {

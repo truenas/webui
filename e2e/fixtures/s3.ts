@@ -1,16 +1,9 @@
 /**
  * S3 preconditions and cleanup, over the API.
  *
- * Buckets and access keys are created through the UI — that is what the S3
- * journeys test. Everything they merely depend on comes from here: a pool to
- * put the bucket's dataset under, the dataset itself, the account that owns
- * things, and a stopped S3 service so the post-save "Start S3 Service" prompt
- * is deterministic.
- *
- * The S3 methods arrived in `@truenas/api-client` 5.0 and their current fields
- * in 6.0; the entry shapes below are named off the directory the same way
- * `fixtures/storage.ts` names its ACL entry, so they follow the generated
- * types rather than restating them.
+ * Buckets and access keys go through the UI, since that is what the journeys test. This provides the rest: a
+ * pool, the bucket's dataset, the owning account, and a stopped S3 service so the "Start S3 Service" prompt is
+ * deterministic. Entry shapes are named off the directory, as `fixtures/storage.ts` does, to follow the types.
  */
 import type { CallResponse, QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -204,16 +197,11 @@ export async function ensureS3ServiceStopped(client: E2eApiClient): Promise<void
 }
 
 /**
- * Puts the parts of the service configuration a journey leaves alone into a
- * known state: no listeners, and the UI certificate.
+ * Resets the service configuration a journey leaves alone: no listeners, and the UI certificate.
  *
- * The service form loads what is stored and saves it back, so anything the
- * journey does not touch is ambient state — a leftover listener from an
- * interrupted run, or a certificate a developer configured — and an assertion
- * about the saved configuration would be about the appliance rather than the
- * journey. `s3.update` replaces the listener list outright, but the form
- * appends rows to the stored ones, so "exactly one listener" only means
- * something from none.
+ * The form saves back whatever is stored, so a leftover listener or developer's certificate would make the
+ * assertion about the appliance, not the journey. `s3.update` replaces listeners outright but the form appends
+ * to the stored ones, so "exactly one listener" only means something from none.
  */
 export async function resetS3ListenersAndCertificate(client: E2eApiClient): Promise<void> {
   await firstValueFrom(

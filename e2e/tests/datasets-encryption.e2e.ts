@@ -1,14 +1,8 @@
 /**
- * Stories: an admin creates an encrypted dataset, locks one, and unlocks one, and the appliance
- * holds what they did.
- *
- * Each is asserted on the Encryption card and through `pool.dataset.query`. The card can only say
- * what the app last loaded. The query says whether the key is really loaded or not.
- *
- * Every dataset here is encrypted with a passphrase and is its own encryption root, because the card
- * shows Lock only on a root and disables it unless the root has a passphrase. The lock and unlock tests start from a
- * dataset made over the API, already unlocked or already locked. The create test makes its own
- * through the form, because creating it is the thing under test.
+ * Stories: an admin creates, locks and unlocks an encrypted dataset; each is checked on the Encryption card and
+ * through `pool.dataset.query`, which says whether the key is really loaded. Every dataset is a passphrase
+ * encryption root, since Lock shows only on a root and needs a passphrase. Lock and unlock start from datasets
+ * made over the API; the create test uses the form, since creating is what it tests.
  */
 import { ensureEncryptedDatasetPresent, lockDataset } from '../fixtures/encryption';
 import { ensureDatasetAbsent, findDataset } from '../fixtures/storage';

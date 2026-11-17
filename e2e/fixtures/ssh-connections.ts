@@ -1,13 +1,9 @@
 /**
- * SSH connections, over the API — specifically one that points back at the
- * appliance itself, for specs that need a "remote" system without an outside one.
+ * SSH connections over the API: one pointing back at the appliance, for specs needing a "remote" system.
  *
- * An SSH connection is a keychain credential of type `SSH_CREDENTIALS`, keyed
- * here on its name, which is what the wizard's select lists it as. It signs in
- * as root with a keypair `fixtures/loopback-ssh.ts` authorizes, and trusts the
- * host key `keychaincredential.remote_ssh_host_key_scan` reads off `127.0.0.1`.
- * Middleware runs the remote side's commands on the appliance, so the loopback
- * address needs nothing forwarded to the runner.
+ * A keychain credential of type `SSH_CREDENTIALS`, keyed on the name the wizard's select lists. It signs in as
+ * root with a keypair `fixtures/loopback-ssh.ts` authorizes, trusting the host key
+ * `keychaincredential.remote_ssh_host_key_scan` reads off `127.0.0.1`; middleware runs remote commands locally.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureLoopbackRootKeyAbsent, ensureLoopbackRootKeyPresent, type LoopbackRootKey } from './loopback-ssh';

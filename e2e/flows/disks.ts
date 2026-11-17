@@ -99,15 +99,11 @@ export async function openWipeDialog(page: Page, disk: string): Promise<void> {
 }
 
 /**
- * Wipes the disk in the open dialog with the Quick method and dismisses the
- * result.
+ * Wipes the disk in the open dialog with the Quick method and dismisses the result.
  *
- * Wipe raises the shared confirm without `hideCheckbox`, so its button stays
- * disabled until the box is ticked, which is asserted on the way. The job then
- * runs behind a progress dialog. When it ends, the wipe dialog closes itself and
- * a general dialog says the disk was wiped. That dialog's only button is Close,
- * under `button-cancel`. The wipe dialog has a Cancel under the same id, so the
- * wipe dialog has to be gone before it is pressed.
+ * Wipe's confirm has no `hideCheckbox`, so its button stays disabled until the box is ticked (asserted).
+ * When the job ends the wipe dialog closes and a dialog says the disk was wiped. Its Close button is
+ * `button-cancel`, the same id as the wipe dialog's Cancel, so the wipe dialog must be gone before pressing it.
  */
 export async function wipeDisk(page: Page): Promise<void> {
   await page.locator(diskWipeLocators.submit).click();

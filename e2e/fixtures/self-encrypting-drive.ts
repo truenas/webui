@@ -1,18 +1,10 @@
 /**
  * The global SED password: preconditions, cleanup and readback, over the API.
  *
- * The password is part of `system.advanced`, a single config record, but it is
- * not restored the way the other Advanced Settings are. Restoring a password
- * means sending it back in clear text, and a wrong restore on a machine with SED
- * drives locks them out at its next boot. So the spec touches it only on an
- * appliance where none was set, and its baseline is "none": middleware takes
- * `sed_passwd: ''` as clearing it, unconditionally, even without the entitlement
- * a non-empty password needs (`plugins/system_advanced/config.py`).
- *
- * `system.advanced.config` never returns the password, so these read it through
- * the two calls the UI makes.
- *
- * Nothing here puts a password in an error message.
+ * Part of `system.advanced` but not restored like the rest: that would mean sending it in clear text, and a
+ * wrong restore locks SED drives out at next boot. So the spec only runs where none was set, and its baseline is
+ * `sed_passwd: ''`, which clears it even without the entitlement. The config never returns it, so it is read via
+ * the UI's two calls. Nothing here puts a password in an error message.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

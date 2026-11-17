@@ -1,15 +1,10 @@
 /**
- * Letting the appliance sign in to itself as root over SSH, for any spec whose
- * "remote" is the appliance's own loopback.
+ * Letting the appliance sign in to itself as root over SSH, for specs whose "remote" is its own loopback.
  *
- * Signing in as root with a key is what `sshd_config` allows without touching
- * password settings: middleware writes `PermitRootLogin without-password` unless
- * root has password login enabled. So {@link ensureLoopbackRootKeyPresent}
- * generates a keypair, appends its public key to root's `sshpubkey` with a marker
- * comment, and makes sure SSH is running. {@link ensureLoopbackRootKeyAbsent}
- * undoes each part. Root's other keys are left as they were: only lines carrying
- * the caller's marker are removed, so two specs with different markers never
- * take out each other's key.
+ * Key login is what `sshd_config` allows for root without touching password settings (`PermitRootLogin
+ * without-password`). {@link ensureLoopbackRootKeyPresent} generates a keypair, appends its public key to root's
+ * `sshpubkey` with a marker comment, and starts SSH; {@link ensureLoopbackRootKeyAbsent} undoes each part,
+ * removing only lines with the caller's marker so specs never take out each other's key.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensureServiceRunning, ensureServiceStopped, queryService } from './services';

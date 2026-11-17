@@ -1,22 +1,9 @@
 /**
- * Stories: an admin builds a pool's mirror from two disks they choose in the pool wizard's Manual
- * Disk Selection dialog, and the appliance builds it from exactly those disks; and taking a disk
- * back out of a vdev makes the vdev invalid again, while Cancel leaves the step as it was.
- *
- * Every other wizard spec lets Automated Disk Selection pick the disks. Only the names of the
- * disks coming back from `pool.query` show that the ones dragged in the dialog are the ones that
- * reached `pool.create`, so the first test picks two disks from the end of the unused list and
- * reads their names back.
- *
- * The disks are dragged with HTML5 drag and drop, which the dialog takes from `ngx-drag-drop`.
- * Nothing on screen confirms a drop, so after every drag a test checks where the disk is now.
- *
- * The first test owns its pool by name. Both names are removed before and after every test,
- * whatever happened, because a pool left behind holds its disks.
- *
- * Not covered: the dialog's disk filters, which show nothing of interest on identical CI disks;
- * manual selection on the other vdev steps; Inspect VDEVs; and enclosure grouping, which needs
- * enclosure hardware.
+ * Stories: an admin builds a mirror from two disks chosen in Manual Disk Selection and the appliance uses exactly
+ * those; taking a disk back out invalidates the vdev, and Cancel leaves the step as it was. The test picks disks
+ * from the end of the unused list and reads their names back from `pool.query`. Drags are HTML5 drag and drop
+ * (`ngx-drag-drop`) and nothing confirms a drop, so each drag is followed by a check of where the disk is.
+ * Both pool names are removed before and after every test, because a pool left behind holds its disks.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import {

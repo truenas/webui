@@ -1,28 +1,10 @@
 /**
- * Story: an admin presses Send Test Mail in the Email form on System > General
- * Settings while no local administrator has an email address, and is told why
- * nothing can be sent.
- *
- * The button first asks `mail.local_administrator_email`. An empty answer raises
- * an info dialog and stops there. Anything else would start `mail.send`. The
- * screen's half is the dialog. The appliance's half is the calls the page made,
- * read off its websocket, and the mail settings, which a test mail never saves.
- *
- * ## Not covered: a test mail that fails
- *
- * `mail.send` defaults `queue` to true, and the form leaves it there. A send that
- * fails is put on middleware's mail queue, which retries it every ten minutes, up
- * to three times, through whatever `mail.config` holds at that moment rather than
- * the settings it was first sent with (`plugins/mail/send.py`, `send_queue.py`).
- * Other specs leave `mail.config` pointing at `smtp.example.com` and
- * `relay.example.com` while they run. So a failed test mail could later be sent
- * to a server other than the dead port it was aimed at, which nothing in this
- * suite may risk. That scenario is left out until the form sends `queue: false`,
- * or the suite has a way to empty the queue.
- *
- * The suite admin's email is set over the API, and restored after each test,
- * whether it passed or not. The mail settings are reset as in
- * `email-settings.e2e.ts`. See `fixtures/email.ts`.
+ * Story: Send Test Mail in the Email form, with no local administrator email, says why nothing can be sent. The
+ * button asks `mail.local_administrator_email` first and stops on an empty answer; checked by the dialog, the page's
+ * websocket calls, and unchanged mail settings. A failing test mail is not covered: `mail.send` queues failures and
+ * retries them through whatever `mail.config` holds later, which other specs point at `smtp.example.com`, so it could
+ * reach another server. Add it once the form sends `queue: false` or the queue can be emptied. The admin's email is
+ * set over the API and restored after each test; mail settings are reset as in `email-settings.e2e.ts`.
  */
 import {
   mailBaseline, readLocalAdministratorEmail, readMailSettings, resetMailSettings,

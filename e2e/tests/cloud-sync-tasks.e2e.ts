@@ -1,29 +1,9 @@
 /**
- * Stories: an admin creates, edits, runs, restores and deletes a cloud sync task
- * from the card on Data Protection, and the appliance holds what they did.
- *
- * Every task syncs through an SFTP credential that points back at the appliance
- * itself — see `fixtures/cloud-sync.ts` — so no outside service is needed and
- * the remote end is a dataset this spec can read back. That is what lets the run
- * and the restore be checked by what they actually copied, which appears
- * nowhere on the screen.
- *
- * Each action is asserted on the card and on the appliance: `cloudsync.query`
- * for the task as stored, `core.get_jobs` for whether a run worked, and
- * `filesystem.listdir` for what it copied.
- *
- * Edit, run, dry run, custom transfers and delete each act beside a second task
- * that must come through untouched. The row's actions sit in a kebab menu, so an
- * action belongs to whichever row's menu was opened, and a row-targeting bug
- * would act on the wrong task without failing anything else.
- *
- * Every other test types its folders. One edit picks the remote folder in the
- * Folder picker instead, which is the only thing here that has the remote list
- * its directories (`cloudsync.list_directory`).
- *
- * Stopping needs a run that lasts: the task is given a bandwidth limit and a
- * file large enough that the run would take minutes, and is stopped long
- * before then.
+ * Stories: an admin creates, edits, runs, restores and deletes a cloud sync task from its card on Data Protection.
+ * Tasks sync over SFTP back to the appliance (`fixtures/cloud-sync.ts`), so runs and restores are checked by what
+ * they copied (`filesystem.listdir`), plus `cloudsync.query` and `core.get_jobs`. Each action runs beside a
+ * bystander task that must come through untouched, so a row-targeting bug fails. One edit uses the Folder picker,
+ * the only coverage of `cloudsync.list_directory`. Stop uses a bandwidth limit and a large file so the run lasts.
  */
 import {
   cloudSyncRunTimeoutMs,

@@ -1,26 +1,9 @@
 /**
- * Stories: an admin opens the full Rsync Tasks list from its card on Data
- * Protection, searches it down to the task they want, and runs, edits and
- * deletes a task from its row. The appliance holds what they did.
- *
- * The card's own journeys are `rsync-tasks.e2e.ts` and `rsync-task-run.e2e.ts`.
- * The list is a different page, with its own search and its own row actions,
- * under ids of its own (see `rsyncTaskLocators.list`), so nothing those specs
- * pass says anything about it.
- *
- * Every action acts beside a second task that must come through untouched. The
- * row's actions sit in a kebab menu, so an action belongs to whichever row's
- * menu was opened, and a row-targeting bug would act on the wrong task without
- * failing anything else.
- *
- * The list has no Enabled switch: Enabled is a Yes/No cell. Switching a task off
- * from the list goes through the edit form's checkbox, so the edit test does it.
- *
- * The run test's task pushes over SSH to the appliance itself, the way
- * `rsync-task-run.e2e.ts` does, so a run really copies a file. Every other task
- * is in Module mode against a host where no rsync daemon listens (see
- * `fixtures/rsync-tasks.ts`), and every task syncs a dataset of its own, made
- * fresh for each test, because the list names a row by its path.
+ * Stories: from the full Rsync Tasks list, an admin searches, runs, edits and deletes a task. The list has its own
+ * search, row actions and ids (`rsyncTaskLocators.list`), so the card specs say nothing about it. Each action runs
+ * beside a second task that must stay untouched. Enabled is a Yes/No cell, so the edit test switches a task off in
+ * the form. The run task pushes over SSH to the appliance itself; the rest use Module mode against a host with no
+ * daemon (`fixtures/rsync-tasks.ts`), each on a fresh dataset of its own because the list names a row by its path.
  */
 import { findFileNames, writeFileOnAppliance } from '../fixtures/cloud-sync';
 import {

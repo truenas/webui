@@ -1,20 +1,9 @@
 /**
- * The Periodic Snapshot Tasks card on Data Protection, its full list, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `convertStringToId('snapshot-task-' + dataset)`, which lowercases the tag and
- * turns its punctuation into hyphens before the library's normalizer sees it.
- * Everything but the lowercasing is something {@link kebabTestSegment} does
- * anyway, so lowercasing first and then running that is the same id — and it
- * matters only for a pool or dataset with capitals, where the normalizer alone
- * would split `MyPool` into `my-pool` and the card writes `mypool`.
- *
- * The tag carries the dataset and nothing else, so two tasks on one dataset
- * share every id on the card. The specs give each task a dataset of its own,
- * except where two on one dataset is the point, which works from the full list.
- *
- * The form's controls declare their `testId`s, and its schedule is the shared
- * `ix-scheduler` — the same control the cron form uses.
+ * The Periodic Snapshot Tasks card on Data Protection, its full list, and its form. Row ids come from
+ * `convertStringToId('snapshot-task-' + dataset)`, so lowercase before {@link kebabTestSegment}: alone it would
+ * split `MyPool` into `my-pool` where the card writes `mypool`. The tag is the dataset alone, so two tasks on one
+ * dataset share every card id; specs give each task its own dataset, except where sharing is the point, which
+ * works from the full list. Controls declare their `testId`s; the schedule is the shared `ix-scheduler`.
  */
 import { taskListDetailAction } from './data-protection';
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';

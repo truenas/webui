@@ -1,14 +1,8 @@
 /**
- * The alerts panel the topbar's bell opens.
- *
- * An alert's ids are built from middleware's `key` for it, run through the
- * library's normalizer: `<ix-alert>` tags its controls `[alert().key, …]`. The
- * key is middleware's, so a spec reads it off `alert.list` rather than
- * predicting it.
- *
- * The panel folds alerts of one class into a single entry when the class has a
- * group summary, and the entry carries the ids of its newest alert. A spec that
- * acts on one alert has to make sure nothing else of its class is in the panel.
+ * The alerts panel the topbar's bell opens. An alert's ids come from middleware's `key` through the library
+ * normalizer (`[alert().key, …]`), so a spec reads the key off `alert.list` rather than predicting it. Alerts of
+ * a class with a group summary fold into one entry carrying its newest alert's ids, so a spec acting on one alert
+ * must make sure nothing else of its class is in the panel.
  */
 import { kebabTestSegment } from './test-id';
 

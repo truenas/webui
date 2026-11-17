@@ -1,16 +1,8 @@
 /**
- * The Email card on System > General Settings, and its form.
- *
- * The card's readouts are tagged `tnTestIdType="text"`, so their ids are static,
- * and each holds the value alone, without its label. From is rendered only once
- * a sender name or address is set.
- *
- * The form is a hand-written template. Every field passes a `testId` equal to its
- * `formControlName`, so the ids read like the API's own keys. Security is a
- * `tn-select` whose options are keyed on their labels. Username and Password
- * exist only while SMTP Authentication is ticked, and everything below From Name
- * only while the send method is SMTP, which is the only method a test uses: the
- * other two need a real OAuth login.
+ * The Email card on System > General Settings, and its form. Card readouts are static `text` ids holding the
+ * value alone; From appears only once a sender is set. Form `testId`s equal their `formControlName`; Security's
+ * options are keyed by label. Username and Password exist only while SMTP Authentication is ticked, and
+ * everything below From Name only for SMTP, the only method tested (the others need a real OAuth login).
  */
 import { kebabTestSegment } from './test-id';
 

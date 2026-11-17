@@ -1,16 +1,10 @@
 /**
- * A pool for the pool devices page: preconditions and readback, over the API.
+ * A pool for the pool devices page, plus the dedup vdev pool, `pool.ddt_prune` jobs, Auto TRIM and dedup table
+ * quota (`pool.update`), over the API.
  *
- * Taking a disk offline needs a vdev that survives losing it, so the pool here is
- * a two-disk mirror rather than the one-disk stripe `ensurePoolPresent` builds.
- * Adding a spare needs a third unused disk, which the wizard offers from the same
- * inventory, and so does replacing a disk. Every test here changes the pool's
- * topology, so the pool is its spec's own and never the worker-scoped one other
- * specs share.
- *
- * Also the pool with a dedup vdev that the Storage Health card's dedup line
- * needs, and the `pool.ddt_prune` jobs its Prune starts. Also the pool's Auto
- * TRIM and dedup table quota, which `pool.update` sets.
+ * Offlining a disk needs a vdev that survives it, so this is a two-disk mirror, not `ensurePoolPresent`'s stripe;
+ * spares and replacements need a third unused disk. Every test changes the topology, so the pool is the spec's
+ * own, never the shared worker-scoped one.
  */
 import type { QueryEntity } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -85,14 +79,11 @@ export async function ensureMirrorPoolPresent(client: E2eApiClient, name: string
 }
 
 /**
- * Builds a RAIDZ1 pool of three disks by name, and returns the device name of a
- * fourth unused disk of the same type and size to extend it with.
+ * Builds a RAIDZ1 pool of three disks by name, and returns a fourth unused disk of the same type and size.
  *
- * All four come from the first type-and-size set that has four, so the disk the
- * test adds is one the Extend dialog offers: it lists only disks at least as large
- * as the vdev's smallest. Nothing is checked for an existing pool: the caller
- * destroys it first with `ensurePoolAbsent`, and again afterwards, unconditionally,
- * for the reason given on `ensureMirrorPoolPresent`.
+ * All four come from the first type-and-size set with four, so Extend offers the fourth (it lists only disks at
+ * least as large as the vdev's smallest). The caller destroys any existing pool first with `ensurePoolAbsent`,
+ * and again afterwards, unconditionally; see `ensureMirrorPoolPresent`.
  */
 export async function createRaidzPool(client: E2eApiClient, name: string): Promise<string> {
   const disks = await getSelectableDisks(client);
@@ -191,20 +182,12 @@ export async function ensureDevicePoolPresent(
 }
 
 /**
- * Builds a pool by name with a dedup vdev and deduplication on, and gives its
- * dedup table entries, if the pool is not already there.
+ * Builds a pool by name with mirrored data and dedup vdevs (four alike disks) and deduplication on, and seeds
+ * its dedup table, unless present. The caller removes it with `ensurePoolAbsent`, unconditionally.
  *
- * Four alike disks: two in a mirror for data, two in a mirror for dedup, which
- * matches the data vdev's redundancy as the wizard asks. The caller owns the
- * removal, through `ensurePoolAbsent`, unconditionally: the pool holds four disks.
- *
- * The Storage Health card offers Prune only while the table has a size, and a
- * new pool's table is empty, so a file of random bytes is written to the root
- * dataset. Random, because neither a run of zeros nor a few bytes of text make
- * an entry: compression writes no block for zeros, and a short file is stored in
- * its block pointer. The table's size follows once the write is synced, so a
- * caller polls `readDedupTableSize` for it, and calls `addDedupSeed` again while
- * it still reads zero.
+ * Prune shows only while the table has a size, so random bytes are written to the root dataset: compression
+ * writes no block for zeros, and a short file lives in its block pointer. The size follows once synced, so the
+ * caller polls `readDedupTableSize` and calls `addDedupSeed` again while it reads zero.
  */
 export async function ensureDedupPoolPresent(client: E2eApiClient, name: string): Promise<void> {
   if (await findPool(client, name)) {
@@ -244,14 +227,11 @@ export async function ensureDedupPoolPresent(client: E2eApiClient, name: string)
 }
 
 /**
- * Appends random bytes to the pool's seed file and syncs the pool, so the
- * write is in the dedup table when this returns.
+ * Appends random bytes to the pool's seed file and syncs the pool, so the write is in the dedup table on return.
  *
- * ZFS caches the table's size and clears that cache only while it syncs a txg
- * that changed the table, so a size read during that sync can stay zero on an
- * idle pool for as long as nothing else writes. It did once in CI, for a full
- * minute. A further write followed by a sync clears it again, which is why a
- * caller still reading zero calls this a second time rather than waiting.
+ * ZFS clears its cached table size only while syncing a txg that changed the table, so a size read during that
+ * sync can stay zero on an idle pool (a full minute once in CI). Another write and sync clears it, which is why a
+ * caller still reading zero calls this again rather than waiting.
  */
 export async function addDedupSeed(client: E2eApiClient, name: string): Promise<void> {
   await runCommandOnAppliance(client, {

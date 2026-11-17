@@ -105,14 +105,11 @@ export async function addCsr(page: Page, name: string, subject: CsrSubject): Pro
 }
 
 /**
- * Deletes a CSR from its row's menu, through webui's shared confirm, starting from
- * the sidebar, and waits for its row to go.
+ * Deletes a CSR from its row's menu through webui's shared confirm, starting from the sidebar.
  *
- * The CSR card raises the confirm with `hideCheckbox: true`, so Delete is enabled
- * from the start — asserted, so a dialog that grew a gate fails here rather than
- * timing out on a disabled button. Force, its secondary checkbox, is left off.
- * The delete is a job; the card reloads only once it has finished, so the row
- * going is the wait.
+ * The CSR card passes `hideCheckbox: true`, so Delete is enabled from the start; that is asserted so a dialog
+ * that grew a gate fails here rather than timing out. Force is left off. The delete is a job and the card
+ * reloads only once it finishes, so the row going is the wait.
  */
 export async function deleteCsr(page: Page, name: string): Promise<void> {
   const { list } = csrLocators;

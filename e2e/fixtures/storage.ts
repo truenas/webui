@@ -54,14 +54,11 @@ interface DiskDetails {
 }
 
 /**
- * Unused disks grouped the way the pool wizard groups them: by type and size.
+ * Unused disks grouped as the pool wizard groups them: by type and size.
  *
- * The grouping is not incidental. `getDiskTypeSizeMap` buckets the inventory by
- * `(type, size)`, the wizard's disk-size select offers one option per bucket, and
- * the width select's range is generated from the *selected* bucket's disk count
- * (`normal-selection.component.ts` reads `selectedDisks.length`). So the question
- * a precondition has to ask is not "are there N unused disks" but "are there N
- * unused disks that are alike".
+ * `getDiskTypeSizeMap` buckets by `(type, size)`, the disk-size select offers one option per bucket, and the width
+ * range comes from the *selected* bucket's count (`selectedDisks.length` in `normal-selection.component.ts`). So a
+ * precondition must ask for N unused disks that are alike, not just N unused disks.
  */
 export interface DiskBucket {
   type: string;
@@ -72,20 +69,10 @@ export interface DiskBucket {
 /**
  * The disks the pool wizard will actually offer.
  *
- * Not `disk.get_unused`, which is the obvious endpoint and the wrong one. The
- * wizard loads `disk.details` (`disk.store.ts`) and then runs the inventory
- * through `filterAllowedDisks`, which with the store's defaults —
- * `allowNonUniqueSerialDisks: false`, `allowExportedPools: []` — discards two
- * kinds of disk that `disk.get_unused` still reports:
- *
- * - anything with a non-empty `duplicate_serial`, which virtual disks acquire
- *   easily since hypervisors are happy to hand out blank or repeated serials;
- * - anything still carrying an `exported_zpool`.
- *
- * Counting the raw endpoint passes this precondition while the wizard's own
- * inventory is smaller, or empty — the width option never renders and the run
- * dies on a 20 second action timeout instead. Assert against the source the UI
- * reads, not the one that sounds equivalent.
+ * Not `disk.get_unused`: the wizard loads `disk.details` and runs `filterAllowedDisks` with the store's defaults,
+ * dropping disks with a non-empty `duplicate_serial` (common on hypervisors) or an `exported_zpool`. Counting the
+ * raw endpoint passes this precondition while the wizard's inventory is smaller or empty, and the run dies on an
+ * action timeout. Assert against the source the UI reads.
  */
 export async function getSelectableDisks(client: E2eApiClient): Promise<UnusedDisk[]> {
   // `disk.details` is typed, but only as `unknown[] | Record<string, unknown>` —
@@ -130,33 +117,12 @@ function typeOrder(type: string): number {
 }
 
 /**
- * Fails fast when the appliance cannot support the test, naming the shortfall.
- *
- * Without this, too few disks surfaces as the width control silently not
- * offering the value the test picks — a confusing mid-wizard failure rather
- * than a clear precondition error (R2.2).
- *
- * Checks **the smallest type-and-size bucket**, which is a stronger condition
- * than it first looks and is the one that actually matches the flow. Two facts
- * combine:
- *
- * - the wizard generates the width options from the *selected* bucket alone
- *   (`normal-selection.component.ts` reads `selectedDisks.length`), so the
- *   inventory total is the wrong question; and
- * - `disk-size-selects.component.ts` sorts the options
- *   `(a, b) => a.value.size - b.value.size`, so the first option is the
- *   *smallest* size — and `createRaidz2Pool` takes the first.
- *
- * The largest bucket is the wrong question: 5x2TB + 9x4TB satisfies "9 alike"
- * while the wizard offers 2TB first, the width select tops out at 5, and
- * `option-width-data-9` never renders.
- *
- * The cost is a false negative on mixed inventory where a larger bucket would
- * have done. Worth taking: it fails in a second with the breakdown printed, the
- * appliances this suite targets are provisioned with identical virtual disks,
- * and the alternative is teaching the flow to pick a bucket by reconstructing
- * `buildNormalizedFileSize`'s label formatting — a second normalizer to keep in
- * step with the app, which is the trap `locators/test-id.ts` documents.
+ * Fails fast, naming the shortfall, when the appliance has too few alike disks, instead of a confusing mid-wizard
+ * failure (R2.2). Checks **the smallest type-and-size bucket**: width options come from the *selected* bucket
+ * (`selectedDisks.length`), and `disk-size-selects.component.ts` sorts by size so the first option, which
+ * `createRaidz2Pool` takes, is the smallest (5x2TB + 9x4TB fails 9-wide). A false negative on mixed inventory is
+ * accepted: suite appliances use identical disks, and picking a bucket would mean re-implementing
+ * `buildNormalizedFileSize`'s labels, the trap `locators/test-id.ts` documents.
  */
 export async function requireUnusedDisks(client: E2eApiClient, needed: number): Promise<void> {
   const buckets = await getUnusedDiskBuckets(client);
@@ -189,15 +155,11 @@ export interface TwoDiskSizes {
 }
 
 /**
- * The first bucket the Disk Size select offers, and the next larger bucket of the same type, or
- * undefined when the appliance has no such pair.
+ * The first bucket the Disk Size select offers and the next larger bucket of the same type, or undefined.
  *
- * The same type because "Treat Disk Size as Minimum" widens the choice within the selected type
- * only (`GroupedDisks.findSuitableDisks`). A larger disk of another type still makes the wizard
- * show the checkbox, and ticking it then changes nothing.
- *
- * Undefined rather than a throw: the specs that need two sizes skip without them, and an
- * appliance provisioned with identical disks is not a broken one.
+ * Same type because "Treat Disk Size as Minimum" widens only within the selected type
+ * (`GroupedDisks.findSuitableDisks`); a larger disk of another type shows the checkbox but ticking it changes
+ * nothing. Undefined rather than a throw: specs skip without two sizes, and identical disks aren't a fault.
  */
 export async function findTwoDiskSizes(client: E2eApiClient): Promise<TwoDiskSizes | undefined> {
   const [smaller, ...others] = await getUnusedDiskBuckets(client);
@@ -267,32 +229,12 @@ export type Nfs4Ace = Extract<
 const writeCapablePerms = new Set(['FULL_CONTROL', 'MODIFY']);
 
 /**
- * ACL entries that grant `username` write access to `path` by group membership.
+ * ACL entries that grant `username` write access to `path` by group membership: evidence the share is usable.
  *
- * Answers the question a share is actually for: can this person use it? Creating
- * a share proves only that it exists — filesystem access is decided separately,
- * by the dataset ACL and the user's groups, and nothing in the UI shows whether
- * the two line up.
- *
- * Middleware has `filesystem.can_access_as_user`, which would answer this
- * outright, but it is `@private` and so not reachable over JSON-RPC. This
- * inspects group-derived grants instead, which is what the SMB preset relies
- * on: creating a user with TrueNAS and SMB access places them in
- * `builtin_administrators` and `builtin_users`, and the preset's ACL grants
- * those groups FULL_CONTROL and MODIFY respectively.
- *
- * Deliberately narrow. It does not evaluate `owner@`/`everyone@`, inheritance,
- * DENY entries, or advanced (bit-flag) permission sets, so it is evidence of
- * access rather than a permission engine —
- * reimplementing that logic here is how a test becomes confidently wrong. It
- * also does not prove SMB itself serves the share; that needs a real client.
- *
- * One more exclusion worth naming: `user.groups` is the *auxiliary* list, and
- * `user.group` holds the primary group separately. A grant to the primary group
- * alone would therefore look like no grant at all. That is fine while the SMB
- * preset works through `builtin_administrators` and `builtin_users`, which are
- * auxiliary — but if that ever changes, this reports a share as unusable when it
- * is not.
+ * `filesystem.can_access_as_user` is `@private`, so this checks the group grants the SMB preset relies on
+ * (`builtin_administrators` FULL_CONTROL, `builtin_users` MODIFY). Deliberately narrow, not a permission engine:
+ * no `owner@`, `everyone@`, inheritance, DENY or advanced sets, and no proof SMB serves it. It reads only the
+ * auxiliary `user.groups`, so a grant to the primary group alone would read as none.
  */
 export async function findGroupAclGrants(
   client: E2eApiClient,
@@ -320,13 +262,9 @@ export async function findGroupAclGrants(
   );
   const gids = new Set(groups.map((group) => group.gid));
 
-  // The response is a discriminated union across the ACL flavours, so the
-  // flavour is checked rather than assumed. This function only understands
-  // NFSv4: a POSIX dataset carries no `perms.BASIC`, so every entry would be
-  // filtered out and the caller would report "no write-capable group grant"
-  // without mentioning why, and a dataset with ACLs disabled has `acl: null`,
-  // which would throw a `TypeError` from the filter below instead of the
-  // sentence the caller wrote.
+  // Only NFSv4 is understood, so the flavour is checked: a POSIX dataset has no `perms.BASIC` and would yield
+  // "no write-capable group grant" without saying why, and `acl: null` (ACLs off) would throw a `TypeError`
+  // from the filter instead of the caller's message.
   const acl = await firstValueFrom(
     client.api
       .call('filesystem.getacl', [path, true, true])
@@ -403,17 +341,10 @@ async function exportPool(client: E2eApiClient, id: number, name: string): Promi
       whatItCosts:
         `Pool "${name}" was not exported, so its disks remain claimed and later runs `
         + 'will be short of inventory.',
-      // No `confirm` here, deliberately: this export has no side effect that is
-      // true only once it has finished. The pool row disappears while the
-      // `destroy: true` wipe is still running, and free-disk counts are absolute
-      // rather than per-pool — an appliance with spares satisfies any threshold
-      // before the export starts. Either would report a clean teardown mid-wipe
-      // and leave `requireUnusedDisks` to fail confusingly on the next run.
-      //
-      // The cost is that a lost job record fails loudly after the full budget
-      // instead of being waved through. That is the right way round, and it is
-      // rare: records live in middlewared, and `restart_services` restarts the
-      // sharing services, not middlewared itself.
+      // No `confirm` here, deliberately: nothing is true only once this export has finished. The pool row goes
+      // while the `destroy: true` wipe still runs, and free-disk counts may already pass, so either would call
+      // teardown clean mid-wipe and break `requireUnusedDisks` next run. A lost job record fails loudly after the
+      // full budget instead, which is rare: `restart_services` restarts sharing services, not middlewared.
     },
   );
 }
@@ -561,15 +492,9 @@ export async function ensureZvolPresent(client: E2eApiClient, name: string): Pro
 /**
  * Deletes a dataset or zvol and everything under it, if present.
  *
- * `force` because a zvol the UI has merely displayed can still be held briefly
- * after the page that showed it is gone, and teardown must not fail on that.
- *
- * The already-gone case is tolerated *after* the query as well as before it.
- * A test that drove a deletion through the UI has a delete in flight when this
- * runs, so the row can disappear between the two calls and middleware answers
- * the second with `[ENOENT] … not found`. Teardown reporting that as a failure
- * buries whatever the test was actually saying — which is how this was found.
- * Anything else still throws.
+ * `force` because a zvol the UI displayed can stay briefly held after its page is gone. Already-gone is tolerated
+ * after the query too: a UI-driven delete may still be in flight, so middleware can answer `[ENOENT] … not found`,
+ * and reporting that would bury what the test was saying. Anything else still throws.
  */
 export async function ensureDatasetAbsent(client: E2eApiClient, name: string): Promise<void> {
   if (!await findDataset(client, name)) {

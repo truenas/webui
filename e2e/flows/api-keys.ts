@@ -33,16 +33,11 @@ export async function openUserApiKeys(page: Page, username: string): Promise<voi
 }
 
 /**
- * Adds a non-expiring key for a user from the open API Keys page, and returns
- * the key the one-time dialog showed.
+ * Adds a non-expiring key for a user from the open API Keys page, and returns the key the dialog showed.
  *
- * The username field opens on the signed-in admin, so picking the account is
- * part of the journey rather than a formality: a form that ignored the pick
- * would make the key for the wrong user without failing anything else here.
- *
- * Non-expiring is the default, and the date input's absence is asserted so a
- * default that flipped would fail here rather than hand middleware a date
- * nobody chose.
+ * The username field opens on the signed-in admin, so a form that ignored the pick would make the key for
+ * the wrong user without failing anything else. Non-expiring is the default; the date input's absence is
+ * asserted so a flipped default fails here rather than sending a date nobody chose.
  */
 export async function createApiKey(page: Page, key: { name: string; username: string }): Promise<string> {
   const { form } = apiKeyLocators;
@@ -90,14 +85,10 @@ export interface ApiKeyChanges {
 
 /**
  * Opens a key's Edit form from its row, makes the changes and presses Save.
- * Returns once Save is pressed; what follows depends on the change.
  *
- * Name holding the key's name is the signal the form has been filled from the
- * row, so a change typed before that cannot be overwritten by it.
- *
- * Each expiry change is confirmed by the date input appearing or going, so a
- * Non-expiring box that started the other way fails here rather than
- * toggling the wrong way.
+ * Name holding the key's name signals the form has loaded, so a change typed after it isn't overwritten.
+ * Each expiry change is confirmed by the date input appearing or going, so a Non-expiring box that
+ * started the other way fails here rather than toggling the wrong way.
  */
 export async function submitApiKeyEdit(page: Page, name: string, changes: ApiKeyChanges): Promise<void> {
   const { form } = apiKeyLocators;

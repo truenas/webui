@@ -113,15 +113,11 @@ export async function fillS3Credential(
 }
 
 /**
- * Presses Verify Credential and waits for middleware's answer to have arrived
- * and the form to have acted on it.
+ * Presses Verify Credential and waits for middleware's answer and the form's reaction to it.
  *
- * Both outcomes are an ordinary answer — `valid: false` is a result, not an
- * error — and the form reports them differently: a toast with no `data-test`
- * for a valid credential, the error dialog for one that is not. So this waits
- * on the answer itself, which needs `test.use({ recordApiCalls: true })` in the
- * spec, and then on the button coming back, which happens after the form has
- * raised whichever it was. What the caller then asserts on is the dialog.
+ * `valid: false` is a result, not an error, and the form shows a toast with no `data-test` for a valid
+ * credential and the error dialog otherwise. So this waits on the answer itself (needs
+ * `test.use({ recordApiCalls: true })`), then on the button coming back. Callers assert on the dialog.
  */
 export async function verifyCloudCredential(page: Page): Promise<void> {
   const method = 'cloudsync.credentials.verify';
@@ -171,14 +167,11 @@ export async function saveCloudCredentialForm(page: Page): Promise<void> {
 }
 
 /**
- * Deletes a credential from its row, starting from the sidebar, and waits for
- * its row to go. `total` is how many credentials the appliance holds, the target
- * included — see {@link showAllCloudCredentials}.
+ * Deletes a credential from its row, starting from the sidebar, and waits for its row to go. `total` is how
+ * many credentials the appliance holds, the target included; see {@link showAllCloudCredentials}.
  *
- * The card raises webui's shared confirm through `confirmDelete`, which does not
- * pass `hideCheckbox`, so Delete stays **disabled** until the box is ticked —
- * asserted on the way, so a dialog that lost its gate fails here rather than
- * passing a test that never needed it.
+ * `confirmDelete` does not pass `hideCheckbox`, so Delete stays **disabled** until the box is ticked; that is
+ * asserted, so a dialog that lost its gate fails here.
  */
 export async function deleteCloudCredential(page: Page, name: string, total: number): Promise<void> {
   await goToBackupCredentials(page);

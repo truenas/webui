@@ -1,17 +1,9 @@
 /**
- * Stories: an admin saves the SMB service settings from its row on the Services
- * page under System, and middleware's refusal of SMB1 with required encryption
- * reaches the form.
- *
- * The page has no readout of the settings, so each save is asserted through
- * `smb.config` alone, and as the whole record: the form sends every field back,
- * so one it dropped or mis-mapped fails here even when nobody edited it.
- *
- * The NetBIOS name and workgroup differ per appliance, so there is no fixed
- * baseline as SSH and FTP have. `beforeEach` snapshots the settings, then moves
- * the fields the tests edit to a known start so each edit is a change; teardown
- * writes the snapshot back. The service is stopped throughout, so a save only
- * rewrites configuration. The Apple-extensions write is `smb-service.e2e.ts`'s.
+ * Stories: an admin saves the SMB service settings from System > Services, and middleware's refusal of SMB1 with
+ * required encryption reaches the form. Each save is checked as the whole `smb.config` record, since the form sends
+ * every field back. NetBIOS name and workgroup vary per appliance, so `beforeEach` snapshots the settings and moves
+ * edited fields to a known start; teardown restores the snapshot. The service stays stopped throughout. The
+ * Apple-extensions write is `smb-service.e2e.ts`'s.
  */
 import { readSmbSettings, setSmbSettings, type SmbSettings } from '../fixtures/service-config';
 import { ensureSmbServiceStopped } from '../fixtures/smb';

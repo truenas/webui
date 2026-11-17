@@ -1,23 +1,10 @@
 /**
- * Credentials > Directory Services: the page's disabled state, the
- * Directory Services Configuration form, its Advanced Settings, the Kerberos
- * Realms and Kerberos Keytab cards inside them, and the two cards' forms.
- *
- * The configuration form's controls pass snake_case `testId`s, which the
- * library kebab-cases (`service_type` → `select-service-type`). A `tn-select`
- * option is `option-<base>-<label>`, keyed by the label on screen, so the option
- * locators take one of the label maps below.
- *
- * Every id on a row is built from its card's own `uniqueRowTag` —
- * `kerberos-realm-<realm>` and `kerberos-keytab-<name>` — run through
- * `convertStringToId` and then the library's normalizer. `convertStringToId`
- * lowercases **first**, so the tag is lowercased here before
- * {@link kebabTestSegment} sees it: on the raw name that splits a digit from the
- * capital after it, and realm `E2E-REALM.TEST` would come out `e2-e-realm-test`
- * where the app renders `kerberos-realm-e2e-realm-test`.
- *
- * Both cards ask for `mode="inline"`, so Edit and Delete are icon buttons on the
- * row rather than items in a kebab menu, and their ids have no `more-action`.
+ * Credentials > Directory Services: the disabled state, the configuration form and its Advanced Settings, and the
+ * Kerberos Realms and Keytab cards with their forms. Config controls pass snake_case `testId`s the library
+ * kebab-cases; `tn-select` options are keyed by on-screen label, hence the label maps. Row tags
+ * (`kerberos-realm-<realm>`, `kerberos-keytab-<name>`) go through `convertStringToId`, which lowercases first, so
+ * lowercase before {@link kebabTestSegment} or `E2E-REALM.TEST` splits into `e2-e-realm-test`. `mode="inline"`
+ * makes Edit and Delete row icon buttons with no `more-action`.
  */
 import { kebabTestSegment } from './test-id';
 

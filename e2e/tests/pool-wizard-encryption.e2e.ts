@@ -1,24 +1,9 @@
 /**
- * Stories: an admin who backs out of the encryption warning gets an unencrypted pool on Review;
- * and an admin creates a software-encrypted pool through the wizard, downloads its key, and the
- * appliance holds a pool whose root is encrypted with that kind of key.
- *
- * Picking "Software Encryption (ZFS)" on the General step raises a warning that has to be
- * accepted, and cancelling it puts the radio back to None. On submit the wizard sends
- * `encryption: true` with a generated key, and once the create job is done it opens the Download
- * Encryption Key dialog. That dialog cannot be dismissed, and its Done stays disabled until the key
- * file has been downloaded. A user who loses that file loses the pool, so the file's name and
- * contents are checked, not only that a download happened.
- *
- * One disk, as a stripe: the subject is encryption, not topology. The wizard warns about a stripe
- * data vdev, which `pool-wizard-validation.e2e.ts` covers and this file does not check.
- *
- * The pool is removed before and after every test, whatever happened. Teardown is over the API,
- * so a Download Key dialog left open by a failure does not get in its way.
- *
- * Not covered: SED pools, which need SED disks and an entitlement; switching the pool root's key
- * to a passphrase and locking it, which is the root dataset's Encryption card; and importing an
- * encrypted pool with its key file.
+ * Stories: backing out of the encryption warning leaves an unencrypted pool on Review; and an admin creates a
+ * software-encrypted pool, downloads its key, and the appliance holds a pool encrypted with that kind of key.
+ * The Download Encryption Key dialog can't be dismissed until the file is downloaded, and losing the file loses
+ * the pool, so the file's name and contents are checked. The pool is removed over the API before and after every
+ * test, so a Download Key dialog left open by a failure doesn't block teardown.
  */
 import { readFile } from 'node:fs/promises';
 import {

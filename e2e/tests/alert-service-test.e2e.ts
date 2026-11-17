@@ -1,36 +1,9 @@
 /**
- * Stories: an admin presses Send Test Alert on the alert service form, on an
- * unsaved service and on an edited one, and learns whether it was delivered —
- * and the press saves nothing.
- *
- * Send Test Alert calls `alertservice.test` with the form's current values, never
- * `alertservice.create` or `.update`. Middleware's `test` builds the service from
- * those values, sends one test alert and answers `true`, or answers `false` if
- * sending raised anything at all — it catches every exception and logs it, so an
- * unreachable endpoint is a `false`, not an error (`plugins/alert/alertservice.py`).
- * The form shows a snackbar with no `data-test` for `true` and the warn dialog
- * for `false`, so the dialog is what each test reads.
- *
- * Nothing outside the appliance is contacted:
- * - **Success** is an SNMP v2c trap to `127.0.0.1:162`. To a loopback host the
- *   SNMP Trap service sends nothing unless the local SNMP service is running, and
- *   it logs a failed send rather than raising (`alert/service/snmp_trap.py`), so
- *   `test` answers `true` whether or not anything listens.
- * - **Failure** is a Slack webhook at `127.0.0.1:1`, where nothing listens. The
- *   POST is refused at once, `requests` raises, and `test` answers `false`.
- *
- * Both were read from middleware's source rather than tried against the CI
- * appliance, which this was written without. If the appliance disagrees, the
- * first dialog assertion of the scenario says which way.
- *
- * The edit test seeds an SNMP Trap service and tests it as Slack. Testing a
- * stored Slack service would prove nothing: its URL, under `example.com`, fails
- * to deliver just as the edited one does, so both would raise the same dialog.
- * The stored SNMP values answer `true`, so the warn dialog can only come from
- * the form's values.
- *
- * Middleware does not hold alert service names unique, and `test` checks only the
- * level, so testing under an existing service's name is accepted.
+ * Stories: Send Test Alert on the alert service form, for an unsaved and an edited service, reports delivery and
+ * saves nothing. It calls `alertservice.test`, which answers `false` on any send error, and tests read the warn
+ * dialog (the success snackbar has no `data-test`). Success is an SNMP v2c trap to `127.0.0.1:162`, `true` whether
+ * or not anything listens; failure is Slack at `127.0.0.1:1`. Both were read from middleware's source, not tried
+ * on CI. The edit test seeds SNMP Trap and tests it as Slack, so the warn dialog can only come from the form.
  */
 import {
   countAlertServices, ensureAlertServiceAbsent, ensureSnmpTrapAlertServicePresent, findAlertService, findAlertServices,

@@ -1,17 +1,8 @@
 /**
- * The Cloud Credentials card on Credentials > Backup Credentials, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `cloud-cred-<name>`, a plain concatenation with no pre-normalizing — so the
- * row, its cells and its action buttons all go through the library's normalizer,
- * and {@link kebabTestSegment} is the one to use throughout.
- *
- * The name is in the tag, so **an edit that renames a credential renames every
- * id on the row**. A spec that renames one looks the row up again under the new
- * name.
- *
- * The card asks for `mode="inline"`, so Edit and Delete are icon buttons on the
- * row rather than items in a kebab menu, and their ids have no `more-action`.
+ * The Cloud Credentials card on Credentials > Backup Credentials, and its form. Row ids come from `uniqueRowTag`,
+ * `cloud-cred-<name>`, with no pre-normalizing, so use {@link kebabTestSegment} throughout. The name is in the tag,
+ * so renaming a credential renames every id on the row; look it up again under the new name. `mode="inline"`
+ * makes Edit and Delete row icon buttons, so their ids have no `more-action`.
  */
 import { kebabTestSegment } from './test-id';
 

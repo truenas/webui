@@ -1,16 +1,8 @@
 /**
- * Story: an admin finds pages and settings through the topbar's global search
- * rather than the sidebar, comes back to them through Recent Searches, and is
- * offered the documentation for a term the UI has nothing for.
- *
- * Search reads a static index of the app's pages and settings, filtered by the
- * signed-in user's roles; every test searches as the suite's full admin, who
- * sees all of it. Nothing here changes the appliance. The one piece of state
- * search keeps is Recent Searches, in the browser's `localStorage` under
- * `recentSearches`, so that is what each test resets.
- *
- * The keyboard shortcut is Ctrl+/ (⌘/ on macOS), the hint the topbar box
- * shows. Nothing in the app binds a bare `/`, and this does not test that.
+ * Story: an admin finds pages and settings through the topbar's global search, returns to them via Recent
+ * Searches, and is offered documentation for an unknown term. Search reads a static index filtered by role, and
+ * every test runs as the full admin. Its only state is Recent Searches in `localStorage` (`recentSearches`), which
+ * each test resets. The shortcut is Ctrl+/ (⌘/ on macOS); a bare `/` is unbound and not tested.
  */
 import { readTimezone } from '../fixtures/localization';
 import { readSystemIdentity } from '../fixtures/system-info';

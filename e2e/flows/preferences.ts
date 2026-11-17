@@ -71,15 +71,11 @@ export function monthDayYearLabel(timezone: string): string {
 }
 
 /**
- * Saves the form and waits for the panel to close.
+ * Saves the form and waits for the panel to close, the app's signal that it took the change.
  *
- * The panel closing is the app's own signal that it took the change.
- *
- * Waits on **Save**, not on the theme select. The select lives inside the
- * `!isSyncWithOs()` branch of the template, so a caller that saves with
- * "Sync Theme With OS" ticked has already made it disappear — and the wait would
- * pass instantly, against a panel still open and a save still in flight. Save is
- * the one control present in both branches.
+ * Waits on **Save**, not the theme select: the select is inside the `!isSyncWithOs()` branch, so with
+ * "Sync Theme With OS" ticked it is already gone and the wait would pass against a panel still saving.
+ * Save is present in both branches.
  */
 export async function savePreferences(page: Page): Promise<void> {
   const save = page.locator(preferencesLocators.form.save);

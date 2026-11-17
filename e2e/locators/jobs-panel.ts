@@ -1,15 +1,8 @@
 /**
- * The jobs panel the topbar's clipboard opens.
- *
- * Each job is an `<ix-job-item>` whose body is tagged `[tnTestId]="['job', job.id]"`
- * as a row, so a job's ids carry middleware's job id and nothing a translation
- * can rename. The panel lists a job twice over its life: under the running jobs
- * while it is running or waiting, then among the five most recently finished.
- * The two lists carry ids of their own, so "where is it" is a selector rather
- * than an inference from which readouts the row happens to show.
- *
- * A running `abortable` job's Abort sits beside its row's body rather than in
- * it, and its id carries the job's description and method but not its id.
+ * The jobs panel the topbar's clipboard opens. Each `<ix-job-item>` body is `[tnTestId]="['job', job.id]"`, so
+ * ids carry middleware's job id and nothing translatable. A job is listed under running jobs, then among the
+ * five most recently finished; each list has its own id, so where a job sits is a selector, not an inference.
+ * A running `abortable` job's Abort sits beside the body, and its id carries description and method, not id.
  */
 import { kebabTestSegment } from './test-id';
 

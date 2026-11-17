@@ -1,27 +1,11 @@
 #!/usr/bin/env tsx
 
 /**
- * Reports where the E2E suite's time goes.
- *
- *     yarn e2e                 # writes test-results/e2e-timings/
- *     yarn e2e:timings         # reads it, prints markdown
- *
- * Two records go in, both written by the suite:
- *
- * - `tests.json`, from `e2e/support/timing-reporter.ts`: each test attempt's span and its phases —
- *   every hook and fixture before and after the body, and the body itself.
- * - `middleware-<pid>.jsonl`, from `e2e/support/timings.ts`: every middleware request and job, by
- *   method name and time.
- *
- * A middleware call is charged to the test, and the phase of it, that was running when the call
- * started. That is how a `beforeAll` hook's calls are found: Playwright leaves the hook out of a
- * test's reported duration, but not out of its step tree. Middleware time in a phase is the union
- * of the calls and jobs in it, so a job and the polls inside it are not counted twice.
- *
- * Usage: `yarn e2e:timings [results-dir] [--out <file>]`. The directory holds one run's records, or
- * one subdirectory per shard, each holding its shard's — which is how CI lays out the shards'
- * artifacts. Markdown goes to stdout, and to `--out` when given; each test's breakdown is written
- * next to the records as `summary.json`.
+ * Reports where the E2E suite's time goes, from `tests.json` (`e2e/support/timing-reporter.ts`, each attempt's
+ * phases) and `middleware-<pid>.jsonl` (`e2e/support/timings.ts`, every request and job). A call is charged to
+ * the phase running when it started, which is how `beforeAll` time is found, and per-phase middleware time is
+ * a union so a job and its polls aren't double-counted. Usage: `yarn e2e:timings [results-dir] [--out <file>]`;
+ * the directory holds one run, or one subdirectory per CI shard.
  */
 
 import {

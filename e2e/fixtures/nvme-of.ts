@@ -1,15 +1,10 @@
 /**
  * NVMe-oF preconditions, cleanup and readback, over the API.
  *
- * A subsystem is useful only with what is attached to it: namespaces (one zvol or
- * file each), ports it listens on, and the hosts allowed to connect. Ports and
- * hosts are shared objects, linked to a subsystem through `nvmet.port_subsys` and
- * `nvmet.host_subsys`; a namespace belongs to exactly one subsystem. The zvol
- * behind a namespace is storage and is left to `fixtures/storage.ts`.
- *
- * The association lists are read off `nvmet.subsys.query` with `verbose`, which is
- * how the UI reads them too. Middleware leaves them out of the declared entity, so
- * they are read through {@link SubsystemAssociations} rather than the generated type.
+ * A subsystem has namespaces (one zvol or file each, owned by it) and shared ports and hosts linked through
+ * `nvmet.port_subsys` and `nvmet.host_subsys`. Zvols are left to `fixtures/storage.ts`. The association lists
+ * come from `nvmet.subsys.query` with `verbose`, as in the UI; the declared entity omits them, hence
+ * {@link SubsystemAssociations}.
  */
 import { expect } from '@playwright/test';
 import type { CallParams, CallResponse } from '@truenas/api-client';

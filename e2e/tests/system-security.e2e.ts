@@ -1,25 +1,10 @@
 /**
- * Stories: an admin sets a password policy from the System Security card on System > Advanced
- * Settings; the form refuses out-of-range values before anything is sent; and ticking STIG lists
- * what is missing, raises the other fields to the STIG minimums and blocks Save.
- *
- * A save is asserted twice, as `kernel-settings.e2e.ts` does: the card's readouts say the screen
- * believed it, `system.security.config` says the appliance did it. Whether middleware then
- * enforces the policy on a password is middleware's behaviour and out of scope.
- *
- * FIPS and STIG are NEVER saved, through the form or over the API. Enabling FIPS needs a reboot,
- * and enabling STIG locks out every account without two-factor — the suite's admin included.
- * The STIG test ticks the switch, reads what it did, and backs out without saving.
- *
- * A password-only save raises no reboot reason (`plugins/security/config.py` sets one only when
- * `enable_fips` or `enable_gpos_stig` changes), and a Max Password Age cannot flag the suite's
- * admin for a change: middleware computes `password_change_required` on read, from a password age
- * that a freshly installed appliance has nowhere near 90 days of, and stops once the age is
- * cleared again (`plugins/account.py`, `user_extend`).
- *
- * The policy is one config record, so nothing is created and nothing is deleted. The five
- * password fields are cleared before each test and written back as the appliance held them after
- * it. A policy left behind would make the user and password specs have their passwords refused.
+ * Stories: an admin sets a password policy on the System Security card, the form refuses out-of-range values, and
+ * ticking STIG lists what's missing, raises fields to STIG minimums and blocks Save. FIPS and STIG are NEVER saved:
+ * FIPS needs a reboot and STIG locks out every account without two-factor, the suite's admin included. A
+ * password-only save raises no reboot reason, and Max Password Age can't flag the admin, whose password on a fresh
+ * appliance is far under 90 days old (`plugins/account.py`). The five password fields are cleared before each test
+ * and restored after; a leftover policy would get the user and password specs' passwords refused.
  */
 import { readDocker } from '../fixtures/apps';
 import {

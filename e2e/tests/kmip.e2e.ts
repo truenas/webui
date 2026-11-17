@@ -1,25 +1,10 @@
 /**
- * Stories: an admin reaches Credentials > KMIP and reads its state, saves a
- * server, port and certificate with KMIP left disabled, and has an attempt to
- * enable it refused.
- *
- * There is no KMIP server on CI, so nothing here connects to one. With
- * `enabled: false`, `kmip.update` checks the port, writes the row and starts
- * nothing (`plugins/kmip/config.py`), which is why the first save lands.
- *
- * The enable is refused before any connection is tried, and not for the reason
- * the server name suggests: `kmip.update` requires a `certificate_authority`
- * whenever KMIP is enabled, and this page has no control for one. So the
- * refusal is "Please specify a valid id.", filed under
- * `kmip_update.certificate_authority` — a refusal the UI cannot avoid. That
- * test skips on an appliance whose KMIP row already holds a certificate
- * authority, since the page sends none and so keeps it. The `.invalid` server
- * stays as a second guard: RFC 2606 reserves the name, so a connection test
- * would fail on DNS rather than reach anything.
- *
- * The page does not reload after a save, so its key status reflects what was
- * read on arrival. Each stored value is read back by leaving through the
- * sidebar and coming back, and over the API.
+ * Stories: an admin reads Credentials > KMIP, saves a server, port and certificate with KMIP disabled, and is
+ * refused enabling it. With `enabled: false`, `kmip.update` connects to nothing, so the save lands without a server.
+ * Enabling requires a `certificate_authority` the page has no control for, so the refusal is under
+ * `kmip_update.certificate_authority`; that test skips if the row already holds one. The `.invalid` server (RFC
+ * 2606) is a second guard. The page does not reload after a save, so values are read back by leaving and
+ * returning, and over the API.
  */
 import { ensureCertificateAbsent, ensureImportedCertificatePresent, findCertificate, findCertificateById } from '../fixtures/certificates';
 import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';

@@ -1,12 +1,9 @@
 /**
  * iSCSI share preconditions, cleanup and readback, over the API.
  *
- * A share is several records that only mean something together: a target, an
- * extent, and the association between them, plus the portal and initiator group
- * the target's group points at. The wizard names all of them after the share — the
- * extent and target by `name`, the portal and initiator group by `comment` — so a
- * name is enough to find, and remove, everything one share made. The zvol behind
- * the extent is storage and is left to `fixtures/storage.ts`.
+ * A share is a target, an extent, their association, and the portal and initiator group the target's group
+ * points at. The wizard names extent and target by `name` and portal and initiator group by `comment`, so a
+ * name finds and removes everything one share made. The zvol is left to `fixtures/storage.ts`.
  */
 import type { CallParams, CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

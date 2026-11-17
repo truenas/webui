@@ -1,17 +1,8 @@
 /**
- * Stories: an admin sets, changes and removes a user quota and a group quota on a dataset, and the
- * appliance holds what they did.
- *
- * The two pages are one component routed twice, so each story runs once per kind. Every change is
- * asserted on the page and through `pool.dataset.get_quota`. The API check is the stronger one: the
- * data quota is typed as `1 GiB` and has to reach middleware as a byte count.
- *
- * Changing and removing each act beside a bystander with a quota of its own, which must come
- * through untouched. Both are reached from a row's own buttons, so a row bug would act on the wrong
- * principal and still look right on screen.
- *
- * Quotas live on a dataset of the spec's own, so deleting the dataset is the teardown for all of
- * them. The principals are removed once the file is done.
+ * Stories: an admin sets, changes and removes a user and a group quota on a dataset; the two pages are one
+ * component, so each story runs per kind. Checked on the page and through `pool.dataset.get_quota`, which proves
+ * `1 GiB` arrived as bytes. Change and remove run beside a bystander quota that must come through untouched, so a
+ * row bug fails. Deleting the spec's dataset tears down the quotas; principals go after the file.
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import { findQuota, setQuota, type QuotaKind } from '../fixtures/quotas';

@@ -1,14 +1,9 @@
 /**
- * Getting around the app the way a user does — clicking the sidebar.
+ * Getting around the app the way a user does: clicking the sidebar.
  *
- * Deliberately no `page.goto()` to feature pages. Typing a URL is not what an
- * administrator does, and jumping straight to a route skips whatever the
- * navigation itself would have exercised: that the menu entry exists, is
- * visible to this user's role, and points where it claims to. A journey that
- * deep-links past the menu cannot notice when the menu breaks.
- *
- * `page.goto()` remains correct for *entering* the app (the sign-in page), and
- * for the token setup project, neither of which a user reaches by clicking.
+ * Deliberately no `page.goto()` to feature pages: a deep link skips checking that the menu entry exists, is
+ * visible to this role, and points where it claims to. `page.goto()` remains correct for entering the app
+ * (the sign-in page) and for the token setup project.
  */
 import { expect, type Locator, type Page } from '@playwright/test';
 import { globalSearchLocators, navLocators } from '../locators/navigation';
@@ -46,14 +41,9 @@ const expectedRoute = {
 /**
  * Resolves a nav locator to the entry the user can actually see.
  *
- * The sidebar renders some entries more than once — the Credentials submenu
- * appears both inline and in a slide-out overlay, both carrying the same
- * `data-test`. A bare selector is therefore ambiguous, and whichever copy is
- * currently hidden cannot be clicked anyway.
- *
- * (Duplicate ids across simultaneously-rendered elements are worth fixing
- * upstream; filtering by visibility is correct regardless, since it targets
- * what the user would click.)
+ * Some sidebar entries render twice with the same `data-test` (the Credentials submenu appears inline and in
+ * a slide-out overlay), and the hidden copy cannot be clicked. Filtering by visibility targets what the user
+ * would click; the duplicate ids are still worth fixing upstream.
  */
 function visibleNavLink(page: Page, locator: string): Locator {
   return page.locator(locator).filter({ visible: true }).first();

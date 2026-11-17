@@ -1,16 +1,9 @@
 /**
- * Stories: registering a bucket again from a dataset that still holds it.
- *
- * Deleting a bucket leaves its dataset, its objects and a config backup in place; the Recover panel on the full
- * bucket list reads that backup back. An administrator recovers a bucket deleted by mistake, and recovers two at
- * once where another bucket has since taken one's name — that one fails on its own, and comes back once renamed.
- * An administrator who instead tries to add the bucket again is offered its recovery by the Add form.
- *
- * What only an appliance can answer here: that the backup middleware writes when a bucket is saved is there to
- * find once the bucket is gone, that a recovery puts the bucket back on its own dataset under its old owner, and
- * that middleware's per-dataset answer reaches the screen — a clash refuses one row, not the request.
- *
- * The S3 service stays stopped: a recovery is configuration, and needs nothing serving it.
+ * Stories: the full bucket list's Recover panel reads back the config backup a deleted bucket leaves on its
+ * dataset. An administrator recovers one bucket, and two where another bucket took one's name (that row fails
+ * alone, then recovers once renamed); and the Add form offers recovery for a bucket being re-added.
+ * Only an appliance shows the backup being there, the bucket returning to its dataset under its old owner, and a
+ * clash refusing one row, not the request. The S3 service stays stopped: recovery is configuration.
  */
 import {
   ensureS3BucketAbsent, ensureS3BucketOrphaned, ensureS3BucketPresent, ensureS3ServiceStopped, findS3Bucket,

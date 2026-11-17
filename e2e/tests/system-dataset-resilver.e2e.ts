@@ -1,34 +1,10 @@
 /**
- * Stories: from the Storage card on System > Advanced Settings, an admin moves
- * the system dataset onto a data pool and back to the boot pool, and sets
- * resilvering to run at higher priority on weekend nights. The form refuses
- * priority resilvering with no days picked.
- *
- * Each save is asserted on the card and through `systemdataset.config` and
- * `pool.resilver.config`.
- *
- * ## Saving sends only what changed
- *
- * The form saves the pool through the `systemdataset.update` job and the
- * resilvering window through `pool.resilver.update`, and only the sections that
- * are dirty. Re-sending an untouched section would send back the values the
- * form loaded, which leaves the config exactly as it was, so the config alone
- * cannot show it was not sent. Hence `recordApiCalls`: a move must not call
- * `pool.resilver.update`, and a resilvering change must start no
- * `systemdataset.update` job. The resilvering test is also what shows the
- * recorder sees `pool.resilver.update` at all.
- *
- * ## Teardown
- *
- * Both settings are global. Before the first test this file records where the
- * system dataset is and the whole resilvering window, and before and after
- * every test writes both back, the system dataset first: a later spec that
- * exports a pool holding it would fail. Each write is skipped when nothing
- * differs, because every move restarts services.
- *
- * Not covered: the SMB reboot warning, the Export/Disconnect dialog's and the
- * Datasets page's system dataset warnings, and whether a resilver really runs
- * faster in the window.
+ * Stories: from Advanced Settings' Storage card, an admin moves the system dataset to a data pool and back, and sets
+ * priority resilvering on weekend nights; the form refuses priority resilvering with no days. Only dirty sections
+ * are saved, and re-sending one would leave the config unchanged, so `recordApiCalls` checks a move calls no
+ * `pool.resilver.update` and a resilver change starts no `systemdataset.update` job. Both settings are global and
+ * restored before and after every test, system dataset first (a later pool export would fail holding it), each
+ * write skipped when nothing differs, since every move restarts services.
  */
 import {
   findSystemDatasetMoveJobIds,

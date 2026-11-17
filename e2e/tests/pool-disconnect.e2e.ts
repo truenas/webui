@@ -1,31 +1,10 @@
 /**
- * Story: a pool cannot be destroyed without meaning it.
- *
- * This is the same confirmation-bypass class as `datasets-deletion.e2e.ts` and
- * the most expensive place in the app to get it wrong. Choosing "Delete Pool"
- * and confirming runs `pool.export` with `destroy: true`, which wipes every
- * member disk — there is no undo and no snapshot to fall back to.
- *
- * Its handler was worse than the dataset dialog's: `startExportDisconnectJob()`
- * read the form and started the job with no validity check whatsoever. The only
- * thing standing between a keypress and a destroyed pool was a disabled button
- * that the browser's implicit form submission does not consult — and once
- * "Delete Pool" is chosen, the name field it reveals is the form's single text
- * input, which is exactly the shape Enter submits.
- *
- * Each claim is settled through `pool.query`. A dialog that stayed open is not
- * evidence the pool survived, and the pool row disappears while the disk wipe
- * is still running, so the screen is not evidence either way.
- *
- * ## Why this spec builds its own pool
- *
- * It must not use the worker-scoped `pool` fixture. That pool is shared with
- * every other spec in the worker, and a test whose subject is destroying a pool
- * would take the rest of the run with it the moment it regressed — the failure
- * would arrive as a dozen unrelated specs breaking. `ensurePoolPresent` builds
- * one disk's worth of pool under a name of this spec's own, and `afterEach`
- * removes it unconditionally: left behind, `findOnlinePool` would hand it to a
- * later spec as *its* pool.
+ * Story: a pool cannot be destroyed without meaning it. "Delete Pool" runs `pool.export` with `destroy: true`,
+ * wiping every member disk with no undo. Once chosen, its name field is the form's single text input, which Enter
+ * submits past the disabled button, and `startExportDisconnectJob()` had no validity check (the same class as
+ * `datasets-deletion.e2e.ts`). Claims are settled through `pool.query`, since the row vanishes while the wipe runs.
+ * It builds its own one-disk pool, never the shared `pool` fixture, and `afterEach` removes it unconditionally:
+ * left behind, `findOnlinePool` would hand it to a later spec.
  */
 import type { Page } from '@playwright/test';
 import { ensurePoolPresent } from '../fixtures/pool';
@@ -105,17 +84,11 @@ test('a fully confirmed delete really does destroy the pool', async ({ page, api
     .poll(() => tolerating(() => findPool(api, target)), { timeout: 3 * 60_000 })
     .toBeUndefined();
 
-  // The row going is not the end of the work. `destroy: true` keeps wiping the
-  // member disk after `pool.query` stops listing the pool, and `CLAUDE.md` is
-  // explicit that inferring a job's success from that side effect is how this
-  // suite has been bitten before. Leaving here mid-wipe starves
-  // `requireUnusedDisks`, which `fresh-install` depends on — so wait for the
-  // disk to actually come back, which is the observable end of the export.
-  //
-  // A count rather than this pool's own `devname`, which is sound only because
-  // `playwright.config.ts` pins `workers: 1` / `fullyParallel: false` — nothing
-  // else can be freeing a disk while this waits. Said out loud because that
-  // guarantee lives three files away.
+  // The row going is not the end: `destroy: true` keeps wiping the disk after `pool.query` drops the pool (see
+  // `CLAUDE.md` on inferring job success from side effects), and leaving mid-wipe starves `requireUnusedDisks`,
+  // which `fresh-install` needs, so wait for the disk to come back. A count rather than this pool's `devname` is
+  // sound only because `playwright.config.ts` pins `workers: 1` and `fullyParallel: false`, so nothing else can be
+  // freeing a disk meanwhile.
   await expect
     .poll(
       () => tolerating(() => getSelectableDisks(api).then((disks) => disks.length)),
@@ -125,20 +98,11 @@ test('a fully confirmed delete really does destroy the pool', async ({ page, api
 });
 
 /**
- * Asserts that whatever just happened in the dialog did not start an export.
- *
- * Getting this right took two attempts, and the first one passed against the
- * *broken* build. Unlike the delete-dataset dialog, this one does not close
- * when it submits — it hands off to a job dialog and closes later — so neither
- * "the dialog is still open" nor "the form still accepts input" says anything
- * about whether `pool.export` was called. Asking `pool.query` straight away is
- * no better: it races the job.
- *
- * So the readback is the dashboard itself. Dismissing the dialog and coming
- * back to the pool list is a full navigation, which cannot resolve before the
- * app has sent everything the keypress queued on the same socket; and an
- * export that did start takes the pool off that page. The appliance is then
- * asked directly, which is the claim that actually matters.
+ * Asserts that whatever just happened in the dialog did not start an export. This dialog hands off to a job dialog
+ * and closes later, so "still open" or "still accepts input" proves nothing (a first attempt relying on that passed
+ * against the broken build), and asking `pool.query` at once races the job. So the readback is a full navigation
+ * back to the pool list, which cannot resolve before the app sends what the keypress queued on the same socket,
+ * and an export that started removes the pool from it; then the appliance is asked directly.
  */
 async function expectPoolSurvived(page: Page, api: E2eApiClient, pool: string): Promise<void> {
   await page.locator(poolDisconnectLocators.cancel).click();
@@ -149,18 +113,11 @@ async function expectPoolSurvived(page: Page, api: E2eApiClient, pool: string): 
 }
 
 /**
- * Runs a poll generator, turning a rejection into "no answer yet".
- *
- * Required, not defensive. Playwright awaits an `expect.poll` generator
- * *outside* its own try/catch, so a rejected call aborts the whole poll rather
- * than costing one attempt — the same trap `readServiceState` documents in
- * `tests/unauthenticated/fresh-install.e2e.ts`. Both polls here run across a
- * `pool.export`, which `support/jobs.ts` records as dropping the connection it
- * is asked over, so a transient rejection is an ordinary step on the way to the
- * answer rather than a failure.
- *
- * The last failure is kept so a *persistently* broken query names itself in the
- * log instead of hiding behind "the pool never went away".
+ * Runs a poll generator, turning a rejection into "no answer yet". Playwright awaits an `expect.poll` generator
+ * outside its own try/catch, so a rejection aborts the poll (see `readServiceState` in
+ * `tests/unauthenticated/fresh-install.e2e.ts`). Both polls span a `pool.export`, which drops its connection
+ * (`support/jobs.ts`), so a transient rejection is normal. The last failure is kept so a persistently broken query
+ * names itself instead of hiding behind "the pool never went away".
  */
 async function tolerating<T>(read: () => Promise<T>): Promise<T | undefined> {
   try {

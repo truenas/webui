@@ -1,18 +1,8 @@
 /**
- * Stories: an admin saves the NFS service settings from the form its row on
- * System > Services opens, and the form refuses a port out of range.
- *
- * Enabled Protocols is covered by `nfs-access.e2e.ts` and left alone here. Bind
- * IP Addresses depends on the appliance's own addresses and RDMA on a NIC CI
- * does not have, so neither is touched.
- *
- * The page has no readout of these settings, so each save is asserted through
- * `nfs.config`. Every field is read back, not only the ones a test edits: the
- * form sends all of them, so a save that changed one it was not asked to fails.
- *
- * The service stays stopped, so a save rewrites its configuration and restarts
- * nothing, and the settings go back to the baseline before and after every test.
- * See `fixtures/nfs.ts`.
+ * Stories: an admin saves NFS service settings from its row on System > Services, and a port out of range is
+ * refused. Enabled Protocols is `nfs-access.e2e.ts`; Bind IPs and RDMA depend on the appliance and are untouched.
+ * Saves are checked through `nfs.config`, every field read back since the form sends all of them. The service stays
+ * stopped, so nothing restarts; settings return to baseline before and after every test (see `fixtures/nfs.ts`).
  */
 import {
   ensureNfsServiceStopped, nfsBaseline, readNfsSettings, setNfsSettings,

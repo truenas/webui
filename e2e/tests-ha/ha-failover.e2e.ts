@@ -1,14 +1,8 @@
 /**
- * Story: an admin fails the pair over from the Dashboard, and controller 2
- * takes over: the app rides out the switch, signs in again through the VIP,
- * and finds controller 2 active with controller 1 back as its standby.
- *
- * The last link of the HA suite's chain (`playwright.config.ts`), after
- * `ha-setup` left HA up with controller 1 active. Its project reaches the
- * pair through the VIP (`haThroughVip`), as a user does: the UI, sign-in and
- * `api` all go to whichever controller holds it. `api` is connected to
- * controller 1, though, and the failover takes the VIP — and that socket —
- * away from it, so everything after the failover asks a fresh connection.
+ * Story: an admin fails the pair over from the Dashboard; the app rides out the switch, signs in again through
+ * the VIP, and finds controller 2 active with controller 1 as standby. The last link of the HA chain
+ * (`playwright.config.ts`), after `ha-setup`. Its project goes through the VIP (`haThroughVip`), but `api` is
+ * connected to controller 1 and loses its socket with the VIP, so everything after failover uses a fresh one.
  */
 import { readFailover, requireHa } from '../fixtures/ha';
 import { awaitAdminShell, submitSignIn } from '../flows/auth';

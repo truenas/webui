@@ -1,16 +1,8 @@
 /**
- * Stories: an admin mounts a dataset into a stopped container from its
- * Filesystem Devices card, changes where it is mounted, removes it, and is
- * refused a source outside a pool.
- *
- * ## Setup and teardown
- *
- * Each test starts with the worker's `pool` as the preferred pool, a dataset
- * `<pool>/e2e_ct_share` to mount, and a stopped container `e2e-ct-fs` seeded over
- * the API. Teardown deletes the container first, so the mount goes with it, then
- * the dataset, then writes back the containers settings the appliance held before
- * the first test. Once the file is done it removes `<pool>/.truenas_containers`,
- * as `containers.e2e.ts` does.
+ * Stories: an admin mounts a dataset into a stopped container from its Filesystem Devices card, changes the mount
+ * point, removes it, and is refused a source outside a pool. Each test seeds `<pool>/e2e_ct_share` and a stopped
+ * `e2e-ct-fs`. Teardown deletes the container first, so the mount goes with it, then the dataset, then restores
+ * the containers settings; after the file it removes `<pool>/.truenas_containers`, as `containers.e2e.ts` does.
  */
 import {
   type ContainerSettings, containersDataset, containerSettingsBaseline, ensureContainerAbsent,

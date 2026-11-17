@@ -17,16 +17,12 @@ export interface CustomSchedule {
 }
 
 /**
- * Picks "Create Custom schedule" on the `ix-scheduler` bound to `control` —
- * `schedule` on most task forms — fills the dialog in, and presses Done.
+ * Picks "Create Custom schedule" on the `ix-scheduler` bound to `control` (usually `schedule`), fills the
+ * dialog in, and presses Done.
  *
- * On a form whose schedule is still a preset, the dialog opens on Hourly, which
- * ticks every weekday and every month. Each weekday to untick is asserted
- * ticked first, so a dialog that opened on something else fails here rather
- * than being clicked into the opposite state.
- *
- * The weekdays left ticked are what the dialog writes as the crontab's
- * day-of-week, by name and in Mon…Sun order (`mon,tue,…`).
+ * From a preset the dialog opens on Hourly, every weekday ticked; each weekday to untick is asserted ticked
+ * first, so a dialog that opened otherwise fails here. The ticked weekdays become the crontab's day-of-week,
+ * by name in Mon…Sun order (`mon,tue,…`).
  */
 export async function chooseCustomSchedule(page: Page, control: string, schedule: CustomSchedule): Promise<void> {
   const dialog = schedulerLocators;

@@ -1,20 +1,9 @@
 /**
- * Story: an admin rearranges the Dashboard in Configure mode. A card group dragged to a new place on
- * a desktop, or moved with the Move buttons at phone width, stays there once saved, and Reset puts
- * the default cards back.
- *
- * The layout is the admin's own `dashState` attribute. Each test writes the layout it starts from
- * over the API, and `afterEach` writes back the one the account had, because
- * `tests/dashboard.e2e.ts` runs on whatever layout it finds and relies on it holding System
- * Information. See `fixtures/dashboard.ts`.
- *
- * `DashboardStore` reads the layout from the account the app loaded at sign-in, and the `page`
- * fixture signs in before a test writes anything. So each test reloads after reaching the
- * Dashboard, which makes the app read `auth.me` again.
- *
- * Does not need a pool, so it does not ask for the `pool` fixture: the layouts it writes hold System
- * Information, Help and CPU Model, none of which shows storage. Reset brings back the default
- * layout, Storage and Backup Tasks included, but only CPU Usage and Help are checked on it.
+ * Story: an admin rearranges the Dashboard in Configure mode; a group dragged on desktop or moved with the Move
+ * buttons at phone width stays once saved, and Reset restores the default cards. Each test writes its starting
+ * `dashState` over the API and `afterEach` restores the account's own, because `tests/dashboard.e2e.ts` relies on it
+ * holding System Information (see `fixtures/dashboard.ts`). The layout is read at sign-in, so each test reloads.
+ * No pool needed; after Reset only CPU Usage and Help are checked.
  */
 import type { Page } from '@playwright/test';
 import {
