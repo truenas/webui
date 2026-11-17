@@ -9,8 +9,8 @@ import {
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { map, Observable, of } from 'rxjs';
-import { finalize, switchMap, tap } from 'rxjs/operators';
+import { map, of } from 'rxjs';
+import { finalize, switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
@@ -74,12 +74,6 @@ export class ExtendDialog {
     return !this.isSubmitting() && this.isFormValid() && this.sedDiskPassword().isValid();
   });
 
-  /** The disk an individual SED password was already applied to, so a retry skips straight to the job. */
-  private readonly preparedDisk = signal<string | null>(null);
-  protected readonly isPasswordApplied = computed(() => {
-    return this.preparedDisk() !== null && this.preparedDisk() === this.newDisk();
-  });
-
   readonly helptext = helptextVolumeStatus;
 
   unusedDisks: DetailsDisk[] = [];
@@ -100,7 +94,7 @@ export class ExtendDialog {
           );
           return of(false);
         }
-        return this.prepareNewDisk().pipe(map(() => true));
+        return this.sedDiskPassword().prepareDisk().pipe(map(() => true));
       }),
       this.loader.withLoader(),
       switchMap((canAttach) => {
@@ -129,26 +123,5 @@ export class ExtendDialog {
         this.dialogRef.close(true);
       }
     });
-  }
-
-  /**
-   * Applies an individual SED password once per disk. After that the disk is unlocked, and running
-   * `disk.setup_sed` again fails because the disk is no longer UNINITIALIZED. With the global
-   * password nothing is applied here, so a retry with an individual one must still run it.
-   */
-  private prepareNewDisk(): Observable<unknown> {
-    const disk = this.form.value.newDisk;
-    if (disk === this.preparedDisk()) {
-      return of(null);
-    }
-    const sedDiskPassword = this.sedDiskPassword();
-    const appliesPassword = sedDiskPassword.appliesPassword();
-    return sedDiskPassword.prepareDisk().pipe(
-      tap(() => {
-        if (appliesPassword) {
-          this.preparedDisk.set(disk);
-        }
-      }),
-    );
   }
 }
