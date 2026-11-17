@@ -6,7 +6,9 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import {
   TnAutocompleteHarness, TnButtonHarness, TnInputHarness, TnRadioGroupHarness,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import {
+  catchError, EMPTY, Observable, of, Subject, throwError,
+} from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -15,6 +17,7 @@ import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -25,6 +28,7 @@ import {
   ExtendDialog, ExtendDialogParams,
 } from 'app/pages/storage/modules/vdevs/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialog>;
@@ -68,6 +72,12 @@ describe('ExtendDialogComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({}),
         })),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$.pipe(catchError(() => EMPTY))),
       }),
       mockProvider(PoolExtendJobService, {
         checkForExistingExtendJob: jest.fn(() => of(false)),
@@ -160,5 +170,57 @@ describe('ExtendDialogComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sde', password: 'disk-secret' }]);
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [4, expect.objectContaining({ new_disk: 'sde' })]);
+  });
+
+  it('shows a loader and blocks a second submit while the extension is in progress', async () => {
+    const jobClosed$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
+      afterClosed: () => jobClosed$,
+    } as ReturnType<DialogService['jobDialog']>);
+
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (10.91 TiB)');
+
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
+    await extendButton.click();
+
+    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
+    expect(await extendButton.isDisabled()).toBe(true);
+
+    spectator.dispatchFakeEvent('form', 'submit');
+    expect(spectator.inject(PoolExtendJobService).checkForExistingExtendJob).toHaveBeenCalledTimes(1);
+
+    jobClosed$.error(new Error('Job failed'));
+    expect(await extendButton.isDisabled()).toBe(false);
+  });
+
+  it('does not repeat the SED step when retrying after the extend job failed', async () => {
+    const api = spectator.inject(ApiService) as unknown as MockApiService;
+    api.mockQuery('disk.query', [{ name: 'sde', sed: true, sed_status: SedStatus.Locked } as WebUiQueryEntity<'disk.query'>]);
+    api.mockCall('disk.unlock_sed', true);
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog')
+      .mockReturnValueOnce({ afterClosed: () => throwError(() => new Error('Job failed')) } as ReturnType<DialogService['jobDialog']>)
+      .mockReturnValueOnce({ afterClosed: () => of({}) } as ReturnType<DialogService['jobDialog']>);
+    spectator.fixture.autoDetectChanges();
+
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (10.91 TiB)');
+    await spectator.fixture.whenStable();
+
+    const source = await loader.getHarness(TnRadioGroupHarness);
+    await source.select('Individual password for this disk');
+    const password = await loader.getHarness(TnInputHarness);
+    await password.setValue('disk-secret');
+
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
+    await extendButton.click();
+    await spectator.fixture.whenStable();
+    await extendButton.click();
+    await spectator.fixture.whenStable();
+
+    const unlockCalls = api.call.mock.calls.filter(([method]) => method === 'disk.unlock_sed');
+    expect(unlockCalls).toHaveLength(1);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalledTimes(2);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 });
