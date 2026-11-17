@@ -44,6 +44,24 @@
         <tn-input testId="outgoingserver" formControlName="outgoingserver"></tn-input>
       </tn-form-field>
 
+      @if (isEncrypted()) {
+        <tn-form-field [tooltip]="helptext.validateCertificate.tooltip | translate">
+          <tn-checkbox
+            testId="validate-certificate"
+            formControlName="validate_certificate"
+            [class.unsafe]="isCertificateValidationDisabled()"
+            [label]="helptext.validateCertificate.label | translate"
+          ></tn-checkbox>
+        </tn-form-field>
+      }
+
+      @if (isCertificateValidationDisabled()) {
+        <tn-banner
+          type="warning"
+          [message]="helptext.validateCertificate.warning | translate"
+        ></tn-banner>
+      }
+
       <tn-form-field
         [label]="'Mail Server Port' | translate"
         [required]="true"

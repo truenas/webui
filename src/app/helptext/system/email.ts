@@ -30,6 +30,14 @@ export const helptextSystemEmail = {
  <i>TLS (STARTTLS)</i>.',
     ),
   },
+  validateCertificate: {
+    label: T('Validate the SMTP server certificate'),
+    tooltip: T('Verify that the SMTP server presents a trusted certificate that matches the\
+ <i>Outgoing Mail Server</i> hostname. Only disable this for servers with a self-signed or otherwise\
+ untrusted certificate.'),
+    warning: T('Certificate validation is disabled. Mail is still encrypted, but the server identity is not\
+ verified, so the connection is open to interception and the SMTP password can be exposed.'),
+  },
   user: {
     tooltip: T(
       'Enter the username if the SMTP server requires\

@@ -10,8 +10,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnInputComponent,
-  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  InputType, TnBannerComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnIconComponent,
+  TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { map, of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
@@ -56,6 +56,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnBannerComponent,
     TnIconComponent,
     OauthButtonComponent,
     TranslateModule,
@@ -105,6 +106,7 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
       portRangeValidator(),
     ]],
     security: [MailSecurity.Plain],
+    validate_certificate: [true],
     smtp: [false],
     user: [''],
     pass: [''],
@@ -139,6 +141,19 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
   });
 
   protected isSmtp = computed(() => this.sendMethod() === MailSendMethod.Smtp);
+
+  private security = toSignal(this.form.controls.security.valueChanges, {
+    initialValue: this.form.controls.security.value,
+  });
+
+  /** Certificate validation only applies to the encrypted transports. */
+  protected isEncrypted = computed(() => this.security() !== MailSecurity.Plain);
+
+  private validateCertificate = toSignal(this.form.controls.validate_certificate.valueChanges, {
+    initialValue: this.form.controls.validate_certificate.value,
+  });
+
+  protected isCertificateValidationDisabled = computed(() => this.isEncrypted() && !this.validateCertificate());
 
   protected hasOauthAuthorization = computed(() => {
     const creds = this.oauthCredentials();
@@ -295,6 +310,7 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
         update.outgoingserver = 'smtp-mail.outlook.com';
         update.port = 587;
         update.security = MailSecurity.Tls;
+        update.validate_certificate = true;
       }
     }
 
