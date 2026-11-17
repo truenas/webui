@@ -223,4 +223,34 @@ describe('ExtendDialogComponent', () => {
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalledTimes(2);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
+
+  it('unlocks the disk on retry when the first attempt used the global password', async () => {
+    const api = spectator.inject(ApiService) as unknown as MockApiService;
+    api.mockQuery('disk.query', [{ name: 'sde', sed: true, sed_status: SedStatus.Locked } as WebUiQueryEntity<'disk.query'>]);
+    api.mockCall('disk.unlock_sed', true);
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog')
+      .mockReturnValueOnce({ afterClosed: () => throwError(() => new Error('Job failed')) } as ReturnType<DialogService['jobDialog']>)
+      .mockReturnValueOnce({ afterClosed: () => of({}) } as ReturnType<DialogService['jobDialog']>);
+    spectator.fixture.autoDetectChanges();
+
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (10.91 TiB)');
+    await spectator.fixture.whenStable();
+
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
+    await extendButton.click();
+    await spectator.fixture.whenStable();
+    expect(api.call).not.toHaveBeenCalledWith('disk.unlock_sed', expect.anything());
+
+    const source = await loader.getHarness(TnRadioGroupHarness);
+    await source.select('Individual password for this disk');
+    const password = await loader.getHarness(TnInputHarness);
+    await password.setValue('disk-secret');
+
+    await extendButton.click();
+    await spectator.fixture.whenStable();
+
+    expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sde', password: 'disk-secret' }]);
+    expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
+  });
 });
