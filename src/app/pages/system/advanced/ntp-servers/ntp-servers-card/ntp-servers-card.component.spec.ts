@@ -23,6 +23,7 @@ const fakeDataSource: NtpServer[] = [
     prefer: false,
     minpoll: 6,
     maxpoll: 10,
+    nts: false,
   },
   {
     id: 3,
@@ -32,6 +33,7 @@ const fakeDataSource: NtpServer[] = [
     prefer: false,
     minpoll: 6,
     maxpoll: 10,
+    nts: false,
   },
   {
     id: 10,
@@ -41,6 +43,7 @@ const fakeDataSource: NtpServer[] = [
     prefer: false,
     minpoll: 6,
     maxpoll: 10,
+    nts: true,
   },
 ];
 
@@ -78,10 +81,10 @@ describe('NtpServerCardComponent', () => {
 
   it('should show table rows', async () => {
     const expectedRows = [
-      ['Address', 'Burst', 'IBurst', 'Prefer', 'Min Poll', 'Max Poll', ''],
-      ['2.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
-      ['1.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
-      ['0.debian.pool.ntp.org', 'No', 'Yes', 'No', '6', '10', ''],
+      ['Address', 'NTS', 'Burst', 'IBurst', 'Prefer', 'Min Poll', 'Max Poll', ''],
+      ['2.debian.pool.ntp.org', 'No', 'No', 'Yes', 'No', '6', '10', ''],
+      ['1.debian.pool.ntp.org', 'No', 'No', 'Yes', 'No', '6', '10', ''],
+      ['0.debian.pool.ntp.org', 'Yes', 'No', 'Yes', 'No', '6', '10', ''],
     ];
 
     expect(api.call).toHaveBeenCalledWith('system.ntpserver.query');
@@ -97,14 +100,14 @@ describe('NtpServerCardComponent', () => {
   });
 
   it('should open edit ntp server form', async () => {
-    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 6);
+    const editButton = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-pencil' }), 1, 7);
     await editButton.click();
 
     expect(slideInRef.open).toHaveBeenCalledWith(NtpServersFormComponent, { data: fakeDataSource[0] });
   });
 
   it('should display confirm dialog of deleting ntp server', async () => {
-    const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 6);
+    const deleteIcon = await table.getHarnessInCell(TnIconHarness.with({ name: 'mdi-delete' }), 1, 7);
     await deleteIcon.click();
 
     expect(api.call).toHaveBeenCalledWith('system.ntpserver.delete', [2]);

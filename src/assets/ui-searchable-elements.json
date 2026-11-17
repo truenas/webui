@@ -1472,7 +1472,9 @@
       "NTP Server"
     ],
     "synonyms": [
-      "Add NTP Server"
+      "Add NTP Server",
+      "NTS",
+      "Network Time Security"
     ],
     "requiredRoles": [],
     "visibleTokens": [],
@@ -1493,6 +1495,8 @@
       "Add NTP Server"
     ],
     "synonyms": [
+      "NTS",
+      "Network Time Security",
       "Create NTP Server",
       "New NTP Server",
       "Time Server"
