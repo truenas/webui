@@ -4,7 +4,9 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { of } from 'rxjs';
+import {
+  catchError, defer, EMPTY, finalize, Observable, of, Subject,
+} from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
@@ -14,6 +16,7 @@ import { DetailsDisk, Disk } from 'app/interfaces/disk.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
@@ -23,6 +26,7 @@ import {
   ExtendDialog, ExtendDialogParams,
 } from 'app/pages/storage/modules/vdevs/components/zfs-info-card/extend-dialog/extend-dialog.component';
 import { PoolExtendJobService } from 'app/pages/storage/modules/vdevs/services/pool-extend-job.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ExtendDialogComponent', () => {
   let spectator: Spectator<ExtendDialog>;
@@ -66,6 +70,12 @@ describe('ExtendDialogComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of({}),
         })),
+      }),
+      mockProvider(LoaderService, {
+        withLoader: jest.fn(() => (source$: Observable<unknown>) => source$),
+      }),
+      mockProvider(ErrorHandlerService, {
+        withErrorHandler: jest.fn(() => (source$: Observable<unknown>) => source$.pipe(catchError(() => EMPTY))),
       }),
       mockProvider(PoolExtendJobService, {
         checkForExistingExtendJob: jest.fn(() => of(false)),
@@ -160,5 +170,60 @@ describe('ExtendDialogComponent', () => {
     expect(api.job).toHaveBeenCalledWith('pool.attach', [4, expect.objectContaining({ new_disk: 'sde' })]);
     expect(jest.mocked(api.call).mock.invocationCallOrder.at(-1))
       .toBeLessThan(jest.mocked(api.job).mock.invocationCallOrder[0]);
+  });
+
+  it('blocks a second submit while the extension is in progress', async () => {
+    const jobClosed$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
+      afterClosed: () => jobClosed$,
+    } as ReturnType<DialogService['jobDialog']>);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'New Disk': 'sde (10.91 TiB)' });
+
+    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    await extendButton.click();
+
+    expect(await extendButton.isDisabled()).toBe(true);
+
+    spectator.dispatchFakeEvent('form', 'submit');
+    expect(spectator.inject(PoolExtendJobService).checkForExistingExtendJob).toHaveBeenCalledTimes(1);
+
+    jobClosed$.error(new Error('Job failed'));
+    expect(await extendButton.isDisabled()).toBe(false);
+  });
+
+  it('keeps the loader open over the SED step and closes it before the job runs', async () => {
+    let isLoaderOpen = false;
+    let wasLoaderOpenForUnlock = false;
+    jest.spyOn(spectator.inject(LoaderService), 'withLoader').mockImplementation((
+      () => (source$: Observable<unknown>) => defer(() => {
+        isLoaderOpen = true;
+        return source$.pipe(finalize(() => isLoaderOpen = false));
+      })
+    ) as LoaderService['withLoader']);
+
+    const api = spectator.inject(MockApiService);
+    api.mockCall('disk.query', [{ name: 'sde', sed: true, sed_status: SedStatus.Locked } as Disk]);
+    api.mockCall('disk.unlock_sed', () => {
+      wasLoaderOpenForUnlock = isLoaderOpen;
+    });
+    const jobClosed$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
+      afterClosed: () => jobClosed$,
+    } as ReturnType<DialogService['jobDialog']>);
+
+    const form = await loader.getHarness(IxFormHarness);
+    await form.fillForm({ 'New Disk': 'sde (10.91 TiB)' });
+    await form.fillForm({ 'SED Password': 'Individual password for this disk' });
+    await form.fillForm({ Password: 'disk-secret' });
+
+    const extendButton = await loader.getHarness(MatButtonHarness.with({ text: 'Extend' }));
+    await extendButton.click();
+
+    expect(wasLoaderOpenForUnlock).toBe(true);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    // The job dialog is still open here, so the loader must not be wrapped around it.
+    expect(isLoaderOpen).toBe(false);
   });
 });
