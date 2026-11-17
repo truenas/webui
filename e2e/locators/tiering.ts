@@ -36,7 +36,7 @@ export const datasetTierLocators = {
    */
   migrationStatus: '[data-test="button-migration-status"]',
 
-  /** "Change" on the details card. A plain `<button>` tagged `tnTestIdType="button"`. */
+  /** "Change Storage Tier" in the details card's footer, `<tn-button testId="change-tier">`. */
   change: '[data-test="button-change-tier"]',
 } as const;
 

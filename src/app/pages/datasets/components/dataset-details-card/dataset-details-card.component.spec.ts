@@ -174,19 +174,21 @@ describe('DatasetDetailsCardComponent', () => {
       );
     });
 
-    it('opens change tier dialog when Change link is clicked', () => {
+    it('opens change tier dialog when Change Storage Tier button is clicked', async () => {
       setupTest({ dataset });
 
-      spectator.click('.change-tier-link');
+      const changeTierButton = await loader.getHarness(TnButtonHarness.with({ label: 'Change Storage Tier' }));
+      await changeTierButton.click();
 
       expect(spectator.inject(SharingTierService).openChangeTierDialogForDataset).toHaveBeenCalledWith({
         datasetName: 'pool/child',
         currentTier: DatasetTier.Regular,
         poolName: 'pool',
       });
+      expect(spectator.inject(DatasetTreeStore).datasetUpdated).toHaveBeenCalled();
     });
 
-    it('hides the Change link when the dataset is locked', () => {
+    it('hides the Change Storage Tier button when the dataset is locked', async () => {
       setupTest({
         dataset: {
           ...dataset,
@@ -194,7 +196,20 @@ describe('DatasetDetailsCardComponent', () => {
         } as DatasetDetails,
       });
 
-      expect(spectator.query('.change-tier-link')).toBeNull();
+      const changeTierButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Change Storage Tier' }));
+      expect(changeTierButton).toBeNull();
+    });
+
+    it('hides the Change Storage Tier button when the dataset has no tier info', async () => {
+      setupTest({
+        dataset: {
+          ...dataset,
+          tier: null,
+        } as DatasetDetails,
+      });
+
+      const changeTierButton = await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Change Storage Tier' }));
+      expect(changeTierButton).toBeNull();
     });
 
     it('shows tier job status icon when a tier job is running', () => {
