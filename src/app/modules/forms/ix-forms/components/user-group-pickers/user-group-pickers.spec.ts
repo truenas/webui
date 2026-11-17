@@ -23,8 +23,9 @@ import {
 import {
   IxUserComboboxComponent,
 } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-combobox.component';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import {
-  IxGroupChipsHarness, IxUserChipsHarness, IxUserComboboxHarness,
+  IxGroupChipsHarness, IxGroupComboboxHarness, IxUserChipsHarness, IxUserComboboxHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ignoreTranslation } from 'app/modules/translate/translate.helper';
 import {
@@ -197,7 +198,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
   describe('value plumbing', () => {
     it('commits a picked user through both accessors to the form control', async () => {
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
 
       expect(await owner.getOptions()).toEqual(users);
 
@@ -276,7 +277,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       fixture.detectChanges();
 
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
 
       expect(await owner.getOptions()).toEqual(['archived-user', 'root', 'operator', 'admin']);
     });
@@ -304,7 +305,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       fixture.detectChanges();
 
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
       await settle();
       await owner.blur();
       await settle();
@@ -330,7 +331,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       // display name elsewhere", and that resolution normally lands
       // asynchronously — after the panel has already fetched its first page.
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
       expect(await owner.getOptions()).toEqual(users);
 
       host.extraOptions.set([{ label: ignoreTranslation('archived-user'), value: 4242 }]);
@@ -345,7 +346,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       host.directoryOptions.set({ localOnly: true, valueField: 'id' });
       fixture.detectChanges();
 
-      await (await loader.getHarness(IxUserComboboxHarness)).focus();
+      await (await loader.getHarness(IxUserComboboxHarness)).open();
 
       expect(directory.seenOptions).toContainEqual({ localOnly: true, valueField: 'id' });
     });
@@ -356,7 +357,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       // so the panel used to keep serving the previous narrowing's results and
       // a pick could commit a value the new one was meant to exclude.
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
       expect(await owner.getOptions()).toEqual(users);
 
       directory.queryUsersImpl = () => of(toOptions(['privileged']));
@@ -369,7 +370,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
 
     it('refetches on the next open when the bag changed while the field was closed', async () => {
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
       await owner.blur();
       await settle();
 
@@ -377,7 +378,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       host.directoryOptions.set({ localOnly: true });
       await settle();
 
-      await owner.focus();
+      await owner.open();
 
       expect(await owner.getOptions()).toEqual(['privileged']);
     });
@@ -394,7 +395,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       directory.queryUsersImpl = () => throwError(() => new Error('directory unreachable'));
 
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
       await settle();
 
       expect(noResultsText()).toBe('Options cannot be loaded');
@@ -407,7 +408,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       directory.queryUsersImpl = () => throwError(() => new Error('directory unreachable'));
 
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
       await settle();
       expect(noResultsText()).toBe('Options cannot be loaded');
 
@@ -553,10 +554,53 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
     });
   });
 
+  describe('focus, blur and a validation error', () => {
+    const serverError = { [ixManualValidateErrorKey]: { message: 'Mapall and Maproot cannot both be set' } };
+
+    it('does not open the dropdown when the field is focused', async () => {
+      // A failed save focuses the invalid field; a dropdown opening then would cover its error.
+      const owner = await loader.getHarness(IxUserComboboxHarness);
+      await owner.focus();
+      await settle();
+
+      expect(await owner.isOpen()).toBe(false);
+    });
+
+    it('still opens and filters the dropdown as the user types', async () => {
+      const owner = await loader.getHarness(IxUserComboboxHarness);
+      await owner.focus();
+      await owner.setInputValue('op');
+      await settle();
+
+      expect(await owner.isOpen()).toBe(true);
+      expect(await owner.getOptions()).toEqual(['operator']);
+    });
+
+    it.each([
+      ['user', IxUserComboboxHarness, 'owner', 'root'],
+      ['group', IxGroupComboboxHarness, 'group', 'wheel'],
+    ] as const)('keeps an error set on the %s field when it blurs unchanged', async (_, harness, name, value) => {
+      // Errors from the server are pinned with setErrors(). Committing the same value again on blur
+      // re-ran the validators and wiped the message the user had not read yet.
+      const control = host.form.controls[name];
+      control.setValue(value);
+      await settle();
+      control.setErrors(serverError);
+
+      const field = await loader.getHarness(harness);
+      await field.open();
+      await field.blur();
+      await settle();
+
+      expect(control.value).toBe(value);
+      expect(control.errors).toEqual(serverError);
+    });
+  });
+
   describe('[allowCreate]', () => {
     it('offers no create row by default', async () => {
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
 
       expect(await owner.getOptions()).toEqual(users);
     });
@@ -567,7 +611,7 @@ describe('ix-user-* / ix-group-* directory pickers', () => {
       fixture.detectChanges();
 
       const owner = await loader.getHarness(IxUserComboboxHarness);
-      await owner.focus();
+      await owner.open();
 
       expect(await owner.getOptions()).toEqual(['Add New', ...users]);
 

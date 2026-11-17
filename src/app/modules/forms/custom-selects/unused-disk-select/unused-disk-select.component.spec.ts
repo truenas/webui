@@ -88,7 +88,7 @@ describe('UnusedDiskSelectComponent', () => {
   });
 
   it('loads and shows an autocomplete with unused disks', async () => {
-    await autocomplete.focus();
+    await autocomplete.open();
     const options = await autocomplete.getOptions();
     expect(options).toEqual([
       'da0 (2 TiB)',
@@ -124,7 +124,7 @@ describe('UnusedDiskSelectComponent', () => {
     spectator.fixture.changeDetectorRef.markForCheck();
     spectator.setHostInput('diskFilteringFn', (disk: DetailsDisk) => disk.devname === 'da1');
 
-    await autocomplete.focus();
+    await autocomplete.open();
     const options = await autocomplete.getOptions();
     expect(options).toEqual([
       'da1 (20 TiB) (pool)',
@@ -157,7 +157,7 @@ describe('UnusedDiskSelectComponent', () => {
     });
 
     it('does not show disks with non-unique serials by default', async () => {
-      await autocomplete.focus();
+      await autocomplete.open();
       const options = await autocomplete.getOptions();
       expect(options).toEqual([
         'da0 (2 TiB)',
@@ -180,7 +180,7 @@ describe('UnusedDiskSelectComponent', () => {
       );
       await allowCheckbox.check();
 
-      await autocomplete.focus();
+      await autocomplete.open();
       const options = await autocomplete.getOptions();
       expect(options).toEqual([
         'da0 (2 TiB)',

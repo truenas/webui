@@ -109,7 +109,7 @@ describe('RaidzExtendDialogComponent', () => {
     expect(warningMessage).toExist();
 
     const disk = await loader.getHarness(TnAutocompleteHarness);
-    await disk.focus();
+    await disk.open();
     const options = await disk.getOptions();
     expect(options).toEqual(['sde (12 TiB)']);
   });

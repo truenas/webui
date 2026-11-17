@@ -14,6 +14,7 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { provideTnFormFieldErrors } from 'app/core/providers/tn-form-field-errors.provider';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -27,6 +28,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   IxIpInputWithNetmaskComponent,
 } from 'app/modules/forms/controls/ix-ip-input-with-netmask/ix-ip-input-with-netmask.component';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { TnFormControlHarness } from 'app/modules/forms/ix-forms/testing/tn-form-control.harness';
@@ -154,6 +156,8 @@ describe('NfsFormComponent', () => {
     // The `<ix-form>` this form renders needs its own service mocks, and the bundle also
     // zeroes the min-feedback hold so a successful close stays synchronous.
     ...ixFormTestingProviders(),
+    // Renders a server error's message under the field, as the app does.
+    provideTnFormFieldErrors(),
   ];
 
   const createComponent = createComponentFactory({
@@ -356,6 +360,30 @@ describe('NfsFormComponent', () => {
       ]);
       expect(store$.dispatch).toHaveBeenCalledWith(checkIfServiceIsEnabled({ serviceName: ServiceName.Nfs }));
       expect(closed).toHaveBeenCalledWith(true);
+    });
+
+    it('keeps a validation error on Maproot User visible when the field is focused and left', async () => {
+      // What FormErrorHandlerService does with a rejected save: pin the message, then focus the field.
+      await clickAdvancedOptions();
+      const message = 'maproot_user and mapall_user are mutually exclusive';
+      const control = spectator.component.form.controls.maproot_user;
+      control.setErrors({ [ixManualValidateErrorKey]: { message } });
+      control.markAsTouched();
+      spectator.detectChanges();
+
+      const maprootUser = await getAutocomplete('maproot_user');
+      const field = await loader.getHarness(TnFormFieldHarness.with({ label: 'Maproot User' }));
+      await maprootUser.focus();
+
+      expect(await maprootUser.isOpen()).toBe(false);
+      expect(await field.getErrorMessage()).toBe(message);
+
+      await maprootUser.open();
+      await maprootUser.blur();
+      await spectator.fixture.whenStable();
+
+      expect(await field.getErrorMessage()).toBe(message);
+      expect(control.value).toBe('news');
     });
 
     it('checks if NFS service is not enabled and enables it after confirmation', async () => {
