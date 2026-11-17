@@ -10,8 +10,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  InputType, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnIconComponent, TnInputComponent,
-  TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
+  InputType, TnBannerComponent, TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnIconComponent,
+  TnInputComponent, TnRadioComponent, TnRadioGroupComponent, TnSelectComponent,
 } from '@truenas/ui-components';
 import { map, of } from 'rxjs';
 import { MailSecurity } from 'app/enums/mail-security.enum';
@@ -56,6 +56,7 @@ import { selectProductType } from 'app/store/system-info/system-info.selectors';
     TnInputComponent,
     TnSelectComponent,
     TnCheckboxComponent,
+    TnBannerComponent,
     TnIconComponent,
     OauthButtonComponent,
     TranslateModule,
@@ -105,6 +106,7 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
       portRangeValidator(),
     ]],
     security: [MailSecurity.Plain],
+    validate_certificate: [true],
     smtp: [false],
     user: [''],
     pass: [''],
@@ -139,6 +141,29 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
   });
 
   protected isSmtp = computed(() => this.sendMethod() === MailSendMethod.Smtp);
+
+  private security = toSignal(this.form.controls.security.valueChanges, {
+    initialValue: this.form.controls.security.value,
+  });
+
+  /**
+   * Middleware that predates `validate_certificate` neither returns it from `mail.config` nor accepts it in
+   * `mail.update` ("Extra inputs are not permitted"), so the option is offered only when the loaded config carries it.
+   */
+  private supportsCertificateValidation = signal(false);
+
+  /** Certificate validation only applies to the encrypted transports. */
+  protected showCertificateValidation = computed(
+    () => this.supportsCertificateValidation() && this.security() !== MailSecurity.Plain,
+  );
+
+  private validateCertificate = toSignal(this.form.controls.validate_certificate.valueChanges, {
+    initialValue: this.form.controls.validate_certificate.value,
+  });
+
+  protected isCertificateValidationDisabled = computed(
+    () => this.showCertificateValidation() && !this.validateCertificate(),
+  );
 
   protected hasOauthAuthorization = computed(() => {
     const creds = this.oauthCredentials();
@@ -240,6 +265,13 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
   private initEmailForm(emailConfig: MailConfig): void {
     this.form.patchValue(emailConfig);
 
+    // A disabled control is left out of `form.value`, so it is never sent to middleware that would reject it.
+    const supportsCertificateValidation = emailConfig.validate_certificate !== undefined;
+    this.supportsCertificateValidation.set(supportsCertificateValidation);
+    if (!supportsCertificateValidation) {
+      this.form.controls.validate_certificate.disable();
+    }
+
     if (emailConfig.oauth?.client_id) {
       this.sendMethodControl.setValue(emailConfig.oauth?.provider);
       this.oauthCredentials.set(emailConfig.oauth);
@@ -295,6 +327,9 @@ export class EmailFormComponent extends IxFormHostForm implements OnInit {
         update.outgoingserver = 'smtp-mail.outlook.com';
         update.port = 587;
         update.security = MailSecurity.Tls;
+        if (this.supportsCertificateValidation()) {
+          update.validate_certificate = true;
+        }
       }
     }
 
