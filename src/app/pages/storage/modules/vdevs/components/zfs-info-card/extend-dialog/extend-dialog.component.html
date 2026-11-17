@@ -8,7 +8,11 @@
     [tooltip]="helptext.dialogFormFields.newDisk.tooltip | translate"
   ></ix-unused-disk-select>
 
-  <ix-sed-disk-password [poolId]="data.poolId" [disk]="newDisk()"></ix-sed-disk-password>
+  <ix-sed-disk-password
+    [poolId]="data.poolId"
+    [disk]="newDisk()"
+    [passwordApplied]="isPasswordApplied()"
+  ></ix-sed-disk-password>
 
 </form>
 <ix-form-actions tnDialogAction tnTestIdType="actions" [tnTestId]="'extend'">
