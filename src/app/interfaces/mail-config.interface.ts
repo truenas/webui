@@ -9,6 +9,8 @@ export interface MailConfig {
   pass: string;
   port: number;
   security: MailSecurity;
+  /** Absent on middleware that predates the option. */
+  validate_certificate?: boolean;
   smtp: boolean;
   user: string;
 }
@@ -30,6 +32,7 @@ export interface MailConfigUpdate {
   pass?: string;
   port?: number;
   security?: MailSecurity;
+  validate_certificate?: boolean;
   user?: string;
 }
 

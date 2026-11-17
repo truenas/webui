@@ -17,6 +17,7 @@ const fakeEmailConfig: MailConfig = {
   outgoingserver: 'google.com',
   port: 25,
   security: MailSecurity.Plain,
+  validate_certificate: true,
   smtp: false,
   pass: '',
   fromname: 'Test',
