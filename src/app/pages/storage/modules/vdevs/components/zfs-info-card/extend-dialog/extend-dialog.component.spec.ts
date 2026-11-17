@@ -4,10 +4,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import {
-  TnAutocompleteHarness, TnButtonHarness, TnInputHarness, TnRadioGroupHarness,
+  TnAutocompleteHarness, TnBannerHarness, TnButtonHarness, TnInputHarness, TnRadioGroupHarness,
 } from '@truenas/ui-components';
 import {
-  catchError, EMPTY, Observable, of, Subject, throwError,
+  catchError, defer, EMPTY, finalize, Observable, of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
@@ -172,7 +172,7 @@ describe('ExtendDialogComponent', () => {
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.attach', [4, expect.objectContaining({ new_disk: 'sde' })]);
   });
 
-  it('shows a loader and blocks a second submit while the extension is in progress', async () => {
+  it('blocks a second submit while the extension is in progress', async () => {
     const jobClosed$ = new Subject<unknown>();
     jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
       afterClosed: () => jobClosed$,
@@ -184,7 +184,6 @@ describe('ExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
 
-    expect(spectator.inject(LoaderService).withLoader).toHaveBeenCalled();
     expect(await extendButton.isDisabled()).toBe(true);
 
     spectator.dispatchFakeEvent('form', 'submit');
@@ -215,6 +214,12 @@ describe('ExtendDialogComponent', () => {
     const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
     await extendButton.click();
     await spectator.fixture.whenStable();
+
+    // The password is on the disk now, so it can no longer be changed for the retry.
+    const banner = await loader.getHarness(TnBannerHarness);
+    expect(await banner.getText()).toContain('An individual SED password was already applied to sde');
+    expect(await loader.getAllHarnesses(TnInputHarness)).toHaveLength(0);
+
     await extendButton.click();
     await spectator.fixture.whenStable();
 
@@ -252,5 +257,45 @@ describe('ExtendDialogComponent', () => {
 
     expect(api.call).toHaveBeenCalledWith('disk.unlock_sed', [{ name: 'sde', password: 'disk-secret' }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
+  });
+
+  it('keeps the loader open over the SED step and closes it before the job runs', async () => {
+    let isLoaderOpen = false;
+    let wasLoaderOpenForUnlock = false;
+    jest.spyOn(spectator.inject(LoaderService), 'withLoader').mockImplementation((
+      () => (source$: Observable<unknown>) => defer(() => {
+        isLoaderOpen = true;
+        return source$.pipe(finalize(() => isLoaderOpen = false));
+      })
+    ) as LoaderService['withLoader']);
+
+    const api = spectator.inject(ApiService) as unknown as MockApiService;
+    api.mockQuery('disk.query', [{ name: 'sde', sed: true, sed_status: SedStatus.Locked } as WebUiQueryEntity<'disk.query'>]);
+    api.mockCall('disk.unlock_sed', () => {
+      wasLoaderOpenForUnlock = isLoaderOpen;
+      return true;
+    });
+    const jobClosed$ = new Subject<unknown>();
+    jest.spyOn(spectator.inject(DialogService), 'jobDialog').mockReturnValue({
+      afterClosed: () => jobClosed$,
+    } as ReturnType<DialogService['jobDialog']>);
+    spectator.fixture.autoDetectChanges();
+
+    const disk = await loader.getHarness(TnAutocompleteHarness);
+    await disk.selectOption('sde (10.91 TiB)');
+    await spectator.fixture.whenStable();
+    const source = await loader.getHarness(TnRadioGroupHarness);
+    await source.select('Individual password for this disk');
+    const password = await loader.getHarness(TnInputHarness);
+    await password.setValue('disk-secret');
+
+    const extendButton = await loader.getHarness(TnButtonHarness.with({ label: 'Extend' }));
+    await extendButton.click();
+    await spectator.fixture.whenStable();
+
+    expect(wasLoaderOpenForUnlock).toBe(true);
+    expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
+    // The job dialog is still open here, so the loader must not be wrapped around it.
+    expect(isLoaderOpen).toBe(false);
   });
 });
