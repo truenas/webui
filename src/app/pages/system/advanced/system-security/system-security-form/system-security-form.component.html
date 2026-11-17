@@ -117,6 +117,13 @@
         [attr.aria-describedby]="isStigEnabled() && form.controls.password_history_length.hasError('stigPasswordHistoryLength') ? 'password-history-error' : null"
       ></ix-input>
 
+      <ix-slide-toggle
+        formControlName="require_nts"
+        color="primary"
+        [label]="'Require NTS' | translate"
+        [tooltip]="'Use only NTP servers with Network Time Security (NTS) to adjust the system clock. Servers without NTS, including servers from DHCP, are ignored, and the clock is not adjusted when no NTS server is reachable. Requires at least one NTP server with NTS enabled.' | translate"
+      ></ix-slide-toggle>
+
       <div class="form-actions">
         <button
           *ixRequiresRoles="requiredRoles"

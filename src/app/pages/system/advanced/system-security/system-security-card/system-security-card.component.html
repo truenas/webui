@@ -87,6 +87,13 @@
           }
         </span>
       </mat-list-item>
+
+      <mat-list-item>
+        <span class="label">{{ 'Require NTS' | translate }}:</span>
+        <span *ixWithLoadingState="systemSecurityConfig$ as systemSecurityConfig" class="value">
+          {{ systemSecurityConfig?.require_nts ? ('Yes' | translate) : ('No' | translate) }}
+        </span>
+      </mat-list-item>
     </mat-list>
   </mat-card-content>
 </mat-card>

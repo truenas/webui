@@ -20,6 +20,12 @@
         ></ix-input>
 
         <ix-checkbox
+          formControlName="nts"
+          [label]="helptext.nts.label | translate"
+          [tooltip]="helptext.nts.tooltip | translate"
+        ></ix-checkbox>
+
+        <ix-checkbox
           formControlName="burst"
           [label]="helptext.burst.label | translate"
           [tooltip]="helptext.burst.tooltip | translate"

@@ -5,6 +5,7 @@ export interface NtpServer {
   id: number;
   maxpoll: number;
   minpoll: number;
+  nts: boolean;
   prefer: boolean;
 }
 
@@ -15,5 +16,6 @@ export interface CreateNtpServer {
   iburst?: boolean;
   maxpoll: number;
   minpoll: number;
+  nts?: boolean;
   prefer?: boolean;
 }

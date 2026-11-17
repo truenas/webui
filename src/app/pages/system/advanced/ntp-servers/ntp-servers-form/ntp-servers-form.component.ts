@@ -55,6 +55,7 @@ export class NtpServersFormComponent implements OnInit {
 
   formGroup = this.fb.nonNullable.group({
     address: [''],
+    nts: [false],
     burst: [false],
     iburst: [true],
     prefer: [false],
@@ -100,6 +101,7 @@ export class NtpServersFormComponent implements OnInit {
   protected setupForm(server: NtpServer): void {
     this.formGroup.patchValue({
       address: server.address,
+      nts: server.nts,
       burst: server.burst,
       iburst: server.iburst,
       prefer: server.prefer,
@@ -119,6 +121,13 @@ export class NtpServersFormComponent implements OnInit {
       maxpoll: values.maxpoll,
       force: values.force,
     };
+
+    // `nts` goes out only when it changes something: a create defaults it to off and an update leaves an omitted
+    // field as it is. Middleware older than NAS-144162 refuses the field outright, so an unconditional
+    // `nts: false` would break every save there.
+    if (Boolean(values.nts) !== Boolean(this.editingServer?.nts)) {
+      body.nts = values.nts;
+    }
 
     this.isFormLoading.set(true);
     let request$: Observable<unknown>;
