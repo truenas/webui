@@ -307,7 +307,6 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
-        require_nts: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: null,
@@ -334,7 +333,6 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
-        require_nts: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: undefined,
@@ -357,7 +355,6 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
-        require_nts: false,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: { $set: [] },

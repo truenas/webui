@@ -35,6 +35,22 @@ describe('getNtpServersFormConfig', () => {
     expect(api.call).toHaveBeenCalledWith('system.ntpserver.create', [allValues]);
   });
 
+  it('leaves nts out when it changes nothing, so middleware without NTS still accepts the save', () => {
+    const definition = getNtpServersFormConfig(api, translate, { id: 7, nts: false } as NtpServer);
+    const values = { ...allValues, nts: false };
+    definition.submit({ isEdit: true, allValues: values, changedValues: values } as FormSubmitEvent<CreateNtpServer>);
+
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.update', [7, allValues]);
+  });
+
+  it('sends nts: false when NTS is turned off on a server that had it', () => {
+    const definition = getNtpServersFormConfig(api, translate, { id: 7, nts: true } as NtpServer);
+    const values = { ...allValues, nts: false };
+    definition.submit({ isEdit: true, allValues: values, changedValues: values } as FormSubmitEvent<CreateNtpServer>);
+
+    expect(api.call).toHaveBeenCalledWith('system.ntpserver.update', [7, values]);
+  });
+
   it('builds an update request scoped to the edited server id', () => {
     const definition = getNtpServersFormConfig(api, translate, { id: 7 } as NtpServer);
     definition.submit({ isEdit: true, allValues, changedValues: allValues } as FormSubmitEvent<CreateNtpServer>);

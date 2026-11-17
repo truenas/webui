@@ -26,10 +26,11 @@ export function toSystemSecurityConfig(config: CallResponse<D, 'system.security.
 
 /**
  * `system.security.update` declares `password_complexity_ruleset` as a plain list; the form has always sent
- * the `{ $set }` envelope the config read returns. The request is unchanged.
+ * the `{ $set }` envelope the config read returns. The request is unchanged. The update is partial, so the form
+ * may leave fields out.
  */
 export function toSystemSecurityUpdateArgs(
-  config: SystemSecurityConfig,
+  config: Partial<SystemSecurityConfig>,
 ): JobParams<D, 'system.security.update'>[0] {
   return config as unknown as JobParams<D, 'system.security.update'>[0];
 }
