@@ -13,7 +13,7 @@
 
 @if (pool) {
   @let selectedNode = selectedNode$ | async;
-  @let showDetails = !masterList.searchQuery() || selectedNode.disk.toLowerCase().includes(masterList.searchQuery().toLowerCase());
+  @let showDetails = !masterList.searchQuery() || (selectedNode && deviceMatchesSearch(selectedNode, masterList.searchQuery()));
 
   <ix-master-detail-view
     #masterDetailView="masterDetailViewContext"

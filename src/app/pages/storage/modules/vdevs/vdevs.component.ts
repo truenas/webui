@@ -18,6 +18,7 @@ import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/compo
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
+import { deviceMatchesSearch } from 'app/pages/storage/modules/vdevs/utils/device-matches-search.utils';
 
 const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyItemType.Raidz2, TopologyItemType.Raidz3];
 
@@ -52,6 +53,7 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   protected poolName = toSignal(this.vDevsStore.poolName$, { initialValue: '' });
 
   protected readonly requiredRoles = [Role.PoolWrite];
+  protected readonly deviceMatchesSearch = deviceMatchesSearch;
 
   protected isMobileView = signal(false);
   protected showMobileDetails = signal(false);

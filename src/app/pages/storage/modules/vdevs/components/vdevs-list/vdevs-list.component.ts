@@ -10,9 +10,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
 import { VDevNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
-import {
-  isTopologyDisk, isVdev, TopologyDisk,
-} from 'app/interfaces/storage.interface';
+import { TopologyDisk } from 'app/interfaces/storage.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
@@ -28,10 +26,13 @@ import { LayoutService } from 'app/modules/layout/layout.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/vdevs/components/vdev-group-node/vdev-group-node.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { collectDescendantWarning } from 'app/pages/storage/modules/vdevs/utils/descendant-warning';
+import { deviceMatchesSearch } from 'app/pages/storage/modules/vdevs/utils/device-matches-search.utils';
+import { findReplacementNode } from 'app/pages/storage/modules/vdevs/utils/find-replacement-node.utils';
 
 @Component({
   selector: 'ix-vdevs-list',
@@ -76,6 +77,10 @@ export class VDevsListComponent implements OnInit {
   // collapse sticks across `nodes$` refreshes — we only auto-expand a given node once.
   private readonly autoExpandedGuids = new Set<string>();
 
+  // The path to the last device that was selected. Kept so that when a refresh removes it, for example a replaced
+  // disk detached once its resilver finished, what took its place can be selected instead.
+  private lastSelectedBranch: VDevNestedDataNode[] | null = null;
+
   searchQuery = signal('');
   protected isLoading$ = this.vDevsStore.isLoading$;
   protected selectedNode$ = this.vDevsStore.selectedNode$;
@@ -98,6 +103,7 @@ export class VDevsListComponent implements OnInit {
 
   ngOnInit(): void {
     this.vDevsStore.loadNodes(this.poolId());
+    this.vDevsStore.listenForPoolChanges().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     this.listenForRouteChanges();
     this.setupTree();
   }
@@ -118,50 +124,64 @@ export class VDevsListComponent implements OnInit {
   private setupTree(): void {
     this.vDevsStore.nodes$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(
-        (nodes) => {
-          this.createDataSource(nodes);
-          this.treeControl.dataNodes = nodes;
-          this.openGroupNodes();
-          this.expandNodesWithDescendantWarning(nodes);
-          this.cdr.markForCheck();
-
-          if (!nodes.length) {
-            return;
-          }
-
-          const routeGuid = this.route.snapshot.paramMap.get('guid');
-          if (routeGuid) {
-            this.vDevsStore.selectNodeByGuid(routeGuid);
-          }
-        },
-      );
+      .subscribe((nodes) => this.onNodesLoaded(nodes));
 
     this.vDevsStore.selectedBranch$
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
       .subscribe((selectedBranch: VDevNestedDataNode[]) => {
+        this.lastSelectedBranch = selectedBranch;
         selectedBranch.forEach((node) => this.treeControl.expand(node));
       });
+  }
+
+  private onNodesLoaded(nodes: VDevNestedDataNode[]): void {
+    this.createDataSource(nodes);
+    if (this.searchQuery()) {
+      // A refresh can happen while the search box still has a query in it.
+      this.dataSource.filter(this.searchQuery());
+    }
+    this.treeControl.dataNodes = nodes;
+    this.openGroupNodes();
+    this.expandNodesWithDescendantWarning(nodes);
+    this.cdr.markForCheck();
+
+    if (!nodes.length) {
+      return;
+    }
+
+    const routeGuid = this.route.snapshot.paramMap.get('guid');
+    if (!routeGuid) {
+      return;
+    }
+
+    const replacement = this.findReplacement(nodes, routeGuid);
+    if (replacement) {
+      this.vDevsStore.selectNodeByGuid(replacement.guid);
+      this.layoutService.navigatePreservingScroll(
+        this.router,
+        ['/storage', this.poolId(), 'vdevs', replacement.guid],
+        { replaceUrl: true },
+      );
+      return;
+    }
+
+    this.vDevsStore.selectNodeByGuid(routeGuid);
+  }
+
+  /** What to select instead of the device in the URL, when it was selected before and is now gone. */
+  private findReplacement(nodes: VDevNestedDataNode[], routeGuid: string): VDevNestedDataNode | null {
+    const branch = this.lastSelectedBranch;
+    if (branch?.at(-1)?.guid !== routeGuid || getTreeBranchToNode(nodes, (node) => node.guid === routeGuid)) {
+      return null;
+    }
+
+    return findReplacementNode(nodes, branch);
   }
 
   private createDataSource(dataNodes: VDevNestedDataNode[]): void {
     this.dataSource = new NestedTreeDataSource();
     this.dataSource.filterPredicate = (nodesToFilter, query = '') => {
-      return flattenTreeWithFilter(nodesToFilter, (dataNode) => {
-        if (isVdevGroup(dataNode)) {
-          return false;
-        }
-
-        if (isVdev(dataNode)) {
-          return dataNode.name?.toLowerCase().includes(query.toLowerCase());
-        }
-
-        if (isTopologyDisk(dataNode)) {
-          return dataNode.disk?.toLowerCase().includes(query.toLowerCase());
-        }
-
-        return false;
-      });
+      return flattenTreeWithFilter(nodesToFilter, (dataNode) => deviceMatchesSearch(dataNode, query));
     };
     this.dataSource.sortComparer = (nodeA, nodeB) => {
       const topologyDiskA = nodeA as TopologyDisk;

@@ -3,7 +3,10 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
 import { EMPTY, Observable, of } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError, debounceTime, filter, map, switchMap, tap,
+} from 'rxjs/operators';
+import { CollectionChangeType } from 'app/enums/api.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
@@ -84,37 +87,48 @@ export class VDevsStore extends ComponentStore<VDevsState> {
         });
       }),
       switchMap((poolId) => {
-        return this.api.call('pool.query', [[['id', '=', poolId]]]).pipe(
-          switchMap((pools) => {
-            if (!pools?.length) {
-              return of([]);
-            }
-            return this.api.call('disk.query', [[['pool', '=', pools[0].name]], { extra: { pools: true } }]).pipe(
-              tap((disks) => {
-                this.patchState({
-                  isLoading: false,
-                  error: null,
-                  poolName: pools[0].name,
-                  diskDictionary: keyBy(disks, (disk) => disk.devname),
-                  nodes: this.createDataNodes(pools[0].topology),
-                });
-              }),
-              catchError((error: unknown) => {
-                this.patchState({
-                  isLoading: false,
-                  error,
-                });
+        return this.fetchPool(poolId).pipe(
+          tap((loaded) => this.patchState({ ...loaded, isLoading: false, error: null })),
+          catchError((error: unknown) => {
+            this.patchState({
+              isLoading: false,
+              error,
+            });
 
-                this.errorHandler.showErrorModal(error);
+            this.errorHandler.showErrorModal(error);
 
-                return EMPTY;
-              }),
-            );
+            return EMPTY;
           }),
         );
       }),
     );
   });
+
+  /**
+   * Refreshes the loaded pool when middleware reports that its devices changed: a disk faulted or dropped off,
+   * a resilver finished, a spare took over. The store is shared across the app, so the page subscribes to this
+   * for as long as it is open. Unlike `loadNodes`, it keeps the selection and leaves `isLoading` alone, so the
+   * tree doesn't flash.
+   */
+  listenForPoolChanges(): Observable<unknown> {
+    return this.api.subscribe('pool.query').pipe(
+      filter((event) => event.msg === CollectionChangeType.Changed),
+      filter((event) => event.id === this.get().poolId),
+      // A state change and the config sync that follows it arrive together.
+      debounceTime(300),
+      filter((event) => {
+        const changedNodes = this.createDataNodes(event.fields.topology);
+        return getTopologyKey(changedNodes) !== getTopologyKey(this.get().nodes);
+      }),
+      switchMap((event) => this.fetchPool(event.id as number).pipe(
+        tap((loaded) => this.patchState(loaded)),
+        catchError((error: unknown) => {
+          this.errorHandler.showErrorModal(error);
+          return EMPTY;
+        }),
+      )),
+    );
+  }
 
   readonly reloadList = this.effect((triggers$: Observable<void>) => {
     return triggers$.pipe(
@@ -138,7 +152,29 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     super(initialState);
   }
 
-  private createDataNodes(topology: PoolTopology): VDevNestedDataNode[] {
+  private fetchPool(poolId: number): Observable<Partial<VDevsState>> {
+    return this.api.call('pool.query', [[['id', '=', poolId]]]).pipe(
+      switchMap(([pool]) => {
+        if (!pool) {
+          return of({});
+        }
+        return this.api.call('disk.query', [[['pool', '=', pool.name]], { extra: { pools: true } }]).pipe(
+          map((disks) => ({
+            poolName: pool.name,
+            diskDictionary: keyBy(disks, (disk) => disk.devname),
+            nodes: this.createDataNodes(pool.topology),
+          })),
+        );
+      }),
+    );
+  }
+
+  private createDataNodes(topology: PoolTopology | null): VDevNestedDataNode[] {
+    // Middleware reports no topology for a pool that ZFS does not list, so there are no devices to show.
+    if (!topology) {
+      return [];
+    }
+
     const dataNodes: VDevNestedDataNode[] = [];
     if (topology.data.length) {
       dataNodes.push({
@@ -198,4 +234,32 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     }
     return this.state().diskDictionary[node.disk];
   }
+}
+
+/**
+ * What a change event can alter that the page shows: which devices there are and where, their state and their
+ * error counts. Usage statistics are left out because they change all the time.
+ */
+function getTopologyKey(nodes: VDevNestedDataNode[]): string {
+  return JSON.stringify(describeNodes(nodes));
+}
+
+// Sorted by guid, because the tree sorts the children of the nodes it is given in place.
+function describeNodes(nodes: VDevNestedDataNode[] = []): unknown[] {
+  return [...nodes]
+    .sort((nodeA, nodeB) => nodeA.guid.localeCompare(nodeB.guid))
+    .map((node) => {
+      if (isVdevGroup(node)) {
+        return [node.guid, describeNodes(node.children)];
+      }
+
+      return [
+        node.guid,
+        node.status,
+        node.stats?.read_errors,
+        node.stats?.write_errors,
+        node.stats?.checksum_errors,
+        describeNodes(node.children),
+      ];
+    });
 }

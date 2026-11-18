@@ -1,12 +1,15 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconComponent } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
+import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
 import { TreeViewComponent } from 'app/modules/ix-tree/components/tree-view/tree-view.component';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/vdevs/components/vdev-group-node/vdev-group-node.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -478,6 +481,7 @@ describe('VDevsListComponent', () => {
           selectedNode$: of(selectedNode),
           isLoading$: of(false),
           loadNodes: jest.fn(),
+          listenForPoolChanges: jest.fn(() => of()),
           nodes$: of(nodes),
           selectedBranch$: of(selectedBranch),
         }),
@@ -541,6 +545,7 @@ describe('VDevsListComponent', () => {
             selectedNode$: of(null),
             isLoading$: of(false),
             loadNodes: jest.fn(),
+            listenForPoolChanges: jest.fn(() => of()),
             nodes$: of(faultedNodes),
             selectedBranch$: of(null),
           }),
@@ -554,6 +559,118 @@ describe('VDevsListComponent', () => {
 
       const rowTexts = spectator.queryAll('.cell-name').map((el) => el.textContent?.trim());
       expect(rowTexts).toContain('sde');
+    });
+  });
+
+  describe('following pool changes', () => {
+    let nodes$: BehaviorSubject<VDevNestedDataNode[]>;
+    let selectedBranch$: BehaviorSubject<VDevNestedDataNode[] | null>;
+    let poolChanges$: Subject<unknown>;
+
+    function setupList(initialNodes: VDevNestedDataNode[], initialBranch: VDevNestedDataNode[] | null): void {
+      nodes$ = new BehaviorSubject(initialNodes);
+      selectedBranch$ = new BehaviorSubject(initialBranch);
+      poolChanges$ = new Subject<unknown>();
+      const routeGuid = initialBranch?.at(-1)?.guid || null;
+
+      spectator = createComponent({
+        props: { poolId: 2 },
+        providers: [
+          mockProvider(VDevsStore, {
+            selectedNode$: of(initialBranch?.at(-1) || null),
+            isLoading$: of(false),
+            loadNodes: jest.fn(),
+            listenForPoolChanges: jest.fn(() => poolChanges$),
+            selectNodeByGuid: jest.fn(),
+            nodes$,
+            selectedBranch$,
+          }),
+          mockProvider(LayoutService),
+          {
+            provide: ActivatedRoute,
+            useValue: { params: of({}), snapshot: { paramMap: { get: () => routeGuid } } },
+          },
+        ],
+      });
+    }
+
+    function disk(guid: string, name: string): VDevNestedDataNode {
+      return {
+        guid, name, disk: name, type: 'DISK', status: 'ONLINE', children: [],
+      } as VDevNestedDataNode;
+    }
+
+    function vdev(guid: string, type: string, children: VDevNestedDataNode[]): VDevNestedDataNode {
+      return {
+        guid, name: guid, type, status: 'ONLINE', children,
+      } as VDevNestedDataNode;
+    }
+
+    function dataGroup(children: VDevNestedDataNode[]): VDevNestedDataNode {
+      return { group: 'Data VDEVs', guid: 'data', children } as VDevNestedDataNode;
+    }
+
+    it('listens for pool changes while it is shown', () => {
+      setupList(nodes, null);
+
+      expect(poolChanges$.observed).toBe(true);
+
+      spectator.fixture.destroy();
+
+      expect(poolChanges$.observed).toBe(false);
+    });
+
+    it('keeps the search filter when the devices are refreshed', async () => {
+      setupList(nodes, null);
+      spectator.detectChanges();
+
+      const search = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(BasicSearchHarness);
+      await search.setValue('sdd');
+      spectator.detectChanges();
+      expect(spectator.queryAll('.cell-name').map((row) => row.textContent)).toEqual(['sdd']);
+
+      // The tree applies its filter after a debounce, which the harness waited for above but nothing waits for here.
+      jest.useFakeTimers();
+      nodes$.next([...nodes]);
+      jest.advanceTimersByTime(200);
+      spectator.detectChanges();
+
+      expect(spectator.queryAll('.cell-name').map((row) => row.textContent)).toEqual(['sdd']);
+      jest.useRealTimers();
+    });
+
+    it('selects the disk that took the place of the selected one when it is gone', () => {
+      const oldDisk = disk('old-guid', 'sdc');
+      const newDisk = disk('new-guid', 'sde');
+      const otherDisk = disk('other-guid', 'sdd');
+      const replacing = vdev('replacing-0', 'REPLACING', [oldDisk, newDisk]);
+      const mirror = vdev('mirror-0', 'MIRROR', [replacing, otherDisk]);
+      const group = dataGroup([mirror]);
+      setupList([group], [group, mirror, replacing, oldDisk]);
+      spectator.detectChanges();
+
+      selectedBranch$.next(null);
+      nodes$.next([dataGroup([vdev('mirror-0', 'MIRROR', [newDisk, otherDisk])])]);
+
+      expect(spectator.inject(VDevsStore).selectNodeByGuid).toHaveBeenLastCalledWith('new-guid');
+      expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(
+        expect.anything(),
+        ['/storage', 2, 'vdevs', 'new-guid'],
+        { replaceUrl: true },
+      );
+    });
+
+    it('keeps the selected device when it is still there after a refresh', () => {
+      const oldDisk = disk('old-guid', 'sdc');
+      const mirror = vdev('mirror-0', 'MIRROR', [oldDisk]);
+      const group = dataGroup([mirror]);
+      setupList([group], [group, mirror, oldDisk]);
+      spectator.detectChanges();
+
+      nodes$.next([dataGroup([vdev('mirror-0', 'MIRROR', [disk('old-guid', 'sdc')])])]);
+
+      expect(spectator.inject(VDevsStore).selectNodeByGuid).toHaveBeenLastCalledWith('old-guid');
+      expect(spectator.inject(LayoutService).navigatePreservingScroll).not.toHaveBeenCalled();
     });
   });
 });
