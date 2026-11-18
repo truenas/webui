@@ -1,5 +1,6 @@
 {
   "0": "0",
+  "A Global SED Password is already configured. Changing it only updates the password TrueNAS stores for unlocking drives (in Advanced Settings). It does not change the password on drives that are already initialized.": "",
   "Enter 0 to remove the quota, or a value of 1 GiB or larger.": "",
   "Forced power off. Ends the VM immediately, like pulling the power cord. {warning}": "",
   "Graceful shutdown. Asks the guest OS to shut down cleanly; the guest may take time to respond or ignore the request.": "",
@@ -5824,7 +5825,6 @@
   "The friendly name to show in front of the sending email address. Example: <i>Storage System 01</i>&lt;it@example.com&gt;": "送信元メールアドレスの前に表示するわかりやすい名前。例: <i>Storage System 01</i>&lt;it@example.com&gt;",
   "The full DNS domain name of the Active Directory domain. This must not be a domain controller. Example: \"mydomain.internal\".": "Active Directory ドメインの完全な DNS ドメイン名。これはドメインコントローラーであってはなりません。例: 「mydomain.internal」。",
   "The Global SED Password is a system-wide setting that applies to all pools using SED encryption.": "グローバル SED パスワードは、SED 暗号化を使用するすべてのプールに適用されるシステム全体の設定です。",
-  "The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.": "グローバル SED パスワードはシステム全体の設定です。パスワードはすでに設定されています。ここに新しいパスワードを入力すると、SED 暗号化を使用しているすべてのプールのパスワードが更新されます。",
   "The GMail OAuth configuration was discarded, so TrueNAS can no longer send mail. Re-authorize the mail account.": "GMail OAuth 設定が破棄されたため、TrueNAS はメールを送信できなくなりました。メールアカウントを再認証してください。",
   "The Group ID (GID) is a unique number used to identify a Unix group. Enter a number above 1000 for a group with user accounts. Groups used by a service must have an ID that matches the default port number used by the service.": "グループID (GID) は Unix のグループを識別するためのユニークな数値です。ユーザーアカウントのために 1000 以上の数字で指定してください。サービスにより利用されるグループは、サービスがデフォルトで利用するポート番号と一致するIDを割り当てる必要があります。",
   "The guest OS is not shut down cleanly, which may result in data loss or filesystem corruption.": "ゲスト OS が正常にシャットダウンされないため、データの損失やファイルシステムの破損が発生する可能性があります。",

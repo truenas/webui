@@ -376,6 +376,9 @@ describe('GeneralWizardStepComponent with existing SED password', () => {
 
     const warningMessage = spectator.query('ix-warning');
     expect(warningMessage).toBeTruthy();
-    expect(warningMessage).toHaveText('The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.');
+    expect(warningMessage).toHaveText(
+      'A Global SED Password is already configured. Changing it only updates the password TrueNAS stores for unlocking drives (in Advanced Settings). It does not change the password on drives that are already initialized.',
+    );
+    expect(warningMessage).not.toHaveText('for all pools using SED encryption');
   });
 });
