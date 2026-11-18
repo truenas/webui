@@ -3,7 +3,9 @@
  * unused disk, from Replace on the disk's Disk Info card.
  *
  * The change is asserted on the page and through `pool.query`, which holds the
- * mirror's disks and their ZFS status.
+ * mirror's disks and their ZFS status. The page is left open through the resilver,
+ * which ZFS finishes after the dialog has closed, so the page has to follow it on
+ * its own: the old disk leaves the tree and the new one, in its place, is selected.
  *
  * ## Why this spec builds its own pool
  *
@@ -36,6 +38,9 @@ const resilverTimeoutMs = 60_000;
 
 /** Middleware reads the old disk back into the unused inventory once it is detached. */
 const inventoryTimeoutMs = 30_000;
+
+/** Middleware sends the detach once ZFS has made it, and the page reads the pool again. A ceiling only. */
+const liveUpdateTimeoutMs = 30_000;
 
 /** Mirror members in device-name order, so the comparison does not depend on ZFS's. */
 function byName(a: { name?: string | null }, b: { name?: string | null }): number {
@@ -88,11 +93,11 @@ test('an admin replaces a disk in a mirror with an unused disk', async ({ page, 
     .poll(async () => (await getSelectableDisks(api)).map(({ name }) => name), { timeout: inventoryTimeoutMs })
     .toContain(target.name);
 
-  // Opened again from the dashboard, so the tree is read back from the appliance
-  // rather than left as the dialog's reload found it mid-resilver.
+  // Not opened again: the page has stayed open since the dialog closed, and follows the
+  // pool on its own. The old disk was selected, so the new one in its place is now.
   const added = after.disks.find(({ disk: name }) => name === replacement.name);
-  await openVdevsPage(page, pool);
-  await page.locator(vdevsPageLocators.node(after.guid)).click();
+  await expect(page.locator(vdevsPageLocators.node(target.guid))).toHaveCount(0, { timeout: liveUpdateTimeoutMs });
   await expect(page.locator(vdevsPageLocators.nodeName(added?.guid ?? ''))).toHaveText(replacement.devname);
-  await expect(page.locator(vdevsPageLocators.node(target.guid))).toHaveCount(0);
+  await expect(page).toHaveURL(new RegExp(`/vdevs/${added?.guid}$`));
+  await expect(page.locator(vdevsPageLocators.detailsTitle)).toHaveText(replacement.devname);
 });

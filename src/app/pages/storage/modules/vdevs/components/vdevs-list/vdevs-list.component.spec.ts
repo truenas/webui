@@ -1,12 +1,14 @@
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
-import { signal } from '@angular/core';
+import { signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnIconButtonHarness, TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
+import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
+import { LayoutService } from 'app/modules/layout/layout.service';
 import { TopologyItemNodeComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-node/topology-item-node.component';
 import { VDevGroupNodeComponent } from 'app/pages/storage/modules/vdevs/components/vdev-group-node/vdev-group-node.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -475,6 +477,7 @@ describe('VDevsListComponent', () => {
           selectedNode: signal(selectedNode),
           isLoading: signal(false),
           loadNodes: jest.fn(),
+          listenForPoolChanges: jest.fn(() => of()),
           nodes: signal(nodes),
           selectedBranch: signal(selectedBranch),
         }),
@@ -549,6 +552,7 @@ describe('VDevsListComponent', () => {
             selectedNode: signal(null),
             isLoading: signal(false),
             loadNodes: jest.fn(),
+            listenForPoolChanges: jest.fn(() => of()),
             nodes: signal(faultedNodes),
             selectedBranch: signal(null),
           }),
@@ -571,6 +575,126 @@ describe('VDevsListComponent', () => {
       const [mirror] = await tree.getNodes({ level: 1 });
       expect(await group.isExpanded()).toBe(true);
       expect(await mirror.isExpanded()).toBe(true);
+    });
+  });
+
+  describe('following pool changes', () => {
+    let nodes$: WritableSignal<VDevNestedDataNode[]>;
+    let selectedBranch$: WritableSignal<VDevNestedDataNode[] | null>;
+    let poolChanges$: Subject<unknown>;
+
+    function setupList(initialNodes: VDevNestedDataNode[], initialBranch: VDevNestedDataNode[] | null): void {
+      nodes$ = signal(initialNodes);
+      selectedBranch$ = signal(initialBranch);
+      poolChanges$ = new Subject<unknown>();
+      const routeGuid = initialBranch?.at(-1)?.guid || null;
+
+      spectator = createComponent({
+        props: { poolId: 2 },
+        providers: [
+          mockProvider(VDevsStore, {
+            selectedNode: signal(initialBranch?.at(-1) || null),
+            isLoading: signal(false),
+            loadNodes: jest.fn(),
+            listenForPoolChanges: jest.fn(() => poolChanges$),
+            selectNodeByGuid: jest.fn(),
+            nodes: nodes$,
+            selectedBranch: selectedBranch$,
+          }),
+          mockProvider(LayoutService),
+          {
+            provide: ActivatedRoute,
+            useValue: { params: of({}), snapshot: { paramMap: { get: () => routeGuid } } },
+          },
+        ],
+      });
+    }
+
+    function disk(guid: string, name: string): VDevNestedDataNode {
+      return {
+        guid, name, disk: name, type: 'DISK', status: 'ONLINE', children: [],
+      } as VDevNestedDataNode;
+    }
+
+    function vdev(guid: string, type: string, children: VDevNestedDataNode[]): VDevNestedDataNode {
+      return {
+        guid, name: guid, type, status: 'ONLINE', children,
+      } as VDevNestedDataNode;
+    }
+
+    function dataGroup(children: VDevNestedDataNode[]): VDevNestedDataNode {
+      return { group: 'Data VDEVs', guid: 'data', children } as VDevNestedDataNode;
+    }
+
+    it('listens for pool changes while it is shown', () => {
+      setupList(nodes, null);
+
+      expect(poolChanges$.observed).toBe(true);
+
+      spectator.fixture.destroy();
+
+      expect(poolChanges$.observed).toBe(false);
+    });
+
+    it('keeps the search filter when the devices are refreshed', async () => {
+      jest.useFakeTimers();
+      setupList(nodes, null);
+      spectator.detectChanges();
+      await settleDeferredTree(spectator.fixture);
+
+      const search = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(BasicSearchHarness);
+      await search.setValue('sdd');
+      await jest.advanceTimersByTimeAsync(300);
+      await settleDeferredTree(spectator.fixture);
+      expect(spectator.queryAll('.cell-name').map((row) => row.textContent)).toEqual(['sdd']);
+
+      nodes$.set([...nodes]);
+      spectator.detectChanges();
+      await jest.advanceTimersByTimeAsync(300);
+      await settleDeferredTree(spectator.fixture);
+
+      expect(spectator.queryAll('.cell-name').map((row) => row.textContent)).toEqual(['sdd']);
+      jest.useRealTimers();
+    });
+
+    it('selects the disk that took the place of the selected one when it is gone', async () => {
+      const oldDisk = disk('old-guid', 'sdc');
+      const newDisk = disk('new-guid', 'sde');
+      const otherDisk = disk('other-guid', 'sdd');
+      const replacing = vdev('replacing-0', 'REPLACING', [oldDisk, newDisk]);
+      const mirror = vdev('mirror-0', 'MIRROR', [replacing, otherDisk]);
+      const group = dataGroup([mirror]);
+      setupList([group], [group, mirror, replacing, oldDisk]);
+      spectator.detectChanges();
+      await settleDeferredTree(spectator.fixture);
+
+      nodes$.set([dataGroup([vdev('mirror-0', 'MIRROR', [newDisk, otherDisk])])]);
+      selectedBranch$.set(null);
+      spectator.detectChanges();
+      await settleDeferredTree(spectator.fixture);
+
+      expect(spectator.inject(VDevsStore).selectNodeByGuid).toHaveBeenLastCalledWith('new-guid');
+      expect(spectator.inject(LayoutService).navigatePreservingScroll).toHaveBeenCalledWith(
+        expect.anything(),
+        ['/storage', 2, 'vdevs', 'new-guid'],
+        { replaceUrl: true },
+      );
+    });
+
+    it('keeps the selected device when it is still there after a refresh', async () => {
+      const oldDisk = disk('old-guid', 'sdc');
+      const mirror = vdev('mirror-0', 'MIRROR', [oldDisk]);
+      const group = dataGroup([mirror]);
+      setupList([group], [group, mirror, oldDisk]);
+      spectator.detectChanges();
+      await settleDeferredTree(spectator.fixture);
+
+      nodes$.set([dataGroup([vdev('mirror-0', 'MIRROR', [disk('old-guid', 'sdc')])])]);
+      spectator.detectChanges();
+      await settleDeferredTree(spectator.fixture);
+
+      expect(spectator.inject(VDevsStore).selectNodeByGuid).toHaveBeenLastCalledWith('old-guid');
+      expect(spectator.inject(LayoutService).navigatePreservingScroll).not.toHaveBeenCalled();
     });
   });
 });
