@@ -196,6 +196,18 @@ describe('ServiceNfsComponent', () => {
     }]);
   });
 
+  // Keyed on the protocol, not the `NFSv3` label, which the library would kebab-case to `nf-sv3`.
+  it('gives the protocol options test ids built from the protocol', async () => {
+    await (await getSelect('protocols')).open();
+
+    const options = Array.from(document.querySelectorAll('[role="option"]'));
+    const nfsv3 = options.find((option) => option.textContent?.trim() === 'NFSv3');
+    const nfsv4 = options.find((option) => option.textContent?.trim() === 'NFSv4');
+
+    expect(nfsv3).toHaveAttribute('data-test', 'option-protocols-nfsv3');
+    expect(nfsv4).toHaveAttribute('data-test', 'option-protocols-nfsv4');
+  });
+
   it('disables NFSv4 specific fields when NFSv4 is not enabled', async () => {
     await (await getSelect('protocols')).selectOption('NFSv4');
 

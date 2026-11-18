@@ -24,6 +24,7 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
+import { optionTestIdByValue } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { rangeValidator, portRangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -132,6 +133,8 @@ export class ServiceNfsComponent extends IxFormHostForm<boolean, NfsFormValue> i
   });
 
   readonly protocolOptions$ = of(mapToOptions(nfsProtocolLabels, this.translate));
+  /** `option-protocols-nfsv3`, from `NFSV3`; the `NFSv3` label would give `nf-sv3`. */
+  protected readonly protocolOptionTestId = optionTestIdByValue;
   readonly requiredRoles = [Role.SharingNfsWrite, Role.SharingWrite];
 
   private readonly v4SpecificFields = ['v4_domain', 'v4_krb'] as const;
