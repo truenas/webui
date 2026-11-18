@@ -16,6 +16,7 @@ import { MatProgressBar } from '@angular/material/progress-bar';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
+import { omit } from 'lodash-es';
 import {
   filter, finalize, map, of, tap, forkJoin, zip,
 } from 'rxjs';
@@ -150,6 +151,7 @@ export class SystemSecurityFormComponent implements OnInit {
     // if STIG is enabled, then FIPS mode *must* also be enabled since FIPS is part of STIG
     enable_fips: [false, this.stigValidatorFn],
     enable_gpos_stig: [false],
+    require_nts: [false],
     min_password_age: [
       null as number | null,
       [Validators.min(1), Validators.max(365), this.stigValidatorFn],
@@ -560,7 +562,12 @@ export class SystemSecurityFormComponent implements OnInit {
   }
 
   private saveSettings(values: SystemSecurityConfig): void {
-    const valuesToSave = { ...values };
+    // `require_nts` goes out only when it changes: the update leaves an omitted field as it is, and middleware
+    // older than NAS-144162 refuses the field outright.
+    const valuesToSave: Partial<SystemSecurityConfig> = Boolean(values.require_nts)
+      === Boolean(this.systemSecurityConfig()?.require_nts)
+      ? omit(values, 'require_nts')
+      : { ...values };
     if (valuesToSave.password_complexity_ruleset) {
       valuesToSave.password_complexity_ruleset = {
         $set: valuesToSave.password_complexity_ruleset as unknown as PasswordComplexityRuleset[],

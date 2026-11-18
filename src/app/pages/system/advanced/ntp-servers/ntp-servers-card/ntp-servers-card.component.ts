@@ -70,6 +70,10 @@ export class NtpServersCardComponent implements OnInit {
       propertyName: 'address',
     }),
     yesNoColumn({
+      title: this.translate.instant('NTS'),
+      propertyName: 'nts',
+    }),
+    yesNoColumn({
       title: this.translate.instant('Burst'),
       propertyName: 'burst',
     }),

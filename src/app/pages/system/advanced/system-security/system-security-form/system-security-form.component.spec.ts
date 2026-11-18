@@ -40,6 +40,7 @@ type MockParams = unknown[] | object | void;
 const fakeSystemSecurityConfig: SystemSecurityConfig = {
   enable_fips: false,
   enable_gpos_stig: false,
+  require_nts: false,
   min_password_age: 10,
   max_password_age: 90,
   password_complexity_ruleset: { $set: [PasswordComplexityRuleset.Upper, PasswordComplexityRuleset.Lower] },
@@ -222,6 +223,7 @@ describe('SystemSecurityFormComponent', () => {
       await form.fillForm({
         'Enable FIPS': true,
         'Enable TrueNAS STIG compatibility mode': false,
+        'Require NTS': true,
         'Min Password Age': 15,
         'Max Password Age': 120,
         'Min Password Length': 10,
@@ -235,6 +237,7 @@ describe('SystemSecurityFormComponent', () => {
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('system.security.update', [{
         enable_fips: true,
         enable_gpos_stig: false,
+        require_nts: true,
         min_password_age: 15,
         max_password_age: 120,
         password_complexity_ruleset: { $set: ['UPPER', 'LOWER'] },
@@ -351,6 +354,7 @@ describe('SystemSecurityFormComponent', () => {
         'Password Complexity Ruleset': ['Upper', 'Lower'],
         'Min Password Length': '12',
         'Password History Length': '5',
+        'Require NTS': false,
       });
     });
 

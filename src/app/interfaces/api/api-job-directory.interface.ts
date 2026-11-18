@@ -175,7 +175,7 @@ export interface ApiJobDirectory {
   // System
   'system.reboot': { params: RebootParams; response: void };
   'system.shutdown': { params: ShutdownParams; response: void };
-  'system.security.update': { params: [SystemSecurityConfig]; response: void };
+  'system.security.update': { params: [Partial<SystemSecurityConfig>]; response: void };
 
   // SystemDataset
   'systemdataset.update': { params: [SystemDatasetUpdate]; response: SystemDatasetConfig };

@@ -27,6 +27,7 @@ describe('NtpServerFormComponent', () => {
   const editingNtpServer = {
     id: 1,
     address: 'mock.ntp.server',
+    nts: false,
     burst: false,
     iburst: true,
     prefer: false,
@@ -85,6 +86,46 @@ describe('NtpServerFormComponent', () => {
         force: true,
       }]);
     });
+
+    it('sends nts when the NTS checkbox is ticked', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({
+        Address: 'time.cloudflare.com',
+        NTS: true,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('system.ntpserver.create', [
+        expect.objectContaining({ address: 'time.cloudflare.com', nts: true }),
+      ]);
+    });
+  });
+
+  describe('editing ntp server with NTS', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => ({ ...editingNtpServer, nts: true }) }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    });
+
+    it('sends nts: false when NTS is turned off on a server that had it', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ NTS: false });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('system.ntpserver.update', [
+        1,
+        expect.objectContaining({ nts: false }),
+      ]);
+    });
   });
 
   describe('editing ntp server', () => {
@@ -104,6 +145,7 @@ describe('NtpServerFormComponent', () => {
 
       expect(values).toEqual({
         Address: 'mock.ntp.server',
+        NTS: false,
         Burst: false,
         IBurst: true,
         Prefer: false,
