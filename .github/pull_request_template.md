@@ -22,11 +22,3 @@ so if you are contributing from a fork, pick or file a ticket first
   suites and needs a replacement in this PR — see "Addressing a table row" in
   e2e/CLAUDE.md.
 -->
-
-### Downstream
-<!--- Note downstream areas that can be affected with a brief reasoning after "|" of each -->
-
-|Affects         |Reasoning
-|----------------|-------------------------------
-|Documentation   |
-|Testing         |
