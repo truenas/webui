@@ -144,6 +144,27 @@ describe('AlertComponent', () => {
       .toBe('2026-11-17 10:00:02 (America/Los_Angeles)');
   });
 
+  it('offers the browser clock in a tooltip when the browser is in another time zone', () => {
+    const timeTooltip = spectator.query(TnTooltipDirective, { parentSelector: '.alert-time' })!;
+
+    expect(timeTooltip.message()).toBe('Browser time: 2026-11-17 20:00:02');
+    expect(timeTooltip.disabled()).toBe(false);
+    expect(spectator.query('.alert-time .has-time-difference')).toExist();
+  });
+
+  it('drops the browser-time tooltip when the browser and the NAS share a time zone', () => {
+    spectator.inject(Store).dispatch(systemConfigLoaded({
+      generalConfig: { timezone: 'Europe/Kiev' } as SystemGeneralConfig,
+      advancedConfig: {} as AdvancedConfig,
+    }));
+    spectator.detectChanges();
+
+    expect(spectator.query(TnTooltipDirective, { parentSelector: '.alert-time' })!.disabled()).toBe(true);
+    expect(spectator.query('.alert-time .has-time-difference')).not.toExist();
+    expect(alert.dateTimeElement!.textContent!.replace(/\s{2,}/g, ' ').trim())
+      .toBe('2026-11-17 20:00:02 (Europe/Kiev)');
+  });
+
   it('falls back to the browser clock with no time-zone label while the NAS time zone is unknown', () => {
     spectator.inject(Store).dispatch(systemConfigLoaded({
       generalConfig: {} as SystemGeneralConfig,

@@ -126,6 +126,11 @@ export class AlertComponent {
    */
   protected readonly alertTime = computed(() => getMachineTime(this.alert().datetime.$date, this.timezone()));
 
+  /** The browser is in another zone, so its own clock is offered in a tooltip, as `<ix-date>` does. */
+  protected readonly isTimezoneDifference = computed(() => {
+    return this.alertTime().getTime() !== this.alert().datetime.$date;
+  });
+
   readonly levelLabel = computed(() => {
     this.langChange();
     const levelLabel = alertLevelLabels.get(this.alert().level) || this.alert().level;

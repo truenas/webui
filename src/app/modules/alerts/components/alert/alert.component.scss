@@ -144,6 +144,15 @@
   line-height: 0.7rem;
   margin-bottom: 2px;
   opacity: 0.7;
+
+  // Same cue as <ix-date>: a dashed underline marks a time with a browser-time tooltip.
+  .has-time-difference {
+    cursor: help;
+    text-decoration: underline;
+    text-decoration-color: var(--alt-fg1);
+    text-decoration-style: dashed;
+    text-underline-offset: 2px;
+  }
 }
 
 .action-link {
