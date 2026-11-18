@@ -1,16 +1,20 @@
 /**
  * Stories: the Storage dashboard tells an admin that a pool has lost redundancy,
- * and tells them again once it is repaired.
+ * and tells them again once it is repaired. A VDEVs page left open shows the
+ * change as it happens.
  *
  * The Storage Health card composes its line from the pool's status and its error
  * count, and picks a warning or a safe icon beside it. The VDEVs page shows ZFS's
- * own status for each vdev and disk.
+ * own status for each vdev and disk, and follows the pool's change events while it
+ * is open.
  *
  * ## Why the disk goes offline over the API
  *
  * Taking a disk offline is the setup here, not the subject: `pool-devices.e2e.ts`
  * already drives it from the VDEVs page. What this spec owns is what the dashboard
- * says about the pool afterwards.
+ * says about the pool afterwards, and what an open VDEVs page says when the change
+ * comes from outside it: another admin, the shell, or ZFS itself. The page's own
+ * Offline reloads the tree after it, so it cannot show that.
  *
  * ## Why this spec builds its own pool
  *
@@ -28,7 +32,7 @@ import {
 } from '../fixtures/pool-devices';
 import { ensurePoolAbsent } from '../fixtures/storage';
 import { goToStorage } from '../flows/navigation';
-import { openVdevsPage } from '../flows/pool-devices';
+import { openVdevsPage, selectMirrorDisk } from '../flows/pool-devices';
 import { vdevsPageLocators } from '../locators/pool-devices';
 import { poolHealthLocators } from '../locators/storage';
 import type { E2eApiClient } from '../support/api/client';
@@ -43,6 +47,9 @@ const resilverTimeoutMs = 60_000;
 
 /** The dashboard loads every pool and its topology before a card renders. */
 const dashboardTimeoutMs = 30_000;
+
+/** Middleware sends the change once ZFS has made it, and the page reads the pool again. A ceiling only. */
+const liveUpdateTimeoutMs = 30_000;
 
 /** The mirror's guid and the guid of the disk taken offline in it. */
 interface DegradedMirror {
@@ -107,4 +114,35 @@ test('a repaired mirror shows as online again on the dashboard', async ({ page, 
   });
   await expect(page.locator(poolHealthLocators.icon(pool, 'safe'))).toBeVisible();
   await expect(page.locator(poolHealthLocators.icon(pool, 'warn'))).toBeHidden();
+});
+
+test('an open VDEVs page shows a disk going offline and back without being opened again', async ({ page, api }) => {
+  const mirror = await readMirror(api, pool);
+  const [disk] = mirror.disks;
+  expect(disk?.disk, `Pool "${pool}" should have named disks in its mirror.`).toBeTruthy();
+  const target = { guid: disk?.guid ?? '', name: disk?.disk ?? '' };
+
+  await openVdevsPage(page, pool);
+  await selectMirrorDisk(page, mirror.guid, target);
+  await expect(page.locator(vdevsPageLocators.nodeStatus(target.guid))).toHaveText('ONLINE');
+
+  await setPoolDiskState(api, pool, target.guid, 'OFFLINE');
+
+  await expect(page.locator(vdevsPageLocators.nodeStatus(target.guid))).toHaveText('OFFLINE', {
+    timeout: liveUpdateTimeoutMs,
+  });
+  await expect(page.locator(vdevsPageLocators.nodeStatus(mirror.guid))).toHaveText('DEGRADED');
+  // The same disk's details are still open beside the tree.
+  await expect(page).toHaveURL(new RegExp(`/vdevs/${target.guid}$`));
+  await expect(page.locator(vdevsPageLocators.detailsTitle)).toHaveText(target.name);
+
+  await setPoolDiskState(api, pool, target.guid, 'ONLINE');
+
+  await expect(page.locator(vdevsPageLocators.nodeStatus(target.guid))).toHaveText('ONLINE', {
+    timeout: liveUpdateTimeoutMs,
+  });
+  await expect(page.locator(vdevsPageLocators.nodeStatus(mirror.guid))).toHaveText('ONLINE', {
+    timeout: resilverTimeoutMs,
+  });
+  await expect(page.locator(vdevsPageLocators.detailsTitle)).toHaveText(target.name);
 });
