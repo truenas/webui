@@ -2,9 +2,10 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatMenuHarness } from '@angular/material/menu/testing';
 import { Router } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
 import { of, Subject, throwError } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -14,6 +15,7 @@ import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
@@ -448,6 +450,30 @@ describe('DiskListComponent - not entitled to SED', () => {
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
     expect(headerRow).toEqual(['', 'Name', 'Serial', 'Disk Size', 'Pool']);
+  });
+
+  it('does not offer the SED column in the Columns menu', async () => {
+    const menu = await loader.getHarness(MatMenuHarness);
+    await menu.open();
+    const itemTexts = await Promise.all((await menu.getItems()).map((item) => item.getText()));
+
+    expect(itemTexts).toContain('Pool');
+    expect(itemTexts.some((text) => text.includes('Self-Encrypting Drive (SED)'))).toBe(false);
+  });
+
+  it('does not show the SED column even when saved column preferences include it', async () => {
+    spectator.inject(MockStore).overrideSelector(selectPreferences, {
+      tableDisplayedColumns: [{
+        title: 'diskList',
+        columns: ['Name', 'Serial', 'Self-Encrypting Drive (SED)'],
+      }],
+    } as Preferences);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(IxTableHarness);
+
+    const cells = await table.getCellTexts();
+    expect(cells[0]).toEqual(['', 'Name', 'Serial']);
   });
 
   it('offers no SED actions, even when disk.details reports a status', async () => {

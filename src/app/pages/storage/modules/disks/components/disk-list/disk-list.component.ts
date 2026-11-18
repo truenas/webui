@@ -248,6 +248,10 @@ export class DiskListComponent implements OnInit {
         if (sedColumn) {
           sedColumn.hidden = false;
         }
+      } else {
+        // Dropped rather than hidden, so the Columns menu doesn't offer it and a saved preference
+        // that includes it can't bring it back. This runs before the selector reads its defaults.
+        this.columns = this.columns.filter((column) => column.propertyName !== 'sed_status');
       }
 
       // SED status comes from `disk.details`; asking `disk.query` for it too probes each drive twice.
