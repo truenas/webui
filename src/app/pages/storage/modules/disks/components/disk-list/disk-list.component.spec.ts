@@ -3,7 +3,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { provideMockStore } from '@ngrx/store/testing';
+import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonHarness, TnDialog, TnEmptyHarness, TnSelectHarness, TnTableHarness,
 } from '@truenas/ui-components';
@@ -18,6 +18,7 @@ import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
+import { Preferences } from 'app/interfaces/preferences.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -709,6 +710,28 @@ describe('DiskListComponent - without SED license', () => {
 
     expect(headerRow).not.toContain('Self-Encrypting Drive (SED)');
     expect(headerRow).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
+  });
+
+  it('does not offer the SED column in the column picker', async () => {
+    const picker = await loader.getHarness(TnSelectHarness);
+    const options = await picker.getOptions();
+
+    expect(options).toContain('Pool');
+    expect(options).not.toContain('Self-Encrypting Drive (SED)');
+  });
+
+  it('falls back to the default columns, without SED, when saved preferences include it', async () => {
+    spectator.inject(MockStore).overrideSelector(selectPreferences, {
+      tableDisplayedColumns: [{
+        title: 'diskList',
+        columns: ['Name', 'Serial', 'Self-Encrypting Drive (SED)'],
+      }],
+    } as Preferences);
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    table = await loader.getHarness(TnTableHarness);
+
+    expect(await table.getHeaderTexts()).toEqual(['Name', 'Serial', 'Disk Size', 'Pool']);
   });
 
   it('offers no SED actions, even when disk.details reports a status', async () => {
