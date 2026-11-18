@@ -21,10 +21,17 @@ import { goToGeneralSettings } from '../flows/navigation';
 import { globalSearchLocators } from '../locators/global-search';
 import { localizationLocators } from '../locators/localization';
 import { servicesLocators } from '../locators/services';
+import { terminalLocators } from '../locators/terminal';
 import { expect, test } from '../support/fixtures';
 
 /** A page, and the term that finds it. Its index entry has no required role. */
 const servicesPage = { term: 'Services', hierarchy: ['System', 'Services'] } as const;
+
+/**
+ * System > Shell, found by its own name and by "console", which only its synonyms hold. UI renders
+ * only its first six results until "View More", so finding it there also means it ranks that high.
+ */
+const shellPage = { terms: ['shell', 'console'], hierarchy: ['System', 'Shell'] } as const;
 
 /** A setting on System > General Settings, and the term that finds it. */
 const timezoneSetting = {
@@ -78,6 +85,24 @@ test('typing the name of a page lists it under UI, and choosing it opens that pa
   await expect(page.locator(servicesLocators.row.row('ssh'))).toBeVisible({ timeout: landingTimeoutMs });
   await expectGlobalSearchClosed(page);
 });
+
+for (const term of shellPage.terms) {
+  test(`searching "${term}" lists Shell under UI, and choosing it opens the Shell page`, async ({ page }) => {
+    const { section, result } = globalSearchLocators;
+
+    await openGlobalSearch(page);
+    await searchFor(page, term);
+
+    await expect(page.locator(result(shellPage.hierarchy))).toBeVisible({ timeout: resultsTimeoutMs });
+    await expect(page.locator(section.ui)).toBeVisible();
+
+    await page.locator(result(shellPage.hierarchy)).click();
+
+    await expect(page).toHaveURL(/\/system\/shell\/?$/, { timeout: landingTimeoutMs });
+    await expect(page.locator(terminalLocators.terminal)).toBeVisible({ timeout: landingTimeoutMs });
+    await expectGlobalSearchClosed(page);
+  });
+}
 
 test('choosing a setting from search lands on the page holding it', async ({ page, api }) => {
   const timezone = await readTimezone(api);

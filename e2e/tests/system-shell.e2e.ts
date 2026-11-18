@@ -19,7 +19,7 @@
  * columns and rows.
  *
  * Not covered: the `/shell` route, which nothing in the app links to; reconnecting after a dropped
- * socket; the font-size limits; global search's Shell entry.
+ * socket; the font-size limits. `global-search.e2e.ts` covers reaching it through global search.
  */
 import type { Page } from '@playwright/test';
 import {
