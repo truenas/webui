@@ -198,6 +198,20 @@ describe('VDevsStore', () => {
       expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
     });
 
+    it('keeps following the pool through a change that has no topology', () => {
+      const unlistedPool = { ...pool, topology: null } as Pool;
+      sendPoolChange(4, unlistedPool);
+      refreshedPools$.next([unlistedPool]);
+
+      expect(spectator.service.nodes()).toEqual([]);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+
+      jest.clearAllMocks();
+      sendPoolChange(4, faultedPool);
+
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.query', [['id', '=', 4]]);
+    });
+
     it('ignores a removed pool', () => {
       poolEvents$.next({ msg: 'removed', id: 4 });
       jest.advanceTimersByTime(300);

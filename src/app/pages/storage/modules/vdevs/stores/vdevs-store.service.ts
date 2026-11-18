@@ -140,7 +140,12 @@ export class VDevsStore {
     );
   }
 
-  private createDataNodes(topology: PoolTopology): VDevNestedDataNode[] {
+  private createDataNodes(topology: PoolTopology | null): VDevNestedDataNode[] {
+    // Middleware reports no topology for a pool that ZFS does not list, so there are no devices to show.
+    if (!topology) {
+      return [];
+    }
+
     const dataNodes: VDevNestedDataNode[] = [];
     if (topology.data.length) {
       dataNodes.push({
