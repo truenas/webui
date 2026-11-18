@@ -3,19 +3,20 @@ import { byText, createComponentFactory, Spectator } from '@ngneat/spectator/jes
 import { EffectsModule } from '@ngrx/effects';
 import { Store, StoreModule } from '@ngrx/store';
 import { TnIconButtonHarness, TnTooltipDirective } from '@truenas/ui-components';
-import { ngMocks } from 'ng-mocks';
 import { FakeFormatDateTimePipe } from 'app/core/testing/classes/fake-format-datetime.pipe';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AlertClassName } from 'app/enums/alert-class-name.enum';
 import { AlertLevel } from 'app/enums/alert-level.enum';
+import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { AlertWithDuplicates } from 'app/interfaces/smart-alert.interface';
+import { SystemGeneralConfig } from 'app/interfaces/system-config.interface';
 import { AlertComponent } from 'app/modules/alerts/components/alert/alert.component';
 import { AlertPageObject } from 'app/modules/alerts/components/alert/alert.page-object';
 import { AlertEffects } from 'app/modules/alerts/store/alert.effects';
 import { adapter, alertReducer, alertsInitialState } from 'app/modules/alerts/store/alert.reducer';
 import { alertStateKey } from 'app/modules/alerts/store/alert.selectors';
-import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { systemConfigLoaded } from 'app/store/system-config/system-config.actions';
 import { systemConfigReducer, SystemConfigState } from 'app/store/system-config/system-config.reducer';
 import { systemConfigStateKey } from 'app/store/system-config/system-config.selectors';
 
@@ -23,7 +24,8 @@ const dummyAlert = {
   id: '79',
   key: 'cpu-alert',
   datetime: {
-    $date: 1641811015,
+    // 17 Nov 2026 10:00:02 in Los Angeles; Jest runs in Europe/Kiev, where it is 20:00:02.
+    $date: Date.UTC(2026, 10, 17, 18, 0, 2),
   },
   node: 'Active Controller (A)',
   level: AlertLevel.Critical,
@@ -50,7 +52,7 @@ describe('AlertComponent', () => {
           [alertStateKey]: adapter.setAll([dummyAlert], alertsInitialState),
           [systemConfigStateKey]: {
             generalConfig: {
-              timezone: 'America/Alaska',
+              timezone: 'America/Los_Angeles',
             },
           } as SystemConfigState,
         },
@@ -137,11 +139,19 @@ describe('AlertComponent', () => {
     expect(spectator.element).toHaveClass('dismissed');
   });
 
-  it('shows alert datetime (formatted according to system settings) and system timezone', () => {
-    expect(alert.dateTimeElement!.textContent!.replace(/\s{2,}/g, ' ').trim()).toBe('1970-01-20 03:03:31 (America/Alaska)');
+  it('shows the alert time on the NAS clock, next to the NAS time zone', () => {
+    expect(alert.dateTimeElement!.textContent!.replace(/\s{2,}/g, ' ').trim())
+      .toBe('2026-11-17 10:00:02 (America/Los_Angeles)');
+  });
 
-    const formatPipe = ngMocks.findInstance(FormatDateTimePipe);
-    expect(formatPipe.transform).toHaveBeenCalledWith(1641811015);
+  it('falls back to the browser clock with no time-zone label while the NAS time zone is unknown', () => {
+    spectator.inject(Store).dispatch(systemConfigLoaded({
+      generalConfig: {} as SystemGeneralConfig,
+      advancedConfig: {} as AdvancedConfig,
+    }));
+    spectator.detectChanges();
+
+    expect(alert.dateTimeElement!.textContent!.trim()).toBe('2026-11-17 20:00:02');
   });
 
   it('dismisses an open alert when Dismiss link is pressed', () => {
