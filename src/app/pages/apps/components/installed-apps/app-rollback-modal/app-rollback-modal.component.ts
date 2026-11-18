@@ -9,9 +9,14 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent, TnFormFieldComponent, TnSelectComponent,
 } from '@truenas/ui-components';
-import { Observable, of, tap } from 'rxjs';
+import {
+  catchError, EMPTY, Observable, of, tap,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ApiErrorName } from 'app/enums/api.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { App, AppRollbackParams } from 'app/interfaces/app.interface';
 import { Option } from 'app/interfaces/option.interface';
@@ -70,7 +75,25 @@ export class AppRollbackModalComponent {
       { title: this.translate.instant(helptextApps.apps.rollbackDialog.job) },
     )
       .afterClosed()
-      .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        catchError((error: unknown) => {
+          // The app library rejecting the values fails with just the reason.
+          if (
+            isFailedJobError(error)
+            && error.apiErrorDetails?.errname === ApiErrorName.Validation
+            && error.job.exc_info?.type !== JobExceptionType.Validation
+          ) {
+            this.dialogService.warn(
+              this.translate.instant('Cannot Roll Back App'),
+              error.apiErrorDetails.reason.replace('[EINVAL] ', ''),
+            );
+          } else {
+            this.errorHandler.showErrorModal(error);
+          }
+          return EMPTY;
+        }),
+        takeUntilDestroyed(this.destroyRef),
+      )
       .subscribe(() => this.dialogRef.close(true));
   }
 

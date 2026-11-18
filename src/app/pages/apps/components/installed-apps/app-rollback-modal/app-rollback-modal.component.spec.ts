@@ -4,14 +4,19 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { TnButtonHarness, TnCheckboxHarness, TnSelectHarness } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { JobState } from 'app/enums/job-state.enum';
+import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { App } from 'app/interfaces/app.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { AppRollbackModalComponent } from 'app/pages/apps/components/installed-apps/app-rollback-modal/app-rollback-modal.component';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { FailedJobError } from 'app/services/errors/error.classes';
 
 describe('AppRollbackModalComponent', () => {
   let spectator: Spectator<AppRollbackModalComponent>;
@@ -38,6 +43,7 @@ describe('AppRollbackModalComponent', () => {
         jobDialog: jest.fn(() => ({
           afterClosed: () => of(null),
         })),
+        warn: jest.fn(() => of(true)),
       }),
     ],
   });
@@ -70,5 +76,25 @@ describe('AppRollbackModalComponent', () => {
       ['my-app', { app_version: '0.9.8', rollback_snapshot: true }],
     );
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
+  });
+
+  it('shows the reason and stays open when the app library rejects the values', async () => {
+    const dialog = spectator.inject(DialogService);
+    const error = new FailedJobError({ method: 'app.rollback' } as Job);
+    error.apiErrorDetails = {
+      errname: ApiErrorName.Validation,
+      reason: '[EINVAL] Invalid port [0]. Valid ports are between 1 and 65535',
+    } as ApiErrorDetails;
+    (dialog.jobDialog as jest.Mock).mockReturnValueOnce({ afterClosed: () => throwError(() => error) });
+
+    const rollbackButton = await loader.getHarness(TnButtonHarness.with({ label: 'Roll Back' }));
+    await rollbackButton.click();
+
+    expect(dialog.warn).toHaveBeenCalledWith(
+      'Cannot Roll Back App',
+      'Invalid port [0]. Valid ports are between 1 and 65535',
+    );
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+    expect(spectator.inject(DialogRef).close).not.toHaveBeenCalled();
   });
 });

@@ -14,17 +14,21 @@ import {
   isArray, isEqual, isPlainObject, unset,
 } from 'lodash-es';
 import {
-  BehaviorSubject, Observable, of, Subject, Subscription, timer,
+  BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, timer,
 } from 'rxjs';
 import {
+  catchError,
   debounceTime,
   distinctUntilChanged,
   filter, map, take, tap,
 } from 'rxjs/operators';
 import { customApp } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { DynamicFormSchemaType } from 'app/enums/dynamic-form-schema-type.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppDetailsRouteParams } from 'app/interfaces/app-details-route-params.interface';
 import {
@@ -291,7 +295,24 @@ export class AppWizardComponent implements OnInit, OnDestroy {
           : this.translate.instant(helptextApps.updating),
       })
         .afterClosed()
-        .pipe(this.errorHandler.withErrorHandler()),
+        .pipe(
+          catchError((error: unknown) => {
+            // The app library rejecting the values (e.g. an invalid port) fails with just the reason.
+            if (
+              isFailedJobError(error)
+              && error.apiErrorDetails?.errname === ApiErrorName.Validation
+              && error.job.exc_info?.type !== JobExceptionType.Validation
+            ) {
+              this.dialogService.warn(
+                this.isNew ? this.translate.instant('Cannot Install App') : this.translate.instant('Cannot Update App'),
+                error.apiErrorDetails.reason.replace('[EINVAL] ', ''),
+              );
+            } else {
+              this.errorHandler.showErrorModal(error);
+            }
+            return EMPTY;
+          }),
+        ),
       successMessage: null,
       onSuccess: () => this.onSuccess(),
     };

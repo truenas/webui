@@ -9,12 +9,15 @@ import { TnButtonComponent, TnCardComponent, TnCardFooterActionsDirective, TnCar
 import ipRegex from 'ip-regex';
 import { ImgFallbackModule } from 'ngx-img-fallback';
 import {
-  filter, switchMap, tap,
+  catchError, EMPTY, filter, switchMap, tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { ApiErrorName } from 'app/enums/api.enum';
 import { AppState } from 'app/enums/app-state.enum';
+import { JobExceptionType } from 'app/enums/response-error-type.enum';
 import { Role } from 'app/enums/role.enum';
+import { isFailedJobError } from 'app/helpers/api.helper';
 import { WINDOW } from 'app/helpers/window.helper';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppUpdateDialogConfig } from 'app/interfaces/app-upgrade-dialog-config.interface';
@@ -159,7 +162,22 @@ export class AppInfoCardComponent {
           { title: this.translate.instant(helptextApps.apps.upgrading) },
         ).afterClosed(),
       ),
-      this.errorHandler.withErrorHandler(),
+      catchError((error: unknown) => {
+        // A migration refusing the upgrade (ENOTSUP) or the app library rejecting the values (EINVAL)
+        // fails with just the reason.
+        const apiError = isFailedJobError(error) && error.job.exc_info?.type !== JobExceptionType.Validation
+          ? error.apiErrorDetails
+          : undefined;
+        if (apiError?.errname === ApiErrorName.NotSupported || apiError?.errname === ApiErrorName.Validation) {
+          this.dialogService.warn(
+            this.translate.instant('Cannot Upgrade App'),
+            apiError.reason.replace(`[${apiError.errname}] `, ''),
+          );
+        } else {
+          this.errorHandler.showErrorModal(error);
+        }
+        return EMPTY;
+      }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe();
   }
