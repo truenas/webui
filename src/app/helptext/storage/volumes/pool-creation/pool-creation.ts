@@ -47,7 +47,7 @@ export const helptextPoolCreation = {
   // SED Encryption
   sedInfoMessage: T('SED-capable (Self-Encrypting Drive) disks detected. Hardware-based encryption provides better performance and security.'),
   sedGlobalPasswordInfo: T('The Global SED Password is a system-wide setting that applies to all pools using SED encryption.'),
-  sedGlobalPasswordWarning: T('The Global SED Password is a system-wide setting. A password is already configured. Entering a new password here will update it for all pools using SED encryption.'),
+  sedGlobalPasswordWarning: T('A Global SED Password is already configured. Changing it only updates the password TrueNAS stores for unlocking drives (in Advanced Settings). It does not change the password on drives that are already initialized.'),
   sedPasswordLabel: T('Global SED Password'),
   sedPasswordConfirmLabel: T('Confirm SED Password'),
   sedPasswordTooltip: T('This password will be used to configure all SED-capable disks in this pool.'),
