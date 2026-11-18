@@ -321,6 +321,7 @@ describe('IxDynamicFormItemComponent', () => {
       });
       expect(spectator.query('.label')).toHaveText('Label Dict');
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
+      expect(spectator.queryAll('.dict-attrs.has-title > ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
 
       spectator.queryAll(TnFormListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
