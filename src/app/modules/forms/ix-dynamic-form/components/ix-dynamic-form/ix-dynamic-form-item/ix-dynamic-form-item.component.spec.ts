@@ -340,6 +340,26 @@ describe('IxDynamicFormItemComponent', () => {
     });
   });
 
+  describe('Host visibility', () => {
+    it('hides its own host while the question is hidden, so it takes no space in a list entry', () => {
+      const control = new FormControl('') as CustomUntypedFormField;
+      control.hidden$ = new BehaviorSubject<boolean>(true);
+      spectator = createComponent({
+        props: {
+          dynamicForm: new FormGroup({ input: control }),
+          dynamicSchema: inputSchema,
+        },
+      });
+
+      expect(spectator.element).toHaveClass('hidden');
+
+      control.hidden$.next(false);
+      spectator.detectChanges();
+
+      expect(spectator.element).not.toHaveClass('hidden');
+    });
+  });
+
   describe('Component methods', () => {
     it('emits "addListItem" when "(add)" is emitted by a list control', () => {
       spectator = createComponent({

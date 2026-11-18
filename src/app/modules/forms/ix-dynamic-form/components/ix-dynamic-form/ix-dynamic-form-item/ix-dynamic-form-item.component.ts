@@ -1,6 +1,7 @@
 import { AsyncPipe } from '@angular/common';
 import {
   AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject,
+  signal,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -45,6 +46,11 @@ import { SchedulerComponent } from 'app/modules/scheduler/components/scheduler/s
   styleUrls: ['./ix-dynamic-form-item.component.scss'],
   templateUrl: './ix-dynamic-form-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    // A hidden question renders nothing, but its host would still be a flex item in a list entry
+    // and take a gap of its own, so hidden siblings stacked up as blank space.
+    '[class.hidden]': 'isHidden()',
+  },
   imports: [
     TnFilePickerComponent,
     FilePickerSourcePipe,
@@ -78,6 +84,7 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
   readonly isEditMode = input<boolean>();
 
   protected readonly InputType = InputType;
+  protected readonly isHidden = signal(false);
 
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();
@@ -116,6 +123,8 @@ export class IxDynamicFormItemComponent implements OnInit, AfterViewInit {
     if (this.dynamicSchema()?.hidden) {
       (this.dynamicForm().controls[this.dynamicSchema().controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
+
+    this.isHidden$?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHidden) => this.isHidden.set(isHidden));
   }
 
   /**

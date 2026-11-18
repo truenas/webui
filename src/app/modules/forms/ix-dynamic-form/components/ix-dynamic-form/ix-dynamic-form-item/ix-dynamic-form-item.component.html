@@ -94,6 +94,7 @@
               >
                 @for (item of listSchema.items; track item) {
                   <ix-dynamic-form-item
+                    class="list-entry"
                     [dynamicSchema]="item"
                     [dynamicForm]="element | cast"
                     [isEditMode]="isEditMode()"
