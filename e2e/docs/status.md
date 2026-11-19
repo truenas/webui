@@ -115,7 +115,7 @@ artifact of an E2E run. The narrative is in git history up to its removal.
   appears for every new share and every edit while SMB is running, whatever the
   purpose. The Time Machine transition logic the comments describe lives in
   `isNewTimeMachineShare`, which nothing in `src/` references. So
-  `smb-service.e2e.ts` covers the Apple-extensions gate and leaves the restart
+  `smb-service.e2e.ts` checks a Time Machine share can be saved and leaves the restart
   prompt alone: pinning the current behaviour would encode something that reads
   as unintended. Worth a product answer before it is tested either way.
 - **The batch-delete dialog's clone guard never fires.** It disables Delete on

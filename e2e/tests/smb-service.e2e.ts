@@ -1,17 +1,15 @@
 /**
  * Stories: what a share needs from the SMB service, and the switches on the card.
  *
- * A Time Machine share requires Apple SMB2/3 extensions, a setting on the
- * *service*. While they are off `extraDisabled` holds Save down and the form
- * offers to turn them on; that write (`smb.update`) outlives the share, so this
- * spec puts it back. It also starts the service, which is global state, and
- * stops it again whatever the test did. The "Restart SMB Service" prompt is
+ * Apple SMB2/3 extensions are always on in the service now, so a Time Machine
+ * share no longer has to stop and ask for them. This spec starts the service,
+ * which is global state, and stops it again whatever the test did. The "Restart SMB Service" prompt is
  * deliberately not covered — see the known gaps in `docs/status.md`.
  */
 import { ensureServiceRunning, queryService } from '../fixtures/services';
 import {
   ensureSmbServiceStopped, ensureSmbShareAbsent, ensureSmbSharePresent, findSmbShare,
-  readSmbAppleExtensions, setSmbAppleExtensions, smbServiceName,
+  smbServiceName,
 } from '../fixtures/smb';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { goToDatasets, goToShares } from '../flows/navigation';
@@ -22,7 +20,7 @@ import { smbLocators } from '../locators/smb';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
 
-/** Typed into the form and never saved — the Time Machine test stops at the gate. */
+/** Typed into the form and never saved — the Time Machine test stops at Save. */
 const timeMachineShare = 'e2e_service_tm_share';
 /** Provisioned over the API, for the switches to act on. */
 const toggledShare = 'e2e_service_toggle_share';
@@ -36,27 +34,15 @@ const purpose = { timeMachine: 'Time Machine Share' } as const;
 const serviceCost = 'the SMB service was left running, so the next run is offered a restart where it expects a start.';
 
 /**
- * Apple extensions as this spec found them, put back in teardown. Undefined
- * until read, so a `beforeEach` that failed before reading it restores nothing.
- */
-let appleExtensionsWereOn: boolean | undefined;
-
-/**
  * Preconditions are *established* here, not asserted in the tests.
  *
- * Including Apple extensions, which are forced off: a run that failed partway
- * could leave them on. The hook does not take `page`, so it runs before one
- * exists — the app reads service state into its store at start-up.
+ * The hook does not take `page`, so it runs before one exists — the app reads
+ * service state into its store at start-up.
  */
 test.beforeEach(async ({ api, pool }) => {
-  appleExtensionsWereOn = undefined;
-  // Never saved by this spec, but a share by this name would be a Time Machine
-  // share, and one of those is what stops teardown turning the extensions off.
+  // Never saved by this spec; removed in case a run that failed partway did.
   await ensureSmbShareAbsent(api, timeMachineShare);
   await ensureSmbShareAbsent(api, toggledShare);
-
-  appleExtensionsWereOn = await readSmbAppleExtensions(api);
-  await setSmbAppleExtensions(api, false);
 
   await ensureDatasetPresent(api, `${pool}/${datasetName}`);
   await ensureSmbSharePresent(api, {
@@ -71,13 +57,9 @@ test.beforeEach(async ({ api, pool }) => {
   await ensureServiceRunning(api, smbServiceName, serviceCost);
 });
 
-/**
- * The service first, then what it served, then the storage under that. The
- * Apple-extensions write goes back after the share is gone: middleware refuses
- * to turn the flag off while a share that needs it exists.
- */
+/** The service first, then what it served, then the storage under that. */
 test.afterEach(async ({ api, pool }) => {
-  if (leavingTestData(`share "${toggledShare}", dataset "${pool}/${datasetName}", SMB as the test left it, and Apple extensions unrestored`)) {
+  if (leavingTestData(`share "${toggledShare}", dataset "${pool}/${datasetName}", and SMB as the test left it`)) {
     return;
   }
 
@@ -85,38 +67,21 @@ test.afterEach(async ({ api, pool }) => {
     ['stop the SMB service', () => ensureSmbServiceStopped(api)],
     [`remove share ${timeMachineShare}`, () => ensureSmbShareAbsent(api, timeMachineShare)],
     [`remove share ${toggledShare}`, () => ensureSmbShareAbsent(api, toggledShare)],
-    ['restore Apple extensions', async () => {
-      if (appleExtensionsWereOn !== undefined) {
-        await setSmbAppleExtensions(api, appleExtensionsWereOn);
-      }
-    }],
     [`remove dataset ${datasetName}`, () => ensureDatasetAbsent(api, `${pool}/${datasetName}`)],
   ]);
 });
 
-test('a Time Machine share cannot be saved until the service supports it', async ({ page, api, pool }) => {
+test('a Time Machine share can be saved without changing the service', async ({ page, pool }) => {
   await openAddShareForm(page);
   await page.locator(smbLocators.form.path).fill(datasetMountPath(`${pool}/${datasetName}`));
   await page.locator(smbLocators.form.name).fill(timeMachineShare);
-
-  // Save is live on the default purpose, which is what makes the refusal below
-  // attributable to the purpose rather than to an unfinished form.
   await expect(page.locator(smbLocators.form.save)).toBeEnabled();
 
   await choosePurpose(page, purpose.timeMachine);
 
-  // The refusal. Not a validation message on a field — `extraDisabled` holds
-  // the whole form down while the banner is up, so there is nothing to correct
-  // and nowhere to correct it except the banner itself.
-  await expect(page.locator(smbLocators.form.save)).toBeDisabled();
-  await expect(page.locator(smbLocators.enableAppleExtensions)).toBeVisible();
-
-  await page.locator(smbLocators.enableAppleExtensions).click();
+  // Time Machine used to hold Save down until Apple extensions were turned on
+  // in the service. They are always on now, so the purpose changes nothing.
   await expect(page.locator(smbLocators.form.save)).toBeEnabled();
-
-  // And it wrote to the *service*, not just to the form's own copy of the
-  // config — which is the part that outlives this test and has to be undone.
-  await expect.poll(() => readSmbAppleExtensions(api)).toBe(true);
 });
 
 test('switching a share off from the list reaches the appliance', async ({ page, api }) => {

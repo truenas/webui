@@ -42,7 +42,6 @@ const smbConfig = {
   unixcharset: 'UTF-8',
   debug: true,
   syslog: false,
-  aapl_extensions: false,
   localmaster: true,
   guest: 'nobody',
   filemask: '',
@@ -229,8 +228,6 @@ describe('ServiceSmbComponent', () => {
     expect(await (await getCheckbox('debug')).isChecked()).toBe(true);
     expect(await (await getCheckbox('syslog')).isChecked()).toBe(false);
     expect(await (await getCheckbox('localmaster')).isChecked()).toBe(true);
-    expect(await (await getCheckbox('aapl_extensions')).isChecked()).toBe(false);
-    expect(await (await getCheckbox('multichannel')).isChecked()).toBe(false);
     expect(await (await getInput('filemask')).getValue()).toBe('');
     expect(await (await getInput('dirmask')).getValue()).toBe('');
 
@@ -247,7 +244,6 @@ describe('ServiceSmbComponent', () => {
       unixcharset: 'UTF-8',
       debug: true,
       syslog: false,
-      aapl_extensions: false,
       localmaster: true,
       guest: 'nobody',
       filemask: '',
@@ -305,7 +301,6 @@ describe('ServiceSmbComponent', () => {
       workgroup: 'WORKGROUP2',
 
       // Old advanced options
-      aapl_extensions: false,
       admin_group: null,
       bindip: [],
       guest: 'nobody',
@@ -314,7 +309,6 @@ describe('ServiceSmbComponent', () => {
       debug: true,
       localmaster: true,
       syslog: false,
-      multichannel: false,
       unixcharset: 'UTF-8',
       encryption: SmbEncryption.Negotiate,
       search_protocols: [smbSearchSpotlight],
@@ -339,7 +333,6 @@ describe('ServiceSmbComponent', () => {
     await (await getCheckbox('syslog')).check();
     await (await getCheckbox('debug')).check();
     await (await getCheckbox('localmaster')).uncheck();
-    await (await getCheckbox('aapl_extensions')).check();
     await (await getSelect('encryption')).selectOption('Default – follow upstream / TrueNAS default');
 
     const adminGroup = await loader.getHarness(TnAutocompleteHarness.with({ placeholder: 'Administrators Group' }));
@@ -367,7 +360,6 @@ describe('ServiceSmbComponent', () => {
       workgroup: 'WORKGROUP',
 
       // New advanced options
-      aapl_extensions: true,
       admin_group: 'test-group',
       bindip: [
         '1.1.1.1',
@@ -379,7 +371,6 @@ describe('ServiceSmbComponent', () => {
       debug: true,
       localmaster: false,
       syslog: true,
-      multichannel: false,
       unixcharset: 'UTF_16',
       encryption: SmbEncryption.Default,
       search_protocols: [],

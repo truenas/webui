@@ -34,14 +34,6 @@ export const helptextServiceSmb = {
  a browser election. Leave unset when the network contains an AD\
  or LDAP server, or when Vista or Windows 7 machines\
  are present.'),
-  aaplExtensionsTooltip: T('These\
- <a href="https://support.apple.com/en-us/HT210803" target="_blank">protocol extensions</a>\
- can be used by macOS to improve the performance and behavioral characteristics of SMB shares.\
- This is required for Time Machine support.'),
-  multichannelTooltip: T('SMB multichannel allows servers to use multiple network connections\
- simultaneously by combining the bandwidth of several network interface cards (NICs) for\
- better performance. SMB multichannel does not function if you combine NICs into a LAGG.\
- <a href="https://www.truenas.com/docs/scale/shares/smb/smbmultichannel/" target="_blank">Read more in docs</a>'),
   guestTooltip: T('Account to be used for guest access. Default is\
  <i>nobody</i>. The chosen account is required to have permissions to the\
  shared pool or dataset. To adjust permissions, edit the dataset Access\

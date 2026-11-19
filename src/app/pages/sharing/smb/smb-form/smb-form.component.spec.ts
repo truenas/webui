@@ -69,8 +69,6 @@ import { SmbFormComponent } from './smb-form.component';
 // includes `tn-banner` — and that mock leaks onto the banner this form renders itself.
 ngMocks.globalKeep(TnBannerComponent);
 
-type SmbConfigResponse = CallResponse<WebUiApiDirectory, 'smb.config'>;
-
 describe('SmbFormComponent', () => {
   const existingShare = {
     id: 1,
@@ -166,7 +164,6 @@ describe('SmbFormComponent', () => {
         mockCall('filesystem.stat', {
           acl: true,
         } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
-        mockCall('smb.config', { aapl_extensions: true } as SmbConfigResponse),
         mockJob('service.control', { state: JobState.Success }),
       ]),
       mockProvider(Router),
@@ -747,24 +744,6 @@ describe('SmbFormComponent', () => {
 
       expect(await checkbox.isChecked()).toBe(true);
       expect(await checkbox.isDisabled()).toBe(true);
-    });
-
-    it('shows extensions warning when FCP share is selected and aapl_extensions is disabled', async () => {
-      // Manually set the component's smbConfig signal to have aapl_extensions disabled
-      await setupTest();
-
-      // Use component's private property to set the config
-      (spectator.component as unknown as { smbConfig: { set: (config: SmbConfigResponse) => void } }).smbConfig.set({
-        aapl_extensions: false,
-      } as SmbConfigResponse);
-
-      await selectPurpose('Final Cut Pro Storage Share');
-
-      spectator.detectChanges();
-      await spectator.fixture.whenStable();
-
-      const warning = spectator.query('ix-smb-extensions-warning');
-      expect(warning).toBeTruthy();
     });
 
     it('does not show aapl_name_mangling checkbox for purposes that do not support it', async () => {
@@ -1662,136 +1641,19 @@ describe('SmbFormComponent', () => {
     });
   });
 
-  describe('Submit button behavior with Apple SMB2/3 extensions', () => {
-    beforeEach(() => {
-      spectator = createComponent();
-      api = spectator.inject(ApiService);
-      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-      mockStore$ = spectator.inject(MockStore);
-
-      spectator.inject(MockApiService).mockCall('smb.config', { aapl_extensions: false } as SmbConfigResponse);
+  describe('Apple SMB2/3 extensions', () => {
+    beforeEach(async () => {
+      await setupTest();
     });
 
-    it('should disable submit button when extensions warning is shown', async () => {
-      // Select Time Machine Share (requires Apple SMB2/3 extensions)
+    it('saves a Time Machine share without asking to turn anything on in the SMB service', async () => {
       await selectPurpose('Time Machine Share');
       const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
       await withDebounces(() => pathControl.setValue('/mnt/pool/timemachine'));
       await setName('timemachine');
 
-      // Manually set the smbConfig signal to trigger the warning
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['updateExtensionsWarning']();
-      spectator.detectChanges();
-
-      // Verify warning is shown
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(true);
-
-      // Verify submit button is disabled
-      expect(spectator.component.canSubmit()).toBe(false);
-
-      // Verify warning component is shown with correct id
-      const warningElement = spectator.query('ix-smb-extensions-warning');
-      expect(warningElement).toBeTruthy();
-    });
-
-    it('should enable submit button after extensions are enabled', async () => {
-      // Select Time Machine Share (requires Apple SMB2/3 extensions)
-      await selectPurpose('Time Machine Share');
-      const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await withDebounces(() => pathControl.setValue('/mnt/pool/timemachine'));
-      await setName('timemachine');
-
-      // Set config to show warning
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['updateExtensionsWarning']();
-      spectator.detectChanges();
-
-      // Verify button is disabled
-      expect(spectator.component.canSubmit()).toBe(false);
-
-      // Enable extensions
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['extensionsEnabled']();
-      spectator.detectChanges();
-
-      // Verify warning is gone and button is enabled
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(false);
       expect(spectator.component.canSubmit()).toBe(true);
-
-      // Verify warning component is no longer shown
-      const warningElement = spectator.query('ix-smb-extensions-warning');
-      expect(warningElement).toBeFalsy();
-    });
-
-    it('should show warning reactively when switching between purposes requiring extensions', async () => {
-      // Start with Default Share (no warning)
-      await selectPurpose('Default Share');
-      const pathControl = await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="path"]' }));
-      await withDebounces(() => pathControl.setValue('/mnt/pool/default'));
-      await setName('default');
-
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['updateExtensionsWarning']();
-      spectator.detectChanges();
-
-      // Verify no warning for Default Share
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      expect(spectator.component.canSubmit()).toBe(true);
-
-      // Switch to Time Machine Share (warning should appear)
-      await selectPurpose('Time Machine Share');
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['updateExtensionsWarning']();
-      spectator.detectChanges();
-
-      // Verify warning is shown and button is disabled
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(true);
-      expect(spectator.component.canSubmit()).toBe(false);
-
-      // Enable extensions
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['extensionsEnabled']();
-      spectator.detectChanges();
-
-      // Verify button is enabled
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      expect(spectator.component.canSubmit()).toBe(true);
-
-      // Switch to FCP Share (another purpose requiring extensions with extensions disabled)
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['smbConfig'].set({ aapl_extensions: false } as SmbConfigResponse);
-      await selectPurpose('Final Cut Pro Storage Share');
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['updateExtensionsWarning']();
-      spectator.detectChanges();
-
-      // Verify warning appears again for FCP share
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(true);
-      expect(spectator.component.canSubmit()).toBe(false);
-
-      // Switch back to Default Share (warning should disappear)
-      await selectPurpose('Default Share');
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      spectator.component['updateExtensionsWarning']();
-      spectator.detectChanges();
-
-      // Verify warning is gone
-      // eslint-disable-next-line @typescript-eslint/dot-notation
-      expect(spectator.component['showExtensionsWarning']()).toBe(false);
-      expect(spectator.component.canSubmit()).toBe(true);
+      expect(api.call).not.toHaveBeenCalledWith('smb.config');
     });
   });
 
