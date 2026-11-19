@@ -52,6 +52,8 @@
 
 .group-container.editing {
   outline: 1px dashed var(--alt-fg1);
+  // Only the handle starts a drag. A press-and-drag anywhere else on a card would select its text.
+  user-select: none;
 
   .group {
     transform: scale(0.85) translate(0, 10px);

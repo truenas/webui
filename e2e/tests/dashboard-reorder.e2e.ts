@@ -1,7 +1,7 @@
 /**
  * Story: an admin rearranges the Dashboard in Configure mode. A card group dragged to a new place on
  * a desktop, or moved with the Move buttons at phone width, stays there once saved, and Reset puts
- * the default cards back.
+ * the default cards back. Neither a drag by the handle nor one that misses it selects page text.
  *
  * The layout is the admin's own `dashState` attribute. Each test writes the layout it starts from
  * over the API, and `afterEach` writes back the one the account had, because
@@ -23,7 +23,7 @@ import {
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';
 import { isHaLicensed } from '../fixtures/ha';
 import {
-  dragCardGroup, enterConfigureMode, moveCardGroupDown, resetDashboard, saveDashboard,
+  dragCardGroup, dragFromCardContent, enterConfigureMode, moveCardGroupDown, resetDashboard, saveDashboard,
 } from '../flows/dashboard';
 import { goToDashboard } from '../flows/navigation';
 import { dashboardLocators } from '../locators/dashboard';
@@ -80,6 +80,11 @@ async function topOf(page: Page, selector: string): Promise<number> {
   return box.y;
 }
 
+/** The text the page has selected, empty when nothing is. */
+async function selectedText(page: Page): Promise<string> {
+  return page.evaluate(() => document.getSelection()?.toString() ?? '');
+}
+
 /** CPU Model sits above System Information on screen. */
 async function expectCpuModelAboveSystemInfo(page: Page): Promise<void> {
   await expect(page.locator(dashboardLocators.cpuModel.title)).toBeVisible({ timeout: widgetLoadTimeoutMs });
@@ -105,6 +110,7 @@ test.describe('on a desktop', () => {
 
     await enterConfigureMode(page);
     await dragCardGroup(page, cpuModelGroupIndex, 0);
+    expect(await selectedText(page)).toBe('');
     await saveDashboard(page);
 
     await expectCpuModelAboveSystemInfo(page);
@@ -112,6 +118,20 @@ test.describe('on a desktop', () => {
 
     await page.reload();
     await expectCpuModelAboveSystemInfo(page);
+  });
+
+  test('a press-and-drag on a card\'s content in Configure mode selects no text', async ({ page, api }) => {
+    await writeDashState(api, threeGroups);
+
+    await goToDashboard(page);
+    await page.reload();
+    await expect(page.locator(dashboardLocators.cpuModel.value)).toBeVisible({ timeout: widgetLoadTimeoutMs });
+    await expect(page.locator(dashboardLocators.systemInfo.hostname)).toBeVisible({ timeout: widgetLoadTimeoutMs });
+
+    await enterConfigureMode(page);
+    await dragFromCardContent(page, dashboardLocators.cpuModel.value, dashboardLocators.systemInfo.hostname);
+
+    expect(await selectedText(page)).toBe('');
   });
 });
 
