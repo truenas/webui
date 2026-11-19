@@ -1,18 +1,23 @@
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
+import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of } from 'rxjs';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { AdvancedConfig } from 'app/interfaces/advanced-config.interface';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { VDevsComponent } from 'app/pages/storage/modules/vdevs/vdevs.component';
@@ -22,6 +27,8 @@ import { selectIsEnterprise } from 'app/store/system-info/system-info.selectors'
 
 describe('VDevsComponent', () => {
   let spectator: Spectator<VDevsComponent>;
+  const pool = signal<Pool | null>(null);
+  const isPoolUnavailable = signal(false);
 
   const selectedNode = {
     name: 'ca0f5344-267c-4be9-a40e-489535c84e9b',
@@ -191,6 +198,7 @@ describe('VDevsComponent', () => {
     component: VDevsComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
+      MockComponent(SedLockedWarningComponent),
       MockComponent(HardwareDiskEncryptionComponent),
     ],
     providers: [
@@ -214,6 +222,8 @@ describe('VDevsComponent', () => {
         selectedParentNode: signal(parentNode),
         nodes: signal(nodes),
         poolName: signal('test'),
+        pool,
+        isPoolUnavailable,
         selectedTopologyCategory: signal(VDevType.Data),
         loadNodes: jest.fn(),
         listenForPoolChanges: jest.fn(() => of()),
@@ -236,6 +246,8 @@ describe('VDevsComponent', () => {
   });
 
   beforeEach(() => {
+    pool.set(null);
+    isPoolUnavailable.set(false);
     jest.spyOn(console, 'warn').mockImplementation();
     spectator = createComponent();
   });
@@ -248,5 +260,44 @@ describe('VDevsComponent', () => {
     expect(headerContainer.textContent).toBe('Details for  sdc ');
     const zfsInfoCard = spectator.query('ix-zfs-info-card');
     expect(zfsInfoCard).toBeTruthy();
+  });
+
+  describe('pool that did not import', () => {
+    function loadOfflinePool(changes: Partial<Pool>): void {
+      pool.set({
+        id: 2, name: 'test', status: PoolStatus.Offline, topology: null, ...changes,
+      } as unknown as Pool);
+      isPoolUnavailable.set(true);
+      spectator.detectChanges();
+    }
+
+    it('hides Add VDEV', async () => {
+      loadOfflinePool({});
+
+      const buttons = await TestbedHarnessEnvironment.loader(spectator.fixture)
+        .getAllHarnesses(TnButtonHarness.with({ label: 'Add VDEV' }));
+      expect(buttons).toHaveLength(0);
+    });
+
+    it('shows the locked SED warning when the pool failed to import because its SED disks are locked', () => {
+      loadOfflinePool({ all_sed: true, status_code: 'LOCKED_SED_DISKS' });
+
+      // A mocked component exposes its signal inputs as plain values.
+      expect(spectator.query(SedLockedWarningComponent)!.pool as unknown).toEqual(pool());
+    });
+
+    it('reloads the pool once the warning reports that it was imported again', () => {
+      loadOfflinePool({ all_sed: true, status_code: 'LOCKED_SED_DISKS' });
+
+      spectator.query(SedLockedWarningComponent)!.importSuccess.emit();
+
+      expect(spectator.inject(VDevsStore).reloadList).toHaveBeenCalled();
+    });
+
+    it('does not show the locked SED warning for a pool that is offline for another reason', () => {
+      loadOfflinePool({ all_sed: false });
+
+      expect(spectator.query(SedLockedWarningComponent)).toBeNull();
+    });
   });
 });

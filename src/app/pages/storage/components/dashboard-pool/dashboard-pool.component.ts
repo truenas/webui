@@ -38,6 +38,7 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
+import { isSedLockedPool } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/is-sed-locked-pool.utils';
 import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import {
   AutotrimDialog,
@@ -95,12 +96,7 @@ export class DashboardPoolComponent implements OnChanges {
     return this.pool().status === PoolStatus.Online;
   });
 
-  protected isSedLocked = computed(() => {
-    const pool = this.pool();
-    return pool?.status === PoolStatus.Offline
-      && pool?.all_sed === true
-      && pool?.status_code === 'SED_LOCKED_DISKS';
-  });
+  protected isSedLocked = computed(() => isSedLockedPool(this.pool()));
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isLoading || !this.isLoading()) {

@@ -93,6 +93,23 @@ describe('VDevsStore', () => {
     ]);
   });
 
+  it('keeps the loaded pool and reports it as available when ZFS lists its devices', () => {
+    loadTank();
+
+    expect(spectator.service.pool()).toEqual(pool);
+    expect(spectator.service.isPoolUnavailable()).toBe(false);
+  });
+
+  it('reports a pool without topology as unavailable, without an error', () => {
+    const offlinePool = { ...pool, topology: null } as unknown as Pool;
+    spectator.service.loadNodes(4);
+    pools$.next([offlinePool]);
+
+    expect(spectator.service.isPoolUnavailable()).toBe(true);
+    expect(spectator.service.nodes()).toEqual([]);
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+  });
+
   it('clears the loading indicator and shows the error when loading fails', () => {
     spectator.service.loadNodes(4);
     pools$.error(new Error('Boom'));

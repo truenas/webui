@@ -15,6 +15,8 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { SplitTagPipe } from 'app/modules/pipes/split-tag/split-tag.pipe';
+import { isSedLockedPool } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/is-sed-locked-pool.utils';
+import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -40,6 +42,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     DiskDetailsPanelComponent,
     MasterDetailViewComponent,
     TopologyItemIconComponent,
+    SedLockedWarningComponent,
   ],
 })
 export class VDevsComponent implements OnInit, AfterViewInit {
@@ -59,6 +62,11 @@ export class VDevsComponent implements OnInit, AfterViewInit {
 
   protected isMobileView = signal(false);
   protected showMobileDetails = signal(false);
+
+  protected readonly sedLockedPool = computed(() => {
+    const pool = this.vDevsStore.pool();
+    return isSedLockedPool(pool) ? pool : null;
+  });
 
   protected selectedParentNode = this.vDevsStore.selectedParentNode;
   protected selectedTopologyCategory = this.vDevsStore.selectedTopologyCategory;
