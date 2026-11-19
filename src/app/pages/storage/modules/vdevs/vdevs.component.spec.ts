@@ -211,6 +211,7 @@ describe('VDevsComponent', () => {
         poolName$: of('test'),
         selectedTopologyCategory$: of(VDevType.Data),
         loadNodes: jest.fn(),
+        listenForPoolChanges: jest.fn(() => of()),
         selectedBranch$: of(selectedBranch),
       }),
       provideMockStore({
