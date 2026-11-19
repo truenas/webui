@@ -310,6 +310,7 @@ describe('IxDynamicFormItemComponent', () => {
       });
       expect(spectator.query('.label')).toHaveText('Label Dict');
       expect(spectator.queryAll('ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
+      expect(spectator.queryAll('.dict-attrs.has-title > ix-dynamic-form-item')).toHaveLength(dictSchema.attrs!.length);
 
       spectator.queryAll(IxListItemComponent).forEach((item) => {
         expect(item).not.toBeHidden();
@@ -325,6 +326,26 @@ describe('IxDynamicFormItemComponent', () => {
       spectator.queryAll('ix-dynamic-form-item').forEach((item) => {
         expect(item).toBeHidden();
       });
+    });
+  });
+
+  describe('Host visibility', () => {
+    it('hides its own host while the question is hidden, so it takes no space in a list entry', () => {
+      const control = new FormControl('') as CustomUntypedFormField;
+      control.hidden$ = new BehaviorSubject<boolean>(true);
+      spectator = createComponent({
+        props: {
+          dynamicForm: new FormGroup({ input: control }),
+          dynamicSchema: inputSchema,
+        },
+      });
+
+      expect(spectator.element).toHaveClass('hidden');
+
+      control.hidden$.next(false);
+      spectator.detectChanges();
+
+      expect(spectator.element).not.toHaveClass('hidden');
     });
   });
 
