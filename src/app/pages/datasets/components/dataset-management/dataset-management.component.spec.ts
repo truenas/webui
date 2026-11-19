@@ -6,17 +6,20 @@ import { Router } from '@angular/router';
 import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
-import { MockComponent } from 'ng-mocks';
-import { Subject } from 'rxjs';
+import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
+import { of, Subject } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
 import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsTierRewriteJobEntry } from 'app/interfaces/zfs-tier.interface';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { DatasetDetailsPanelComponent } from 'app/pages/datasets/components/dataset-details-panel/dataset-details-panel.component';
 import { DatasetsManagementComponent } from 'app/pages/datasets/components/dataset-management/dataset-management.component';
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
@@ -66,6 +69,7 @@ describe('DatasetsManagementComponent', () => {
         selectedBranch,
         selectedDataset: signal(null),
         isLoading: signal(false),
+        pendingSelectionId: signal(null),
         selectDatasetById: () => {},
       }),
       mockSharingTierService({ jobUpdates$: tierJobUpdates$ }),
@@ -276,5 +280,89 @@ describe('DatasetsManagementComponent', () => {
 
       expect(reservedWidth()).toBe('655px');
     });
+  });
+});
+
+// With the real store: the reload a create starts unmounts the details panel, which a mocked store never does.
+describe('DatasetsManagementComponent opening a dataset just created', () => {
+  let spectator: SpectatorRouting<DatasetsManagementComponent>;
+  /** One subject per `pool.dataset.details` call, answered by the test. */
+  let answers: Subject<DatasetDetails[]>[];
+
+  const pool = { id: 'pool', name: 'pool', children: [] as DatasetDetails[] } as DatasetDetails;
+  const created = { id: 'pool/new', name: 'pool/new', children: [] as DatasetDetails[] } as DatasetDetails;
+
+  const createComponent = createRoutingFactory({
+    component: DatasetsManagementComponent,
+    detectChanges: false,
+    params: { datasetId: 'pool' },
+    overrideComponents: [
+      [
+        DatasetsManagementComponent,
+        {
+          remove: { imports: [DatasetNodeComponent, DatasetDetailsPanelComponent, DetailsHeightDirective] },
+          add: {
+            imports: [
+              MockComponents(DatasetNodeComponent, DatasetDetailsPanelComponent),
+              MockDirective(DetailsHeightDirective),
+            ],
+          },
+        },
+      ],
+    ],
+    providers: [
+      mockAuth(),
+      mockProvider(ApiService, {
+        call: jest.fn((method: string) => {
+          if (method !== 'pool.dataset.details') {
+            return of({ pool: 'pool' });
+          }
+          const answer$ = new Subject<DatasetDetails[]>();
+          answers.push(answer$);
+          return answer$;
+        }),
+      }),
+      mockSharingTierService({ jobUpdates$: new Subject<ZfsTierRewriteJobEntry>() }),
+    ],
+  });
+
+  /** Answers the latest `pool.dataset.details` call. */
+  async function respond(datasets: DatasetDetails[]): Promise<void> {
+    const answer$ = answers[answers.length - 1];
+    answer$.next(datasets);
+    answer$.complete();
+    await spectator.fixture.whenStable();
+  }
+
+  beforeEach(async () => {
+    answers = [];
+    spectator = createComponent();
+    spectator.detectChanges();
+    await respond([pool]);
+  });
+
+  it('opens the new dataset once the reload that brings it in has answered', async () => {
+    const router = spectator.inject(Router);
+    const store = spectator.inject(DatasetTreeStore);
+
+    store.datasetCreated('pool/new');
+    await spectator.fixture.whenStable();
+    expect(router.navigate).not.toHaveBeenCalledWith(['/datasets', 'pool/new']);
+
+    await respond([pool, created]);
+
+    expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'pool/new']);
+    expect(store.pendingSelectionId()).toBeNull();
+  });
+
+  it('stays on the current dataset when the reload does not contain the new one', async () => {
+    const router = spectator.inject(Router);
+    const store = spectator.inject(DatasetTreeStore);
+
+    store.datasetCreated('pool/new');
+    await respond([pool]);
+
+    expect(router.navigate).not.toHaveBeenCalledWith(['/datasets', 'pool/new']);
+    expect(store.pendingSelectionId()).toBeNull();
   });
 });

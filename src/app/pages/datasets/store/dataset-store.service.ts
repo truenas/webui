@@ -13,6 +13,8 @@ export interface DatasetTreeState {
   error: unknown;
   datasets: DatasetDetails[];
   selectedDatasetId: string | null;
+  /** A dataset or zvol just created, for the page to open once the reload that brings it into the tree answers. */
+  pendingSelectionId: string | null;
 }
 
 const initialState: DatasetTreeState = {
@@ -20,6 +22,7 @@ const initialState: DatasetTreeState = {
   error: null,
   datasets: [],
   selectedDatasetId: null,
+  pendingSelectionId: null,
 };
 
 @Injectable({
@@ -33,6 +36,7 @@ export class DatasetTreeStore {
   readonly isLoading = this.state.isLoading;
   readonly error = this.state.error;
   readonly datasets = this.state.datasets;
+  readonly pendingSelectionId = this.state.pendingSelectionId;
 
   /** The selected dataset and its ancestors, root first; `null` when nothing is selected or it isn't in the tree. */
   readonly selectedBranch = computed<DatasetDetails[] | null>(() => {
@@ -148,12 +152,26 @@ export class DatasetTreeStore {
     patchState(this.state, {
       isLoading: false,
       selectedDatasetId: null,
+      pendingSelectionId: null,
       datasets: [],
     });
   }
 
   datasetUpdated(): void {
     this.loadDatasets();
+  }
+
+  /**
+   * Reloads the datasets and marks `id` for the page to open once they arrive. The page holding the
+   * selection, not the details panel, has to act on it: the reload unmounts the panel.
+   */
+  datasetCreated(id: string): void {
+    patchState(this.state, { pendingSelectionId: id });
+    this.loadDatasets();
+  }
+
+  clearPendingSelection(): void {
+    patchState(this.state, { pendingSelectionId: null });
   }
 
   selectDatasetById(selectedDatasetId: string): void {

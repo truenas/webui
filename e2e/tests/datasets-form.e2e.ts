@@ -71,6 +71,11 @@ test('an admin creates a dataset, and the appliance really has one', async ({ pa
 
   await expect(page.locator(datasetLocators.treeNode(dataset))).toBeVisible();
 
+  // The page moves to the new dataset rather than staying on the pool it was added under.
+  await expect(page).toHaveURL((url) => url.pathname.endsWith(`/datasets/${encodeURIComponent(dataset)}`));
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(dataset);
+  await expect(page.locator(datasetDetailsLocators.ownName)).toHaveText(createdLeaf);
+
   const created = await findDataset(api, dataset);
   expect(created).toMatchObject({
     name: dataset,

@@ -1,7 +1,6 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, effect, input, inject, output, signal, untracked,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, input, inject, output,
 } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnButtonComponent, TnTestIdDirective, TnTooltipDirective } from '@truenas/ui-components';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -50,7 +49,6 @@ import { doesDatasetHaveShares, isIocageMounted } from 'app/pages/datasets/utils
 })
 export class DatasetDetailsPanelComponent {
   private datasetStore = inject(DatasetTreeStore);
-  private router = inject(Router);
   private formPanel = inject(FormSidePanelService);
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
@@ -80,43 +78,19 @@ export class DatasetDetailsPanelComponent {
 
   protected readonly isZvol = computed(() => this.dataset().type === DatasetType.Volume);
 
-  /** A dataset or zvol just added, to open once the reload that brings it into the tree has answered. */
-  private readonly pendingDatasetId = signal<string | null>(null);
-
-  constructor() {
-    effect(() => {
-      const id = this.pendingDatasetId();
-      if (!id || this.datasetStore.isLoading()) {
-        return;
-      }
-
-      untracked(() => {
-        this.pendingDatasetId.set(null);
-        this.router.navigate(['/datasets', id]);
-      });
-    });
-  }
-
   onAddDataset(): void {
     this.formPanel.open<Dataset>(DatasetFormComponent, {
       wide: true,
       title: this.translate.instant(helptextDatasetForm.addTitle),
       inputs: { params: { isNew: true, datasetId: this.dataset().id } },
-    }).onSuccess((response) => {
-      this.switchToNewDateset(response.id);
-    }, this.destroyRef);
+    }).onSuccess((response) => this.datasetStore.datasetCreated(response.id), this.destroyRef);
   }
 
   onAddZvol(): void {
     this.formPanel.open<Dataset>(ZvolFormComponent, {
       title: this.translate.instant(helptextZvol.addTitle),
       inputs: { params: { isNew: true, parentOrZvolId: this.dataset().id } },
-    }).onSuccess((response) => this.switchToNewDateset(response.id), this.destroyRef);
-  }
-
-  private switchToNewDateset(id: string): void {
-    this.datasetStore.datasetUpdated();
-    this.pendingDatasetId.set(id);
+    }).onSuccess((response) => this.datasetStore.datasetCreated(response.id), this.destroyRef);
   }
 
   onCloseMobileDetails(): void {
