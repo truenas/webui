@@ -10,6 +10,7 @@ import { firstValueFrom } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { AppStats } from 'app/interfaces/app.interface';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { WidgetResourcesService } from 'app/pages/dashboard/services/widget-resources.service';
@@ -127,6 +128,21 @@ describe('WidgetResourcesService', () => {
 
       expect(await received).toEqual({ fields: update });
       expect(spectator.inject(MockApiService).subscribe).toHaveBeenCalledWith('reporting.realtime');
+    });
+  });
+
+  describe('scans$', () => {
+    it('emits the scan from pool.scan changes and skips other messages', () => {
+      const scan = { name: 'pool_1', scan: { function: 'SCRUB', state: 'SCANNING' } } as PoolScan;
+      const emissions: PoolScan[] = [];
+      spectator.service.scans$.subscribe((value) => emissions.push(value));
+      const api = spectator.inject(MockApiService);
+
+      api.emitEvent('pool.scan', { msg: 'added', fields: scan } as unknown as EventUnion<WebUiApiDirectory, 'pool.scan'>);
+      api.emitEvent('pool.scan', { msg: 'changed', fields: scan } as EventUnion<WebUiApiDirectory, 'pool.scan'>);
+
+      expect(api.subscribe).toHaveBeenCalledWith('pool.scan');
+      expect(emissions).toEqual([scan]);
     });
   });
 

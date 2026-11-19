@@ -28,7 +28,6 @@ import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/int
  * client is typed against. Remove an entry once the generated directory has it.
  */
 export interface UndeclaredCallDirectory {
-  'interface.lag_supported_protocols': { params: []; response: string[] };
   'kerberos.keytab.kerberos_principal_choices': { params: []; response: string[] };
 }
 

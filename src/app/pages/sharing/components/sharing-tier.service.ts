@@ -39,15 +39,6 @@ interface ChangeTierActionOptions {
   requiredRoles?: Role[];
 }
 
-/**
- * The rewrite job carried by a `zfs.tier.rewrite_job_status` update. The generated event model wraps
- * the entry in `fields` twice and declares only `added`, while middleware sends it under `fields` once
- * and as `changed` (gap 16 in docs/devs/typed-api-client.md), so the wire shape is read here.
- */
-function tierJobFromEvent(event: object): ZfsTierRewriteJobEntry | null {
-  return (event as { fields?: ZfsTierRewriteJobEntry }).fields ?? null;
-}
-
 @Injectable({
   providedIn: 'root',
 })
@@ -121,8 +112,8 @@ export class SharingTierService {
    */
   subscribeTierJobStatus(tierJobId: string): Observable<ZfsTierRewriteJobEntry> {
     return this.api.subscribe('zfs.tier.rewrite_job_status', { tier_job_id: tierJobId }).pipe(
-      map(tierJobFromEvent),
-      filter((job) => job !== null),
+      filter((event) => event.msg === 'changed'),
+      map((event) => event.fields as ZfsTierRewriteJobEntry),
     );
   }
 

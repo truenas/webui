@@ -364,10 +364,11 @@ above. Each is a change for `truenas/api-client-ts`.
    NAS-144006 moved the log tails (`ConsoleMessagesStore`, the job progress dialog's
    `filesystem.file_tail_follow`, the installed app's `app.container_log_follow`)
    and `SharingTierService`'s `zfs.tier.rewrite_job_query` and
-   `zfs.tier.rewrite_job_status`. The generated models declare only `added` for
-   a source, so narrowing on it is what types `fields`. That holds on the wire
-   for the log tails, but not everywhere: `zfs.tier.rewrite_job_status` sends
-   `changed`, and `zfs.tier.rewrite_job_query` sends all three kinds (gap 16).
+   `zfs.tier.rewrite_job_status`. Narrowing on the event kind is what types
+   `fields`. Most sources declare only `added`, which holds on the wire for the
+   log tails. The tier sources declare what they send since 13.0.0 (gap 16):
+   `zfs.tier.rewrite_job_status` sends `changed`, and `zfs.tier.rewrite_job_query`
+   sends all three kinds.
    The timer-driven sources (`reporting.realtime`, `app.stats`, `container.metrics`)
    moved once gap 17 was closed; see there.
 6. **Message and connection types are not exported.** The query grammar is:
@@ -477,15 +478,19 @@ above. Each is a change for `truenas/api-client-ts`.
     bump does not fix it; the client would have to stop bundling its
     declarations, or export the enums outside the namespaces.
 
-14. **Methods missing from the dump.** `interface.lag_supported_protocols` and
-    `kerberos.keytab.kerberos_principal_choices` are in no generated directory,
-    because middleware marks them private. `UndeclaredCallDirectory` in
-    `typed-api-client.token.ts` declares them by hand, and `NetworkService` and the
-    directory services form's credential step reach them through
+14. **Methods missing from the dump.** `kerberos.keytab.kerberos_principal_choices`
+    is in no generated directory, because middleware marks it private.
+    `UndeclaredCallDirectory` in `typed-api-client.token.ts` declares it by hand,
+    and the directory services form's credential step reaches it through
     `ApiService.callUndeclared` (`mockUndeclaredCall` in specs). A separate verb
     rather than a widened `WebUiApiDirectory`, which would stop the client and its
-    fake from being the directory's own type. Nothing checks those entries against
-    middleware; drop each one once the generated directory carries it.
+    fake from being the directory's own type. Nothing checks the entry against
+    middleware. It stays private: middleware #20113 dropped it on review, and the
+    principal names are to come from `kerberos.keytab.query` instead, which does
+    not return them yet.
+
+    `interface.lag_supported_protocols` was the other entry. Middleware #20113
+    made it public and 13.0.0 declares it, so `NetworkService` calls it with `call`.
 
     A third, `nfs.add_principal`, behind the NFS service's Add SPN dialog, was not
     private but gone: middleware removed it in 2024 (its test went in
@@ -502,26 +507,21 @@ above. Each is a change for `truenas/api-client-ts`.
     where the license's missing top-level `expires_at` would hide, so `License`
     declares it optional; the readers fall back to the `Support` feature's date.
 
-16. **An event model without its `fields` wrapper.** `pool.scan` declares its
-    `changed` payload as `{ name, scan }` at the top level, while middleware
-    sends it under `fields` like every other collection update (the legacy
-    readers take `event.fields.scan` and work). The client forwards the frame
-    untouched, so the generated type names properties that are not there.
-    `poolScanFromEvent` in `app/helpers/pool-scan-event.helper.ts` reads the
-    wire shape once for every consumer. The generator emits the model exactly as
-    middleware's dump declares it (`PoolScanChangedEvent` is `{ name, scan }` in
-    every version), so the fix is the model in middleware; a generator rule
-    would have to guess which sources send `fields` and which do not.
+16. ~~**An event model without its `fields` wrapper.**~~ Resolved on 13.0.0,
+    generated from a dump that carries middleware #20112. `pool.scan` declares
+    its `changed` payload under `fields`, the tier sources declare the entry once
+    and every kind they send, and the readers narrow on the kind and take
+    `event.fields` from the generated type. `poolScanFromEvent` and
+    `tierJobFromEvent` are deleted. What it was:
 
-    The storage tier's event sources go wrong the other way.
-    `zfs.tier.rewrite_job_query` and `zfs.tier.rewrite_job_status` declare a
-    model that already has `fields`, and the generator wraps it again, so the
-    type reads `event.fields.fields`. Middleware sends the entry under `fields`
-    once (`send_event(..., fields=entry)` in `plugins/zfs/tier.py`). Both also
-    declare only `added`, while the status source sends `changed` and the query
-    source sends `added`, `changed` and `removed`. `tierJobFromEvent` in
-    `SharingTierService` reads the wire shape whatever the kind, and the list
-    refresh reloads on every kind.
+    `pool.scan` declared its
+    `changed` payload as `{ name, scan }` at the top level, while middleware
+    sent it under `fields` like every other collection update. The tier sources
+    went wrong the other way: their model already had `fields` and the dump
+    wrapped it again, so the type read `event.fields.fields`, and both declared
+    only `added`. The generator emits models exactly as the dump declares them,
+    so both were fixed in middleware rather than by a generator rule. The
+    released 25.10 slices are frozen and still carry the old `pool.scan` shape.
 
 17. ~~**Event subscriptions are never released.**~~ Resolved by 9.0.1, which
     carries api-client-ts #69 (TNC-2583). The client still shares one stream per

@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {
   byText, createComponentFactory, mockProvider, Spectator,
 } from '@ngneat/spectator/jest';
+import { EventUnion } from '@truenas/api-client';
 import { TnButtonHarness } from '@truenas/ui-components';
 import { MockComponent, MockComponents } from 'ng-mocks';
 import { of, Subject } from 'rxjs';
@@ -14,7 +15,6 @@ import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
 import { PoolScrubAction } from 'app/enums/pool-scrub-action.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
-import { PoolScanEvent } from 'app/helpers/pool-scan-event.helper';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -24,6 +24,7 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   ScrubFormComponent,
 } from 'app/pages/storage/components/dashboard-pool/disk-health-card/scrub-form/scrub-form.component';
@@ -89,7 +90,7 @@ describe('StorageHealthCardComponent', () => {
   } as ScrubTask;
 
   let api: ApiService;
-  const websocketSubscription$ = new Subject<PoolScanEvent>();
+  const websocketSubscription$ = new Subject<EventUnion<WebUiApiDirectory, 'pool.scan'>>();
 
   const createComponent = createComponentFactory({
     component: StorageHealthCardComponent,
@@ -320,11 +321,10 @@ describe('StorageHealthCardComponent', () => {
           },
         } as PoolScan;
 
-        // Middleware sends the scan under `fields`, where the generated event model has none (gap 16).
         websocketSubscription$.next({
           msg: 'changed',
           fields: activeScrub,
-        } as unknown as PoolScanEvent);
+        } as EventUnion<WebUiApiDirectory, 'pool.scan'>);
 
         spectator.detectChanges();
 

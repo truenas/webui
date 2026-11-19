@@ -20,6 +20,8 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 
 export type S3BucketEntry = QueryEntity<E2eApiDirectory['call'], 'sharing.s3.query'>;
 export type S3AccessKeyEntry = QueryEntity<E2eApiDirectory['call'], 's3.accesskey.query'>;
+/** What `s3.accesskey.create` answers: the entry plus its secret, which queries no longer return. */
+export type S3AccessKeyWithSecret = CallResponse<E2eApiDirectory, 's3.accesskey.create'>;
 export type S3ConfigEntry = CallResponse<E2eApiDirectory, 's3.config'>;
 
 /**
@@ -131,7 +133,7 @@ export interface S3AccessKeySpec {
 export async function provisionS3AccessKey(
   client: E2eApiClient,
   key: S3AccessKeySpec,
-): Promise<S3AccessKeyEntry> {
+): Promise<S3AccessKeyWithSecret> {
   const [existing] = await firstValueFrom(
     client.api
       .query('s3.accesskey.query', [['name', '=', key.name], ['username', '=', key.username]])
