@@ -337,4 +337,35 @@ describe('SmbCardComponent', () => {
       ]);
     });
   });
+
+  describe('with several shares', () => {
+    const createSeveralSharesComponent = createComponentFactory({
+      component: SmbCardComponent,
+      imports: commonImports,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockQuery('pool.query', [{ path: '/mnt/APPS' }] as WebUiQueryEntity<'pool.query'>[]),
+          mockQuery('sharing.smb.query', ['share10', 'Beta', 'share2', 'alpha'].map((name, index) => ({
+            ...smbShares[0],
+            id: index + 1,
+            name,
+          })) as unknown as WebUiQueryEntity<'sharing.smb.query'>[]),
+        ]),
+        mockSharingTierService({ enabled: false }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createSeveralSharesComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(TnTableHarness);
+    });
+
+    it('sorts shares by name naturally and ignoring case, and shows the sort in the header', async () => {
+      const names = (await table.getAllRowTexts()).map((row) => row[0]);
+      expect(names).toEqual(['alpha', 'Beta', 'share2', 'share10']);
+      expect(await table.getSortDirection('name')).toBe('ascending');
+    });
+  });
 });

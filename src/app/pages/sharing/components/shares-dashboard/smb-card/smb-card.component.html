@@ -65,6 +65,8 @@
       [trackBy]="trackBySmbId"
       [fixedLayout]="true"
       [loading]="!!(dataProvider.isLoading$ | async)"
+      [(sortColumn)]="sortColumn"
+      [(sortDirection)]="sortDirection"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'name'" [sortable]="true" [width]="'20%'">

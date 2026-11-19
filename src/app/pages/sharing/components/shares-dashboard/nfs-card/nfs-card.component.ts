@@ -39,7 +39,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
@@ -164,6 +163,10 @@ export class NfsCardComponent implements OnInit {
     return columns;
   });
 
+  private readonly defaultSort: TnSortEvent = { column: 'path', direction: 'asc' };
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
+
   protected readonly trackByNfsId = (_index: number, row: NfsShare): number => row.id;
 
   private readonly rowTags = rowTagPair<NfsShare>((row) => `card-nfs-share-${row.path}-${row.comment}`);
@@ -266,10 +269,6 @@ export class NfsCardComponent implements OnInit {
   }
 
   protected setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'path',
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort<NfsShare>(this.defaultSort, this.displayedColumns()));
   }
 }

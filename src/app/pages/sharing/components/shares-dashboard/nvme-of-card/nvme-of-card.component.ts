@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, computed, OnInit, inject, DestroyRef, signal, untracked,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
@@ -36,7 +38,6 @@ import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { ArrayDataProvider } from 'app/modules/tn-table/classes/array-data-provider/array-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
@@ -128,6 +129,9 @@ export class NvmeOfCardComponent implements OnInit {
 
   protected readonly subsystems = this.nvmeOfStore.subsystems;
 
+  protected readonly sortColumn = signal('name');
+  protected readonly sortDirection = signal<TnSortEvent['direction']>('asc');
+
   protected dataProvider = computed<ArrayDataProvider<NvmeOfSubsystemDetails>>(() => {
     const subsystems = this.subsystems();
     const isLoading = this.isLoading();
@@ -140,11 +144,9 @@ export class NvmeOfCardComponent implements OnInit {
     }
 
     dataProvider.setRows(subsystems);
-    dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
+    // Rebuilt whenever the subsystems change, so it takes the header's current sort rather than resetting it.
+    const sort = untracked(() => ({ column: this.sortColumn(), direction: this.sortDirection() }));
+    dataProvider.setSorting(mapTnSortToTableSort<NvmeOfSubsystemDetails>(sort, this.displayedColumns));
     if (!subsystems.length) {
       dataProvider.setEmptyType(EmptyType.NoPageData);
     }

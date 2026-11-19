@@ -47,6 +47,23 @@ describe('ArrayDataProvider', () => {
     ]);
   });
 
+  it('sorts string columns naturally and ignoring case', async () => {
+    const dataProvider = new ArrayDataProvider<{ name: string }>();
+    dataProvider.setRows([{ name: 'share10' }, { name: 'Beta' }, { name: 'share2' }, { name: 'alpha' }]);
+
+    dataProvider.setSorting({ active: 0, direction: SortDirection.Asc, propertyName: 'name' });
+    expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
+      { name: 'alpha' }, { name: 'Beta' }, { name: 'share2' }, { name: 'share10' },
+    ]);
+
+    dataProvider.setSorting({
+      active: 0, direction: SortDirection.Desc, propertyName: 'name', sortBy: (row) => row.name,
+    });
+    expect(await firstValueFrom(dataProvider.currentPage$)).toEqual([
+      { name: 'share10' }, { name: 'share2' }, { name: 'Beta' }, { name: 'alpha' },
+    ]);
+  });
+
   it('setPagination', async () => {
     const dataProvider = new ArrayDataProvider<TestTableData>();
     dataProvider.setRows(testTableData);
