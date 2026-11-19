@@ -76,6 +76,11 @@ test('an admin creates a zvol, and the appliance really has one', async ({ page,
 
   await expect(page.locator(datasetLocators.treeNode(zvol))).toBeVisible();
 
+  // The page moves to the new zvol rather than staying on the pool it was added under.
+  await expect(page).toHaveURL((url) => url.pathname.endsWith(`/datasets/${encodeURIComponent(zvol)}`));
+  await expect(page.locator(datasetDetailsLocators.path)).toHaveText(zvol);
+  await expect(page.locator(datasetDetailsLocators.ownName)).toHaveText(createdLeaf);
+
   const created = await findDataset(api, zvol);
   expect(created).toMatchObject({
     name: zvol,
