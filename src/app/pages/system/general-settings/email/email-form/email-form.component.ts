@@ -94,6 +94,7 @@ export class EmailFormComponent implements OnInit {
       portRangeValidator(),
     ]],
     security: [MailSecurity.Plain],
+    validate_certificate: [true],
     smtp: [false],
     user: [''],
     pass: [''],
@@ -174,6 +175,21 @@ export class EmailFormComponent implements OnInit {
 
   get isSmtp(): boolean {
     return this.sendMethodControl.value === MailSendMethod.Smtp;
+  }
+
+  /**
+   * Middleware that predates `validate_certificate` neither returns it from `mail.config` nor accepts it in
+   * `mail.update` ("Extra inputs are not permitted"), so the option is offered only when the loaded config carries it.
+   */
+  private supportsCertificateValidation = signal(false);
+
+  /** Certificate validation only applies to the encrypted transports. */
+  get showCertificateValidation(): boolean {
+    return this.supportsCertificateValidation() && this.form.controls.security.value !== MailSecurity.Plain;
+  }
+
+  get isCertificateValidationDisabled(): boolean {
+    return this.showCertificateValidation && !this.form.controls.validate_certificate.value;
   }
 
   get isFromEmailRequired(): boolean {
@@ -257,6 +273,13 @@ export class EmailFormComponent implements OnInit {
   private initEmailForm(emailConfig: MailConfig): void {
     this.form.patchValue(emailConfig);
 
+    // A disabled control is left out of `form.value`, so it is never sent to middleware that would reject it.
+    const supportsCertificateValidation = emailConfig.validate_certificate !== undefined;
+    this.supportsCertificateValidation.set(supportsCertificateValidation);
+    if (!supportsCertificateValidation) {
+      this.form.controls.validate_certificate.disable();
+    }
+
     if (emailConfig.oauth?.client_id) {
       this.sendMethodControl.setValue(emailConfig.oauth?.provider);
       this.oauthCredentials = emailConfig.oauth;
@@ -312,6 +335,9 @@ export class EmailFormComponent implements OnInit {
         update.outgoingserver = 'smtp-mail.outlook.com';
         update.port = 587;
         update.security = MailSecurity.Tls;
+        if (this.supportsCertificateValidation()) {
+          update.validate_certificate = true;
+        }
       }
     }
 

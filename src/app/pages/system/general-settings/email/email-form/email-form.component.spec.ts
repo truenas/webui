@@ -18,6 +18,8 @@ import { OauthMessage } from 'app/interfaces/oauth-message.interface';
 import { User } from 'app/interfaces/user.interface';
 import { OauthButtonComponent } from 'app/modules/buttons/oauth-button/oauth-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { WarningComponent } from 'app/modules/forms/ix-forms/components/warning/warning.component';
+import { WarningHarness } from 'app/modules/forms/ix-forms/components/warning/warning.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
 import { SlideInRef } from 'app/modules/slide-ins/slide-in-ref';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -34,6 +36,7 @@ const fakeEmailConfig: MailConfig = {
   pass: '12345678',
   port: 587,
   security: MailSecurity.Tls,
+  validate_certificate: true,
   smtp: true,
   user: 'authuser@ixsystems.com',
 };
@@ -304,6 +307,7 @@ describe('EmailFormComponent', () => {
         outgoingserver: 'smtp-mail.outlook.com',
         port: 587,
         security: 'TLS',
+        validate_certificate: true,
         oauth: {
           client_id: 'new_client_id',
           client_secret: 'new_secret',
@@ -340,6 +344,7 @@ describe('EmailFormComponent', () => {
             outgoingserver: 'smtp-mail.outlook.com',
             port: 587,
             security: 'TLS',
+            validate_certificate: true,
             oauth: {
               client_id: 'new_client_id',
               client_secret: 'new_secret',
@@ -383,6 +388,7 @@ describe('EmailFormComponent', () => {
         outgoingserver: 'smtp.ixsystems.com',
         port: 21,
         security: MailSecurity.Ssl,
+        validate_certificate: true,
         smtp: false,
       }]);
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
@@ -400,6 +406,7 @@ describe('EmailFormComponent', () => {
         'Outgoing Mail Server': 'smtp.gmail.com',
         'Mail Server Port': '587',
         Security: 'TLS (STARTTLS)',
+        'Validate the SMTP server certificate': true,
         'SMTP Authentication': true,
         Password: '12345678',
         Username: 'authuser@ixsystems.com',
@@ -425,6 +432,7 @@ describe('EmailFormComponent', () => {
             pass: '12345678',
             port: 587,
             security: MailSecurity.Tls,
+            validate_certificate: true,
             smtp: true,
             user: 'authuser@ixsystems.com',
           },
@@ -433,6 +441,81 @@ describe('EmailFormComponent', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith(
         'Test email sent.',
       );
+    });
+
+    it('shows Validate Certificate checked for an encrypted connection and hides it for Plain', async () => {
+      expect(await form.getValues()).toMatchObject({ 'Validate the SMTP server certificate': true });
+
+      await form.fillForm({ Security: 'Plain (No Encryption)' });
+
+      expect(await form.getValues()).not.toHaveProperty('Validate the SMTP server certificate');
+    });
+
+    it('warns and saves validate_certificate as false when certificate validation is turned off', async () => {
+      expect(spectator.query(WarningComponent)).toBeNull();
+
+      await form.fillForm({ 'Validate the SMTP server certificate': false });
+
+      const warning = await loader.getHarness(WarningHarness);
+      expect(await warning.getText()).toContain('Certificate validation is disabled.');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.objectContaining({ validate_certificate: false }),
+      ]);
+    });
+
+    it('hides the warning when security is switched to Plain', async () => {
+      await form.fillForm({ 'Validate the SMTP server certificate': false });
+      await form.fillForm({ Security: 'Plain (No Encryption)' });
+
+      expect(await loader.getAllHarnesses(WarningHarness)).toHaveLength(0);
+    });
+  });
+
+  describe('middleware without validate_certificate', () => {
+    const legacyEmailConfig: MailConfig = { ...fakeEmailConfig };
+    delete legacyEmailConfig.validate_certificate;
+
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, getData: () => legacyEmailConfig }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('hides the option and leaves validate_certificate out of the saved SMTP config', async () => {
+      expect(await form.getValues()).not.toHaveProperty('Validate the SMTP server certificate');
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.not.objectContaining({ validate_certificate: expect.anything() }),
+      ]);
+    });
+
+    it('leaves validate_certificate out of the saved Outlook config', async () => {
+      await form.fillForm({ 'Send Mail Method': 'Outlook OAuth' });
+
+      const logInButton = await loader.getHarness(MatButtonHarness.with({ text: 'Log In To Outlook' }));
+      await logInButton.click();
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.not.objectContaining({ validate_certificate: expect.anything() }),
+      ]);
+      expect(api.call).toHaveBeenCalledWith('mail.update', [
+        expect.objectContaining({ security: 'TLS', outgoingserver: 'smtp-mail.outlook.com' }),
+      ]);
     });
   });
 
@@ -542,6 +625,7 @@ describe('EmailFormComponent', () => {
           'Outgoing Mail Server': 'smtp.gmail.com',
           'Mail Server Port': '587',
           Security: 'TLS (STARTTLS)',
+          'Validate the SMTP server certificate': true,
           'SMTP Authentication': true,
           Password: '12345678',
           Username: 'authuser@ixsystems.com',
@@ -564,6 +648,7 @@ describe('EmailFormComponent', () => {
           outgoingserver: 'smtp.gmail.com',
           port: 587,
           security: MailSecurity.Tls,
+          validate_certificate: true,
           smtp: true,
           user: 'authuser@ixsystems.com',
           pass: '12345678',
