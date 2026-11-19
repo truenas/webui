@@ -65,6 +65,19 @@ describe('TierConfigFormComponent', () => {
     expect(await (await getInput('special_class_metadata_reserve_pct')).getValue()).toBe('25');
   });
 
+  it('explains that tiering is manual', () => {
+    expect(spectator.query('.description')).toHaveText('Nothing moves automatically or on a schedule.');
+  });
+
+  it('shows a tooltip on Enabled', async () => {
+    // Enabled's field has no label to find it by; it is the first field in the form.
+    const [enabledField] = await loader.getAllHarnesses(TnFormFieldHarness);
+
+    expect(await enabledField.getTooltip()).toBe(
+      'Allows datasets to be moved between the Performance and Regular tiers. Turning this on does not move any data by itself.',
+    );
+  });
+
   it('renders no in-form Save', async () => {
     expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: 'Save' }))).toBeNull();
   });

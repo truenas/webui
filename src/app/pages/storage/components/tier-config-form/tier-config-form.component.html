@@ -5,7 +5,9 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="'Tiering Configuration' | translate">
-    <tn-form-field>
+    <p class="description">{{ helptext.description | translate }}</p>
+
+    <tn-form-field [tooltip]="helptext.enabledTooltip | translate">
       <tn-checkbox
         formControlName="enabled"
         [label]="'Enabled' | translate"
@@ -15,8 +17,8 @@
     @if (showEnabledWarning()) {
       <tn-banner
         type="warning"
-        [heading]="enabledWarningHeading | translate"
-        [message]="enabledWarningMessage | translate"
+        [heading]="helptext.enabledWarningHeading | translate"
+        [message]="helptext.enabledWarningMessage | translate"
       ></tn-banner>
     }
 
