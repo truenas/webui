@@ -23,13 +23,6 @@
           <ix-warning [message]="legacyWarningMessage"></ix-warning>
         }
 
-        @if (showExtensionsWarning()) {
-          <ix-smb-extensions-warning
-            id="apple-extensions-warning"
-            (extensionsEnabled)="extensionsEnabled()"
-          ></ix-smb-extensions-warning>
-        }
-
         @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
           <ix-explorer
             formControlName="path"
@@ -215,14 +208,6 @@
               ></ix-checkbox>
             }
 
-            @if (form.controls.streams.enabled) {
-              <ix-checkbox
-                formControlName="streams"
-                [label]="helptextSharingSmb.streamsLabel | translate"
-                [tooltip]="helptextSharingSmb.streamsTooltip | translate"
-              ></ix-checkbox>
-            }
-
             @if (form.controls.durablehandle.enabled) {
               <ix-checkbox
                 formControlName="durablehandle"
@@ -315,8 +300,7 @@
           type="submit"
           color="primary"
           ixTest="save"
-          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending || showExtensionsWarning()"
-          [attr.aria-describedby]="showExtensionsWarning() ? 'apple-extensions-warning' : null"
+          [disabled]="form.invalid || isLoading() || isAsyncValidatorPending"
         >
           {{ 'Save' | translate }}
         </button>

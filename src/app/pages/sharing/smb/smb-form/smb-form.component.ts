@@ -34,7 +34,6 @@ import { mapToOptionsWithHoverTooltips } from 'app/helpers/options.helper';
 import { helptextSharingSmb } from 'app/helptext/sharing';
 import { DatasetCreate } from 'app/interfaces/dataset.interface';
 import { SelectOption } from 'app/interfaces/option.interface';
-import { SmbConfig } from 'app/interfaces/smb-config.interface';
 import {
   externalSmbSharePath,
   FcpSmbShareOptions,
@@ -65,14 +64,12 @@ import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service'
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
@@ -103,7 +100,6 @@ import { selectService } from 'app/store/services/services.selectors';
     TranslateModule,
     WarningComponent,
     SmbUsersWarningComponent,
-    SmbExtensionsWarningComponent,
   ],
 })
 export class SmbFormComponent implements OnInit, AfterViewInit {
@@ -117,7 +113,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   private translate = inject(TranslateService);
   private router = inject(Router);
   protected loader = inject(LoaderService);
-  private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private snackbar = inject(SnackbarService);
@@ -136,7 +131,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   protected isLoading = signal(false);
   protected showLegacyWarning = signal(false);
-  protected showExtensionsWarning = signal(false);
   protected legacyWarningMessage = this.translate.instant(
     'For the best experience, we recommend choosing a modern SMB share purpose instead of the legacy option.',
   );
@@ -149,7 +143,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
   protected readonly requiredRoles = [Role.SharingSmbWrite, Role.SharingWrite];
 
   private wasStripAclWarningShown = false;
-  private smbConfig = signal<SmbConfig | null>(null);
 
   title: string = helptextSharingSmb.formTitleAdd;
 
@@ -341,7 +334,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     hostsallow: [[] as string[]],
     hostsdeny: [[] as string[]],
     guestok: [false],
-    streams: [false],
     durablehandle: [false],
     shadowcopy: [false],
     fsrvp: [false],
@@ -408,7 +400,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.setupPurposeControl();
-    this.loadSmbConfig();
 
     if (this.defaultSmbShare) {
       this.form.patchValue(this.defaultSmbShare);
@@ -533,7 +524,6 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     this.form.controls.purpose.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.showLegacyWarning.set(value === SmbSharePurpose.LegacyShare);
-        this.updateExtensionsWarning();
 
         this.clearPresets();
 
@@ -882,38 +872,5 @@ export class SmbFormComponent implements OnInit, AfterViewInit {
     }
 
     return options;
-  }
-
-  private updateExtensionsWarning(): void {
-    const config = this.smbConfig();
-    if (!config) {
-      return; // Guard against unloaded config
-    }
-
-    const purpose = this.form.controls.purpose.value;
-    const requiresExtensions = purpose === SmbSharePurpose.TimeMachineShare
-      || purpose === SmbSharePurpose.FcpShare;
-    this.showExtensionsWarning.set(!config.aapl_extensions && requiresExtensions);
-  }
-
-  private loadSmbConfig(): void {
-    this.api.call('smb.config')
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((config) => {
-        this.smbConfig.set(config);
-        this.updateExtensionsWarning();
-      });
-  }
-
-  protected extensionsEnabled(): void {
-    this.smbConfig.set({
-      ...this.smbConfig(),
-      aapl_extensions: true,
-    });
-
-    this.updateExtensionsWarning();
   }
 }
