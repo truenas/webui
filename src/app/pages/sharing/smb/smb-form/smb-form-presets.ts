@@ -8,7 +8,7 @@ type OptionKeys = AllOptionKeys<SmbShareOptions>;
 
 export const presetEnabledFields: Partial<Record<SmbSharePurpose, OptionKeys[]>> = {
   [SmbSharePurpose.LegacyShare]: [
-    'recyclebin', 'path_suffix', 'guestok', 'streams', 'durablehandle', 'shadowcopy',
+    'recyclebin', 'path_suffix', 'guestok', 'durablehandle', 'shadowcopy',
     'fsrvp', 'home', 'acl', 'afp', 'timemachine', 'timemachine_quota',
     'aapl_name_mangling', 'auxsmbconf', 'vuid', 'hostsallow', 'hostsdeny',
   ],

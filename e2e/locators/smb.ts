@@ -153,17 +153,6 @@ export const smbLocators = {
   declineStartService: '[data-test="button-do-not-start"]',
 
   /**
-   * "Enable Now" on the Apple-extensions banner.
-   *
-   * Shown when the chosen purpose needs Apple SMB2/3 extensions — Time Machine
-   * or Final Cut Pro — and the service does not have them on. While it is
-   * showing, `extraDisabled` holds Save down, so this is not advice: it is the
-   * only way forward from that purpose. It writes service-wide configuration
-   * (`smb.update`), which outlives the share.
-   */
-  enableAppleExtensions: '[data-test="button-enable-apple-extensions"]',
-
-  /**
    * The Share ACL panel (`smb-acl.component.html`), one `tn-form-list` row per
    * entry.
    *

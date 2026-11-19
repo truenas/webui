@@ -47,15 +47,6 @@
       ></tn-banner>
     }
 
-    @if (showExtensionsWarning()) {
-      <!-- The Save this used to describe now lives in the panel footer, which takes no
-           `aria-describedby`. The warning is a `tn-banner` (role="status"), so it announces
-           on appearance; the dangling id has no referrer and is dropped. -->
-      <ix-smb-extensions-warning
-        (extensionsEnabled)="extensionsEnabled()"
-      ></ix-smb-extensions-warning>
-    }
-
     @if (form.controls.purpose.value !== SmbPresetType.ExternalShare) {
       <tn-form-field
         [label]="helptextSharingSmb.pathLabel | translate"
@@ -288,16 +279,6 @@
               testId="aapl-name-mangling"
               formControlName="aapl_name_mangling"
               [label]="helptextSharingSmb.aaplNameManglingLabel | translate"
-            ></tn-checkbox>
-          </tn-form-field>
-        }
-
-        @if (form.controls.streams.enabled) {
-          <tn-form-field [tooltip]="helptextSharingSmb.streamsTooltip | translate">
-            <tn-checkbox
-              testId="streams"
-              formControlName="streams"
-              [label]="helptextSharingSmb.streamsLabel | translate"
             ></tn-checkbox>
           </tn-form-field>
         }
