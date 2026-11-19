@@ -5,8 +5,8 @@ import { TnDialog, TnIconButtonComponent } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
-import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { helptextTopbar } from 'app/helptext/topbar';
+import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import {
   ResilverProgressDialog,
 } from 'app/modules/layout/topbar/resilvering-indicator/resilver-progress/resilver-progress.component';
@@ -28,9 +28,9 @@ export class ResilveringIndicatorComponent {
   private api = inject(ApiService);
 
   protected isResilvering$ = this.api.subscribe('pool.scan').pipe(
-    map(poolScanFromEvent),
-    filter((poolScan) => poolScan !== null),
-    map(({ scan }) => scan.function === PoolScanFunction.Resilver && scan.state !== PoolScanState.Finished),
+    filter((event) => event.msg === 'changed'),
+    map((event) => (event.fields as PoolScan).scan),
+    map((scan) => scan.function === PoolScanFunction.Resilver && scan.state !== PoolScanState.Finished),
   );
 
   protected readonly tooltips = helptextTopbar.tooltips;

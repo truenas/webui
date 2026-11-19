@@ -17,7 +17,6 @@ import { PoolStatus, poolStatusLabels } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { countTopologyErrors } from 'app/helpers/disk-errors.helper';
-import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
@@ -93,9 +92,9 @@ export class StorageHealthCardComponent {
 
   private scanUpdates$ = toObservable(this.pool).pipe(
     switchMap((pool) => this.api.subscribe('pool.scan').pipe(
-      map((event) => poolScanFromEvent(event)),
-      filter((scan): scan is PoolScan => scan?.name === pool.name),
-      map((scan) => scan.scan),
+      filter((event) => event.msg === 'changed'),
+      filter((event) => event.fields.name === pool.name),
+      map((event) => (event.fields as PoolScan).scan),
     )),
     this.errorHandler.withErrorHandler(),
     shareReplay({ bufferSize: 1, refCount: true }),

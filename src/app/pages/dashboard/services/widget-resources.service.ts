@@ -9,7 +9,6 @@ import {
 } from 'rxjs';
 import { detectStaleData, StaleDataState } from 'app/helpers/operators/detect-stale-data.operator';
 import { LoadingState, toLoadingState } from 'app/helpers/operators/to-loading-state.helper';
-import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { App, AppStartQueryParams, AppStats } from 'app/interfaces/app.interface';
 import { CloudBackup } from 'app/interfaces/cloud-backup.interface';
 import { CloudSyncTask } from 'app/interfaces/cloud-sync-task.interface';
@@ -128,8 +127,8 @@ export class WidgetResourcesService {
   // since pool.query doesn't emit events for scan updates, we need to subscribe to
   // the `pool.scan` endpoint to actually receive real-time scrub/resilver updates.
   readonly scans$ = this.api.subscribe('pool.scan').pipe(
-    map((event) => poolScanFromEvent(event)),
-    filter((scan) => scan !== null),
+    filter((event) => event.msg === 'changed'),
+    map((event) => event.fields as PoolScan),
     shareReplay({ bufferSize: 1, refCount: true }),
   );
 
