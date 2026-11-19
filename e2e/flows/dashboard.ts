@@ -110,7 +110,7 @@ export async function dragCardGroup(page: Page, fromIndex: number, toIndex: numb
 
 /**
  * Presses on the element `from` inside a card, away from its handle, and drags to `to`, as someone
- * who missed the handle would. No drag starts from there, so the layout stays as it was.
+ * who missed the handle would. Only the handle starts a drag, so this one moves no group.
  */
 export async function dragFromCardContent(page: Page, from: string, to: string): Promise<void> {
   await page.locator(from).hover();
