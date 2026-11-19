@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, input, signal, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Store } from '@ngrx/store';
@@ -18,6 +17,7 @@ import {
 } from 'app/modules/alerts/utils/alert-consolidation.utils';
 import { hasAlertDetails } from 'app/modules/alerts/utils/alert-summary.utils';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { getMachineTime } from 'app/modules/language/locale.service';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
 
@@ -49,7 +49,6 @@ enum AlertLevelColor {
     TnTestIdDirective,
     TranslateModule,
     FormatDateTimePipe,
-    AsyncPipe,
     RequiresRolesDirective,
   ],
   host: {
@@ -118,7 +117,19 @@ export class AlertComponent {
   protected readonly requiredRoles = [Role.AlertListWrite];
   protected readonly closeIcon = alertIcons.close;
 
-  timezone$ = this.store$.select(selectTimezone);
+  /** NAS time zone, shown next to the alert time. */
+  protected readonly timezone = toSignal(this.store$.select(selectTimezone));
+
+  /**
+   * Alert time on the NAS wall-clock, so it matches the time-zone label beside it.
+   * Formatting the raw instant would print the browser's local time under the NAS zone's name.
+   */
+  protected readonly alertTime = computed(() => getMachineTime(this.alert().datetime.$date, this.timezone()));
+
+  /** The browser is in another zone, so its own clock is offered in a tooltip, as `<ix-date>` does. */
+  protected readonly isTimezoneDifference = computed(() => {
+    return this.alertTime().getTime() !== this.alert().datetime.$date;
+  });
 
   readonly levelLabel = computed(() => {
     this.langChange();
