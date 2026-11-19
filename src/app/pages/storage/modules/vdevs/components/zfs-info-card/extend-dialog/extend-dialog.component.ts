@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, viewChild,
+  ChangeDetectionStrategy, Component, computed, DestroyRef, inject, signal, viewChild,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Validators, ReactiveFormsModule } from '@angular/forms';
@@ -9,14 +9,15 @@ import {
 } from '@angular/material/dialog';
 import { FormBuilder } from '@ngneat/reactive-forms';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { of } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, of } from 'rxjs';
+import { finalize, switchMap } from 'rxjs/operators';
 import { helptextVolumeStatus } from 'app/helptext/storage/volumes/volume-status';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
 import { PoolAttachParams } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { UnusedDiskSelectComponent } from 'app/modules/forms/custom-selects/unused-disk-select/unused-disk-select.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
+import { LoaderService } from 'app/modules/loader/loader.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -52,6 +53,7 @@ export class ExtendDialog {
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private snackbar = inject(SnackbarService);
+  private loader = inject(LoaderService);
   private translate = inject(TranslateService);
   private dialogRef = inject<MatDialogRef<ExtendDialog>>(MatDialogRef);
   private poolExtendJobService = inject(PoolExtendJobService);
@@ -65,7 +67,12 @@ export class ExtendDialog {
   protected readonly newDisk = toSignal(this.form.controls.newDisk.value$, { initialValue: '' });
   private readonly sedDiskPassword = viewChild.required(SedDiskPasswordComponent);
   private readonly isFormValid = toSignal(this.form.valid$, { initialValue: false });
-  protected readonly canSubmit = computed(() => this.isFormValid() && this.sedDiskPassword().isValid());
+  /** Set from the click until the job dialog closes, so a second click can't repeat the SED setup. */
+  protected readonly isSubmitting = signal(false);
+
+  protected readonly canSubmit = computed(() => {
+    return !this.isSubmitting() && this.isFormValid() && this.sedDiskPassword().isValid();
+  });
 
   readonly helptext = helptextVolumeStatus;
 
@@ -73,14 +80,25 @@ export class ExtendDialog {
 
   onSubmit(event: SubmitEvent): void {
     event.preventDefault();
+    if (this.isSubmitting()) {
+      return;
+    }
+    this.isSubmitting.set(true);
 
-    // Check for existing pool.attach jobs for this pool
+    // `disk.setup_sed` can take several seconds, so the loader covers everything before the job dialog.
     this.poolExtendJobService.checkForExistingExtendJob(this.data.poolId).pipe(
       switchMap((hasExistingJob) => {
         if (hasExistingJob) {
           this.snackbar.error(
             this.translate.instant('A VDEV extension operation is already in progress for this pool. Please wait for it to complete.'),
           );
+          return of(false);
+        }
+        return this.sedDiskPassword().prepareDisk().pipe(map(() => true));
+      }),
+      this.loader.withLoader(),
+      switchMap((canAttach) => {
+        if (!canAttach) {
           return of(null);
         }
 
@@ -91,14 +109,13 @@ export class ExtendDialog {
           target_vdev: this.data.targetVdevGuid,
         } as PoolAttachParams;
 
-        return this.sedDiskPassword().prepareDisk().pipe(
-          switchMap(() => this.dialogService.jobDialog(
-            this.api.job('pool.attach', [this.data.poolId, payload]),
-            { title: this.translate.instant('Extending VDEV'), canMinimize: true },
-          ).afterClosed()),
-        );
+        return this.dialogService.jobDialog(
+          this.api.job('pool.attach', [this.data.poolId, payload]),
+          { title: this.translate.instant('Extending VDEV'), canMinimize: true },
+        ).afterClosed();
       }),
       this.errorHandler.withErrorHandler(),
+      finalize(() => this.isSubmitting.set(false)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe((result) => {
       if (result) {
