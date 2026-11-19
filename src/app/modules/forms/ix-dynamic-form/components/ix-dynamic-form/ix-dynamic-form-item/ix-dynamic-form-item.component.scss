@@ -14,10 +14,20 @@
   padding-left: 16px;
 }
 
+:host(.hidden) {
+  display: none;
+}
+
+// A dict title heads a group of fields, so it must read as a heading, not as one more field label.
 .label {
   align-items: center;
+  color: var(--fg1);
   display: flex;
   flex-direction: row;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 16px;
 }
 
 .label-wrapper {
@@ -26,6 +36,13 @@
   height: 100%;
   justify-content: center;
   margin-right: 10px;
+}
+
+// The rule shows where one group (e.g. one storage entry) ends and the next begins.
+.dict-attrs.has-title {
+  border-left: 2px solid var(--alt-bg2);
+  margin-top: 4px;
+  padding-left: 12px;
 }
 
 .label-tooltip {

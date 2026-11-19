@@ -1,5 +1,7 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, input, OnInit, output, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UntypedFormArray, UntypedFormGroup, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -41,6 +43,10 @@ import { TooltipComponent } from 'app/modules/tooltip/tooltip.component';
   styleUrls: ['./ix-dynamic-form-item.component.scss'],
   templateUrl: './ix-dynamic-form-item.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    // A hidden question renders nothing, so its host is hidden too and adds no space of its own.
+    '[class.hidden]': 'isHidden()',
+  },
   imports: [
     ReactiveFormsModule,
     SchedulerComponent,
@@ -68,6 +74,8 @@ export class IxDynamicFormItemComponent implements OnInit {
   readonly dynamicForm = input.required<UntypedFormGroup>();
   readonly dynamicSchema = input.required<DynamicFormSchemaNode>();
   readonly isEditMode = input<boolean>();
+
+  protected readonly isHidden = signal(false);
 
   readonly addListItem = output<AddListItemEvent>();
   readonly deleteListItem = output<DeleteListItemEvent>();
@@ -106,6 +114,8 @@ export class IxDynamicFormItemComponent implements OnInit {
     if (this.dynamicSchema()?.hidden) {
       (this.dynamicForm().controls[this.dynamicSchema().controlName] as CustomUntypedFormField)?.hidden$?.next(true);
     }
+
+    this.isHidden$?.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHidden) => this.isHidden.set(isHidden));
   }
 
   get getFormArray(): UntypedFormArray {
