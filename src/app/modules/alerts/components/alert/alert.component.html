@@ -44,8 +44,12 @@
     <div class="alert-node">{{ alert().node }}</div>
   }
   <div class="alert-time">
-    {{ alert().datetime.$date | formatDateTime }}
-    @if (timezone$ | async; as timezone) {
+    <span
+      [class.has-time-difference]="isTimezoneDifference()"
+      [matTooltip]="'Browser time: {time}' | translate: { time: (alert().datetime.$date | formatDateTime) }"
+      [matTooltipDisabled]="!isTimezoneDifference()"
+    >{{ alertTime() | formatDateTime }}</span>
+    @if (timezone(); as timezone) {
       ({{ timezone }})
     }
   </div>
