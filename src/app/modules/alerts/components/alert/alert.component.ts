@@ -1,5 +1,5 @@
-import { AsyncPipe } from '@angular/common';
 import { afterNextRender, AfterViewInit, ChangeDetectionStrategy, Component, computed, ElementRef, HostBinding, input, OnChanges, signal, ViewChild, inject } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { MatButton, MatIconButton } from '@angular/material/button';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
@@ -13,6 +13,7 @@ import { AlertWithDuplicates, EnhancedAlert } from 'app/interfaces/smart-alert.i
 import { SmartAlertService } from 'app/modules/alerts/services/smart-alert.service';
 import { alertPanelClosed, dismissAlertPressed, reopenAlertPressed } from 'app/modules/alerts/store/alert.actions';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
+import { getMachineTime } from 'app/modules/language/locale.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { AppState } from 'app/store';
 import { selectTimezone } from 'app/store/system-config/system-config.selectors';
@@ -47,7 +48,6 @@ enum AlertLevelColor {
     TestDirective,
     TranslateModule,
     FormatDateTimePipe,
-    AsyncPipe,
     RequiresRolesDirective,
   ],
 })
@@ -84,7 +84,19 @@ export class AlertComponent implements OnChanges, AfterViewInit {
   icon: string;
   iconTooltip: string;
 
-  timezone$ = this.store$.select(selectTimezone);
+  /** NAS time zone, shown next to the alert time. */
+  protected readonly timezone = toSignal(this.store$.select(selectTimezone));
+
+  /**
+   * Alert time on the NAS wall-clock, so it matches the time-zone label beside it.
+   * Formatting the raw instant would print the browser's local time under the NAS zone's name.
+   */
+  protected readonly alertTime = computed(() => getMachineTime(this.alert().datetime.$date, this.timezone()));
+
+  /** The browser is in another zone, so its own clock is offered in a tooltip, as `<ix-date>` does. */
+  protected readonly isTimezoneDifference = computed(() => {
+    return this.alertTime().getTime() !== this.alert().datetime.$date;
+  });
 
   @HostBinding('class.dismissed')
   get isDismissed(): boolean {
