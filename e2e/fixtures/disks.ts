@@ -95,6 +95,18 @@ export async function pickUnusedDisks(client: E2eApiClient, count: number): Prom
   return disks;
 }
 
+/**
+ * The names of the disks in an imported pool. `disk.query` reports a disk's pool only when
+ * asked for `pools`, which is what the Disks page asks for too.
+ */
+export async function listPoolDiskNames(client: E2eApiClient, pool: string): Promise<string[]> {
+  const disks = await firstValueFrom(
+    client.api.query('disk.query', [], { extra: { pools: true } }).pipe(timeout(readTimeoutMs)),
+  );
+
+  return disks.filter((disk) => disk.pool === pool).map(({ name }) => name);
+}
+
 /** The disk's editable settings as the appliance holds them. */
 export async function readDiskSettings(client: E2eApiClient, name: string): Promise<DiskSettings> {
   const disk = await getDisk(client, name);

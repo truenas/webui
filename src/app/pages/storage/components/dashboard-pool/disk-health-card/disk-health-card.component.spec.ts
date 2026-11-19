@@ -68,10 +68,10 @@ describe('DiskHealthCardComponent', () => {
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
-  it('links to the disks page under its legacy link-* test id', async () => {
+  it('links to the disks page, scoped to this pool, under its legacy link-* test id', async () => {
     const manageDisksButton = await loader.getHarness(TnButtonHarness.with({ label: 'View Disks' }));
 
-    expect(await manageDisksButton.getHref()).toBe('/storage/disks');
+    expect(await manageDisksButton.getHref()).toBe('/storage/disks?pool=DEV');
     // Id is host-pinned, not passed through `[testId]` — see the note in the template.
     expect(await (await manageDisksButton.host()).getAttribute('data-test')).toBe('link-view-disks');
   });

@@ -1,4 +1,9 @@
-<tn-card class="card" [ixUiSearch]="searchableElements.elements.diskHealth">
+<tn-card
+  class="card"
+  tnTestIdType="card"
+  [tnTestId]="[poolState().name, 'disk-health']"
+  [ixUiSearch]="searchableElements.elements.diskHealth"
+>
   <h3 tnCardHeader class="tn-card__title">
     {{ 'Disk Health' | translate }}
     <ix-pool-card-icon [type]="iconType" [tooltip]="iconTooltip"></ix-pool-card-icon>
@@ -10,6 +15,7 @@
       tnTestIdType="link"
       [tnTestId]="'view-disks'"
       [routerLink]="['/storage', 'disks']"
+      [queryParams]="{ pool: poolState().name }"
       [label]="'View Disks' | translate"
     ></tn-button>
   </ng-template>
