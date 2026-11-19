@@ -8,6 +8,10 @@
   padding-left: 16px;
 }
 
+:host(.hidden) {
+  display: none;
+}
+
 tn-form-field {
   display: block;
 
@@ -18,10 +22,24 @@ tn-form-field {
   }
 }
 
+// A list entry's fields are flex items spaced by `tn-form-list-item`'s own gap, where margins
+// don't collapse as they do between top-level questions, so they would add to the gap instead.
+// Fields nested in a dict inside the entry keep theirs: they sit in a block and collapse as usual.
+:host(.list-entry) > div > tn-form-field {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+// A dict title heads a group of fields, so it must read as a heading, not as one more field label.
 .label {
   align-items: center;
+  color: var(--fg1);
   display: flex;
   flex-direction: row;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 16px;
 }
 
 .label-wrapper {
@@ -30,6 +48,13 @@ tn-form-field {
   height: 100%;
   justify-content: center;
   margin-right: 10px;
+}
+
+// The rule shows where one group (e.g. one storage entry) ends and the next begins.
+.dict-attrs.has-title {
+  border-left: 2px solid var(--alt-bg2);
+  margin-top: 4px;
+  padding-left: 12px;
 }
 
 .label-tooltip {
