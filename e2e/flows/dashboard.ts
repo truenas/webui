@@ -91,8 +91,8 @@ export async function dragCardGroup(page: Page, fromIndex: number, toIndex: numb
   const handle = page.locator(dashboardLocators.edit.dragHandle(fromIndex));
 
   // Configure mode shrinks every group with a CSS transition and only then lets the handles take
-  // the pointer. A press measured mid-transition lands on card text, starts a text selection
-  // instead of a drag, and Save then stores the unchanged layout. `hover()` waits until the handle
+  // the pointer. A press measured mid-transition lands on the card's content, starts no drag, and
+  // Save then stores the unchanged layout. `hover()` waits until the handle
   // is stable and is the element the pointer actually hits, and leaves the pointer on it.
   await handle.hover();
   const from = await centreOf(handle);
@@ -106,6 +106,21 @@ export async function dragCardGroup(page: Page, fromIndex: number, toIndex: numb
   // The drag preview and placeholder are copies of the group, handle id included, and CDK removes
   // them in the same step that emits `dropped`.
   await expect(handle).toHaveCount(1);
+}
+
+/**
+ * Presses on the element `from` inside a card, away from its handle, and drags to `to`, as someone
+ * who missed the handle would. No drag starts from there, so the layout stays as it was.
+ */
+export async function dragFromCardContent(page: Page, from: string, to: string): Promise<void> {
+  await page.locator(from).hover();
+  const start = await centreOf(page.locator(from));
+  const end = await centreOf(page.locator(to));
+
+  await page.mouse.down();
+  await page.mouse.move(start.x, start.y - dragStartDistancePx, { steps: 2 });
+  await page.mouse.move(end.x, end.y, { steps: dragSteps });
+  await page.mouse.up();
 }
 
 /** Moves a group one place down with its Move down button, which only phone width shows. */
