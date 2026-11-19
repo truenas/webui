@@ -349,7 +349,7 @@ describe('DatasetsManagementComponent opening a dataset just created', () => {
     await spectator.fixture.whenStable();
     expect(router.navigate).not.toHaveBeenCalledWith(['/datasets', 'pool/new']);
 
-    await respond([pool, created]);
+    await respond([{ ...pool, children: [created] }]);
 
     expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'pool/new']);
     expect(store.pendingSelectionId()).toBeNull();

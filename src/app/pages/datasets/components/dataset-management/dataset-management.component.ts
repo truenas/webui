@@ -42,6 +42,7 @@ import { datasetManagementElements } from 'app/pages/datasets/components/dataset
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 
 @Component({
@@ -500,7 +501,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       const datasets = this.datasetStore.datasets();
       untracked(() => {
         this.datasetStore.clearPendingSelection();
-        if (datasets.some((dataset) => dataset.id === pendingId)) {
+        if (getTreeBranchToNode(datasets, (dataset) => dataset.id === pendingId)) {
           this.router.navigate(['/datasets', pendingId]);
         }
       });
