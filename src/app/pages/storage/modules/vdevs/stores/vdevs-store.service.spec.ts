@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { firstValueFrom } from 'rxjs';
+import { firstValueFrom, of } from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -10,6 +10,7 @@ import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { VDevsState, VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('VDevsStore', () => {
   let spectator: SpectatorService<VDevsStore>;
@@ -18,6 +19,7 @@ describe('VDevsStore', () => {
     service: VDevsStore,
     providers: [
       mockProvider(ApiService),
+      mockProvider(ErrorHandlerService),
     ],
   });
 
@@ -63,6 +65,7 @@ describe('VDevsStore', () => {
           isLoading: true,
           error: null,
           poolName: '',
+          pool: null,
           nodes: [],
           diskDictionary: {},
           poolId: 4,
@@ -72,6 +75,7 @@ describe('VDevsStore', () => {
           isLoading: false,
           error: null,
           poolName: 'tank',
+          pool: expect.objectContaining({ name: 'tank' }),
           nodes: [
             {
               children: [
@@ -95,6 +99,42 @@ describe('VDevsStore', () => {
           selectedNodeGuid: null,
         },
       });
+    });
+  });
+
+  describe('isPoolUnavailable$', () => {
+    function loadPool(pool: Pool): void {
+      const mockedApi = spectator.inject(ApiService);
+      jest.spyOn(mockedApi, 'call').mockImplementation((method) => {
+        if (method === 'pool.query') {
+          return of([pool]);
+        }
+        if (method === 'disk.query') {
+          return of([] as Disk[]);
+        }
+        throw new Error(`Unexpected method: ${method}`);
+      });
+
+      spectator.service.loadNodes(4);
+    }
+
+    it('is false when ZFS lists the devices of the pool', async () => {
+      loadPool({
+        name: 'tank',
+        topology: {
+          data: [], cache: [], log: [], spare: [], special: [], dedup: [],
+        },
+      } as unknown as Pool);
+
+      expect(await firstValueFrom(spectator.service.isPoolUnavailable$)).toBe(false);
+    });
+
+    it('is true for a pool without topology, which is loaded without an error', async () => {
+      loadPool({ name: 'tank', topology: null } as unknown as Pool);
+
+      expect(await firstValueFrom(spectator.service.isPoolUnavailable$)).toBe(true);
+      expect(await firstValueFrom(spectator.service.nodes$)).toEqual([]);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
     });
   });
 

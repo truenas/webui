@@ -2,14 +2,17 @@ import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { provideMockStore } from '@ngrx/store/testing';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
+import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { VDevsComponent } from 'app/pages/storage/modules/vdevs/vdevs.component';
@@ -183,11 +186,15 @@ describe('VDevsComponent', () => {
     },
   ] as VDevNestedDataNode[];
 
+  const pool$ = new BehaviorSubject<Pool | null>(null);
+  const isPoolUnavailable$ = new BehaviorSubject(false);
+
   const createComponent = createComponentFactory({
     component: VDevsComponent,
     declarations: [
       MockComponent(PageHeaderComponent),
       MockComponent(HardwareDiskEncryptionComponent),
+      MockComponent(SedLockedWarningComponent),
     ],
     providers: [
       mockAuth(),
@@ -209,8 +216,11 @@ describe('VDevsComponent', () => {
         selectedParentNode$: of(parentNode),
         nodes$: of(nodes),
         poolName$: of('test'),
+        pool$,
+        isPoolUnavailable$,
         selectedTopologyCategory$: of(VDevType.Data),
         loadNodes: jest.fn(),
+        reloadList: jest.fn(),
         selectedBranch$: of(selectedBranch),
       }),
       provideMockStore({
@@ -226,6 +236,8 @@ describe('VDevsComponent', () => {
 
   beforeEach(() => {
     jest.spyOn(console, 'warn').mockImplementation();
+    pool$.next(null);
+    isPoolUnavailable$.next(false);
     spectator = createComponent();
   });
 
@@ -237,5 +249,44 @@ describe('VDevsComponent', () => {
     expect(headerContainer.textContent).toBe('Details for  sdc ');
     const zfsInfoCard = spectator.query('ix-zfs-info-card');
     expect(zfsInfoCard).toBeTruthy();
+  });
+
+  describe('pool that did not import', () => {
+    function loadOfflinePool(changes: Partial<Pool>): void {
+      pool$.next({
+        id: 2, name: 'test', status: PoolStatus.Offline, topology: null, ...changes,
+      } as unknown as Pool);
+      isPoolUnavailable$.next(true);
+      spectator.detectChanges();
+    }
+
+    it('hides Add VDEV', () => {
+      expect(spectator.query('[ixTest="add-vdev"]')).toExist();
+
+      loadOfflinePool({});
+
+      expect(spectator.query('[ixTest="add-vdev"]')).not.toExist();
+    });
+
+    it('shows the locked SED warning when the pool failed to import because its SED disks are locked', () => {
+      loadOfflinePool({ all_sed: true, status_code: 'LOCKED_SED_DISKS' });
+
+      // A mocked component exposes its signal inputs as plain values.
+      expect(spectator.query(SedLockedWarningComponent)!.pool as unknown).toEqual(pool$.value);
+    });
+
+    it('reloads the pool once the warning reports that it was imported again', () => {
+      loadOfflinePool({ all_sed: true, status_code: 'LOCKED_SED_DISKS' });
+
+      spectator.query(SedLockedWarningComponent)!.importSuccess.emit();
+
+      expect(spectator.inject(VDevsStore).reloadList).toHaveBeenCalled();
+    });
+
+    it('does not show the locked SED warning for a pool that is offline for another reason', () => {
+      loadOfflinePool({ all_sed: false });
+
+      expect(spectator.query(SedLockedWarningComponent)).toBeNull();
+    });
   });
 });

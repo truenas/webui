@@ -41,6 +41,7 @@ import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-st
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
+import { isSedLockedPool } from './sed-locked-warning/is-sed-locked-pool.utils';
 import { SedLockedWarningComponent } from './sed-locked-warning/sed-locked-warning.component';
 import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 
@@ -95,12 +96,7 @@ export class DashboardPoolComponent implements OnChanges {
     return this.pool().status === PoolStatus.Online;
   });
 
-  protected isSedLocked = computed(() => {
-    const pool = this.pool();
-    return pool?.status === PoolStatus.Offline
-      && pool?.all_sed === true
-      && pool?.status_code === 'SED_LOCKED_DISKS';
-  });
+  protected isSedLocked = computed(() => isSedLockedPool(this.pool()));
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isLoading || !this.isLoading()) {

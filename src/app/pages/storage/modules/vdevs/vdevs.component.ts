@@ -1,6 +1,8 @@
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterViewInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, DestroyRef, signal, OnInit, AfterViewInit, inject, computed,
+} from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { MatAnchor } from '@angular/material/button';
 import { ActivatedRoute, RouterLink } from '@angular/router';
@@ -14,6 +16,8 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
+import { isSedLockedPool } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/is-sed-locked-pool.utils';
+import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -39,6 +43,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     MasterDetailViewComponent,
     AsyncPipe,
     TopologyItemIconComponent,
+    SedLockedWarningComponent,
   ],
 })
 export class VDevsComponent implements OnInit, AfterViewInit {
@@ -50,6 +55,13 @@ export class VDevsComponent implements OnInit, AfterViewInit {
 
   protected poolId = signal<number | null>(null);
   protected poolName = toSignal(this.vDevsStore.poolName$, { initialValue: '' });
+  protected isPoolUnavailable = toSignal(this.vDevsStore.isPoolUnavailable$, { initialValue: false });
+  private pool = toSignal(this.vDevsStore.pool$, { initialValue: null });
+
+  protected readonly sedLockedPool = computed(() => {
+    const pool = this.pool();
+    return isSedLockedPool(pool) ? pool : null;
+  });
 
   protected readonly requiredRoles = [Role.PoolWrite];
 

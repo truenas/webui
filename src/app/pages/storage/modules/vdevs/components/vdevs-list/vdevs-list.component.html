@@ -7,131 +7,135 @@
       [loading]="!!(isLoading$ | async)"
     ></ix-fake-progress-bar>
 
-    <div class="item-search">
-      <ix-basic-search
-        [query]="searchQuery()"
-        (queryChange)="onListFiltered($event)"
-      ></ix-basic-search>
-    </div>
-
-    <div class="sticky-header">
-      <div class="tree-header">
-        <div>
-          <span class="name-header">
-            {{ 'VDEV Name' | translate }}
-          </span>
-        </div>
-        <div class="disk-status-header">{{ 'Status' | translate }}</div>
-        <div>{{ 'Capacity' | translate }}</div>
-        <div>{{ 'ZFS Errors' | translate }}</div>
+    @if (isPoolUnavailable$ | async) {
+      <ix-empty [conf]="unavailableEmptyConfig()"></ix-empty>
+    } @else {
+      <div class="item-search">
+        <ix-basic-search
+          [query]="searchQuery()"
+          (queryChange)="onListFiltered($event)"
+        ></ix-basic-search>
       </div>
-    </div>
 
-    <div class="tree-wrapper">
-      <div class="tree-inner">
-        <ix-tree-view
-          class="disk-tree"
-          [ixDataSource]="dataSource"
-          [ixTreeControl]="treeControl"
-        >
-          <ix-tree-node
-            *treeNodeDef="let topologyItem; dataSource: dataSource"
-            routerLinkActive="selected"
-            [treeNodeDefDataSource]="dataSource"
-            [class.selected]="topologyItem.guid === selectedNode?.guid"
-            [routerLink]="['/storage', poolId(), 'vdevs', topologyItem.guid]"
-            (click)="viewDetails(poolId(), topologyItem.guid)"
-            (keydown.enter)="viewDetails(poolId(), topologyItem.guid)"
+      <div class="sticky-header">
+        <div class="tree-header">
+          <div>
+            <span class="name-header">
+              {{ 'VDEV Name' | translate }}
+            </span>
+          </div>
+          <div class="disk-status-header">{{ 'Status' | translate }}</div>
+          <div>{{ 'Capacity' | translate }}</div>
+          <div>{{ 'ZFS Errors' | translate }}</div>
+        </div>
+      </div>
+
+      <div class="tree-wrapper">
+        <div class="tree-inner">
+          <ix-tree-view
+            class="disk-tree"
+            [ixDataSource]="dataSource"
+            [ixTreeControl]="treeControl"
           >
-            <span class="spacer" treeNodeToggle [class.spacer-root]="topologyItem.isRoot"></span>
-            <ix-topology-item-node
-              [topologyItem]="topologyItem | cast"
-              [disk]="vDevsStore.getDisk(topologyItem)"
-            ></ix-topology-item-node>
-            <tn-icon
-              name="chevron-right"
-              library="mdi"
-              class="mobile-actions"
-            ></tn-icon>
-          </ix-tree-node>
-
-          <ix-nested-tree-node
-            *treeNodeDef="let group; dataSource: dataSource; when: isVdevGroup"
-            [treeNodeDefDataSource]="dataSource"
-          >
-            <div
-              class="nested-tree-root-node"
-              (click)="onRowGroupSelected(group, $event)"
-            >
-              <ix-vdev-group-node [vdevGroup]="group | cast">
-                <button
-                  mat-icon-button
-                  treeNodeToggle
-                  class="vdev-group-toggle"
-                  [ixTest]="['toggle-vdev-group', group.guid]"
-                  [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
-                  (click)="$event.preventDefault()"
-                >
-                  <tn-icon
-                    library="mdi"
-                    [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
-                  ></tn-icon>
-                </button>
-              </ix-vdev-group-node>
-            </div>
-
-            @if (treeControl.isExpanded(group)) {
-              <ng-container treeNodeOutlet></ng-container>
-            }
-          </ix-nested-tree-node>
-
-          <ix-nested-tree-node
-            *treeNodeDef="let vdev; dataSource: dataSource; when: hasNestedChild"
-            [treeNodeDefDataSource]="dataSource"
-          >
-            <div
-              class="nested-tree-root-node"
+            <ix-tree-node
+              *treeNodeDef="let topologyItem; dataSource: dataSource"
               routerLinkActive="selected"
-              [class.selected]="vdev.guid === selectedNode?.guid"
-              [routerLink]="['/storage', poolId(), 'vdevs', vdev.guid]"
-              (click)="viewDetails(poolId(), vdev.guid)"
-              (keydown.enter)="viewDetails(poolId(), vdev.guid)"
+              [treeNodeDefDataSource]="dataSource"
+              [class.selected]="topologyItem.guid === selectedNode?.guid"
+              [routerLink]="['/storage', poolId(), 'vdevs', topologyItem.guid]"
+              (click)="viewDetails(poolId(), topologyItem.guid)"
+              (keydown.enter)="viewDetails(poolId(), topologyItem.guid)"
             >
-              <button
-                mat-icon-button
-                treeNodeToggle
-                [ixTest]="['toggle', vdev.guid]"
-                [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
-                (click)="$event.preventDefault()"
-                (keydown.enter)="$event.stopPropagation()"
-              >
-                <tn-icon
-                  library="mdi"
-                  [name]="treeControl.isExpanded(vdev) ? 'chevron-down' : 'chevron-right'"
-                ></tn-icon>
-              </button>
-
+              <span class="spacer" treeNodeToggle [class.spacer-root]="topologyItem.isRoot"></span>
               <ix-topology-item-node
-                [topologyItem]="vdev | cast"
-                [disk]="vDevsStore.getDisk(vdev.children[0])"
+                [topologyItem]="topologyItem | cast"
+                [disk]="vDevsStore.getDisk(topologyItem)"
               ></ix-topology-item-node>
-
               <tn-icon
                 name="chevron-right"
                 library="mdi"
                 class="mobile-actions"
               ></tn-icon>
-            </div>
+            </ix-tree-node>
 
-            @if (treeControl.isExpanded(vdev)) {
-              <ng-container
-                treeNodeOutlet
-              ></ng-container>
-            }
-          </ix-nested-tree-node>
-        </ix-tree-view>
+            <ix-nested-tree-node
+              *treeNodeDef="let group; dataSource: dataSource; when: isVdevGroup"
+              [treeNodeDefDataSource]="dataSource"
+            >
+              <div
+                class="nested-tree-root-node"
+                (click)="onRowGroupSelected(group, $event)"
+              >
+                <ix-vdev-group-node [vdevGroup]="group | cast">
+                  <button
+                    mat-icon-button
+                    treeNodeToggle
+                    class="vdev-group-toggle"
+                    [ixTest]="['toggle-vdev-group', group.guid]"
+                    [attr.aria-label]="'Toggle {row}' | translate: { row: group.guid }"
+                    (click)="$event.preventDefault()"
+                  >
+                    <tn-icon
+                      library="mdi"
+                      [name]="treeControl.isExpanded(group) ? 'chevron-down' : 'chevron-right'"
+                    ></tn-icon>
+                  </button>
+                </ix-vdev-group-node>
+              </div>
+
+              @if (treeControl.isExpanded(group)) {
+                <ng-container treeNodeOutlet></ng-container>
+              }
+            </ix-nested-tree-node>
+
+            <ix-nested-tree-node
+              *treeNodeDef="let vdev; dataSource: dataSource; when: hasNestedChild"
+              [treeNodeDefDataSource]="dataSource"
+            >
+              <div
+                class="nested-tree-root-node"
+                routerLinkActive="selected"
+                [class.selected]="vdev.guid === selectedNode?.guid"
+                [routerLink]="['/storage', poolId(), 'vdevs', vdev.guid]"
+                (click)="viewDetails(poolId(), vdev.guid)"
+                (keydown.enter)="viewDetails(poolId(), vdev.guid)"
+              >
+                <button
+                  mat-icon-button
+                  treeNodeToggle
+                  [ixTest]="['toggle', vdev.guid]"
+                  [attr.aria-label]="'Toggle {row}' | translate: { row: vdev.guid }"
+                  (click)="$event.preventDefault()"
+                  (keydown.enter)="$event.stopPropagation()"
+                >
+                  <tn-icon
+                    library="mdi"
+                    [name]="treeControl.isExpanded(vdev) ? 'chevron-down' : 'chevron-right'"
+                  ></tn-icon>
+                </button>
+
+                <ix-topology-item-node
+                  [topologyItem]="vdev | cast"
+                  [disk]="vDevsStore.getDisk(vdev.children[0])"
+                ></ix-topology-item-node>
+
+                <tn-icon
+                  name="chevron-right"
+                  library="mdi"
+                  class="mobile-actions"
+                ></tn-icon>
+              </div>
+
+              @if (treeControl.isExpanded(vdev)) {
+                <ng-container
+                  treeNodeOutlet
+                ></ng-container>
+              }
+            </ix-nested-tree-node>
+          </ix-tree-view>
+        </div>
       </div>
-    </div>
+    }
   </div>
 
 </div>

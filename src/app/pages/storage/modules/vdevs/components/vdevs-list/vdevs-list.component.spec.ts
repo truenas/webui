@@ -477,6 +477,8 @@ describe('VDevsListComponent', () => {
         mockProvider(VDevsStore, {
           selectedNode$: of(selectedNode),
           isLoading$: of(false),
+          isPoolUnavailable$: of(false),
+          poolName$: of('tank'),
           loadNodes: jest.fn(),
           nodes$: of(nodes),
           selectedBranch$: of(selectedBranch),
@@ -501,6 +503,33 @@ describe('VDevsListComponent', () => {
     expect(treeNodes[0].textContent).toBe('MIRROR');
     expect(treeNodes[1].textContent).toBe('sdc');
     expect(treeNodes[2].textContent).toBe('sdd');
+  });
+
+  it('explains that there are no devices to show when the pool is offline', () => {
+    spectator = createComponent({
+      props: { poolId: 2 },
+      providers: [
+        mockProvider(VDevsStore, {
+          selectedNode$: of(null),
+          isLoading$: of(false),
+          isPoolUnavailable$: of(true),
+          poolName$: of('tank'),
+          loadNodes: jest.fn(),
+          nodes$: of([]),
+          selectedBranch$: of(null),
+        }),
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({}), snapshot: { paramMap: { get: () => null } } },
+        },
+      ],
+    });
+    spectator.detectChanges();
+
+    expect(spectator.query('.empty-title')).toHaveText('VDEVs Unavailable');
+    expect(spectator.query('.empty-message')).toHaveText('tank is offline, so ZFS cannot list its VDEVs.');
+    expect(spectator.query('ix-tree-view')).not.toExist();
+    expect(spectator.query('ix-basic-search')).not.toExist();
   });
 
   describe('auto-expand on descendant warning', () => {
@@ -540,6 +569,8 @@ describe('VDevsListComponent', () => {
           mockProvider(VDevsStore, {
             selectedNode$: of(null),
             isLoading$: of(false),
+            isPoolUnavailable$: of(false),
+            poolName$: of('tank'),
             loadNodes: jest.fn(),
             nodes$: of(faultedNodes),
             selectedBranch$: of(null),
