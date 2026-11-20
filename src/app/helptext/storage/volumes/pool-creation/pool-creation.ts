@@ -3,6 +3,8 @@ import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 export const helptextPoolCreation = {
   exportedDisksWarning: T('The following disks have exported pools on them.\nUsing those disks will make existing pools on them unable to be imported.\nYou will lose any and all data in selected disks.'),
 
+  hiddenSedDisksWarning: T('Locked or initialized SED disks can only be used in a pool with SED encryption, so they are not offered here: {disks}. To use them in this pool, reset them on the Disks page. Resetting erases all data on the disk.'),
+
   exportedSelectedDisksWarning: T('Some of the selected disks have exported pools on them. Using those disks will make existing pools on them unable to be imported. You will lose any and all data in selected disks.'),
 
   encryptionMessage: T('Encryption is for users storing sensitive data.\

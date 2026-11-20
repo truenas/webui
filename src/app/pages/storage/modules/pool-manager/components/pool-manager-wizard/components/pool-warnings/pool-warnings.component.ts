@@ -21,7 +21,9 @@ import { getNonUniqueSerialDisksWarning } from 'app/pages/storage/modules/pool-m
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { DiskStore } from 'app/pages/storage/modules/pool-manager/store/disk.store';
 import { PoolManagerStore } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
-import { hasNonUniqueSerial, hasExportedPool, isSedCapable } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
+import {
+  hasActiveSedSecurity, hasExportedPool, hasNonUniqueSerial, suitsEncryptionType,
+} from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
 @Component({
   selector: 'ix-pool-warnings',
@@ -62,6 +64,10 @@ export class PoolWarningsComponent implements OnInit {
   nonUniqueSerialDisksTooltip: string;
 
   disksWithExportedPools: DetailsDisk[] = [];
+
+  /** Locked or initialized SEDs left out of a pool without SED encryption. */
+  protected hiddenSedDiskNames: string[] = [];
+  protected readonly hiddenSedDisksWarning = helptextPoolCreation.hiddenSedDisksWarning;
   poolAndDisks = new Map<string, string[]>();
 
   // `translated`, not a plain field: the labels are composed in TypeScript rather than
@@ -103,10 +109,13 @@ export class PoolWarningsComponent implements OnInit {
 
       // Untracked: pruning allowed pools updates the store, which must not re-run this effect.
       untracked(() => {
-        // Filter disks based on SED encryption requirement
-        const filteredDisks = encryptionType === EncryptionType.Sed
-          ? allDisks.filter(isSedCapable)
-          : allDisks;
+        const filteredDisks = allDisks.filter((disk) => suitsEncryptionType(disk, encryptionType));
+
+        // An SED pool leaves out plain disks, which needs no explaining; any other pool leaves out
+        // SEDs whose security is on, and the user should know where those disks went.
+        this.hiddenSedDiskNames = encryptionType === EncryptionType.Sed
+          ? []
+          : allDisks.filter(hasActiveSedSecurity).map((disk) => disk.devname);
 
         this.nonUniqueSerialDisks = filteredDisks.filter(hasNonUniqueSerial);
         this.disksWithExportedPools = filteredDisks.filter(hasExportedPool);
