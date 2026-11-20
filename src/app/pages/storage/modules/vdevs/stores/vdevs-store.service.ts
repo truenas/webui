@@ -10,7 +10,7 @@ import {
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk, toDisk } from 'app/interfaces/disk.interface';
-import { PoolTopology, toPool } from 'app/interfaces/pool.interface';
+import { Pool, PoolTopology, toPool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
@@ -20,6 +20,7 @@ export interface VDevsState {
   isLoading: boolean;
   poolId: number | null;
   poolName: string;
+  pool: Pool | null;
   nodes: VDevNestedDataNode[];
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
@@ -29,6 +30,7 @@ const initialState: VDevsState = {
   isLoading: false,
   poolId: null,
   poolName: '',
+  pool: null,
   nodes: [],
   diskDictionary: {},
   selectedNodeGuid: null,
@@ -46,8 +48,15 @@ export class VDevsStore {
 
   readonly isLoading = this.state.isLoading;
   readonly poolName = this.state.poolName;
+  readonly pool = this.state.pool;
   readonly nodes = this.state.nodes;
   readonly diskDictionary = this.state.diskDictionary;
+
+  /** The pool is known to middleware but ZFS does not list it, e.g. it failed to import, so it has no devices. */
+  readonly isPoolUnavailable = computed(() => {
+    const pool = this.state.pool();
+    return Boolean(pool && !pool.topology);
+  });
 
   readonly selectedBranch = computed(() => {
     const selectedNodeGuid = this.state.selectedNodeGuid();
@@ -132,6 +141,7 @@ export class VDevsStore {
         return this.api.query('disk.query', [['pool', '=', pool.name]], { extra: { pools: true } }).pipe(
           map((disks) => ({
             poolName: pool.name,
+            pool,
             diskDictionary: keyBy(disks.map(toDisk), (disk) => disk.devname),
             nodes: this.createDataNodes(pool.topology),
           })),

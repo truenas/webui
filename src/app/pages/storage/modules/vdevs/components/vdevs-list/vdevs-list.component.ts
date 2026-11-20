@@ -10,10 +10,12 @@ import {
 } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  TnEmptyComponent,
   TnIconButtonComponent,
   TnIconComponent,
   TnNestedTreeDataSource,
   TnNestedTreeNodeComponent,
+  TnTestIdDirective,
   TnTreeComponent,
   TnTreeExpansion,
   TnTreeNodeOutletDirective,
@@ -42,6 +44,8 @@ import { findReplacementNode } from 'app/pages/storage/modules/vdevs/utils/find-
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterLink,
+    TnEmptyComponent,
+    TnTestIdDirective,
     BasicSearchComponent,
     FakeProgressBarComponent,
     FormsModule,

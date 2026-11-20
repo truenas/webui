@@ -19,7 +19,7 @@ describe('SedLockedWarningComponent', () => {
   const pool = {
     id: 1,
     name: 'tank',
-    status_code: 'SED_LOCKED_DISKS',
+    status_code: 'LOCKED_SED_DISKS',
     all_sed: true,
   } as Pool;
 

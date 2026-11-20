@@ -2,7 +2,9 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal, WritableSignal } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnIconButtonHarness, TnIconComponent, TnTreeHarness } from '@truenas/ui-components';
+import {
+  TnEmptyHarness, TnIconButtonHarness, TnIconComponent, TnTreeHarness,
+} from '@truenas/ui-components';
 import { of, Subject } from 'rxjs';
 import { settleDeferredTree } from 'app/core/testing/utils/settle-deferred-tree.utils';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
@@ -476,6 +478,7 @@ describe('VDevsListComponent', () => {
         mockProvider(VDevsStore, {
           selectedNode: signal(selectedNode),
           isLoading: signal(false),
+          isPoolUnavailable: signal(false),
           loadNodes: jest.fn(),
           listenForPoolChanges: jest.fn(() => of()),
           nodes: signal(nodes),
@@ -512,6 +515,35 @@ describe('VDevsListComponent', () => {
     await groupToggle.click();
     spectator.detectChanges();
     expect(await groupNode.isExpanded()).toBe(false);
+  });
+
+  it('explains that there are no devices to show when the pool is offline', async () => {
+    spectator = createComponent({
+      props: { poolId: 2 },
+      providers: [
+        mockProvider(VDevsStore, {
+          selectedNode: signal(null),
+          isLoading: signal(false),
+          isPoolUnavailable: signal(true),
+          poolName: signal('tank'),
+          loadNodes: jest.fn(),
+          listenForPoolChanges: jest.fn(() => of()),
+          nodes: signal([]),
+          selectedBranch: signal(null),
+        }),
+        {
+          provide: ActivatedRoute,
+          useValue: { params: of({}), snapshot: { paramMap: { get: () => null } } },
+        },
+      ],
+    });
+    spectator.detectChanges();
+
+    const empty = await TestbedHarnessEnvironment.loader(spectator.fixture).getHarness(TnEmptyHarness);
+    expect(await empty.getTitle()).toBe('VDEVs Unavailable');
+    expect(await empty.getDescription()).toBe('tank is offline, so ZFS cannot list its VDEVs.');
+    expect(spectator.query('tn-tree')).not.toExist();
+    expect(spectator.query('ix-basic-search')).not.toExist();
   });
 
   describe('auto-expand on descendant warning', () => {
@@ -551,6 +583,7 @@ describe('VDevsListComponent', () => {
           mockProvider(VDevsStore, {
             selectedNode: signal(null),
             isLoading: signal(false),
+            isPoolUnavailable: signal(false),
             loadNodes: jest.fn(),
             listenForPoolChanges: jest.fn(() => of()),
             nodes: signal(faultedNodes),
@@ -595,6 +628,7 @@ describe('VDevsListComponent', () => {
           mockProvider(VDevsStore, {
             selectedNode: signal(initialBranch?.at(-1) || null),
             isLoading: signal(false),
+            isPoolUnavailable: signal(false),
             loadNodes: jest.fn(),
             listenForPoolChanges: jest.fn(() => poolChanges$),
             selectNodeByGuid: jest.fn(),
