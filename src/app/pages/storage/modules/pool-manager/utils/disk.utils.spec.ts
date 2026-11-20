@@ -1,10 +1,13 @@
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { DetailsDisk } from 'app/interfaces/disk.interface';
+import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import {
   filterAllowedDisks,
+  hasActiveSedSecurity,
   hasExportedPool,
   hasNonUniqueSerial,
   isSedCapable,
+  suitsEncryptionType,
 } from 'app/pages/storage/modules/pool-manager/utils/disk.utils';
 
 describe('hasNonUniqueSerial', () => {
@@ -43,6 +46,42 @@ describe('isSedCapable', () => {
   it('returns false when disk has no sed_status', () => {
     expect(isSedCapable({} as DetailsDisk)).toBe(false);
   });
+});
+
+describe('hasActiveSedSecurity', () => {
+  it('returns true for a locked or an initialized (unlocked) SED', () => {
+    expect(hasActiveSedSecurity({ sed_status: SedStatus.Locked } as DetailsDisk)).toBe(true);
+    expect(hasActiveSedSecurity({ sed_status: SedStatus.Unlocked } as DetailsDisk)).toBe(true);
+  });
+
+  it('returns false for an uninitialized SED and for a disk with no SED status', () => {
+    expect(hasActiveSedSecurity({ sed_status: SedStatus.Uninitialized } as DetailsDisk)).toBe(false);
+    expect(hasActiveSedSecurity({} as DetailsDisk)).toBe(false);
+  });
+});
+
+describe('suitsEncryptionType', () => {
+  const plainDisk = {} as DetailsDisk;
+  const uninitializedSed = { sed_status: SedStatus.Uninitialized } as DetailsDisk;
+  const unlockedSed = { sed_status: SedStatus.Unlocked } as DetailsDisk;
+  const lockedSed = { sed_status: SedStatus.Locked } as DetailsDisk;
+
+  it('takes only SED-capable disks for an SED pool', () => {
+    expect(suitsEncryptionType(uninitializedSed, EncryptionType.Sed)).toBe(true);
+    expect(suitsEncryptionType(unlockedSed, EncryptionType.Sed)).toBe(true);
+    expect(suitsEncryptionType(lockedSed, EncryptionType.Sed)).toBe(false);
+    expect(suitsEncryptionType(plainDisk, EncryptionType.Sed)).toBe(false);
+  });
+
+  it.each([EncryptionType.None, EncryptionType.Software])(
+    'refuses disks with active SED security for a %s pool',
+    (encryptionType) => {
+      expect(suitsEncryptionType(plainDisk, encryptionType)).toBe(true);
+      expect(suitsEncryptionType(uninitializedSed, encryptionType)).toBe(true);
+      expect(suitsEncryptionType(unlockedSed, encryptionType)).toBe(false);
+      expect(suitsEncryptionType(lockedSed, encryptionType)).toBe(false);
+    },
+  );
 });
 
 describe('filterAllowedDisks', () => {
@@ -100,7 +139,7 @@ describe('filterAllowedDisks', () => {
     expect(filteredDisks).toEqual([enclosureDisk]);
   });
 
-  it('filters out non-SED capable disks when requireSedCapable is true', () => {
+  it('filters out non-SED capable disks for an SED pool', () => {
     const sedDisk1 = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
     const sedDisk2 = { duplicate_serial: [] as string[], sed_status: SedStatus.Unlocked } as DetailsDisk;
     const nonSedDisk1 = { duplicate_serial: [] as string[], sed_status: SedStatus.Locked } as DetailsDisk;
@@ -113,30 +152,30 @@ describe('filterAllowedDisks', () => {
       allowNonUniqueSerialDisks: true,
       allowExportedPools: [],
       limitToSingleEnclosure: null,
-      requireSedCapable: true,
+      encryptionType: EncryptionType.Sed,
     });
 
     expect(filteredDisks).toEqual([sedDisk1, sedDisk2]);
   });
 
-  it('includes all disks when requireSedCapable is false', () => {
-    const sedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
+  it('filters out locked and initialized SEDs for a pool without SED encryption', () => {
+    const uninitializedSed = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
+    const unlockedSed = { duplicate_serial: [] as string[], sed_status: SedStatus.Unlocked } as DetailsDisk;
+    const lockedSed = { duplicate_serial: [] as string[], sed_status: SedStatus.Locked } as DetailsDisk;
     const nonSedDisk = { duplicate_serial: [] as string[] } as DetailsDisk;
 
-    const mixedDisks = [sedDisk, nonSedDisk];
-
-    const filteredDisks = filterAllowedDisks(mixedDisks, {
+    const filteredDisks = filterAllowedDisks([uninitializedSed, unlockedSed, lockedSed, nonSedDisk], {
       allowNonUniqueSerialDisks: true,
       allowExportedPools: [],
       limitToSingleEnclosure: null,
-      requireSedCapable: false,
+      encryptionType: EncryptionType.None,
     });
 
-    expect(filteredDisks).toEqual([sedDisk, nonSedDisk]);
+    expect(filteredDisks).toEqual([uninitializedSed, nonSedDisk]);
   });
 
-  it('includes all disks when requireSedCapable is undefined', () => {
-    const sedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Uninitialized } as DetailsDisk;
+  it('skips the encryption check when no encryption type is given', () => {
+    const sedDisk = { duplicate_serial: [] as string[], sed_status: SedStatus.Locked } as DetailsDisk;
     const nonSedDisk = { duplicate_serial: [] as string[] } as DetailsDisk;
 
     const mixedDisks = [sedDisk, nonSedDisk];
