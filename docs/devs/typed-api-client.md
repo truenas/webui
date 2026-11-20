@@ -492,10 +492,13 @@ above. Each is a change for `truenas/api-client-ts`.
     `zpool.list` is there for a different reason: middleware NAS-141300 renamed
     `zpool.query` to it and removed the old name, after the 13.0.0 dump was taken.
     `ZpoolListEntry` types its pool guid as the decimal string `zpool.list` now
-    returns. Move its three callers (the pools dashboard store, the Change Tier
-    dialog and the dataset capacity card) to `call` once a client regenerated
-    from that middleware declares it, and subscribe the dashboard store to its
-    events.
+    returns. Its three callers (the pools dashboard store, the Change Tier dialog
+    and the dataset capacity card) go through `listZpools` in
+    `app/helpers/list-zpools.helper.ts`, which falls back to `zpool.query` when
+    an appliance built before that change answers "Method not found". Drop the
+    fallback once every master appliance has `zpool.list`. Move the call to
+    `call` once a client regenerated from that middleware declares it, and
+    subscribe the dashboard store to its events.
 
     `interface.lag_supported_protocols` was the other entry. Middleware #20113
     made it public and 13.0.0 declares it, so `NetworkService` calls it with `call`.

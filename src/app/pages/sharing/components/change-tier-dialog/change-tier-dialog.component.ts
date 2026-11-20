@@ -13,6 +13,7 @@ import { forkJoin, tap } from 'rxjs';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { mntPath } from 'app/enums/mnt-path.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
+import { listZpools } from 'app/helpers/list-zpools.helper';
 import { toDataset } from 'app/interfaces/dataset.interface';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
@@ -146,10 +147,10 @@ export class ChangeTierDialogComponent implements OnInit {
 
   private loadDetails(): void {
     forkJoin([
-      this.api.callUndeclared('zpool.list', [{
+      listZpools(this.api, {
         pool_names: [this.data.poolName],
         properties: ['class_normal_available', 'class_special_available'],
-      }]),
+      }),
       this.api.query('pool.dataset.query', [['id', '=', this.data.datasetName]]),
     ]).pipe(
       tap({ error: () => this.loadFailed.set(true) }),

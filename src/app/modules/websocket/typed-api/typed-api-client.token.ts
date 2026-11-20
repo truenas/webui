@@ -38,7 +38,7 @@ export type ZpoolListEntry = Omit<v28_0_0.ZPoolEntry, 'guid' | 'topology'> & { g
 export interface UndeclaredCallDirectory {
   'kerberos.keytab.kerberos_principal_choices': { params: []; response: string[] };
   // TODO: Move to `call` once `@truenas/api-client` is regenerated after NAS-141300, which also publishes
-  // pool changes as `zpool.list` events.
+  // pool changes as `zpool.list` events. Reached through `listZpools`, which falls back to `zpool.query`.
   'zpool.list': { params: [data?: v28_0_0.ZPoolQuery]; response: ZpoolListEntry[] };
 }
 

@@ -11,6 +11,7 @@ import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { listZpools } from 'app/helpers/list-zpools.helper';
 import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { toDatasetQuotas } from 'app/interfaces/dataset-quota.interface';
@@ -146,10 +147,10 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       this.performanceTierAvailable.set(null);
       return;
     }
-    this.api.callUndeclared('zpool.list', [{
+    listZpools(this.api, {
       pool_names: [this.dataset().pool],
       properties: ['class_special_available'],
-    }]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (zpools) => {
         const special = Number(zpools[0]?.properties?.class_special_available?.value ?? 0);
         this.performanceTierAvailable.set(special);

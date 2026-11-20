@@ -5,6 +5,7 @@ import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
   catchError, combineLatest, EMPTY, forkJoin, map, Observable, of, pipe, switchMap, tap,
 } from 'rxjs';
+import { listZpools } from 'app/helpers/list-zpools.helper';
 import { Alert, toAlert } from 'app/interfaces/alert.interface';
 import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
 import {
@@ -97,7 +98,7 @@ export class PoolsDashboardStore {
       // re-emits via its live subscription, combineLatest reuses this stale `zpool.list` value, meaning tier
       // numbers (class_normal_*, class_special_*) won't reflect the current state until the next
       // loadDashboard() call. Subscribe to `zpool.list` once the client has its events.
-      this.api.callUndeclared('zpool.list', [{
+      listZpools(this.api, {
         properties: [
           'class_normal_usable',
           'class_normal_used',
@@ -106,7 +107,7 @@ export class PoolsDashboardStore {
           'class_special_used',
           'class_special_available',
         ],
-      }]),
+      }),
     ]).pipe(
       tap(([pools, rootDatasets, zpools]) => {
         const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
