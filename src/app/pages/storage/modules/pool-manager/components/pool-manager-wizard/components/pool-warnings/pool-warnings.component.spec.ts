@@ -135,4 +135,46 @@ describe('PoolWarningsComponent', () => {
       expect(await checkboxes[0].getLabelText()).toContain('SED_POOL');
     });
   });
+
+  describe('locked and initialized SEDs', () => {
+    const lockedSed = {
+      identifier: '{uuid}locked', duplicate_serial: [] as string[], devname: 'sdj', sed_status: SedStatus.Locked,
+    } as DetailsDisk;
+    const unlockedSed = {
+      identifier: '{uuid}unlocked', duplicate_serial: [] as string[], devname: 'sdk', sed_status: SedStatus.Unlocked,
+    } as DetailsDisk;
+    const uninitializedSed = {
+      identifier: '{uuid}uninit', duplicate_serial: [] as string[], devname: 'sdl', sed_status: SedStatus.Uninitialized,
+    } as DetailsDisk;
+
+    let encryptionType$: BehaviorSubject<EncryptionType>;
+    const createSedComponent = createComponentFactory({
+      component: PoolWarningsComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockProvider(PoolManagerStore, {
+          setDiskWarningOptions: jest.fn(),
+          get encryptionType$() { return encryptionType$; },
+        }),
+        mockProvider(DiskStore, {
+          selectableDisks$: of([lockedSed, unlockedSed, uninitializedSed]),
+        }),
+      ],
+    });
+
+    it('names the SEDs left out of a pool without SED encryption, and drops the note for an SED pool', () => {
+      encryptionType$ = new BehaviorSubject<EncryptionType>(EncryptionType.None);
+      const sedSpectator = createSedComponent();
+
+      expect(sedSpectator.queryAll('ix-warning')).toHaveLength(1);
+      expect(sedSpectator.query('ix-warning')).toHaveText(
+        'Locked or initialized SED disks can only be used in a pool with SED encryption, so they are not offered here: sdj, sdk.',
+      );
+
+      encryptionType$.next(EncryptionType.Sed);
+      sedSpectator.detectChanges();
+
+      expect(sedSpectator.queryAll('ix-warning')).toHaveLength(0);
+    });
+  });
 });
