@@ -25,6 +25,9 @@ import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import {
   InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
+import {
+  SedDiskPasswordsComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/sed-disk-passwords/sed-disk-passwords.component';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { TopologyCategoryDescriptionPipe } from 'app/pages/storage/modules/pool-manager/pipes/topology-category-description.pipe';
@@ -53,6 +56,7 @@ import { EntitlementsService } from 'app/services/entitlements.service';
     MapValuePipe,
     TopologyCategoryDescriptionPipe,
     FormActionsComponent,
+    SedDiskPasswordsComponent,
   ],
 })
 export class ReviewWizardStepComponent implements OnInit {
@@ -83,7 +87,8 @@ export class ReviewWizardStepComponent implements OnInit {
 
   protected readonly poolCreationErrors = this.poolManagerValidation.poolCreationErrors;
   protected readonly isCreateDisabled = computed(() => {
-    return this.poolCreationErrors().some((error) => error.severity === PoolCreationSeverity.Error);
+    return this.poolCreationErrors().some((error) => error.severity === PoolCreationSeverity.Error)
+      || !this.store.sedDiskPasswords().isValid;
   });
 
   protected totalCapacity = this.store.totalUsableCapacity;
