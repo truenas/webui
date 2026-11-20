@@ -102,8 +102,8 @@ describe('PoolsDashboardStore', () => {
       'pool.scrub.query': answers.scrubs ?? [],
       'disk.query': answers.disks ?? [],
     }));
+    jest.mocked(api.callUndeclared).mockImplementation(answer({ 'zpool.list': answers.zpools ?? [] }) as never);
     jest.mocked(api.call).mockImplementation(answer({
-      'zpool.query': answers.zpools ?? [],
       'disk.temperature_alerts': [],
       'disk.temperature_agg': answers.temperatureAgg ?? {},
     }) as never);
@@ -188,7 +188,7 @@ describe('PoolsDashboardStore', () => {
     ]);
   });
 
-  it('keeps showing pools when zpool.query returns null properties', () => {
+  it('keeps showing pools when zpool.list returns null properties', () => {
     stubApi({
       pools: [{
         id: 1, name: 'pool1', used: 10, available: 20,

@@ -2,17 +2,18 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { CallResponse } from '@truenas/api-client';
 import { TnBannerHarness, TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import {
   EMPTY, Observable, catchError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import {
+  mockApi, mockCall, mockQuery, mockUndeclaredCall,
+} from 'app/core/testing/utils/mock-api.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiQueryEntity, ZpoolListEntry } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   ChangeTierDialogComponent, ChangeTierDialogData,
 } from 'app/pages/sharing/components/change-tier-dialog/change-tier-dialog.component';
@@ -31,7 +32,7 @@ describe('ChangeTierDialogComponent — share usage list', () => {
     component: ChangeTierDialogComponent,
     providers: [
       mockApi([
-        mockCall('zpool.query', []),
+        mockUndeclaredCall('zpool.list', []),
         mockQuery('pool.dataset.query', []),
         mockQuery('sharing.smb.query', []),
         mockQuery('sharing.nfs.query', []),
@@ -147,7 +148,7 @@ describe('ChangeTierDialogComponent — load failure', () => {
     component: ChangeTierDialogComponent,
     providers: [
       mockApi([
-        mockCall('zpool.query', []),
+        mockUndeclaredCall('zpool.list', []),
         mockQuery('pool.dataset.query', []),
         mockQuery('sharing.smb.query', []),
         mockQuery('sharing.nfs.query', []),
@@ -167,7 +168,7 @@ describe('ChangeTierDialogComponent — load failure', () => {
 
   it('disables the Apply button when loadDetails fails', async () => {
     spectator = createComponent({ detectChanges: false });
-    spectator.inject(MockApiService).mockCallError('zpool.query');
+    spectator.inject(MockApiService).mockCallError('zpool.list');
     spectator.detectChanges();
     await spectator.fixture.whenStable();
     spectator.detectChanges();
@@ -192,13 +193,13 @@ describe('ChangeTierDialogComponent — loadDetails parsing', () => {
     component: ChangeTierDialogComponent,
     providers: [
       mockApi([
-        mockCall('zpool.query', [{
+        mockUndeclaredCall('zpool.list', [{
           name: 'tank',
           properties: {
             class_normal_available: { value: 1024 * 1024 * 1024 * 4 }, // 4 GiB
             class_special_available: { value: 1024 * 1024 * 1024 * 2 }, // 2 GiB
           },
-        }] as unknown as CallResponse<WebUiApiDirectory, 'zpool.query'>),
+        }] as unknown as ZpoolListEntry[]),
         mockQuery('pool.dataset.query', [{
           id: 'tank/SHARE',
           usedbydataset: { parsed: 1024 * 1024 * 512 }, // 512 MiB
@@ -255,7 +256,7 @@ describe('ChangeTierDialogComponent — apply', () => {
     component: ChangeTierDialogComponent,
     providers: [
       mockApi([
-        mockCall('zpool.query', []),
+        mockUndeclaredCall('zpool.list', []),
         mockQuery('pool.dataset.query', []),
         mockQuery('sharing.smb.query', []),
         mockQuery('sharing.nfs.query', []),

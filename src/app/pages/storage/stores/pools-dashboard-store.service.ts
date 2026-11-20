@@ -1,11 +1,11 @@
 import { computed, Injectable, inject } from '@angular/core';
 import { patchState, signalState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { CallResponse } from '@truenas/api-client';
 import { groupBy, keyBy, sortBy } from 'lodash-es';
 import {
   catchError, combineLatest, EMPTY, forkJoin, map, Observable, of, pipe, switchMap, tap,
 } from 'rxjs';
+import { listZpools } from 'app/helpers/list-zpools.helper';
 import { Alert, toAlert } from 'app/interfaces/alert.interface';
 import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
 import {
@@ -14,7 +14,7 @@ import {
 import { ScrubTask, toScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, toPool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { ZpoolListEntry } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
@@ -85,7 +85,7 @@ export class PoolsDashboardStore {
     )),
   ));
 
-  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], CallResponse<WebUiApiDirectory, 'zpool.query'>]> {
+  private loadPoolsAndRootDatasets(): Observable<[Pool[], Dataset[], ZpoolListEntry[]]> {
     return combineLatest([
       this.api.queryAndSubscribe('pool.query', [], { extra: { is_upgraded: true } }).pipe(
         map((pools) => pools.map(toPool)),
@@ -93,12 +93,12 @@ export class PoolsDashboardStore {
       this.api.query('pool.dataset.query', [], { extra: { retrieve_children: false } }).pipe(
         map((datasets) => datasets.map(toDataset)),
       ),
-      // TODO: `zpool.query` is not an event source in the generated event directory,
-      // so it cannot use queryAndSubscribe. When `pool.query` re-emits via its live subscription,
-      // combineLatest reuses this stale `zpool.query` value, meaning tier numbers
-      // (class_normal_*, class_special_*) won't reflect the current state until the next
-      // loadDashboard() call. Revisit once `zpool.query` events are supported.
-      this.api.call('zpool.query', [{
+      // TODO: Middleware publishes `zpool.list` events, but the generated event directory does not
+      // have them until `@truenas/api-client` is regenerated after NAS-141300. Until then, when `pool.query`
+      // re-emits via its live subscription, combineLatest reuses this stale `zpool.list` value, meaning tier
+      // numbers (class_normal_*, class_special_*) won't reflect the current state until the next
+      // loadDashboard() call. Subscribe to `zpool.list` once the client has its events.
+      listZpools(this.api, {
         properties: [
           'class_normal_usable',
           'class_normal_used',
@@ -107,7 +107,7 @@ export class PoolsDashboardStore {
           'class_special_used',
           'class_special_available',
         ],
-      }]),
+      }),
     ]).pipe(
       tap(([pools, rootDatasets, zpools]) => {
         const zpoolsByName = keyBy(zpools, (zpool) => zpool.name);
