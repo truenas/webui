@@ -115,7 +115,7 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
   }
 
   constructor() {
-    this.clearPathOnTypeChanges();
+    this.syncFieldsWithType();
   }
 
   ngOnChanges(changes: IxSimpleChanges<BaseNamespaceFormComponent>): void {
@@ -160,11 +160,36 @@ export class BaseNamespaceFormComponent implements OnInit, OnChanges {
     });
   }
 
-  private clearPathOnTypeChanges(): void {
+  private syncFieldsWithType(): void {
+    this.syncNewFileControls(this.form.controls.device_type.value);
+
     this.form.controls.device_type.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => {
+      .subscribe((type) => {
         this.form.patchValue({ device_path: '' });
+        this.syncNewFileControls(type);
       });
+  }
+
+  /**
+   * `filename` and `filesize` are only rendered for New File, so they are only enabled there.
+   *
+   * Their `required` comes from `[required]` on the `ix-input`s. When the New File branch is destroyed,
+   * Angular removes that validator but does not re-run validation, so an empty field would stay INVALID
+   * while hidden and keep Save disabled. A disabled control does not count towards the form's validity,
+   * and `form.value` leaves it out, so its value cannot reach the payload either.
+   */
+  private syncNewFileControls(type: FormNamespaceType): void {
+    const { filename, filesize } = this.form.controls;
+
+    if (type === FormNamespaceType.NewFile) {
+      filename.enable();
+      filesize.enable();
+    } else {
+      filename.reset();
+      filesize.reset();
+      filename.disable();
+      filesize.disable();
+    }
   }
 }

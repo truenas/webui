@@ -101,6 +101,34 @@ describe('BaseNamespaceFormComponent', () => {
       } as NamespaceChanges);
     });
 
+    it.each([
+      ['Zvol', 'Path To Zvol', '/dev/zvol/tank/test-zvol'],
+      ['Existing File', 'Path To File', '/mnt/tank/test-file'],
+    ])('enables Save after switching from New File to %s', async (type, pathLabel, path) => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ Type: 'New File' });
+      await form.fillForm({
+        Type: type,
+        [pathLabel]: path,
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('still requires Filename and File Size after switching away from New File and back', async () => {
+      const form = await loader.getHarness(IxFormHarness);
+      await form.fillForm({ Type: 'New File' });
+      await form.fillForm({ Type: 'Zvol' });
+      await form.fillForm({
+        Type: 'New File',
+        'Parent Directory': '/mnt/tank',
+      });
+
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(true);
+    });
+
     it('shows errors when they are provided in the input', () => {
       const mockError = {
         device_path: 'This field is required',
