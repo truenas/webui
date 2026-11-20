@@ -163,7 +163,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     (unusedDisks, diskOptions, enclosureOptions, encryptionType) => filterAllowedDisks(unusedDisks, {
       ...diskOptions,
       ...enclosureOptions,
-      requireSedCapable: encryptionType === EncryptionType.Sed,
+      encryptionType,
     }),
   );
 
