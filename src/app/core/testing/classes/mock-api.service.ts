@@ -22,7 +22,7 @@ type D = WebUiApiDirectory;
 export type MockCallMethod = Exclude<CallMethod<D>, QueryMethod<D['call']>>;
 
 /** Methods `mockCallError` can refuse: calls, `.query` methods and job methods alike. */
-export type RefusableMethod = MockCallMethod | QueryMethod<D['call']> | JobMethod<D>;
+export type RefusableMethod = MockCallMethod | UndeclaredCallMethod | QueryMethod<D['call']> | JobMethod<D>;
 
 export type CallResponseOrFactory<M extends MockCallMethod>
   = | CallResponse<D, M>

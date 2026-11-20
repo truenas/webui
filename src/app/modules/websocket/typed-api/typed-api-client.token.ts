@@ -22,13 +22,24 @@ import { WebSocketDebugService } from 'app/modules/websocket-debug-panel/service
 import { interceptConnection } from 'app/modules/websocket-debug-panel/utils/intercept-connection';
 
 /**
+ * A pool as `zpool.list` returns it. The middleware PR that renamed `zpool.query` to `zpool.list` (NAS-141300)
+ * also made the pool guid a decimal string, because a 64-bit integer loses its low digits in `JSON.parse`.
+ * `topology` is left out: its vdev guids are strings as well, and no caller asks for it yet.
+ */
+export type ZpoolListEntry = Omit<v28_0_0.ZPoolEntry, 'guid' | 'topology'> & { guid: string };
+
+/**
  * Calls middleware serves but leaves out of `--dump-api`, most likely because it marks them
- * private (gap 14 in docs/devs/typed-api-client.md). Declared here by hand, and reached only
+ * private (gap 14 in docs/devs/typed-api-client.md), or that a newer middleware serves than
+ * the `@truenas/api-client` release was generated from. Declared here by hand, and reached only
  * through `ApiService.callUndeclared`, so the generated directory stays exactly what the
  * client is typed against. Remove an entry once the generated directory has it.
  */
 export interface UndeclaredCallDirectory {
   'kerberos.keytab.kerberos_principal_choices': { params: []; response: string[] };
+  // TODO: Move to `call` once `@truenas/api-client` is regenerated after NAS-141300, which also publishes
+  // pool changes as `zpool.list` events.
+  'zpool.list': { params: [data?: v28_0_0.ZPoolQuery]; response: ZpoolListEntry[] };
 }
 
 /** A method of {@link UndeclaredCallDirectory}. */

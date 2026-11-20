@@ -146,7 +146,7 @@ export class ChangeTierDialogComponent implements OnInit {
 
   private loadDetails(): void {
     forkJoin([
-      this.api.call('zpool.query', [{
+      this.api.callUndeclared('zpool.list', [{
         pool_names: [this.data.poolName],
         properties: ['class_normal_available', 'class_special_available'],
       }]),

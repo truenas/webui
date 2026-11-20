@@ -489,6 +489,14 @@ above. Each is a change for `truenas/api-client-ts`.
     principal names are to come from `kerberos.keytab.query` instead, which does
     not return them yet.
 
+    `zpool.list` is there for a different reason: middleware NAS-141300 renamed
+    `zpool.query` to it and removed the old name, after the 13.0.0 dump was taken.
+    `ZpoolListEntry` types its pool guid as the decimal string `zpool.list` now
+    returns. Move its three callers (the pools dashboard store, the Change Tier
+    dialog and the dataset capacity card) to `call` once a client regenerated
+    from that middleware declares it, and subscribe the dashboard store to its
+    events.
+
     `interface.lag_supported_protocols` was the other entry. Middleware #20113
     made it public and 13.0.0 declares it, so `NetworkService` calls it with `call`.
 

@@ -6,7 +6,7 @@ import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockQuery, mockUndeclaredCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -249,7 +249,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
         mockAuth(),
         mockApi([
           mockQuery('pool.dataset.get_quota', []),
-          mockCall('zpool.query', [{
+          mockUndeclaredCall('zpool.list', [{
             name: 'dozer',
             properties: {
               class_special_available: { value: 1024 * 1024 * 1024 * 5 },

@@ -146,7 +146,7 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
       this.performanceTierAvailable.set(null);
       return;
     }
-    this.api.call('zpool.query', [{
+    this.api.callUndeclared('zpool.list', [{
       pool_names: [this.dataset().pool],
       properties: ['class_special_available'],
     }]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
