@@ -4,7 +4,6 @@ import { SmbMinProtocol } from 'app/enums/smb-min-protocol.enum';
 export const smbSearchSpotlight = 'SPOTLIGHT' as const;
 
 export interface SmbConfig {
-  aapl_extensions: boolean;
   admin_group: string | null;
   bindip: string[];
   cifs_SID: string;
@@ -28,6 +27,4 @@ export interface SmbConfig {
   search_protocols: string[];
 }
 
-export type SmbConfigUpdate = {
-  multichannel?: boolean;
-} & Partial<Omit<SmbConfig, 'cifs_SID' | 'id' | 'next_rid'>>;
+export type SmbConfigUpdate = Partial<Omit<SmbConfig, 'cifs_SID' | 'id' | 'next_rid'>>;

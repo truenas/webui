@@ -158,8 +158,6 @@ export class ServiceSmbComponent implements OnInit {
     dirmask: ['', []],
     admin_group: ['', [Validators.maxLength(120)]],
     bindip: this.fb.array<BindIp>([]),
-    aapl_extensions: [false, []],
-    multichannel: [false, []],
     encryption: [SmbEncryption.Default],
     spotlight_search: [false, []],
     stateful_failover: [false, []],
@@ -183,8 +181,6 @@ export class ServiceSmbComponent implements OnInit {
     dirmask: helptextServiceSmb.dirmaskTooltip,
     admin_group: helptextServiceSmb.adminGroupTooltip,
     bindip: helptextServiceSmb.bindipTooltip,
-    aapl_extensions: helptextServiceSmb.aaplExtensionsTooltip,
-    multichannel: helptextServiceSmb.multichannelTooltip,
     spotlight_search: helptextServiceSmb.spotlightSearchTooltip,
     stateful_failover: helptextServiceSmb.statefulFailoverTooltip,
   };

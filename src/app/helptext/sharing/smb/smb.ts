@@ -152,15 +152,6 @@ export const helptextSharingSmb = {
  characters. Enabling this option translates NTFS illegal characters to the Unicode private range.',
   ),
 
-  extensionsWarning: T('Please enable Apple SMB2/3 protocol extension support above before saving.'),
-
-  streamsLabel: T('Enable Alternate Data Streams'),
-  streamsTooltip: T(
-    'Allows multiple\
- <a href="http://www.ntfs.com/ntfs-multiple.htm">NTFS data streams</a>.\
- Disabling this option causes macOS to write streams to files on the filesystem.',
-  ),
-
   durablehandleLabel: T('Enable SMB2/3 Durable Handles'),
   durablehandleTooltip: T(
     'Allow using open file handles that can withstand short disconnections.\

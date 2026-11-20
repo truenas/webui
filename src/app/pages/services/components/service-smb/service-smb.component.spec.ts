@@ -59,7 +59,6 @@ describe('ServiceSmbComponent', () => {
           unixcharset: 'UTF-8',
           debug: true,
           syslog: false,
-          aapl_extensions: false,
           localmaster: true,
           guest: 'nobody',
           filemask: '',
@@ -152,7 +151,6 @@ describe('ServiceSmbComponent', () => {
       'Administrators Group': '',
       Description: 'TrueNAS Server',
       'Directory Mask': '',
-      'Enable Apple SMB2/3 Protocol Extensions': false,
       'Minimum Protocol': 'SMB2 – default',
       'File Mask': '',
       'Guest Account': 'nobody',
@@ -161,7 +159,6 @@ describe('ServiceSmbComponent', () => {
       'NetBIOS Alias': [],
       'NetBIOS Name': 'truenas',
       'Transport Encryption Behavior': 'Negotiate – only encrypt transport if explicitly requested by the SMB client',
-      Multichannel: false,
       'UNIX Charset': 'UTF-8',
       'Use Debug': true,
       'Use Syslog Only': false,
@@ -182,7 +179,6 @@ describe('ServiceSmbComponent', () => {
       unixcharset: 'UTF-8',
       debug: true,
       syslog: false,
-      aapl_extensions: false,
       localmaster: true,
       guest: 'nobody',
       filemask: '',
@@ -248,7 +244,6 @@ describe('ServiceSmbComponent', () => {
       workgroup: 'WORKGROUP2',
 
       // Old advanced options
-      aapl_extensions: false,
       admin_group: null,
       bindip: [],
       guest: 'nobody',
@@ -257,7 +252,6 @@ describe('ServiceSmbComponent', () => {
       debug: true,
       localmaster: true,
       syslog: false,
-      multichannel: false,
       unixcharset: 'UTF-8',
       encryption: SmbEncryption.Negotiate,
       search_protocols: [smbSearchSpotlight],
@@ -283,7 +277,6 @@ describe('ServiceSmbComponent', () => {
       'Use Syslog Only': true,
       'Use Debug': true,
       'Local Master': false,
-      'Enable Apple SMB2/3 Protocol Extensions': true,
       'Administrators Group': 'test-group',
       'File Mask': '0666',
       'Directory Mask': '0777',
@@ -307,7 +300,6 @@ describe('ServiceSmbComponent', () => {
       workgroup: 'WORKGROUP',
 
       // New advanced options
-      aapl_extensions: true,
       admin_group: 'test-group',
       bindip: [
         '1.1.1.1',
@@ -319,7 +311,6 @@ describe('ServiceSmbComponent', () => {
       debug: true,
       localmaster: false,
       syslog: true,
-      multichannel: false,
       unixcharset: 'UTF-16',
       encryption: SmbEncryption.Default,
       search_protocols: [],
