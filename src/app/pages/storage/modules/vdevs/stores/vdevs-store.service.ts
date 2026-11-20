@@ -7,7 +7,7 @@ import { catchError, switchMap, tap } from 'rxjs/operators';
 import { VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
-import { PoolTopology } from 'app/interfaces/pool.interface';
+import { Pool, PoolTopology } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
@@ -17,6 +17,7 @@ export interface VDevsState {
   isLoading: boolean;
   poolId: number | null;
   poolName: string;
+  pool: Pool | null;
   error: unknown;
   nodes: VDevNestedDataNode[];
   diskDictionary: Record<string, Disk>;
@@ -27,6 +28,7 @@ const initialState: VDevsState = {
   isLoading: false,
   poolId: null,
   poolName: '',
+  pool: null,
   error: null,
   nodes: [],
   diskDictionary: {},
@@ -44,6 +46,11 @@ export class VDevsStore extends ComponentStore<VDevsState> {
   readonly isLoading$ = this.select((state) => state.isLoading);
   readonly error$ = this.select((state) => state.error);
   readonly poolName$ = this.select((state) => state.poolName);
+  readonly pool$ = this.select((state) => state.pool);
+
+  /** The pool is known to middleware but ZFS does not list it, e.g. it failed to import, so it has no devices. */
+  readonly isPoolUnavailable$ = this.select((state) => Boolean(state.pool && !state.pool.topology));
+
   readonly nodes$ = this.select((state) => state.nodes);
   readonly diskDictionary$ = this.select((state) => state.diskDictionary);
   readonly selectedBranch$ = this.select((state) => {
@@ -95,6 +102,7 @@ export class VDevsStore extends ComponentStore<VDevsState> {
                   isLoading: false,
                   error: null,
                   poolName: pools[0].name,
+                  pool: pools[0],
                   diskDictionary: keyBy(disks, (disk) => disk.devname),
                   nodes: this.createDataNodes(pools[0].topology),
                 });
@@ -138,8 +146,11 @@ export class VDevsStore extends ComponentStore<VDevsState> {
     super(initialState);
   }
 
-  private createDataNodes(topology: PoolTopology): VDevNestedDataNode[] {
+  private createDataNodes(topology: PoolTopology | null): VDevNestedDataNode[] {
     const dataNodes: VDevNestedDataNode[] = [];
+    if (!topology) {
+      return dataNodes;
+    }
     if (topology.data.length) {
       dataNodes.push({
         children: topology.data,

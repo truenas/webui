@@ -1,18 +1,22 @@
 import { AsyncPipe } from '@angular/common';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, input, output, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, computed, input, output, inject, signal,
+} from '@angular/core';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MatIconButton } from '@angular/material/button';
 import {
   ActivatedRoute, Router, RouterLink, RouterLinkActive,
 } from '@angular/router';
-import { TranslateModule } from '@ngx-translate/core';
-import { TnIconComponent } from '@truenas/ui-components';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { TnIconComponent, tnIconMarker } from '@truenas/ui-components';
 import { filter, map } from 'rxjs/operators';
 import { VDevNestedDataNode, isVdevGroup } from 'app/interfaces/device-nested-data-node.interface';
+import { EmptyConfig } from 'app/interfaces/empty-config.interface';
 import {
   isTopologyDisk, isVdev, TopologyDisk,
 } from 'app/interfaces/storage.interface';
+import { EmptyComponent } from 'app/modules/empty/empty.component';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { NestedTreeNodeComponent } from 'app/modules/ix-tree/components/nested-tree-node/nested-tree-node.component';
 import { TreeNodeComponent } from 'app/modules/ix-tree/components/tree-node/tree-node.component';
@@ -58,6 +62,7 @@ import { collectDescendantWarning } from 'app/pages/storage/modules/vdevs/utils/
     TreeNodeDefDirective,
     TreeNodeToggleDirective,
     TreeNodeOutletDirective,
+    EmptyComponent,
   ],
 })
 export class VDevsListComponent implements OnInit {
@@ -67,6 +72,7 @@ export class VDevsListComponent implements OnInit {
   protected vDevsStore = inject(VDevsStore);
   private layoutService = inject(LayoutService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
 
   poolId = input.required<number>();
   showMobileDetails = output<boolean>();
@@ -79,6 +85,14 @@ export class VDevsListComponent implements OnInit {
   searchQuery = signal('');
   protected isLoading$ = this.vDevsStore.isLoading$;
   protected selectedNode$ = this.vDevsStore.selectedNode$;
+  protected isPoolUnavailable$ = this.vDevsStore.isPoolUnavailable$;
+  private poolName = toSignal(this.vDevsStore.poolName$, { initialValue: '' });
+
+  protected readonly unavailableEmptyConfig = computed<EmptyConfig>(() => ({
+    title: this.translate.instant('VDEVs Unavailable'),
+    message: this.translate.instant('{name} is offline, so ZFS cannot list its VDEVs.', { name: this.poolName() }),
+    icon: tnIconMarker('database-off-outline', 'mdi'),
+  }));
 
   protected dataSource: NestedTreeDataSource<VDevNestedDataNode>;
 

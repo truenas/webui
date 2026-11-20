@@ -173,7 +173,7 @@ describe('DashboardPoolComponent', () => {
       ...pool,
       status: PoolStatus.Offline,
       all_sed: true,
-      status_code: 'SED_LOCKED_DISKS',
+      status_code: 'LOCKED_SED_DISKS',
     });
     spectator.detectChanges();
 
@@ -186,7 +186,7 @@ describe('DashboardPoolComponent', () => {
       ...pool,
       status: PoolStatus.Offline,
       all_sed: true,
-      status_code: 'SED_LOCKED_DISKS',
+      status_code: 'LOCKED_SED_DISKS',
     });
     spectator.detectChanges();
 

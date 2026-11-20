@@ -1,15 +1,24 @@
 @let pool = poolId();
 <ix-page-header [pageTitle]="pageTitle">
-  <a
-    *ixRequiresRoles="requiredRoles"
-    mat-button
-    color="primary"
-    ixTest="add-vdev"
-    [routerLink]="['/storage', pool, 'add-vdevs']"
-  >
-    {{ 'Add VDEV' | translate }}
-  </a>
+  @if (!isPoolUnavailable()) {
+    <a
+      *ixRequiresRoles="requiredRoles"
+      mat-button
+      color="primary"
+      ixTest="add-vdev"
+      [routerLink]="['/storage', pool, 'add-vdevs']"
+    >
+      {{ 'Add VDEV' | translate }}
+    </a>
+  }
 </ix-page-header>
+
+@if (sedLockedPool(); as lockedPool) {
+  <ix-sed-locked-warning
+    [pool]="lockedPool"
+    (importSuccess)="vDevsStore.reloadList()"
+  ></ix-sed-locked-warning>
+}
 
 @if (pool) {
   @let selectedNode = selectedNode$ | async;
