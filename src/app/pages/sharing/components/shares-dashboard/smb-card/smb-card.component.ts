@@ -44,7 +44,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { mapTnSortToTableSort, rowTagPair } from 'app/modules/tn-table/utils';
 import {
@@ -191,6 +190,10 @@ export class SmbCardComponent implements OnInit {
     return columns;
   });
 
+  private readonly defaultSort: TnSortEvent = { column: 'name', direction: 'asc' };
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
+
   protected readonly trackBySmbId = (_index: number, row: SmbShare): number => row.id;
 
   private readonly rowTags = rowTagPair<SmbShare>((row) => `card-smb-share-${row.name}`);
@@ -335,10 +338,6 @@ export class SmbCardComponent implements OnInit {
   }
 
   protected setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort<SmbShare>(this.defaultSort, this.displayedColumns()));
   }
 }

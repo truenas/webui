@@ -38,7 +38,6 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
@@ -167,6 +166,10 @@ export class S3CardComponent implements OnInit {
     return columns;
   });
 
+  private readonly defaultSort: TnSortEvent = { column: 'name', direction: 'asc' };
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
+
   protected readonly trackByBucketId = (_index: number, row: S3Bucket): number => row.id;
 
   protected readonly uniqueRowTag = (row: S3Bucket): string => convertStringToId('card-s3-bucket-' + row.name);
@@ -285,10 +288,6 @@ export class S3CardComponent implements OnInit {
   }
 
   protected setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort<S3Bucket>(this.defaultSort, this.displayedColumns()));
   }
 }

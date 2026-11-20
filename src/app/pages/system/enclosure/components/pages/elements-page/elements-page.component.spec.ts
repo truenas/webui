@@ -94,10 +94,12 @@ describe('ElementsComponent', () => {
 
   it('keeps sorting applied when the route view changes', async () => {
     const table = await loader.getHarness(TnTableHarness);
+    // Descending, because the rows already arrive in ascending (natural) order.
+    await table.clickSortHeader('descriptor');
     await table.clickSortHeader('descriptor');
     spectator.detectChanges();
 
-    expect(await table.getSortDirection('descriptor')).toBe('ascending');
+    expect(await table.getSortDirection('descriptor')).toBe('descending');
     expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['12V Sensor', '5V Sensor']);
 
     // Switch to a DIFFERENT populated view. The table instance survives the route change, so
@@ -105,8 +107,8 @@ describe('ElementsComponent', () => {
     spectator.setRouteParam('view', EnclosureElementType.PowerSupply);
     spectator.detectChanges();
 
-    expect(await table.getSortDirection('descriptor')).toBe('ascending');
-    expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['PSU A', 'PSU B']);
+    expect(await table.getSortDirection('descriptor')).toBe('descending');
+    expect((await table.getAllRowTexts()).map((row) => row[0])).toEqual(['PSU B', 'PSU A']);
   });
 
   it('shows a no-records empty state when the view has no elements', async () => {

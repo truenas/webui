@@ -69,6 +69,8 @@
       [displayedColumns]="displayedColumns()"
       [trackBy]="trackByIscsiId"
       [loading]="isLoading()"
+      [(sortColumn)]="sortColumn"
+      [(sortDirection)]="sortDirection"
       (sortChange)="onSortChange($event)"
     >
       <ng-container [tnColumnDef]="'name'" [sortable]="true">

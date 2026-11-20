@@ -39,7 +39,6 @@ import { EmptyService } from 'app/modules/empty/empty.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { TablePagerShowMoreComponent } from 'app/modules/tn-table/components/table-pager-show-more/table-pager-show-more.component';
-import { SortDirection } from 'app/modules/tn-table/enums/sort-direction.enum';
 import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-config.interface';
 import {
   dataProviderLoading, dataProviderRows, mapTnSortToTableSort, toUniqueRowTag,
@@ -178,6 +177,10 @@ export class IscsiCardComponent implements OnInit {
     return columns;
   });
 
+  private readonly defaultSort: TnSortEvent = { column: 'name', direction: 'asc' };
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
+
   protected readonly trackByIscsiId = (_index: number, row: IscsiTarget): number => row.id;
 
   protected readonly uniqueRowTag = (row: IscsiTarget): string => toUniqueRowTag('card-iscsi-target-' + row.name);
@@ -225,10 +228,6 @@ export class IscsiCardComponent implements OnInit {
   }
 
   private setDefaultSort(): void {
-    this.dataProvider.setSorting({
-      active: 0,
-      direction: SortDirection.Asc,
-      propertyName: 'name',
-    });
+    this.dataProvider.setSorting(mapTnSortToTableSort<IscsiTarget>(this.defaultSort, this.displayedColumns()));
   }
 }
