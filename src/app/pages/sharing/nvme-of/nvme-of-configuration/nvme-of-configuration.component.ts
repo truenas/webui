@@ -6,13 +6,17 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { MatTooltip } from '@angular/material/tooltip';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { finalize, forkJoin, of } from 'rxjs';
+import {
+  finalize, forkJoin, of, take,
+} from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxFieldsetComponent } from 'app/modules/forms/ix-forms/components/ix-fieldset/ix-fieldset.component';
@@ -34,6 +38,7 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
+  styleUrls: ['./nvme-of-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     ModalHeaderComponent,
@@ -51,6 +56,7 @@ import { selectService } from 'app/store/services/services.selectors';
     TestDirective,
     MatTooltip,
     LicensedFeatureComponent,
+    CopyButtonComponent,
   ],
 })
 export class NvmeOfConfigurationComponent implements OnInit {
@@ -64,12 +70,22 @@ export class NvmeOfConfigurationComponent implements OnInit {
   private nvmeOfService = inject(NvmeOfService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
+  private authService = inject(AuthService);
 
   protected readonly requiredRoles = [Role.SharingNvmeTargetWrite];
   protected isLoading = signal(false);
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly hasSpdk = this.entitlements.entitled(EntitlementFeature.NvmeOfSpdk);
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
+
+  /**
+   * Why a control is locked, kept apart from `control.disabled`: a read-only user gets every control
+   * disabled too, and the license key / "stop the service" hints must not claim a reason that isn't
+   * the real one.
+   */
+  protected readonly isAnaUnavailable = signal(false);
+  protected readonly isRdmaUnavailable = signal(false);
+  protected readonly isKernelLocked = signal(false);
 
   protected form = this.formBuilder.nonNullable.group({
     basenqn: [''],
@@ -107,23 +123,32 @@ export class NvmeOfConfigurationComponent implements OnInit {
     forkJoin([
       this.api.call('nvmet.global.config'),
       this.nvmeOfService.isRdmaCapable(),
+      this.authService.hasRole(this.requiredRoles).pipe(take(1)),
     ]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoading.set(false)),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([config, isRdmaCapable]) => {
+    ).subscribe(([config, isRdmaCapable, canEdit]) => {
       this.form.patchValue(config);
 
-      if (!isRdmaCapable) {
+      this.isRdmaUnavailable.set(!isRdmaCapable);
+      this.isAnaUnavailable.set(!this.isHaLicensed());
+      this.isKernelLocked.set(this.service()?.state === ServiceStatus.Running);
+
+      if (!canEdit) {
+        this.form.disable();
+        return;
+      }
+
+      if (this.isRdmaUnavailable()) {
         this.form.controls.rdma.disable();
       }
 
-      if (!this.isHaLicensed()) {
+      if (this.isAnaUnavailable()) {
         this.form.controls.ana.disable();
       }
 
-      const service = this.service();
-      if (service?.state === ServiceStatus.Running) {
+      if (this.isKernelLocked()) {
         this.form.controls.kernel.disable();
       }
     });

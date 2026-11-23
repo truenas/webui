@@ -5,6 +5,9 @@ export const helptextNvmeOf = {
   rdmaTooltip: T('Once enabled, one or more ports may be configured with RDMA selected as the transport.\
  Enabling is limited to TrueNAS Enterprise-licensed systems and requires the system and network environment\
  have Remote Direct Memory Access (RDMA)-capable hardware.'),
+  anaTooltip: T('Asymmetric Namespace Access (ANA) reports which controller of an HA system serves each path,\
+ so hosts with NVMe multipath send I/O to the active controller and switch paths when the system fails over.\
+ Requires an HA license.'),
   anaDisabledTooltip: T('Not enabled, because this feature requires an HA license.'),
   implementationTooltip: T('Experimental. This option is geared towards experimentation with client compatibility. \
 Try this if having issues with certain clients, such as hypervisors that may require specific capabilities.'),

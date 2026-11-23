@@ -1,9 +1,12 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatButtonHarness } from '@angular/material/button/testing';
+import { MatTooltipHarness } from '@angular/material/tooltip/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
+import { TnIconButtonHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -20,6 +23,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { ClipboardService } from 'app/services/clipboard.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -71,6 +75,9 @@ describe('NvmeOfConfigurationComponent', () => {
       }),
       mockProvider(NvmeOfService, {
         isRdmaCapable: jest.fn(() => of(true)),
+      }),
+      mockProvider(ClipboardService, {
+        copy: jest.fn(() => Promise.resolve()),
       }),
       mockProvider(SnackbarService),
     ],
@@ -223,5 +230,57 @@ describe('NvmeOfConfigurationComponent', () => {
       basenqn: 'iqn.2005-10.org.freenas:ctl',
       rdma: true,
     }]);
+  });
+
+  it('copies the Base NQN to the clipboard', async () => {
+    const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
+    await copyButton.click();
+
+    expect(spectator.inject(ClipboardService).copy).toHaveBeenCalledWith('iqn.2005-10.org.freenas:ctl');
+  });
+
+  it('explains what ANA does in a help tooltip when the system is HA-licensed', () => {
+    const gate = spectator.query('[formControlName="ana"]')!.closest('ix-licensed-feature')!;
+    const help = gate.querySelector('button.icon-button')!;
+
+    expect(gate.querySelector('tn-icon[name="help-circle"]')).toExist();
+    expect(help.getAttribute('aria-label')).toContain('Asymmetric Namespace Access (ANA) reports which controller');
+  });
+
+  describe('user without the NVMe-oF write role', () => {
+    beforeEach(async () => {
+      spectator.inject(MockAuthService).hasRole.mockReturnValue(of(false));
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+    });
+
+    it('disables every control', async () => {
+      expect(await form.getDisabledState()).toEqual({
+        'Base NQN': true,
+        'Implementation (Experimental)': true,
+        'Enable Asymmetric Namespace Access (ANA)': true,
+        'Enable Remote Direct Memory Access (RDMA)': true,
+      });
+    });
+
+    it('keeps the help icons instead of claiming a missing license or a running service', () => {
+      expect(spectator.query('tn-icon[name="key-variant"]')).not.toExist();
+      expect(spectator.queryAll('ix-licensed-feature tn-icon[name="help-circle"]')).toHaveLength(2);
+    });
+
+    it('shows the full Base NQN on hover', async () => {
+      const tooltip = await loader.getHarness(MatTooltipHarness.with({ selector: 'ix-input' }));
+      await tooltip.show();
+
+      expect(await tooltip.getTooltipText()).toBe('iqn.2005-10.org.freenas:ctl');
+    });
+
+    it('still lets the Base NQN be copied', async () => {
+      const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
+      await copyButton.click();
+
+      expect(spectator.inject(ClipboardService).copy).toHaveBeenCalledWith('iqn.2005-10.org.freenas:ctl');
+    });
   });
 });

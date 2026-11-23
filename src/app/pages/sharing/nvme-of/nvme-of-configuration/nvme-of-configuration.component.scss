@@ -1,0 +1,16 @@
+.base-nqn {
+  align-items: flex-end;
+  display: flex;
+  gap: 0.25rem;
+
+  ix-input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  // ix-input's host carries 12px margin + 8px padding below the input box;
+  // match it so the button lines up with the input rather than the label.
+  ix-copy-button {
+    margin-bottom: 20px;
+  }
+}

@@ -8,14 +8,20 @@
   <mat-card-content>
     <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
       <ix-fieldset>
-        <ix-input
-          formControlName="basenqn"
-          [label]="'Base NQN' | translate"
-          [tooltip]="helptext.baseNqnTooltip | translate"
-        ></ix-input>
+        <!-- The NQN outgrows the panel, and hosts need it verbatim, so the copy button works for read-only
+             users too; with the field disabled the hover tooltip is the only way to read the whole value. -->
+        <div class="base-nqn">
+          <ix-input
+            formControlName="basenqn"
+            [label]="'Base NQN' | translate"
+            [tooltip]="helptext.baseNqnTooltip | translate"
+            [matTooltip]="form.controls.basenqn.disabled ? form.controls.basenqn.value : ''"
+          ></ix-input>
+          <ix-copy-button [text]="form.controls.basenqn.value"></ix-copy-button>
+        </div>
 
         @if (hasSpdk()) {
-          <div [matTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''">
+          <div [matTooltip]="isKernelLocked() ? (helptext.implementationDisabledTooltip | translate) : ''">
             <ix-radio-group
               formControlName="kernel"
               [label]="'Implementation (Experimental)' | translate"
@@ -26,7 +32,8 @@
         }
 
         <ix-licensed-feature
-          [locked]="form.controls.ana.disabled"
+          [locked]="isAnaUnavailable()"
+          [tooltip]="helptext.anaTooltip | translate"
           [lockedTooltip]="helptext.anaDisabledTooltip | translate"
         >
           <ix-checkbox
@@ -37,7 +44,7 @@
 
         <!-- `rdma.capable_protocols` folds the Enterprise license into its answer, so the UI can't tell a
              missing license from missing hardware: the locked state shows the full requirement text. -->
-        <ix-licensed-feature [locked]="form.controls.rdma.disabled" [tooltip]="helptext.rdmaTooltip | translate">
+        <ix-licensed-feature [locked]="isRdmaUnavailable()" [tooltip]="helptext.rdmaTooltip | translate">
           <ix-checkbox
             formControlName="rdma"
             [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
