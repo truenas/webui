@@ -14,6 +14,45 @@ export const s3AccessLabels = new Map<S3Access, string>([
   [S3Access.Deny, T('Deny')],
 ]);
 
+/**
+ * The actions a grant may list instead of a preset: exactly what `READWRITE` allows. The S3 service refuses its
+ * whole config over any other name, so owner-only actions such as releasing a legal hold are not here.
+ */
+export enum S3GrantAction {
+  GetObject = 'GetObject',
+  PutObject = 'PutObject',
+  DeleteObject = 'DeleteObject',
+  GetObjectTagging = 'GetObjectTagging',
+  PutObjectTagging = 'PutObjectTagging',
+  DeleteObjectTagging = 'DeleteObjectTagging',
+  ListBucket = 'ListBucket',
+  GetBucketLocation = 'GetBucketLocation',
+  ListBucketMultipartUploads = 'ListBucketMultipartUploads',
+  ListMultipartUploadParts = 'ListMultipartUploadParts',
+  AbortMultipartUpload = 'AbortMultipartUpload',
+  PutObjectRetention = 'PutObjectRetention',
+  PutObjectLegalHold = 'PutObjectLegalHold',
+  ListAllMyBuckets = 'ListAllMyBuckets',
+  GetObjectAcl = 'GetObjectAcl',
+  PutObjectAcl = 'PutObjectAcl',
+  GetBucketAcl = 'GetBucketAcl',
+  PutBucketAcl = 'PutBucketAcl',
+  GetBucketPolicy = 'GetBucketPolicy',
+}
+
+/**
+ * What the grant editor's Access select offers: a preset, or `Custom` for a grant that lists its own actions.
+ * `Custom` is the form's only; the wire carries the action list in its place.
+ */
+export const s3GrantCustomAccess = 'CUSTOM';
+
+export type S3GrantAccessChoice = S3Access | typeof s3GrantCustomAccess;
+
+export const s3GrantAccessChoiceLabels = new Map<S3GrantAccessChoice, string>([
+  ...s3AccessLabels,
+  [s3GrantCustomAccess, T('Custom')],
+]);
+
 export enum S3PrincipalType {
   User = 'USER',
   Group = 'GROUP',

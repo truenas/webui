@@ -552,9 +552,12 @@ export class S3BucketFormComponent implements OnInit {
 
   private setBucketForEdit(bucket: S3Bucket): void {
     const [auditMode, auditActions] = this.auditMaskToForm(bucket.audit);
-    bucket.grants.forEach((grant) => this.form.controls.grants.push(createS3GrantFormGroup(grant)));
+    // The rows are built from the grants above; patching them again would write a listed grant's
+    // actions over the row's `Custom` choice.
+    const { grants, ...rest } = bucket;
+    grants.forEach((grant) => this.form.controls.grants.push(createS3GrantFormGroup(grant)));
     this.form.patchValue({
-      ...bucket,
+      ...rest,
       audit_mode: auditMode,
       audit_actions: auditActions,
       audit_overflow: bucket.audit_overflow,

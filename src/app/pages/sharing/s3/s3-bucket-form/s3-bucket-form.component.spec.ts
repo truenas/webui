@@ -13,7 +13,7 @@ import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3BucketLayout, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType,
-  S3Versioning,
+  S3GrantAction, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { Group } from 'app/interfaces/group.interface';
@@ -568,6 +568,66 @@ describe('S3BucketFormComponent', () => {
         grants: [{ principal_type: S3PrincipalType.Everyone, xid: null, access: S3Access.ReadOnly }],
       })]);
     });
+
+    it('adds a grant that lists its own actions', async () => {
+      await form.fillForm({
+        Name: 'shared',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await clickAdvancedOptions();
+
+      const grants = await loader.getHarness(IxListHarness.with({ label: 'Grants' }));
+      await grants.pressAddButton();
+      await form.fillForm({
+        Principal: 'Everyone',
+        Access: 'Custom',
+      });
+
+      // The list starts empty, and a grant must allow at least one action.
+      expect(await (await getSaveButton()).isDisabled()).toBe(true);
+
+      await form.fillForm({ Actions: ['GetObject', 'ListBucket'] });
+      expect(await (await getSaveButton()).isDisabled()).toBe(false);
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        grants: [{
+          principal_type: S3PrincipalType.Everyone,
+          xid: null,
+          access: [S3GrantAction.GetObject, S3GrantAction.ListBucket],
+        }],
+      })]);
+    });
+
+    it('drops a half-filled action list when the grant goes back to a preset', async () => {
+      await form.fillForm({
+        Name: 'shared',
+        'Parent Dataset': 'tank',
+        Owner: 'alice',
+      });
+      await clickAdvancedOptions();
+
+      const grants = await loader.getHarness(IxListHarness.with({ label: 'Grants' }));
+      await grants.pressAddButton();
+      await form.fillForm({
+        Principal: 'Everyone',
+        Access: 'Custom',
+      });
+      expect(await (await getSaveButton()).isDisabled()).toBe(true);
+
+      await form.fillForm({ Access: 'Read / Write' });
+
+      expect(await form.getLabels()).not.toContain('Actions');
+      expect(await (await getSaveButton()).isDisabled()).toBe(false);
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        grants: [{ principal_type: S3PrincipalType.Everyone, xid: null, access: S3Access.ReadWrite }],
+      })]);
+    });
   });
 
   describe('premium features', () => {
@@ -787,6 +847,51 @@ describe('S3BucketFormComponent', () => {
         audit_overflow: null,
       }]);
       expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+    });
+  });
+
+  describe('editing a bucket with a grant that lists its actions', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, {
+            ...slideInRef,
+            getData: () => ({
+              ...existingBucket,
+              grants: [{
+                principal_type: S3PrincipalType.Everyone,
+                xid: null,
+                name: '',
+                access: [S3GrantAction.GetObject, S3GrantAction.PutObject],
+              }],
+            }),
+          }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    });
+
+    it('shows the grant as Custom and saves the list back unchanged', async () => {
+      await clickAdvancedOptions();
+
+      const grants = await loader.getHarness(IxListHarness.with({ label: 'Grants' }));
+      expect(await grants.getFormValues()).toEqual([{
+        Principal: 'Everyone',
+        Access: 'Custom',
+        Actions: ['GetObject', 'PutObject'],
+      }]);
+
+      await (await getSaveButton()).click();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
+        grants: [{
+          principal_type: S3PrincipalType.Everyone,
+          xid: null,
+          access: [S3GrantAction.GetObject, S3GrantAction.PutObject],
+        }],
+      })]);
     });
   });
 
