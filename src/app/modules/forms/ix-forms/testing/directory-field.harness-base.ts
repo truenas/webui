@@ -32,9 +32,19 @@ export class DirectoryComboboxHarnessBase extends ComponentHarness {
     return this.inner();
   }
 
-  /** Focuses the field, which opens the dropdown and loads the first page. */
+  /** Focuses the field. The dropdown stays closed until the user types or opens it. */
   async focus(): Promise<void> {
     return (await this.inner()).focus();
+  }
+
+  /** Opens the dropdown with a click, which loads the first page. */
+  async open(): Promise<void> {
+    return (await this.inner()).open();
+  }
+
+  /** Whether the dropdown is open. */
+  async isOpen(): Promise<boolean> {
+    return (await this.inner()).isOpen();
   }
 
   /** Blurs the field, committing a typed value when custom values are allowed. */

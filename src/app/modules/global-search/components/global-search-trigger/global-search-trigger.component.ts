@@ -4,7 +4,7 @@ import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, D
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTestIdDirective } from '@truenas/ui-components';
-import { delay, take } from 'rxjs';
+import { delay, take, takeUntil } from 'rxjs';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
@@ -70,8 +70,14 @@ export class GlobalSearchTriggerComponent implements AfterViewInit {
     // <main>. The highlight service has already focused the chosen element
     // (which may be a mat-menu-item we just opened); moving focus to main
     // would yank it out of the menu and trigger mat-menu's auto-close.
+    // Dropped once this overlay closes, so it cannot close the next one.
     this.searchProvider.selectionChanged$
-      .pipe(take(1), delay(searchDelayConst), takeUntilDestroyed(this.destroyRef))
+      .pipe(
+        take(1),
+        delay(searchDelayConst),
+        takeUntilDestroyed(this.destroyRef),
+        takeUntil(this.overlayRef.detachments()),
+      )
       .subscribe(() => this.detachOverlay());
   }
 

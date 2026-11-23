@@ -169,7 +169,7 @@ export class PoolManagerStore {
   readonly allowedDisks = computed(() => filterAllowedDisks(this.diskStore.selectableDisks(), {
     ...this.state.diskSettings(),
     ...this.state.enclosureSettings(),
-    requireSedCapable: this.state.encryptionType() === EncryptionType.Sed,
+    encryptionType: this.state.encryptionType(),
   }));
 
   readonly hasMultipleEnclosuresAfterFirstStep = computed(() => {

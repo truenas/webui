@@ -3,9 +3,10 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnCheckboxHarness, TnInputHarness, TnRadioHarness, TnTooltipHarness,
+  TnCheckboxHarness, TnIconButtonHarness, TnInputHarness, TnRadioHarness, TnTooltipHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -15,11 +16,13 @@ import { ServiceStatus } from 'app/enums/service-status.enum';
 import { NvmeOfGlobalConfig } from 'app/interfaces/nvme-of.interface';
 import { Service } from 'app/interfaces/service.interface';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { NvmeOfService } from 'app/pages/sharing/nvme-of/services/nvme-of.service';
+import { ClipboardService } from 'app/services/clipboard.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 import { selectIsHaLicensed } from 'app/store/ha-info/ha-info.selectors';
 import { selectServices } from 'app/store/services/services.selectors';
@@ -68,6 +71,10 @@ describe('NvmeOfConfigurationComponent', () => {
       mockProvider(NvmeOfService, {
         isRdmaCapable: jest.fn(() => of(true)),
       }),
+      mockProvider(ClipboardService, {
+        copy: jest.fn(() => Promise.resolve()),
+      }),
+      mockProvider(SnackbarService),
     ],
   });
 
@@ -228,5 +235,70 @@ describe('NvmeOfConfigurationComponent', () => {
       basenqn: 'iqn.2005-10.org.freenas:ctl',
       rdma: true,
     }]);
+  });
+
+  it('copies the Base NQN to the clipboard', async () => {
+    const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
+    await copyButton.click();
+
+    expect(spectator.inject(ClipboardService).copy).toHaveBeenCalledWith('iqn.2005-10.org.freenas:ctl');
+  });
+
+  it('explains what ANA does in a help tooltip when the system is HA-licensed', () => {
+    const gate = spectator.query('[formControlName="ana"]')!.closest('ix-licensed-feature')!;
+    const help = gate.querySelector('button.icon-button')!;
+
+    expect(gate.querySelector('tn-icon[name="help-circle"]')).toExist();
+    expect(help.getAttribute('aria-label')).toContain('Asymmetric Namespace Access (ANA) reports which controller');
+  });
+
+  describe('user without the NVMe-oF write role', () => {
+    beforeEach(async () => {
+      spectator.inject(MockAuthService).hasRole.mockReturnValue(of(false));
+      spectator = createComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+    });
+
+    it('disables every control', async () => {
+      const basenqn = await loader.getHarness(TnInputHarness.with({ selector: '[formControlName="basenqn"]' }));
+      expect(await basenqn.isDisabled()).toBe(true);
+
+      const radios = await loader.getAllHarnesses(TnRadioHarness);
+      expect(radios).toHaveLength(2);
+      for (const radio of radios) {
+        expect(await radio.isDisabled()).toBe(true);
+      }
+
+      const checkboxes = await loader.getAllHarnesses(TnCheckboxHarness);
+      expect(checkboxes).toHaveLength(2);
+      for (const checkbox of checkboxes) {
+        expect(await checkbox.isDisabled()).toBe(true);
+      }
+    });
+
+    it('keeps the help icons instead of claiming a missing license or a running service', () => {
+      expect(spectator.query('tn-icon[name="key-variant"]')).not.toExist();
+      expect(spectator.queryAll('ix-licensed-feature tn-icon[name="help-circle"]')).toHaveLength(2);
+    });
+
+    it('shows the full Base NQN on hover', async () => {
+      // tn-tooltip opens on a setTimeout (showDelay, 0 by default), which whenStable() does not wait for.
+      jest.useFakeTimers();
+      spectator.dispatchMouseEvent('tn-input[formControlName="basenqn"]', 'mouseenter');
+      jest.runOnlyPendingTimers();
+      jest.useRealTimers();
+
+      const tooltip = await TestbedHarnessEnvironment.documentRootLoader(spectator.fixture)
+        .getHarness(TnTooltipHarness);
+      expect(await tooltip.getText()).toBe('iqn.2005-10.org.freenas:ctl');
+    });
+
+    it('still lets the Base NQN be copied', async () => {
+      const copyButton = await loader.getHarness(TnIconButtonHarness.with({ name: 'content-copy' }));
+      await copyButton.click();
+
+      expect(spectator.inject(ClipboardService).copy).toHaveBeenCalledWith('iqn.2005-10.org.freenas:ctl');
+    });
   });
 });

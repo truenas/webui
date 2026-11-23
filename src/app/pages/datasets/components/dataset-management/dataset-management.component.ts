@@ -42,6 +42,7 @@ import { datasetManagementElements } from 'app/pages/datasets/components/dataset
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
+import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
 
 @Component({
@@ -228,6 +229,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     // first run should see this visit's load rather than whatever the last visit left behind.
     this.setupTree();
     this.listenForRouteChanges();
+    this.listenForPendingSelection();
     this.listenForLoading();
     // Fetched again on each visit: tiering can be changed outside this tab.
     this.sharingTierService.refresh();
@@ -482,6 +484,31 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
         }
       });
     }, { injector: this.injector });
+  }
+
+  /**
+   * Opens a dataset or zvol just created (`DatasetTreeStore.datasetCreated`) once the reload has answered.
+   * Not before: `listenForRouteChanges` would not find it in the tree yet and would replace the URL with the
+   * first pool. Dropped without navigating when the reload fails or does not contain it.
+   */
+  private listenForPendingSelection(): void {
+    effect(() => {
+      const pendingId = this.datasetStore.pendingSelectionId();
+      if (!pendingId || this.isLoading()) {
+        return;
+      }
+
+      const datasets = this.datasetStore.datasets();
+      untracked(() => {
+        this.datasetStore.clearPendingSelection();
+        if (getTreeBranchToNode(datasets, (dataset) => dataset.id === pendingId)) {
+          this.router.navigate(['/datasets', pendingId]);
+        }
+      });
+    }, { injector: this.injector });
+
+    // The store outlives this page; a selection left pending must not redirect the next visit.
+    this.destroyRef.onDestroy(() => this.datasetStore.clearPendingSelection());
   }
 
   private handlePendingGlobalSearchElement(): void {

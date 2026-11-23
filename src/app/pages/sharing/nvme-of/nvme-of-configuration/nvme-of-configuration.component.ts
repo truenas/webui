@@ -7,13 +7,15 @@ import {
   TnCheckboxComponent, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent,
   TnRadioGroupComponent, TnTooltipDirective,
 } from '@truenas/ui-components';
-import { finalize, forkJoin } from 'rxjs';
+import { finalize, forkJoin, take } from 'rxjs';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
 import { helptextNvmeOf } from 'app/helptext/sharing/nvme-of/nvme-of';
 import { Option } from 'app/interfaces/option.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -30,6 +32,7 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-nvme-of-configuration',
   templateUrl: './nvme-of-configuration.component.html',
+  styleUrls: ['./nvme-of-configuration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TranslateModule,
@@ -43,6 +46,7 @@ import { selectService } from 'app/store/services/services.selectors';
     ReactiveFormsModule,
     TnTooltipDirective,
     LicensedFeatureComponent,
+    CopyButtonComponent,
   ],
 })
 export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnInit {
@@ -54,6 +58,7 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
   private nvmeOfService = inject(NvmeOfService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
+  private authService = inject(AuthService);
 
   readonly requiredRoles = [Role.SharingNvmeTargetWrite];
 
@@ -63,6 +68,15 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
   protected readonly isHaLicensed = toSignal(this.store$.select(selectIsHaLicensed));
   protected readonly hasSpdk = this.entitlements.entitled(EntitlementFeature.NvmeOfSpdk);
   protected readonly service = toSignal(this.store$.select(selectService(ServiceName.NvmeOf)));
+
+  /**
+   * Why a control is locked, kept apart from `control.disabled`: a read-only user gets every control
+   * disabled too, and the license key / "stop the service" hints must not claim a reason that isn't
+   * the real one.
+   */
+  protected readonly isAnaUnavailable = signal(false);
+  protected readonly isRdmaUnavailable = signal(false);
+  protected readonly isKernelLocked = signal(false);
 
   protected readonly form = this.formBuilder.nonNullable.group({
     basenqn: [''],
@@ -94,23 +108,32 @@ export class NvmeOfConfigurationComponent extends IxFormHostForm implements OnIn
     forkJoin([
       this.api.call('nvmet.global.config'),
       this.nvmeOfService.isRdmaCapable(),
+      this.authService.hasRole(this.requiredRoles).pipe(take(1)),
     ]).pipe(
       this.errorHandler.withErrorHandler(),
       finalize(() => this.isLoadingConfig.set(false)),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(([config, isRdmaCapable]) => {
+    ).subscribe(([config, isRdmaCapable, canEdit]) => {
       this.form.patchValue(config);
 
-      if (!isRdmaCapable) {
+      this.isRdmaUnavailable.set(!isRdmaCapable);
+      this.isAnaUnavailable.set(!this.isHaLicensed());
+      this.isKernelLocked.set(this.service()?.state === ServiceStatus.Running);
+
+      if (!canEdit) {
+        this.form.disable();
+        return;
+      }
+
+      if (this.isRdmaUnavailable()) {
         this.form.controls.rdma.disable();
       }
 
-      if (!this.isHaLicensed()) {
+      if (this.isAnaUnavailable()) {
         this.form.controls.ana.disable();
       }
 
-      const service = this.service();
-      if (service?.state === ServiceStatus.Running) {
+      if (this.isKernelLocked()) {
         this.form.controls.kernel.disable();
       }
     });

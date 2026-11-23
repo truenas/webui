@@ -6,7 +6,6 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnButtonComponent, TnDialogShellComponent, TnProgressBarComponent, TnTestIdDirective } from '@truenas/ui-components';
 import { PoolScanFunction } from 'app/enums/pool-scan-function.enum';
 import { PoolScanState } from 'app/enums/pool-scan-state.enum';
-import { poolScanFromEvent } from 'app/helpers/pool-scan-event.helper';
 import { PoolScan } from 'app/interfaces/resilver-job.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 
@@ -46,8 +45,11 @@ export class ResilverProgressDialog implements OnInit {
 
   ngOnInit(): void {
     this.api.subscribe('pool.scan').pipe(takeUntilDestroyed(this.destroyRef)).subscribe((event) => {
-      const poolScan = poolScanFromEvent(event);
-      if (!poolScan?.scan.function.includes(PoolScanFunction.Resilver)) {
+      if (event.msg !== 'changed') {
+        return;
+      }
+      const poolScan = event.fields as PoolScan;
+      if (poolScan.scan.function !== PoolScanFunction.Resilver) {
         return;
       }
 

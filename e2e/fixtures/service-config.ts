@@ -386,8 +386,7 @@ export async function pickUpsSerialPort(client: E2eApiClient): Promise<string> {
 }
 
 /**
- * The part of `smb.config` the SMB settings spec edits, and Apple extensions,
- * which it reads to check the form sent back what it loaded.
+ * The part of `smb.config` the SMB settings spec edits.
  *
  * Unlike SSH and FTP there is no fixed baseline: the NetBIOS name and workgroup
  * differ per appliance, so the spec snapshots these in `beforeEach` and writes
@@ -396,7 +395,7 @@ export async function pickUpsSerialPort(client: E2eApiClient): Promise<string> {
 export type SmbSettings = Pick<
   SmbConfig,
   'netbiosname' | 'workgroup' | 'description' | 'minimum_protocol' | 'ntlmv1_auth' | 'unixcharset' | 'encryption'
-  | 'debug' | 'syslog' | 'multichannel' | 'filemask' | 'dirmask' | 'aapl_extensions'
+  | 'debug' | 'syslog' | 'filemask' | 'dirmask'
 >;
 
 /** The SMB settings as the appliance holds them. */
@@ -413,10 +412,8 @@ export async function readSmbSettings(client: E2eApiClient): Promise<SmbSettings
     encryption: config.encryption,
     debug: config.debug,
     syslog: config.syslog,
-    multichannel: config.multichannel,
     filemask: config.filemask,
     dirmask: config.dirmask,
-    aapl_extensions: config.aapl_extensions,
   };
 }
 
@@ -439,10 +436,8 @@ export async function setSmbSettings(client: E2eApiClient, settings: SmbSettings
     encryption: settings.encryption,
     debug: settings.debug,
     syslog: settings.syslog,
-    multichannel: settings.multichannel,
     filemask: settings.filemask,
     dirmask: settings.dirmask,
-    aapl_extensions: settings.aapl_extensions,
   };
 
   await firstValueFrom(client.api.call('smb.update', [update]).pipe(timeout(slowCallTimeoutMs)));

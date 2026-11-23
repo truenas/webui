@@ -1,4 +1,14 @@
 <ng-container [formGroup]="form">
+  @if (hiddenSedDiskNames.length) {
+    <div class="spacer-top">
+      <ix-warning
+        tnTestId="hidden-sed-disks-warning"
+        tnTestIdType="text"
+        [message]="hiddenSedDisksWarning | translate: { disks: hiddenSedDiskNames.join(', ') }"
+      ></ix-warning>
+    </div>
+  }
+
   @if (nonUniqueSerialDisks.length) {
     <div class="spacer-top">
       <ix-warning tnTestId="non-unique-serial-disks-warning" tnTestIdType="text" [message]="nonUniqueSerialDisksTooltip"></ix-warning>

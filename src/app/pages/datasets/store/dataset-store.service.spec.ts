@@ -221,6 +221,21 @@ describe('DatasetTreeStore', () => {
     expect(spectator.service.datasets()).toEqual(datasets);
   });
 
+  it('datasetCreated reloads the datasets and keeps the new id pending until it is cleared', () => {
+    const [load$] = mockAnswers(1);
+
+    spectator.service.datasetCreated('parent/new');
+
+    expect(spectator.service.isLoading()).toBe(true);
+    expect(spectator.service.pendingSelectionId()).toBe('parent/new');
+
+    respond(load$, datasets);
+    expect(spectator.service.pendingSelectionId()).toBe('parent/new');
+
+    spectator.service.clearPendingSelection();
+    expect(spectator.service.pendingSelectionId()).toBeNull();
+  });
+
   describe('selection', () => {
     beforeEach(() => {
       jest.spyOn(api, 'call').mockReturnValue(of(tree));

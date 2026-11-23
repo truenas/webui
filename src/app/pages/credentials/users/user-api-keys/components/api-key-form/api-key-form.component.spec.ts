@@ -236,7 +236,7 @@ describe('ApiKeyFormComponent', () => {
       await setupTest();
 
       const username = await loader.getHarness(TnAutocompleteHarness);
-      await username.focus();
+      await username.open();
 
       expect(await username.getOptions()).toEqual(['Add New', 'root', 'operator']);
 
@@ -249,7 +249,7 @@ describe('ApiKeyFormComponent', () => {
       await setupTest({ presetUsername: 'testuser' });
 
       const username = await loader.getHarness(TnAutocompleteHarness);
-      await username.focus();
+      await username.open();
 
       expect(await username.getOptions()).toEqual(['Add New', 'root', 'operator', 'testuser']);
     });

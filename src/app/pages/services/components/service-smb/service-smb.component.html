@@ -79,14 +79,6 @@
         <tn-checkbox formControlName="localmaster" [label]="'Local Master' | translate"></tn-checkbox>
       </tn-form-field>
 
-      <tn-form-field [tooltip]="tooltips.aapl_extensions | translate">
-        <tn-checkbox formControlName="aapl_extensions" [label]="'Enable Apple SMB2/3 Protocol Extensions' | translate"></tn-checkbox>
-      </tn-form-field>
-
-      <tn-form-field [tooltip]="tooltips.multichannel | translate">
-        <tn-checkbox formControlName="multichannel" [label]="'Multichannel' | translate"></tn-checkbox>
-      </tn-form-field>
-
       @if (isHaLicensed()) {
         <tn-form-field [tooltip]="tooltips.stateful_failover | translate">
           <tn-checkbox formControlName="stateful_failover" [label]="'Stateful Failover' | translate"></tn-checkbox>

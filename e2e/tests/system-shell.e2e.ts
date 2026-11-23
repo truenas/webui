@@ -3,7 +3,7 @@
  * the shell, as does resizing the window; a read-only admin (no `web_shell`) finds Shell locked. Only commands that
  * print and change nothing are typed (`echo`, `id -un`). Never `exit`: a closed shell reconnects on its own. The
  * font test pins `terminalFontSize` via the preference baseline and restores it. `core.resize_shell` is recorded
- * without params, so the claim is that a resize was sent and accepted, not its exact columns and rows.
+ * without params, so the claim is that a resize was sent and accepted. Global search's route is its own spec's.
  */
 import type { Page } from '@playwright/test';
 import {

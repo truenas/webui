@@ -42,7 +42,7 @@ export class NetworkService {
   }
 
   getLaggProtocolChoices(): Observable<string[]> {
-    return this.api.callUndeclared('interface.lag_supported_protocols');
+    return this.api.call('interface.lag_supported_protocols');
   }
 
   getBridgeMembersChoices(id?: string): Observable<Choices> {

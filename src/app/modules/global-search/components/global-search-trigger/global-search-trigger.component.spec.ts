@@ -3,12 +3,14 @@ import { ComponentPortal } from '@angular/cdk/portal';
 import { ElementRef, signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockComponent, MockInstance } from 'ng-mocks';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { mockWindow } from 'app/core/testing/utils/mock-window.utils';
 import { GlobalSearchComponent } from 'app/modules/global-search/components/global-search/global-search.component';
 import {
   GlobalSearchTriggerComponent,
 } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
+import { searchDelayConst } from 'app/modules/global-search/constants/delay.const';
+import { UiSearchableElement } from 'app/modules/global-search/interfaces/ui-searchable-element.interface';
 import { UiSearchProvider } from 'app/modules/global-search/services/ui-search.service';
 import { KeyboardShortcutComponent } from 'app/modules/keyboard-shortcut/keyboard-shortcut.component';
 
@@ -77,5 +79,34 @@ describe('GlobalSearchTriggerComponent', () => {
     spectator.dispatchKeyboardEvent(document, 'keydown', 'Escape');
 
     expect(createdOverlay.detach).toHaveBeenCalled();
+  });
+
+  it('closes search shortly after a selection', () => {
+    jest.useFakeTimers();
+    const selection$ = new Subject<UiSearchableElement>();
+    spectator.inject(UiSearchProvider).selectionChanged$ = selection$;
+
+    spectator.click('input');
+    selection$.next({} as UiSearchableElement);
+    jest.advanceTimersByTime(searchDelayConst);
+
+    expect(createdOverlay.hasAttached()).toBe(false);
+    jest.useRealTimers();
+  });
+
+  it('does not close search reopened before the auto-close after a selection fires', () => {
+    jest.useFakeTimers();
+    const selection$ = new Subject<UiSearchableElement>();
+    spectator.inject(UiSearchProvider).selectionChanged$ = selection$;
+
+    spectator.click('input');
+    selection$.next({} as UiSearchableElement);
+    // Closed some other way before the auto-close fired, then opened again.
+    spectator.dispatchKeyboardEvent(document, 'keydown', 'Escape');
+    spectator.click('input');
+    jest.advanceTimersByTime(searchDelayConst);
+
+    expect(createdOverlay.hasAttached()).toBe(true);
+    jest.useRealTimers();
   });
 });

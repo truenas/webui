@@ -58,8 +58,12 @@
     <div class="alert-node" tnTestIdType="text" [tnTestId]="[alert().key, 'node']">{{ alert().node }}</div>
   }
   <div class="alert-time" tnTestIdType="text" [tnTestId]="[alert().key, 'time']">
-    {{ alert().datetime.$date | formatDateTime }}
-    @if (timezone$ | async; as timezone) {
+    <span
+      [class.has-time-difference]="isTimezoneDifference()"
+      [tnTooltip]="'Browser time: {time}' | translate: { time: (alert().datetime.$date | formatDateTime) }"
+      [tnTooltipDisabled]="!isTimezoneDifference()"
+    >{{ alertTime() | formatDateTime }}</span>
+    @if (timezone(); as timezone) {
       ({{ timezone }})
     }
   </div>

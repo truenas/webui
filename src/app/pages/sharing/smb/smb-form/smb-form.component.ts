@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  computed,
   DestroyRef,
   OnInit,
   inject,
@@ -17,7 +16,6 @@ import {
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { CallResponse } from '@truenas/api-client';
 import {
   InputType, TnBannerComponent, TnFormErrorsComponent, TnCheckboxComponent, TnChipInputComponent, TnDialog,
   TnFormFieldComponent, TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
@@ -60,16 +58,13 @@ import {
 } from 'app/modules/slide-ins/form-side-panel/side-panel-footer-actions';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { RestartSmbDialog } from 'app/pages/sharing/smb/smb-form/restart-smb-dialog/restart-smb-dialog.component';
-import { SmbExtensionsWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-extensions-warning/smb-extensions-warning.component';
 import { presetEnabledFields } from 'app/pages/sharing/smb/smb-form/smb-form-presets';
 import { SmbUsersWarningComponent } from 'app/pages/sharing/smb/smb-form/smb-users-warning/smb-users-warning.component';
 import { SmbValidationService } from 'app/pages/sharing/smb/smb-form/smb-validator.service';
 import { getRootDatasetsValidator } from 'app/pages/sharing/utils/root-datasets-validator';
 import { DatasetService } from 'app/services/dataset/dataset.service';
 import { EntitlementsService } from 'app/services/entitlements.service';
-import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
 import { ServicesState } from 'app/store/services/services.reducer';
@@ -78,7 +73,6 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
-  styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnFilePickerComponent,
@@ -99,7 +93,6 @@ import { selectService } from 'app/store/services/services.selectors';
     AsyncPipe,
     TnBannerComponent,
     SmbUsersWarningComponent,
-    SmbExtensionsWarningComponent,
   ],
 })
 export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterViewInit {
@@ -112,7 +105,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   private translate = inject(TranslateService);
   private router = inject(Router);
   protected loader = inject(LoaderService);
-  private errorHandler = inject(ErrorHandlerService);
   private formErrorHandler = inject(FormErrorHandlerService);
   private filesystemService = inject(FilesystemService);
   private snackbar = inject(SnackbarService);
@@ -138,12 +130,9 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   private pendingValidation = signal(false);
 
   /** Extra Save-disable gate ORed into the `<ix-form>` wrapper checks. */
-  protected readonly extraDisabled = computed(
-    () => this.showExtensionsWarning() || this.pendingValidation(),
-  );
+  protected readonly extraDisabled = this.pendingValidation.asReadonly();
 
   protected showLegacyWarning = signal(false);
-  protected showExtensionsWarning = signal(false);
 
 
   protected SmbPresetType = SmbSharePurpose;
@@ -169,7 +158,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
   }
 
   private wasStripAclWarningShown = false;
-  private smbConfig = signal<CallResponse<WebUiApiDirectory, 'smb.config'> | null>(null);
 
   title: string = helptextSharingSmb.formTitleAdd;
 
@@ -366,7 +354,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     hostsallow: [[] as string[]],
     hostsdeny: [[] as string[]],
     guestok: [false],
-    streams: [false],
     durablehandle: [false],
     shadowcopy: [false],
     fsrvp: [false],
@@ -429,7 +416,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     );
 
     this.setupPurposeControl();
-    this.loadSmbConfig();
 
     if (this.defaultSmbShare) {
       this.form.patchValue(this.defaultSmbShare);
@@ -561,8 +547,6 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     this.form.controls.purpose.valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
         this.showLegacyWarning.set(value === SmbSharePurpose.LegacyShare);
-        this.updateExtensionsWarning();
-
         this.clearPresets();
 
         if (value) {
@@ -905,38 +889,5 @@ export class SmbFormComponent extends IxFormHostForm implements OnInit, AfterVie
     }
 
     return options;
-  }
-
-  private updateExtensionsWarning(): void {
-    const config = this.smbConfig();
-    if (!config) {
-      return; // Guard against unloaded config
-    }
-
-    const purpose = this.form.controls.purpose.value;
-    const requiresExtensions = purpose === SmbSharePurpose.TimeMachineShare
-      || purpose === SmbSharePurpose.FcpShare;
-    this.showExtensionsWarning.set(!config.aapl_extensions && requiresExtensions);
-  }
-
-  private loadSmbConfig(): void {
-    this.api.call('smb.config')
-      .pipe(
-        this.errorHandler.withErrorHandler(),
-        takeUntilDestroyed(this.destroyRef),
-      )
-      .subscribe((config) => {
-        this.smbConfig.set(config);
-        this.updateExtensionsWarning();
-      });
-  }
-
-  protected extensionsEnabled(): void {
-    this.smbConfig.set({
-      ...this.smbConfig(),
-      aapl_extensions: true,
-    });
-
-    this.updateExtensionsWarning();
   }
 }

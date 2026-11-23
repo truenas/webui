@@ -1,17 +1,26 @@
 @let pool = poolId();
 <ix-page-header [pageTitle]="pageTitle">
-  <tn-button
-    *ixRequiresRoles="requiredRoles"
-    color="primary"
-    [testId]="'add-vdev'"
-    [label]="'Add VDEV' | translate"
-    [routerLink]="['/storage', pool, 'add-vdevs']"
-  ></tn-button>
+  @if (!vDevsStore.isPoolUnavailable()) {
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="'add-vdev'"
+      [label]="'Add VDEV' | translate"
+      [routerLink]="['/storage', pool, 'add-vdevs']"
+    ></tn-button>
+  }
 </ix-page-header>
+
+@if (sedLockedPool(); as lockedPool) {
+  <ix-sed-locked-warning
+    [pool]="lockedPool"
+    (importSuccess)="vDevsStore.reloadList()"
+  ></ix-sed-locked-warning>
+}
 
 @if (pool) {
   @let selectedNode = vDevsStore.selectedNode();
-  @let showDetails = !masterList.searchQuery() || selectedNode.disk.toLowerCase().includes(masterList.searchQuery().toLowerCase());
+  @let showDetails = !masterList.searchQuery() || (selectedNode && deviceMatchesSearch(selectedNode, masterList.searchQuery()));
 
   <ix-master-detail-view
     #masterDetailView="masterDetailViewContext"

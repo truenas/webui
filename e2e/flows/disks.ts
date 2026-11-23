@@ -36,6 +36,32 @@ export async function openDisksPage(page: Page, disk: string): Promise<void> {
 }
 
 /**
+ * Opens the Disks page from View Disks on `pool`'s Disk Health card on the Storage dashboard,
+ * starting from the sidebar, and waits for the given disk's row.
+ */
+export async function openPoolDisksPage(page: Page, pool: string, disk: string): Promise<void> {
+  await goToStorage(page);
+  const entry = page.locator(diskListLocators.poolEntry(pool));
+  await expect(entry).toBeVisible({ timeout: saveTimeoutMs });
+  await entry.click();
+  await expect(page).toHaveURL(/\/storage\/disks\?pool=/);
+  await expect(page.locator(diskListLocators.row(disk))).toBeVisible({ timeout: saveTimeoutMs });
+}
+
+/**
+ * Clears the pool scope from its chip. A click lands on the chip's body, which focuses it, and
+ * Delete is the chip's own dismiss key: its close button has no id to click. The chip going and
+ * the URL losing the pool say the scope is gone.
+ */
+export async function clearPoolScope(page: Page): Promise<void> {
+  const chip = page.locator(diskListLocators.poolScope);
+  await chip.click();
+  await page.keyboard.press('Delete');
+  await expect(chip).toBeHidden();
+  await expect(page).toHaveURL(/\/storage\/disks\/?$/);
+}
+
+/**
  * Expands a disk's row by clicking its name, which is how the row's actions and
  * its hidden columns are reached. Waits on the row's Edit.
  */

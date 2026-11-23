@@ -18,3 +18,12 @@ export const optionTestIdByLabel = (option: TnSelectOption): string => option.la
  * normalizer would not reproduce from the value (it drops the hyphen before the digit).
  */
 export const optionTestIdByKebabLabel = (option: TnSelectOption): string => kebabCase(option.label);
+
+/**
+ * Keys option ids off a primitive value instead of the label. For labels that the library's
+ * normalizer splits at a case change — `NFSv3` becomes `nf-sv3` — while the value it maps to
+ * (`NFSV3` → `nfsv3`) gives the id e2e and Release Engineering select by.
+ */
+export const optionTestIdByValue = (option: TnSelectOption): string | number | undefined => {
+  return typeof option.value === 'string' || typeof option.value === 'number' ? option.value : undefined;
+};

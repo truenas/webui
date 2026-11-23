@@ -27,7 +27,7 @@ import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
   S3Access, S3BucketLayout, S3MultipartEtag, S3ObjectLockMode, S3ObjectOwnership, S3PermissionsModel, S3PrincipalType,
-  S3Versioning,
+  S3GrantAction, S3Versioning,
 } from 'app/enums/s3.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { S3Bucket, S3RecoverableBucket } from 'app/interfaces/s3.interface';
@@ -444,6 +444,66 @@ describe('S3BucketFormComponent', () => {
       })]);
     });
 
+    it('adds a grant that lists its own actions', async () => {
+      await (await getInput('name')).setValue('shared');
+      await (await getParentDatasetExplorer()).setValue('tank');
+      await setOwner('alice');
+
+      await clickAdvancedOptions();
+
+      const grants = await loader.getHarness(TnFormListHarness.with({ label: 'Grants' }));
+      await grants.add();
+      await (await getSelect('principal_type')).selectOption('Everyone');
+      await (await getSelect('access')).selectOption('Custom');
+
+      // The list starts empty, and a grant must allow at least one action.
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      const actions = await getSelect('actions');
+      await actions.selectOption('GetObject');
+      await actions.selectOption('ListBucket');
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        grants: [{
+          principal_type: S3PrincipalType.Everyone,
+          xid: null,
+          access: [S3GrantAction.GetObject, S3GrantAction.ListBucket],
+        }],
+      })]);
+    });
+
+    it('drops a half-filled action list when the grant goes back to a preset', async () => {
+      await (await getInput('name')).setValue('shared');
+      await (await getParentDatasetExplorer()).setValue('tank');
+      await setOwner('alice');
+
+      await clickAdvancedOptions();
+
+      const grants = await loader.getHarness(TnFormListHarness.with({ label: 'Grants' }));
+      await grants.add();
+      await (await getSelect('principal_type')).selectOption('Everyone');
+      await (await getSelect('access')).selectOption('Custom');
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await (await getSelect('access')).selectOption('Read / Write');
+
+      expect(await loader.getHarnessOrNull(
+        TnSelectHarness.with({ selector: '[formControlName="actions"]' }),
+      )).toBeNull();
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.create', [expect.objectContaining({
+        grants: [{ principal_type: S3PrincipalType.Everyone, xid: null, access: S3Access.ReadWrite }],
+      })]);
+    });
+
     describe('serving an existing dataset read-only', () => {
       const chooseExistingDataset = async (): Promise<void> => {
         await (await getLayout()).select('Existing Dataset (Read-only)');
@@ -833,6 +893,39 @@ describe('S3BucketFormComponent', () => {
       expect(await ownership.getDisplayText()).toBe('Object Writer');
       expect(await ownership.isDisabled()).toBe(true);
       expect(await (await getCheckbox('object_lock')).isDisabled()).toBe(true);
+    });
+
+    it('shows a grant that lists its actions as Custom and saves the list back unchanged', async () => {
+      spectator = createComponent({
+        props: {
+          bucket: {
+            ...existingBucket,
+            grants: [{
+              principal_type: S3PrincipalType.Everyone,
+              xid: null,
+              name: '',
+              access: [S3GrantAction.GetObject, S3GrantAction.PutObject],
+            }],
+          },
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+      await clickAdvancedOptions();
+
+      expect(await (await getSelect('access')).getDisplayText()).toBe('Custom');
+      expect(await (await getSelect('actions')).getDisplayText()).toContain('GetObject');
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('sharing.s3.update', [7, expect.objectContaining({
+        grants: [{
+          principal_type: S3PrincipalType.Everyone,
+          xid: null,
+          access: [S3GrantAction.GetObject, S3GrantAction.PutObject],
+        }],
+      })]);
     });
 
     it('lets an EVERYONE grant be switched to a user grant', async () => {

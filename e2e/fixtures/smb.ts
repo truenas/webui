@@ -1,8 +1,8 @@
 /**
  * SMB share preconditions and cleanup, over the API.
  *
- * Shares, and the things about the service that are SMB's own: its name, its
- * Apple-extensions flag and Stateful Failover. Starting and stopping is `fixtures/services.ts`,
+ * Shares, and the things about the service that are SMB's own: its name and
+ * Stateful Failover. Starting and stopping is `fixtures/services.ts`,
  * and the split matters more here than elsewhere: SMB service state is global,
  * so a test that starts it changes which dialog every later test is shown —
  * `CLAUDE.md` names that as the failure mode a passing suite hides.
@@ -155,32 +155,6 @@ export async function ensureSmbServiceStopped(client: E2eApiClient): Promise<voi
     client,
     smbServiceName,
     'SMB service did not stop; the next run will not start from a fresh state.',
-  );
-}
-
-/**
- * Whether the SMB service advertises Apple SMB2/3 protocol extensions.
- *
- * Service-wide, not per-share, and the share form depends on it: a Time Machine
- * or Final Cut Pro share cannot be saved while it is off — `extraDisabled`
- * keeps Save down and the form offers to turn it on inline.
- */
-export async function readSmbAppleExtensions(client: E2eApiClient): Promise<boolean> {
-  const config = await firstValueFrom(client.api.call('smb.config').pipe(timeout(readTimeoutMs)));
-
-  return config.aapl_extensions;
-}
-
-/**
- * Sets that flag back to a known value.
- *
- * For teardown. Driving the form's "Enable Now" writes service configuration
- * that outlives the share it was enabled for, so a spec that touches it owes
- * the next one the value it found.
- */
-export async function setSmbAppleExtensions(client: E2eApiClient, enabled: boolean): Promise<void> {
-  await firstValueFrom(
-    client.api.call('smb.update', [{ aapl_extensions: enabled }]).pipe(timeout(slowCallTimeoutMs)),
   );
 }
 

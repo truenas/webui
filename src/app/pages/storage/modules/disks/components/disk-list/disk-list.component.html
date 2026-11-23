@@ -1,4 +1,13 @@
 <ix-page-header [loading]="isLoading()">
+  @if (scopePool()) {
+    <tn-chip
+      color="secondary"
+      [label]="scopeLabel()"
+      [testId]="'pool-scope'"
+      (onClose)="clearScope()"
+    ></tn-chip>
+  }
+
   <ix-basic-search
     [query]="searchQuery()"
     (queryChange)="onListFiltered($event)"

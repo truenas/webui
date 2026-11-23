@@ -40,7 +40,8 @@ const baseStats: ZfsTierRewriteJobStats = {
 describe('DataMigrationStatusDialogComponent', () => {
   let spectator: Spectator<DataMigrationStatusDialogComponent>;
   let loader: HarnessLoader;
-  let updates$: Subject<{ msg: 'added'; fields: ZfsTierRewriteJobEntry }>;
+  // `zfs.tier.rewrite_job_status` sends every update as `changed`.
+  let updates$: Subject<{ msg: 'changed'; fields: ZfsTierRewriteJobEntry }>;
 
   const createComponent = createComponentFactory({
     component: DataMigrationStatusDialogComponent,
@@ -268,7 +269,7 @@ describe('DataMigrationStatusDialogComponent', () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
       updates$.next({
-        msg: 'added',
+        msg: 'changed',
         fields: { ...baseJob, status: TierRewriteJobStatus.Complete, stats: { ...baseStats } },
       });
       spectator.detectChanges();
@@ -280,7 +281,7 @@ describe('DataMigrationStatusDialogComponent', () => {
       build({ ...baseJob, stats: { ...baseStats } });
 
       updates$.next({
-        msg: 'added',
+        msg: 'changed',
         fields: { ...baseJob, status: TierRewriteJobStatus.Cancelled, stats: { ...baseStats } },
       });
       spectator.detectChanges();

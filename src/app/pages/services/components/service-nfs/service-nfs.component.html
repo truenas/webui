@@ -45,6 +45,7 @@
           testId="protocols"
           formControlName="protocols"
           [options]="(protocolOptions$ | async) ?? []"
+          [optionTestIdKey]="protocolOptionTestId"
           [multiple]="true"
         ></tn-select>
       </tn-form-field>

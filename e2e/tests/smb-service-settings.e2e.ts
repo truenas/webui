@@ -2,8 +2,7 @@
  * Stories: an admin saves the SMB service settings from System > Services, and middleware's refusal of SMB1 with
  * required encryption reaches the form. Each save is checked as the whole `smb.config` record, since the form sends
  * every field back. NetBIOS name and workgroup vary per appliance, so `beforeEach` snapshots the settings and moves
- * edited fields to a known start; teardown restores the snapshot. The service stays stopped throughout. The
- * Apple-extensions write is `smb-service.e2e.ts`'s.
+ * edited fields to a known start; teardown restores the snapshot. The service stays stopped throughout.
  */
 import { readSmbSettings, setSmbSettings, type SmbSettings } from '../fixtures/service-config';
 import { ensureSmbServiceStopped } from '../fixtures/smb';
@@ -32,7 +31,7 @@ const refusalTimeoutMs = 60_000;
  * Where each test starts the fields it edits: away from every value a test
  * saves, so a control the form ignored leaves its field here and fails.
  */
-const startingValues: Omit<SmbSettings, 'netbiosname' | 'workgroup' | 'aapl_extensions'> = {
+const startingValues: Omit<SmbSettings, 'netbiosname' | 'workgroup'> = {
   description: '',
   minimum_protocol: 'SMB2',
   ntlmv1_auth: false,
@@ -40,7 +39,6 @@ const startingValues: Omit<SmbSettings, 'netbiosname' | 'workgroup' | 'aapl_exte
   encryption: 'DEFAULT',
   debug: false,
   syslog: false,
-  multichannel: false,
   filemask: 'DEFAULT',
   dirmask: 'DEFAULT',
 };
@@ -113,7 +111,6 @@ test('an admin saves the advanced options, and the appliance keeps them', async 
   await selectOption(page, form.encryption, form.encryptionOption(encryptionLabel.desired));
   await page.locator(form.debug).click();
   await page.locator(form.syslog).click();
-  await page.locator(form.multichannel).click();
   await page.locator(form.fileMask).fill('0644');
   await page.locator(form.dirMask).fill('0755');
   await saveServiceForm(page);
@@ -124,7 +121,6 @@ test('an admin saves the advanced options, and the appliance keeps them', async 
     encryption: 'DESIRED',
     debug: true,
     syslog: true,
-    multichannel: true,
     filemask: '0644',
     dirmask: '0755',
   });

@@ -1,9 +1,9 @@
 /**
- * Stories: an admin browses Storage > Disks, edits a disk, and wipes one in no pool, each checked on the page and
- * through `disk.query` or `disk.details`. A blank disk shows no result after a wipe, so the wiped disk carries a
- * pool exported without `destroy`; a real wipe leaves `disk.details` reporting no pool. Only Quick is used, since
- * other methods write the whole disk. Ticking and expanding a row are the cheapest proof of `tn-table`'s control
- * ids (`locators/table.ts`). Bulk edit is `disks-bulk-edit.e2e.ts`; SED actions need a self-encrypting drive.
+ * Stories: an admin browses Storage > Disks (also scoped to a pool from its Disk Health card's View Disks), edits a
+ * disk, and wipes one in no pool, each checked on the page and through `disk.query` or `disk.details`. A blank disk
+ * shows no result after a wipe, so the wiped disk carries a pool exported without `destroy`; a real wipe leaves
+ * `disk.details` reporting no pool. Only Quick is used. Ticking and expanding a row prove `tn-table`'s control ids
+ * (`locators/table.ts`). Bulk edit is `disks-bulk-edit.e2e.ts`; SED actions need a self-encrypting drive.
  */
 import {
   diskBaseline,
@@ -11,6 +11,7 @@ import {
   ensureExportedPoolGone,
   findDisksCarryingExportedPool,
   listDisks,
+  listPoolDiskNames,
   pickUnusedDisk,
   readDiskSettings,
   resetDiskSettings,
@@ -19,9 +20,11 @@ import { getSelectableDisks } from '../fixtures/storage';
 import {
   chooseAdvPowerManagement,
   chooseHddStandby,
+  clearPoolScope,
   expandDisk,
   openDiskForm,
   openDisksPage,
+  openPoolDisksPage,
   openWipeDialog,
   saveDiskForm,
   wipeDisk,
@@ -62,6 +65,26 @@ test('the Disks page lists every disk on the appliance, and search narrows it to
   await page.locator(diskListLocators.search).fill(targetSerial);
   await expect(page.locator(diskListLocators.row(target))).toBeVisible();
   await expect(page.locator(diskListLocators.row(other ?? ''))).toBeHidden();
+});
+
+test('a pool\'s View Disks lists only that pool\'s disks, and clearing the scope lists them all', async ({ page, api, pool }) => {
+  const poolDisks = await listPoolDiskNames(api, pool);
+  const [first] = poolDisks;
+  expect(first, `pool "${pool}" reports no disks.`).toBeDefined();
+  // In no pool, so the scope has to leave it out.
+  const outside = await pickUnusedDisk(api);
+
+  await openPoolDisksPage(page, pool, first ?? '');
+  await expect(page.locator(diskListLocators.poolScope)).toContainText(pool);
+  await expect(page.locator(diskListLocators.search)).toHaveValue('');
+  for (const disk of poolDisks) {
+    await expect(page.locator(diskListLocators.row(disk))).toBeVisible();
+  }
+  await expect(page.locator(diskListLocators.row(outside))).toBeHidden();
+
+  await clearPoolScope(page);
+  await expect(page.locator(diskListLocators.row(outside))).toBeVisible();
+  await expect(page.locator(diskListLocators.row(first ?? ''))).toBeVisible();
 });
 
 test('ticking a disk\'s row brings up the batch bar for it, and clearing it takes the bar away', async ({ page, api }) => {

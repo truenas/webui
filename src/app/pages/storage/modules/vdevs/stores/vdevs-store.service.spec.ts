@@ -2,6 +2,7 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
 import { of, Subject } from 'rxjs';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
@@ -29,6 +30,7 @@ const pool = {
 describe('VDevsStore', () => {
   let spectator: SpectatorService<VDevsStore>;
   let pools$: Subject<Pool[]>;
+  let poolEvents$: Subject<{ msg: string; id: number; fields?: Pool }>;
   const createService = createServiceFactory({
     service: VDevsStore,
     providers: [
@@ -43,6 +45,8 @@ describe('VDevsStore', () => {
   beforeEach(() => {
     spectator = createService();
     pools$ = new Subject<Pool[]>();
+    poolEvents$ = new Subject();
+    (spectator.inject(ApiService).subscribe as unknown as jest.Mock).mockReturnValue(poolEvents$);
     (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementation((method: string) => {
       if (method === 'pool.query') {
         return pools$;
@@ -89,6 +93,23 @@ describe('VDevsStore', () => {
     ]);
   });
 
+  it('keeps the loaded pool and reports it as available when ZFS lists its devices', () => {
+    loadTank();
+
+    expect(spectator.service.pool()).toEqual(pool);
+    expect(spectator.service.isPoolUnavailable()).toBe(false);
+  });
+
+  it('reports a pool without topology as unavailable, without an error', () => {
+    const offlinePool = { ...pool, topology: null } as unknown as Pool;
+    spectator.service.loadNodes(4);
+    pools$.next([offlinePool]);
+
+    expect(spectator.service.isPoolUnavailable()).toBe(true);
+    expect(spectator.service.nodes()).toEqual([]);
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+  });
+
   it('clears the loading indicator and shows the error when loading fails', () => {
     spectator.service.loadNodes(4);
     pools$.error(new Error('Boom'));
@@ -104,6 +125,116 @@ describe('VDevsStore', () => {
     spectator.service.reloadList();
 
     expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.query', [['id', '=', 4]]);
+  });
+
+  describe('listenForPoolChanges', () => {
+    const faultedPool = {
+      ...pool,
+      topology: {
+        ...pool.topology,
+        cache: [{ name: 'sdr', guid: 'guid2', status: TopologyItemStatus.Faulted }],
+      },
+    } as Pool;
+    let refreshedPools$: Subject<Pool[]>;
+
+    beforeEach(() => {
+      jest.useFakeTimers();
+      loadTank();
+      spectator.service.selectNodeByGuid('guid2');
+      spectator.service.listenForPoolChanges().subscribe();
+
+      refreshedPools$ = new Subject<Pool[]>();
+      jest.clearAllMocks();
+      (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementation((method: string) => {
+        return method === 'pool.query' ? refreshedPools$ : of([{ devname: 'sdr' }] as Disk[]);
+      });
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    function sendPoolChange(id: number, changedPool: Pool): void {
+      poolEvents$.next({ msg: 'changed', id, fields: changedPool });
+      jest.advanceTimersByTime(300);
+    }
+
+    it('reloads the pool without the loading indicator and keeps the selection when its devices change', () => {
+      sendPoolChange(4, faultedPool);
+
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.query', [['id', '=', 4]]);
+      expect(spectator.service.isLoading()).toBe(false);
+
+      refreshedPools$.next([faultedPool]);
+
+      expect(spectator.service.selectedNode()).toEqual(
+        expect.objectContaining({ guid: 'guid2', status: TopologyItemStatus.Faulted }),
+      );
+    });
+
+    it('reloads once for a burst of changes', () => {
+      poolEvents$.next({ msg: 'changed', id: 4, fields: faultedPool });
+      poolEvents$.next({ msg: 'changed', id: 4, fields: faultedPool });
+      jest.advanceTimersByTime(300);
+
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledTimes(1);
+    });
+
+    it('ignores changes to other pools', () => {
+      sendPoolChange(5, faultedPool);
+
+      expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
+    });
+
+    it('ignores a change that leaves the pool\'s devices as they are', () => {
+      sendPoolChange(4, pool);
+
+      expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
+    });
+
+    it('ignores a change that lists the same devices in another order', () => {
+      const reorderedPool = {
+        ...pool,
+        topology: {
+          ...pool.topology,
+          data: [
+            { name: 'raidz1-0', guid: 'guid1' },
+            { name: 'raidz1-1', guid: 'guid3' },
+          ],
+        },
+      } as Pool;
+      sendPoolChange(4, reorderedPool);
+      refreshedPools$.next([reorderedPool]);
+      jest.clearAllMocks();
+
+      sendPoolChange(4, {
+        ...reorderedPool,
+        topology: { ...reorderedPool.topology, data: [...reorderedPool.topology.data].reverse() },
+      } as Pool);
+
+      expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
+    });
+
+    it('keeps following the pool through a change that has no topology', () => {
+      const unlistedPool = { ...pool, topology: null } as Pool;
+      sendPoolChange(4, unlistedPool);
+      refreshedPools$.next([unlistedPool]);
+
+      expect(spectator.service.nodes()).toEqual([]);
+      expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+
+      jest.clearAllMocks();
+      sendPoolChange(4, faultedPool);
+
+      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.query', [['id', '=', 4]]);
+    });
+
+    it('ignores a removed pool', () => {
+      poolEvents$.next({ msg: 'removed', id: 4 });
+      jest.advanceTimersByTime(300);
+
+      expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
+    });
   });
 
   describe('selected node', () => {

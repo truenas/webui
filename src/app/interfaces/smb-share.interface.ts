@@ -141,7 +141,6 @@ export interface LegacySmbShareOptions {
   hostsallow?: string[];
   hostsdeny?: string[];
   guestok?: boolean;
-  streams?: boolean;
   durablehandle?: boolean;
   shadowcopy?: boolean;
   fsrvp?: boolean;

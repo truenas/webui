@@ -32,12 +32,6 @@ export type NfsSecurityFlavour = 'SYS' | 'KRB5' | 'KRB5I' | 'KRB5P';
 /** Middleware's names for the NFS protocol versions. */
 export type NfsProtocolName = 'NFSV3' | 'NFSV4';
 
-/** What the Enabled Protocols select shows for each version. Its option ids are keyed on these labels. */
-export const nfsProtocolLabels: Record<NfsProtocolName, string> = {
-  NFSV3: 'NFSv3',
-  NFSV4: 'NFSv4',
-};
-
 export const nfsLocators = {
   /**
    * "Add" in the UNIX (NFS) Shares card on the Shares dashboard —
@@ -153,8 +147,12 @@ export const nfsLocators = {
     open: '[data-test="button-nfs-actions-menu-config-service"]',
     /** "Enabled Protocols", a multiple `tn-select` with `testId="protocols"`. */
     protocols: '[data-test="select-protocols"]',
+    /**
+     * Keyed on the middleware name (`NFSV3` → `option-protocols-nfsv3`) via `[optionTestIdKey]`,
+     * not the `NFSv3` label, which the library would normalize to `nf-sv3`.
+     */
     protocolOption: (protocol: NfsProtocolName): string => (
-      `[data-test="option-protocols-${kebabTestSegment(nfsProtocolLabels[protocol])}"]`
+      `[data-test="option-protocols-${kebabTestSegment(protocol)}"]`
     ),
     save: '[data-test="button-save"]',
   },

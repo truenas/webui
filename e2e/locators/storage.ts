@@ -359,6 +359,8 @@ export const zvolLocators = {
 export const datasetDetailsLocators = {
   /** The selected dataset's full name, `pool/child`. */
   path: '[data-test="text-dataset-details-path"]',
+  /** The last segment of its name, `child`, in the details panel's "Details for" header. */
+  ownName: '[data-test="text-dataset-details-for"]',
   /** Rendered only when the dataset has a comment of its own. */
   comments: '[data-test="text-dataset-details-comments"]',
   /** The raw ZFS value, `ALWAYS` rather than the form's `Always`. */

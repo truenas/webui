@@ -1,9 +1,9 @@
 /**
  * Story: an admin rearranges the Dashboard in Configure mode; a group dragged on desktop or moved with the Move
- * buttons at phone width stays once saved, and Reset restores the default cards. Each test writes its starting
- * `dashState` over the API and `afterEach` restores the account's own, because `tests/dashboard.e2e.ts` relies on it
- * holding System Information (see `fixtures/dashboard.ts`). The layout is read at sign-in, so each test reloads.
- * No pool needed; after Reset only CPU Usage and Help are checked.
+ * buttons at phone width stays once saved, Reset restores the default cards, and no drag selects page text. Each
+ * test writes its starting `dashState` over the API and `afterEach` restores the account's own, because
+ * `tests/dashboard.e2e.ts` relies on it holding System Information (see `fixtures/dashboard.ts`). The layout is
+ * read at sign-in, so each test reloads. No pool needed; after Reset only CPU Usage and Help are checked.
  */
 import type { Page } from '@playwright/test';
 import {
@@ -12,7 +12,7 @@ import {
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';
 import { isHaLicensed } from '../fixtures/ha';
 import {
-  dragCardGroup, enterConfigureMode, moveCardGroupDown, resetDashboard, saveDashboard,
+  dragCardGroup, dragFromCardContent, enterConfigureMode, moveCardGroupDown, resetDashboard, saveDashboard,
 } from '../flows/dashboard';
 import { goToDashboard } from '../flows/navigation';
 import { dashboardLocators } from '../locators/dashboard';
@@ -69,6 +69,11 @@ async function topOf(page: Page, selector: string): Promise<number> {
   return box.y;
 }
 
+/** The text the page has selected, empty when nothing is. */
+async function selectedText(page: Page): Promise<string> {
+  return page.evaluate(() => document.getSelection()?.toString() ?? '');
+}
+
 /** CPU Model sits above System Information on screen. */
 async function expectCpuModelAboveSystemInfo(page: Page): Promise<void> {
   await expect(page.locator(dashboardLocators.cpuModel.title)).toBeVisible({ timeout: widgetLoadTimeoutMs });
@@ -94,6 +99,7 @@ test.describe('on a desktop', () => {
 
     await enterConfigureMode(page);
     await dragCardGroup(page, cpuModelGroupIndex, 0);
+    expect(await selectedText(page)).toBe('');
     await saveDashboard(page);
 
     await expectCpuModelAboveSystemInfo(page);
@@ -101,6 +107,20 @@ test.describe('on a desktop', () => {
 
     await page.reload();
     await expectCpuModelAboveSystemInfo(page);
+  });
+
+  test('a press-and-drag on a card\'s content in Configure mode selects no text', async ({ page, api }) => {
+    await writeDashState(api, threeGroups);
+
+    await goToDashboard(page);
+    await page.reload();
+    await expect(page.locator(dashboardLocators.cpuModel.value)).toBeVisible({ timeout: widgetLoadTimeoutMs });
+    await expect(page.locator(dashboardLocators.systemInfo.hostname)).toBeVisible({ timeout: widgetLoadTimeoutMs });
+
+    await enterConfigureMode(page);
+    await dragFromCardContent(page, dashboardLocators.cpuModel.value, dashboardLocators.systemInfo.hostname);
+
+    expect(await selectedText(page)).toBe('');
   });
 });
 
