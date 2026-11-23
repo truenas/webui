@@ -32,13 +32,7 @@ export function toMailConfig(config: CallResponse<WebUiApiDirectory, 'mail.confi
   return config as unknown as MailConfig;
 }
 
-/**
- * `validate_certificate` is in the middleware's mail schema (27.0+) but not yet in the published `@truenas/api-client`
- * types, so it is added here until the generated `MailUpdate` carries it.
- */
-export type MailConfigUpdate = CallParams<WebUiApiDirectory, 'mail.update'>[0] & {
-  validate_certificate?: boolean;
-};
+export type MailConfigUpdate = CallParams<WebUiApiDirectory, 'mail.update'>[0];
 
 export enum MailSendMethod {
   Smtp = 'smtp',

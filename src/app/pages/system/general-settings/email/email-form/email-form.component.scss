@@ -12,13 +12,8 @@
   margin: 10px 0;
 }
 
-// The banner colours its border and icon from --tn-warning, which webui doesn't bridge onto the theme globally yet.
-:host {
-  --tn-warning: var(--orange);
-}
-
-// Turning certificate validation off is unsafe, so the checkbox label turns orange to match the warning below it.
+// Turning certificate validation off is unsafe, so the checkbox label takes the warning colour of the banner below it.
 // The label is rendered inside tn-checkbox, out of reach of this component's scoped styles.
 :host ::ng-deep .unsafe .tn-checkbox__text {
-  color: var(--orange);
+  color: var(--tn-warning);
 }

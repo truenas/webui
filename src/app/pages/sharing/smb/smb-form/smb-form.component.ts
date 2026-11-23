@@ -73,7 +73,6 @@ import { selectService } from 'app/store/services/services.selectors';
 @Component({
   selector: 'ix-smb-form',
   templateUrl: './smb-form.component.html',
-  styleUrls: ['./smb-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     TnFilePickerComponent,
