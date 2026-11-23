@@ -4,6 +4,7 @@ import {
   S3AccessKeyStatus,
   S3AuditOverflow,
   S3BucketLayout,
+  S3GrantAction,
   S3MultipartEtag,
   S3ObjectLockMode,
   S3ObjectOwnership,
@@ -26,7 +27,10 @@ export interface S3Grant {
    * uid of the user or gid of the group. `null` for `EVERYONE`.
    */
   xid: number | null;
-  access: S3Access;
+  /**
+   * A preset, or the exact actions the grant allows (at least one, none repeated).
+   */
+  access: S3Access | S3GrantAction[];
 }
 
 export interface S3GrantEntry extends S3Grant {
@@ -42,6 +46,14 @@ export type S3Config = CallResponse<WebUiApiDirectory, 's3.config'>;
 export type S3ConfigUpdate = CallParams<WebUiApiDirectory, 's3.update'>[0];
 
 export type S3Listener = NonNullable<S3Config['listeners']>[number];
+
+/**
+ * Hands grant rows to `s3.update` unchanged. `@truenas/api-client` 13.0.0 types a grant's `access` as a preset
+ * only; middleware also takes the list of actions (NAS-145334).
+ */
+export function toS3GrantArgs(grants: S3Grant[]): NonNullable<S3ConfigUpdate['global_grants']> {
+  return grants as NonNullable<S3ConfigUpdate['global_grants']>;
+}
 
 export interface S3Bucket {
   id: number;

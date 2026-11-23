@@ -32,7 +32,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextSharingS3 } from 'app/helptext/sharing';
 import {
-  S3Config, S3ConfigUpdate, S3GrantEntry, S3Listener,
+  S3Config, S3ConfigUpdate, S3GrantEntry, S3Listener, toS3GrantArgs,
 } from 'app/interfaces/s3.interface';
 import {
   WithManageCertificatesLinkComponent,
@@ -217,7 +217,7 @@ export class ServiceS3Component extends IxFormHostForm<boolean, S3ServiceFormVal
       region: values.region,
       log_level: values.log_level,
       managed_root_dataset: values.managed_root_dataset,
-      global_grants: toS3Grants(this.form.controls.global_grants.controls),
+      global_grants: toS3GrantArgs(toS3Grants(this.form.controls.global_grants.controls)),
       // Omitted rather than sent as the form's defaults when the appliance has no key:
       // middleware rejects audit settings it is not entitled to, and the controls the user saw
       // were inert, so nothing on screen was theirs to send. Only an outright denial omits it:

@@ -18,7 +18,7 @@ import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.ut
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import {
-  S3Access, S3AuditOverflow, S3LogLevel, S3PrincipalType,
+  S3Access, S3AuditOverflow, S3GrantAction, S3LogLevel, S3PrincipalType,
 } from 'app/enums/s3.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
@@ -164,6 +164,24 @@ describe('ServiceS3Component', () => {
       default_audit_overflow: S3AuditOverflow.Drop,
     }]);
     expect(closed).toHaveBeenCalledWith(true);
+  });
+
+  it('saves a global grant that lists its own actions', async () => {
+    await (await getSelect('access')).selectOption('Custom');
+    const actions = await getSelect('actions');
+    await actions.selectOption('GetObject');
+    await actions.selectOption('PutObjectRetention');
+
+    spectator.component.submit();
+    await spectator.fixture.whenStable();
+
+    expect(api.call).toHaveBeenCalledWith('s3.update', [expect.objectContaining({
+      global_grants: [{
+        principal_type: S3PrincipalType.User,
+        xid: 1000,
+        access: [S3GrantAction.GetObject, S3GrantAction.PutObjectRetention],
+      }],
+    })]);
   });
 
   describe('premium features', () => {

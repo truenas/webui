@@ -52,6 +52,16 @@
       <tn-form-field [label]="'Access' | translate" [required]="true">
         <tn-select formControlName="access" [options]="accessOptions"></tn-select>
       </tn-form-field>
+
+      @if (group.controls.access.value === s3GrantCustomAccess) {
+        <tn-form-field
+          [label]="'Actions' | translate"
+          [tooltip]="helptext.grantActionsTooltip | translate"
+          [required]="true"
+        >
+          <tn-select formControlName="actions" [options]="actionOptions" [multiple]="true"></tn-select>
+        </tn-form-field>
+      }
     </tn-form-list-item>
   }
 </tn-form-list>
