@@ -1,11 +1,10 @@
-tn-form-field,
-tn-checkbox {
-  display: block;
-  margin-bottom: 2rem;
-}
+.base-nqn {
+  align-items: center;
+  display: flex;
+  gap: 0.25rem;
 
-// A checkbox wrapped in a form-field (for its tooltip) gets its spacing from the
-// form-field; avoid doubling the bottom margin.
-tn-form-field tn-checkbox {
-  margin-bottom: 0;
+  tn-input {
+    flex: 1;
+    min-width: 0;
+  }
 }

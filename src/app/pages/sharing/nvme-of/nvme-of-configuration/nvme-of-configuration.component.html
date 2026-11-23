@@ -11,14 +11,22 @@
       [label]="'Base NQN' | translate"
       [tooltip]="helptext.baseNqnTooltip | translate"
     >
-      <tn-input formControlName="basenqn"></tn-input>
+      <!-- The NQN outgrows the panel, and hosts need it verbatim, so the copy button works for read-only
+           users too; with the field disabled the hover tooltip is the only way to read the whole value. -->
+      <div class="base-nqn">
+        <tn-input
+          formControlName="basenqn"
+          [tnTooltip]="form.controls.basenqn.disabled ? form.controls.basenqn.value : ''"
+        ></tn-input>
+        <ix-copy-button [text]="form.controls.basenqn.value"></ix-copy-button>
+      </div>
     </tn-form-field>
 
     @if (hasSpdk()) {
       <tn-form-field
         [label]="'Implementation (Experimental)' | translate"
         [tooltip]="helptext.implementationTooltip | translate"
-        [tnTooltip]="form.controls.kernel.disabled ? (helptext.implementationDisabledTooltip | translate) : ''"
+        [tnTooltip]="isKernelLocked() ? (helptext.implementationDisabledTooltip | translate) : ''"
       >
         <tn-radio-group formControlName="kernel">
           @for (option of implementationOptions; track option.value) {
@@ -36,7 +44,8 @@
 
     <tn-form-field>
       <ix-licensed-feature
-        [locked]="form.controls.ana.disabled"
+        [locked]="isAnaUnavailable()"
+        [tooltip]="helptext.anaTooltip | translate"
         [lockedTooltip]="helptext.anaDisabledTooltip | translate"
       >
         <tn-checkbox
@@ -49,7 +58,7 @@
     <!-- `rdma.capable_protocols` folds the Enterprise license into its answer, so the UI can't tell a
          missing license from missing hardware: the locked state shows the full requirement text. -->
     <tn-form-field>
-      <ix-licensed-feature [locked]="form.controls.rdma.disabled" [tooltip]="helptext.rdmaTooltip | translate">
+      <ix-licensed-feature [locked]="isRdmaUnavailable()" [tooltip]="helptext.rdmaTooltip | translate">
         <tn-checkbox
           formControlName="rdma"
           [label]="'Enable Remote Direct Memory Access (RDMA)' | translate"
