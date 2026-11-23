@@ -82,9 +82,9 @@ export class ExportButtonComponent<T, M extends JobMethod<WebUiApiDirectory>> {
         const downloadMethod = this.downloadMethod() || this.jobMethod();
 
         if (this.addReportNameArgument()) {
-          // The export job's result is the generated report's download URL; the
-          // download endpoint expects that URL under the `report_name` argument.
-          customArguments.report_name = url;
+          // The export job's result is the report's full path, but the download method
+          // only takes its file name (middleware NAS-145323), and refuses a path with 422.
+          customArguments.report_name = url.split('/').pop();
         }
 
         return this.download.coreDownload({
