@@ -10,7 +10,7 @@ import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   TnCardComponent, TnDialog, TnStepComponent, TnStepperComponent,
 } from '@truenas/ui-components';
-import { of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { filter, switchMap } from 'rxjs/operators';
 import { StepActivationDirective } from 'app/directives/step-activation.directive';
 import {
@@ -163,6 +163,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       : of(null);
 
     sedPasswordUpdate$.pipe(
+      switchMap(() => this.applySedDiskPasswords()),
       switchMap(() => {
         return this.dialogService.jobDialog(
           this.api.job('pool.create', [toPoolCreateArgs(payload)]),
@@ -214,6 +215,21 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * The pool job sets each uninitialized SED disk up with the disk's stored password, or the global one
+   * when none is stored, so the per-disk choices from the Review step are stored on the disks first.
+   */
+  private applySedDiskPasswords(): Observable<unknown> {
+    const { changes } = this.store.sedDiskPasswords();
+    if (this.store.encryptionType() !== EncryptionType.Sed || !changes.length) {
+      return of(null);
+    }
+
+    return forkJoin(changes.map((change) => {
+      return this.api.call('disk.update', [change.identifier, { passwd: change.password }]);
+    }));
+  }
+
   private prepareCreatePayload(): CreatePool {
     const payload: CreatePool = {
       name: this.store.name(),
@@ -251,12 +267,12 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       payload.force_topology = true;
     }
 
-    this.dialogService.jobDialog(
-      this.api.job('pool.update', [this.existingPool().id, toPoolUpdateArgs(payload)]),
-      { title: this.translate.instant('Update Pool') },
-    )
-      .afterClosed()
+    this.applySedDiskPasswords()
       .pipe(
+        switchMap(() => this.dialogService.jobDialog(
+          this.api.job('pool.update', [this.existingPool().id, toPoolUpdateArgs(payload)]),
+          { title: this.translate.instant('Update Pool') },
+        ).afterClosed()),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )

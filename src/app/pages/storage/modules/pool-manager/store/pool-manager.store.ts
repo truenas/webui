@@ -68,6 +68,20 @@ export interface PoolManagerEnclosureSettings {
   dispersalStrategy: DispersalStrategy | null;
 }
 
+/** A disk whose stored SED password has to change before the pool job sets the disk up. */
+export interface SedDiskPasswordChange {
+  identifier: string;
+  name: string;
+  /** The disk's own password, or `''` to drop it so the global SED password is used. */
+  password: string;
+}
+
+export interface SedDiskPasswords {
+  changes: SedDiskPasswordChange[];
+  /** False while the choices are loading or a chosen individual password is incomplete. */
+  isValid: boolean;
+}
+
 export interface PoolManagerState {
   isLoading: boolean;
   enclosures: Enclosure[];
@@ -76,6 +90,7 @@ export interface PoolManagerState {
   encryptionType: EncryptionType;
   sedPassword: string | null;
   hasSedCapableDisks: boolean;
+  sedDiskPasswords: SedDiskPasswords;
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
@@ -114,6 +129,7 @@ export const initialState: PoolManagerState = {
   encryptionType: EncryptionType.None,
   sedPassword: null,
   hasSedCapableDisks: false,
+  sedDiskPasswords: { changes: [], isValid: true },
 
   diskSettings: {
     allowNonUniqueSerialDisks: false,
@@ -158,6 +174,7 @@ export class PoolManagerStore {
   readonly encryptionType = this.state.encryptionType;
   readonly sedPassword = this.state.sedPassword;
   readonly hasSedCapableDisks = this.state.hasSedCapableDisks;
+  readonly sedDiskPasswords = this.state.sedDiskPasswords;
   readonly enclosures = this.state.enclosures;
   readonly topology = this.state.topology;
   readonly diskSettings = this.state.diskSettings;
@@ -267,6 +284,10 @@ export class PoolManagerStore {
 
   setHasSedCapableDisks(hasSedCapableDisks: boolean): void {
     patchState(this.state, { hasSedCapableDisks });
+  }
+
+  setSedDiskPasswords(sedDiskPasswords: SedDiskPasswords): void {
+    patchState(this.state, { sedDiskPasswords });
   }
 
   setDiskWarningOptions(diskOptions: PoolManagerDiskSettings): void {

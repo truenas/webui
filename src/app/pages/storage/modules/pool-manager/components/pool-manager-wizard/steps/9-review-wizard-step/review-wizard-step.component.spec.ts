@@ -9,6 +9,7 @@ import {
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
@@ -34,7 +35,9 @@ import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-man
 import {
   PoolManagerState,
   PoolManagerStore,
+  SedDiskPasswords,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
@@ -68,7 +71,10 @@ describe('ReviewWizardStepComponent', () => {
   } as PoolManagerState;
   const currentState = signal(state);
   const forceTopology = signal(false);
+  const sedDiskPasswords = signal<SedDiskPasswords>({ changes: [], isValid: true });
   const poolManagerStoreMock = {
+    sedDiskPasswords,
+    setSedDiskPasswords: jest.fn(),
     name: computed(() => currentState().name),
     encryptionType: computed(() => currentState().encryptionType),
     topology: computed(() => currentState().topology),
@@ -81,6 +87,7 @@ describe('ReviewWizardStepComponent', () => {
   beforeEach(() => {
     currentState.set(state);
     forceTopology.set(false);
+    sedDiskPasswords.set({ changes: [], isValid: true });
   });
 
   const createComponent = createComponentFactory({
@@ -100,6 +107,8 @@ describe('ReviewWizardStepComponent', () => {
       }),
       mockProvider(PoolManagerStore, poolManagerStoreMock),
       mockProvider(TnDialog),
+      mockApi(),
+      mockProvider(ErrorHandlerService),
       mockEntitlements([EntitlementFeature.Support]),
       mockAuth(),
     ],
@@ -121,6 +130,13 @@ describe('ReviewWizardStepComponent', () => {
       await createPool.click();
 
       expect(spectator.component.createPool.emit).toHaveBeenCalled();
+    });
+
+    it('disables Create Pool while a per-disk SED password choice is incomplete', async () => {
+      sedDiskPasswords.set({ changes: [], isValid: false });
+
+      const createPool = await loader.getHarness(TnButtonHarness.with({ label: 'Create Pool' }));
+      expect(await createPool.isDisabled()).toBe(true);
     });
 
     it('opens an Inspect VDEVs dialog when corresponding button is pressed', async () => {
