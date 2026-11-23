@@ -39,7 +39,6 @@ export interface Container {
   cpuset: string | null;
   /**
    * Hard memory limit in MiB, also reported as the container's total memory. `null` means no limit.
-   * Not in `@truenas/api-client` 9.0.6's generated types yet (middleware #20119).
    */
   memory: number | null;
   autostart: boolean;
@@ -61,16 +60,11 @@ export interface Container {
   };
 }
 
-/** `memory` is not in `@truenas/api-client` 9.0.6's generated create/update params yet (middleware #20119). */
-interface ContainerMemoryParams {
-  memory?: number | null;
-}
-
 /** What the container form sends to `container.create`. */
-export type CreateContainer = JobParams<WebUiApiDirectory, 'container.create'>[0] & ContainerMemoryParams;
+export type CreateContainer = JobParams<WebUiApiDirectory, 'container.create'>[0];
 
 /** What the container form sends to `container.update`. */
-export type UpdateContainer = CallParams<WebUiApiDirectory, 'container.update'>[1] & ContainerMemoryParams;
+export type UpdateContainer = CallParams<WebUiApiDirectory, 'container.update'>[1];
 
 export interface ContainerFilesystemDevice {
   id?: number;

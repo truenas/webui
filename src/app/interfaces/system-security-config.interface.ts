@@ -18,7 +18,7 @@ export interface SystemSecurityConfig {
 /**
  * Reads `system.security.config`. Middleware's JSON encoder writes a Python set as a `{ $set: [...] }`
  * envelope, which is how `password_complexity_ruleset` arrives, while the generated model declares a
- * plain list of the rules. `require_nts` is newer than the generated model.
+ * plain list of the rules.
  */
 export function toSystemSecurityConfig(config: CallResponse<D, 'system.security.config'>): SystemSecurityConfig {
   return config as unknown as SystemSecurityConfig;

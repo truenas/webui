@@ -1,8 +1,0 @@
-// The library's banners colour their border and icon from --tn-warning, falling back to a
-// fixed hex that ignores the theme when it is undefined, and webui hasn't wired the global
-// --tn-* bridge yet. Mapping it on the host themes both banners this form can show — the
-// legacy-purpose warning and <ix-smb-users-warning> — from one source, since custom
-// properties inherit down the DOM regardless of view encapsulation.
-:host {
-  --tn-warning: var(--orange);
-}

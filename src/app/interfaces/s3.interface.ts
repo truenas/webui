@@ -51,7 +51,7 @@ export interface S3Bucket {
    */
   dataset: string;
   /**
-   * Set at creation and fixed after. Not in `@truenas/api-client` 9.0.3's generated types yet (NAS-144823).
+   * Set at creation and fixed after.
    */
   layout: S3BucketLayout;
   enabled: boolean;
