@@ -101,6 +101,23 @@ describe('ExportButtonComponent', () => {
     });
   });
 
+  it('names the report by its file name when the download method takes one', async () => {
+    spectator.setInput('downloadMethod', 'audit.download_report');
+    spectator.setInput('addReportNameArgument', true);
+    spectator.detectChanges();
+
+    const exportButton = await loader.getHarness(MatButtonHarness.with({ text: 'Export As CSV' }));
+    await exportButton.click();
+
+    // The job answers with the report's full path; middleware refuses anything but the file name.
+    expect(spectator.inject(DownloadService).coreDownload).toHaveBeenLastCalledWith({
+      arguments: [{ report_name: 'data.csv' }],
+      fileName: 'data.csv',
+      method: 'audit.download_report',
+      mimeType: 'text/csv',
+    });
+  });
+
   it('should use custom displayFormat when provided', async () => {
     spectator.setInput('displayFormat', 'JSON');
     spectator.setInput('fileType', 'tgz');
