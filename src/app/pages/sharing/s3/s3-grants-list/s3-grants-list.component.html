@@ -6,6 +6,7 @@
   (add)="addGrant()"
 >
   @for (group of formArray().controls; track group; let i = $index) {
+    @let providers = providersFor(group);
     <ix-list-item [label]="label()" (delete)="removeGrant(i)">
       <div class="grant" [formGroup]="group">
         <ix-select
@@ -20,7 +21,7 @@
             <ix-combobox
               formControlName="xid"
               [label]="'User' | translate"
-              [provider]="providersFor(group).user"
+              [provider]="providers.user"
               [required]="true"
             ></ix-combobox>
           }
@@ -28,7 +29,7 @@
             <ix-combobox
               formControlName="xid"
               [label]="'Group' | translate"
-              [provider]="providersFor(group).group"
+              [provider]="providers.group"
               [required]="true"
             ></ix-combobox>
           }
@@ -40,6 +41,17 @@
           [options]="accessOptions$"
           [required]="true"
         ></ix-select>
+
+        @if (group.controls.access.value === s3GrantCustomAccess) {
+          <ix-select
+            formControlName="actions"
+            [label]="'Actions' | translate"
+            [tooltip]="helptext.grantActionsTooltip | translate"
+            [options]="actionOptions$"
+            [multiple]="true"
+            [required]="true"
+          ></ix-select>
+        }
       </div>
     </ix-list-item>
   }

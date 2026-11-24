@@ -3,6 +3,7 @@ import {
   S3AccessKeyStatus,
   S3AuditOverflow,
   S3BucketLayout,
+  S3GrantAction,
   S3LogLevel,
   S3MultipartEtag,
   S3ObjectLockMode,
@@ -25,7 +26,10 @@ export interface S3Grant {
    * uid of the user or gid of the group. `null` for `EVERYONE`.
    */
   xid: number | null;
-  access: S3Access;
+  /**
+   * A preset, or the exact actions the grant allows (at least one, none repeated).
+   */
+  access: S3Access | S3GrantAction[];
 }
 
 export interface S3GrantEntry extends S3Grant {

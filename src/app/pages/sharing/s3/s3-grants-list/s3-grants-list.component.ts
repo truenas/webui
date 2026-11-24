@@ -6,16 +6,20 @@ import { FormArray, ReactiveFormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 import {
-  S3PrincipalType, s3AccessLabels, s3PrincipalTypeLabels,
+  S3GrantAction, S3PrincipalType, s3GrantAccessChoiceLabels, s3GrantCustomAccess, s3PrincipalTypeLabels,
 } from 'app/enums/s3.enum';
 import { mapToOptions } from 'app/helpers/options.helper';
+import { helptextSharingS3 } from 'app/helptext/sharing/s3/s3';
+import { Option } from 'app/interfaces/option.interface';
 import { IxComboboxComponent } from 'app/modules/forms/ix-forms/components/ix-combobox/ix-combobox.component';
 import { IxListItemComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list-item/ix-list-item.component';
 import { IxListComponent } from 'app/modules/forms/ix-forms/components/ix-list/ix-list.component';
 import { IxSelectComponent } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.component';
 import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { createS3GrantFormGroup, S3GrantFormGroup } from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
+import {
+  createS3GrantFormGroup, S3GrantFormGroup, syncS3GrantActions,
+} from 'app/pages/sharing/s3/s3-grants-list/s3-grant-form-group';
 import { S3PrincipalComboboxProvider } from 'app/pages/sharing/s3/s3-grants-list/s3-principal-combobox-provider';
 
 interface GrantProviders {
@@ -52,7 +56,16 @@ export class S3GrantsListComponent {
 
   protected readonly S3PrincipalType = S3PrincipalType;
   protected readonly principalTypeOptions$ = of(mapToOptions(s3PrincipalTypeLabels, this.translate));
-  protected readonly accessOptions$ = of(mapToOptions(s3AccessLabels, this.translate));
+  protected readonly accessOptions$ = of(mapToOptions(s3GrantAccessChoiceLabels, this.translate));
+  /**
+   * S3 action names, shown as they are spelled in the S3 API and in policies, so they are not translated.
+   */
+  protected readonly actionOptions$ = of<Option<S3GrantAction>[]>(
+    Object.values(S3GrantAction).map((action) => ({ label: action, value: action })),
+  );
+
+  protected readonly s3GrantCustomAccess = s3GrantCustomAccess;
+  protected readonly helptext = helptextSharingS3;
 
   /**
    * Keyed by form group rather than index, so rows keep their providers when an earlier row is removed.
@@ -69,7 +82,10 @@ export class S3GrantsListComponent {
 
   /**
    * Rows may be pushed by the parent (e.g. when loading an existing bucket), so each row is wired up
-   * the first time it is rendered rather than when it is added.
+   * the first time it is rendered rather than when it is added. The template resolves this for every
+   * row, not only those showing a picker, so the `principal_type` subscription below exists for an
+   * `EVERYONE` row as well and can re-enable `xid` when the type changes. The `access` subscription
+   * likewise enables the action list when the row switches to `Custom`.
    */
   protected providersFor(group: S3GrantFormGroup): GrantProviders {
     let providers = this.providers.get(group);
@@ -103,6 +119,10 @@ export class S3GrantsListComponent {
         xidControl.enable();
       }
     });
+
+    group.controls.access.valueChanges.pipe(
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => syncS3GrantActions(group));
 
     return providers;
   }

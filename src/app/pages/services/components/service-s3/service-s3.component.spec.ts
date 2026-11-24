@@ -10,7 +10,7 @@ import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import {
-  S3Access, S3AuditOverflow, S3LogLevel, S3PrincipalType,
+  S3Access, S3AuditOverflow, S3GrantAction, S3LogLevel, S3PrincipalType,
 } from 'app/enums/s3.enum';
 import { Certificate } from 'app/interfaces/certificate.interface';
 import { S3Config } from 'app/interfaces/s3.interface';
@@ -143,6 +143,24 @@ describe('ServiceS3Component', () => {
     }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalledWith('Service configuration saved');
     expect(spectator.inject(SlideInRef).close).toHaveBeenCalledWith({ response: true });
+  });
+
+  it('saves a global grant that lists its own actions', async () => {
+    const grants = await loader.getHarness(IxListHarness.with({ label: 'Global Grants' }));
+    const grant = await grants.getLastListItem();
+    await grant.fillForm({ Access: 'Custom' });
+    await grant.fillForm({ Actions: ['GetObject', 'PutObjectRetention'] });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('s3.update', [expect.objectContaining({
+      global_grants: [{
+        principal_type: S3PrincipalType.User,
+        xid: 1000,
+        access: [S3GrantAction.GetObject, S3GrantAction.PutObjectRetention],
+      }],
+    })]);
   });
 
   it('sends an empty managed root dataset when the field is cleared', async () => {

@@ -28,6 +28,8 @@ export const helptextSharingS3 = {
  the other protocols\' users own the filesystem permissions.'),
   grantsTooltip: T('Who may access the bucket and how, beyond its owner. A <b>Deny</b> grant refuses every \
  operation for the principal and outranks the owner.'),
+  grantActionsTooltip: T('The grant allows exactly these actions and nothing more. Owner-only actions, such as\
+ releasing a legal hold or bypassing governance retention, cannot be granted.'),
   globalGrantsTooltip: T('Grants that apply to every bucket. A <b>Deny</b> here suspends the principal everywhere.'),
   versioningTooltip: T('Keep previous versions of objects. Object lock keeps versioning enabled.'),
   versioningLockedHint: T('Kept enabled while object lock is on.'),
