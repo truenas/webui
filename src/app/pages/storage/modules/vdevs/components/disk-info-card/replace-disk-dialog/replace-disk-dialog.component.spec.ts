@@ -2,7 +2,9 @@ import { DIALOG_DATA, DialogRef } from '@angular/cdk/dialog';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
-import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import {
+  byText, createComponentFactory, mockProvider, Spectator,
+} from '@ngneat/spectator/jest';
 import {
   TnAutocompleteHarness, TnButtonHarness, TnCheckboxHarness, TnDialogHarness, TnInputHarness, TnRadioGroupHarness,
 } from '@truenas/ui-components';
@@ -60,6 +62,7 @@ describe('ReplaceDiskDialogComponent', () => {
           poolId: 1,
           guid: '9804554747743380831',
           diskName: 'sda',
+          location: { enclosureId: 'enc1', enclosureLabel: 'M50', slot: 3 },
         } as ReplaceDiskDialogData,
       },
       mockAuth(),
@@ -76,6 +79,14 @@ describe('ReplaceDiskDialogComponent', () => {
     const dialog = await loader.getHarness(TnDialogHarness);
 
     expect(await dialog.getTitle()).toBe('Replacing disk sda');
+  });
+
+  it('shows the enclosure and slot of the disk that is about to be replaced', () => {
+    const enclosure = spectator.query(byText('Enclosure:', { exact: true }))!;
+    expect(enclosure.nextElementSibling).toHaveText('M50');
+
+    const slot = spectator.query(byText('Slot:', { exact: true }))!;
+    expect(slot.nextElementSibling).toHaveText('3');
   });
 
   it('replaces a disk when the form is submitted', async () => {

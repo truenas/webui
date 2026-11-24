@@ -63,6 +63,8 @@ export class DiskInfoCardComponent {
     return !!this.disk();
   });
 
+  protected readonly location = computed(() => this.vDevsStore.getEnclosureLocation(this.disk()));
+
   // Replace stays available whether or not the disk is online, but is gated on PoolWrite
   // (previously *ixRequiresRoles on the footer button).
   protected readonly replaceAction = computed<TnCardAction | undefined>(() => {
@@ -104,6 +106,7 @@ export class DiskInfoCardComponent {
           poolId: Number(poolId),
           guid: this.topologyDisk().guid,
           diskName: this.disk()?.name || this.topologyDisk().guid,
+          location: this.location(),
         } as ReplaceDiskDialogData,
       })
       .closed

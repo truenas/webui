@@ -18,12 +18,15 @@ import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { SedDiskPasswordComponent } from 'app/pages/storage/modules/vdevs/components/sed-disk-password/sed-disk-password.component';
+import { DiskEnclosureLocation } from 'app/pages/storage/modules/vdevs/utils/get-disk-enclosure-locations.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface ReplaceDiskDialogData {
   diskName: string;
   guid: string;
   poolId: number;
+  /** Where the disk being replaced sits, so the user can check it before pulling it; null when not known. */
+  location: DiskEnclosureLocation | null;
 }
 
 @Component({

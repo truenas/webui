@@ -1,10 +1,12 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { mockProvider } from '@ngneat/spectator/jest';
-import { of, Subject } from 'rxjs';
+import { of, Subject, throwError } from 'rxjs';
+import { EnclosureElementType } from 'app/enums/enclosure-slot-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { VDevNestedDataNode } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk } from 'app/interfaces/disk.interface';
+import { DashboardEnclosure, DashboardEnclosureSlot } from 'app/interfaces/enclosure.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -27,6 +29,19 @@ const pool = {
   },
 } as Pool;
 
+const enclosures = [
+  {
+    id: 'enc1',
+    name: 'ES24',
+    label: 'Shelf A',
+    elements: {
+      [EnclosureElementType.ArrayDeviceSlot]: {
+        4: { drive_bay_number: 4, serial: 'SERIAL1' } as DashboardEnclosureSlot,
+      },
+    },
+  },
+] as DashboardEnclosure[];
+
 describe('VDevsStore', () => {
   let spectator: SpectatorService<VDevsStore>;
   let pools$: Subject<Pool[]>;
@@ -35,8 +50,9 @@ describe('VDevsStore', () => {
     service: VDevsStore,
     providers: [
       mockProvider(ApiService, {
-        // An instance property, so `mockProvider` cannot stub it on its own.
+        // Instance properties, so `mockProvider` cannot stub them on its own.
         query: jest.fn(),
+        call: jest.fn(),
       }),
       mockProvider(ErrorHandlerService),
     ],
@@ -56,6 +72,7 @@ describe('VDevsStore', () => {
       }
       throw new Error(`Unexpected method: ${method}`);
     });
+    (spectator.inject(ApiService).call as unknown as jest.Mock).mockReturnValue(of(enclosures));
   });
 
   function loadTank(): void {
@@ -91,6 +108,25 @@ describe('VDevsStore', () => {
         guid: 'cache',
       },
     ]);
+  });
+
+  it('looks up where a disk sits in an enclosure by its serial', () => {
+    loadTank();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('webui.enclosure.dashboard');
+    expect(spectator.service.getEnclosureLocation({ serial: 'SERIAL1' } as Disk))
+      .toEqual({ enclosureId: 'enc1', enclosureLabel: 'Shelf A', slot: 4 });
+    expect(spectator.service.getEnclosureLocation({ serial: 'OTHER' } as Disk)).toBeNull();
+    expect(spectator.service.getEnclosureLocation(undefined)).toBeNull();
+  });
+
+  it('still loads the pool, with no disk locations, when enclosures cannot be read', () => {
+    (spectator.inject(ApiService).call as unknown as jest.Mock).mockReturnValue(throwError(() => new Error('EPERM')));
+    loadTank();
+
+    expect(spectator.service.diskDictionary()).toEqual({ sdr: { devname: 'sdr' } });
+    expect(spectator.service.getEnclosureLocation({ serial: 'SERIAL1' } as Disk)).toBeNull();
+    expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
   });
 
   it('keeps the loaded pool and reports it as available when ZFS lists its devices', () => {
@@ -293,6 +329,7 @@ describe('VDevsStore', () => {
 
         jest.advanceTimersByTime(20000);
         disks$.next([{ devname: 'sdr' }] as Disk[]);
+        disks$.complete();
 
         expect(queriedMethods()).toEqual(['pool.query', 'disk.query']);
         expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);

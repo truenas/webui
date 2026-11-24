@@ -29,6 +29,18 @@
       </div>
     </div>
     <div class="details-item">
+      <div class="label">{{ 'Enclosure' | translate }}:</div>
+      <div class="value" tnTestId="disk-enclosure" tnTestIdType="text">
+        {{ location()?.enclosureLabel || ('Not available' | translate) }}
+      </div>
+    </div>
+    <div class="details-item">
+      <div class="label">{{ 'Slot' | translate }}:</div>
+      <div class="value" tnTestId="disk-slot" tnTestIdType="text">
+        {{ location()?.slot ?? ('Not available' | translate) }}
+      </div>
+    </div>
+    <div class="details-item">
       <div class="label">{{ 'Model' | translate }}:</div>
       <div class="value" tnTestId="disk-model" tnTestIdType="text">
         {{ disk()?.model | orNotAvailable }}
