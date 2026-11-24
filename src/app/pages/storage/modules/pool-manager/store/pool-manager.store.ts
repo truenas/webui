@@ -63,6 +63,20 @@ export interface PoolManagerEnclosureSettings {
   dispersalStrategy: DispersalStrategy | null;
 }
 
+/** A disk whose stored SED password has to change before the pool job sets the disk up. */
+export interface SedDiskPasswordChange {
+  identifier: string;
+  name: string;
+  /** The disk's own password, or `''` to drop it so the global SED password is used. */
+  password: string;
+}
+
+export interface SedDiskPasswords {
+  changes: SedDiskPasswordChange[];
+  /** False while the choices are loading or a chosen individual password is incomplete. */
+  isValid: boolean;
+}
+
 export interface PoolManagerState {
   isLoading: boolean;
   enclosures: Enclosure[];
@@ -71,6 +85,7 @@ export interface PoolManagerState {
   encryptionType: EncryptionType;
   sedPassword: string | null;
   hasSedCapableDisks: boolean;
+  sedDiskPasswords: SedDiskPasswords;
   diskSettings: PoolManagerDiskSettings;
   enclosureSettings: PoolManagerEnclosureSettings;
   topology: PoolManagerTopology;
@@ -106,6 +121,7 @@ export const initialState: PoolManagerState = {
   encryptionType: EncryptionType.None,
   sedPassword: null,
   hasSedCapableDisks: false,
+  sedDiskPasswords: { changes: [], isValid: true },
 
   diskSettings: {
     allowNonUniqueSerialDisks: false,
@@ -146,6 +162,7 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
   readonly encryptionType$ = this.select((state) => state.encryptionType);
   readonly sedPassword$ = this.select((state) => state.sedPassword);
   readonly hasSedCapableDisks$ = this.select((state) => state.hasSedCapableDisks);
+  readonly sedDiskPasswords$ = this.select((state) => state.sedDiskPasswords);
   readonly enclosures$ = this.select((state) => state.enclosures);
   readonly topology$ = this.select((state) => state.topology);
   readonly diskSettings$ = this.select((state) => state.diskSettings);
@@ -309,6 +326,13 @@ export class PoolManagerStore extends ComponentStore<PoolManagerState> {
     return {
       ...state,
       hasSedCapableDisks,
+    };
+  });
+
+  readonly setSedDiskPasswords = this.updater((state, sedDiskPasswords: SedDiskPasswords) => {
+    return {
+      ...state,
+      sedDiskPasswords,
     };
   });
 

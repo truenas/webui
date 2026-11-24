@@ -8,6 +8,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { BehaviorSubject, of } from 'rxjs';
 import { GiB } from 'app/constants/bytes.constant';
+import { mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DiskType } from 'app/enums/disk-type.enum';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
@@ -31,7 +32,9 @@ import { PoolManagerValidationService } from 'app/pages/storage/modules/pool-man
 import {
   PoolManagerState,
   PoolManagerStore,
+  SedDiskPasswords,
 } from 'app/pages/storage/modules/pool-manager/store/pool-manager.store';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 describe('ReviewWizardStepComponent', () => {
   let spectator: Spectator<ReviewWizardStepComponent>;
@@ -64,6 +67,19 @@ describe('ReviewWizardStepComponent', () => {
     },
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
+  const sedDiskPasswords$ = new BehaviorSubject<SedDiskPasswords>({ changes: [], isValid: true });
+  const poolManagerStoreMock = {
+    state$,
+    totalUsableCapacity$: of(2 * GiB),
+    encryptionType$: of(state.encryptionType),
+    topology$: of(state.topology),
+    sedDiskPasswords$,
+    setSedDiskPasswords: jest.fn(),
+  };
+
+  beforeEach(() => {
+    sedDiskPasswords$.next({ changes: [], isValid: true });
+  });
 
   const createComponent = createComponentFactory({
     component: ReviewWizardStepComponent,
@@ -80,11 +96,10 @@ describe('ReviewWizardStepComponent', () => {
       mockProvider(PoolManagerValidationService, {
         getPoolCreationErrors: jest.fn(() => of([])),
       }),
-      mockProvider(PoolManagerStore, {
-        state$,
-        totalUsableCapacity$: of(2 * GiB),
-      }),
+      mockProvider(PoolManagerStore, poolManagerStoreMock),
       mockProvider(MatDialog),
+      mockApi(),
+      mockProvider(ErrorHandlerService),
       mockAuth(),
     ],
   });
@@ -105,6 +120,13 @@ describe('ReviewWizardStepComponent', () => {
       await createPool.click();
 
       expect(spectator.component.createPool.emit).toHaveBeenCalled();
+    });
+
+    it('disables Create Pool while a per-disk SED password choice is incomplete', async () => {
+      sedDiskPasswords$.next({ changes: [], isValid: false });
+
+      const createPool = await loader.getHarness(MatButtonHarness.with({ text: 'Create Pool' }));
+      expect(await createPool.isDisabled()).toBe(true);
     });
 
     it('opens an Inspect VDEVs dialog when corresponding button is pressed', async () => {
@@ -236,10 +258,7 @@ describe('ReviewWizardStepComponent', () => {
     beforeEach(() => {
       spectator = createComponent({
         providers: [
-          mockProvider(PoolManagerStore, {
-            state$,
-            totalUsableCapacity$: of(2 * GiB),
-          }),
+          mockProvider(PoolManagerStore, poolManagerStoreMock),
           mockProvider(PoolManagerValidationService, {
             getPoolCreationErrors: jest.fn(() => of([
               {
