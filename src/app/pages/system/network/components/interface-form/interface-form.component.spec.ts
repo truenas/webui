@@ -497,6 +497,117 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
+  describe('bridge loop warning', () => {
+    const physicalNics = ['enp0s3', 'enp0s4'].map((name) => ({
+      ...existingInterface,
+      id: name,
+      name,
+      type: NetworkInterfaceType.Physical,
+    } as NetworkInterface));
+    const vlanNic = {
+      ...existingInterface, id: 'vlan1', name: 'vlan1', type: NetworkInterfaceType.Vlan,
+    } as NetworkInterface;
+
+    const bridgeLoopConfirmation = expect.objectContaining({
+      title: 'Possible network loop',
+      buttonText: 'Continue',
+      cancelText: 'Back to editing',
+      hideCheckbox: true,
+    });
+
+    function setUp(props: Partial<InterfaceFormComponent>): void {
+      spectator = createComponent({ props });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      api = spectator.inject(ApiService);
+    }
+
+    async function createBridge(...members: string[]): Promise<void> {
+      await setSelectValue('type', 'Bridge');
+      await setSelectValue('bridge_members', ...members);
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+    }
+
+    it('asks before creating a bridge with two physical members and saves on Continue', async () => {
+      setUp({ interfacesList: physicalNics });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
+
+      await createBridge('enp0s3', 'enp0s4');
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(bridgeLoopConfirmation);
+      expect(api.call).toHaveBeenCalledWith('interface.create', [
+        expect.objectContaining({ bridge_members: ['enp0s3', 'enp0s4'] }),
+      ]);
+    });
+
+    it('keeps the form open without saving on Back to editing', async () => {
+      setUp({ interfacesList: physicalNics });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(false));
+      const closedSpy = jest.fn();
+      spectator.component.closed.subscribe(closedSpy);
+
+      await createBridge('enp0s3', 'enp0s4');
+
+      expect(api.call).not.toHaveBeenCalledWith('interface.create', expect.anything());
+      expect(closedSpy).not.toHaveBeenCalled();
+      const members = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="bridge_members"]' }));
+      expect(await members.getDisplayText()).toContain('enp0s4');
+    });
+
+    it('does not ask when only one bridge member is physical', async () => {
+      setUp({ interfacesList: [physicalNics[0], { ...vlanNic, name: 'enp0s4' } as NetworkInterface] });
+
+      await createBridge('enp0s3', 'enp0s4');
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(api.call).toHaveBeenCalledWith('interface.create', expect.anything());
+    });
+
+    it('does not ask on an edit that leaves the physical members unchanged', async () => {
+      setUp({
+        interfacesList: physicalNics,
+        editInterface: {
+          ...existingInterface,
+          id: 'br7',
+          name: 'br7',
+          type: NetworkInterfaceType.Bridge,
+          bridge_members: ['enp0s4', 'enp0s3'],
+        } as NetworkInterface,
+      });
+
+      await setInputValue('description', 'Updated');
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(api.call).toHaveBeenCalledWith('interface.update', ['br7', expect.anything()]);
+    });
+
+    it('asks when an edit adds a second physical member', async () => {
+      setUp({
+        interfacesList: physicalNics,
+        editInterface: {
+          ...existingInterface,
+          id: 'br7',
+          name: 'br7',
+          type: NetworkInterfaceType.Bridge,
+          bridge_members: ['enp0s3'],
+        } as NetworkInterface,
+      });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
+
+      await setSelectValue('bridge_members', 'enp0s4');
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(bridgeLoopConfirmation);
+      expect(api.call).toHaveBeenCalledWith('interface.update', [
+        'br7',
+        expect.objectContaining({ bridge_members: ['enp0s3', 'enp0s4'] }),
+      ]);
+    });
+  });
+
   describe('edit link aggregation', () => {
     beforeEach(async () => {
       spectator = createComponent({

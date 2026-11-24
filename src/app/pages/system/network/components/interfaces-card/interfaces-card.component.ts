@@ -227,6 +227,7 @@ export class InterfacesCardComponent implements OnInit {
       title: this.translate.instant('Edit Interface'),
       inputs: {
         editInterface: row,
+        interfacesList: this.interfaces(),
       },
     }).onSuccess(() => {
       this.interfacesUpdated.emit();
