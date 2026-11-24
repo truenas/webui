@@ -5,10 +5,6 @@ import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectat
 import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import {
-  mockApi, mockCall, mockQuery, settleApi,
-} from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DatasetQuota } from 'app/interfaces/dataset-quota.interface';
@@ -21,10 +17,10 @@ import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/p
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 import { DatasetQuotasListComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quotas-list/dataset-quotas-list.component';
+import { DatasetQuotaService } from 'app/services/dataset/dataset-quota.service';
 
 const fakeQuotas = [{
   id: 1,
@@ -55,7 +51,7 @@ const fakeQuotas = [{
 describe('DatasetQuotasListComponent', () => {
   let spectator: Spectator<DatasetQuotasListComponent>;
   let loader: HarnessLoader;
-  let api: ApiService;
+  let quotaService: DatasetQuotaService;
   let table: TnTableHarness;
 
   const createComponent = createComponentFactory({
@@ -91,11 +87,10 @@ describe('DatasetQuotasListComponent', () => {
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.empty()),
       }),
-      mockApi([
-        // Not a `.query` method, but it has an entity, so the fake answers it as one.
-        mockQuery('pool.dataset.get_quota', fakeQuotas as unknown as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
-        mockCall('pool.dataset.set_quota', null),
-      ]),
+      mockProvider(DatasetQuotaService, {
+        getQuotas: jest.fn(() => of(fakeQuotas)),
+        setQuotas: jest.fn(() => of(null)),
+      }),
       mockAuth(),
     ],
   });
@@ -103,20 +98,12 @@ describe('DatasetQuotasListComponent', () => {
   beforeEach(async () => {
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
-    api = spectator.inject(ApiService);
+    quotaService = spectator.inject(DatasetQuotaService);
     table = await loader.getHarness(TnTableHarness);
   });
 
   it('should show table rows', async () => {
-    expect(api.call).toHaveBeenCalledWith(
-      'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.User, []],
-    );
-
-    expect(api.call).toHaveBeenCalledWith(
-      'pool.dataset.get_quota',
-      ['Test', DatasetQuotaType.User, [['name', '=', null]]],
-    );
+    expect(quotaService.getQuotas).toHaveBeenCalledWith('Test', DatasetQuotaType.User);
 
     expect(await table.getHeaderTexts()).toEqual(
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
@@ -147,18 +134,15 @@ describe('DatasetQuotasListComponent', () => {
         title: 'Delete User Quota',
       }),
     );
-    expect(api.call).toHaveBeenCalledWith(
-      'pool.dataset.set_quota',
-      ['Test', [{
-        id: '1',
-        quota_type: DatasetQuotaType.User,
-        quota_value: 0,
-      }, {
-        id: '1',
-        quota_type: DatasetQuotaType.UserObj,
-        quota_value: 0,
-      }]],
-    );
+    expect(quotaService.setQuotas).toHaveBeenCalledWith('Test', [{
+      id: '1',
+      quota_type: DatasetQuotaType.User,
+      quota_value: 0,
+    }, {
+      id: '1',
+      quota_type: DatasetQuotaType.UserObj,
+      quota_value: 0,
+    }]);
   });
 
   it('opens side panel to edit user quota when edit button is pressed', async () => {
@@ -177,23 +161,16 @@ describe('DatasetQuotasListComponent', () => {
   it('removes invalid quotas, and hides Remove Invalid Quotas once none are left', async () => {
     const removeButton = await loader.getHarness(TnButtonHarness.with({ label: 'Remove Invalid Quotas' }));
 
-    // After the removal middleware lists no invalid quota. The fake does not apply the filter,
-    // so it is given no rows at all for the reload.
-    spectator.inject(MockApiService).mockQuery('pool.dataset.get_quota', []);
+    // After the removal the reload lists no quota without a name.
+    jest.spyOn(quotaService, 'getQuotas').mockReturnValue(of(fakeQuotas.slice(0, 2)));
     await removeButton.click();
-    // Removal, the reload and the invalid-quota check are three answers, one after another.
-    await settleApi();
-    await settleApi();
-    await settleApi();
+    await spectator.fixture.whenStable();
     spectator.detectChanges();
 
-    expect(api.call).toHaveBeenCalledWith(
-      'pool.dataset.set_quota',
-      ['Test', expect.arrayContaining([
-        { id: '1000', quota_type: DatasetQuotaType.User, quota_value: 0 },
-        { id: '1000', quota_type: DatasetQuotaType.UserObj, quota_value: 0 },
-      ])],
-    );
+    expect(quotaService.setQuotas).toHaveBeenCalledWith('Test', [
+      { id: '1000', quota_type: DatasetQuotaType.User, quota_value: 0 },
+      { id: '1000', quota_type: DatasetQuotaType.UserObj, quota_value: 0 },
+    ]);
     expect(await loader.getAllHarnesses(TnButtonHarness.with({ label: 'Remove Invalid Quotas' }))).toHaveLength(0);
   });
 

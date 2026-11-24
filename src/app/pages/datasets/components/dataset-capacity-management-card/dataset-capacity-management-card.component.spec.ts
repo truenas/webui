@@ -2,11 +2,12 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { signal } from '@angular/core';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnCardComponent } from '@truenas/ui-components';
 import { MockComponents, MockModule } from 'ng-mocks';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { of } from 'rxjs';
-import { mockApi, mockQuery, mockUndeclaredCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockUndeclaredCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType } from 'app/enums/dataset.enum';
@@ -17,7 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
@@ -83,11 +84,13 @@ describe('DatasetCapacityManagementCardComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        // Not a `.query` method, but it has an entity, so the fake answers it as one.
-        mockQuery('pool.dataset.get_quota', [
-          { id: 1, quota: 200 },
-          { id: 2, quota: 200 },
-        ] as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
+        mockCall('zfs.resource.userspace.list', [
+          { xid: 1001, quota: 200, used: 0 },
+          { xid: 1002, quota: 200, used: 0 },
+          { xid: 1003, quota: 0, used: 100 },
+        ] as CallResponse<WebUiApiDirectory, 'zfs.resource.userspace.list'>),
+        mockCall('user.get_user_obj', { pw_name: 'user' } as CallResponse<WebUiApiDirectory, 'user.get_user_obj'>),
+        mockCall('group.get_group_obj', { gr_name: 'group' } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
       ]),
       mockProvider(DialogService),
       mockProvider(DatasetTreeStore, {
@@ -248,7 +251,7 @@ describe('DatasetCapacityManagementCardComponent', () => {
       providers: [
         mockAuth(),
         mockApi([
-          mockQuery('pool.dataset.get_quota', []),
+          mockCall('zfs.resource.userspace.list', []),
           mockUndeclaredCall('zpool.list', [{
             name: 'dozer',
             properties: {

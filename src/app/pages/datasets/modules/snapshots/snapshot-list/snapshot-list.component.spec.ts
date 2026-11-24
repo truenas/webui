@@ -22,6 +22,7 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
+import { snapshotPageLeft } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { fakeZfsSnapshotDataSource } from 'app/pages/datasets/modules/snapshots/testing/snapshot-fake-datasource';
@@ -49,7 +50,7 @@ describe('SnapshotListComponent', () => {
       mockAuth(),
       mockApi([
         mockQuery('pool.snapshot.query', fakeZfsSnapshotDataSource as unknown as WebUiQueryEntity<'pool.snapshot.query'>[]),
-        mockCall('pool.snapshot.delete', null),
+        mockCall('zfs.resource.snapshot.destroy', null),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -119,6 +120,15 @@ describe('SnapshotListComponent', () => {
     store$.refreshState();
     spectator.detectChanges();
   }
+
+  it('tells the store the page was left, so it stops live updates and periodic re-reads', () => {
+    const store$ = spectator.inject(MockStore);
+    jest.spyOn(store$, 'dispatch');
+
+    spectator.fixture.destroy();
+
+    expect(store$.dispatch).toHaveBeenCalledWith(snapshotPageLeft());
+  });
 
   it('should show table rows', async () => {
     expect(await table.getRowCount()).toBe(2);

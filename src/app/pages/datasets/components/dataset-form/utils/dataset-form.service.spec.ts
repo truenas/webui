@@ -1,22 +1,31 @@
 import { createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { firstValueFrom, of } from 'rxjs';
 import { maxDatasetNesting, maxDatasetPath } from 'app/constants/dataset.constants';
-import { mockApi, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { inherit } from 'app/enums/with-inherit.enum';
+import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 
 describe('DatasetFormService', () => {
-  const dataset = {} as Dataset;
+  const row = {
+    name: 'test',
+    pool: 'test',
+    type: 'FILESYSTEM',
+    properties: {
+      compression: { raw: 'lz4', value: 'lz4', source: { type: 'LOCAL', value: null } },
+    },
+    user_properties: {},
+    children: null,
+  } as unknown as ZfsResourceEntry;
   const createService = createServiceFactory({
     service: DatasetFormService,
     providers: [
       mockApi([
-        mockQuery('pool.dataset.query', [dataset as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
+        mockCall('zfs.resource.list', [row]),
       ]),
       mockProvider(DialogService),
     ],
@@ -61,8 +70,18 @@ describe('DatasetFormService', () => {
     it('loads dataset by id', async () => {
       const loadedDataset = await firstValueFrom(service.loadDataset('test'));
 
-      expect(api.query).toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'test']]);
-      expect(loadedDataset).toEqual(dataset);
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.list', [expect.objectContaining({
+        paths: ['test'],
+        get_source: true,
+        get_user_properties: true,
+      })]);
+      expect(loadedDataset).toEqual(expect.objectContaining({
+        id: 'test',
+        name: 'test',
+        compression: {
+          parsed: 'lz4', rawvalue: 'lz4', value: 'LZ4', source: ZfsPropertySource.Local,
+        },
+      }));
     });
   });
 

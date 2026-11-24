@@ -13,7 +13,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { RollbackRecursiveType } from 'app/enums/rollback-recursive-type.enum';
 import { helptextSnapshots } from 'app/helptext/storage/snapshots/snapshots';
-import { toZfsSnapshot, ZfsRollbackParams, ZfsSnapshot } from 'app/interfaces/zfs-snapshot.interface';
+import { ZfsRollbackOptions, ZfsSnapshot, zfsResourceToSnapshot } from 'app/interfaces/zfs-snapshot.interface';
 import { FormatDateTimePipe } from 'app/modules/dates/pipes/format-date-time/format-datetime.pipe';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -131,12 +131,7 @@ export class SnapshotRollbackDialog implements OnInit {
       return;
     }
     this.isLoading.set(true);
-    this.api.query('pool.snapshot.query', [['id', '=', snapshot.name]], {
-      // `select` projects the `properties` column; `extra.properties` tells
-      // middleware which ZFS properties to populate inside it. Both are required.
-      select: ['properties'],
-      extra: { properties: ['creation'] },
-    }).pipe(
+    this.api.call('zfs.resource.snapshot.list', [{ paths: [snapshot.name], properties: ['creation'] }]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (snapshots) => {
@@ -152,7 +147,7 @@ export class SnapshotRollbackDialog implements OnInit {
         // translated sentence below. `<ix-date>` can't be embedded inside an
         // ngx-translate {datetime} placeholder, so we mirror its conversion via
         // toMachineTime + formatDateTime here.
-        this.creationMachineTime.set(this.computeCreationMachineTime(toZfsSnapshot(fetched)));
+        this.creationMachineTime.set(this.computeCreationMachineTime(zfsResourceToSnapshot(fetched)));
         this.isLoading.set(false);
       },
       error: (error: unknown) => {
@@ -181,7 +176,7 @@ export class SnapshotRollbackDialog implements OnInit {
     if (!snapshot) {
       return;
     }
-    const body: ZfsRollbackParams[1] = {
+    const body: ZfsRollbackOptions = {
       force: true,
     };
 
@@ -193,15 +188,15 @@ export class SnapshotRollbackDialog implements OnInit {
       body.recursive_clones = true;
     }
 
-    this.api.call('pool.snapshot.rollback', [snapshot.name, body]).pipe(
+    this.api.call('zfs.resource.snapshot.rollback', [{ path: snapshot.name, ...body }]).pipe(
       this.loader.withLoader(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: () => {
         this.wasDatasetRolledBack.set(true);
         // Rollback destroys every snapshot newer than the target at the ZFS
-        // level, but that destruction doesn't emit `Removed` events on the
-        // `pool.snapshot.query` collection subscription — so the list keeps
+        // level, but that destruction isn't guaranteed to reach the list as
+        // `zfs.resource.snapshot.list` REMOVED events — so the list could keep
         // showing stale rows whose every action then fails with "snapshot not
         // found". Force a full reload so the list reflects true backend state.
         this.store$.dispatch(snapshotPageEntered());

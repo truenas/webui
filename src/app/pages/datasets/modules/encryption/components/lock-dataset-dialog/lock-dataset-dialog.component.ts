@@ -51,7 +51,7 @@ export class LockDatasetDialog {
 
     const force = this.forceCheckbox.value;
     this.dialogService.jobDialog(
-      this.api.job('pool.dataset.lock', [this.dataset.id, { force_umount: force }]),
+      this.api.job('zfs.resource.encryption.lock', [{ path: this.dataset.id, force_unmount: force }]),
       { title: this.translate.instant(helptextVolumes.lockingDataset) },
     )
       .afterClosed()

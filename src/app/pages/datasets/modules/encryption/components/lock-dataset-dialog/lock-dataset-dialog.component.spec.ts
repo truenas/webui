@@ -30,7 +30,7 @@ describe('LockDatasetDialogComponent', () => {
         })),
       }),
       mockApi([
-        mockJob('pool.dataset.lock', { state: JobState.Success }),
+        mockJob('zfs.resource.encryption.lock', { state: JobState.Success }),
       ]),
       {
         provide: DIALOG_DATA,
@@ -56,7 +56,7 @@ describe('LockDatasetDialogComponent', () => {
 
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(ApiService).job)
-      .toHaveBeenCalledWith('pool.dataset.lock', ['pool/dataset', { force_umount: true }]);
+      .toHaveBeenCalledWith('zfs.resource.encryption.lock', [{ path: 'pool/dataset', force_unmount: true }]);
     expect(spectator.inject(DialogRef).close).toHaveBeenCalled();
   });
 });

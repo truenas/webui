@@ -32,6 +32,7 @@ describe('SnapshotAddFormComponent', () => {
       mockApi([
         mockCall('pool.filesystem_choices', ['APPS', 'POOL']),
         mockCall('pool.snapshot.create', null),
+        mockCall('zfs.resource.snapshot.create', null),
         mockCall('replication.list_naming_schemas', mockNamingSchema),
         mockCall('vmware.dataset_has_vms', true),
       ]),
@@ -119,6 +120,7 @@ describe('SnapshotAddFormComponent', () => {
 
     expect(spectator.component.canSubmit()).toBe(false);
     expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+    expect(api.call).not.toHaveBeenCalledWith('zfs.resource.snapshot.create', expect.anything());
   });
 
   it('blocks saving while the VM check is in flight', async () => {
@@ -168,10 +170,28 @@ describe('SnapshotAddFormComponent', () => {
     await (await getInput('name')).setValue('test-snapshot-name');
     save();
 
-    // `vmware_sync` is only sent when the newest lookup found VMs — the stale `true` must not leak.
-    expect(api.call).toHaveBeenCalledWith('pool.snapshot.create', [
-      expect.not.objectContaining({ vmware_sync: expect.anything() }),
+    // `vmware_sync` is only sent when the newest lookup found VMs — the stale `true` must not leak, so the
+    // snapshot is taken directly through `zfs.resource`.
+    expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.snapshot.create', [
+      { dataset: 'APPS', name: 'test-snapshot-name', recursive: true },
     ]);
+  });
+
+  it('takes a snapshot with a plain name through zfs.resource.snapshot.create', async () => {
+    await (await getSelect('dataset')).selectOption('APPS');
+    await (await getInput('name')).setValue('plain-name');
+
+    const closed = jest.fn();
+    spectator.component.closed.subscribe(closed);
+    save();
+
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.snapshot.create', [
+      { dataset: 'APPS', name: 'plain-name', recursive: false },
+    ]);
+    expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+    await spectator.fixture.whenStable();
+    expect(closed).toHaveBeenCalledWith(true);
   });
 
   it('re-checks for VMs in dataset when recursive checkbox is toggled or dataset changed', async () => {
@@ -229,6 +249,7 @@ describe('SnapshotAddFormComponent', () => {
       save();
 
       expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+      expect(api.call).not.toHaveBeenCalledWith('zfs.resource.snapshot.create', expect.anything());
     });
 
     it('explains the block on the dataset field', async () => {
@@ -340,6 +361,7 @@ describe('SnapshotAddFormComponent', () => {
       await retry.click();
 
       expect(api.call).not.toHaveBeenCalledWith('pool.snapshot.create', expect.anything());
+      expect(api.call).not.toHaveBeenCalledWith('zfs.resource.snapshot.create', expect.anything());
     });
 
     it('takes the retry button away once another dataset is picked', async () => {

@@ -27,7 +27,7 @@ describe('SnapshotCloneDialogComponent', () => {
       mockProvider(DialogRef),
       mockProvider(DialogService),
       mockApi([
-        mockCall('pool.snapshot.clone', null),
+        mockCall('zfs.resource.snapshot.clone', null),
       ]),
     ],
   });
@@ -49,8 +49,8 @@ describe('SnapshotCloneDialogComponent', () => {
     const cloneButton = await loader.getHarness(TnButtonHarness.with({ label: 'Clone' }));
     await cloneButton.click();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.clone', [{
-      dataset_dst: 'pool/dataset',
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.snapshot.clone', [{
+      dataset: 'pool/dataset',
       snapshot: 'my-snapshot',
     }]);
     expect(spectator.fixture.nativeElement).toHaveText('Dataset pool/dataset was created.');

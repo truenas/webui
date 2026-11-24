@@ -153,7 +153,7 @@ export class DatasetDetailsCardComponent {
   }
 
   private promoteDataset(): void {
-    this.api.call('pool.dataset.promote', [this.dataset().id])
+    this.api.call('zfs.resource.promote', [{ path: this.dataset().id }])
       .pipe(this.errorHandler.withErrorHandler(), takeUntilDestroyed(this.destroyRef))
       .subscribe(() => {
         this.snackbar.success(this.translate.instant('Dataset promoted successfully.'));

@@ -47,8 +47,8 @@ export class DownloadKeyDialog {
     this.loader.open();
 
     this.download.coreDownload({
-      method: 'pool.dataset.export_keys',
-      arguments: [this.data.name],
+      method: 'zfs.resource.encryption.export_keys',
+      arguments: [{ path: this.data.name }],
       fileName: this.filename,
       mimeType: 'application/json',
     })

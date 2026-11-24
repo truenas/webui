@@ -27,7 +27,7 @@ const sourceName = 'e2e_promote_src';
 const cloneName = 'e2e_promote_clone';
 const snapshotName = 'base';
 
-const promoteMethod = 'pool.dataset.promote';
+const promoteMethod = 'zfs.resource.promote';
 /** What the Datasets page reloads its tree and the selected dataset's card from. */
 const detailsMethod = 'pool.dataset.details';
 

@@ -17,14 +17,14 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
-import { DatasetQuota, SetDatasetQuota, toDatasetQuotas } from 'app/interfaces/dataset-quota.interface';
+import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetQuotaService } from 'app/services/dataset/dataset-quota.service';
 
 @Component({
   selector: 'ix-dataset-quota-edit-form',
@@ -40,7 +40,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnInit {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private quotaService = inject(DatasetQuotaService);
   private translate = inject(TranslateService);
   private errorHandler = inject(FormErrorHandlerService);
   protected dialogService = inject(DialogService);
@@ -139,9 +139,8 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
   }
 
   private getQuota(id: number): Observable<DatasetQuota[]> {
-    return this.api.call('pool.dataset.get_quota', [this.datasetId(), this.quotaType(), [['id', '=', id]]]).pipe(
-      map(toDatasetQuotas),
-    );
+    return this.quotaService.getQuotas(this.datasetId(), this.quotaType())
+      .pipe(map((quotas) => quotas.filter((quota) => quota.id === id)));
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
@@ -166,7 +165,7 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
     const canSubmit$ = this.isUnsettingQuota(values) ? this.getConfirmation(values.name) : of(true);
     const request$ = canSubmit$.pipe(
       filter(Boolean),
-      switchMap(() => this.api.call('pool.dataset.set_quota', [this.datasetId(), payload])),
+      switchMap(() => this.quotaService.setQuotas(this.datasetId(), payload)),
     );
 
     return {

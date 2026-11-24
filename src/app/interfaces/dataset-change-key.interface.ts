@@ -1,7 +1,5 @@
-export interface DatasetChangeKeyParams {
-  generate_key?: boolean;
-  key_file?: boolean;
-  pbkdf2iters?: number;
-  passphrase?: string;
-  key?: string;
-}
+import { JobParams } from '@truenas/api-client';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+
+/** What `zfs.resource.encryption.change_key` takes. */
+export type DatasetChangeKeyParams = JobParams<WebUiApiDirectory, 'zfs.resource.encryption.change_key'>[0];

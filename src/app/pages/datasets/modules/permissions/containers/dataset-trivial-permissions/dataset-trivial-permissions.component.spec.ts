@@ -6,10 +6,9 @@ import { createRoutingFactory, mockProvider, Spectator } from '@ngneat/spectator
 import { TnButtonHarness, TnCheckboxHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import {
-  mockApi, mockJob, mockQuery, settleApi,
+  mockApi, mockCall, mockJob, settleApi,
 } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DatasetAclType } from 'app/enums/dataset.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
@@ -18,7 +17,7 @@ import {
   IxUserComboboxHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 import { StorageService } from 'app/services/storage.service';
 import { UserService } from 'app/services/user.service';
 import { DatasetTrivialPermissionsComponent } from './dataset-trivial-permissions.component';
@@ -39,11 +38,13 @@ describe('DatasetTrivialPermissionsComponent', () => {
     providers: [
       ixFormTestingProviders(),
       mockApi([
-        mockQuery('pool.dataset.query', [{
-          acltype: {
-            value: DatasetAclType.Posix,
+        mockCall('zfs.resource.list', [{
+          name: 'pool/trivial',
+          type: 'FILESYSTEM',
+          properties: {
+            acltype: { raw: 'posix', value: 'posix', source: { type: 'LOCAL', value: null } },
           },
-        }] as unknown as WebUiQueryEntity<'pool.dataset.query'>[]),
+        }] as ZfsResourceEntry[]),
         mockJob('filesystem.setperm', { state: JobState.Success }),
       ]),
       mockProvider(StorageService, {

@@ -7,7 +7,7 @@ import {
 } from 'rxjs';
 import { listZpools } from 'app/helpers/list-zpools.helper';
 import { Alert, toAlert } from 'app/interfaces/alert.interface';
-import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import {
   Disk, DiskTemperatureAgg, StorageDashboardDisk, toDisk,
 } from 'app/interfaces/disk.interface';
@@ -15,6 +15,7 @@ import { ScrubTask, toScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool, toPool } from 'app/interfaces/pool.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ZpoolListEntry } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 
@@ -41,6 +42,7 @@ const initialState: PoolsDashboardState = {
 export class PoolsDashboardStore {
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
+  private datasetApi = inject(DatasetApiService);
   private poolStoreService = inject(poolStore);
 
   private readonly state = signalState(initialState);
@@ -90,9 +92,8 @@ export class PoolsDashboardStore {
       this.api.queryAndSubscribe('pool.query', [], { extra: { is_upgraded: true } }).pipe(
         map((pools) => pools.map(toPool)),
       ),
-      this.api.query('pool.dataset.query', [], { extra: { retrieve_children: false } }).pipe(
-        map((datasets) => datasets.map(toDataset)),
-      ),
+      // Without paths, `zfs.resource.list` returns each pool's root dataset.
+      this.datasetApi.loadDatasets([]),
       // TODO: Middleware publishes `zpool.list` events, but the generated event directory does not
       // have them until `@truenas/api-client` is regenerated after NAS-141300. Until then, when `pool.query`
       // re-emits via its live subscription, combineLatest reuses this stale `zpool.list` value, meaning tier

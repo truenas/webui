@@ -1,17 +1,16 @@
 // cspell:ignore ngneat snapshottask zvol volsize volblocksize pbkdf
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { Provider } from '@angular/core';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
   TnButtonToggleHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import {
-  MockApiResponse, mockApi, mockCall, mockQuery,
-} from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import {
   DatasetCaseSensitivity, DatasetRecordSize, DatasetSnapdev, DatasetSync, DatasetType,
@@ -30,9 +29,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EditableHarness } from 'app/modules/forms/editable/editable.harness';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-form.component';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
 
@@ -76,19 +74,27 @@ async function setEditableTnInput(
   await input.setValue(value);
 }
 
+/** What `zfs.resource.compression_choices` lists; the form shows the keys upper-cased. */
+const compressionChoices = {
+  off: 'off',
+  lz4: 'lz4',
+  gzip: 'gzip',
+  zstd: 'zstd',
+};
+
 /**
- * `mockQuery` answers every filter with the same rows. The form reads both the zvol and its parent through
- * `pool.dataset.query`, and tells them apart only by the `id` filter.
+ * The form reads the zvol and its parent through `DatasetApiService`, which is tested on its own; here it answers
+ * each path with the rows `rowsFor` gives and hands back the saved record.
  */
-function mockDatasetQueryById(rowsFor: (id: unknown) => Dataset[]): MockApiResponse {
-  return (api) => {
-    api.client.connection.autoReply('pool.dataset.query', (frame) => {
-      const { id, params } = frame as { id: string; params?: [[string, string, unknown][]?] };
-      const rows = rowsFor(params?.[0]?.[0]?.[2]);
-      // On a microtask, as the package's own answers are.
-      queueMicrotask(() => api.client.connection.receive({ jsonrpc: '2.0', id, result: rows }));
-    });
-  };
+function mockDatasetApi(
+  rowsFor: (path: string) => Dataset[],
+  saved: { created?: Partial<Dataset> | null; updated?: Partial<Dataset> | null } = {},
+): Provider {
+  return mockProvider(DatasetApiService, {
+    loadDatasets: jest.fn((paths: string[]) => of(rowsFor(paths[0]))),
+    createDataset: jest.fn(() => of(saved.created ?? null)),
+    updateDataset: jest.fn(() => of(saved.updated ?? null)),
+  });
 }
 
 describe('ZvolFormComponent', () => {
@@ -167,33 +173,22 @@ describe('ZvolFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('pool.dataset.create', { id: 'parentId/new zvol', name: 'parentId/new zvol' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockCall('pool.dataset.update', { id: 'zvolId', name: 'zvolId' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-        mockCall('pool.dataset.compression_choices', {
-          OFF: 'Off',
-          LZ4: 'lz4 (recommended)',
-          GZIP: 'gzip (default level, 6)',
-          'GZIP-1': 'gzip-1 (fastest)',
-          'GZIP-9': 'gzip-9 (maximum, slow)',
-          ZSTD: 'zstd (default level, 3)',
-          'ZSTD-5': 'zstd-5 (slow)',
-          'ZSTD-7': 'zstd-7 (very slow)',
-          'ZSTD-FAST': 'zstd-fast (default level, 1)',
-          ZLE: 'zle (runs of zeros)',
-          LZJB: 'lzjb (legacy, not recommended)',
-        }),
-        mockDatasetQueryById((id) => {
-          if (id === 'parentId') {
-            return [dataset];
-          }
-
-          return [{
-            ...dataset,
-            type: DatasetType.Volume,
-          }];
-        }),
+        mockCall('zfs.resource.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+        mockCall('zfs.resource.compression_choices', compressionChoices),
       ]),
+      mockDatasetApi((path) => {
+        if (path === 'parentId') {
+          return [dataset];
+        }
+
+        return [{
+          ...dataset,
+          type: DatasetType.Volume,
+        }];
+      }, {
+        created: { id: 'parentId/new zvol', name: 'parentId/new zvol' },
+        updated: { id: 'zvolId', name: 'zvolId' },
+      }),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
       mockAuth(),
@@ -233,7 +228,7 @@ describe('ZvolFormComponent', () => {
 
       await setEditableTnInput(loader, mainDetails, 'Comments', 'comments', 'comments text');
       await setEditableTnSelect(loader, mainDetails, 'Sync', 'sync', 'Standard');
-      await setEditableTnSelect(loader, mainDetails, 'Compression', 'compression', 'lz4 (recommended)');
+      await setEditableTnSelect(loader, mainDetails, 'Compression', 'compression', 'LZ4');
       await setEditableTnSelect(loader, mainDetails, 'ZFS Deduplication', 'deduplication', 'Verify');
       await setEditableTnSelect(loader, mainDetails, 'Read-only', 'readonly', 'On');
       await setEditableTnSelect(loader, mainDetails, 'Snapdev', 'snapdev', 'Visible');
@@ -245,7 +240,7 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.create', [{
+      expect(spectator.inject(DatasetApiService).createDataset).toHaveBeenLastCalledWith({
         name: 'parentId/new zvol',
         comments: 'comments text',
         compression: 'LZ4',
@@ -264,7 +259,7 @@ describe('ZvolFormComponent', () => {
           pbkdf2iters: 1400000,
         },
         type: DatasetType.Volume,
-      }]);
+      });
       expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'parentId/new zvol' }));
     });
 
@@ -272,7 +267,7 @@ describe('ZvolFormComponent', () => {
       // `closed` is the only signal that tears the panel down, so an unexpected response must
       // still emit — falsy, which `FormSidePanelService` reads as a cancel — rather than leaving
       // the panel wedged open with no Save in flight.
-      spectator.inject(MockApiService).mockCall('pool.dataset.create', undefined);
+      jest.spyOn(spectator.inject(DatasetApiService), 'createDataset').mockReturnValueOnce(of(undefined));
 
       await setTnInput(loader, 'name', 'new zvol');
       await setTnInput(loader, 'volsize', '1 GiB');
@@ -366,9 +361,8 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith(
-        'pool.dataset.create',
-        [expect.not.objectContaining({ deduplication: expect.anything() })],
+      expect(spectator.inject(DatasetApiService).createDataset).toHaveBeenLastCalledWith(
+        expect.not.objectContaining({ deduplication: expect.anything() }),
       );
     });
   });
@@ -396,24 +390,10 @@ describe('ZvolFormComponent', () => {
       ],
       providers: [
         mockApi([
-          mockCall('pool.dataset.create', null),
-          mockCall('pool.dataset.update', null),
-          mockCall('pool.dataset.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
-          mockQuery('pool.dataset.query', [encryptedParent as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
-          mockCall('pool.dataset.compression_choices', {
-            OFF: 'Off',
-            LZ4: 'lz4 (recommended)',
-            GZIP: 'gzip (default level, 6)',
-            'GZIP-1': 'gzip-1 (fastest)',
-            'GZIP-9': 'gzip-9 (maximum, slow)',
-            ZSTD: 'zstd (default level, 3)',
-            'ZSTD-5': 'zstd-5 (slow)',
-            'ZSTD-7': 'zstd-7 (very slow)',
-            'ZSTD-FAST': 'zstd-fast (default level, 1)',
-            ZLE: 'zle (runs of zeros)',
-            LZJB: 'lzjb (legacy, not recommended)',
-          }),
+          mockCall('zfs.resource.recommended_zvol_blocksize', '16K' as DatasetRecordSize),
+          mockCall('zfs.resource.compression_choices', compressionChoices),
         ]),
+        mockDatasetApi(() => [encryptedParent]),
         mockProvider(DialogService),
         ...ixFormTestingProviders(),
         mockAuth(),
@@ -437,17 +417,16 @@ describe('ZvolFormComponent', () => {
       // Wait for the async operations to complete
       await encryptedSpectator.fixture.whenStable();
 
-      const calls = (encryptedSpectator.inject(ApiService).call as jest.Mock).mock.calls;
-      const createCall = calls.find((call) => call[0] === 'pool.dataset.create');
+      const createCall = (encryptedSpectator.inject(DatasetApiService).createDataset as jest.Mock).mock.calls[0];
 
       expect(createCall).toBeDefined();
-      expect(createCall[1][0]).toMatchObject({
+      expect(createCall[0]).toMatchObject({
         name: 'parentId/encrypted-zvol',
         type: DatasetType.Volume,
         inherit_encryption: true,
         // Should NOT include encryption field when inherit_encryption is true
       });
-      expect(createCall[1][0].encryption).toBeUndefined(); // encryption should not be sent when inheriting
+      expect(createCall[0].encryption).toBeUndefined(); // encryption should not be sent when inheriting
     });
   });
 
@@ -472,7 +451,7 @@ describe('ZvolFormComponent', () => {
 
       expect(await mainDetails.getValues()).toEqual({
         Comments: 'Not Set',
-        Compression: 'lz4 (recommended)',
+        Compression: 'LZ4',
         'Read-only': 'Inherit (off)',
         Snapdev: 'Inherit (hidden)',
         Sync: 'Inherit (standard)',
@@ -489,9 +468,9 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', ['zvolId', {
+      expect(spectator.inject(DatasetApiService).updateDataset).toHaveBeenLastCalledWith('zvolId', {
         volsize: 2147483648,
-      }]);
+      });
 
       expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'zvolId' }));
     });
@@ -515,14 +494,13 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.update');
+      const updateCall = (spectator.inject(DatasetApiService).updateDataset as jest.Mock).mock.calls[0];
 
       expect(updateCall).toBeDefined();
       // The size should be included in the payload and aligned to block size
-      expect(updateCall[1][1].volsize).toBeDefined();
+      expect(updateCall[1].volsize).toBeDefined();
       // Should be aligned to 64K block size: 1075890585 + (65536 - 1075890585 % 65536) = 1075904512
-      expect(updateCall[1][1].volsize).toBe(1075904512);
+      expect(updateCall[1].volsize).toBe(1075904512);
     });
 
     it('preserves original size when change is below 0.1% threshold', async () => {
@@ -536,12 +514,11 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.update');
+      const updateCall = (spectator.inject(DatasetApiService).updateDataset as jest.Mock).mock.calls[0];
 
       expect(updateCall).toBeDefined();
       // Should use original volsize to avoid precision loss
-      expect(updateCall[1][1].volsize).toBe(1073741824);
+      expect(updateCall[1].volsize).toBe(1073741824);
     });
   });
 
@@ -551,23 +528,10 @@ describe('ZvolFormComponent', () => {
         props: { params: { isNew: true, parentOrZvolId: 'parentId' } },
         providers: [
           mockApi([
-            mockQuery('pool.dataset.query', [dataset as unknown as WebUiQueryEntity<'pool.dataset.query'>]),
-            mockCall('pool.dataset.recommended_zvol_blocksize', '16K'),
-            mockCall('pool.dataset.create', { id: 'parentId/zvol1' } as WebUiQueryEntity<'pool.dataset.query'>),
-            mockCall('pool.dataset.compression_choices', {
-              OFF: 'Off',
-              LZ4: 'lz4 (recommended)',
-              GZIP: 'gzip (default level, 6)',
-              'GZIP-1': 'gzip-1 (fastest)',
-              'GZIP-9': 'gzip-9 (maximum, slow)',
-              ZSTD: 'zstd (default level, 3)',
-              'ZSTD-5': 'zstd-5 (slow)',
-              'ZSTD-7': 'zstd-7 (very slow)',
-              'ZSTD-FAST': 'zstd-fast (default level, 1)',
-              ZLE: 'zle (runs of zeros)',
-              LZJB: 'lzjb (legacy, not recommended)',
-            }),
+            mockCall('zfs.resource.recommended_zvol_blocksize', '16K'),
+            mockCall('zfs.resource.compression_choices', compressionChoices),
           ]),
+          mockDatasetApi(() => [dataset], { created: { id: 'parentId/zvol1' } }),
           mockProvider(DialogService),
           ...ixFormTestingProviders(),
           mockProvider(ErrorHandlerService, {
@@ -587,9 +551,8 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.create');
-      const payload = callArgs[1][0];
+      const callArgs = (spectator.inject(DatasetApiService).createDataset as jest.Mock).mock.calls[0];
+      const payload = callArgs[0];
 
       expect(payload.special_small_block_size).toBeUndefined();
     });
@@ -605,9 +568,8 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.create');
-      const payload = callArgs[1][0];
+      const callArgs = (spectator.inject(DatasetApiService).createDataset as jest.Mock).mock.calls[0];
+      const payload = callArgs[0];
 
       expect(payload.special_small_block_size).toBe(0);
     });
@@ -623,9 +585,8 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.create');
-      const payload = callArgs[1][0];
+      const callArgs = (spectator.inject(DatasetApiService).createDataset as jest.Mock).mock.calls[0];
+      const payload = callArgs[0];
 
       expect(payload.special_small_block_size).toBe(16777216); // 16 MiB in bytes
     });
@@ -642,9 +603,8 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const callArgs = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.create');
-      const payload = callArgs[1][0];
+      const callArgs = (spectator.inject(DatasetApiService).createDataset as jest.Mock).mock.calls[0];
+      const payload = callArgs[0];
 
       expect(payload.special_small_block_size).toBe(262144);
     });
@@ -742,11 +702,10 @@ describe('ZvolFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      const updateCall = (spectator.inject(ApiService).call as jest.Mock).mock.calls
-        .find(([method]) => method === 'pool.dataset.update');
+      const updateCall = (spectator.inject(DatasetApiService).updateDataset as jest.Mock).mock.calls[0];
 
       expect(updateCall).toBeDefined();
-      expect(updateCall[1][1].volsize).toBeUndefined();
+      expect(updateCall[1].volsize).toBeUndefined();
     });
 
     it('disables volsize when inherit is selected and inherited readonly is ON', () => {

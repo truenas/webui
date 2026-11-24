@@ -10,12 +10,11 @@ import {
   TnTestIdDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { forkJoin, startWith } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AclType } from 'app/enums/acl-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextPermissions } from 'app/helptext/storage/volumes/datasets/dataset-permissions';
-import { toDataset } from 'app/interfaces/dataset.interface';
 import { FilesystemSetPermParams } from 'app/interfaces/filesystem-stat.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
@@ -26,6 +25,7 @@ import { IxUserComboboxComponent } from 'app/modules/forms/ix-forms/components/u
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { StorageService } from 'app/services/storage.service';
 
@@ -69,6 +69,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private router = inject(Router);
   private activatedRoute = inject(ActivatedRoute);
   private api = inject(ApiService);
+  private datasetApi = inject(DatasetApiService);
   private errorHandler = inject(ErrorHandlerService);
   private storageService = inject(StorageService);
   private translate = inject(TranslateService);
@@ -195,7 +196,7 @@ export class DatasetTrivialPermissionsComponent implements OnInit {
   private loadPermissionsInformation(): void {
     this.isLoading.set(true);
     forkJoin([
-      this.api.query('pool.dataset.query', [['id', '=', this.datasetId]]).pipe(map((datasets) => datasets.map(toDataset))),
+      this.datasetApi.loadDatasets([this.datasetId]),
       this.storageService.filesystemStat(this.datasetPath),
     ])
       .pipe(takeUntilDestroyed(this.destroyRef))

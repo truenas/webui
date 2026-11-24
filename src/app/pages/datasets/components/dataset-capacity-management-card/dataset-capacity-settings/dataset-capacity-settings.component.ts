@@ -9,7 +9,7 @@ import {
 import { Role } from 'app/enums/role.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { DatasetDetails, DatasetUpdate, toDatasetUpdateArgs } from 'app/interfaces/dataset.interface';
+import { DatasetDetails, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
@@ -17,6 +17,7 @@ import {
 import { ApiService } from 'app/modules/websocket/api.service';
 import { datasetQuotaValidator } from 'app/pages/datasets/utils/dataset-quota.validator';
 import { getUserProperty, isPropertyInherited, isRootDataset } from 'app/pages/datasets/utils/dataset.utils';
+import { toZfsResourceSet } from 'app/services/dataset/zfs-resource.utils';
 
 @Component({
   selector: 'ix-dataset-capacity-settings',
@@ -139,9 +140,8 @@ export class DatasetCapacitySettingsComponent extends IxFormHostForm implements 
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     return {
-      request$: this.api.call('pool.dataset.update', [
-        this.datasetToEdit().id,
-        toDatasetUpdateArgs(this.getChangedFormValues()),
+      request$: this.api.call('zfs.resource.set', [
+        toZfsResourceSet(this.datasetToEdit().id, this.getChangedFormValues()),
       ]),
       successMessage: this.translate.instant('Dataset settings updated.'),
     };

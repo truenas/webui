@@ -91,7 +91,7 @@ describe('DatasetDetailsCardComponent', () => {
         })),
       }),
       mockApi([
-        mockCall('pool.dataset.promote', null),
+        mockCall('zfs.resource.promote', null),
       ]),
       mockProvider(Router),
       mockProvider(DialogService),
@@ -292,7 +292,7 @@ describe('DatasetDetailsCardComponent', () => {
       const menu = await openCardMenu();
       await menu.clickItem({ label: 'Promote' });
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.promote', ['pool/child']);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.promote', [{ path: 'pool/child' }]);
     });
   });
 });

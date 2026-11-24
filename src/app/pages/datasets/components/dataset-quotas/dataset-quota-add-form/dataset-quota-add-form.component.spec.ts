@@ -2,6 +2,7 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
@@ -14,6 +15,7 @@ import {
   IxUserChipsHarness,
 } from 'app/modules/forms/ix-forms/testing/user-group-picker.harnesses';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetQuotaAddFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import { UserService } from 'app/services/user.service';
 
@@ -33,7 +35,15 @@ describe('DatasetQuotaAddFormComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('pool.dataset.set_quota', null),
+        mockCall('zfs.resource.userspace.set', null),
+        mockCall('user.get_user_obj', ([{ username }]) => ({
+          pw_name: username,
+          pw_uid: username === 'john' ? 1001 : 1002,
+        }) as CallResponse<WebUiApiDirectory, 'user.get_user_obj'>),
+        mockCall('group.get_group_obj', ([{ groupname }]) => ({
+          gr_name: groupname,
+          gr_gid: groupname === 'sys' ? 3 : 2,
+        }) as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
       ]),
       mockProvider(UserService, {
         userQueryDsCache: () => of([
@@ -88,13 +98,15 @@ describe('DatasetQuotaAddFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
-        'my-dataset',
-        [
-          { id: 'john', quota_type: DatasetQuotaType.User, quota_value: 524288000 },
-          { id: 'john', quota_type: DatasetQuotaType.UserObj, quota_value: 2000 },
+      expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ username: 'john' }]);
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.userspace.set', [{
+        path: 'my-dataset',
+        quotas: [
+          {
+            type: 'user', xid: 1001, quota: 524288000, objquota: 2000,
+          },
         ],
-      ]);
+      }]);
       expect(closed).toHaveBeenCalledWith(true);
     });
   });
@@ -124,15 +136,17 @@ describe('DatasetQuotaAddFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', [
-        'my-dataset',
-        [
-          { id: 'sys', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
-          { id: 'sys', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
-          { id: 'bin', quota_type: DatasetQuotaType.Group, quota_value: 524288000 },
-          { id: 'bin', quota_type: DatasetQuotaType.GroupObj, quota_value: 2000 },
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.userspace.set', [{
+        path: 'my-dataset',
+        quotas: [
+          {
+            type: 'group', xid: 3, quota: 524288000, objquota: 2000,
+          },
+          {
+            type: 'group', xid: 2, quota: 524288000, objquota: 2000,
+          },
         ],
-      ]);
+      }]);
     });
   });
 });

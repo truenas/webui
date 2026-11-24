@@ -3,6 +3,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SpectatorRouting } from '@ngneat/spectator';
 import { mockProvider, createRoutingFactory } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnCheckboxHarness, TnDialog } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
@@ -16,7 +17,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { SnapshotCloneDialog } from 'app/pages/datasets/modules/snapshots/snapshot-clone-dialog/snapshot-clone-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { SnapshotRollbackDialog } from 'app/pages/datasets/modules/snapshots/snapshot-rollback-dialog/snapshot-rollback-dialog.component';
@@ -26,8 +27,10 @@ describe('SnapshotDetailsRowComponent', () => {
   let spectator: SpectatorRouting<SnapshotDetailsRowComponent>;
   let loader: HarnessLoader;
   let api: ApiService;
-  /** What `pool.dataset.query` answers when asked which datasets have this snapshot as their origin. */
-  let clonesOfSnapshot: WebUiQueryEntity<'pool.dataset.query'>[] = [];
+  /** The datasets of the snapshot's pool, as `zfs.resource.list` answers with their `origin`. */
+  let poolDatasets = [
+    { name: 'test-dataset', properties: { origin: { raw: 'none' } } },
+  ] as CallResponse<WebUiApiDirectory, 'zfs.resource.list'>;
   /** What `hasRole` answers for `SNAPSHOT_WRITE`. */
   let hasSnapshotWrite = true;
 
@@ -50,10 +53,10 @@ describe('SnapshotDetailsRowComponent', () => {
       }),
       mockApi([
         mockQuery('pool.snapshot.query', [fakeZfsSnapshot as unknown as WebUiQueryEntity<'pool.snapshot.query'>]),
-        mockQuery('pool.dataset.query', []),
-        mockCall('pool.snapshot.hold', null),
-        mockCall('pool.snapshot.release', null),
-        mockCall('pool.snapshot.delete', null),
+        mockCall('zfs.resource.list', []),
+        mockCall('zfs.resource.snapshot.hold', null),
+        mockCall('zfs.resource.snapshot.release', null),
+        mockCall('zfs.resource.snapshot.destroy', null),
       ]),
     ],
   });
@@ -65,7 +68,7 @@ describe('SnapshotDetailsRowComponent', () => {
       },
       detectChanges: false,
     });
-    spectator.inject(MockApiService).mockQuery('pool.dataset.query', clonesOfSnapshot);
+    spectator.inject(MockApiService).mockCall('zfs.resource.list', poolDatasets);
     spectator.inject(MockAuthService).hasRole.mockReturnValue(of(hasSnapshotWrite));
     spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
@@ -123,11 +126,11 @@ describe('SnapshotDetailsRowComponent', () => {
     expect(await holdCheckbox.isChecked()).toBeTruthy();
 
     await holdCheckbox.toggle();
-    expect(api.call).toHaveBeenCalledWith('pool.snapshot.release', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.snapshot.release', [{ path: fakeZfsSnapshot.name }]);
     expect(await holdCheckbox.isChecked()).toBeFalsy();
 
     await holdCheckbox.toggle();
-    expect(api.call).toHaveBeenCalledWith('pool.snapshot.hold', [fakeZfsSnapshot.name]);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.snapshot.hold', [{ path: fakeZfsSnapshot.name }]);
   });
 
   describe('for a user without SNAPSHOT_WRITE', () => {
@@ -155,12 +158,17 @@ describe('SnapshotDetailsRowComponent', () => {
 
   describe('when a dataset was cloned from the snapshot', () => {
     // Set before the outer `beforeEach` creates the row, which asks once, as it opens.
+    const withoutClones = poolDatasets;
+
     beforeAll(() => {
-      clonesOfSnapshot = [{ id: 'test-dataset-clone' } as WebUiQueryEntity<'pool.dataset.query'>];
+      poolDatasets = [
+        ...withoutClones,
+        { name: 'test-dataset-clone', properties: { origin: { raw: fakeZfsSnapshot.name } } },
+      ] as CallResponse<WebUiApiDirectory, 'zfs.resource.list'>;
     });
 
     afterAll(() => {
-      clonesOfSnapshot = [];
+      poolDatasets = withoutClones;
     });
 
     it('disables Delete', async () => {
@@ -168,11 +176,11 @@ describe('SnapshotDetailsRowComponent', () => {
 
       // Found from the clone's side — the dataset whose origin is this snapshot — because neither
       // snapshot query returns a `clones` property.
-      expect(api.query).toHaveBeenCalledWith(
-        'pool.dataset.query',
-        [['origin.rawvalue', '=', fakeZfsSnapshot.name]],
-        { select: ['id'], extra: { properties: ['origin'] } },
-      );
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.list', [{
+        paths: ['test-dataset'],
+        get_children: true,
+        properties: ['origin'],
+      }]);
       expect(await deleteButton.isDisabled()).toBe(true);
     });
   });
@@ -187,6 +195,6 @@ describe('SnapshotDetailsRowComponent', () => {
       successMessage: 'Snapshot deleted.',
     });
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.snapshot.delete', ['test-dataset@first-snapshot']);
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.snapshot.destroy', [{ path: 'test-dataset@first-snapshot' }]);
   });
 });

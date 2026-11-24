@@ -1,16 +1,14 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
-import { CallResponse } from '@truenas/api-client';
 import { FilePickerCreateAction, FileSystemItem } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { emptyRootNode } from 'app/constants/basic-root-nodes.constant';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { CreateDatasetActionPipe } from 'app/modules/forms/file-picker/create-dataset-action.pipe';
 import { TreeNodeSource } from 'app/modules/forms/file-picker/tree-node-source';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 
 describe('CreateDatasetActionPipe', () => {
   let spectator: SpectatorService<CreateDatasetActionPipe>;
@@ -22,23 +20,36 @@ describe('CreateDatasetActionPipe', () => {
   const folder = { path: '/mnt/tank/dir', name: 'dir', type: 'folder' } as FileSystemItem;
 
   const parentDataset = {
-    id: 'tank',
     name: 'tank',
-    casesensitivity: { value: DatasetCaseSensitivity.Sensitive },
+    type: 'FILESYSTEM',
+    properties: {
+      casesensitivity: { raw: 'sensitive', value: 'sensitive', source: null },
+    },
     children: [
-      { name: 'tank/existing' },
+      { name: 'tank/existing', type: 'FILESYSTEM' },
     ],
-  } as WebUiQueryEntity<'pool.dataset.query'>;
+  } as ZfsResourceEntry;
+
+  /** Answers the parent lookup, and the read-back of whatever was just created. */
+  function listDatasets([query]: [{ paths?: string[] }?]): ZfsResourceEntry[] {
+    const path = query?.paths?.[0];
+    if (path === 'tank') {
+      return [parentDataset];
+    }
+    return [{
+      name: path,
+      type: 'FILESYSTEM',
+      properties: { mountpoint: { raw: `/mnt/${path}`, value: `/mnt/${path}`, source: null } },
+    } as ZfsResourceEntry];
+  }
 
   const createService = createServiceFactory({
     service: CreateDatasetActionPipe,
     providers: [
       mockAuth(),
       mockApi([
-        mockQuery('pool.dataset.query', [parentDataset]),
-        mockCall('pool.dataset.create', {
-          mountpoint: '/mnt/tank/new',
-        } as CallResponse<WebUiApiDirectory, 'pool.dataset.create'>),
+        mockCall('zfs.resource.list', listDatasets),
+        mockCall('zfs.resource.create', {} as ZfsResourceEntry),
       ]),
     ],
   });
@@ -81,19 +92,21 @@ describe('CreateDatasetActionPipe', () => {
     it('creates the dataset under the browsed parent and resolves with its mountpoint', async () => {
       const created = await action.create!('/mnt/tank', 'new');
 
-      expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'tank']]);
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
-        comments: 'test',
-        name: 'tank/new',
-      }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.list', [
+        expect.objectContaining({ paths: ['tank'], max_depth: 1, nest_results: true }),
+      ]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.create', [expect.objectContaining({
+        path: 'tank/new',
+        user_properties: { 'org.freenas:description': 'test' },
+      })]);
       expect(created).toBe('/mnt/tank/new');
     });
 
     it('maps parent and result through a source with relative dataset names', async () => {
       const created = await spectator.service.transform(relativeSource).create!('/tank', 'new');
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [
-        expect.objectContaining({ name: 'tank/new' }),
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.create', [
+        expect.objectContaining({ path: 'tank/new' }),
       ]);
       expect(created).toBe('/tank/new');
     });
@@ -108,7 +121,7 @@ describe('CreateDatasetActionPipe', () => {
     });
 
     it('rejects when the parent dataset does not exist', async () => {
-      spectator.inject(MockApiService).mockQuery('pool.dataset.query', []);
+      spectator.inject(MockApiService).mockCall('zfs.resource.list', []);
 
       await expect(action.create!('/mnt/gone', 'new'))
         .rejects.toThrow('Parent dataset gone not found.');

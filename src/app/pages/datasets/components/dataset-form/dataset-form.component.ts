@@ -14,9 +14,7 @@ import { mntPath } from 'app/enums/mnt-path.enum';
 import { Role } from 'app/enums/role.enum';
 import { ServiceName } from 'app/enums/service-name.enum';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import {
-  Dataset, DatasetCreate, DatasetUpdate, toDataset, toDatasetCreateArgs, toDatasetUpdateArgs,
-} from 'app/interfaces/dataset.interface';
+import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { SmbSharePurpose } from 'app/interfaces/smb-share.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix-form-host-form.directive';
@@ -42,6 +40,8 @@ import {
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
 import { getDatasetLabel } from 'app/pages/datasets/utils/dataset.utils';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
+import { zfsResourceErrorFields } from 'app/services/dataset/zfs-resource.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { AppState } from 'app/store';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
@@ -73,6 +73,7 @@ interface DatasetFormSection {
 })
 export class DatasetFormComponent extends IxFormHostForm<Dataset | null> implements OnInit, AfterViewInit {
   private api = inject(ApiService);
+  private datasetApi = inject(DatasetApiService);
   private dialog = inject(DialogService);
   private datasetFormService = inject(DatasetFormService);
   private router = inject(Router);
@@ -240,7 +241,8 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
         }
         return isValidLengthAndDepth;
       }),
-      switchMap(() => this.datasetFormService.loadDataset(this.params().datasetId)),
+      // The new dataset's name must not repeat a sibling's, so read the parent's children too.
+      switchMap(() => this.datasetFormService.loadDataset(this.params().datasetId, { withChildren: true })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (dataset) => {
@@ -293,10 +295,9 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
 
     let request$: Observable<Dataset>;
     if (this.isNew()) {
-      request$ = this.api.call('pool.dataset.create', [toDatasetCreateArgs(payload as DatasetCreate)]).pipe(map(toDataset));
+      request$ = this.datasetApi.createDataset(payload as DatasetCreate);
     } else if (existingDataset) {
-      request$ = this.api.call('pool.dataset.update', [existingDataset.id, toDatasetUpdateArgs(payload as DatasetUpdate)])
-        .pipe(map(toDataset));
+      request$ = this.datasetApi.updateDataset(existingDataset.id, payload as DatasetUpdate);
     } else {
       // Unreachable — `isMissingEditRecord` keeps Save disabled until the edit load lands. An
       // erroring request$ rather than a `throw` (which `onFormSubmit` calls outside its try-less
@@ -325,7 +326,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
       // instead, so a duplicate name or an out-of-range quota lands on the control that caused it;
       // anything it can't place still falls back to an error modal inside the handler.
       onError: (error: unknown) => {
-        this.formErrorHandler.handleValidationErrors(error, this.sectionForms());
+        this.formErrorHandler.handleValidationErrors(error, this.sectionForms(), zfsResourceErrorFields);
         return true;
       },
     };
@@ -432,7 +433,7 @@ export class DatasetFormComponent extends IxFormHostForm<Dataset | null> impleme
   }
 
   private rollBack(dataset: Dataset, error: unknown): Observable<Dataset> {
-    return this.api.call('pool.dataset.delete', [dataset.id, { recursive: true, force: true }]).pipe(
+    return this.datasetApi.deleteDataset(dataset.id).pipe(
       switchMap(() => {
         throw error;
       }),

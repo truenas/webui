@@ -9,16 +9,14 @@ import { maxDatasetPath } from 'app/constants/dataset.constants';
 import { nameValidatorRegex } from 'app/constants/name-validator.constant';
 import { DatasetCaseSensitivity, DatasetPreset } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
+import { Dataset, DatasetCreate } from 'app/interfaces/dataset.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
 import { TreeNodeSource } from 'app/modules/forms/file-picker/tree-node-source';
-import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorParserService } from 'app/services/errors/error-parser.service';
 
 /** What a host presets on the datasets the picker creates. The name comes from the inline row. */
 export type ExplorerDatasetProperties = Omit<v28_0_0.PoolDatasetCreateFilesystem, 'name'>;
-
-type DatasetEntry = WebUiQueryEntity<'pool.dataset.query'>;
 
 export const genericCreateDatasetProps: ExplorerDatasetProperties = {
   share_type: DatasetPreset.Generic,
@@ -37,7 +35,7 @@ export const genericCreateDatasetProps: ExplorerDatasetProperties = {
   name: 'createDatasetAction',
 })
 export class CreateDatasetActionPipe implements PipeTransform {
-  private api = inject(ApiService);
+  private datasetApi = inject(DatasetApiService);
   private translate = inject(TranslateService);
   private authService = inject(AuthService);
   private errorParser = inject(ErrorParserService);
@@ -70,7 +68,7 @@ export class CreateDatasetActionPipe implements PipeTransform {
     const parent = this.toParentDatasetId(source.fromPickerPath(parentPath));
     // After stripping the /mnt/ prefix, a real dataset path is either bare ("tank") or
     // nested ("tank/foo"). A leading slash means the browsed directory isn't under /mnt/
-    // (e.g. /dev/zvol/<pool>) and pool.dataset.create would reject it.
+    // (e.g. /dev/zvol/<pool>) and zfs.resource.create would reject it.
     if (!parent || parent.startsWith('/')) {
       return false;
     }
@@ -90,7 +88,7 @@ export class CreateDatasetActionPipe implements PipeTransform {
     const datasetName = name.trim();
 
     const parents = await firstValueFrom(
-      this.api.query('pool.dataset.query', [['id', '=', parentId]]).pipe(this.toInlineError()),
+      this.datasetApi.loadDatasets([parentId], { withChildren: true }).pipe(this.toInlineError()),
     );
     if (!parents.length) {
       throw new Error(this.translate.instant('Parent dataset {name} not found.', { name: parentId }));
@@ -100,17 +98,17 @@ export class CreateDatasetActionPipe implements PipeTransform {
 
     const fullName = `${parentId}/${datasetName}`;
     const dataset = await firstValueFrom(
-      this.api.call('pool.dataset.create', [{
+      this.datasetApi.createDataset({
         ...datasetProperties,
         name: fullName,
-      }]).pipe(this.toInlineError()),
+      } as DatasetCreate).pipe(this.toInlineError()),
     );
-    // Optional in the generated entry; a new filesystem is always mounted under /mnt.
+    // A new filesystem is always mounted under /mnt.
     return dataset.mountpoint ?? `/mnt/${fullName}`;
   }
 
   /** `parentName` is the parent's id, which for a dataset is its name. */
-  private validateName(parentName: string, parent: DatasetEntry, name: string): void {
+  private validateName(parentName: string, parent: Dataset, name: string): void {
     if (!nameValidatorRegex.test(name)) {
       throw new Error(this.translate.instant('Name is invalid.'));
     }
@@ -119,13 +117,9 @@ export class CreateDatasetActionPipe implements PipeTransform {
       throw new Error(this.translate.instant('Dataset name is too long.'));
     }
 
-    // Middleware types the property value as an open string; it is one of the enum's values.
-    const caseSensitivity = parent.casesensitivity?.value as DatasetCaseSensitivity | undefined;
-    const isNameCaseInsensitive = caseSensitivity !== DatasetCaseSensitivity.Sensitive;
-    // Middleware types nested children as `unknown[]`; they are dataset entries like the parent.
-    const children = (parent.children ?? []) as DatasetEntry[];
-    const namesInUse = children
-      .map((child) => /[^/]*$/.exec(child.name ?? '')?.[0])
+    const isNameCaseInsensitive = parent.casesensitivity?.value !== DatasetCaseSensitivity.Sensitive;
+    const namesInUse = (parent.children ?? [])
+      .map((child) => /[^/]*$/.exec(child.name)?.[0])
       .filter((childName): childName is string => childName !== undefined);
     const isInUse = isNameCaseInsensitive
       ? namesInUse.some((usedName) => usedName.toLowerCase() === name.toLowerCase())

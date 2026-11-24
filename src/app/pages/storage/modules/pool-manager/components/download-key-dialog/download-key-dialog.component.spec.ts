@@ -54,9 +54,9 @@ describe('DownloadKeyDialogComponent', () => {
       await downloadButton.click();
 
       expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
-        arguments: ['my-pool'],
+        arguments: [{ path: 'my-pool' }],
         fileName: 'dataset_my-pool_keys.json',
-        method: 'pool.dataset.export_keys',
+        method: 'zfs.resource.encryption.export_keys',
         mimeType: 'application/json',
       });
 

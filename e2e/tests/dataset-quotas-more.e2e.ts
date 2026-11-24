@@ -276,7 +276,7 @@ for (const kind of ['user', 'group'] as const) {
       // Enter in a field submits the form even with Save disabled, and `<ix-form>` has to refuse it.
       // A form that sent it anyway would be refused by middleware too, so the request is the claim.
       await page.locator(form.objectQuota).press('Enter');
-      expect(apiCallsTo(page, 'pool.dataset.set_quota')).toEqual([]);
+      expect(apiCallsTo(page, 'zfs.resource.userspace.set')).toEqual([]);
       await expect(page.locator(form.save)).toBeVisible();
 
       // A backstop the ticket asks for: nothing above could have set a quota.

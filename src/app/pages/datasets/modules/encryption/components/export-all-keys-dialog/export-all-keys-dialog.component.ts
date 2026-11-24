@@ -34,8 +34,8 @@ export class ExportAllKeysDialog {
     const fileName = 'dataset_' + this.dataset.name + '_keys.json';
     this.download.coreDownload({
       fileName,
-      method: 'pool.dataset.export_keys',
-      arguments: [this.dataset.name],
+      method: 'zfs.resource.encryption.export_keys',
+      arguments: [{ path: this.dataset.name }],
       mimeType: 'application/json',
     })
       .pipe(

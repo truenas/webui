@@ -2,15 +2,16 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnInputHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetQuotaEditFormComponent } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
 
 describe('DatasetQuotaEditFormComponent', () => {
@@ -29,14 +30,17 @@ describe('DatasetQuotaEditFormComponent', () => {
     ],
     providers: [
       mockApi([
-        // Not a `.query` method, but it has an entity, so the fake answers it as one.
-        mockQuery('pool.dataset.get_quota', [{
-          id: 1,
-          name: 'daemon',
-          quota: 512000,
-          obj_quota: 0,
-        }] as unknown as WebUiQueryEntity<'pool.dataset.get_quota'>[]),
-        mockCall('pool.dataset.set_quota', null),
+        mockCall('zfs.resource.userspace.list', [
+          {
+            xid: 1, quota: 512000, objquota: 0, used: 0, objused: 0,
+          },
+          {
+            xid: 2, quota: 1024, objquota: 0, used: 0, objused: 0,
+          },
+        ] as CallResponse<WebUiApiDirectory, 'zfs.resource.userspace.list'>),
+        mockCall('user.get_user_obj', { pw_name: 'daemon' } as CallResponse<WebUiApiDirectory, 'user.get_user_obj'>),
+        mockCall('group.get_group_obj', { gr_name: 'daemon' } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
+        mockCall('zfs.resource.userspace.set', null),
       ]),
       mockProvider(DialogService),
       ...ixFormTestingProviders(),
@@ -59,8 +63,8 @@ describe('DatasetQuotaEditFormComponent', () => {
 
     it('shows current quota values when editing', async () => {
       expect(api.call).toHaveBeenCalledWith(
-        'pool.dataset.get_quota',
-        ['Test', DatasetQuotaType.User, [['id', '=', 1]]],
+        'zfs.resource.userspace.list',
+        [{ paths: ['Test'], types: ['user'] }],
       );
 
       expect(await (await getTnInput('name')).getValue()).toBe('daemon');
@@ -76,18 +80,12 @@ describe('DatasetQuotaEditFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
-        {
-          quota_type: DatasetQuotaType.User,
-          id: '1',
-          quota_value: 1024000,
-        },
-        {
-          quota_type: DatasetQuotaType.UserObj,
-          id: '1',
-          quota_value: 0,
-        },
-      ]]);
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.userspace.set', [{
+        path: 'Test',
+        quotas: [{
+          type: 'user', xid: 1, quota: 1024000, objquota: 0,
+        }],
+      }]);
       expect(closed).toHaveBeenCalledWith(true);
     });
   });
@@ -107,8 +105,8 @@ describe('DatasetQuotaEditFormComponent', () => {
 
     it('shows current quota values when editing', async () => {
       expect(api.call).toHaveBeenCalledWith(
-        'pool.dataset.get_quota',
-        ['Test', DatasetQuotaType.Group, [['id', '=', 1]]],
+        'zfs.resource.userspace.list',
+        [{ paths: ['Test'], types: ['group'] }],
       );
 
       expect(await (await getTnInput('name')).getValue()).toBe('daemon');
@@ -122,18 +120,12 @@ describe('DatasetQuotaEditFormComponent', () => {
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', ['Test', [
-        {
-          quota_type: DatasetQuotaType.Group,
-          id: '1',
-          quota_value: 512000,
-        },
-        {
-          quota_type: DatasetQuotaType.GroupObj,
-          id: '1',
-          quota_value: 1,
-        },
-      ]]);
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.userspace.set', [{
+        path: 'Test',
+        quotas: [{
+          type: 'group', xid: 1, quota: 512000, objquota: 1,
+        }],
+      }]);
     });
   });
 
@@ -163,7 +155,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       expect(confirmSpy).toHaveBeenCalledWith(expect.objectContaining({
         title: 'Delete User Quota',
       }));
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.userspace.set', expect.anything());
     });
 
     it('does not update the quota when the confirmation is declined', async () => {
@@ -176,7 +168,7 @@ describe('DatasetQuotaEditFormComponent', () => {
       await spectator.fixture.whenStable();
 
       expect(dialogService.confirm).toHaveBeenCalled();
-      expect(api.call).not.toHaveBeenCalledWith('pool.dataset.set_quota', expect.anything());
+      expect(api.call).not.toHaveBeenCalledWith('zfs.resource.userspace.set', expect.anything());
       expect(closed).not.toHaveBeenCalled();
     });
   });

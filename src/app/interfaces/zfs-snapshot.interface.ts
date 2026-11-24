@@ -1,4 +1,4 @@
-import { CallParams, EventUnion } from '@truenas/api-client';
+import { CallParams, CallResponse, EventUnion } from '@truenas/api-client';
 import { ZfsSnapshotRetentionSource } from 'app/enums/zfs-snapshot-retention-source.enum';
 import { ApiTimestamp } from 'app/interfaces/api-date.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -42,15 +42,50 @@ export interface CreateZfsSnapshot {
   properties?: Record<string, unknown>;
 }
 
-export type ZfsRollbackParams = [
-  id: string,
-  params: {
-    recursive?: boolean;
-    recursive_clones?: boolean;
-    force?: boolean;
-    recursive_rollback?: boolean;
-  },
-];
+/** What `zfs.resource.snapshot.rollback` takes besides the snapshot's path. */
+export interface ZfsRollbackOptions {
+  recursive?: boolean;
+  recursive_clones?: boolean;
+  force?: boolean;
+  recursive_rollback?: boolean;
+}
+
+/** A snapshot as `zfs.resource.snapshot.list` returns it, or as its ADDED event carries it. */
+export type ZfsResourceSnapshot = CallResponse<WebUiApiDirectory, 'zfs.resource.snapshot.list'>[number];
+
+/**
+ * Reads a `zfs.resource.snapshot.list` row into `ZfsSnapshot`, the shape `pool.snapshot.query` returned: `id` is the
+ * name, each property is `{ parsed, rawvalue, value, source }` with `parsed` holding the typed value (`creation` in
+ * unix seconds), and a hold is `{ truenas: 1 }`.
+ */
+export function zfsResourceToSnapshot(row: ZfsResourceSnapshot): ZfsSnapshot {
+  const properties = Object.fromEntries(
+    Object.entries(row.properties ?? {})
+      .filter(([, property]) => Boolean(property))
+      .map(([name, property]) => [name, {
+        parsed: property.value,
+        rawvalue: property.raw,
+        value: String(property.value ?? ''),
+        source: property.source?.type ?? 'NONE',
+      }]),
+  );
+
+  return {
+    id: row.name,
+    name: row.name,
+    pool: row.pool,
+    dataset: row.dataset,
+    snapshot_name: row.snapshot_name,
+    type: 'SNAPSHOT',
+    ...(row.properties ? { properties: properties as ZfsSnapshot['properties'] } : {}),
+    ...(row.holds !== null ? { holds: toLegacyHolds(row.holds) } : {}),
+  };
+}
+
+/** `['truenas']` → `{ truenas: 1 }`, the form `pool.snapshot.query` reported holds in. */
+export function toLegacyHolds(holds: unknown[] | null): ZfsSnapshot['holds'] {
+  return holds?.includes('truenas') ? { truenas: 1 } : {};
+}
 
 /** A snapshot as `pool.snapshot.query` returns it, whole or narrowed by `select`, or as its change events carry it. */
 type SnapshotRow
