@@ -3,22 +3,18 @@ import { ChangeDetectionStrategy, Component, computed, input, inject, DestroyRef
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { TnIconButtonComponent } from '@truenas/ui-components';
-import {
-  filter, last, Observable, switchMap, take,
-} from 'rxjs';
+import { filter, last, take } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
-import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
+import { ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus, serviceStatusLabels } from 'app/enums/service-status.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { Service } from 'app/interfaces/service.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { MapValuePipe } from 'app/modules/pipes/map-value/map-value.pipe';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
-import { IscsiService } from 'app/services/iscsi.service';
+import { ServiceStopConfirmationService } from 'app/services/service-stop-confirmation.service';
 import { ServicesService } from 'app/services/services.service';
 
 @Component({
@@ -36,11 +32,10 @@ import { ServicesService } from 'app/services/services.service';
 })
 export class ServiceStatusCellComponent {
   private api = inject(ApiService);
-  private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
   private loader = inject(LoaderService);
   private errorHandler = inject(ErrorHandlerService);
-  private iscsiService = inject(IscsiService);
+  private stopConfirmation = inject(ServiceStopConfirmationService);
   private snackbar = inject(SnackbarService);
   private servicesService = inject(ServicesService);
   private destroyRef = inject(DestroyRef);
@@ -78,7 +73,7 @@ export class ServiceStatusCellComponent {
   }
 
   protected stopServiceClicked(): void {
-    this.confirmStop().pipe(
+    this.stopConfirmation.confirmStop(this.service().service).pipe(
       filter(Boolean),
       take(1),
       takeUntilDestroyed(this.destroyRef),
@@ -97,45 +92,5 @@ export class ServiceStatusCellComponent {
         this.snackbar.success(this.translate.instant('Service stopped'));
       }
     });
-  }
-
-  private confirmStop(): Observable<boolean> {
-    if (this.service().service === ServiceName.Iscsi) {
-      return this.confirmStopIscsiService();
-    }
-
-    return this.dialogService.confirm({
-      message: this.translate.instant('Are you sure you want to stop {serviceName}?', {
-        serviceName: serviceNames.get(this.service().service),
-      }),
-      hideCheckbox: true,
-      buttonColor: 'warn',
-      buttonText: this.translate.instant('Stop'),
-    });
-  }
-
-  private confirmStopIscsiService(): Observable<boolean> {
-    return this.iscsiService.getGlobalSessions().pipe(
-      switchMap((sessions) => {
-        let message = this.translate.instant('Stop {serviceName}?', { serviceName: serviceNames.get(this.service().service) });
-        if (sessions.length) {
-          const connectionsMessage = this.translate.instant('{n, plural, one {There is an active iSCSI connection.} other {There are # active iSCSI connections}}', {
-            n: sessions.length,
-          });
-          const stopMessage = this.translate.instant('Stop the {serviceName} service and close these connections?', {
-            serviceName: serviceNames.get(this.service().service),
-          });
-          message = `<font color="red">${connectionsMessage}</font><br>${stopMessage}` as TranslatedString;
-        }
-
-        return this.dialogService.confirm({
-          message,
-          hideCheckbox: true,
-          buttonColor: 'warn',
-          buttonText: this.translate.instant('Stop'),
-        });
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    );
   }
 }

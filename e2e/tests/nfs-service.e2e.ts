@@ -15,6 +15,7 @@ import { goToDatasets, goToShares } from '../flows/navigation';
 import {
   fillNfsSharePath, openAddNfsShareForm, saveNfsShareFormAndStartService, toggleNfsShareEnabled,
 } from '../flows/nfs';
+import { confirmServiceStop } from '../flows/services';
 import { formSettleTimeoutMs } from '../flows/smb';
 import { nfsLocators } from '../locators/nfs';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
@@ -130,7 +131,9 @@ test('the switch on the card starts the service and stops it again', async ({ pa
   // different control, and a start from here must not turn into one.
   expect((await queryService(api, nfsServiceName))?.enable).toBe(false);
 
+  // Stopping asks first, as it does from System > Services; starting does not.
   await page.locator(nfsLocators.card.serviceToggle).click();
+  await confirmServiceStop(page);
 
   await expect
     .poll(async () => (await queryService(api, nfsServiceName))?.state, { timeout: serviceChangeTimeoutMs })

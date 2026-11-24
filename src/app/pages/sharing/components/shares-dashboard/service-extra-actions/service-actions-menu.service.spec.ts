@@ -4,13 +4,17 @@ import { TranslateService } from '@ngx-translate/core';
 import {
   catchError, EMPTY, Observable, of, throwError,
 } from 'rxjs';
-import { mockApi, mockJob, settleApi } from 'app/core/testing/utils/mock-api.utils';
+import {
+  mockApi, mockCall, mockJob, settleApi,
+} from 'app/core/testing/utils/mock-api.utils';
 import { AuditService } from 'app/enums/audit.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ServiceName, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
+import { IscsiGlobalSession } from 'app/interfaces/iscsi-global-config.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { Service } from 'app/interfaces/service.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
@@ -58,7 +62,9 @@ describe('ServiceActionsMenuService', () => {
       { provide: TranslateService, useClass: MockTranslateService },
       mockApi([
         mockJob('service.control', { state: JobState.Success, result: true }),
+        mockCall('iscsi.global.sessions', [{} as IscsiGlobalSession]),
       ]),
+      mockProvider(DialogService, { confirm: jest.fn(() => of(true)) }),
       mockProvider(SnackbarService),
       mockProvider(Router),
       mockProvider(FormSidePanelService),
@@ -216,17 +222,61 @@ describe('ServiceActionsMenuService', () => {
       expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     });
 
-    it('starts a stopped service', () => {
+    it('starts a stopped service without asking', () => {
       const items = spectator.service.buildMenuItems(
         service({ service: ServiceName.Cifs, state: ServiceStatus.Stopped }),
         true,
       );
       items.find((item) => item.id === 'service-state-toggle')?.action?.();
 
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
       expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
         'service.control',
         [ServiceOperation.Start, ServiceName.Cifs, { silent: false }],
       );
+    });
+
+    [ServiceName.S3, ServiceName.Cifs, ServiceName.Nfs, ServiceName.NvmeOf, ServiceName.WebShare].forEach((name) => {
+      it(`asks for the same confirmation as System > Services before stopping ${name}`, () => {
+        spectator.service.toggleServiceState(service({ service: name, state: ServiceStatus.Running }));
+
+        expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith({
+          message: expect.stringMatching(/^Are you sure you want to stop .+\?$/),
+          hideCheckbox: true,
+          buttonColor: 'warn',
+          buttonText: 'Stop',
+        });
+        expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+          'service.control',
+          [ServiceOperation.Stop, name, { silent: false }],
+        );
+      });
+    });
+
+    it('warns about active connections before stopping iSCSI', async () => {
+      spectator.service.toggleServiceState(service({ service: ServiceName.Iscsi, state: ServiceStatus.Running }));
+      await settleApi();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+        message: expect.stringContaining('Stop the iSCSI service and close these connections?'),
+      }));
+      expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
+        'service.control',
+        [ServiceOperation.Stop, ServiceName.Iscsi, { silent: false }],
+      );
+    });
+
+    it('leaves the service running when the confirmation is cancelled', () => {
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValueOnce(of(false));
+
+      const items = spectator.service.buildMenuItems(
+        service({ service: ServiceName.S3, state: ServiceStatus.Running }),
+        true,
+      );
+      items.find((item) => item.id === 'service-state-toggle')?.action?.();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalled();
+      expect(spectator.inject(ApiService).job).not.toHaveBeenCalled();
     });
 
     const cases = [

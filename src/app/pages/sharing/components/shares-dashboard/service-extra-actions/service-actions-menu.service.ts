@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import type { TnCardHeaderStatus, TnMenuItem } from '@truenas/ui-components';
-import { last } from 'rxjs';
+import { filter, last, take } from 'rxjs';
 import { AuditService } from 'app/enums/audit.enum';
 import { ServiceName, serviceNames, ServiceOperation } from 'app/enums/service-name.enum';
 import { ServiceStatus } from 'app/enums/service-status.enum';
@@ -25,6 +25,7 @@ import {
   NvmeOfConfigurationComponent,
 } from 'app/pages/sharing/nvme-of/nvme-of-configuration/nvme-of-configuration.component';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { ServiceStopConfirmationService } from 'app/services/service-stop-confirmation.service';
 import { AuditUrlOptions, UrlOptionsService } from 'app/services/url-options.service';
 
 @Injectable({ providedIn: 'root' })
@@ -37,6 +38,7 @@ export class ServiceActionsMenuService {
   private errorHandler = inject(ErrorHandlerService);
   private loader = inject(LoaderService);
   private snackbar = inject(SnackbarService);
+  private stopConfirmation = inject(ServiceStopConfirmationService);
   private destroyRef = inject(DestroyRef);
 
   /**
@@ -215,7 +217,11 @@ export class ServiceActionsMenuService {
 
   private changeServiceState(service: Service): void {
     if (service.state === ServiceStatus.Running) {
-      this.stopService(service);
+      this.stopConfirmation.confirmStop(service.service).pipe(
+        filter(Boolean),
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+      ).subscribe(() => this.stopService(service));
     } else {
       this.startService(service);
     }

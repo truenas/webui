@@ -30,6 +30,14 @@ export async function startServiceFromList(page: Page, service: ServiceKey): Pro
 /** Stops a running service from its row's stop button, confirming the dialog that raises. */
 export async function stopServiceFromList(page: Page, service: ServiceKey): Promise<void> {
   await page.locator(servicesLocators.row.stop(service)).click();
+  await confirmServiceStop(page);
+}
+
+/**
+ * Confirms the dialog raised before a running service is stopped. System > Services and the switches on the
+ * Shares page cards raise the same one.
+ */
+export async function confirmServiceStop(page: Page): Promise<void> {
   await expect(page.locator(confirmDialogLocators.title)).toBeVisible();
   await page.locator(confirmDialogLocators.confirm).click();
 }
