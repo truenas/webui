@@ -155,6 +155,67 @@ describe('InstalledAppsListComponent', () => {
     expect(await table.getRowCount()).toBe(2);
   });
 
+  describe('column widths', () => {
+    // What a real resize does: every observer watching the table hears about it — tn-table's own
+    // as well as the component's.
+    function resizeTable(width: number): void {
+      const observerMock = jest.mocked(ResizeObserver).mock;
+      const table = spectator.query('tn-table');
+      observerMock.results.forEach(({ value }, index) => {
+        const observer = value as ResizeObserver;
+        if (jest.mocked(observer.observe).mock.calls.some(([target]) => target === table)) {
+          observerMock.calls[index][0]([{ contentRect: { width } } as ResizeObserverEntry], observer);
+        }
+      });
+      spectator.detectChanges();
+    }
+
+    function getColumnWidths(): Record<string, string> {
+      return Object.fromEntries(
+        spectator.queryAll('th')
+          .filter((header) => header.textContent.trim())
+          .map((header) => [header.textContent.trim(), header.style.width]),
+      );
+    }
+
+    it('caps the value columns on a wide table and gives the rest to Application', () => {
+      resizeTable(1132);
+
+      expect(getColumnWidths()).toEqual({
+        Application: '398px',
+        Status: '100px',
+        CPU: '42px',
+        RAM: '86px',
+        'Block I/O': '94px',
+        Network: '94px',
+        Updates: '130px',
+        Controls: '70px',
+      });
+    });
+
+    it('splits a narrow table between the columns by their share', () => {
+      resizeTable(620);
+
+      expect(getColumnWidths()).toEqual({
+        Application: '97px',
+        Status: '64px',
+        CPU: '24px',
+        RAM: '59px',
+        'Block I/O': '59px',
+        Network: '76px',
+        Updates: '76px',
+        Controls: '47px',
+      });
+    });
+
+    it('keeps percentages in the mobile layout, where the table scrolls instead', () => {
+      spectator.setInput('isMobileView', true);
+      resizeTable(390);
+
+      expect(getColumnWidths()).toMatchObject({ Application: '18%', Status: '13%', Controls: '10%' });
+    });
+  });
+
   it('shows an empty list when there are no search results', () => {
     expect(spectator.query(EmptyComponent)).not.toExist();
 
