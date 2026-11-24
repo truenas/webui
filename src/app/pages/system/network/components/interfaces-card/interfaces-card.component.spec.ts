@@ -162,7 +162,7 @@ describe('InterfacesCardComponent', () => {
 
     expect(spectator.inject(FormSidePanelService).open).toHaveBeenCalledWith(InterfaceFormComponent, {
       title: 'Edit Interface',
-      inputs: { editInterface: interfaces[0] },
+      inputs: { editInterface: interfaces[0], interfacesList: interfaces },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);
