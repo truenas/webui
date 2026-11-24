@@ -42,6 +42,7 @@ export class SnapshotEffects {
   private document = inject(DOCUMENT);
 
   private pageLeft$ = this.actions$.pipe(ofType(snapshotPageLeft));
+  private liveEvent$ = this.actions$.pipe(ofType(snapshotAdded, snapshotChanged, snapshotRemoved));
 
   loadSnapshots$ = createEffect(() => this.actions$.pipe(
     ofType(snapshotPageEntered),
@@ -74,6 +75,9 @@ export class SnapshotEffects {
           console.error(error);
           return EMPTY;
         }),
+        // An answer read before a live event would undo it (bring back a snapshot just deleted, drop one just
+        // created), so a re-read that a live event overtook is dropped. The next tick catches up.
+        takeUntil(this.liveEvent$),
       )),
       takeUntil(this.pageLeft$),
     )),

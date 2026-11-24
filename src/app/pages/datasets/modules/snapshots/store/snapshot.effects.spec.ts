@@ -221,6 +221,28 @@ describe('SnapshotEffects', () => {
       subscription.unsubscribe();
     });
 
+    it('drops a re-read that a live event overtook, so it cannot undo the event', async () => {
+      const answer$ = new Subject<SnapshotRows>();
+      jest.spyOn(api, 'call').mockReturnValueOnce(answer$ as never);
+      const dispatched: Action[] = [];
+      actions$.next(snapshotsLoaded({ snapshots: [] }));
+      const subscription = spectator.service.refreshSnapshots$.subscribe((action) => dispatched.push(action));
+
+      await jest.advanceTimersByTimeAsync(snapshotRefreshIntervalMs);
+      // The snapshot is deleted while the re-read is in flight; the answer predates that.
+      actions$.next(snapshotRemoved({ id: 'test@snapshot1' }));
+      answer$.next(wireSnapshots);
+
+      expect(dispatched).toEqual([]);
+
+      // The next tick reads again and is applied. (This spec's action stream replays its last action, which
+      // NgRx's does not; an unrelated action keeps the removal from replaying into the next re-read.)
+      actions$.next({ type: '[Test] Unrelated' });
+      await jest.advanceTimersByTimeAsync(snapshotRefreshIntervalMs);
+      expect(dispatched).toEqual([snapshotsRefreshed({ snapshots: expectedSnapshots })]);
+      subscription.unsubscribe();
+    });
+
     it('skips the re-read while the tab is hidden', async () => {
       const hidden = jest.spyOn(document, 'hidden', 'get').mockReturnValue(true);
       actions$.next(snapshotsLoaded({ snapshots: [] }));
