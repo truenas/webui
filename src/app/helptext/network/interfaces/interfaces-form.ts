@@ -21,6 +21,10 @@ export const helptextInterfacesForm = {
  on this TrueNAS controller. The alias can be an IPv4 or IPv6 \
  address.'),
   bridgeMembersTooltip: T('Network interfaces to include in the bridge.'),
+  bridgeLoopWarning: {
+    title: T('Possible network loop'),
+    message: T('Bridging these physical interfaces can create a network loop if another Layer 2 path already connects them. This can disrupt TrueNAS and other devices on the same network. Verify the switch topology and loop protection before continuing.'),
+  },
   failover: {
     criticalTooltip: T('Interfaces marked <i>critical</i> are\
  considered necessary for normal operation. When the last critical\

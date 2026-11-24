@@ -9,12 +9,12 @@ import { MatTooltip } from '@angular/material/tooltip';
 import { FormBuilder, FormControl } from '@ngneat/reactive-forms';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { range } from 'lodash-es';
+import { isEqual, range } from 'lodash-es';
 import {
   BehaviorSubject, Observable, of,
 } from 'rxjs';
 import {
-  filter, map, switchMap, take,
+  filter, map, switchMap, take, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
@@ -33,6 +33,7 @@ import {
   NetworkInterfaceCreate,
   NetworkInterfaceUpdate,
 } from 'app/interfaces/network-interface.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxCheckboxComponent } from 'app/modules/forms/ix-forms/components/ix-checkbox/ix-checkbox.component';
 import { IxErrorsComponent } from 'app/modules/forms/ix-forms/components/ix-errors/ix-errors.component';
@@ -116,6 +117,7 @@ export class InterfaceFormComponent implements OnInit {
   private validatorsService = inject(IxValidatorsService);
   private interfaceFormValidator = inject(InterfaceNameValidatorService);
   private matDialog = inject(MatDialog);
+  private dialog = inject(DialogService);
   private systemGeneralService = inject(SystemGeneralService);
   private destroyRef = inject(DestroyRef);
   private store$ = inject<Store<AppState>>(Store);
@@ -126,6 +128,8 @@ export class InterfaceFormComponent implements OnInit {
 
   protected readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected existingInterface: NetworkInterface | undefined;
+  /** Physical bridge members as loaded for edit, so Save only warns when that set actually changes. */
+  private initialPhysicalBridgeMembers: string[] = [];
 
   readonly defaultMtu = 1500;
   protected readonly isHaEnabled$ = new BehaviorSubject(false);
@@ -280,6 +284,7 @@ export class InterfaceFormComponent implements OnInit {
 
     this.setOptionsForEdit(nic);
     this.disableVlanParentInterface();
+    this.initialPhysicalBridgeMembers = this.getPhysicalBridgeMembers(this.form.controls.bridge_members.value);
   }
 
   protected addStaticIpAddress(): void {
@@ -310,9 +315,20 @@ export class InterfaceFormComponent implements OnInit {
     this.isLoading.set(true);
     const params = this.prepareSubmitParams();
 
-    const request$ = this.existingInterface
-      ? this.api.call('interface.update', [this.existingInterface.id, params])
-      : this.api.call('interface.create', [params]);
+    const existingInterface = this.existingInterface;
+
+    // "Back to editing" completes the chain without emitting, so the form stays open with its values.
+    const request$ = this.confirmBridgeLoopRiskIfNeeded().pipe(
+      tap((confirmed) => {
+        if (!confirmed) {
+          this.isLoading.set(false);
+        }
+      }),
+      filter(Boolean),
+      switchMap(() => (existingInterface
+        ? this.api.call('interface.update', [existingInterface.id, params])
+        : this.api.call('interface.create', [params]))),
+    );
 
     request$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
@@ -336,6 +352,41 @@ export class InterfaceFormComponent implements OnInit {
         this.formErrorHandler.handleValidationErrors(error, this.form);
       },
     });
+  }
+
+  /**
+   * Two physical NICs in one bridge form a Layer 2 loop if the switch already connects them, and nothing
+   * on this side can see that topology — so ask before staging a bridge whose physical member set is new.
+   * Edits that leave that set alone don't ask again.
+   */
+  private confirmBridgeLoopRiskIfNeeded(): Observable<boolean> {
+    if (!this.isBridge) {
+      return of(true);
+    }
+
+    const physicalMembers = this.getPhysicalBridgeMembers(this.form.controls.bridge_members.value);
+    const hasPhysicalMembersChanged = this.isNew || !isEqual(physicalMembers, this.initialPhysicalBridgeMembers);
+    if (physicalMembers.length < 2 || !hasPhysicalMembersChanged) {
+      return of(true);
+    }
+
+    return this.dialog.confirm({
+      title: this.translate.instant(this.helptext.bridgeLoopWarning.title),
+      message: this.translate.instant(this.helptext.bridgeLoopWarning.message),
+      hideCheckbox: true,
+      buttonText: this.translate.instant('Continue'),
+      cancelText: this.translate.instant('Back to editing'),
+    });
+  }
+
+  /** Sorted, so a reordered selection compares equal to the one it started as. */
+  private getPhysicalBridgeMembers(members: string[]): string[] {
+    const physicalNames = new Set(
+      (this.slideInRef.getData()?.interfaces ?? [])
+        .filter((nic) => nic.type === NetworkInterfaceType.Physical)
+        .map((nic) => nic.name),
+    );
+    return members.filter((member) => physicalNames.has(member)).sort((a, b) => a.localeCompare(b));
   }
 
   private generateNextAvailableNameByType(type: NetworkInterfaceType): string | null {
