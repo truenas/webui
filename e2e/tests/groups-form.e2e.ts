@@ -1,12 +1,7 @@
 /**
- * Story: what the add-group form accepts, what it refuses, and what the
- * appliance is left holding afterwards.
- *
- * Saves are asserted through the API for the reason the user specs give: a row
- * says the screen believed it, `group.query` says the appliance did it. The
- * group form adds something the user form has no equivalent of — fields that
- * are *derived* on submit rather than sent as typed, which is why the sudo
- * test below reads the stored value rather than the control.
+ * Story: what the add-group form accepts, what it refuses, and what the appliance holds afterwards. Saves are
+ * checked through `group.query`, as in the user specs. Some fields are derived on submit rather than sent as
+ * typed, which is why the sudo test reads the stored value rather than the control.
  */
 import { ensureGroupAbsent, ensureGroupPresent, findGroup } from '../fixtures/groups';
 import { openAddGroupForm, saveGroupForm } from '../flows/groups';

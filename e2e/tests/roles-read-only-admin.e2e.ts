@@ -1,16 +1,8 @@
 /**
- * Stories: a read-only administrator signs in, lands on the dashboard and can
- * sign out again; and finds Restart and Shut Down locked in the topbar's power
- * menu, where a full admin finds them enabled.
- *
- * The read-only admin signs in through the form, in a `describe` that turns the
- * token off: the token fixture mints tokens for the suite's admin only. Every
- * sign-in spends from the unauthenticated rate limit, so each story signs in
- * once and runs its checks as steps.
- *
- * Restart and Shut Down are never clicked, by either account. Locked is the
- * claim, and a click that got through would restart the appliance under the rest
- * of the run. `system.boot_id` is read before and after as a guard on that.
+ * Stories: a read-only administrator signs in, lands on the dashboard and signs out; and finds Restart and Shut
+ * Down locked in the power menu, where a full admin finds them enabled. Sign-in is through the form (tokens are
+ * minted for the suite's admin only), and each sign-in spends from the rate limit, so each story signs in once.
+ * Restart and Shut Down are never clicked; `system.boot_id` is read before and after as a guard.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import {

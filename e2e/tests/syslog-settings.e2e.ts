@@ -1,20 +1,8 @@
 /**
- * Stories: an admin changes the syslog settings from the Syslog card on
- * System > Advanced Settings, and the appliance keeps what they saved.
- *
- * Each save is asserted twice, the way the other Advanced Settings specs do it:
- * the card's readouts say the screen believed it, `system.advanced.config` says
- * the appliance did it.
- *
- * One test sets every field, starting from the defaults. The other starts with
- * everything set and undoes all of it, removing the server. Between them, every
- * control in the form is changed in both directions. A third adds a server over
- * TLS, which is the one transport that needs a certificate.
- *
- * The settings are one config record, so there is nothing to delete afterwards.
- * Teardown writes middleware's defaults back. See `fixtures/syslog.ts`. The TLS
- * test may import a certificate, which teardown removes after the settings, so
- * that no server still uses it.
+ * Stories: an admin changes the syslog settings from the Syslog card; each save is checked on the card and in
+ * `system.advanced.config`. One test sets every field from defaults and one undoes them all, so every control
+ * changes both ways; a third adds a TLS server, the one transport needing a certificate. Teardown writes
+ * middleware's defaults back (`fixtures/syslog.ts`), then removes any imported certificate, so no server uses it.
  */
 import { ensureCertificateAbsent, ensureImportedCertificatePresent, findCertificate } from '../fixtures/certificates';
 import { readSyslogSettings, setSyslogSettings, syslogBaseline } from '../fixtures/syslog';

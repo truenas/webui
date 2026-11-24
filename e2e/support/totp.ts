@@ -1,12 +1,8 @@
 /**
- * Time-based one-time passwords (RFC 6238), for signing in as an account with
- * two-factor authentication.
- *
- * Written here because nothing else will do it: no TOTP library is installed,
- * and the app's own `totp.helper.ts` exports only a verifier. Node's HMAC-SHA1
- * does the hashing. The parameters are the ones the app asks middleware for
- * (`user.renew_2fa_secret` with a 30-second interval and six digits), so a code
- * from here is the code an authenticator app would show.
+ * Time-based one-time passwords (RFC 6238), for signing in as an account with two-factor authentication.
+ * Hand-written because no TOTP library is installed and the app's `totp.helper.ts` only verifies. Parameters
+ * match what the app asks middleware for (`user.renew_2fa_secret`: 30-second interval, six digits), so a code
+ * here is what an authenticator app would show.
  */
 import { createHmac } from 'node:crypto';
 import { firstValueFrom, timeout } from 'rxjs';

@@ -1,22 +1,9 @@
 /**
- * The Replication Tasks card on Data Protection, its full list, the wizard its
- * Add opens, the form its Edit opens, and the dialog its Restore opens.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `convertStringToId('replication-task-' + name)`, which lowercases the tag and
- * turns its punctuation into hyphens before the library's normalizer sees it. As
- * on the rsync task card, lowercasing first and then running
- * {@link kebabTestSegment} is the same id. The tag carries the task's name and
- * nothing else, and middleware holds names unique.
- *
- * The wizard is two steps in one side panel, with no panel footer: each step
- * owns its buttons. Its controls declare their `testId`s, and its two
- * The `tn-file-picker`s' inner `<input>` takes the
- * control name.
- *
- * Edit opens a different component, `ix-replication-form`: one long form in five
- * sections, with Save in the side panel's footer. Its controls declare their
- * `testId`s too.
+ * The Replication Tasks card on Data Protection, its full list, its Add wizard, Edit form and Restore dialog. Row
+ * ids come from `convertStringToId('replication-task-' + name)`; as on rsync, lowercasing then
+ * {@link kebabTestSegment} gives the same id, and middleware keeps names unique. The wizard is two steps in one
+ * side panel with no footer (each step owns its buttons); its `tn-file-picker` inputs take the control name. Edit
+ * opens a different component, `ix-replication-form`, with Save in the panel footer. Both declare their `testId`s.
  */
 import { taskListDetailAction } from './data-protection';
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';

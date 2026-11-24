@@ -106,17 +106,12 @@ export async function openCreateContainerForm(page: Page): Promise<void> {
 const imageRegistryTimeoutMs = 60_000;
 
 /**
- * Picks `image` in the Create form's image browser — searched for by name and
- * narrowed to its version with the Release filter. Returns once the browser has
- * closed and the form's Image field holds the choice.
+ * Picks `image` in the Create form's image browser by name, narrowed to its version with the Release filter.
+ * Returns once the browser has closed and the Image field holds the choice.
  *
- * The browser lists versions oldest first, and the oldest is the build upstream
- * deletes next, so the version is chosen rather than taking the first row: pass
- * what `firstRegistryImage` returns.
- *
- * The browser reads the registry from `images.sys.truenas.net` as it opens, so
- * the first Select can take a while to appear. The Release filter has no options
- * until then, so it is opened only after that.
+ * Pass what `firstRegistryImage` returns: the browser lists oldest first, and upstream deletes the oldest
+ * next. The browser reads `images.sys.truenas.net` as it opens, so the first Select can be slow, and the
+ * Release filter has no options until then.
  */
 export async function chooseImage(page: Page, image: { name: string; version: string }): Promise<void> {
   const browser = containersLocators.imageBrowser;
@@ -147,14 +142,11 @@ export async function openContainerDetails(page: Page, name: string): Promise<vo
 }
 
 /**
- * Opens Edit on a container's General Info card, starting from the sidebar, and
- * switches the form to its advanced options, where CPU Set, Shutdown Timeout and
- * the environment variables are.
+ * Opens Edit on a container's General Info card, starting from the sidebar, and switches to advanced options
+ * (CPU Set, Shutdown Timeout, environment variables).
  *
- * The form fills itself from `container.get_instance` after it opens, so this
- * waits for Name to hold the container's name: an edit made before that could
- * be overwritten by the load. Switched to advanced only after that wait, since
- * each environment variable row has an `input-name` of its own too.
+ * The form fills from `container.get_instance` after opening, so this waits for Name to hold the name first;
+ * advanced is switched on only after that, since each environment variable row has its own `input-name`.
  */
 export async function openEditContainerForm(page: Page, name: string): Promise<void> {
   await openContainerDetails(page, name);

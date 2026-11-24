@@ -1,18 +1,8 @@
 /**
- * Stories: an admin sets and unsets the preferred pool for containers, moves the
- * automatic bridge to another IPv4 network, and is refused a network too small to
- * use. The Create New Container form asks for a pool only while none is preferred.
- *
- * Every setting lives in `lxc.config`, so each save is asserted twice: once by
- * reopening the form, and once through the API. No container is created, so no
- * image and no internet are needed.
- *
- * ## Setup and teardown
- *
- * Each test starts from middleware's defaults with no preferred pool, and
- * teardown writes back what the appliance held before the first test. The
- * preferred pool is the worker's `pool`, and teardown clears it before the
- * worker exports that pool.
+ * Stories: an admin sets and unsets the preferred pool for containers, moves the automatic bridge to another IPv4
+ * network, and is refused one too small; Create New Container asks for a pool only while none is preferred. Saves
+ * are checked by reopening the form and through `lxc.config`. Tests start from defaults; teardown restores the
+ * original settings and clears the preferred pool before the worker exports it.
  */
 import {
   type ContainerSettings, containerSettingsBaseline, countContainers, readContainerConfig, setContainerConfig,

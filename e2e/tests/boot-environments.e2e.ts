@@ -1,18 +1,8 @@
 /**
- * Stories: an admin clones a boot environment, marks one to be kept, and deletes
- * one, from System > Boot, and the appliance holds what they did.
- *
- * Each action is asserted twice, the way the share specs do it: the list says the
- * screen believed it, `boot.environment.query` says the appliance did it.
- *
- * Keep and delete each run beside a second boot environment that must come
- * through untouched: a row's actions belong to whichever row was clicked, and a
- * row-targeting bug changes the wrong boot environment without failing anything
- * else.
- *
- * Every boot environment here is a clone of the running one, so none of them is
- * running or set to boot next, and nothing the suite does changes what the
- * appliance boots into.
+ * Stories: an admin clones, keeps and deletes a boot environment from System > Boot, each checked in the list and
+ * through `boot.environment.query`. Keep and delete run beside a second boot environment that must come through
+ * untouched, so a row-targeting bug fails the test. All are clones of the running one, so nothing the suite does
+ * changes what the appliance boots into.
  */
 import {
   ensureBootEnvironmentAbsent,

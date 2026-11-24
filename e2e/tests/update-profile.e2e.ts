@@ -1,32 +1,10 @@
 /**
- * Story: an admin chooses an update profile on System > Update, and the appliance keeps it.
- *
- * Which profiles are listed, and which of them are available, is the appliance's answer, so every
- * test reads `update.profile_choices` and `update.config` first and derives names from them. In
- * middleware (`plugins/update_/profile_.py`), an appliance without the Mission Critical entitlement
- * lists Developer, Early Adopter and General, and one with it lists General and Mission Critical. A
- * profile is available when it is the configured one, or when it is no more conservative than the
- * profile of the installed version.
- *
- * On the CI appliance fewer than two are available: E2E run 39359788981 (2026-10-20) skipped both
- * switching tests for that reason, and `dashboard-update-state.e2e.ts` skipped in the same run
- * because Developer is not available. With one profile on offer the card disables the select and
- * Apply, so nothing can be switched or cancelled there. The readouts test does not need the select
- * open, so it runs whatever is on offer and checks the options only when there is a choice.
- *
- * Switching only rewrites the configuration: `update.update` sends an `update.status` CHANGED event
- * and clears the HasUpdate alert, and starts no download (`plugins/update_/config.py`). So the
- * test asserts the configuration and nothing about update availability. `update.status` asks the
- * update server, and the page shows the card only once that has answered, hence the long ceiling on
- * the first wait. Whatever the page says about updates is not asserted.
- *
- * The profile is global. It is read once, before the first test changes it, written back in
- * `beforeEach` when the appliance holds something else, and written back in `afterEach`
- * unconditionally. If the starting profile was available only because it was the configured one,
- * middleware refuses it once another is configured, and the restore fails with that refusal rather
- * than leaving the appliance quietly on the wrong profile.
- *
- * Does not need a pool, so it does not ask for the `pool` fixture.
+ * Story: an admin chooses an update profile on System > Update. Listed and available profiles are the appliance's
+ * answer (`plugins/update_/profile_.py`), so tests derive names from `update.profile_choices` and `update.config`.
+ * CI offers fewer than two, so the switching tests skip there and the readouts test checks options only when there's
+ * a choice. Switching only rewrites config, so availability isn't asserted; `update.status` asks the update server,
+ * hence the long first wait. The global profile is restored in `beforeEach` and `afterEach`; if it was available
+ * only as the configured one, the restore fails loudly rather than leaving the wrong profile.
  */
 import type { Page } from '@playwright/test';
 import { readUpdateProfile, readUpdateProfileChoices, setUpdateProfile } from '../fixtures/update';

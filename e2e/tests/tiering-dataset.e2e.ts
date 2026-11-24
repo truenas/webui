@@ -1,29 +1,9 @@
 /**
- * Story: an admin moves a dataset to the performance tier.
- *
- * With tiering on, every dataset on a pool with a special vdev has a tier, and
- * the dataset details card shows it with a Change button. Change opens the
- * Change Storage Tier dialog, whose one decision is whether to also move the
- * data already written — "Move existing data", ticked by default — which starts
- * a rewrite job the card then reports as a migration badge.
- *
- * Both answers to that question are covered, because they leave the dataset in
- * different states and the UI has to report each one truthfully: a tier change
- * with no migration, and a tier change with one. Each is checked on screen and
- * through `pool.dataset.query`, which is what separates "the card re-rendered"
- * from "the appliance moved the dataset".
- *
- * A migration can also be cancelled while it runs, from the dialog its badge
- * opens. Cancelling stops the rewrite and keeps the new tier, and the third test
- * holds the UI and middleware to both halves of that.
- *
- * ## Why this spec builds its own pool
- *
- * A tier needs a special vdev, and the shared `pool` fixture has none —
- * middleware reports `tier: null` for its datasets and the UI hides every
- * control this spec drives. `ensureTierPoolPresent` builds one, and `afterAll`
- * removes it: left behind it would hold two disks `fresh-install` needs, and
- * `findOnlinePool` would hand it to the next spec as that spec's pool.
+ * Story: an admin moves a dataset to the performance tier from its details card's Change Storage Tier dialog, with
+ * and without "Move existing data", and cancels a running migration (the new tier stays). Each is checked on screen
+ * and in `pool.dataset.query`, which separates a re-render from the appliance moving the dataset. The shared `pool`
+ * has no special vdev, so tiers are `null` and the controls hidden; `ensureTierPoolPresent` builds one and
+ * `afterAll` removes it, else it holds two disks `fresh-install` needs and `findOnlinePool` hands it to the next spec.
  */
 import { ensureCronjobAbsent } from '../fixtures/cron';
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
@@ -46,14 +26,9 @@ let dataset = '';
 const migrationTimeoutMs = 60_000;
 
 /**
- * The pool and the switch are set up once for the file, not per test.
- *
- * Both restart the tiering daemon: `zfs.tier.update` reloads it, and building or
- * exporting a pool moves the system dataset, which restarts it again. Done per
- * test, that churn was enough for systemd to stop starting the daemon
- * (`start-limit-hit`), and the next migration failed with `[Errno 2]` — a
- * middleware defect this spec should not keep tripping over. Each test owns only
- * its dataset.
+ * The pool and the switch are set up once per file, not per test. Both restart the tiering daemon, and per-test
+ * churn made systemd stop starting it (`start-limit-hit`), failing the next migration with `[Errno 2]`, a
+ * middleware defect this spec shouldn't keep tripping over. Each test owns only its dataset.
  */
 test.beforeAll(async ({ api, entitlements }) => {
   // Every dataset's tier is null until tiering is on, and `zfs.tier.update`

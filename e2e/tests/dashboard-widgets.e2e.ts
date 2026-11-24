@@ -1,23 +1,9 @@
 /**
- * Story: an admin opens the Dashboard and sees the default cards, and the CPU, storage and network
- * cards describe this appliance.
- *
- * The layout is the admin's own `dashState` attribute. Each test writes the layout it needs over
- * the API, and `afterEach` writes back the one the account had, because `tests/dashboard.e2e.ts`
- * runs on whatever layout it finds and relies on it holding System Information. See
- * `fixtures/dashboard.ts`.
- *
- * `DashboardStore` reads the layout from the account the app loaded at sign-in, and the `page`
- * fixture signs in before a test writes anything. So each test reloads after opening the
- * Dashboard, which makes the app read `auth.me` again.
- *
- * Values that move on their own are not checked: CPU usage, temperatures, traffic rates, uptime,
- * and the memory total, which comes from `reporting.realtime` rather than from `system.info`.
- *
- * Only the second test needs a pool, and it asks for the `pool` fixture: it reads a pool's tile on
- * the Storage card, and with no pool the card draws none. The first does not. Of the Storage and
- * Backup Tasks cards it checks only the report button and the title, and both are in the cards'
- * headers, which render whether or not the appliance has a pool.
+ * Story: an admin opens the Dashboard and sees the default cards, and the CPU, storage and network cards describe
+ * this appliance. Each test writes its `dashState` over the API and reloads (the layout is read at sign-in);
+ * `afterEach` restores the account's own, since `tests/dashboard.e2e.ts` relies on System Information (see
+ * `fixtures/dashboard.ts`). Moving values are not checked: CPU usage, temperatures, traffic, uptime and the
+ * memory total. Only the second test uses the `pool` fixture, for a pool tile on the Storage card.
  */
 import {
   captureDashState, readDashState, readFirstNicName, readNicWithIpv4, readShownPool, restoreDashState, writeDashState,

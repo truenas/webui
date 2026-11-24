@@ -1,31 +1,10 @@
 /**
- * Stories: an admin attaches a NIC to a stopped container from its NIC Devices
- * card, either with one click on the default bridge or by picking an interface,
- * changes its adapter type and MAC address, removes it, and is refused a MAC
- * address that is not colon-separated.
- *
- * A container only has network through a NIC device, and `container.create`
- * adds none, so the seeded container starts with loopback only and the card
- * says so.
- *
- * ## Which NIC
- *
- * Interface names differ per appliance, so each test reads the one it uses:
- * the first interface the card's Add menu offers, which is
- * `container.device.nic_attach_choices` (`findAddableNics`). Nothing here
- * creates a bridge or a VLAN to make
- * one, since on a single-NIC appliance that touches the management link; with
- * nothing to offer, `beforeEach` fails and says so.
- *
- * ## Setup and teardown
- *
- * Each test starts with no staged interface change, since one hides Add and
- * every device menu, the worker's `pool` as the preferred pool, and a stopped
- * container `e2e-ct-nic` seeded over the API. Nothing starts it, so no host
- * interface changes. Teardown deletes the container, and its NIC devices with
- * it, then writes back the containers settings the appliance held before the
- * first test. Once the file is done it removes `<pool>/.truenas_containers`, as
- * `containers.e2e.ts` does.
+ * Stories: an admin attaches a NIC to a stopped container from its NIC Devices card (default bridge or a picked
+ * interface), changes its adapter type and MAC, removes it, and is refused a MAC that is not colon-separated. Each
+ * test uses the first interface from `container.device.nic_attach_choices`; nothing creates a bridge or VLAN, since
+ * on a single-NIC appliance that touches the management link, so with none `beforeEach` fails. Tests start with no
+ * staged interface change (it hides Add) and a stopped `e2e-ct-nic`; teardown deletes it and restores settings,
+ * and after the file `<pool>/.truenas_containers` is removed, as `containers.e2e.ts` does.
  */
 import {
   type ContainerSettings, containersDataset, containerSettingsBaseline, ensureContainerAbsent,

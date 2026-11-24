@@ -1,27 +1,10 @@
 /**
- * Story: with the appliance joined to Active Directory, the read-only
- * administrator opens Directory Services, sees the domain healthy on its card,
- * the Kerberos realm and the machine account's keytab, and finds every control
- * that would change them locked. The sharing administrator, who holds no more
- * here, finds the card locked the same way.
- *
- * Saving the configuration, leaving the domain and editing a realm or keytab
- * all need `DIRECTORY_SERVICE_WRITE`, which neither account holds. Leave and
- * Rebuild Directory Service Cache are the card menu's only items and are left
- * out of it without that role, so the card draws no menu at all; that absence is
- * what is asserted, since there is nothing to find locked. The card's Settings
- * and a row's Edit carry no role, so their forms open, with Save locked.
- *
- * Needs a real domain (`TN_AD_*`), and skips without one. It is in
- * `tests/unpublished/` because the domain's name is on the card and in the
- * form, and a published trace would keep it; for the same reason every hook and
- * test runs inside `withActiveDirectoryRedacted`. The appliance joins once, over
- * the API, for the whole file, under a fresh `e2eui-` computer name with DNS
- * updates off, and leaves before the nameservers are put back.
- *
- * Each test signs in once: every sign-in spends from the unauthenticated rate
- * limit. Nothing locked is ever clicked, so what each page would change is read
- * back over the API only as a guard that nothing got through.
+ * Story: on an AD-joined appliance, the read-only and sharing administrators see the domain, realm and keytab on
+ * Directory Services and find every control locked, all needing `DIRECTORY_SERVICE_WRITE`. The card's only menu
+ * items need it too, so no menu is drawn and that absence is asserted; Settings and a row's Edit open with Save
+ * locked. Needs `TN_AD_*`; unpublished because the domain name would stay in a trace, and every hook and test runs
+ * in `withActiveDirectoryRedacted`. The file joins once over the API (fresh `e2eui-` name, DNS updates off) and
+ * leaves before nameservers are restored. One sign-in per test; nothing locked is clicked.
  */
 import type { Page } from '@playwright/test';
 import { firstValueFrom, timeout } from 'rxjs';

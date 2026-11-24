@@ -1,17 +1,9 @@
 /**
- * Stories: deleting several snapshots at once from the list deletes the ones
- * that were ticked, says which it could not, and Cancel deletes none.
- *
- * Every test ticks two of a dataset's three snapshots, so the third is the
- * witness that the batch went to the rows that were picked and no further.
- *
- * The batch is one `core.bulk` job, which does not fail when one of its calls
- * does: it answers per snapshot, and the dialog reports the failures. A held
- * snapshot is how a test makes one fail — middleware refuses to destroy it
- * without `defer`, which the dialog never sends, and names it in the error.
- *
- * Not covered: the dialog's clone guard, which never fires from the list
- * (see `docs/status.md`), and Go to Storage, which only navigates.
+ * Stories: deleting ticked snapshots from the list deletes those, says which it couldn't, and Cancel deletes none.
+ * Each test ticks two of a dataset's three snapshots, so the third witnesses that the batch went no further. The
+ * batch is one `core.bulk` job that answers per snapshot; a held snapshot makes one fail, since middleware refuses
+ * to destroy it without `defer`, which the dialog never sends. Not covered: the clone guard, which never fires from
+ * the list (see `docs/status.md`).
  */
 import {
   ensureSnapshotPresent, ensureSnapshotsAbsent, findSnapshot, holdSnapshot, isSnapshotHeld,

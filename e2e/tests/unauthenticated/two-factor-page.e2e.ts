@@ -1,34 +1,10 @@
 /**
- * Stories: a user who already has two-factor opens the Two-Factor Authentication
- * page from the user menu and renews their secret, confirming the new one with a
- * code; unsets it; or starts a renewal and cancels it, which leaves the account
- * with no secret at all, because the old one was replaced the moment Renew ran.
- *
- * `two-factor.e2e.ts` and `two-factor-setup.e2e.ts` set a secret up on an account
- * that has none, where the card's button reads Configure and asks nothing first.
- * This is the same card on an account that has one, where it reads Renew, asks
- * for a confirmation, and offers Unset beside it.
- *
- * Under `tests/unauthenticated/` because the user signs in through the form with
- * a code: the token bypass mints tokens for the suite's admin only, who must
- * never hold a secret. One sign-in per test, a password and a code, and each is
- * one `auth.login_ex` from the unauthenticated rate limit (20 per method per IP
- * per 60s): six across this file.
- *
- * The starting secret is armed over the API, as in `two-factor-signin.e2e.ts`,
- * and a fresh one per test, so no sign-in code is ever replayed. Codes are
- * computed on the appliance's clock (`applianceNow`), which both the sign-in and
- * the card check them against. Secrets are compared as booleans and codes are
- * only typed into a field: neither is ever quoted in an assertion.
- *
- * The page keeps a renewal awaiting its code in `localStorage`, keyed by
- * username. Every test has a fresh browser context, so none inherits one.
- *
- * Global two-factor is on here as a precondition, and left on it would put every
- * later account with no secret — the suite's admin included — through the setup
- * dialog. So it is turned off after each test, unconditionally and not skipped
- * under `TN_KEEP_TEST_DATA`, and the user goes with it: a secret left on it would
- * ask for a code at its next sign-in in another spec.
+ * Stories: a user with two-factor renews their secret on the Two-Factor Authentication page and confirms it with a
+ * code; unsets it; or cancels a renewal, which leaves no secret, since Renew replaced the old one at once. Users sign
+ * in with a code through the form (the suite's admin must never hold a secret), one sign-in per test against the
+ * rate limit. Each test arms a fresh secret over the API, so no code is replayed; codes use the appliance's clock
+ * (`applianceNow`) and are never quoted in assertions. Global two-factor is turned off after each test,
+ * unconditionally and not skipped under `TN_KEEP_TEST_DATA`, and the user is removed with it.
  */
 import type { Page } from '@playwright/test';
 import {

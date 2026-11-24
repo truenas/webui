@@ -1,19 +1,11 @@
 /**
  * ZFS tiering preconditions and cleanup, over the API.
  *
- * Two kinds of state, handled differently:
- *
- * - **The tiering configuration** is global, like preferences: one row that every
- *   later test sees. With tiering on, share lists grow a Storage Tier column, the
- *   dataset form hides its special-vdev fields, and SMB shares stop following nested
- *   datasets. So {@link establishTierBaseline} writes a known state before each test
- *   and again after it, rather than restoring whatever it found.
- * - **The pool** tiered datasets live on needs a special vdev, which the shared
- *   `pool` fixture does not have and must not be given. {@link ensureTierPoolPresent}
- *   builds one of its own, and the caller removes it with `ensurePoolAbsent`.
- *
- * A dataset's data is what a migration moves, so {@link seedMigrationData} writes enough of it for
- * one to still be running when a test reaches it.
+ * The tiering config is global (share lists gain a Storage Tier column, the dataset form hides special-vdev
+ * fields, SMB shares stop following nested datasets), so {@link establishTierBaseline} writes a known state before
+ * and after each test. Tiered datasets need a special vdev the shared `pool` must not get, so
+ * {@link ensureTierPoolPresent} builds its own pool, removed with `ensurePoolAbsent`. {@link seedMigrationData}
+ * writes enough data for a migration to still be running when a test reaches it.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';
@@ -61,16 +53,11 @@ export async function readTierConfig(client: E2eApiClient): Promise<TierConfigEn
 }
 
 /**
- * Writes the tiering configuration — the baseline, with any overrides on top —
- * unless the appliance already holds exactly that.
+ * Writes the tiering configuration (baseline plus overrides) unless the appliance already holds exactly that.
  *
- * The skip is load-bearing, not an optimisation. Every `zfs.tier.update` reloads
- * the tiering daemon (restarts it when `max_concurrent_jobs` changes), and pool
- * creation and export restart it again by moving the system dataset. Enough of
- * that in a short window and systemd stops starting it (`start-limit-hit`); the
- * daemon's socket is then gone, and every migration fails with `[Errno 2] No such
- * file or directory` until something restarts it. Writing only real changes keeps
- * the suite's own contribution to that churn to the changes its tests are about.
+ * The skip is load-bearing: every `zfs.tier.update` reloads the daemon, and pool create/export restart it via the
+ * system dataset. Too much churn and systemd stops starting it (`start-limit-hit`); its socket is gone and every
+ * migration fails with `[Errno 2] No such file or directory`. Writing only real changes limits the suite's churn.
  */
 export async function establishTierBaseline(
   client: E2eApiClient,
@@ -90,19 +77,11 @@ export async function establishTierBaseline(
 }
 
 /**
- * Builds {@link tierPoolName}, if it is not already there: one data disk and one
- * special disk, both striped.
+ * Builds {@link tierPoolName} unless present: one data disk and one special disk, both striped.
  *
- * The special vdev is the whole point. Middleware reports `tier: null` for every
- * dataset on a pool without one, and the UI hides everything tier-related on a
- * dataset whose `tier` is null — so on the shared pool there is nothing to click.
- * Striped because nothing stored here matters.
- *
- * It holds two disks for as long as it exists, and `fresh-install` needs nine alike
- * — every disk a nine-disk appliance has. So the caller removes it after its last
- * test, not at the end of the run. Build it once per spec file rather than per
- * test: each create and export moves the system dataset, which restarts the
- * tiering daemon — see `establishTierBaseline`.
+ * Without a special vdev middleware reports `tier: null` and the UI hides everything tier-related. It holds two
+ * disks while it exists, and `fresh-install` needs nine alike, so the caller removes it after its last test.
+ * Build it once per spec file, not per test: create and export restart the tiering daemon (`establishTierBaseline`).
  */
 export async function ensureTierPoolPresent(client: E2eApiClient): Promise<void> {
   if (await findPool(client, tierPoolName)) {
@@ -134,18 +113,12 @@ export async function ensureTierPoolPresent(client: E2eApiClient): Promise<void>
 }
 
 /**
- * A dataset name no earlier run has used.
+ * A dataset name no earlier run has used, unlike the suite's usual fixed names ("Fixed names" in `docs/status.md`).
  *
- * Fixed names are the suite's habit (see "Fixed names" in `docs/status.md`), and
- * here they are wrong. Middleware keys a rewrite job by dataset *name* and never
- * forgets one: a dataset created under a name that was migrated before — even after
- * the dataset was deleted, even after its pool was destroyed and rebuilt — comes back
- * as `REGULAR` carrying the old job, `COMPLETE`, targeting `PERFORMANCE`. Probed
- * against `27.0.0-MASTER+20260924-230159`. With a fixed name, the second run of the
- * no-migration test would open on a dataset the UI already calls migrated.
- *
- * Base 36 of the clock keeps the tree node's id short. Two calls in one
- * millisecond would collide, which serial execution (R3.4) does not produce.
+ * Middleware keys rewrite jobs by dataset *name* forever: a reused name, even after deleting the dataset or
+ * rebuilding the pool, comes back `REGULAR` with the old `COMPLETE` job (probed on 27.0.0-MASTER+20260924-230159),
+ * so the UI would call it migrated. Base 36 keeps the node id short; same-millisecond calls would collide, which
+ * serial execution (R3.4) does not produce.
  */
 export function unusedDatasetName(prefix: string): string {
   return `${prefix}_${Date.now().toString(36)}`;
@@ -154,13 +127,9 @@ export function unusedDatasetName(prefix: string): string {
 /**
  * How much {@link seedMigrationData} writes: 4 GiB of random bytes, as 262,144 files of 16 KiB.
  *
- * Sized for a migration that is still running when a test reaches its Cancel, a few seconds
- * after Apply. Random, because the pool compresses and zeros would leave almost nothing to
- * move. Many small files rather than one large one, because the rewrite pays per file as well
- * as per byte. The tier pool's disks are 10 GB each, so this fits on either side of the move.
- *
- * Measured in CI (run 39091322942): 2 GiB in 131,072 files migrated in 5 seconds, before the
- * dialog could be opened. Size alone does not buy enough, so see {@link migrationSeedCompression}.
+ * Sized so a migration still runs when a test reaches Cancel a few seconds after Apply. Random because the pool
+ * compresses; small files because the rewrite pays per file. Fits the 10 GB tier disks either side. CI run
+ * 39091322942 migrated 2 GiB in 5 seconds, so size alone isn't enough; see {@link migrationSeedCompression}.
  */
 const migrationSeedBytes = 4 * 1024 ** 3;
 const migrationSeedFileBytes = 16 * 1024;

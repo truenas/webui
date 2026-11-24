@@ -1,31 +1,9 @@
 /**
- * Stories: the Storage dashboard tells an admin that a pool has lost redundancy,
- * and tells them again once it is repaired. A VDEVs page left open shows the
- * change as it happens.
- *
- * The Storage Health card composes its line from the pool's status and its error
- * count, and picks a warning or a safe icon beside it. The VDEVs page shows ZFS's
- * own status for each vdev and disk, and follows the pool's change events while it
- * is open.
- *
- * ## Why the disk goes offline over the API
- *
- * Taking a disk offline is the setup here, not the subject: `pool-devices.e2e.ts`
- * already drives it from the VDEVs page. What this spec owns is what the dashboard
- * says about the pool afterwards, and what an open VDEVs page says when the change
- * comes from outside it: another admin, the shell, or ZFS itself. The page's own
- * Offline reloads the tree after it, so it cannot show that.
- *
- * ## Why this spec builds its own pool
- *
- * A degraded pool is a changed topology, so the worker-scoped `pool` fixture other
- * specs share is out. The pool is a two-disk mirror, because ZFS refuses to take
- * the only disk of a stripe offline. It is destroyed and built again before each
- * test, so a disk an interrupted run left offline is never the starting state, and
- * destroyed after each one. A degraded pool exports like any other.
- *
- * Not covered: the `VolumeStatus` alert, which middleware raises on its own
- * schedule, and faulted pools, which need a disk taken away from the VM.
+ * Stories: the Storage dashboard says a pool has lost redundancy, and again once repaired, via the Storage Health
+ * card and the VDEVs page, which follows the change live when it comes from outside the page (its own Offline
+ * reloads the tree). So the disk goes offline over the API; `pool-devices.e2e.ts` drives that from the UI. The
+ * spec builds its own two-disk mirror (ZFS will not offline a stripe's only disk), rebuilt before each test and
+ * destroyed after. Not covered: the `VolumeStatus` alert and faulted pools.
  */
 import {
   ensureMirrorPoolPresent, readMirror, readPoolStatus, setPoolDiskState,

@@ -1,22 +1,9 @@
 /**
- * Stories: the Add Periodic Snapshot Task form refuses a naming schema with a
- * slash in it, a naming schema without the date tokens, a lifetime of zero, an
- * excluded dataset outside the one being snapshotted, and an exclusion on a task
- * that is not recursive. Each refusal is asserted on the screen and by the task
- * not existing on the appliance.
- *
- * Only the slash is the form's own refusal: `naming_schema` carries a
- * `Validators.pattern`, so Save goes disabled before anything is sent. The rest
- * are middleware's, and come back from `pool.snapshottask.create` as validation
- * errors that `ix-form` pins under the field they name — the naming schema's
- * tokens and the lifetime's `ge=1` from the API model, the two exclusion rules
- * from `plugins/snapshot/crud.py::_validate`. So for those the panel must still
- * be open once the message has arrived, which is what says the save was refused
- * rather than merely slow.
- *
- * A task created by a regression would be on the selected dataset, and
- * `pool.snapshottask.query` is read twice to rule that out: no task on the
- * dataset, and no more tasks on the appliance than before the test.
+ * Stories: the Add Periodic Snapshot Task form refuses a slash in the naming schema, a schema without date tokens,
+ * a zero lifetime, an exclusion outside the snapshotted dataset, and an exclusion on a non-recursive task. Only the
+ * slash is the form's own (`Validators.pattern` disables Save); the rest come back from `pool.snapshottask.create`,
+ * so the panel must still be open once the message arrives, proving the save was refused, not slow. A task made by
+ * a regression is ruled out in `pool.snapshottask.query`: none on the dataset, and no more overall than before.
  */
 import { countSnapshotTasks, ensureSnapshotTasksAbsent, findSnapshotTasks } from '../fixtures/snapshot-tasks';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';

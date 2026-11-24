@@ -1,20 +1,9 @@
 /**
- * The Network Configuration card on System > Network and the Settings form it opens.
- *
- * The card is `network-configuration-card.component.html` and the form is
- * `network-configuration.component.html`. The form opens in a side panel, so Save
- * and the close button belong to the panel rather than to the form.
- *
- * Every form control is bound by control name with no `testId`, so its id falls
- * back to that name: `input-nameserver1`, `checkbox-inherit-dhcp`. A `tn-chip-input`
- * puts its id on the typable field inside it, as `chip-input-<name>`.
- *
- * The card's readouts are scoped inside the card, because the top bar renders its
- * own `text-hostname` and an unscoped locator matches both.
- *
- * Outbound Network is stored the other way round from how it reads: "Allow All"
- * saves `{ type: 'DENY', activities: [] }`, an empty deny list, and "Deny All"
- * saves an empty allow list. The component's own comment explains why.
+ * The Network Configuration card on System > Network and its Settings form, which opens in a side panel (Save and
+ * close belong to the panel). Controls have no `testId`, so ids fall back to the name (`input-nameserver1`); a
+ * `tn-chip-input` puts `chip-input-<name>` on its inner field. Card readouts are scoped to the card because the
+ * top bar renders its own `text-hostname`. Outbound Network is stored inverted: "Allow All" saves an empty DENY
+ * list, "Deny All" an empty allow list (the component's comment explains why).
  */
 import { kebabTestSegment } from './test-id';
 

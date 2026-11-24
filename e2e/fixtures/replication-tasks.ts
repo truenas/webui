@@ -1,14 +1,9 @@
 /**
  * Replication task preconditions, cleanup and readback, over the API.
  *
- * A task is named, and middleware holds names unique, so these helpers key on
- * the name. Creating and deleting a task are plain calls; running one is a job,
- * `replication.run`.
- *
- * Every task made here is local: both ends on this appliance, so `LOCAL`
- * transport and no SSH connection. It replicates snapshots matching
- * {@link replicationNamingSchema} — the wizard's own default — and never runs on
- * a schedule, so nothing fires between a test and its teardown.
+ * Names are unique, so helpers key on them. Create and delete are plain calls; a run is a `replication.run`
+ * job. Every task is local (`LOCAL` transport, no SSH), replicates snapshots matching
+ * {@link replicationNamingSchema} (the wizard's default), and has no schedule, so nothing fires before teardown.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

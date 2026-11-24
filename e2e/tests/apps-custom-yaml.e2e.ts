@@ -1,31 +1,10 @@
 /**
- * Story: an admin installs a custom app from a compose file, edits its YAML and deletes it, and
- * pulls a container image and deletes it.
- *
- * Each action is the UI's: Discover's Install via YAML and its side panel; the installed app's Edit
- * and Delete on its Application Info card; Manage Container Images' Pull Image and the row's
- * Delete. Each is checked on screen and through `app.query`, `app.config` or `app.image.query`. The
- * app a test does not install is seeded with `app.create`.
- *
- * ## The image
- *
- * BusyBox 1.36 from the containerd project's copy on ghcr.io. The app runs it as one service with
- * `sleep infinity`, no ports and no volumes.
- *
- * Every registry rate-limits anonymous pulls: Docker Hub per IP, and Amazon ECR Public, which this
- * spec used before, failed installs on CI with `toomanyrequests`. So the three app tests pull the
- * image over the API first, retrying a throttled pull, and the service says `pull_policy: never`,
- * so the install and the edit run the local image and never reach a registry. Only the pull test,
- * which is about pulling, takes it from the registry through the UI.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture: built once
- * per worker, and emptied of every app and image before each spec, so the install and delete tests
- * still find the installed list empty. Teardown deletes the app and the image after every test.
- *
- * Not covered: the Custom App form that is not YAML, signing in to a registry, and deleting more
- * than one image at once.
+ * Story: an admin installs a custom app via Install via YAML, edits its YAML and deletes it, and pulls and deletes
+ * a container image, each checked on screen and through `app.query`, `app.config` or `app.image.query`. Registries
+ * rate-limit anonymous pulls (ECR Public failed CI with `toomanyrequests`), so app tests pull BusyBox 1.36 from
+ * ghcr.io over the API with retries and the service uses `pull_policy: never`; only the pull test reaches a
+ * registry through the UI. The shared `e2e_apps` pool is emptied before each spec, so install and delete find
+ * the list empty; teardown deletes the app and image after every test.
  */
 import {
   appInstallTimeoutMs,

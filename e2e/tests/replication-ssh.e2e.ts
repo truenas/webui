@@ -1,27 +1,9 @@
 /**
- * Story: an admin creates a push replication task to a different system over an
- * SSH connection, through the wizard on Data Protection, and the target really
- * ends up holding the source's snapshots.
- *
- * The "different system" is the appliance itself, reached over an SSH connection
- * to `127.0.0.1` — see `fixtures/ssh-connections.ts` — so no second appliance is
- * needed and the target is a dataset this spec can read back. Middleware still
- * sends the stream through `ssh`, exactly as it would to another machine: the
- * task's transport and connection are what decide that, not the address.
- *
- * The task is asserted on the card and on the appliance: `replication.query`
- * for the task as stored, `core.get_jobs` for whether the run worked, and
- * `pool.snapshot.query` for what the run actually did, which appears nowhere on
- * the screen.
- *
- * Creating goes through the wizard with Run Once, which snapshots the source,
- * saves the task and starts it. The source is made fresh for each test and no
- * target is: replication creates its own, so a target that exists afterwards is
- * evidence of a run. Local replication is `replication-tasks.e2e.ts`.
- *
- * A second test pulls over the same connection, picking its source by browsing
- * the remote system's datasets in the wizard's picker. It is saved on a schedule
- * and never run, so only the stored task is checked.
+ * Stories: an admin creates a push replication task over SSH through the wizard and the target receives the
+ * source's snapshots; and creates a pull task by browsing the remote's datasets (saved on a schedule, never run).
+ * The "remote" is the appliance itself via `127.0.0.1` (see `fixtures/ssh-connections.ts`); middleware still sends
+ * the stream through `ssh`. Results come from `replication.query`, `core.get_jobs` and `pool.snapshot.query`.
+ * Sources are fresh per test; no target is made, so a target existing afterwards is evidence of a run.
  */
 import {
   countReplicationTasks,

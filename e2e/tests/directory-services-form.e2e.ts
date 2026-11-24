@@ -1,22 +1,9 @@
 /**
- * Stories: with no directory service configured, Credentials > Directory
- * Services shows its disabled state; the configuration form it opens renders the
- * section, credential types and IDMAP fields of whichever type is picked; and it
- * keeps Save disabled until the form is complete and the timeout is in range.
- *
- * Joining needs a domain controller, LDAP or IPA server the CI appliance does
- * not have, so nothing here is saved. Every journey closes the form unsaved, and
- * the last one asks the appliance afterwards whether anything changed. Saving a
- * disabled configuration and Clear Config are their own spec; Advanced Settings
- * belongs to `kerberos.e2e.ts`.
- *
- * Where a checkbox reveals fields, they are asserted hidden before the click and
- * visible after it, so the check cannot pass on fields that were always there.
- *
- * The page renders its disabled state until its config has loaded, as well as
- * after, so the first test waits for the page's own `directoryservices.status`
- * and `directoryservices.config` to be answered before reading the screen.
- * Hence `recordApiCalls`.
+ * Stories: with no directory service, Credentials > Directory Services shows its disabled state; the form renders
+ * each type's sections, credential types and IDMAP fields, and keeps Save disabled until complete with the timeout
+ * in range. Nothing is saved (CI has no servers); the last journey checks the appliance is unchanged. Revealed
+ * fields are asserted hidden before the click. The page shows its disabled state before config loads too, so the
+ * first test waits for `directoryservices.status` and `.config` to be answered (`recordApiCalls`).
  */
 import type { Page } from '@playwright/test';
 import { ensureDirectoryServicesCleared, readDirectoryServices } from '../fixtures/directory-services';

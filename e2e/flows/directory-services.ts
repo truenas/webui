@@ -1,13 +1,10 @@
 /**
- * Credentials > Directory Services, driven through the UI: the Directory Services
- * Configuration form, and the Kerberos realms and keytabs behind the page's
- * Advanced Settings.
+ * Credentials > Directory Services through the UI: the configuration form, and the Kerberos realms and
+ * keytabs behind Advanced Settings.
  *
- * Joining LDAP or IPA needs a directory server the CI appliance does not have,
- * so for those the configuration form is only ever saved disabled, which binds
- * to nothing. Active Directory is joined only when the run has a domain
- * (`TN_AD_*`), by `directory-services-ad`. The two Kerberos cards need no
- * server, which is why they are saved.
+ * The CI appliance has no LDAP or IPA server, so for those the form is only saved disabled. Active Directory
+ * is joined only when the run has a domain (`TN_AD_*`), by `directory-services-ad`. The Kerberos cards need
+ * no server, so they are saved.
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDirectoryServices } from './navigation';
@@ -38,14 +35,11 @@ export async function openDirectoryServicesForm(page: Page): Promise<void> {
 }
 
 /**
- * Opens the configuration form on what is already stored, starting from the
- * sidebar.
+ * Opens the configuration form on what is already stored, starting from the sidebar.
  *
- * The page shows its disabled state — and so the Configure button — before its
- * config has loaded, and the form takes whatever the page holds when the button
- * is pressed. So the page's own `directoryservices.status` and
- * `directoryservices.config` are waited on first, or the form could open empty on
- * a stored configuration. Needs `test.use({ recordApiCalls: true })`.
+ * The page shows Configure before its config has loaded, and the form takes whatever the page holds when
+ * pressed. So `directoryservices.status` and `directoryservices.config` are waited on first, or the form
+ * could open empty. Needs `test.use({ recordApiCalls: true })`.
  */
 export async function openStoredDirectoryServicesForm(page: Page): Promise<void> {
   await goToDirectoryServices(page);

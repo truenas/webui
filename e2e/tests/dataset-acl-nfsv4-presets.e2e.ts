@@ -1,16 +1,8 @@
 /**
- * Stories: built-in NFSv4 ACL presets, applied through the ACL editor from both
- * places it offers them, and the editor's Apply Owner / Apply Group.
- *
- * A trivial NFSv4 dataset opens the Unix editor, whose Set ACL takes it to the
- * ACL editor, and that raises the preset dialog itself. A non-trivial one opens
- * the ACL editor on its entries, where Use Preset raises the same dialog. Either
- * way a preset only fills the form, and Save is what sends it.
- *
- * Every result is read back through `filesystem.getacl` and `filesystem.stat`.
- * The entries a preset should give are read from `filesystem.acltemplate.by_path`
- * rather than written out here, so a middleware change to a template does not
- * break the spec; only what tells one preset from another is asserted by hand.
+ * Stories: built-in NFSv4 ACL presets applied from both places the ACL editor offers them (Set ACL from the Unix
+ * editor on a trivial dataset, Use Preset on a non-trivial one), and Apply Owner / Apply Group. A preset only fills
+ * the form; Save sends it. Results are read through `filesystem.getacl` and `filesystem.stat`, and expected entries
+ * come from `filesystem.acltemplate.by_path` so a middleware template change does not break the spec.
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {

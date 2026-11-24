@@ -1,22 +1,9 @@
 /**
- * Stories: an admin adds a cloud credential and checks it with Verify
- * Credential, edits one and deletes one, from the Cloud Credentials card on
- * Credentials > Backup Credentials, and the appliance holds what they did.
- *
- * Every credential is SFTP to `127.0.0.1` as root, signing in with a keypair
- * this spec authorizes for root — see `fixtures/loopback-ssh.ts` — so Verify
- * reaches a real remote with no outside service involved. The cloud sync specs
- * create their credential the same way, over the API; this is the spec where
- * the form is what makes it.
- *
- * Each save is asserted twice: the card's row says the screen believed it,
- * `cloudsync.credentials.query` says the appliance did it — and carries the
- * host, user and keypair, which the card does not show.
- *
- * Edit and delete each run beside a second credential that must come through
- * untouched. Every row carries its own Edit and Delete buttons, so an action
- * belongs to whichever row's button was clicked, and a row-targeting bug
- * changes the wrong credential without failing anything else.
+ * Stories: an admin adds a cloud credential and checks it with Verify Credential, edits one and deletes one, from
+ * the Cloud Credentials card on Credentials > Backup Credentials. Every credential is SFTP to `127.0.0.1` as root
+ * with a keypair this spec authorizes (`fixtures/loopback-ssh.ts`), so Verify reaches a real remote with no outside
+ * service. Saves are checked on the row and through `cloudsync.credentials.query`, which carries host, user and
+ * keypair. Edit and delete run beside a bystander that must come through untouched, so a row-targeting bug fails.
  */
 import {
   countCloudCredentials,

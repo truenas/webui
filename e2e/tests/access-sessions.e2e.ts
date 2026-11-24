@@ -1,36 +1,10 @@
 /**
- * Stories: on the Access card of System > Advanced Settings, an admin ends another user's session
- * from its row; cannot end their own; and ends every other session with Terminate Other Sessions
- * while staying signed in.
- *
- * Each is checked on screen and through `auth.sessions`, by session `id`. A client whose session
- * ends logs in again by itself when its socket reopens, under a new id and origin, so "this user
- * has no session" could flake where "this session is gone" cannot.
- *
- * ## The sessions
- *
- * The other session is a second API client, signed in as a seeded administrator for the test and
- * closed after it. Its username tells its row apart from the suite admin's rows. It is opened
- * before the page goes to the card, because the card reads the sessions once, when it opens.
- *
- * The browser's own session is opened with a token the worker `api` client mints, so the card
- * shows it under the suite admin's name, and `auth.sessions` reports it as a `TOKEN` session. Asked
- * through the worker client, `current` marks the worker's session rather than the browser's.
- *
- * ## Terminate Other Sessions
- *
- * It ends every session but the caller's, whoever holds it, and that includes the worker client
- * every later test in the worker uses, and the session whose token the browser redeemed. #14677
- * asks for what that does to both to be measured before this test is kept, and nothing here could
- * run it, so its first CI run is that measurement. It checks that both are still usable afterwards,
- * and does not try to repair either. If either is not, the test fails, Playwright replaces the
- * worker before the next spec, and the test is to be removed rather than worked around. It runs
- * last in the file.
- *
- * ## Setup
- *
- * Before and after every test the second client is closed and the session user deleted. Nothing
- * else is global.
+ * Stories: on the Access card of System > Advanced Settings, an admin ends another user's session, cannot end
+ * their own, and ends all others with Terminate Other Sessions while staying signed in. Sessions are checked by
+ * `id`: an ended client logs in again under a new id, so "this user has no session" could flake where this cannot.
+ * The other session is a second API client, opened before the page because the card reads sessions only once.
+ * Terminate Other Sessions also ends the worker client and the browser's token session; it runs last in the file,
+ * and if either is unusable afterwards (#14677), remove the test rather than work around it.
  */
 import {
   isSessionPresent, readSessions, readUserSessions, type Session,

@@ -1,26 +1,9 @@
 /**
- * Story: the delete-dataset confirmation gate cannot be bypassed.
- *
- * The dialog asks for two things before it will destroy a dataset — its name
- * typed back, and a Confirm tick — and disables its button until it has both.
- * That disabled button was, for three months, the *only* thing enforcing the
- * gate: the tn-dialog migration moved the dialog's actions outside `<form>`,
- * leaving a form with one text input and no submit button, which is precisely
- * the shape the HTML spec submits when Enter is pressed in a text field. The
- * handler did not re-check validity, so Enter in the name field destroyed the
- * dataset with both gates untouched.
- *
- * Nothing below this layer could see it. The unit tests asserted the button is
- * disabled, and it genuinely was; the browser submitted the form anyway. So the
- * claims here are deliberately about the *keyboard*, not about the button, and
- * each is checked through `pool.dataset.query` — a dialog that stayed open is
- * not evidence the dataset survived, and a dialog that closed is not evidence
- * it went.
- *
- * The pair matters as much as either half. A guard that blocks Enter always
- * would pass the first two tests and break deletion for anyone who does not
- * reach for the mouse, so "Enter still submits a completed form" is a claim in
- * its own right.
+ * Story: the delete-dataset confirmation gate (name typed back plus Confirm tick) cannot be bypassed by Enter.
+ * The dialog's form has one text input and no submit button, which HTML submits on Enter, so the disabled button
+ * alone does not enforce the gate and unit tests cannot see it. Claims are about the keyboard, each checked through
+ * `pool.dataset.query`: an open or closed dialog is no evidence either way. "Enter still submits a completed form"
+ * matters too, since a guard that always blocked Enter would pass the first two tests.
  */
 import { ensureDatasetAbsent, ensureZvolPresent, ensureDatasetPresent, findDataset } from '../fixtures/storage';
 import { fillDatasetDeletionConfirmation, openDeleteDatasetDialog } from '../flows/storage';
@@ -53,13 +36,10 @@ test('pressing Enter in the name field does not delete an unconfirmed dataset', 
   await expect(page.locator(deleteDatasetDialogLocators.submit)).toBeDisabled();
   await page.locator(deleteDatasetDialogLocators.name).press('Enter');
 
-  // Completing the confirmation now does double duty, and both halves are
-  // needed. It is the tell: the bug closed this dialog the moment its delete
-  // succeeded, so a dialog that still accepts the name and still enables its
-  // button is one the keypress did not submit. And it is a round trip through
-  // the app, so a delete that keypress *had* started has landed by the time
-  // the appliance is asked below — asserting straight after the press races
-  // the very call it is trying to rule out, and would pass either way.
+  // Completing the confirmation is the tell: the bug closed the dialog once its delete succeeded, so a dialog that
+  // still accepts the name and enables its button was not submitted by the keypress. It is also a round trip
+  // through the app, so any delete the keypress started has landed before the appliance is asked below; asserting
+  // straight after the press would race that call and pass either way.
   await fillDatasetDeletionConfirmation(page, dataset);
 
   expect(await findDataset(api, dataset)).toBeDefined();
@@ -135,14 +115,9 @@ test('Enter still submits once both gates are satisfied', async ({ page, api, po
 });
 
 /**
- * Runs a poll generator, turning a rejection into "no answer yet".
- *
- * Playwright awaits an `expect.poll` generator *outside* its own try/catch, so
- * a rejected call aborts the poll rather than costing one attempt — the same
- * trap `readServiceState` documents in
- * `tests/unauthenticated/fresh-install.e2e.ts`. A recursive dataset delete is
- * brief, but it is still a call that can reject, and a transport blip should
- * not be reported as "the dataset is still there".
+ * Runs a poll generator, turning a rejection into "no answer yet". Playwright awaits an `expect.poll` generator
+ * outside its own try/catch, so a rejection aborts the poll instead of costing one attempt (see `readServiceState`
+ * in `tests/unauthenticated/fresh-install.e2e.ts`). A transport blip must not read as "the dataset is still there".
  */
 async function tolerating<T>(read: () => Promise<T>): Promise<T | undefined> {
   try {

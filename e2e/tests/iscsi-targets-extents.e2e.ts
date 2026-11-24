@@ -1,17 +1,8 @@
 /**
- * Stories: an admin manages iSCSI targets and extents on the full iSCSI page, the
- * one the Block (iSCSI) Shares Targets card's title opens, and the appliance holds
- * what they did.
- *
- * On the Targets tab: adding a target with an authorized network and a group that
- * points at a portal, and associating an extent with a target as a LUN and then
- * unlinking it. On the Extents tab: adding a zvol (Device) extent and a File
- * extent, editing one extent beside another, and deleting a File extent with
- * "Remove file?" ticked.
- *
- * The portal, the initiator group, the zvols and every extent or target a test does
- * not create itself are provisioned over the API. Everything is read back over the
- * API too, since the page shows little of what a target or an extent holds.
+ * Stories: on the full iSCSI page (opened from the Targets card's title) an admin adds a target with a network and
+ * a portal group, associates and unlinks an extent as a LUN, adds Device and File extents, edits one beside
+ * another, and deletes a File extent with "Remove file?" ticked. Everything a test does not create is provisioned
+ * over the API, and everything is read back over the API, since the page shows little of a target or extent.
  */
 import {
   ensureIscsiFileExtentPresent, ensureIscsiInitiatorPresent, ensureIscsiPortalPresent, ensureIscsiShareAbsent,

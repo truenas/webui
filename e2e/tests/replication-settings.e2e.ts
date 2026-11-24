@@ -1,17 +1,8 @@
 /**
- * Stories: an admin changes the replication tasks limit from the Replication
- * card on System > Advanced Settings, and the appliance keeps what they saved.
- *
- * Each save is asserted twice, the way the other Advanced Settings specs do it:
- * the card's readout says the screen believed it, `replication.config.config`
- * says the appliance did it.
- *
- * One test starts with no limit and sets one. The other starts with a limit and
- * empties the field, which the form saves as no limit and the card shows as `–`.
- *
- * The setting is one config record, so there is nothing to delete afterwards.
- * Teardown writes back the limit the appliance held before the first test. See
- * `fixtures/replication.ts` for why that is not a fixed baseline.
+ * Stories: an admin sets and clears the replication tasks limit from the Replication card on System > Advanced
+ * Settings; each save is checked on the card and in `replication.config.config`. An emptied field saves as no
+ * limit and shows as `–`. Teardown writes back the limit the appliance held before the first test; see
+ * `fixtures/replication.ts` for why that isn't a fixed baseline.
  */
 import {
   readReplicationTasksLimit, setReplicationTasksLimit, type ReplicationTasksLimit,

@@ -1,17 +1,8 @@
 /**
- * Stories: an admin adds, edits and deletes a static route from the Static
- * Routes card on System > Network, and the appliance holds what they did.
- *
- * Each save is asserted twice: the card's row says the screen believed it,
- * `staticroute.query` says the appliance did it — and carries the description,
- * which the card does not show.
- *
- * Edit and delete each run beside a second route that must come through
- * untouched. Every row carries its own Edit and Delete buttons, so an action
- * belongs to whichever row's button was clicked, and a row-targeting bug
- * changes the wrong route without failing anything else.
- *
- * Every address is reserved for documentation — see `fixtures/static-routes.ts`.
+ * Stories: an admin adds, edits and deletes a static route from the Static Routes card on System > Network. Each
+ * save is checked on the row and in `staticroute.query`, which also carries the description. Edit and delete run
+ * beside a second route that must stay untouched, to catch row-targeting bugs. Every address is reserved for
+ * documentation; see `fixtures/static-routes.ts`.
  */
 import {
   countStaticRoutes, ensureStaticRouteAbsent, ensureStaticRoutePresent, findStaticRoute,

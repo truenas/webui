@@ -1,27 +1,9 @@
 /**
- * Stories: an admin edits an installed catalog app's port and environment in the install wizard,
- * and the app takes the change; the wizard refuses a port out of range; and an admin converts a
- * catalog app to a custom app from its Application Info card, and it keeps running.
- *
- * Each is checked on screen and through `app.query`, the edits in the app's saved values. Every test
- * seeds its own app with `app.create`, under a name of its own.
- *
- * ## The app
- *
- * IT Tools from the `community` train, as in `apps-install.e2e.ts`: one container, no storage, and a
- * form whose WebUI Port is an int with a `max`, and whose Additional Environment Variables are saved
- * under `it_tools.additional_envs`. Converting is one-way, which is why the convert test has an app
- * of its own.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
- * per worker. `community` is added to the preferred trains if it is missing, and written back
- * afterwards. No test installs through Discover, so the apps agreement is left alone. Teardown
- * deletes both apps after every test, custom or not.
- *
- * Not covered: editing a custom app (`apps-custom-yaml.e2e.ts`), storage, GPU, networks and labels in
- * the form, and whether the new port serves IT Tools.
+ * Stories: an admin edits an installed catalog app's port and environment in the install wizard, is refused an
+ * out-of-range port, and converts a catalog app to a custom app that keeps running. Each is checked on screen and
+ * through `app.query`; every test seeds its own IT Tools app (`community` train) under its own name, since
+ * converting is one-way. Apps run on the shared `e2e_apps` pool; `community` is added to preferred trains and
+ * restored, and teardown deletes both apps after every test.
  */
 import {
   appInstallTimeoutMs,

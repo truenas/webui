@@ -1,16 +1,8 @@
 /**
- * Stories: from a subsystem's details page, an admin opens Manage Ports or Manage
- * Hosts from the card's Add menu and edits or deletes a port or a host outright —
- * not its link to the subsystem, which `nvme-of.e2e.ts` covers. That dialog is the
- * only place in the UI a port or a host is changed or removed.
- *
- * Ports and hosts are shared between subsystems, so every test runs beside a second
- * subsystem holding its own port, host and namespace, which must come through
- * untouched. Deleting one that a subsystem uses is allowed: the dialog warns, names
- * the subsystem, and then deletes with `force`, which drops the link too.
- *
- * The service is never started. Editing a port that a subsystem uses is refused only
- * while the service runs, and nothing here needs a target that serves.
+ * Stories: from a subsystem's details page an admin opens Manage Ports or Manage Hosts and edits or deletes a port
+ * or host outright (unlinking is `nvme-of.e2e.ts`). Ports and hosts are shared, so each test runs beside a second
+ * subsystem whose port, host and namespace must come through untouched. Deleting one in use is allowed after a
+ * warning, with `force`. The service is never started; editing an in-use port is refused only while it runs.
  */
 import {
   associateNvmeOfHost, associateNvmeOfPort, ensureNvmeOfHostAbsent, ensureNvmeOfHostPresent, ensureNvmeOfPortAbsent,

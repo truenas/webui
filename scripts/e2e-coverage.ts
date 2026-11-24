@@ -1,35 +1,11 @@
 #!/usr/bin/env tsx
 
 /**
- * Reports what the E2E suite exercises, as a share of what the UI can do.
- *
- *     yarn e2e                 # each test writes test-results/e2e-coverage/<test>.json
- *     yarn e2e:coverage        # merges them against the inventory below, prints markdown
- *
- * Two measures, both feature-level rather than line-level:
- *
- * - **Middleware methods.** Every method the UI's source names at a call site, against those the
- *   browser actually sent while a test ran. This is the closest mechanical stand-in for "which
- *   features does a test drive": a feature is, roughly, the methods behind it.
- * - **Routes.** Every routed page in the router config, against the URLs the app reached.
- *
- * The recording side is `e2e/support/coverage.ts`. It counts from each test's first navigation or
- * first user input, whichever comes first, so the dashboard every test signs in onto is not
- * credited to all of them.
- *
- * Methods come from the TypeScript AST, in `scripts/e2e-coverage/api-inventory.ts`: call sites and
- * `method:` properties, with literal unions resolved and comments ignored. It is approximate in a
- * known direction. A name built at runtime, or held in anything typed more loosely than a literal
- * union, is not found. When a test sends one anyway, it shows up under "seen in the run but not in
- * the inventory" and joins the denominator, so a gap in the scan can lower the total but never
- * inflate the share covered. Names `@truenas/api-client` sends itself (`auth.login_ex`) land there
- * too, correctly. Uploads go over HTTP rather than the socket, so their methods (`filesystem.put`,
- * `config.upload`) never count.
- *
- * Routes nothing links to are listed in {@link unlinkedRoutes} and reported outside the total.
- *
- * Usage: `yarn e2e:coverage [results-dir] [--out <file>]`. Markdown goes to stdout, and to `--out`
- * when given; a JSON summary is written next to the results as `summary.json`.
+ * Reports the share of UI middleware methods and routed pages the E2E suite exercises, from what
+ * `e2e/support/coverage.ts` records per test (counted from its first navigation or input, so the shared sign-in
+ * dashboard isn't credited to every test). The method inventory is approximate but can only understate
+ * coverage: names it misses join the denominator when seen. HTTP uploads never count; unlinked routes are in
+ * {@link unlinkedRoutes}. Usage: `yarn e2e:coverage [results-dir] [--out <file>]`.
  */
 
 import {

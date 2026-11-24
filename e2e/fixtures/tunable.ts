@@ -1,14 +1,9 @@
 /**
- * Sysctl tunable preconditions, cleanup and readback, over the API.
+ * Sysctl tunable preconditions, cleanup and readback, over the API, keyed on the variable (unique in middleware).
  *
- * A tunable is identified by its variable, which middleware holds unique: a
- * second create for the same variable is refused, so these helpers key on it.
- *
- * Creating, updating and deleting a tunable are jobs, and they reach the
- * kernel. A sysctl tunable that is enabled sets its variable as soon as it is
- * saved, and deleting or disabling it puts back the value middleware recorded
- * when it was created. So the specs use variables that are harmless to move,
- * and a run that dies before its teardown leaves one of them changed.
+ * Create, update and delete are jobs that reach the kernel: an enabled tunable applies on save, and deleting or
+ * disabling it restores the value recorded at creation. So specs use variables harmless to move; a run that dies
+ * before teardown leaves one changed.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

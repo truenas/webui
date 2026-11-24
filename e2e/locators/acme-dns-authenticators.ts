@@ -1,16 +1,9 @@
 /**
- * The ACME DNS-Authenticators card on Credentials > Certificates, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `amce-dns-<name>` — "amce", a typo, and the id as it resolves today. It is
- * kept rather than corrected, because renaming a resolved `data-test` is a
- * breaking change for anything outside this repository that selects it (see
- * `e2e/CLAUDE.md`). A plain concatenation with no pre-normalizing, so
- * {@link kebabTestSegment} is the one to use throughout.
- *
- * The form's provider fields are not in its template: `ix-dynamic-form` renders
- * one `tn-input` per field of the selected provider's schema, tagged with the
- * field's name, so Cloudflare's `api_token` is `input-api-token`.
+ * The ACME DNS-Authenticators card on Credentials > Certificates, and its form. Row ids come from the card's
+ * `uniqueRowTag`, `amce-dns-<name>`: "amce" is a typo kept on purpose, since renaming a resolved `data-test`
+ * breaks outside consumers (`e2e/CLAUDE.md`). No pre-normalizing, so use {@link kebabTestSegment} throughout.
+ * Provider fields come from `ix-dynamic-form`, one `tn-input` per schema field named after it (Cloudflare's
+ * `api_token` is `input-api-token`).
  */
 import { kebabTestSegment } from './test-id';
 

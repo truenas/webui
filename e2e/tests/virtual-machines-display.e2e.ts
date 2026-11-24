@@ -1,22 +1,9 @@
 /**
- * Stories: an admin creates a VM with the wizard on a zvol that already exists, with a VNC display;
- * adds a SPICE display from a VM's Devices page; and opens a running VM's display from its row,
- * which for a SPICE web display is a new tab and for a VNC one is a dialog saying where to connect.
- *
- * The wizard's other branch, a new zvol with the display turned off, is `virtual-machines.e2e.ts`'s.
- *
- * Whatever the screens say, each claim is read back from middleware: the devices from
- * `vm.device.query`, and the calls only the page can make (`vm.port_wizard`,
- * `vm.device.disk_choices`, `vm.resolution_choices`, `vm.get_display_web_uri`) off its socket.
- * A display's password never is: middleware declares it a `Secret`, so `vm.device.query` gives it
- * back redacted.
- *
- * The two running VMs have nothing but a display, so once started they sit at their firmware, as
- * the device-less one in `virtual-machines-power.e2e.ts` does. Whether the console connects,
- * renders or takes the password is not asserted; the claim stops at where the page sends the user.
- *
- * Not covered: editing a display and the zvol-in-use warning. Importing a disk image is
- * `virtual-machines-disk-images.e2e.ts`, and the serial shell `virtual-machines-serial.e2e.ts`.
+ * Stories: an admin creates a VM with the wizard on an existing zvol with VNC, adds a SPICE display from Devices,
+ * and opens a running VM's display (SPICE web: a new tab; VNC: a dialog saying where to connect). Claims are read
+ * back from `vm.device.query` and from page-only calls on its socket, such as `vm.get_display_web_uri`. Not the
+ * display password: middleware returns that `Secret` redacted. Running VMs have only a display, so they sit at
+ * firmware; whether the console connects or renders isn't asserted, only where the page sends the user.
  */
 import type { Page } from '@playwright/test';
 import { ensureDatasetAbsent, ensureDatasetPresent, ensureZvolPresent, listZvolsUnder } from '../fixtures/storage';

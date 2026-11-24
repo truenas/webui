@@ -1,19 +1,9 @@
 /**
- * Stories: an admin adds a Cloudflare ACME DNS authenticator on Credentials >
- * Certificates, is stopped from giving it an API token and an API key at once,
- * edits one and deletes one from its row, and the appliance holds what they did.
- *
- * Every action is read back through `acme.dns.authenticator.query`, which says
- * the appliance did it. The add also reads the new row's cells, and the delete
- * checks that the bystander's row is still on the card.
- *
- * The token is a dummy. Middleware checks a Cloudflare authenticator's
- * credentials only for which of token, key and email were given together, and
- * never calls Cloudflare on save — see `fixtures/acme-dns-authenticators.ts`.
- *
- * The edit and the delete each run beside a second authenticator that must come
- * through untouched. Every row has its own Edit and Delete, so a row-targeting
- * bug acts on the wrong one without failing anything else.
+ * Stories: an admin adds a Cloudflare ACME DNS authenticator on Credentials > Certificates, is refused an API
+ * token and key together, and edits and deletes one; each is read back through `acme.dns.authenticator.query`.
+ * The token is a dummy: middleware never calls Cloudflare on save (see `fixtures/acme-dns-authenticators.ts`).
+ * Edit and delete run beside a bystander authenticator that must come through untouched, so a row-targeting bug
+ * fails the test.
  */
 import {
   cloudflareAttributes,

@@ -1,16 +1,8 @@
 /**
- * Global search: the "Search UI" box in the topbar and the overlay it opens.
- *
- * The topbar's box is only a trigger. Opening it attaches an overlay holding a
- * second, identical box on top of it, and hides the first with `visibility:
- * hidden` so the layout does not shift. Both inputs are `input-global-search`,
- * so while the overlay is open the id matches twice, and only the overlay's copy
- * is visible.
- *
- * Every result is tagged `[tnTestId]="['search-result', hierarchy.join('-')]"`
- * with `tnTestIdType="text"`, whichever section lists it — a page chosen once is
- * the same id under UI and under Recent Searches. The hierarchy is the
- * breadcrumb the result shows, `System › Services`, in English.
+ * Global search: the topbar's "Search UI" box and its overlay. The topbar box is only a trigger: opening it lays
+ * an identical box over it and hides the first with `visibility: hidden`, so `input-global-search` matches twice
+ * and only the overlay's copy is visible. Results are `text` ids `['search-result', hierarchy.join('-')]`, the
+ * English breadcrumb (`System › Services`), the same under UI and Recent Searches.
  */
 import { kebabTestSegment } from './test-id';
 

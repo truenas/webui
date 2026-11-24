@@ -1,18 +1,9 @@
 /**
- * A log of the app's middleware traffic, for a journey whose failure is the
- * app waiting on a call that never comes back.
- *
- * A Playwright trace records HTTP but not WebSocket frames, and the app talks
- * to middleware over one socket. This records, per socket, when it opened and
- * closed, and every JSON-RPC call's id and method, every answer's id and
- * whether it was a result or an error, and every notification's method.
- *
- * Beyond that it records only what is on an allowlist, since the log is
- * published with the run's artifacts: which collection a `core.subscribe` or
- * `core.unsubscribe` names; each event's collection, kind and id; a job
- * event's method, state and times, never its arguments; and the answers and
- * events of the failover methods below, which hold no secrets. Never a call's
- * params otherwise — they carry the password at sign-in.
+ * A log of the app's middleware traffic, for journeys that fail by waiting on a call that never returns; traces
+ * record HTTP but not WebSocket frames. Per socket: open/close, each call's id and method, each answer's id and
+ * result/error kind, each notification's method. It's published, so anything more is allowlisted: subscribe
+ * collections, event collection/kind/id, job method/state/times, and failover answers. Never other params:
+ * they carry the password at sign-in.
  */
 import type { Page, TestInfo } from '@playwright/test';
 

@@ -1,40 +1,10 @@
 /**
- * Stories: an admin creates a replication task between two datasets on the same
- * appliance, and runs one, from the card on Data Protection — and the target
- * really ends up holding the source's snapshots. They also edit, delete and
- * restore from a task, and download its encryption keys, from the card, and the
- * appliance holds what they did.
- *
- * Each action is asserted on the card and on the appliance: `replication.query`
- * for the task as stored, `core.get_jobs` for whether the run worked, and
- * `pool.snapshot.query` for what the run actually did, which is the point of a
- * replication and appears nowhere on the screen.
- *
- * Creating goes through the wizard with Run Once, which is the one path where
- * the UI does both halves itself: it snapshots the source, because there is
- * nothing to send yet, saves the task, and starts it. Running, editing and
- * deleting from the card each act beside a second task that must come through
- * untouched. The row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug would act on the
- * wrong task without failing anything else.
- *
- * Edit opens the full replication form rather than the wizard. The edit renames
- * the task, and the row's ids are built from its name, so the renamed row is
- * found under its new name and the old one must be gone.
- *
- * Restore makes the reverse task and runs nothing, so the restore test runs the
- * original over the API first — that run is setup, not the thing under test —
- * and then runs the restored task from the card into a dataset that did not
- * exist. The stored task's direction and source say it pulls from the original's
- * target; the new dataset holding that snapshot afterwards says the pull ran.
- *
- * Download keys is offered only for a source whose key middleware stores, which
- * a passphrase never is. The source is encrypted with a key the test chooses,
- * so the file can be checked for that exact key rather than for its shape.
- *
- * Every plain source dataset is made fresh for each test. No target is:
- * replication creates its own, so a target that exists afterwards is evidence of
- * a run.
+ * Stories: from the Data Protection card, an admin creates (wizard, Run Once), runs, edits, deletes and restores a
+ * local replication task and downloads its keys; checked via `replication.query`, `core.get_jobs` and
+ * `pool.snapshot.query`. Row actions run beside a second task that must stay untouched. Edit renames the task and
+ * row ids come from its name, so the old row must be gone. Restore runs nothing, so the original runs over the API
+ * first as setup. Keys are offered only for a stored key, so the source uses a chosen key and the file is checked
+ * for it. Sources are fresh per test; no target is made, so one existing afterwards is evidence of a run.
  */
 import { readFile } from 'node:fs/promises';
 import { ensureKeyEncryptedDatasetPresent } from '../fixtures/encryption';

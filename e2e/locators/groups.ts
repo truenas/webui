@@ -1,19 +1,8 @@
 /**
- * Groups page, group form, delete dialog and the members picker.
- *
- * The group form is built by `ix-form-renderer` from a declarative config
- * (`group.form-config.ts`) rather than a hand-written template, so every field's
- * id is its *control name* — the renderer binds `[testId]="field.name"` for all
- * field types. That is why the ids below read like API parameters
- * (`sudo_commands_all`) rather than like labels.
- *
- * Only what the specs select on. The screen carries more — the no-password
- * command list, the picker's search fields — and those ids are
- * deliberately absent until a test needs one, because an entry here reads as a
- * verified fact about the screen and an unexercised one is only a guess at it.
- * `locators/users.ts` holds to the same line.
- *
- * See `signin.ts` for a note on the type-prefixing that produces these values.
+ * Groups page, group form, delete dialog and the members picker. The form is `ix-form-renderer` from
+ * `group.form-config.ts`, which binds `[testId]="field.name"`, so ids read like API params (`sudo_commands_all`).
+ * Only what the specs select on: an entry here reads as a verified fact about the screen, so ids stay out until
+ * a test needs one (as in `locators/users.ts`). See `signin.ts` on the type-prefixing behind these values.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
@@ -34,14 +23,9 @@ export const groupsLocators = {
   showBuiltIns: '[data-test="toggle-show-built-in-groups"]',
 
   /**
-   * A group's row in the list.
-   *
-   * The same normalizer split the users list has: `memoizedRowTag` pre-kebabs
-   * the whole tag with lodash, so `e2e_form_group` lands as
-   * `group-e-2-e-form-group`, while the buttons inside the row (below) go
-   * through the library's normalizer and get `e2e-form-group`. One group, two
-   * spellings, and they agree on any name without a letter-digit boundary —
-   * which is exactly what makes picking the wrong one easy to miss.
+   * A group's row in the list. Like users, `memoizedRowTag` pre-kebabs with lodash (`group-e-2-e-form-group`)
+   * while the row's buttons use the library normalizer (`e2e-form-group`). The two agree on any name without a
+   * letter-digit boundary, which makes picking the wrong one easy to miss.
    */
   row: (group: string): string => `[data-test="row-group-${legacyKebabTestSegment(group)}"]`,
 
@@ -113,18 +97,10 @@ export const groupsLocators = {
   },
 
   /**
-   * The members picker at `/credentials/groups/:pk/members`.
-   *
-   * A dual listbox: users sit on the `available` side, members on the
-   * `selected` side, and the arrow buttons move whatever is selected between
-   * them. Which side a user is on is the entire state of the screen, so the
-   * per-item ids below are how a test reads it.
-   *
-   * Those ids are built from each record's *display* value — the username here
-   * — because that is the only part of a record a test can know in advance; the
-   * picker's own key is a numeric user id the appliance allocates. So they are
-   * unique exactly as far as displayed names are, which for usernames is
-   * always. See the note in `dual-listbox-side.component.html`.
+   * The members picker at `/credentials/groups/:pk/members`, a dual listbox: users on the `available` side,
+   * members on `selected`. Which side a user is on is the whole state, so the per-item ids are how a test reads
+   * it. They're built from the displayed username, since the picker's own key is an appliance-allocated user id,
+   * so they're unique exactly as far as usernames are. See `dual-listbox-side.component.html`.
    */
   members: {
     available: (username: string): string => `[data-test="list-item-available-${kebabTestSegment(username)}"]`,

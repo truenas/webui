@@ -1,16 +1,8 @@
 /**
- * Stories: the two ACL actions in an SMB share's row menu.
- *
- * Edit Share ACL edits the share's own ACL, which SMB checks before the
- * filesystem is asked anything. Its stories add an entry and remove one, and
- * each is asserted through `sharing.smb.getacl`. Edit Filesystem ACL opens the
- * dataset ACL editor on the share's path. Its story saves one entry there and
- * reads it back through `filesystem.getacl`. The editor itself is a separate
- * story, so this one goes no further than one entry.
- *
- * The share sits on a dataset made with the SMB preset, which gives it an
- * NFSv4 ACL that is not trivial. A trivial one would open the editor on a
- * preset picker instead of the entries.
+ * Stories: the two ACL actions in an SMB share's row menu. Edit Share ACL adds and removes an entry, checked via
+ * `sharing.smb.getacl`; Edit Filesystem ACL saves one entry on the share's path, checked via `filesystem.getacl`
+ * (the editor itself is another story). The dataset uses the SMB preset so its NFSv4 ACL is non-trivial; a trivial
+ * one would open the editor on a preset picker instead of the entries.
  */
 import { findUserAclEntries } from '../fixtures/permissions';
 import {

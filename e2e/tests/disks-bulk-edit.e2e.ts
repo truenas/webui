@@ -1,23 +1,10 @@
 /**
- * Stories: an admin ticks several disks on the Disks page under Storage and
- * changes their power settings at once through Edit Disks.
- *
- * Three disks that no pool holds: two targets, which are ticked, and a bystander,
- * which is not. The bystander is what shows the save touched only what was
- * ticked. Every change is read back through `disk.query`.
- *
- * The bulk form prefills a select only when every ticked disk holds the same
- * value, and drops an empty select from the `core.bulk` payload. So a setting
- * the disks disagree on opens empty and, left that way, keeps each disk's own
- * value. Description is not on the bulk form at all, so it is never sent.
- *
- * `disks.e2e.ts` edits the first unused disk too, which is one of these. Both
- * specs write that disk's settings before and after each test, and the suite
- * runs serially, so neither sees the other's values.
- *
- * Not covered: the error dialog for a disk `core.bulk` fails on, which nothing in
- * the UI can cause on CI's disks; selections across pages or after a search; and
- * select-all.
+ * Stories: an admin ticks several disks on Storage > Disks and changes their power settings at once through Edit
+ * Disks. Two unused disks are ticked and a third is a bystander that shows only ticked disks changed; every change
+ * is read back through `disk.query`. The bulk form prefills a select only when all ticked disks agree, and drops an
+ * empty one from the `core.bulk` payload, so a disagreeing setting left empty keeps each disk's value.
+ * `disks.e2e.ts` edits one of these disks too; both specs write its settings before and after each test, and the
+ * suite runs serially.
  */
 import {
   diskBaseline,

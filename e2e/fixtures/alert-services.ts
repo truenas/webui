@@ -1,15 +1,9 @@
 /**
  * Alert service preconditions, cleanup and readback, over the API.
  *
- * Saving a service sends nothing — only the form's Send Test Alert does, which
- * `alert-service-test.e2e.ts` presses, only ever at `127.0.0.1` (see that spec's
- * header). Every saved Slack URL is under `example.com`, which RFC 2606 reserves,
- * and the one SNMP Trap service points at `127.0.0.1`, so even a service that
- * fired a real alert could reach nothing outside the appliance.
- *
- * Middleware does not hold names unique, and a form saved twice by a retried
- * test leaves two services with one name. So these helpers key on the name, and
- * removal takes every match.
+ * Saving sends nothing; only Send Test Alert does, at `127.0.0.1` (see `alert-service-test.e2e.ts`). Slack
+ * URLs are under RFC 2606's `example.com` and SNMP Trap targets `127.0.0.1`, so nothing leaves the appliance.
+ * Names are not unique and a retried save leaves duplicates, so helpers key on the name and removal takes all.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

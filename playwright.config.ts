@@ -24,48 +24,11 @@ try {
 const target = loadTargetConfig();
 
 /**
- * Node-side TLS leniency, for the API client's connection to middleware.
- *
- * This is deliberately NOT conditional on the profile. Two distinct connections
- * are involved, and only one of them varies:
- *
- *   browser -> UI origin     shipped: HTTPS to the appliance (self-signed)
- *                            branch:  HTTP to localhost
- *                            => handled by `ignoreHTTPSErrors`, profile-scoped
- *
- *   Node -> middleware       always wss:// to the appliance (self-signed),
- *                            because `truenas-connection.ts` hardcodes the
- *                            scheme and every profile uses a real appliance
- *                            => unconditional
- *
- * Do not scope this to `ignoreHttpsErrors`: in `branch` mode the browser needs
- * no leniency but the API client still does, and the symptom is a 30 second
- * WebSocket timeout rather than a certificate error — version discovery falls
- * back to `FALLBACK_VERSION` when its `fetch` hits the same certificate, so
- * nothing names the cause.
- *
- * ## Why it is process-wide, which is worse than it should be
- *
- * `NODE_TLS_REJECT_UNAUTHORIZED` is a blunt instrument: it turns verification
- * off for every outbound TLS connection this process makes, for the life of the
- * process, including ones added later by someone who never reads this comment.
- * Scoping it to the one connection that needs it would be strictly better.
- *
- * There is no seam for that, verified against `@truenas/api-client@5.0.0`:
- * `CreateClientOptions` takes `uuid`, `hostnames`, `enabled`, `systemName`,
- * `logger` and `version` — no `WebSocketCtor`, no dispatcher, no TLS options — and the socket
- * is built internally from an rxjs `WebSocketSubjectConfig` the caller never
- * sees. Version discovery's `fetch` needs the same leniency and has no seam
- * either. `NODE_EXTRA_CA_CERTS` is not an answer while the certificate is
- * generated per appliance at install time.
- *
- * So this stays, deliberately and visibly, until the client exposes one of
- * those. It is tracked under "Known gaps" in `docs/status.md` so it
- * does not become permanent by default, and the banner below states it on every
- * run rather than letting it pass unnoticed.
- *
- * An explicit value in the environment still wins, so verification can be
- * forced back on.
+ * Node-side TLS leniency for the API client's wss:// connection to middleware, which is always self-signed.
+ * Not tied to `ignoreHTTPSErrors`: in `branch` mode the browser needs none but the client still does, and the
+ * failure is an unexplained 30-second WebSocket timeout. It's process-wide because `@truenas/api-client` has
+ * no TLS seam (checked at 5.0.0); kept visibly, with the banner below, until it does (see "Known gaps" in
+ * `docs/status.md`). An explicit `NODE_TLS_REJECT_UNAUTHORIZED` still wins.
  */
 if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -79,17 +42,9 @@ if (process.env.NODE_TLS_REJECT_UNAUTHORIZED === undefined) {
 process.env[timingsDirVar] ??= join(import.meta.dirname, 'test-results', timingsDirName);
 
 /**
- * Announce the resolved target before anything runs.
- *
- * This suite exports pools with `destroy: true` and deletes users, so the
- * machine it is pointed at is not a detail to bury in a log line. Emitted after
- * the TLS decision above so the banner reports what is actually in effect.
- *
- * Guarded because this file is not evaluated once. Playwright re-loads the
- * config in every worker process, and spawns a replacement worker after a failed
- * test — so an unguarded `console.warn` reprints the banner partway through the
- * output, which is precisely where a warning stops being read. Workers are
- * forked and inherit this environment, so setting the flag here silences them.
+ * Announces the resolved target first, since the suite destroys pools and deletes users, and after the TLS
+ * decision so it reports what's in effect. Guarded because Playwright reloads this config in every worker,
+ * including replacements after a failure; forked workers inherit the flag, so the banner prints once.
  */
 const announcedVar = 'TN_TARGET_ANNOUNCED';
 if (!process.env[announcedVar]) {
@@ -184,20 +139,9 @@ const singleApplianceProjects = [
   },
   {
     /**
-     * Authenticated tests that type a secret which outlives the job — the
-     * Active Directory test domain's credentials — into the UI.
-     *
-     * The appliance password in every other trace is made per job and dies
-     * with its runner; these do not, and this public repository publishes
-     * `test-results/`. A trace records every `fill` value and every input's
-     * value in its DOM snapshots, password fields included, and a failure's
-     * `error-context.md` holds input values too — which no option turns off
-     * for one file. So, as `ha-license` does for its license, CI traces
-     * nothing here and everything is written to an `outputDir` outside
-     * `test-results/`, which only a project can set. Locally a trace stays on
-     * your own disk, so it is kept on failure as usual.
-     *
-     * A spec joins by living in `tests/unpublished/`.
+     * Specs in `tests/unpublished/` type a long-lived secret (the AD test domain's credentials). Traces and
+     * `error-context.md` capture input values and this public repo publishes `test-results/`, so CI traces
+     * nothing here and output goes to an `outputDir` outside it, which only a project can set.
      */
     name: 'unpublished',
     testDir: './e2e/tests/unpublished',
@@ -225,29 +169,11 @@ const singleApplianceProjects = [
 ];
 
 /**
- * The HA suite, under `e2e/tests-ha`, run only against an HA pair (`TN_HA=true`)
- * and then instead of the single-appliance one: its journeys set the pair up
- * from unlicensed, and nothing in `e2e/tests` expects a pair.
- *
- * A chain of projects, each depending on the one before, because each journey
- * builds on what the last left: the license, then the VIP, the pool and
- * failover, then a failover. A failed link skips the rest rather than letting
- * them fail on what was never set up.
- *
- * `ha-license` records nothing — no trace, screenshot or video, on a retry
- * either. It pastes the HA license into a textarea, which every one of those
- * would capture, and this repository's CI publishes them. What Playwright
- * writes regardless — a failure's `error-context.md` page snapshot, which
- * holds the textarea's value — goes to its own `outputDir`, outside the
- * `test-results/` CI publishes, so no file or directory name decides it.
- *
- * `ha-failover` reaches the pair through its VIP (`haThroughVip`), as a user
- * does once there is one: the controller it signs in to is the one the
- * failover takes the VIP away from.
- *
- * None of them is retried: each changes the pair for good, so a retry starts
- * from where the failed attempt left it rather than from where the journey
- * expects — a retried failover finds controller 2 already active.
+ * The HA suite (`e2e/tests-ha`), run instead of the single-appliance one when `TN_HA=true`. Each project depends
+ * on the last because each journey builds on it (license, VIP, pool, failover); none is retried, since each
+ * changes the pair for good. `ha-license` records nothing and writes to its own `outputDir`, outside the
+ * published `test-results/`, because every artifact would capture the pasted license. `ha-failover` signs in
+ * through the VIP (`haThroughVip`), like a user would.
  */
 const haProjects = target.ha
   ? [
@@ -332,19 +258,10 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
   forbidOnly: isCi,
 
   /**
-   * Per-test ceiling, covering the hooks — Playwright counts `beforeEach` and
-   * `afterEach` against the same budget, and `fresh-install` cleans up in both.
-   *
-   * Sized for the expected slow path, not the worst one. One pool export per
-   * hook plus the journey's own pool creation is about 17 minutes, so 20 leaves
-   * the fixture timeouts spendable and lets them report what a failure costs
-   * rather than being cut short by Playwright's own message.
-   *
-   * It deliberately does not cover every fixture timing out at once. `cleanUp`
-   * runs all four steps even after one throws, so that case is nearer 29
-   * minutes — but it means the appliance is unreachable and the run is lost
-   * whatever this number is, and covering it would put a single retried test
-   * past R8.1's 45 minutes for the whole suite.
+   * Per-test ceiling, hooks included (`fresh-install` cleans up in both). Sized for the expected slow path:
+   * a pool export per hook plus pool creation is about 17 minutes, so fixture timeouts can still report.
+   * Every fixture timing out at once (~29 minutes) means a lost run anyway, and covering it would push one
+   * retried test past R8.1's 45 minutes.
    */
   timeout: 20 * 60_000,
   expect: { timeout: 15_000 },
@@ -383,15 +300,9 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
     actionTimeout: 20_000,
 
     /**
-     * `TN_SLOW_MO=<ms>` pauses between browser actions so a run can be followed
-     * by eye. Pair with `--headed`. There is no CLI flag for this — it is a
-     * launch option.
-     *
-     * Debugging affordance only, never a default: it is a fixed delay on every
-     * action, which is what R8.3 rules out, and it scales with the number of
-     * actions rather than with anything meaningful. It does not help with the
-     * middleware rate limit either — that counts unauthenticated calls, and
-     * everything after sign-in is exempt.
+     * `TN_SLOW_MO=<ms>` pauses between browser actions so a `--headed` run can be followed (a launch option,
+     * no CLI flag). Debugging only: a fixed per-action delay is what R8.3 rules out, and it doesn't help with
+     * the rate limit, which only counts unauthenticated calls.
      */
     launchOptions: {
       // Parsed rather than truthiness-checked: `Number('abc')` is `NaN`, and
@@ -401,30 +312,16 @@ export default defineConfig<E2eTestOptions, Pick<E2eWorkerFixtures, 'haThroughVi
     },
 
     /**
-     * R7.1 — the artifacts of a failed nightly are the whole product.
-     *
-     * The mode has to follow `retries` above. `on-first-retry` records nothing
-     * at all when there is no retry, so pairing it with local retries of 0 would
-     * silently take the trace away from exactly the person who needs it — while
-     * `README.md` and `CLAUDE.md` both still tell them to open one. Locally the
-     * trace is retained on failure instead; in CI the retry is the cheaper hook,
-     * since tracing every test on a nightly buys nothing for the ones that pass.
+     * R7.1: a failed nightly's artifacts are the whole product. The mode follows `retries`: `on-first-retry`
+     * records nothing without a retry, so locally (0 retries) the trace is retained on failure instead.
      */
     trace: isCi ? 'on-first-retry' : 'retain-on-failure',
     screenshot: 'only-on-failure',
 
     /**
-     * `TN_VIDEO=1` records every test at 1280x720, for demonstrating or
-     * reviewing a run. Otherwise video is kept only for a CI retry, which is
-     * when it earns its cost (R7.1).
-     *
-     * Deliberately not given the local `retain-on-failure` treatment the trace
-     * gets: video is recorded for every test and thrown away for the ones that
-     * pass, and unlike a trace it costs on the passing majority while adding
-     * nothing a trace's DOM snapshots do not already show. `TN_VIDEO=1` is there
-     * for the cases where watching it really is what you want.
-     *
-     * Like `TN_SLOW_MO`, there is no CLI flag for this.
+     * `TN_VIDEO=1` records every test at 1280x720 for demos or reviews (no CLI flag). Otherwise video is kept
+     * only for a CI retry (R7.1); unlike a trace it costs on every passing test and adds nothing a trace's DOM
+     * snapshots don't show, so it gets no local `retain-on-failure`.
      */
     video: recordVideo
       ? { mode: 'on', size: { width: 1280, height: 720 } }

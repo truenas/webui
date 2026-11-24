@@ -1,19 +1,9 @@
 /**
- * Story: a read-only administrator sees the seeded records on Users, Groups and
- * Backup Credentials, and finds every control that would change one locked. On
- * Users that is Add, Delete on another user, and Save on the edit form; Delete
- * on their own account is not rendered at all. On Groups, Add and the row's
- * Delete. On Backup Credentials, Add and Delete on each of the three cards, and
- * Save on the SSH connection's edit form. Nothing is changed afterwards.
- *
- * One test with a step per page, so the account signs in once: every sign-in
- * spends from the unauthenticated rate limit (see `flows/roles.ts`).
- *
- * Edit carries no role on Users or on the SSH Connections card, so both forms
- * open. `expectLockedByRole` asks for the role-missing wrapper as well as
- * `disabled`, so a Save held down by a pristine or invalid form does not pass.
- * The user form is also made dirty, so it is closed through the unsaved-changes
- * question and nothing is saved.
+ * Story: a read-only administrator sees seeded records on Users, Groups and Backup Credentials and finds every
+ * control that would change one locked (Delete on their own account isn't rendered). One test, one sign-in: every
+ * sign-in spends from the rate limit (see `flows/roles.ts`). `expectLockedByRole` requires the role-missing wrapper
+ * as well as `disabled`, so a Save held down by a pristine form doesn't pass; the user form is dirtied and closed
+ * through the unsaved-changes question, saving nothing.
  */
 import type { Page } from '@playwright/test';
 import {

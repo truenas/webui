@@ -1,28 +1,9 @@
 /**
- * Stories: an admin creates a Mirror pool, a RAIDZ1 pool and a pool of two striped mirrors
- * through the pool wizard's Automated Disk Selection, and the appliance holds the layout the
- * wizard showed.
- *
- * Each test checks the layout four times: in the Data step's Configuration Preview, on the Review
- * step, on the pool's VDEVs card on the Storage dashboard, and in `pool.query`'s topology. The last
- * is the one that matters. The wizard builds `pool.create`'s payload itself (`topologyToPayload`),
- * so a payload with the wrong layout, width or vdev count would still show the right words on the
- * Review step. Only the appliance would show the mistake.
- *
- * `fresh-install` already builds a RAIDZ2 pool through the wizard as one step of a longer journey.
- * These tests cover the other layouts, and check the Review step and the result, which that one
- * does not.
- *
- * ## Why these tests build pools of their own
- *
- * Creating a pool is the thing under test, so none of them can use the worker-scoped `pool`
- * fixture. Each test owns one pool, by name. Every one of those names is removed before each test
- * and after it, whatever happened. A pool left behind holds its disks, and `findOnlinePool` would
- * hand it to a later spec as that spec's pool.
- *
- * Not covered: RAIDZ2 (`fresh-install`'s), RAIDZ3, dRAID, the other kinds of vdev, Manual Disk
- * Selection, encryption, Inspect VDEVs, Reset Step and Start Over. The wizard's validation is in
- * `pool-wizard-validation.e2e.ts`.
+ * Stories: an admin creates Mirror, RAIDZ1 and striped-mirror pools through Automated Disk Selection, and the
+ * appliance holds the layout the wizard showed. The wizard builds `pool.create`'s payload itself
+ * (`topologyToPayload`), so Review can read right while the payload is wrong; `pool.query`'s topology is the
+ * check that matters. Each test owns one pool by name, removed before and after it, whatever happened: a pool
+ * left behind holds its disks, and `findOnlinePool` would hand it to a later spec.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import { ensurePoolAbsent, findPool, requireUnusedDisks } from '../fixtures/storage';

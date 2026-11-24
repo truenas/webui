@@ -1,30 +1,10 @@
 /**
- * Stories: an admin scrubs the boot pool; changes how often it is scrubbed, and
- * the dialog refuses an interval under a day; activates another boot environment
- * and then the original again; and attaches an unused disk to the boot pool as a
- * mirror, then detaches that disk again from its own row. All from System > Boot
- * and the Boot Pool Status page it links to. Both mirror tests skip where no
- * unused disk is as large as the boot disk, because middleware refuses that
- * attach. The CI appliance is given one for them.
- *
- * Each is asserted twice: the screen, and middleware's own record —
- * `boot.get_state`, `boot.get_disks`, `boot.environment.query`,
- * `system.advanced.config` and `core.get_jobs`.
- *
- * Before each test and after it, unconditionally, the scrub interval is written
- * back as the run found it, and the running boot environment is made the one set
- * to boot next again before the clone is removed — in that order, because a boot
- * environment set to boot next cannot be destroyed.
- *
- * After the mirror tests, any disk they added to the boot pool is detached and
- * wiped. Not before a test: that needs the boot pool's disks as the test found
- * them, and on a boot pool that is already mirrored there is no telling which
- * disk the appliance was installed on. So the mirror tests refuse to start on
- * one, and a run killed mid-test leaves the mirror for a person to undo.
- *
- * The original boot disk is never acted on. Replace is out of scope for that
- * reason, and the mirror teardown only touches a disk that was not in the boot
- * pool when the test started.
+ * Stories: from System > Boot an admin scrubs the boot pool, changes its scrub interval (under a day is refused),
+ * activates another boot environment and back, and attaches then detaches an unused disk as a mirror. Mirror tests
+ * skip with no unused disk as large as the boot disk, and refuse to start on an already-mirrored boot pool. Before
+ * and after each test the scrub interval is restored and the running BE re-activated before the clone is removed,
+ * in that order: a BE set to boot next cannot be destroyed. Mirror teardown detaches and wipes only a disk added
+ * by the test; the original boot disk is never touched, and a run killed mid-test leaves the mirror for a person.
  */
 import {
   attachBootDiskOverApi,

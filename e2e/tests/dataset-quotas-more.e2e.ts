@@ -1,15 +1,9 @@
 /**
- * Stories: an admin clears a user or group quota from its edit form, lists the principals with
- * no quota and filters them out again, removes the quotas a deleted user or group left behind,
- * and is refused a quota for a name that does not exist.
- *
- * `dataset-quotas.e2e.ts` covers add, edit with new values and the row's Delete. These are the
- * page's other paths, and each runs once per kind, as that spec does. Every change is asserted
- * on the page and through `pool.dataset.get_quota`.
- *
- * Quotas live on a dataset of the spec's own, so deleting the dataset is the teardown for all of
- * them. The principals are removed separately: the target and bystander once the file is done, and
- * the one the invalid-quota story deletes mid-test after every test, since a failed run can leave it.
+ * Stories: an admin clears a user or group quota from its edit form, lists and re-hides principals with no quota,
+ * removes quotas a deleted principal left, and is refused a quota for a nonexistent name; each runs once per kind
+ * and is checked on the page and through `pool.dataset.get_quota` (`dataset-quotas.e2e.ts` covers the rest).
+ * Deleting the spec's dataset tears down the quotas; the target and bystander go after the file, and the principal
+ * the invalid-quota story deletes is removed after every test, since a failed run can leave it.
  */
 import { ensureGroupAbsent, ensureGroupPresent, findGroup } from '../fixtures/groups';
 import {

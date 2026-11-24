@@ -1,37 +1,10 @@
 /**
- * Story: an admin updates several installed apps at once, with Update All in the Installed page's
- * header and with Update All Selected in the bulk bar's menu, and an app with nothing to update is
- * left alone.
- *
- * Both open the same bulk Update dialog, which keeps only the apps it was given that have
- * `upgrade_available` and runs one `core.bulk` job over `app.upgrade` for them. Each row starts
- * collapsed, and a collapsed row sends no version, so middleware takes it to the catalog's latest.
- * The dialog closes on the job's first update, and the same way when an upgrade inside it failed,
- * so a test waits for the job to end over the API, checks which apps it was given, and reads every
- * outcome back through `app.query`.
- *
- * ## The apps
- *
- * Two copies of `nginx` from the `test` train, `e2e-upd-a` and `e2e-upd-b`, installed at revision
- * `1.0.5` on their own WebUI ports, as `apps-upgrade.e2e.ts` installs one. That spec says why this
- * app and revision. The bystander, `e2e-upd-keep`, is IT Tools from `community`, as
- * `apps-install.e2e.ts` runs it: its train keeps one revision, so it is always up to date. Its image
- * is on ghcr.io.
- *
- * nginx's images, `nginx` and `bash`, are untagged on Docker Hub. They are pulled once before the
- * first test, apps are deleted between tests with their images kept, and the images go after the
- * last test. `app.upgrade` pulls the new revision's images itself, so each upgrade still costs one.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
- * per worker. `community` is added to the preferred trains if it is missing, and the trains are
- * written back after the last test. Teardown deletes the three apps before and after every test.
- *
- * Not covered: picking a version for one app in the dialog. From `1.0.5` the only newer revision
- * the catalog keeps is the latest, so the dialog offers no choice, and `1.0.4`, which would offer
- * one, bind-mounts a host path under `/usr`, which is read-only on TrueNAS. Also not covered: a
- * failed upgrade inside the bulk, image-only updates, and the Changelog link.
+ * Story: an admin updates several apps via Update All and Update All Selected; an up-to-date app is left alone.
+ * The dialog closes on the job's first update, even if one failed, so tests wait for the `core.bulk` job over the
+ * API and read every outcome through `app.query`. Apps are two `nginx` copies from `test` at `1.0.5` (see
+ * `apps-upgrade.e2e.ts` for why) plus IT Tools as an always-current bystander. Images are pulled once and deleted
+ * after the last test; `community` is added to preferred trains and restored. Picking a version is not covered:
+ * from `1.0.5` the catalog offers only the latest, and `1.0.4` bind-mounts a read-only path under `/usr`.
  */
 import {
   appInstallTimeoutMs,

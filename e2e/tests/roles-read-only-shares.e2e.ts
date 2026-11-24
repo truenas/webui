@@ -1,20 +1,8 @@
 /**
- * Story: a read-only administrator sees the shares on the Shares dashboard's
- * SMB, NFS and iSCSI cards, and finds every control that would change one
- * locked. On the SMB and NFS cards that is Add, the service switch, the row's
- * Enabled switch, Delete in the row menu, and Save on the edit form; on the
- * iSCSI card, the Wizard, Delete in the row menu, and Add on the Targets page.
- * Nothing is changed afterwards.
- *
- * One test with a step per card, so the account signs in once: every sign-in
- * spends from the unauthenticated rate limit (see `flows/roles.ts`).
- *
- * Edit carries no role on these cards, so its form opens. The form is made
- * dirty and valid before Save is checked, so that Save can only be held down by
- * the role; `expectLockedByRole` also asks for the role-missing wrapper.
- *
- * Services are never started or stopped here. The admin only has to see the
- * switch, whatever its position, and each one's state is read before and after.
+ * Story: a read-only administrator sees the SMB, NFS and iSCSI share cards and finds every control that would
+ * change one locked. One test, one sign-in (see `flows/roles.ts`). Edit forms are made dirty and valid so only the
+ * role holds Save down; `expectLockedByRole` also requires the role-missing wrapper. Services are never started or
+ * stopped; each one's state is read before and after.
  */
 import type { Page } from '@playwright/test';
 import {

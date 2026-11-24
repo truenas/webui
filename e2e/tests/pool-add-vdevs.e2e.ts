@@ -1,27 +1,9 @@
 /**
- * Stories: from "Add VDEV" on a pool's VDEVs page, an admin adds a second mirror
- * to a one-mirror pool, and adds a cache and a log to it in one Update Pool.
- *
- * When adding to a pool, the wizard's Data step does not offer a layout: it shows
- * the pool's own, read-only, and the new data vdev takes it. The Review step
- * summarises what is being added, not the pool it is added to, so each test
- * checks it holds only the new vdevs. What the appliance then holds is read back
- * from the pool's card on the Storage dashboard, where the wizard lands, and
- * through `pool.query`, which is the one that matters.
- *
- * The first test also seeds a dataset before the update and reads it back after,
- * and both check the pool's original mirror is still there by its guid: adding
- * vdevs must change the pool, not rebuild it.
- *
- * ## Why this spec builds its own pool
- *
- * Both tests change a pool's topology, so neither may use the worker-scoped
- * `pool` fixture other specs share. The pool is built in each test, one two-disk
- * mirror, and destroyed before and after each one: with what is added it holds
- * four disks, and `fresh-install` needs nine alike.
- *
- * Not covered: a spare, which `pool-devices.e2e.ts` adds the same way; special
- * and dedup vdevs; and a pool whose data vdevs are RAIDZ.
+ * Stories: from "Add VDEV" on a pool's VDEVs page an admin adds a second mirror to a one-mirror pool, and a cache
+ * and log in one Update Pool. Review shows only what is added; results are read on the Storage card and through
+ * `pool.query`. The first test also seeds a dataset and both check the original mirror's guid: adding vdevs must
+ * not rebuild the pool. Topology changes rule out the shared `pool` fixture, so each test builds a two-disk mirror
+ * and destroys it before and after: it grows to four disks, and `fresh-install` needs nine alike.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import { ensureDevicePoolPresent, readPoolStatus } from '../fixtures/pool-devices';

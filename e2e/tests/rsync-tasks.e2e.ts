@@ -1,20 +1,9 @@
 /**
- * Stories: an admin adds, edits and deletes a rsync task from the card on Data
- * Protection, and the appliance holds what they did.
- *
- * Each action is asserted twice, the way the other card specs do it: the card's
- * row says the screen believed it, and `rsynctask.query` says the appliance did
- * it — and carries what the card does not show at all, the remote end, the
- * direction, the schedule and the transfer options.
- *
- * Edit and delete each act beside a second task that must come through
- * untouched. The row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug would act on the
- * wrong task without failing anything else.
- *
- * Every task is in Module mode against a host where no rsync daemon listens —
- * see `fixtures/rsync-tasks.ts` — and syncs a dataset of its own, made fresh
- * for each test, because the card names a row by its path.
+ * Stories: an admin adds, edits and deletes a rsync task from the Data Protection card. Each action is checked on
+ * the row and in `rsynctask.query`, which also carries the remote end, direction, schedule and transfer options.
+ * Edit and delete run beside a second task that must stay untouched, to catch row-targeting bugs. Tasks use Module
+ * mode against a host with no daemon (`fixtures/rsync-tasks.ts`), each on a fresh dataset because the card names a
+ * row by its path.
  */
 import {
   countRsyncTasks,

@@ -89,16 +89,7 @@ const projectOverrides = {
     }],
     '@angular-eslint/prefer-host-metadata-property': 'error',
     '@angular-eslint/prefer-output-emitter-ref': 'error',
-    // Enforced as an error for `src/` below instead of as a repo-wide warning.
-    'truenas/max-comment-lines': 'off',
-  },
-};
-
-// `pools-dashboard.component.ts` keeps one long comment until the open storage store migration lands.
-const commentCapOverrides = {
-  files: ['src/**/*.ts'],
-  ignores: ['src/app/pages/storage/pools-dashboard.component.ts'],
-  rules: {
+    // The shared default is a warning, which never fails `yarn lint`.
     'truenas/max-comment-lines': ['error', { max: 6, skipBlankLines: true }],
   },
 };
@@ -221,5 +212,4 @@ export default [
   specOverrides,
   zonelessOverrides,
   e2eOverrides,
-  commentCapOverrides,
 ];

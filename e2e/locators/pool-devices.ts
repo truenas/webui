@@ -1,18 +1,9 @@
 /**
- * A pool's VDEVs page, its ZFS Info and Disk Info cards, and the Replace Disk,
- * Extend and RAIDZ Extend dialogs.
- *
- * "Add VDEV" opens the creation wizard with the pool's name fixed and every step
- * after General optional, so its controls are `poolWizardLocators` in
- * `locators/storage.ts`.
- *
- * The page is `/storage/<id>/vdevs`, reached from "View VDEVs" on the pool's
- * VDEVs card on the Storage dashboard. It is a tree: one group per kind of vdev
- * (`Data VDEVs`, `Spare`, …), the vdevs under it, and the disks under those.
- *
- * Every vdev and disk is keyed by its ZFS `guid`, not by its name, so a test
- * reads the guid from `pool.query` first. Guids are all digits, which no
- * normalizer changes. A group is keyed by its `VDevType`: `data`, `spare`, ….
+ * A pool's VDEVs page (`/storage/<id>/vdevs`, via "View VDEVs" on the dashboard's VDEVs card), its ZFS Info and
+ * Disk Info cards, and the Replace Disk, Extend and RAIDZ Extend dialogs. "Add VDEV" opens the creation wizard,
+ * so its controls are `poolWizardLocators` in `locators/storage.ts`. The page is a tree of groups keyed by
+ * `VDevType` (`data`, `spare`), vdevs, then disks; vdevs and disks are keyed by ZFS `guid`, not name, so read it
+ * from `pool.query` first. Guids are all digits, which no normalizer changes.
  */
 import { kebabTestSegment } from './test-id';
 

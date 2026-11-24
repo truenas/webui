@@ -1,17 +1,8 @@
 /**
- * Stories: an admin adds, edits and deletes an alert service from the Alert
- * Services table on System > Alert Settings, and the appliance holds what they did.
- *
- * Each save is asserted twice: the table's row says the screen believed it,
- * `alertservice.query` says the appliance did it — and carries the webhook URL,
- * which the table does not show.
- *
- * Edit and delete each run beside a second service that must come through
- * untouched. Every row carries its own Edit and Delete buttons, so an action
- * belongs to whichever row's button was clicked, and a row-targeting bug
- * changes the wrong service without failing anything else.
- *
- * Every service is a Slack one pointed at `example.com` — see `fixtures/alert-services.ts`.
+ * Stories: an admin adds, edits and deletes an alert service from the Alert Services table on System > Alert
+ * Settings. Each save is checked on the row and through `alertservice.query`, which also carries the webhook URL.
+ * Edit and delete run beside a bystander service that must come through untouched, so a row-targeting bug fails
+ * the test. Every service is Slack pointed at `example.com` (see `fixtures/alert-services.ts`).
  */
 import {
   ensureAlertServiceAbsent, ensureSlackAlertServicePresent, findAlertService,

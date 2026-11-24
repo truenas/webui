@@ -1,14 +1,9 @@
 /**
- * Stories: looking after an access key that already exists.
+ * Stories: an administrator rotates a key's secret and deletes a key from the row menu under Credentials, each
+ * starting from a key the API created (minting through the UI is `s3.e2e.ts`'s story).
  *
- * An administrator rotates a key's secret and deletes a key, both from the row
- * menu under Credentials. Each starts from a key the API created — minting one
- * through the UI is `s3.e2e.ts`'s story.
- *
- * Rotation is the interesting one: middleware issues a new secret under the
- * same access key id and shows it once. The dialog is the only place the new
- * secret ever appears, so the test reads it there and compares it with the
- * secret the API handed out at creation.
+ * Rotation issues a new secret under the same access key id and shows it once, so the test reads it from the
+ * dialog and compares it with the secret the API handed out at creation.
  */
 import {
   ensureS3AccessKeysAbsent, findS3AccessKeys, provisionS3AccessKey,

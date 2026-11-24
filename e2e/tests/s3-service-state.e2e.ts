@@ -1,16 +1,9 @@
 /**
- * Stories: the S3 service as the dashboard card shows it.
+ * Stories: an administrator adds a bucket while the S3 service is running (no "Start S3 Service" prompt) and stops
+ * it with the card header's switch; and sets the managed root dataset for protocol-made buckets.
  *
- * An administrator adds a bucket while the service is already running, which
- * the app takes in its stride — no "Start S3 Service" prompt — and then stops
- * the service with the switch in the card's header. Separately, an
- * administrator sets the managed root dataset the service creates
- * protocol-made buckets under.
- *
- * Every other S3 journey starts from a stopped service; this file is the one
- * that starts from a running one, so the other branch of the post-save check
- * is exercised too, and the header switch — which nothing else touches — is
- * shown to call `service.control` for real.
+ * Every other S3 journey starts from a stopped service, so this file covers the post-save check's other branch,
+ * and shows the header switch, which nothing else touches, calling `service.control` for real.
  */
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {

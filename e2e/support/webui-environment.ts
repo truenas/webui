@@ -1,29 +1,9 @@
 /**
- * Reads the appliance webui itself is pointed at.
- *
- * In-tree, the suite and the dev server should agree on which machine they are
- * talking to without being told twice. `yarn ui remote -i <ip>` already writes
- * that address into `src/environments/environment.ts` for the dev server and
- * proxy, so `TN_HOST=auto` reads it from there rather than naming the appliance
- * again — one command configures both.
- *
- * Opt-in, never a default. This used to be the fallback whenever `TN_HOST` was
- * unset, which meant `yarn e2e` with no `.env` silently pointed a suite that
- * destroys pools and deletes users at the developer's own dev appliance. See
- * `config.ts`.
- *
- * Deliberately parsed rather than imported. `environment.ts` is an Angular
- * source file (it imports `WebUiEnvironment` from a path only the app's
- * tsconfig resolves), so importing it would drag Angular's module resolution
- * into the Playwright runner for one string.
- *
- * Environment variables still win, so CI can point the suite at a machine
- * without touching the working tree — which matters, because `environment.ts`
- * is gitignored and CI has no reason to run `yarn ui remote`.
- *
- * This module is the one place the suite reaches into webui's source. When the
- * suite lived in its own repository that was forbidden outright (R2.10); in
- * tree it is the whole point, but it stays isolated so the coupling is visible.
+ * Reads the appliance webui is pointed at, so `TN_HOST=auto` reuses what `yarn ui remote -i <ip>` wrote to
+ * `src/environments/environment.ts`. Opt-in, never a default: the suite destroys pools (see `config.ts`).
+ * Parsed rather than imported, because importing would drag Angular's tsconfig resolution into the runner.
+ * Environment variables still win, so CI needs neither the gitignored file nor `yarn ui remote`.
+ * The one place the suite reaches into webui's source (R2.10); kept isolated so the coupling is visible.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';

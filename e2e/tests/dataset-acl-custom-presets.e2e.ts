@@ -1,14 +1,9 @@
 /**
- * Stories: saving the ACL editor's entries as a custom preset, applying that preset to another
- * dataset, and deleting it, all on NFSv4 datasets.
- *
- * A custom preset is an ACL template, and templates are global to the appliance: they outlive every
- * dataset. So every test deletes `e2e_acl_custom` over the API before and after it runs, whatever it
- * did in between. The two stories that need the preset to exist create it over the API, from the
- * source dataset's own entries with `group@` changed to Read, so it is told apart from what the SMB
- * preset gives.
- *
- * Each result is read back through `filesystem.acltemplate.query` and `filesystem.getacl`.
+ * Stories: saving the ACL editor's entries as a custom preset, applying it to another dataset, and deleting it, on
+ * NFSv4 datasets. Presets are ACL templates, global to the appliance, so every test deletes `e2e_acl_custom` over
+ * the API before and after. Where the preset must exist it is created from the source's entries with `group@` set
+ * to Read, to tell it from the SMB preset. Results are read through `filesystem.acltemplate.query` and
+ * `filesystem.getacl`.
  */
 import {
   ensureAclTemplateAbsent,

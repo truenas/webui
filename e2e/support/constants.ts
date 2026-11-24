@@ -7,14 +7,9 @@
  * page object exists.
  */
 /**
- * The app's root layout element. Present only once authentication has completed
- * and the shell has rendered, which makes it the reliable "we are in" signal —
- * a URL change happens earlier and can precede a usable page.
- *
- * This is a component selector rather than a `data-test` attribute, so it is a
- * deliberate exception to R5.1. It is justified: the layout is not an
- * interactive element and would not carry a test ID, and this is harness
- * plumbing rather than a test assertion. It should remain the only exception.
+ * The app's root layout element: present only once authentication completes and the shell renders, so it's
+ * the reliable "we are in" signal (a URL change can precede a usable page). A component selector, a deliberate
+ * exception to R5.1: the layout is non-interactive harness plumbing with no test ID. Keep exceptions this rare.
  */
 export const adminLayout = 'ix-admin-layout';
 
@@ -51,15 +46,9 @@ export const errorDialogHeading = 'ix-error-dialog h2';
 export const errorDialogBody = 'ix-error-dialog [role="alertdialog"]';
 
 /**
- * The development build's concurrency diagnostic, by its own test ID.
- *
- * `websocket-handler.service.ts` raises it when 20 middleware calls are in
- * flight at once, naming itself `concurrent-calls` there so its title carries
- * an id of its own — both open the same component. That name is spelled in both
- * places and nothing links them, so a rename there needs one here. Gated on `!environment.production`,
- * so only `branch` sees it.
- *
- * A real signal, but about the *page*, not the journey a test asserts, so the
- * harness dismisses it rather than failing.
+ * The development build's concurrency diagnostic, raised by `websocket-handler.service.ts` when 20 calls are
+ * in flight. Its `concurrent-calls` name is spelled there too with nothing linking them, so rename both.
+ * Dev-build only (`!environment.production`), so only `branch` sees it. It's about the page, not the
+ * journey, so the harness dismisses it rather than failing.
  */
 export const concurrentCallsDialogTitleId = '[data-test="dialog-title-concurrent-calls"]';

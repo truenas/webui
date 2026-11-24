@@ -1,22 +1,9 @@
 /**
- * Stories: an admin creates a virtual machine with the wizard, edits one, and deletes one, from the
- * Virtual Machines page, and the appliance holds what they did.
- *
- * No test starts a machine. The wizard is told not to start it on boot, every check reads the
- * state back as STOPPED, and the rows are expanded through their Name cell so that no click can
- * land on the Running toggle beside it.
- *
- * Each change is asserted through `vm.query`, because the list shows a VM's name and running
- * state and little else until a column is turned on. The created VM's devices are read back too,
- * since the wizard makes its disk and NIC in separate calls after the VM itself, and a VM with no
- * disk would still have a row.
- *
- * Edit and delete both act beside a bystander VM that must come through untouched. Both are
- * reached from the row's detail panel, which is keyed by VM id, so acting on the wrong row would
- * act on the wrong VM and still look right on screen.
- *
- * The created VM's zvol goes under a dataset of its own, because the wizard names it after the VM
- * plus a random suffix. Removing that dataset removes whatever the wizard put there.
+ * Stories: an admin creates, edits and deletes a VM from the Virtual Machines page. No machine is started: the
+ * wizard disables start on boot, checks read STOPPED, and rows open via their Name cell so no click hits the Running
+ * toggle. Changes are checked in `vm.query`, and the created VM's devices too, since the wizard adds disk and NIC in
+ * separate calls. Edit and delete run beside a bystander VM that must stay untouched. The created zvol goes under
+ * its own dataset because the wizard names it with a random suffix; removing the dataset removes it.
  */
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import {

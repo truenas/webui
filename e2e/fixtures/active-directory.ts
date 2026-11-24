@@ -1,26 +1,10 @@
 /**
- * Joining and leaving a real Active Directory domain, over the API, for the
- * specs that test the UI around a join — and the cleanup after the one that
- * joins through the form.
- *
- * The domain is the internal test domain (`TN_AD_*`), shared with other
- * automation and outliving the run. Three things keep a run from leaving a mark
- * on it:
- *
- * - Every computer account is named by {@link adComputerName}: a prefix nobody
- *   else uses, then something random, so concurrent runs and shards never
- *   collide, and anything a dead runner left behind can be told apart.
- * - DNS updates stay off, so a join registers nothing in the domain's DNS. It
- *   would register the appliance's NAT address, `10.0.2.15`, which every CI
- *   appliance has.
- * - Teardown leaves the domain whenever a join got as far as the domain
- *   knowing about it, which deletes the computer account.
- *
- * None of the `TN_AD_*` values may reach a failure message: JUnit is published,
- * and GitHub masks a secret in the log only where it appears verbatim, not
- * upper-cased into a realm or escaped into a regex. A job's error names the
- * domain and often a controller, so everything here runs inside
- * {@link withActiveDirectoryRedacted}, and so must a spec's tests and hooks.
+ * Joining and leaving the shared internal AD domain (`TN_AD_*`) over the API, plus cleanup after the form join.
+ * Computer accounts are named by {@link adComputerName} (unique prefix plus random) so runs never collide and
+ * leftovers are identifiable; DNS updates stay off (a join would register the NAT address `10.0.2.15`); and
+ * teardown leaves whenever the domain learned of a join, deleting the account. No `TN_AD_*` value may reach a
+ * failure message: JUnit is published and GitHub masks only verbatim secrets, so everything here, and a spec's
+ * tests and hooks, run inside {@link withActiveDirectoryRedacted}.
  */
 import type { JobParams } from '@truenas/api-client';
 import { escapeRegExp } from 'lodash-es';

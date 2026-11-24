@@ -33,13 +33,10 @@ test('the form refuses bad credentials without saying which half was wrong', asy
     await expectSignInRefused(page, wrongCredentialsMessage);
   });
 
-  // No "and the right password still works" step here, deliberately. It would
-  // guard against a form that refuses *everything* — but `admin-user.e2e.ts`
-  // signs in through this same form in this same project, so that failure could
-  // not hide. Proving it again costs another login out of the rate-limit budget,
-  // and under the `branch` profile a third login in quick succession is what
-  // raises the dev-only "Max Concurrent Calls" dialog, failing this test for a
-  // reason that has nothing to do with what it asserts.
+  // No "the right password still works" step, deliberately: `admin-user.e2e.ts` signs in through this form in the
+  // same project, so a form refusing everything can't hide. Another login costs rate-limit budget, and under the
+  // `branch` profile a third quick login raises the dev-only "Max Concurrent Calls" dialog, failing this test for
+  // a reason unrelated to what it asserts.
 });
 
 /**

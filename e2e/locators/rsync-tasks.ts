@@ -1,25 +1,9 @@
 /**
- * The Rsync Tasks card on Data Protection, its full list, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `convertStringToId('card-rsync-task-' + path + '-' + remotehost)`, which
- * lowercases the tag and turns its punctuation into hyphens before the
- * library's normalizer sees it. As on the snapshot task card, lowercasing first
- * and then running {@link kebabTestSegment} is the same id.
- *
- * The tag carries the path and the remote host and nothing else, so editing
- * either renames every id on the row, and two tasks on one path to one host
- * share every id. The specs give each task a dataset of its own and never edit
- * the host.
- *
- * A task saved from the form in SSH mode through a keychain connection has no
- * host at all: the form sends `remotehost: null`, middleware keeps it, and the
- * card's string concatenation writes it as `null`. So the card's locators take
- * `null` for such a row, and its tag ends in `-null`.
- *
- * The form's controls declare their `testId`s, its user is the same
- * `ix-user-combobox` the cron form uses, and its schedule is the shared
- * `ix-scheduler`.
+ * The Rsync Tasks card on Data Protection, its full list, and its form. Row ids come from
+ * `convertStringToId('card-rsync-task-' + path + '-' + remotehost)`; lowercasing then {@link kebabTestSegment} gives
+ * the same id. Editing path or host renames the row, and two tasks on one path to one host share ids, so specs give
+ * each task its own dataset. An SSH task via a keychain connection saves `remotehost: null`, so its tag ends in
+ * `-null` and the locators take `null`. The form's user is `ix-user-combobox`, its schedule `ix-scheduler`.
  */
 import { kebabTestSegment, legacyKebabTestSegment } from './test-id';
 
