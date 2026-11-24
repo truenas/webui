@@ -138,6 +138,11 @@ function pick(changed, map, specs, sources) {
     if (!areaOf(path)) {
       return { full: true, reason: `${path} is outside every mapped page area` };
     }
+    // A partial has no component of its own, and any stylesheet in any area
+    // can @import it, so there is no area to narrow to.
+    if (/(^|\/)_[^/]*\.scss$/.test(path)) {
+      return { full: true, reason: `${path} is a stylesheet partial, which any area can import` };
+    }
     for (const dependent of dependents(path, importers)) {
       const area = areaOf(dependent);
       if (!area) {
