@@ -25,8 +25,8 @@ export class DatasetQuotaService {
    * The user or group quotas on `path`. A row whose account no longer exists has a `null` name, which the quota list
    * offers to remove.
    *
-   * Every row needs a name lookup, one call per account, so usage-only rows (an owner of files with no limit set,
-   * possibly thousands of them) are left out unless `includeUsageOnly` asks for them.
+   * Every row needs a name, and accounts outside the local database cost a call each, so usage-only rows (an owner
+   * of files with no limit set, possibly thousands of them) are left out unless `includeUsageOnly` asks for them.
    */
   getQuotas(
     path: string,
@@ -65,10 +65,8 @@ export class DatasetQuotaService {
     if (!xids.length) {
       return of([]);
     }
-    const type = toUserspaceType(quotaType);
-    return forkJoin(xids.map((xid) => this.getName(type, xid))).pipe(
-      map((names) => {
-        const namesById = new Map(xids.map((xid, i) => [xid, names[i]]));
+    return this.getNames(toUserspaceType(quotaType), xids).pipe(
+      map((namesById) => {
         return rows.map((row): DatasetQuota => ({
           id: row.xid,
           name: namesById.get(row.xid) ?? null,
@@ -109,6 +107,37 @@ export class DatasetQuotaService {
         });
         const [first, ...rest] = [...items.values()];
         return this.api.call('zfs.resource.userspace.set', [{ path, quotas: [first, ...rest] }]);
+      }),
+    );
+  }
+
+  /**
+   * Names for many ids at once. Local accounts come from one `user.query` / `group.query`; only the ids it doesn't
+   * return (directory-service accounts, or ones that no longer exist) are looked up one by one.
+   */
+  private getNames(type: UserspaceType, xids: number[]): Observable<Map<number, string | null>> {
+    const known$: Observable<Map<number, string>> = type === 'user'
+      ? this.api.query('user.query', [['uid', 'in', xids]], { select: ['uid', 'username'] }).pipe(
+          map((users) => new Map(users.map((user) => [user.uid, user.username]))),
+        )
+      : this.api.query('group.query', [['gid', 'in', xids]], { select: ['gid', 'group'] }).pipe(
+          map((groups) => new Map(groups.map((group) => [group.gid, group.group]))),
+        );
+
+    return known$.pipe(
+      // Without the role to list accounts, every id is looked up on its own, as before.
+      catchError(() => of(new Map<number, string>())),
+      switchMap((known) => {
+        const unknown = xids.filter((xid) => !known.has(xid));
+        if (!unknown.length) {
+          return of(new Map<number, string | null>(known));
+        }
+        return forkJoin(unknown.map((xid) => this.getName(type, xid))).pipe(
+          map((names) => new Map<number, string | null>([
+            ...known,
+            ...unknown.map((xid, i): [number, string | null] => [xid, names[i]]),
+          ])),
+        );
       }),
     );
   }

@@ -96,4 +96,13 @@ describe('QuotasSectionComponent', () => {
       reservation: 2 * GiB,
     });
   });
+
+  it('requires an alert threshold once Inherit is unticked', async () => {
+    await (await getCheckbox('quota_warning_inherit')).uncheck();
+    // The harness can't type an empty string; clearing the field is what the user does.
+    spectator.typeInElement('', '[formControlName="quota_warning"] input');
+
+    expect(spectator.component.form.controls.quota_warning.hasError('required')).toBe(true);
+    expect(spectator.component.form.valid).toBe(false);
+  });
 });

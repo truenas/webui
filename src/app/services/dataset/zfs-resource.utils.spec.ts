@@ -295,6 +295,25 @@ describe('zfs-resource utils', () => {
     });
   });
 
+  describe('cleared user properties', () => {
+    it('leaves a cleared alert threshold unset on create instead of writing "null"', () => {
+      const args = toZfsResourceCreate({ name: 'dozer/new', quota_warning: null, quota_critical: 90 } as unknown as DatasetCreate);
+
+      expect(args.user_properties).toEqual({ 'org.freenas:quota_critical': '90' });
+    });
+
+    it('inherits a cleared alert threshold on update instead of writing "null"', () => {
+      const args = toZfsResourceSet('dozer/data', { refquota_warning: null } as unknown as DatasetUpdate);
+
+      expect(args.user_properties).toEqual({});
+      expect(args.inherit).toEqual(['org.freenas:refquota_warning']);
+    });
+
+    it('still writes an empty comment, which keeps the parent\'s from showing through', () => {
+      expect(toZfsResourceSet('dozer/data', { comments: '' }).user_properties).toEqual({ 'org.freenas:description': '' });
+    });
+  });
+
   describe('toZfsResourceSet', () => {
     it('puts INHERIT into inherit, user properties included', () => {
       expect(toZfsResourceSet('dozer/nas145308-new-plain', {

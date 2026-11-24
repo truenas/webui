@@ -2,10 +2,10 @@ import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { firstValueFrom } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetQuotaService } from 'app/services/dataset/dataset-quota.service';
 
 type UserspaceRows = CallResponse<WebUiApiDirectory, 'zfs.resource.userspace.list'>;
@@ -29,6 +29,8 @@ describe('DatasetQuotaService', () => {
       mockApi([
         mockCall('zfs.resource.userspace.list', rows),
         mockCall('zfs.resource.userspace.set', null),
+        mockQuery('user.query', []),
+        mockQuery('group.query', []),
         mockCall('user.get_user_obj', (params) => ({
           pw_name: params[0]?.uid !== undefined ? `user${params[0].uid}` : '',
           pw_uid: params[0]?.username === 'john' ? 1000 : 0,
@@ -121,6 +123,43 @@ describe('DatasetQuotaService', () => {
 
       expect(await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.User))).toEqual([]);
       expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', expect.anything());
+    });
+  });
+
+  describe('name lookups', () => {
+    it('takes local names from one user.query and looks up only the ids it does not return', async () => {
+      spectator.inject(MockApiService).mockQuery('user.query', [
+        { uid: 1000, username: 'alice' },
+      ] as WebUiQueryEntity<'user.query'>[]);
+
+      const quotas = await firstValueFrom(
+        spectator.service.getQuotas('dozer/data', DatasetQuotaType.User, { includeUsageOnly: true }),
+      );
+
+      expect(api.query).toHaveBeenCalledWith('user.query', [['uid', 'in', [1000, 1001]]], { select: ['uid', 'username'] });
+      expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1000 }]);
+      expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1001 }]);
+      expect(quotas.map((quota) => quota.name)).toEqual(['alice', 'user1001']);
+    });
+
+    it('takes group names from group.query', async () => {
+      spectator.inject(MockApiService).mockQuery('group.query', [
+        { gid: 1000, group: 'staff' },
+      ] as WebUiQueryEntity<'group.query'>[]);
+
+      const quotas = await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.Group));
+
+      expect(api.call).not.toHaveBeenCalledWith('group.get_group_obj', expect.anything());
+      expect(quotas.map((quota) => quota.name)).toEqual(['staff']);
+    });
+
+    it('falls back to one lookup per id when the accounts cannot be listed', async () => {
+      spectator.inject(MockApiService).mockCallError('user.query', { reason: 'Not authorized' });
+
+      const quotas = await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.User));
+
+      expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1000 }]);
+      expect(quotas.map((quota) => quota.name)).toEqual(['user1000']);
     });
   });
 

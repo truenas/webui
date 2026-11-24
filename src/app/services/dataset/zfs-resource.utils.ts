@@ -264,7 +264,9 @@ function translatePayload(payload: Partial<DatasetCreate> | Partial<DatasetUpdat
       return;
     }
 
-    if (value === inherit) {
+    // A cleared user property (`null`, e.g. an emptied alert threshold) has no value to write; ZFS would store the
+    // literal "null". It is inherited instead, which on create simply leaves it unset.
+    if (value === inherit || (userKey && value === null)) {
       if (userKey) {
         result.inherit.push(userKey);
       } else if (!notInheritable.has(nativeName)) {
