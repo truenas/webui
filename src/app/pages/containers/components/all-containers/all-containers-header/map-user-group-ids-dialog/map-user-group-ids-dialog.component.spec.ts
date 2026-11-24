@@ -5,6 +5,7 @@ import { MatButtonHarness } from '@angular/material/button/testing';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatTableHarness } from '@angular/material/table/testing';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Group } from 'app/interfaces/group.interface';
@@ -147,6 +148,12 @@ describe('MapUserGroupIdsDialogComponent', () => {
     expect(apiCallSpy).toHaveBeenCalledWith('user.query', [[
       ['local', '=', true], ['userns_idmap', '!=', null],
     ]]);
+  });
+
+  it('shows an × close button with an accessible name', async () => {
+    const closeButton = await loader.getHarness(MatButtonHarness.with({ selector: '[aria-label="Close Dialog"]' }));
+
+    expect(await closeButton.getHarnessOrNull(TnIconHarness.with({ name: 'close' }))).not.toBeNull();
   });
 
   it('closes dialog when close button is clicked', async () => {
