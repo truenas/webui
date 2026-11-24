@@ -6,12 +6,13 @@ import {
   TnMenuTesting, TnTableHarness,
 } from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
-import { of } from 'rxjs';
+import { BehaviorSubject, of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { VmDeviceType, VmDiskMode, VmState } from 'app/enums/vm.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -32,6 +33,7 @@ describe('DeviceListComponent', () => {
   let spectator: Spectator<DeviceListComponent>;
   let loader: HarnessLoader;
   let table: TnTableHarness;
+  let hasVmWrite$: BehaviorSubject<boolean>;
   const devices = [
     {
       id: 1,
@@ -89,7 +91,10 @@ describe('DeviceListComponent', () => {
   });
 
   beforeEach(async () => {
-    spectator = createComponent();
+    hasVmWrite$ = new BehaviorSubject(true);
+    spectator = createComponent({ detectChanges: false });
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(hasVmWrite$);
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     table = await loader.getHarness(TnTableHarness);
   });
@@ -190,6 +195,18 @@ describe('DeviceListComponent', () => {
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(DeviceDeleteModalComponent, expect.objectContaining({
       data: devices[0],
     }));
+  });
+
+  it('disables Delete for a user without the VM write role, leaving the other items enabled', async () => {
+    hasVmWrite$.next(false);
+    spectator.detectChanges();
+
+    const menu = await openRowMenu(0);
+
+    expect(await menu.getItemLabels()).toEqual(['Edit', 'Delete', 'Details']);
+    expect(await menu.isItemDisabled({ label: 'Delete' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Edit' })).toBe(false);
+    expect(await menu.isItemDisabled({ label: 'Details' })).toBe(false);
   });
 
   it('shows details dialog when Details option is selected', async () => {

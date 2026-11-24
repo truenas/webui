@@ -15,10 +15,10 @@
   ></tn-menu-item>
 
   <tn-menu-item
-    *ixRequiresRoles="requiredRoles"
     testId="map-user-group-ids"
     [label]="'Map User/Group IDs' | translate"
     [ixUiSearch]="searchableElements.elements.mapUserGroupIds"
+    [disabled]="!(requiredRoles | hasRoles | async)"
     (itemClick)="onMapUserGroupIds()"
   ></tn-menu-item>
 </tn-menu>

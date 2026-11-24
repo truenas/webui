@@ -1,5 +1,5 @@
 <tn-button
-  *ixRequiresRoles="[Role.FullAdmin]"
+  *ixRequiresRoles="requiredRoles"
   iconPosition="right"
   [icon]="menuDownIcon"
   [testId]="'manage-configuration-menu'"
@@ -10,25 +10,25 @@
 
 <tn-menu #menu>
   <tn-menu-item
-    *ixRequiresRoles="[Role.FullAdmin]"
     [testId]="'download-configuration'"
     [label]="'Download File' | translate"
     [ixUiSearch]="searchableElements.elements.downloadFile"
+    [disabled]="!(requiredRoles | hasRoles | async)"
     (itemClick)="onDownloadConfig()"
   ></tn-menu-item>
   <tn-menu-item
-    *ixRequiresRoles="[Role.FullAdmin]"
     [testId]="'upload-configuration'"
     [label]="'Upload File' | translate"
     [ixUiSearch]="searchableElements.elements.uploadFile"
+    [disabled]="!(requiredRoles | hasRoles | async)"
     (itemClick)="onUploadConfig()"
   ></tn-menu-item>
   @if (isSysAdmin$ | async) {
     <tn-menu-item
-      *ixRequiresRoles="[Role.FullAdmin]"
       [testId]="'reset-configuration'"
       [label]="'Reset to Defaults' | translate"
       [ixUiSearch]="searchableElements.elements.resetToDefaults"
+      [disabled]="!(requiredRoles | hasRoles | async)"
       (itemClick)="onResetToDefaults()"
     ></tn-menu-item>
   }

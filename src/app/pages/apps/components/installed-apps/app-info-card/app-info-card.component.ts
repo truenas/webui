@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, DestroyRef, effect, inject, input, output, signal,
   WritableSignal,
@@ -12,6 +13,7 @@ import {
   catchError, EMPTY, filter, switchMap, tap,
 } from 'rxjs';
 import { appImagePlaceholder } from 'app/constants/catalog.constants';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { ApiErrorName } from 'app/enums/api.enum';
 import { AppState } from 'app/enums/app-state.enum';
@@ -60,6 +62,8 @@ import { RedirectService } from 'app/services/redirect.service';
     CleanLinkPipe,
     TnTooltipDirective,
     RouterLink,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 export class AppInfoCardComponent {

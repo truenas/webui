@@ -1,11 +1,13 @@
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
 import { TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
 import { TopologyItemStatus } from 'app/enums/vdev-status.enum';
 import { PoolInstance } from 'app/interfaces/pool.interface';
 import { TopologyDisk, VDev } from 'app/interfaces/storage.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { BootPoolActionType } from 'app/pages/system/bootenv/bootenv-status/bootenv-status.component';
 import { BootenvNodeItemComponent } from './bootenv-node-item.component';
 
@@ -54,17 +56,26 @@ describe('BootenvNodeItemComponent', () => {
     declarations: [],
   });
 
-  beforeEach(() => {
+  // The role is read on first render, so it is set before the component is created.
+  function setup(
+    props: { node?: TopologyDisk; poolInstance?: PoolInstance; oneDisk?: boolean } = {},
+    hasBootEnvWrite = true,
+  ): void {
     spectator = createComponent({
-      props: { node: topologyItem, poolInstance },
+      props: { node: topologyItem, poolInstance, ...props },
+      detectChanges: false,
     });
-  });
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(hasBootEnvWrite));
+    spectator.detectChanges();
+  }
 
   it('shows boot pool name', () => {
+    setup();
     expect(spectator.query('.cell-name')).toHaveText('sda3');
   });
 
   it('shows pool status', () => {
+    setup();
     expect(spectator.query('.cell-status')).toHaveText('Online');
   });
 
@@ -74,10 +85,26 @@ describe('BootenvNodeItemComponent', () => {
   }
 
   it('does not offer Detach on the disk of a single-disk boot pool', async () => {
-    spectator.setInput('oneDisk', true);
+    setup({ oneDisk: true });
 
     const menu = await openActionsMenu();
     expect(await menu.getItemLabels()).toEqual(['Replace', 'Attach']);
+  });
+
+  it('enables Replace and Attach for a user with the BootEnvWrite role', async () => {
+    setup({ oneDisk: true });
+
+    const menu = await openActionsMenu();
+    expect(await menu.isItemDisabled({ label: 'Replace' })).toBe(false);
+    expect(await menu.isItemDisabled({ label: 'Attach' })).toBe(false);
+  });
+
+  it('disables Replace and Attach for a user without the BootEnvWrite role', async () => {
+    setup({ oneDisk: true }, false);
+
+    const menu = await openActionsMenu();
+    expect(await menu.isItemDisabled({ label: 'Replace' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Attach' })).toBe(true);
   });
 
   describe('mirrored boot pool', () => {
@@ -96,15 +123,22 @@ describe('BootenvNodeItemComponent', () => {
       children: [topologyItem, member],
     } as VDev;
 
-    beforeEach(() => {
-      spectator.setInput({
-        node: member,
-        poolInstance: { ...poolInstance, topology: { data: [mirror] } } as PoolInstance,
-        oneDisk: false,
-      });
+    const mirrorProps = {
+      node: member,
+      poolInstance: { ...poolInstance, topology: { data: [mirror] } } as PoolInstance,
+      oneDisk: false,
+    };
+
+    it('disables Replace and Detach for a user without the BootEnvWrite role', async () => {
+      setup(mirrorProps, false);
+
+      const menu = await openActionsMenu();
+      expect(await menu.isItemDisabled({ label: 'Replace' })).toBe(true);
+      expect(await menu.isItemDisabled({ label: 'Detach' })).toBe(true);
     });
 
     it('offers Detach on a member disk of the mirror, and emits it for that disk', async () => {
+      setup(mirrorProps);
       const emitted = jest.fn();
       spectator.output('invokeAction').subscribe(emitted);
 

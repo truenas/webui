@@ -5,9 +5,11 @@ import { Spectator, createComponentFactory, mockProvider } from '@ngneat/spectat
 import {
   TnButtonHarness, TnMenuHarness, TnMenuTesting, TnDialog,
 } from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { ContainerGlobalConfig } from 'app/interfaces/container.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import {
@@ -135,6 +137,22 @@ describe('AllContainersHeaderComponent', () => {
           panelClass: 'map-user-group-dialog',
         },
       );
+    });
+  });
+
+  describe('roles', () => {
+    it('disables Map User/Group IDs for a user without the Container Write role', async () => {
+      spectator = createComponent({ detectChanges: false });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(false));
+      spectator.detectChanges();
+
+      const configButton = await loader.getHarness(TnButtonHarness.with({ label: 'Configuration' }));
+      await configButton.click();
+
+      const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+      expect(await menu.isItemDisabled({ label: 'Settings' })).toBe(false);
+      expect(await menu.isItemDisabled({ label: 'Map User/Group IDs' })).toBe(true);
     });
   });
 });

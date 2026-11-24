@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, inject,
 } from '@angular/core';
@@ -8,6 +9,7 @@ import {
   TnMenuTriggerDirective, TnTooltipDirective,
 } from '@truenas/ui-components';
 import { customAppTrain, customApp } from 'app/constants/catalog.constants';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -31,6 +33,8 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     TnMenuItemComponent,
     TnIconButtonComponent,
     TnMenuTriggerDirective,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 export class CustomAppButtonComponent {

@@ -25,17 +25,15 @@
   -->
   <tn-menu #appInfoMenu>
     <tn-menu-item
-      *ixRequiresRoles="requiredRoles"
       [testId]="[app().name, 'update']"
       [label]="'Update' | translate"
-      [disabled]="!app().upgrade_available"
+      [disabled]="!app().upgrade_available || !(requiredRoles | hasRoles | async)"
       (itemClick)="updateButtonPressed()"
     ></tn-menu-item>
     <tn-menu-item
-      *ixRequiresRoles="requiredRoles"
       [testId]="[app().name, 'convert']"
       [label]="'Convert to custom app' | translate"
-      [disabled]="app().custom_app"
+      [disabled]="app().custom_app || !(requiredRoles | hasRoles | async)"
       (itemClick)="openConvertDialog()"
     ></tn-menu-item>
   </tn-menu>

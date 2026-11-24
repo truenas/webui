@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, DestroyRef } from '@angular/core';
 import { marker as T } from '@biesbjerg/ngx-translate-extract-marker';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -9,6 +10,7 @@ import {
   TnMenuTriggerDirective,
   tnIconMarker,
 } from '@truenas/ui-components';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -40,6 +42,8 @@ import { ContainersStore } from 'app/pages/containers/stores/containers.store';
     TnMenuTriggerDirective,
     UiSearchDirective,
     RequiresRolesDirective,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 export class AllContainersHeaderComponent {

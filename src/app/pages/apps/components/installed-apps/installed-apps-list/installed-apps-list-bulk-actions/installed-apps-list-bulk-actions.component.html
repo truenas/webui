@@ -21,30 +21,27 @@
 
   <tn-menu #menu>
     <tn-menu-item
-      *ixRequiresRoles="requiredRoles"
       testId="start-selected"
       [label]="'Start All Selected' | translate"
-      [disabled]="isBulkStartDisabled()"
+      [disabled]="isBulkStartDisabled() || !(requiredRoles | hasRoles | async)"
       (itemClick)="bulkStart.emit()"
     ></tn-menu-item>
     <tn-menu-item
-      *ixRequiresRoles="requiredRoles"
       testId="stop-selected"
       [label]="'Stop All Selected' | translate"
-      [disabled]="isBulkStopDisabled()"
+      [disabled]="isBulkStopDisabled() || !(requiredRoles | hasRoles | async)"
       (itemClick)="bulkStop.emit()"
     ></tn-menu-item>
     <tn-menu-item
-      *ixRequiresRoles="requiredRoles"
       testId="update-selected"
       [label]="'Update All Selected' | translate"
-      [disabled]="isBulkUpdateDisabled()"
+      [disabled]="isBulkUpdateDisabled() || !(requiredRoles | hasRoles | async)"
       (itemClick)="bulkUpdate.emit()"
     ></tn-menu-item>
     <tn-menu-item
-      *ixRequiresRoles="requiredRoles"
       testId="delete-selected"
       [label]="'Delete All Selected' | translate"
+      [disabled]="!(requiredRoles | hasRoles | async)"
       (itemClick)="bulkDelete.emit()"
     ></tn-menu-item>
   </tn-menu>

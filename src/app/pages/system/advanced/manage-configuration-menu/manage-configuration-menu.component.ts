@@ -8,6 +8,7 @@ import {
   TnButtonComponent, TnDialog, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
@@ -27,6 +28,7 @@ import {
   templateUrl: './manage-configuration-menu.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
+    HasRolesPipe,
     RequiresRolesDirective,
     UiSearchDirective,
     TnButtonComponent,
@@ -45,7 +47,7 @@ export class ManageConfigurationMenuComponent {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
 
-  protected readonly Role = Role;
+  protected readonly requiredRoles = [Role.FullAdmin];
   protected isSysAdmin$ = this.authService.isSysAdmin$;
   protected readonly searchableElements = manageConfigurationElements;
   protected readonly menuDownIcon = tnIconMarker('menu-down', 'mdi');

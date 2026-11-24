@@ -1,4 +1,5 @@
 import { CdkPortalOutlet, ComponentPortal } from '@angular/cdk/portal';
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, ComponentRef, inject, input, model, output, signal,
   type Signal,
@@ -18,6 +19,7 @@ import {
   type TnTestIdValue,
 } from '@truenas/ui-components';
 import { Observable, of } from 'rxjs';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import {
@@ -94,6 +96,8 @@ export type HostedSidePanelForm = SidePanelHostForm & {
     RequiresRolesDirective,
     CdkPortalOutlet,
     TranslateModule,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 export class FormSidePanelContainerComponent {

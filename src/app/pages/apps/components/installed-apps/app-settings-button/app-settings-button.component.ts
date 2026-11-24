@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, inject, ViewContainerRef,
 } from '@angular/core';
@@ -11,7 +12,7 @@ import {
 import {
   filter, forkJoin,
 } from 'rxjs';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
@@ -36,9 +37,10 @@ import { DockerStore } from 'app/pages/apps/store/docker.store';
     TnMenuTriggerDirective,
     TranslateModule,
     TnMenuComponent,
-    RequiresRolesDirective,
     TnMenuItemComponent,
     TnTooltipDirective,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 export class AppSettingsButtonComponent {

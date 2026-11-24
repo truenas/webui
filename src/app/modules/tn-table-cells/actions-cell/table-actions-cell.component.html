@@ -43,7 +43,7 @@
         <tn-menu-item
           [icon]="action.iconName"
           [testId]="menuItemTestId(action)"
-          [disabled]="!!isDisabled || !(hasRoles(roles) | async)"
+          [disabled]="!!isDisabled || !(roles | hasRoles | async)"
           (itemClick)="onActionClick(null, action)"
         >{{ action.dynamicTooltip ? (action.dynamicTooltip(row()) | async) : action.tooltip }}</tn-menu-item>
       }

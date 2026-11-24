@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, DestroyRef, input, OnChanges, inject, computed,
 } from '@angular/core';
@@ -15,6 +16,7 @@ import {
 } from '@truenas/ui-components';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { filter, switchMap, tap } from 'rxjs/operators';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { JobState } from 'app/enums/job-state.enum';
@@ -70,6 +72,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     TnCardComponent,
     TranslateModule,
     SedLockedWarningComponent,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 export class DashboardPoolComponent implements OnChanges {
