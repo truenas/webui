@@ -307,4 +307,36 @@ describe('SmbCardComponent', () => {
       expect(await items[0].isDisabled()).toBe(true);
     });
   });
+
+  describe('with several shares', () => {
+    const createSeveralSharesComponent = createComponentFactory({
+      component: SmbCardComponent,
+      imports: commonImports,
+      declarations: commonDeclarations,
+      providers: [
+        ...commonProviders,
+        mockApi([
+          mockCall('pool.query', [{ path: '/mnt/APPS' }] as Pool[]),
+          mockCall('sharing.smb.query', ['share10', 'Beta', 'share2', 'alpha'].map((name, index) => ({
+            ...smbShares[0],
+            id: index + 1,
+            name,
+          }))),
+        ]),
+        mockSharingTierService({ enabled: false }),
+      ],
+    });
+
+    beforeEach(async () => {
+      spectator = createSeveralSharesComponent();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      table = await loader.getHarness(IxTableHarness);
+    });
+
+    it('sorts shares by name naturally and ignoring case, and shows the sort in the header', async () => {
+      const names = (await table.getCellTexts()).slice(1).map((row) => row[0]);
+      expect(names).toEqual(['alpha', 'Beta', 'share2', 'share10']);
+      expect(spectator.query('thead th:first-child tn-icon.sort-icon')).toHaveAttribute('name', 'arrow-up');
+    });
+  });
 });

@@ -19,6 +19,7 @@ import { TruenasConnectConfig } from 'app/interfaces/truenas-connect-config.inte
 import { User } from 'app/interfaces/user.interface';
 import { WebShare } from 'app/interfaces/webshare-config.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { IxTableHarness } from 'app/modules/ix-table/components/ix-table/ix-table.harness';
 import {
   IxTablePagerShowMoreComponent,
 } from 'app/modules/ix-table/components/ix-table-pager-show-more/ix-table-pager-show-more.component';
@@ -44,16 +45,17 @@ describe('WebShareCardComponent', () => {
     open: jest.fn(),
   } as unknown as Window;
 
+  // Out of name order, so the card's default sort is what puts `documents` first.
   const mockWebShares: WebShare[] = [
-    {
-      id: 1,
-      name: 'documents',
-      path: '/mnt/tank/documents',
-    },
     {
       id: 2,
       name: 'media',
       path: '/mnt/tank/media',
+    },
+    {
+      id: 1,
+      name: 'documents',
+      path: '/mnt/tank/documents',
     },
   ];
 
@@ -137,6 +139,14 @@ describe('WebShareCardComponent', () => {
 
     expect(rows[0]).toHaveText('documents');
     expect(rows[0]).toHaveText('/mnt/tank/documents');
+  });
+
+  it('sorts rows by name by default and shows it in the header', async () => {
+    const table = await loader.getHarness(IxTableHarness);
+    const names = (await table.getCellTexts()).slice(1).map((row) => row[0]);
+
+    expect(names).toEqual(['documents', 'media']);
+    expect(spectator.query('thead th:first-child tn-icon.sort-icon')).toHaveAttribute('name', 'arrow-up');
   });
 
   it('shows Open WebShare button when service is running', async () => {

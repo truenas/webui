@@ -1,5 +1,5 @@
 import { EventEmitter } from '@angular/core';
-import { orderBy, sortBy } from 'lodash-es';
+import { orderBy, property, sortBy } from 'lodash-es';
 import {
   BehaviorSubject, Observable, Subscription, map,
 } from 'rxjs';
@@ -140,6 +140,10 @@ export function sort<T>(rows: T[], sorting: TableSort<T>): T[] {
   }
 
   if (sorting.sortBy) {
+    const naturallySorted = sortStrings(sorted, sorting.sortBy, direction);
+    if (naturallySorted) {
+      return naturallySorted;
+    }
     return direction === SortDirection.Desc ? sortBy(sorted, sorting.sortBy).reverse() : sortBy(sorted, sorting.sortBy);
   }
 
@@ -147,7 +151,26 @@ export function sort<T>(rows: T[], sorting: TableSort<T>): T[] {
     return sorted;
   }
 
-  return orderBy(sorted, propertyName, direction);
+  return sortStrings(sorted, property(propertyName), direction) ?? orderBy(sorted, propertyName, direction);
+}
+
+const naturalCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
+
+/**
+ * Orders rows naturally and case-insensitively (`alpha`, `Beta`, `share2`, `share10`) when every row's value
+ * is a string. Returns `null` otherwise — a number, date or missing value anywhere — so the caller keeps
+ * lodash's ordering for that column.
+ */
+function sortStrings<T>(rows: T[], value: (row: T) => unknown, direction: SortDirection): T[] | null {
+  const keyed = rows.map((row) => ({ row, key: value(row) }));
+  if (!keyed.every((item) => typeof item.key === 'string')) {
+    return null;
+  }
+
+  const sign = direction === SortDirection.Desc ? -1 : 1;
+  return keyed
+    .toSorted((a, b) => sign * naturalCollator.compare(a.key as string, b.key as string))
+    .map((item) => item.row);
 }
 
 export function paginate<T>(rows: T[], pagination: TablePagination): T[] {
