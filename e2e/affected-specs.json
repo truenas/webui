@@ -1,0 +1,78 @@
+{
+  "$comment": "Which E2E specs a pull request's changes can break. Keys are path prefixes under the repo root (the longest match wins); values are regexes over spec paths relative to e2e/tests. A changed file no key covers runs the whole suite. See scripts/e2e-affected-specs.mjs.",
+  "areas": {
+    "src/app/pages/apps/": ["^apps-"],
+    "src/app/pages/audit/": ["^audit-"],
+    "src/app/pages/containers/": ["^containers"],
+
+    "src/app/pages/credentials/": [
+      "^cloud-credentials", "^ssh-", "^certificates", "^acme-", "^groups-", "^kmip", "^privileges", "^s3-access-key",
+      "^users-", "^user-details", "^api-keys", "^roles-"
+    ],
+    "src/app/pages/credentials/backup-credentials/": ["^cloud-credentials", "^ssh-", "^roles-read-only-credentials"],
+    "src/app/pages/credentials/certificates-dash/": ["^certificates", "^acme-", "^roles-read-only-credentials"],
+    "src/app/pages/credentials/groups/": ["^groups-", "^roles-read-only-credentials"],
+    "src/app/pages/credentials/kmip/": ["^kmip"],
+    "src/app/pages/credentials/privileges/": ["^privileges", "^roles-"],
+    "src/app/pages/credentials/s3-access-keys/": ["^s3-access-key"],
+    "src/app/pages/credentials/users/": ["^users-", "^user-details", "^api-keys", "^roles-read-only-credentials"],
+
+    "src/app/pages/dashboard/": ["^dashboard"],
+
+    "src/app/pages/data-protection/": [
+      "^data-protection-dashboard", "^cloud-backup", "^cloud-sync", "^replication", "^rsync-task", "^snapshot-task",
+      "^periodic-snapshot", "^roles-read-only-data-protection"
+    ],
+    "src/app/pages/data-protection/cloud-backup/": ["^cloud-backup"],
+    "src/app/pages/data-protection/cloudsync/": ["^cloud-sync"],
+    "src/app/pages/data-protection/replication/": ["^replication"],
+    "src/app/pages/data-protection/rsync-task/": ["^rsync-task"],
+    "src/app/pages/data-protection/snapshot-task/": ["^snapshot-task", "^periodic-snapshot"],
+    "src/app/pages/data-protection/vmware-snapshot/": ["^data-protection-dashboard"],
+
+    "src/app/pages/datasets/": ["^dataset", "^zvols", "^tiering-dataset", "^snapshot-"],
+    "src/app/pages/datasets/modules/encryption/": ["^datasets-encryption"],
+    "src/app/pages/datasets/modules/permissions/": ["^dataset-acl", "^dataset-permissions"],
+    "src/app/pages/datasets/modules/snapshots/": ["^snapshot-", "^dataset-snapshots-link"],
+
+    "src/app/pages/directory-service/": ["^directory-services", "^kerberos", "^unpublished/"],
+    "src/app/pages/jobs/": ["^jobs-"],
+    "src/app/pages/reports-dashboard/": ["^reporting"],
+    "src/app/pages/services/": ["^services", "-service"],
+
+    "src/app/pages/sharing/": [
+      "^iscsi", "^nfs-", "^nvme-of", "^s3", "^smb-", "^webshare", "^tiering-shares", "^roles-read-only-shares",
+      "^roles-share-admin-shares"
+    ],
+    "src/app/pages/sharing/iscsi/": ["^iscsi"],
+    "src/app/pages/sharing/nfs/": ["^nfs-"],
+    "src/app/pages/sharing/nvme-of/": ["^nvme-of"],
+    "src/app/pages/sharing/s3/": ["^s3-bucket", "^s3-list", "^s3\\.e2e", "^s3-service"],
+    "src/app/pages/sharing/smb/": ["^smb-"],
+    "src/app/pages/sharing/webshare/": ["^webshare"],
+
+    "src/app/pages/shell/": ["^system-shell"],
+    "src/app/pages/signin/": ["^unauthenticated/"],
+
+    "src/app/pages/storage/": ["^pool-", "^disks", "^roles-read-only-storage", "^tiering-config"],
+
+    "src/app/pages/system/advanced/": [
+      "^access-", "^console-", "^cron-", "^init-shutdown", "^kernel-", "^sysctl", "^syslog", "^tunables",
+      "^system-security", "^system-dataset", "^self-encrypting", "^replication-settings", "^audit-settings"
+    ],
+    "src/app/pages/system/alert-config-form/": ["^alert"],
+    "src/app/pages/system/alert-service/": ["^alert"],
+    "src/app/pages/system/alert-settings/": ["^alert"],
+    "src/app/pages/system/bootenv/": ["^boot-"],
+    "src/app/pages/system/enclosure/": ["^disks"],
+    "src/app/pages/system/general-settings/": [
+      "^gui-settings", "^localization", "^ntp-", "^email-", "^support-card", "^save-config"
+    ],
+    "src/app/pages/system/network/": ["^network-", "^static-routes"],
+    "src/app/pages/system/update/": ["^update-"],
+
+    "src/app/pages/two-factor-auth/": ["^two-factor", "^users-two-factor"],
+    "src/app/pages/vm/": ["^virtual-machines"]
+  },
+  "always": ["^smoke"]
+}

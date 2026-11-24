@@ -37,6 +37,12 @@ inputs:
       never interpolated into a shell line: it comes from a dispatch, and
       this runs on a runner with hypervisor access.
     default: ''
+  specs:
+    description: >-
+      Optional space-separated spec paths to run instead of the whole suite;
+      e2e.yml's plan job picks them for a pull request. The `setup` project
+      they depend on still runs.
+    default: ''
   env:
     description: >-
       Further variables to pass to the suite, by name, one per line: their
@@ -64,6 +70,7 @@ runs:
         CI: 'true'
         TN_GREP: ${{ inputs.grep }}
         TN_SHARD: ${{ inputs.shard }}
+        TN_SPECS: ${{ inputs.specs }}
         EXTRA_ENV: ${{ inputs.env }}
         EXTRA_VOLUMES: ${{ inputs.volumes }}
       run: |
@@ -76,7 +83,7 @@ runs:
         esac
         envFile="$RUNNER_TEMP/suite.env"
         trap 'rm -f "$envFile"' EXIT
-        names=(CI TN_GREP TN_SHARD TN_PROFILE TN_UI_BASE_URL TN_UI_BASE_URL_HTTP TN_HOST
+        names=(CI TN_GREP TN_SHARD TN_SPECS TN_PROFILE TN_UI_BASE_URL TN_UI_BASE_URL_HTTP TN_HOST
                TN_USERNAME TN_PASSWORD TN_DOMAIN TN_BASELINE TN_SPARE_NICS)
         while read -r name; do
           [ -n "$name" ] && names+=("$name")
@@ -103,7 +110,7 @@ runs:
           -w /work \
           --env-file "$envFile" \
           "$PLAYWRIGHT_IMAGE" \
-          bash -c 'if [ -n "${TN_GREP:-}" ]; then ./node_modules/.bin/playwright test --shard "$TN_SHARD" --grep "$TN_GREP"; else ./node_modules/.bin/playwright test --shard "$TN_SHARD"; fi'
+          bash -c 'read -ra specs <<< "${TN_SPECS:-}"; args=(--shard "$TN_SHARD"); if [ -n "${TN_GREP:-}" ]; then args+=(--grep "$TN_GREP"); fi; ./node_modules/.bin/playwright test "${args[@]}" "${specs[@]}"'
 
     # The flaky tests' table for the job summary, which the suite's
     # flaky-reporter.ts writes when any test needed its retry. Its warning

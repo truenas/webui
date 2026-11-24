@@ -106,14 +106,75 @@ jobs:
     # Fork PRs stop here, and so everything after. See the header.
     if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    # Job-level permissions replace the workflow's: the PR's file list, and
+    # `actions: write` to force-cancel the run this push superseded.
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: write
     outputs:
       shards: ${{ steps.shards.outputs.shards }}
       total: ${{ steps.shards.outputs.total }}
+      specs: ${{ steps.affected.outputs.specs }}
     steps:
+      # `concurrency` above asks the superseded run to cancel, but a shard on
+      # a self-hosted runner can sit on that request for many minutes, still
+      # holding its runner and appliance. Force-cancelling it frees the pool
+      # for this run. Same PR branch, and only older runs (lower ids): an older
+      # run whose plan starts late must not cancel a newer one.
+      - name: Force-cancel the run this push superseded
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+          for status in in_progress queued; do
+            gh api "repos/$GITHUB_REPOSITORY/actions/workflows/e2e.yml/runs?event=pull_request&status=$status&branch=$BRANCH" \
+              --jq ".workflow_runs[] | select(.id < $GITHUB_RUN_ID) | .id"
+          done | sort -u | while read -r id; do
+            echo "Force-cancelling run $id"
+            gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/force-cancel" > /dev/null || true
+          done
+
+      - uses: actions/checkout@v4
+        if: github.event_name == 'pull_request'
+
+      # A pull request runs only the specs its changes can reach (see
+      # scripts/e2e-affected-specs.mjs and e2e/affected-specs.json), and the
+      # whole suite as soon as it touches anything shared. Every other
+      # trigger runs the whole suite.
+      - id: affected
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          result="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' \
+            | node scripts/e2e-affected-specs.mjs)"
+          if [ "$(jq -r .full <<< "$result")" = true ]; then
+            echo "Whole suite: $(jq -r .reason <<< "$result")" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo "Only the specs this PR's changes can reach ($(jq '.specs | length' <<< "$result")):"
+            jq -r '.specs[] | "- `\(.)`"' <<< "$result"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "specs=$(jq -r '.specs | join(" ")' <<< "$result")" >> "$GITHUB_OUTPUT"
+          echo "count=$(jq '.specs | length' <<< "$result")" >> "$GITHUB_OUTPUT"
+
+      # Two runners by default. A narrowed run of a handful of specs takes one:
+      # a second appliance would spend its boot on a few minutes of tests.
       - id: shards
         env:
           SHARDS: ${{ inputs.shards || 2 }}
+          COUNT: ${{ steps.affected.outputs.count }}
         run: |
+          if [ -n "$COUNT" ] && [ "$COUNT" -le 15 ]; then
+            SHARDS=1
+          fi
           echo "total=$SHARDS" >> "$GITHUB_OUTPUT"
           echo "shards=$(jq -cn --argjson n "$SHARDS" '[range(1; $n + 1)]')" >> "$GITHUB_OUTPUT"
 
@@ -301,6 +362,7 @@ jobs:
         with:
           shard: ${{ matrix.shard }}/${{ needs.plan.outputs.total }}
           grep: ${{ inputs.grep }}
+          specs: ${{ needs.plan.outputs.specs }}
           artifact-suffix: -${{ matrix.shard }}
           # The `report` job below reports over every shard at once.
           reports: 'false'
