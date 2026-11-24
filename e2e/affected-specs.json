@@ -71,7 +71,7 @@
     "src/app/pages/system/network/": ["^network-", "^static-routes"],
     "src/app/pages/system/update/": ["^update-"],
 
-    "src/app/pages/two-factor-auth/": ["^two-factor", "^users-two-factor"],
+    "src/app/pages/two-factor-auth/": ["^two-factor", "^users-two-factor", "^unauthenticated/two-factor"],
     "src/app/pages/vm/": ["^virtual-machines"]
   },
   "always": ["^smoke"]

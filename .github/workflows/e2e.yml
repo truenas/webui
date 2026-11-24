@@ -97,9 +97,12 @@ permissions:
 
 # Runs share nothing, so a newer push to the same ref replaces an older run:
 # cancelling one leaks nothing, its runner and appliance are deleted with it.
-concurrency:
-  group: e2e-${{ github.ref }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+#
+# The groups are on the `e2e` and `report` jobs, not on the workflow. A
+# workflow-level group holds the newer run pending, `plan` included, until the
+# older one has fully stopped, so `plan` could never force-cancel a shard that
+# was sitting on its cancel request: by the time it ran, nothing was left to
+# cancel. Outside the group, `plan` starts at once and frees the pool.
 
 jobs:
   plan:
@@ -117,7 +120,7 @@ jobs:
       total: ${{ steps.shards.outputs.total }}
       specs: ${{ steps.affected.outputs.specs }}
     steps:
-      # `concurrency` above asks the superseded run to cancel, but a shard on
+      # The jobs' `concurrency` asks the superseded run to cancel, but a shard on
       # a self-hosted runner can sit on that request for many minutes, still
       # holding its runner and appliance. Force-cancelling it frees the pool
       # for this run. Same PR branch, and only older runs (lower ids): an older
@@ -145,13 +148,22 @@ jobs:
       # scripts/e2e-affected-specs.mjs and e2e/affected-specs.json), and the
       # whole suite as soon as it touches anything shared. Every other
       # trigger runs the whole suite.
+      #
+      # The PR files API stops at 3000 files, even paginated. Past that the
+      # list is partial, and a partial list could narrow a run it should widen.
       - id: affected
         if: github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
           PR: ${{ github.event.pull_request.number }}
+          CHANGED_FILES: ${{ github.event.pull_request.changed_files }}
         run: |
           set -euo pipefail
+          if [ "$CHANGED_FILES" -gt 3000 ]; then
+            echo "Whole suite: $CHANGED_FILES changed files, past the 3000 the PR files API lists" \
+              | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           result="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' \
             | node scripts/e2e-affected-specs.mjs)"
           if [ "$(jq -r .full <<< "$result")" = true ]; then
@@ -180,6 +192,12 @@ jobs:
 
   e2e:
     needs: plan
+    # One group per shard: a single group would make the shards of one run
+    # cancel or queue behind each other. An older run with more shards than
+    # this one leaves a shard no newer one replaces; `plan` force-cancels it.
+    concurrency:
+      group: e2e-${{ github.ref }}-shard-${{ matrix.shard }}
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     strategy:
       fail-fast: false
       matrix:
@@ -492,6 +510,9 @@ jobs:
   # each shard: never fails the run.
   report:
     needs: [plan, e2e]
+    concurrency:
+      group: e2e-${{ github.ref }}-report
+      cancel-in-progress: ${{ github.event_name == 'pull_request' }}
     if: ${{ !cancelled() && needs.plan.result == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 15
