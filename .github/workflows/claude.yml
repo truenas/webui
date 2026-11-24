@@ -38,12 +38,6 @@ on:
     paths-ignore:
       - 'src/assets/i18n/**'
 
-# A push supersedes the review of the commit before it: that review's findings
-# would be outdated before they posted, and it holds a runner meanwhile.
-concurrency:
-  group: claude-review-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
-
 jobs:
   review:
     uses: iXsystems/ux-github-workflows/.github/workflows/claude-review.yml@master
