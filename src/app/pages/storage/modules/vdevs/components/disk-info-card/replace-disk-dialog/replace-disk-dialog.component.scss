@@ -2,3 +2,12 @@
   display: block;
   width: 340px;
 }
+
+.location {
+  margin-bottom: 16px;
+
+  .label {
+    font-weight: bold;
+    margin-right: 5px;
+  }
+}

@@ -20,6 +20,7 @@ import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
 import { DiskFormComponent } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
 import { ReplaceDiskDialog } from 'app/pages/storage/modules/vdevs/components/disk-info-card/replace-disk-dialog/replace-disk-dialog.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
+import { DiskEnclosureLocation } from 'app/pages/storage/modules/vdevs/utils/get-disk-enclosure-locations.utils';
 import { DiskInfoCardComponent } from './disk-info-card.component';
 
 describe('DiskInfoCardComponent', () => {
@@ -37,6 +38,8 @@ describe('DiskInfoCardComponent', () => {
     type: DiskType.Hdd,
     zfs_guid: '11254578662959974657',
   } as Disk;
+
+  const diskLocation: DiskEnclosureLocation = { enclosureId: 'enc1', enclosureLabel: 'M50', slot: 3 };
 
   const createComponent = createComponentFactory({
     component: DiskInfoCardComponent,
@@ -72,7 +75,10 @@ describe('DiskInfoCardComponent', () => {
           guid: '11254578662959974657',
         } as TopologyDisk,
       },
+      detectChanges: false,
     });
+    jest.spyOn(spectator.inject(VDevsStore), 'getEnclosureLocation').mockReturnValue(diskLocation);
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   });
 
@@ -100,6 +106,27 @@ describe('DiskInfoCardComponent', () => {
 
     const descriptionItem = spectator.query(byText('Description:', { exact: true }))!;
     expect(descriptionItem.nextElementSibling).toHaveText('N/A');
+  });
+
+  it('shows the enclosure and slot the disk sits in', () => {
+    expect(spectator.inject(VDevsStore).getEnclosureLocation).toHaveBeenCalledWith(disk);
+
+    const enclosureItem = spectator.query(byText('Enclosure:', { exact: true }))!;
+    expect(enclosureItem.nextElementSibling).toHaveText('M50');
+
+    const slotItem = spectator.query(byText('Slot:', { exact: true }))!;
+    expect(slotItem.nextElementSibling).toHaveText('3');
+  });
+
+  it('shows the enclosure and slot as not available when the disk has no known location', () => {
+    jest.spyOn(spectator.inject(VDevsStore), 'getEnclosureLocation').mockReturnValue(null);
+    spectator.setInput('disk', { ...disk });
+
+    const enclosureItem = spectator.query(byText('Enclosure:', { exact: true }))!;
+    expect(enclosureItem.nextElementSibling).toHaveText('Not available');
+
+    const slotItem = spectator.query(byText('Slot:', { exact: true }))!;
+    expect(slotItem.nextElementSibling).toHaveText('Not available');
   });
 
   it('opens the disk edit form in a side panel when clicks Edit button', async () => {
@@ -131,6 +158,7 @@ describe('DiskInfoCardComponent', () => {
         poolId: 1,
         guid: '11254578662959974657',
         diskName: 'sda',
+        location: diskLocation,
       },
     });
   });

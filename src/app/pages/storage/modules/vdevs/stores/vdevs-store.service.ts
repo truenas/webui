@@ -5,16 +5,21 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
 import {
-  catchError, debounceTime, EMPTY, exhaustMap, filter, finalize, interval, map, merge, Observable, of, pipe,
-  switchMap, tap,
+  catchError, debounceTime, EMPTY, exhaustMap, filter, finalize, forkJoin, interval, map, merge, Observable, of,
+  pipe, switchMap, tap,
 } from 'rxjs';
 import { TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk, toDisk } from 'app/interfaces/disk.interface';
+import { DashboardEnclosure } from 'app/interfaces/enclosure.interface';
 import { Pool, PoolTopology, toPool } from 'app/interfaces/pool.interface';
 import { isTopologyDisk, TopologyDisk, VDevItem } from 'app/interfaces/storage.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
+import {
+  DiskEnclosureLocation,
+  getDiskEnclosureLocations,
+} from 'app/pages/storage/modules/vdevs/utils/get-disk-enclosure-locations.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 export interface VDevsState {
@@ -24,6 +29,8 @@ export interface VDevsState {
   pool: Pool | null;
   nodes: VDevNestedDataNode[];
   diskDictionary: Record<string, Disk>;
+  /** Where each disk sits in an enclosure, keyed by serial. */
+  enclosureLocations: Record<string, DiskEnclosureLocation>;
   selectedNodeGuid: string | null;
 }
 
@@ -43,6 +50,7 @@ const initialState: VDevsState = {
   pool: null,
   nodes: [],
   diskDictionary: {},
+  enclosureLocations: {},
   selectedNodeGuid: null,
 };
 
@@ -206,15 +214,31 @@ export class VDevsStore {
         if (!pool) {
           return of({});
         }
-        return this.api.query('disk.query', [['pool', '=', pool.name]], { extra: { pools: true } }).pipe(
-          map((disks) => ({
+        return forkJoin([
+          this.api.query('disk.query', [['pool', '=', pool.name]], { extra: { pools: true } }),
+          this.fetchEnclosureLocations(),
+        ]).pipe(
+          map(([disks, enclosureLocations]) => ({
             poolName: pool.name,
             pool,
             diskDictionary: keyBy(disks.map(toDisk), (disk) => disk.devname),
+            enclosureLocations,
             nodes: this.createDataNodes(pool.topology),
           })),
         );
       }),
+    );
+  }
+
+  /**
+   * A system without a supported enclosure, or a user who may not read enclosures, gets no locations rather than
+   * an error, so the page still loads and shows the location as not available.
+   */
+  private fetchEnclosureLocations(): Observable<Record<string, DiskEnclosureLocation>> {
+    return this.api.call('webui.enclosure.dashboard').pipe(
+      // Middleware types the response as plain dicts.
+      map((enclosures) => getDiskEnclosureLocations(enclosures as DashboardEnclosure[])),
+      catchError(() => of({})),
     );
   }
 
@@ -282,6 +306,13 @@ export class VDevsStore {
       return undefined;
     }
     return this.state.diskDictionary()[node.disk];
+  }
+
+  getEnclosureLocation(disk: Disk | undefined): DiskEnclosureLocation | null {
+    if (!disk?.serial) {
+      return null;
+    }
+    return this.state.enclosureLocations()[disk.serial] || null;
   }
 }
 

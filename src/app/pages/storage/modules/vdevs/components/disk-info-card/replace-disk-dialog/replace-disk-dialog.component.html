@@ -1,5 +1,20 @@
 <tn-dialog-shell testId="replace-disk" [title]="'Replacing disk {name}' | translate: { name: data.diskName }">
 <form class="ix-form-container" [formGroup]="form" (submit)="onSubmit()">
+  <div class="location">
+    <div class="location-item">
+      <span class="label">{{ 'Enclosure' | translate }}:</span>
+      <span tnTestId="replace-disk-enclosure" tnTestIdType="text">
+        {{ data.location?.enclosureLabel || ('Not available' | translate) }}
+      </span>
+    </div>
+    <div class="location-item">
+      <span class="label">{{ 'Slot' | translate }}:</span>
+      <span tnTestId="replace-disk-slot" tnTestIdType="text">
+        {{ data.location?.slot ?? ('Not available' | translate) }}
+      </span>
+    </div>
+  </div>
+
   <ix-unused-disk-select
     formControlName="replacement"
     testId="replacement"
