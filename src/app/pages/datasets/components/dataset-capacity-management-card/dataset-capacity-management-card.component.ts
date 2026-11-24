@@ -6,15 +6,13 @@ import { TnCardComponent, TnTestIdDirective, type TnCardAction } from '@truenas/
 import { maxBy } from 'lodash-es';
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import { forkJoin, Subject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
 import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { listZpools } from 'app/helpers/list-zpools.helper';
-import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { toDatasetQuotas } from 'app/interfaces/dataset-quota.interface';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
 import { AuthService } from 'app/modules/auth/auth.service';
@@ -26,6 +24,7 @@ import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/
 import { SpaceManagementChartComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/space-management-chart/space-management-chart.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { DatasetQuotaService } from 'app/services/dataset/dataset-quota.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -46,6 +45,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit {
   private api = inject(ApiService);
+  private quotaService = inject(DatasetQuotaService);
   private errorHandler = inject(ErrorHandlerService);
   private cdr = inject(ChangeDetectorRef);
   private datasetStore = inject(DatasetTreeStore);
@@ -170,14 +170,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       }),
       switchMap(() => forkJoin([
-        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.User, []]).pipe(map(toDatasetQuotas)),
-        this.api.call('pool.dataset.get_quota', [this.dataset().id, DatasetQuotaType.Group, []]).pipe(map(toDatasetQuotas)),
+        this.quotaService.countQuotas(this.dataset().id, DatasetQuotaType.User),
+        this.quotaService.countQuotas(this.dataset().id, DatasetQuotaType.Group),
       ])),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([userQuotas, groupQuotas]) => {
-        this.userQuotas = userQuotas.filter(isQuotaSet).length;
-        this.groupQuotas = groupQuotas.filter(isQuotaSet).length;
+        this.userQuotas = userQuotas;
+        this.groupQuotas = groupQuotas;
         this.isLoadingQuotas = false;
         this.cdr.markForCheck();
       },

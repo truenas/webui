@@ -149,17 +149,19 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
    * as the dataset whose `origin` is this snapshot.
    *
    * Only for a user who is shown Delete at all, and only for the one property the filter reads:
-   * unfiltered by id, this walks every dataset, and it runs each time a row is opened.
+   * this walks every dataset in the snapshot's pool, and it runs each time a row is opened.
    */
   private checkForClones(): void {
     this.authService.hasRole(this.requiredRoles).pipe(
       take(1),
       filter(Boolean),
-      switchMap(() => this.api.query(
-        'pool.dataset.query',
-        [['origin.rawvalue', '=', this.snapshot().name]],
-        { select: ['id'], extra: { properties: ['origin'] } },
-      )),
+      // A clone lives in the snapshot's pool, so only that pool's datasets are read.
+      switchMap(() => this.api.call('zfs.resource.list', [{
+        paths: [this.snapshot().dataset.split('/')[0]],
+        get_children: true,
+        properties: ['origin'],
+      }])),
+      map((datasets) => datasets.filter((dataset) => dataset.properties?.origin?.raw === this.snapshot().name)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: (clones) => {
@@ -171,9 +173,9 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   }
 
   private doHoldOrRelease(): void {
-    const holdOrRelease = this.holdControl.value ? 'pool.snapshot.hold' : 'pool.snapshot.release';
+    const holdOrRelease = this.holdControl.value ? 'zfs.resource.snapshot.hold' : 'zfs.resource.snapshot.release';
     // The row's own name, not `snapshotInfo`'s: the tick box is live before that query answers.
-    this.api.call(holdOrRelease, [this.snapshot().name])
+    this.api.call(holdOrRelease, [{ path: this.snapshot().name }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: (error: unknown) => {
@@ -200,7 +202,7 @@ export class SnapshotDetailsRowComponent implements OnInit, OnDestroy {
   doDelete(snapshot: ZfsSnapshot): void {
     this.dialogService.confirmDelete({
       message: this.translate.instant('Delete snapshot {name}?', { name: snapshot.name }),
-      call: () => this.api.call('pool.snapshot.delete', [snapshot.name]),
+      call: () => this.api.call('zfs.resource.snapshot.destroy', [{ path: snapshot.name }]),
       successMessage: this.translate.instant('Snapshot deleted.'),
     // Deliberately not unsubscribing to make sure "Snapshot deleted" message is shown.
     }).subscribe();

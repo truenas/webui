@@ -10,20 +10,19 @@ import {
 import {
   combineLatest, Observable, of,
 } from 'rxjs';
-import { catchError, switchMap, tap } from 'rxjs/operators';
+import { catchError, tap } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
-import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { helptextDeleteDataset } from 'app/helptext/storage/volumes/datasets/delete-dataset';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 @Component({
@@ -49,7 +48,7 @@ export class DeleteDatasetDialog implements OnInit {
   private fb = inject(FormBuilder);
   private errorHandler = inject(ErrorHandlerService);
   private api = inject(ApiService);
-  private dialog = inject(DialogService);
+  private datasetApi = inject(DatasetApiService);
   protected dialogRef = inject<DialogRef>(DialogRef);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
@@ -93,12 +92,6 @@ export class DeleteDatasetDialog implements OnInit {
       this.loader.withLoader(),
       tap(() => this.dialogRef.close(true)),
       catchError((error: unknown) => {
-        const apiError = extractApiErrorDetails(error);
-
-        if (apiError?.reason?.includes('Device busy')) {
-          return this.askToForceDelete();
-        }
-
         this.dialogRef.close();
         this.errorHandler.showErrorModal(error);
 
@@ -108,36 +101,14 @@ export class DeleteDatasetDialog implements OnInit {
     ).subscribe();
   }
 
-  private deleteDataset(): Observable<boolean> {
-    return this.api.call('pool.dataset.delete', [this.dataset.id, { recursive: true }]);
-  }
-
-  private forceDeleteDataset(): Observable<boolean> {
-    return this.api.call('pool.dataset.delete', [this.dataset.id, { recursive: true, force: true }]);
-  }
-
-  private askToForceDelete(): Observable<unknown> {
-    return this.getForceDeleteConfirmation()
-      .pipe(
-        switchMap((shouldForceDelete: boolean) => {
-          return shouldForceDelete ? this.forceDeleteDataset() : of();
-        }),
-      );
-  }
-
-  private getForceDeleteConfirmation(): Observable<boolean> {
-    return this.dialog.confirm({
-      title: this.translate.instant('Device Busy'),
-      message: this.translate.instant('Force deletion of dataset <i>{datasetName}</i>?', { datasetName: this.dataset.name }),
-      buttonText: this.translate.instant('Force Delete'),
-      buttonColor: 'warn',
-    });
+  private deleteDataset(): Observable<unknown> {
+    return this.datasetApi.deleteDataset(this.dataset.id);
   }
 
   private loadDatasetRelatedEntities(): void {
     combineLatest([
-      this.api.call('pool.dataset.attachments', [this.dataset.id]),
-      this.api.call('pool.dataset.processes', [this.dataset.id]),
+      this.api.call('zfs.resource.attachments', [this.dataset.id]),
+      this.api.call('zfs.resource.processes', [this.dataset.id]),
     ]).pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ([attachments, processes]) => {

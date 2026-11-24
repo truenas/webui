@@ -37,7 +37,7 @@ import { choicesToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import {
-  Dataset, DatasetCreate, DatasetUpdate, toDataset, toDatasetCreateArgs, toDatasetUpdateArgs,
+  Dataset, DatasetCreate, DatasetUpdate,
 } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { DetailsItemComponent } from 'app/modules/details-table/details-item/details-item.component';
@@ -62,6 +62,8 @@ import { ZvolFormData } from 'app/pages/datasets/components/zvol-form/zvol-form.
 import {
   getDatasetLabel, getUserProperty, transformSpecialSmallBlockSizeForPayload,
 } from 'app/pages/datasets/utils/dataset.utils';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
+import { toUpperCaseChoices } from 'app/services/dataset/zfs-resource.utils';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
@@ -98,6 +100,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private translate = inject(TranslateService);
   private formBuilder = inject(NonNullableFormBuilder);
   private api = inject(ApiService);
+  private datasetApi = inject(DatasetApiService);
   private dialogService = inject(DialogService);
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
@@ -263,7 +266,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private buildCreateResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     const data = this.buildCreatePayload(event.allValues);
     return {
-      request$: this.api.call('pool.dataset.create', [toDatasetCreateArgs(data as DatasetCreate)]).pipe(map(toDataset)),
+      request$: this.datasetApi.createDataset(data as DatasetCreate),
       // Owned by the form so every entry point (details panel, details card, explorer) confirms
       // identically; the openers deliberately raise no snackbar of their own.
       successMessage: (created) => this.translate.instant('Zvol «{name}» created.', {
@@ -276,15 +279,13 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
   private buildEditResult(event: FormSubmitEvent<ZvolFormData>): SubmitResult<Dataset, Dataset> {
     return {
-      request$: this.api.query('pool.dataset.query', [['id', '=', this.parentOrZvolId()]]).pipe(
+      request$: this.datasetApi.loadDatasets([this.parentOrZvolId()]).pipe(
         switchMap((datasets) => {
-          const { payload, canSubmit } = this.buildEditPayload(event, datasets.map(toDataset));
+          const { payload, canSubmit } = this.buildEditPayload(event, datasets);
           if (!canSubmit) {
             return throwError(() => new VolsizeValidationError('Zvol volsize cannot be shrunk.'));
           }
-          return this.api.call('pool.dataset.update', [this.parentOrZvolId(), toDatasetUpdateArgs(payload)]).pipe(
-            map(toDataset),
-          );
+          return this.datasetApi.updateDataset(this.parentOrZvolId(), payload);
         }),
       ),
       // See `buildCreateResult` — the message is the form's, not the opener's.
@@ -472,11 +473,10 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
 
     this.setupLoading.set(true);
     forkJoin([
-      this.api.query('pool.dataset.query', [['id', '=', this.parentOrZvolId()]]).pipe(
-        map((datasets) => datasets.map(toDataset)),
-      ),
+      // A new zvol's name must not repeat a sibling's, so read the parent's children too.
+      this.datasetApi.loadDatasets([this.parentOrZvolId()], { withChildren: this.isNew() }),
       this.loadRecommendedBlocksize(),
-      this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions()),
+      this.api.call('zfs.resource.compression_choices').pipe(map(toUpperCaseChoices), choicesToOptions()),
     ])
       .pipe(
         finalize(() => this.setupLoading.set(false)),
@@ -508,8 +508,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
             parentDatasetId.pop();
             parentDatasetId = parentDatasetId.join('/');
 
-            this.api.query('pool.dataset.query', [['id', '=', parentDatasetId]]).pipe(
-              map((datasets) => datasets.map(toDataset)),
+            this.datasetApi.loadDatasets([parentDatasetId]).pipe(
               this.errorHandler.withErrorHandler(),
               takeUntilDestroyed(this.destroyRef),
             ).subscribe({
@@ -825,7 +824,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private loadRecommendedBlocksize(): Observable<unknown> {
     const root = this.parentOrZvolId().split('/')[0];
 
-    return this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+    return this.api.call('zfs.resource.recommended_zvol_blocksize', [root]).pipe(
       map((recommendedSize) => recommendedSize as DatasetRecordSize),
       tap((recommendedSize) => {
         this.form.controls.volblocksize.setValue(recommendedSize);

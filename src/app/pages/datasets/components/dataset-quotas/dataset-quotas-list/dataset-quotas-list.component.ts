@@ -18,16 +18,15 @@ import {
 } from '@truenas/ui-components';
 import { EMPTY, Observable, of } from 'rxjs';
 import {
-  catchError, filter, map, switchMap, tap,
+  catchError, filter, switchMap, tap,
 } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import {
-  DatasetQuota, DatasetQuotaFilter, SetDatasetQuota, toDatasetQuotaFilters, toDatasetQuotas,
+  DatasetQuota, SetDatasetQuota,
 } from 'app/interfaces/dataset-quota.interface';
 import { ConfirmOptions } from 'app/interfaces/dialog.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -43,13 +42,13 @@ import { IconActionConfig } from 'app/modules/tn-table/interfaces/icon-action-co
 import { convertStringToId, mapTnSortToTableSort } from 'app/modules/tn-table/utils';
 import { TableActionsCellComponent } from 'app/modules/tn-table-cells/actions-cell/table-actions-cell.component';
 import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/table-text-cell.component';
-import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DatasetQuotaAddFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-add-form/dataset-quota-add-form.component';
 import {
   DatasetQuotaEditFormComponent,
 } from 'app/pages/datasets/components/dataset-quotas/dataset-quota-edit-form/dataset-quota-edit-form.component';
+import { DatasetQuotaService } from 'app/services/dataset/dataset-quota.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 interface QuotaData {
@@ -82,7 +81,7 @@ interface QuotaData {
   ],
 })
 export class DatasetQuotasListComponent implements OnInit {
-  private api = inject(ApiService);
+  private quotaService = inject(DatasetQuotaService);
   private formatter = inject(IxFormatterService);
   private dialogService = inject(DialogService);
   private errorHandler = inject(ErrorHandlerService);
@@ -133,7 +132,6 @@ export class DatasetQuotasListComponent implements OnInit {
   private quotaObjType: QuotaData['quotaObjType'];
   protected helpTextKey: QuotaData['helpTextKey'];
 
-  protected invalidFilter: DatasetQuotaFilter[] = [['name', '=', null]];
 
   ngOnInit(): void {
     const paramMap = this.route.snapshot.params;
@@ -207,18 +205,16 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private getQuotas(): void {
     this.isLoading = true;
-    this.api.call('pool.dataset.get_quota', [this.datasetId, this.quotaType, []])
-      .pipe(map(toDatasetQuotas), takeUntilDestroyed(this.destroyRef)).subscribe({
+    this.quotaService.getQuotas(this.datasetId, this.quotaType, { includeUsageOnly: this.showAllQuotas })
+      .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
-          this.quotas = quotas.filter(isQuotaSet);
-
-          if (this.showAllQuotas) {
-            this.quotas = quotas;
-          }
+          this.quotas = quotas;
 
           this.onListFiltered(this.searchQuery());
-          this.checkInvalidQuotas();
+          // Assigned whatever its length, so a removal that leaves none takes the button away.
+          this.invalidQuotas = quotas.filter((quota) => quota.name === null);
+          this.cdr.markForCheck();
         },
         error: (error: unknown) => {
           this.emptyType = EmptyType.Errors;
@@ -232,20 +228,6 @@ export class DatasetQuotasListComponent implements OnInit {
     this.errorHandler.showErrorModal(error);
     this.cdr.markForCheck();
   };
-
-  private checkInvalidQuotas(): void {
-    this.api.call(
-      'pool.dataset.get_quota',
-      [this.datasetId, this.quotaType, toDatasetQuotaFilters(this.invalidFilter)],
-    ).pipe(map(toDatasetQuotas), takeUntilDestroyed(this.destroyRef)).subscribe({
-      next: (quotas: DatasetQuota[]) => {
-        // Assigned whatever its length, so a removal that leaves none takes the button away.
-        this.invalidQuotas = quotas ?? [];
-        this.cdr.markForCheck();
-      },
-      error: this.handleError,
-    });
-  }
 
   protected toggleDisplay(newValue: boolean): void {
     this.showAllQuotas = newValue;
@@ -288,8 +270,8 @@ export class DatasetQuotasListComponent implements OnInit {
     ).subscribe();
   }
 
-  private setQuota(quotas: SetDatasetQuota[]): Observable<void> {
-    return this.api.call('pool.dataset.set_quota', [this.datasetId, quotas]);
+  private setQuota(quotas: SetDatasetQuota[]): Observable<unknown> {
+    return this.quotaService.setQuotas(this.datasetId, quotas);
   }
 
   protected doAdd(): void {

@@ -224,8 +224,18 @@ export class SnapshotAddFormComponent extends IxFormHostForm implements OnInit {
       params.vmware_sync = values.vmware_sync;
     }
 
+    // `zfs.resource.snapshot.create` takes only a literal name. Expanding a naming schema and syncing VMware
+    // happen in middleware around the snapshot, and only `pool.snapshot.create` does them.
+    const request$ = params.naming_schema || params.vmware_sync
+      ? this.api.call('pool.snapshot.create', [toCreateZfsSnapshotArgs(params)])
+      : this.api.call('zfs.resource.snapshot.create', [{
+          dataset: params.dataset,
+          name: params.name ?? '',
+          recursive: params.recursive,
+        }]);
+
     return {
-      request$: this.api.call('pool.snapshot.create', [toCreateZfsSnapshotArgs(params)]),
+      request$,
       // Owned by the form so every entry point confirms identically.
       successMessage: this.translate.instant('Snapshot added successfully.'),
       onSuccess: () => this.datasetStore.datasetUpdated(),

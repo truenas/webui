@@ -28,7 +28,7 @@ import {
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { UnsavedChangesService } from 'app/modules/unsaved-changes/unsaved-changes.service';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity, WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetFormComponent } from 'app/pages/datasets/components/dataset-form/dataset-form.component';
 import {
   EncryptionSectionComponent,
@@ -43,9 +43,22 @@ import {
   QuotasSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/quotas-section/quotas-section.component';
 import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/utils/dataset-form.service';
+import { ZfsResourceEntry, zfsResourceErrorFields } from 'app/services/dataset/zfs-resource.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { FilesystemService } from 'app/services/filesystem.service';
 import { checkIfServiceIsEnabled } from 'app/store/services/services.actions';
+
+/** What `zfs.resource.list` answers when the form reads the saved dataset back. */
+function savedRow(path: string): ZfsResourceEntry {
+  return {
+    name: path,
+    pool: 'parent',
+    type: 'FILESYSTEM',
+    properties: { mountpoint: { raw: `/mnt/${path}`, value: `/mnt/${path}`, source: null } },
+    user_properties: {},
+    children: null,
+  } as ZfsResourceEntry;
+}
 
 describe('DatasetFormComponent', () => {
   let spectator: Spectator<DatasetFormComponent>;
@@ -102,8 +115,9 @@ describe('DatasetFormComponent', () => {
       mockApi([
         mockCall('sharing.smb.create', null),
         mockCall('sharing.nfs.create', null),
-        mockCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
-        mockCall('pool.dataset.update', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
+        mockCall('zfs.resource.create', {} as CallResponse<WebUiApiDirectory, 'zfs.resource.create'>),
+        mockCall('zfs.resource.set', {} as CallResponse<WebUiApiDirectory, 'zfs.resource.set'>),
+        mockCall('zfs.resource.list', ([query]) => [savedRow(query?.paths?.[0] ?? '')]),
         mockCall('filesystem.stat', { acl: true } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
       ]),
       ...ixFormTestingProviders(),
@@ -222,11 +236,11 @@ describe('DatasetFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
-        path: '/mnt/saved-id',
+        path: '/mnt/dataset',
       }]);
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.nfs.create', [{
-        path: '/mnt/saved-id',
+        path: '/mnt/dataset',
       }]);
 
       expect(spectator.inject(Store).dispatch).toHaveBeenCalledWith(
@@ -245,7 +259,7 @@ describe('DatasetFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
-        path: '/mnt/saved-id',
+        path: '/mnt/dataset',
         purpose: SmbSharePurpose.MultiProtocolShare,
       }]);
 
@@ -262,11 +276,11 @@ describe('DatasetFormComponent', () => {
 
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.smb.create', [{
         name: 'new_sbm_name',
-        path: '/mnt/saved-id',
+        path: '/mnt/dataset',
       }]);
 
       expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('sharing.nfs.create', [{
-        path: '/mnt/saved-id',
+        path: '/mnt/dataset',
       }]);
 
       expect(spectator.inject(Store).dispatch).not.toHaveBeenCalledWith(
@@ -289,6 +303,7 @@ describe('DatasetFormComponent', () => {
       expect(spectator.inject(FormErrorHandlerService).handleValidationErrors).toHaveBeenCalledWith(
         error,
         expect.arrayContaining([nameAndOptionsForm, datasetPresetForm]),
+        zfsResourceErrorFields,
       );
     });
 
@@ -315,25 +330,22 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
-        name: 'dataset',
-        encryption: true,
-        aclmode: AclMode.Passthrough,
-      }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.create', [expect.objectContaining({
+        path: 'dataset',
+        properties: { aclmode: 'passthrough' },
+      })]);
       // The panel closes with the saved record — the dataset list needs it to switch to the new dataset.
-      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'saved-id' }));
+      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'dataset', mountpoint: '/mnt/dataset' }));
     });
 
     it('creates a new dataset in advanced mode when new form is submitted', () => {
       toggleAdvanced();
       save();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.create', [{
-        name: 'dataset',
-        encryption: true,
-        refquota: GiB,
-        aclmode: AclMode.Passthrough,
-      }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.create', [expect.objectContaining({
+        path: 'dataset',
+        properties: { refquota: GiB, aclmode: 'passthrough' },
+      })]);
     });
 
     it('checks if parent has ACL and goes to the ACL editor once the panel has closed', async () => {
@@ -351,10 +363,10 @@ describe('DatasetFormComponent', () => {
         }),
       );
       // Record handed back first, so the opener still sees it before navigation tears the panel down.
-      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'saved-id' }));
+      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'dataset' }));
       expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(
         ['/', 'datasets', 'acl', 'edit'],
-        { queryParams: { path: '/mnt/saved-id' } },
+        { queryParams: { path: '/mnt/dataset' } },
       );
       // Deliberately silent on this branch — we're navigating away, so a snackbar would be noise.
       expect(spectator.inject(SnackbarService).success).not.toHaveBeenCalled();
@@ -377,7 +389,7 @@ describe('DatasetFormComponent', () => {
       await spectator.fixture.whenStable();
 
       expect(spectator.inject(SnackbarService).success)
-        .toHaveBeenCalledWith('Dataset «saved-child» created.');
+        .toHaveBeenCalledWith('Dataset «dataset» created.');
     });
 
     it('announces the updated dataset', async () => {
@@ -390,7 +402,7 @@ describe('DatasetFormComponent', () => {
       await spectator.fixture.whenStable();
 
       expect(spectator.inject(SnackbarService).success)
-        .toHaveBeenCalledWith('Dataset «saved-child» updated.');
+        .toHaveBeenCalledWith('Dataset «child» updated.');
     });
   });
 
@@ -411,16 +423,16 @@ describe('DatasetFormComponent', () => {
       save();
       await spectator.fixture.whenStable();
 
-      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'saved-id' }));
+      expect(closed).toHaveBeenCalledWith(expect.objectContaining({ id: 'parent/child' }));
     });
 
     it('updates an existing child dataset when edit form is submitted', () => {
       save();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent/child', {
-        name: 'dataset',
-        aclmode: AclMode.Passthrough,
-      }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.set', [expect.objectContaining({
+        path: 'parent/child',
+        properties: { aclmode: 'passthrough' },
+      })]);
     });
   });
 
@@ -469,7 +481,7 @@ describe('DatasetFormComponent', () => {
 
       save();
 
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('zfs.resource.create', expect.anything());
     });
   });
 
@@ -492,7 +504,7 @@ describe('DatasetFormComponent', () => {
 
       save();
 
-      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('pool.dataset.create', expect.anything());
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('zfs.resource.create', expect.anything());
     });
   });
 
@@ -520,10 +532,10 @@ describe('DatasetFormComponent', () => {
     it('updates an existing root dataset when edit form is submitted', () => {
       save();
 
-      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', ['parent', {
-        name: 'dataset',
-        aclmode: AclMode.Passthrough,
-      }]);
+      expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.set', [expect.objectContaining({
+        path: 'parent',
+        properties: { aclmode: 'passthrough' },
+      })]);
     });
   });
 });
@@ -543,7 +555,8 @@ describe('DatasetFormComponent hosted in the side panel', () => {
       imports: [FormSidePanelContainerComponent, TranslateModule.forRoot()],
       providers: [
         mockApi([
-          mockCall('pool.dataset.create', { id: 'saved-id', name: 'parent/saved-child', mountpoint: '/mnt/saved-id' } as WebUiQueryEntity<'pool.dataset.query'>),
+          mockCall('zfs.resource.create', {} as CallResponse<WebUiApiDirectory, 'zfs.resource.create'>),
+          mockCall('zfs.resource.list', ([query]) => [savedRow(query?.paths?.[0] ?? '')]),
           mockCall('filesystem.stat', { acl: false } as CallResponse<WebUiApiDirectory, 'filesystem.stat'>),
         ]),
         ...ixFormTestingProviders(),

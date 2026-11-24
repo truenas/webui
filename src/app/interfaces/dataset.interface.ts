@@ -243,9 +243,6 @@ export function toDatasetDetails(details: CallResponse<WebUiApiDirectory, 'pool.
 /** What `pool.dataset.create` takes, as middleware declares it. */
 export type DatasetCreateArgs = CallParams<WebUiApiDirectory, 'pool.dataset.create'>[0];
 
-/** What `pool.dataset.update` takes as its changes, as middleware declares it. */
-export type DatasetUpdateArgs = CallParams<WebUiApiDirectory, 'pool.dataset.update'>[1];
-
 /**
  * Hands a form's payload to `pool.dataset.create` unchanged. Middleware spells `compression`, `recordsize` and
  * friends as literal unions; the forms hold them as strings read from the matching `*_choices` call, so they
@@ -253,9 +250,4 @@ export type DatasetUpdateArgs = CallParams<WebUiApiDirectory, 'pool.dataset.upda
  */
 export function toDatasetCreateArgs(payload: DatasetCreate): DatasetCreateArgs {
   return payload as DatasetCreateArgs;
-}
-
-/** {@link toDatasetCreateArgs} for `pool.dataset.update`. */
-export function toDatasetUpdateArgs(payload: DatasetUpdate): DatasetUpdateArgs {
-  return payload as DatasetUpdateArgs;
 }

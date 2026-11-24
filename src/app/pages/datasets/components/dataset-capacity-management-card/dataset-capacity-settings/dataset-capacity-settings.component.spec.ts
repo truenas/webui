@@ -2,11 +2,11 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
+import { CallResponse } from '@truenas/api-client';
 import { TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
 import { GiB } from 'app/constants/bytes.constant';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
@@ -14,6 +14,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   DatasetCapacitySettingsComponent,
 } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -64,7 +65,7 @@ describe('DatasetCapacitySettingsComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('pool.dataset.update', null),
+        mockCall('zfs.resource.set', {} as CallResponse<WebUiApiDirectory, 'zfs.resource.set'>),
       ]),
       ...ixFormTestingProviders(),
       mockProvider(DialogService),
@@ -141,18 +142,21 @@ describe('DatasetCapacitySettingsComponent', () => {
     save();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('pool.dataset.update', [
-      'root/path',
-      {
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('zfs.resource.set', [{
+      path: 'root/path',
+      properties: {
         quota: 110 * GiB,
-        quota_critical: 90,
-        quota_warning: 50,
         refquota: 0,
-        refquota_warning: inherit,
         refreservation: 15 * GiB,
         reservation: 25 * GiB,
       },
-    ]);
+      user_properties: {
+        'org.freenas:quota_critical': '90',
+        'org.freenas:quota_warning': '50',
+      },
+      inherit: ['org.freenas:refquota_warning'],
+      force_size: false,
+    }]);
     expect(spectator.inject(SnackbarService).success).toHaveBeenCalled();
     expect(closed).toHaveBeenCalledWith(true);
   });
@@ -167,13 +171,16 @@ describe('DatasetCapacitySettingsComponent', () => {
     save();
     await spectator.fixture.whenStable();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
-      'root/path',
-      {
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('zfs.resource.set', [{
+      path: 'root/path',
+      properties: {
         refquota: 0,
         quota: 0,
       },
-    ]);
+      user_properties: {},
+      inherit: [],
+      force_size: false,
+    }]);
   });
 
   it('rejects a quota between 0 and 1 GiB', async () => {
@@ -191,12 +198,16 @@ describe('DatasetCapacitySettingsComponent', () => {
 
     save();
 
-    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('pool.dataset.update', [
-      'root/path',
-      {
+    expect(spectator.inject(ApiService).call).toHaveBeenLastCalledWith('zfs.resource.set', [{
+      path: 'root/path',
+      properties: {
         quota: 105 * GiB,
-        quota_critical: 93,
       },
-    ]);
+      user_properties: {
+        'org.freenas:quota_critical': '93',
+      },
+      inherit: [],
+      force_size: false,
+    }]);
   });
 });

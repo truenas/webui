@@ -7,7 +7,7 @@ import {
   TnButtonHarness, TnCheckboxHarness, TnInputHarness, TnSelectHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
-import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { JobState } from 'app/enums/job-state.enum';
@@ -16,8 +16,8 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { indexFormControls } from 'app/modules/forms/ix-forms/testing/control-harnesses.helpers';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { EncryptionOptionsDialog } from 'app/pages/datasets/modules/encryption/components/encryption-options-dialog/encryption-options-dialog.component';
+import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 import { EncryptionOptionsDialogData } from './encryption-options-dialog-data.interface';
 
 describe('EncryptionOptionsDialogComponent', () => {
@@ -40,13 +40,14 @@ describe('EncryptionOptionsDialogComponent', () => {
         })),
       }),
       mockApi([
-        mockJob('pool.dataset.change_key', { state: JobState.Success }),
-        mockCall('pool.dataset.inherit_parent_encryption_properties', null),
-        mockQuery('pool.dataset.query', [{
-          pbkdf2iters: {
-            rawvalue: '1300000',
+        mockJob('zfs.resource.encryption.change_key', { state: JobState.Success }),
+        mockCall('zfs.resource.encryption.inherit', null),
+        mockCall('zfs.resource.list', [{
+          name: 'pool/parent/child',
+          properties: {
+            pbkdf2iters: { raw: '1300000', value: 1300000, source: null },
           },
-        }] as unknown as WebUiQueryEntity<'pool.dataset.query'>[]),
+        }] as ZfsResourceEntry[]),
       ]),
       mockAuth(),
     ],
@@ -100,8 +101,8 @@ describe('EncryptionOptionsDialogComponent', () => {
 
   it('loads dataset pbkdf2iters when dialog is opened', async () => {
     setupTest();
-    expect(api.query)
-      .toHaveBeenCalledWith('pool.dataset.query', [['id', '=', 'pool/parent/child']]);
+    expect(api.call)
+      .toHaveBeenCalledWith('zfs.resource.list', [{ paths: ['pool/parent/child'], properties: ['pbkdf2iters'] }]);
 
     const pbkdf2iters = await loader.getHarness(
       TnInputHarness.with({ selector: '[formControlName="pbkdf2iters"]' }),
@@ -117,7 +118,7 @@ describe('EncryptionOptionsDialogComponent', () => {
 
     await clickSave();
 
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties', ['pool/parent/child']);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.encryption.inherit', [{ path: 'pool/parent/child' }]);
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
 
@@ -138,7 +139,7 @@ describe('EncryptionOptionsDialogComponent', () => {
 
     await clickSave();
 
-    expect(api.call).not.toHaveBeenCalledWith('pool.dataset.inherit_parent_encryption_properties');
+    expect(api.call).not.toHaveBeenCalledWith('zfs.resource.encryption.inherit', expect.anything());
     expect(dialogRef.close).toHaveBeenCalledWith(false);
   });
 
@@ -174,8 +175,8 @@ describe('EncryptionOptionsDialogComponent', () => {
     await clickSave();
 
     expect(api.job).toHaveBeenCalledWith(
-      'pool.dataset.change_key',
-      ['pool/parent/child', { key, generate_key: false }],
+      'zfs.resource.encryption.change_key',
+      [{ path: 'pool/parent/child', key, generate_key: false }],
     );
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
@@ -190,8 +191,8 @@ describe('EncryptionOptionsDialogComponent', () => {
     await clickSave();
 
     expect(api.job).toHaveBeenCalledWith(
-      'pool.dataset.change_key',
-      ['pool/parent/child', { generate_key: true }],
+      'zfs.resource.encryption.change_key',
+      [{ path: 'pool/parent/child', generate_key: true }],
     );
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
@@ -208,8 +209,8 @@ describe('EncryptionOptionsDialogComponent', () => {
     await clickSave();
 
     expect(api.job).toHaveBeenCalledWith(
-      'pool.dataset.change_key',
-      ['pool/parent/child', { passphrase: '12345678', pbkdf2iters: 1300001 }],
+      'zfs.resource.encryption.change_key',
+      [{ path: 'pool/parent/child', passphrase: '12345678', pbkdf2iters: 1300001 }],
     );
     expect(dialogRef.close).toHaveBeenCalledWith(true);
   });
@@ -231,8 +232,8 @@ describe('EncryptionOptionsDialogComponent', () => {
     await saveButton.click();
 
     expect(api.job).toHaveBeenCalledWith(
-      'pool.dataset.change_key',
-      ['pool/parent/child', { key, generate_key: false }],
+      'zfs.resource.encryption.change_key',
+      [{ path: 'pool/parent/child', key, generate_key: false }],
     );
   });
 

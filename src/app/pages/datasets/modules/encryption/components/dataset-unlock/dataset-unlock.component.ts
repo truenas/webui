@@ -25,8 +25,11 @@ import {
   DatasetEncryptionSummaryQueryParams,
   DatasetEncryptionSummaryQueryParamsDataset,
   toDatasetEncryptionSummaryJob,
+  toUnlockSummaryArgs,
 } from 'app/interfaces/dataset-encryption-summary.interface';
-import { DatasetUnlockParams, DatasetUnlockResult, toDatasetUnlockJob } from 'app/interfaces/dataset-lock.interface';
+import {
+  DatasetUnlockParams, DatasetUnlockResult, toDatasetUnlockJob, toUnlockArgs,
+} from 'app/interfaces/dataset-lock.interface';
 import { Job } from 'app/interfaces/job.interface';
 import { RadioOption } from 'app/interfaces/option.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -169,7 +172,8 @@ export class DatasetUnlockComponent implements OnInit {
 
   private getEncryptionSummary(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.dataset.encryption_summary', [this.pk]).pipe(map(toDatasetEncryptionSummaryJob)),
+      this.api.job('zfs.resource.encryption.unlock_summary', [toUnlockSummaryArgs(this.pk)])
+        .pipe(map(toDatasetEncryptionSummaryJob)),
       {
         title: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryTitle),
         description: this.translate.instant(helptextUnlock.fetchingEncryptionSummaryMessage, { dataset: this.pk }),
@@ -235,10 +239,10 @@ export class DatasetUnlockComponent implements OnInit {
     const job$ = payload.key_file
       ? this.upload.uploadAsJob({
           file: values.file,
-          method: 'pool.dataset.unlock',
-          params: [this.pk, payload],
+          method: 'zfs.resource.encryption.unlock',
+          params: [toUnlockArgs(this.pk, payload)],
         }).pipe(map(toDatasetUnlockJob))
-      : this.api.job('pool.dataset.unlock', [this.pk, payload]).pipe(map(toDatasetUnlockJob));
+      : this.api.job('zfs.resource.encryption.unlock', [toUnlockArgs(this.pk, payload)]).pipe(map(toDatasetUnlockJob));
 
     this.dialogService.jobDialog(job$, {
       title: this.translate.instant(helptextUnlock.unlockingDatasetsTitle),
@@ -286,10 +290,11 @@ export class DatasetUnlockComponent implements OnInit {
     const job$ = values.use_file
       ? this.upload.uploadAsJob({
           file: values.file,
-          method: 'pool.dataset.encryption_summary',
-          params: [this.pk, payload],
+          method: 'zfs.resource.encryption.unlock_summary',
+          params: [toUnlockSummaryArgs(this.pk, payload)],
         }).pipe(map(toDatasetEncryptionSummaryJob))
-      : this.api.job('pool.dataset.encryption_summary', [this.pk, payload]).pipe(map(toDatasetEncryptionSummaryJob));
+      : this.api.job('zfs.resource.encryption.unlock_summary', [toUnlockSummaryArgs(this.pk, payload)])
+          .pipe(map(toDatasetEncryptionSummaryJob));
 
     return {
       request$: this.dialogService.jobDialog(job$, {

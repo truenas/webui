@@ -61,9 +61,9 @@ export class SnapshotCloneDialog implements OnInit {
   }
 
   onSubmit(): void {
-    this.api.call('pool.snapshot.clone', [{
+    this.api.call('zfs.resource.snapshot.clone', [{
       snapshot: this.snapshotName,
-      dataset_dst: this.datasetName,
+      dataset: this.datasetName,
     }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
@@ -72,7 +72,7 @@ export class SnapshotCloneDialog implements OnInit {
           this.cdr.markForCheck();
         },
         error: (error: unknown) => {
-          this.errorHandler.handleValidationErrors(error, this.form);
+          this.errorHandler.handleValidationErrors(error, this.form, { dataset: 'dataset_dst' });
         },
       });
   }

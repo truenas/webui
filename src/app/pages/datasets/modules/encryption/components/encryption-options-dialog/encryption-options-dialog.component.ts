@@ -11,7 +11,7 @@ import {
   InputType, TnButtonComponent, TnCheckboxComponent, TnDialogShellComponent,
   TnFormFieldComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
-import { map, of, startWith } from 'rxjs';
+import { of, startWith } from 'rxjs';
 import { minimumPbkdf2Iterations } from 'app/constants/dataset.constants';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
@@ -19,7 +19,6 @@ import { Role } from 'app/enums/role.enum';
 import { findInTree } from 'app/helpers/find-in-tree.utils';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetChangeKeyParams } from 'app/interfaces/dataset-change-key.interface';
-import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormActionsComponent } from 'app/modules/forms/ix-forms/components/form-actions/form-actions.component';
 import {
@@ -177,13 +176,13 @@ export class EncryptionOptionsDialog implements OnInit {
 
       return {
         request$: this.api
-          .call('pool.dataset.inherit_parent_encryption_properties', [this.data.dataset.id])
+          .call('zfs.resource.encryption.inherit', [{ path: this.data.dataset.id }])
           .pipe(this.loader.withLoader()),
         successMessage: this.translate.instant('Encryption Options Saved'),
       };
     }
 
-    const body = {} as DatasetChangeKeyParams;
+    const body: DatasetChangeKeyParams = { path: this.data.dataset.id };
     if (values.encryption_type === EncryptionType.Key) {
       body.generate_key = values.generate_key;
       if (!values.generate_key) {
@@ -196,7 +195,7 @@ export class EncryptionOptionsDialog implements OnInit {
 
     return {
       request$: this.dialog.jobDialog(
-        this.api.job('pool.dataset.change_key', [this.data.dataset.id, body]),
+        this.api.job('zfs.resource.encryption.change_key', [body]),
         { title: this.translate.instant('Updating key type') },
       ).afterClosed(),
       successMessage: this.translate.instant('Encryption Options Saved'),
@@ -204,18 +203,18 @@ export class EncryptionOptionsDialog implements OnInit {
   };
 
   private loadPbkdf2iters(): void {
-    this.api.query('pool.dataset.query', [['id', '=', this.data.dataset.id]])
-      .pipe(map((datasets) => datasets.map(toDataset)), this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
+    this.api.call('zfs.resource.list', [{ paths: [this.data.dataset.id], properties: ['pbkdf2iters'] }])
+      .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: (datasets: Dataset[]) => {
-          const pbkdf2iters = datasets[0].pbkdf2iters;
+        next: (datasets) => {
+          const pbkdf2iters = datasets[0]?.properties?.pbkdf2iters;
 
-          if (!pbkdf2iters || pbkdf2iters.rawvalue === '0') {
+          if (!pbkdf2iters || pbkdf2iters.raw === '0') {
             return;
           }
 
           this.form.patchValue({
-            pbkdf2iters: Number(pbkdf2iters.rawvalue),
+            pbkdf2iters: Number(pbkdf2iters.raw),
           });
         },
         error: (error: unknown) => {

@@ -5,13 +5,13 @@ import { DiskBus } from 'app/enums/disk-bus.enum';
 import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { DiskType } from 'app/enums/disk-type.enum';
-import { Dataset } from 'app/interfaces/dataset.interface';
 import { Disk, DiskTemperatureAgg, StorageDashboardDisk } from 'app/interfaces/disk.interface';
 import { ScrubTask } from 'app/interfaces/pool-scrub.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
+import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { poolStore } from 'app/services/global-store/stores.constant';
 import { StorageService } from 'app/services/storage.service';
@@ -78,7 +78,7 @@ describe('PoolsDashboardStore', () => {
 
   interface ApiAnswers {
     pools: Pool[] | Observable<Pool[]>;
-    rootDatasets?: Dataset[];
+    rootDatasets?: ZfsResourceEntry[];
     zpools?: unknown[];
     scrubs?: ScrubTask[];
     disks?: Disk[];
@@ -98,12 +98,12 @@ describe('PoolsDashboardStore', () => {
 
     jest.mocked(api.queryAndSubscribe).mockImplementation(answer({ 'pool.query': answers.pools }) as never);
     (api.query as unknown as jest.Mock).mockImplementation(answer({
-      'pool.dataset.query': answers.rootDatasets ?? [],
       'pool.scrub.query': answers.scrubs ?? [],
       'disk.query': answers.disks ?? [],
     }));
     jest.mocked(api.callUndeclared).mockImplementation(answer({ 'zpool.list': answers.zpools ?? [] }) as never);
     jest.mocked(api.call).mockImplementation(answer({
+      'zfs.resource.list': answers.rootDatasets ?? [],
       'disk.temperature_alerts': [],
       'disk.temperature_agg': answers.temperatureAgg ?? {},
     }) as never);
@@ -117,7 +117,10 @@ describe('PoolsDashboardStore', () => {
     ] as ScrubTask[];
     stubApi({
       pools: pools$,
-      rootDatasets: [{ id: 'pool1' }, { id: 'pool2' }] as Dataset[],
+      rootDatasets: [
+        { name: 'pool1', pool: 'pool1', type: 'FILESYSTEM' },
+        { name: 'pool2', pool: 'pool2', type: 'FILESYSTEM' },
+      ] as ZfsResourceEntry[],
       scrubs,
       disks,
       temperatureAgg,
@@ -145,8 +148,8 @@ describe('PoolsDashboardStore', () => {
       { id: 2, name: 'pool2' },
     ]);
     expect(store.rootDatasets()).toEqual({
-      pool1: { id: 'pool1' },
-      pool2: { id: 'pool2' },
+      pool1: expect.objectContaining({ id: 'pool1', name: 'pool1' }),
+      pool2: expect.objectContaining({ id: 'pool2', name: 'pool2' }),
     });
   });
 

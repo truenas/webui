@@ -4,7 +4,6 @@ import {
 import { ReactiveFormsModule, FormBuilder } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { InputType, TnFormFieldComponent, TnFormSectionComponent, TnInputComponent } from '@truenas/ui-components';
-import { Observable } from 'rxjs';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { helptextGlobal } from 'app/helptext/global-helptext';
@@ -16,7 +15,7 @@ import {
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
 import { IxGroupChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-group-chips.component';
 import { IxUserChipsComponent } from 'app/modules/forms/ix-forms/components/user-group-pickers/ix-user-chips.component';
-import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetQuotaService } from 'app/services/dataset/dataset-quota.service';
 
 @Component({
   selector: 'ix-dataset-quota-add-form',
@@ -35,7 +34,7 @@ import { ApiService } from 'app/modules/websocket/api.service';
 })
 export class DatasetQuotaAddFormComponent extends IxFormHostForm {
   private formBuilder = inject(FormBuilder);
-  private api = inject(ApiService);
+  private quotaService = inject(DatasetQuotaService);
   private translate = inject(TranslateService);
 
   /** Context supplied by the `<tn-side-panel>` host (via {@link FormSidePanelService}). */
@@ -90,7 +89,7 @@ export class DatasetQuotaAddFormComponent extends IxFormHostForm {
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {
     const quotas = this.getQuotas();
-    const request$: Observable<void> = this.api.call('pool.dataset.set_quota', [this.datasetId(), quotas]);
+    const request$ = this.quotaService.setQuotas(this.datasetId(), quotas);
 
     return {
       request$,

@@ -5,7 +5,7 @@ import {
   snapshotPageEntered,
   snapshotAdded,
   snapshotChanged, snapshotRemoved, snapshotsLoaded,
-  snapshotsNotLoaded,
+  snapshotsNotLoaded, snapshotsRefreshed,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 
 export interface SnapshotsState extends EntityState<ZfsSnapshot> {
@@ -29,11 +29,9 @@ export const snapshotReducer = createReducer(
   on(snapshotPageEntered, (state) => ({ ...state, isLoading: true, error: null as string | null })),
   on(snapshotsLoaded, (state, { snapshots }) => adapter.setAll(snapshots, { ...state, isLoading: false })),
   on(snapshotsNotLoaded, (state, { error }) => ({ ...state, error, isLoading: false })),
+  on(snapshotsRefreshed, (state, { snapshots }) => adapter.setAll(snapshots, state)),
 
-  on(snapshotAdded, (state, { snapshot }) => adapter.addOne(snapshot, state)),
-  on(snapshotChanged, (state, { snapshot }) => adapter.updateOne({
-    id: snapshot.name,
-    changes: snapshot,
-  }, state)),
+  on(snapshotAdded, (state, { snapshot }) => adapter.upsertOne(snapshot, state)),
+  on(snapshotChanged, (state, { id, changes }) => adapter.updateOne({ id, changes }, state)),
   on(snapshotRemoved, (state, { id }) => adapter.removeOne(id, state)),
 );

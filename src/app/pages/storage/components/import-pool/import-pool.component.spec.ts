@@ -7,7 +7,7 @@ import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { NEVER, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -17,7 +17,8 @@ import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 import { ImportPoolComponent } from './import-pool.component';
 
 type DiskDetailsCallResponse = CallResponse<WebUiApiDirectory, 'disk.details'>;
@@ -77,11 +78,16 @@ describe('ImportPoolComponent', () => {
         mockJob('pool.import_find', { state: JobState.Success, result: mockPools }),
         mockCall('disk.details', mockDiskDetailsNoLocked as unknown as DiskDetailsCallResponse),
         mockCall('system.advanced.sed_global_password', 'existingpassword'),
-        mockQuery('pool.dataset.query', [{
-          id: '/mnt/pewl',
-          locked: true,
-          encryption_root: '/mnt/pewl',
-        } as WebUiQueryEntity<'pool.dataset.query'>]),
+        mockCall('zfs.resource.list', [{
+          name: 'pewl',
+          pool: 'pewl',
+          type: 'FILESYSTEM',
+          properties: {
+            encryption: { raw: 'aes-256-gcm', value: 'aes-256-gcm', source: null },
+            encryptionroot: { raw: 'pewl', value: 'pewl', source: null },
+            keystatus: { raw: 'unavailable', value: 'unavailable', source: null },
+          },
+        }] as ZfsResourceEntry[]),
       ]),
       mockProvider(DialogService, {
         confirm: jest.fn(() => of(true)),
@@ -138,12 +144,12 @@ describe('ImportPoolComponent', () => {
     const importButton = await loader.getHarness(TnButtonHarness.with({ label: 'Import' }));
     await importButton.click();
 
-    expect(api.query).toHaveBeenCalledWith('pool.dataset.query', [['name', '=', 'pool_name_1']]);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.list', [expect.objectContaining({ paths: ['pool_name_1'] })]);
     expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
       title: 'Unlock Pool',
     }));
 
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pewl', 'unlock']);
+    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'pewl', 'unlock']);
   });
 
   describe('while the initial lookup is in flight', () => {
@@ -189,7 +195,7 @@ describe('ImportPoolComponent', () => {
           mockCall('disk.details', mockDiskDetailsWithLocked as unknown as DiskDetailsCallResponse),
           mockCall('system.advanced.sed_global_password', 'existingpassword'),
           mockCall('disk.unlock_sed', null),
-          mockQuery('pool.dataset.query', [{ id: '/mnt/pewl', locked: false } as WebUiQueryEntity<'pool.dataset.query'>]),
+          mockCall('zfs.resource.list', [{ name: 'pewl', pool: 'pewl', type: 'FILESYSTEM' }] as ZfsResourceEntry[]),
         ]),
         mockProvider(DialogService, {
           confirm: jest.fn(() => of(true)),

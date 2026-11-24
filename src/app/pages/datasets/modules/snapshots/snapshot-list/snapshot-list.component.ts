@@ -45,7 +45,9 @@ import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/s
 import { SnapshotBatchDeleteDialog } from 'app/pages/datasets/modules/snapshots/snapshot-batch-delete-dialog/snapshot-batch-delete-dialog.component';
 import { SnapshotDetailsRowComponent } from 'app/pages/datasets/modules/snapshots/snapshot-details-row/snapshot-details-row.component';
 import { snapshotListElements } from 'app/pages/datasets/modules/snapshots/snapshot-list/snapshot-list.elements';
-import { snapshotPageEntered, snapshotsLoaded } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
+import {
+  snapshotPageEntered, snapshotPageLeft, snapshotsLoaded,
+} from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
 import { selectSnapshotState, selectSnapshots, selectSnapshotsTotal } from 'app/pages/datasets/modules/snapshots/store/snapshot.selectors';
 import { getFiniteNumber, getSnapshotCreationMs } from 'app/pages/datasets/modules/snapshots/utils/snapshot-creation.utils';
 import { isInDatasetScope } from 'app/pages/datasets/utils/dataset-scope.utils';
@@ -159,9 +161,10 @@ export class SnapshotListComponent implements OnInit {
   protected readonly uniqueRowTag = memoizedRowTag<ZfsSnapshot>((snapshot) => `snapshot-${snapshot.name}`);
 
   /**
-   * Selection identity. A snapshot's `name` carries both its dataset and its own name, so
-   * it is unique across the whole list — which is what lets tn-table hold the selection
-   * across a page turn and across a reload that rebuilt every row object.
+   * Selection and expansion identity. A snapshot's `name` carries both its dataset and its own
+   * name, so it is unique across the whole list — which is what lets tn-table hold the selection
+   * and the open details row across a page turn, a hold/release event that replaces the row
+   * object, and the periodic re-read that rebuilds every row object.
    */
   protected readonly snapshotSelectionKey = (row: ZfsSnapshot): string => row.name;
 
@@ -222,6 +225,8 @@ export class SnapshotListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Stops the live updates and the periodic re-read the store runs while the list is open.
+    this.destroyRef.onDestroy(() => this.store$.dispatch(snapshotPageLeft()));
     this.getPreferences();
     this.getSnapshots();
     this.setDefaultSort();

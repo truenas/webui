@@ -45,7 +45,7 @@ describe('DatasetUnlockComponent', () => {
         snapshot: { params: { datasetId: 'pool_name_1' } },
       }),
       mockApi([
-        mockJob('pool.dataset.encryption_summary', { state: JobState.Success }),
+        mockJob('zfs.resource.encryption.unlock_summary', { state: JobState.Success }),
       ]),
       mockProvider(DialogService, {
         jobDialog: jest.fn(() => ({
@@ -80,8 +80,8 @@ describe('DatasetUnlockComponent', () => {
     expect(spectator.inject(DialogService).jobDialog).toHaveBeenCalled();
     expect(spectator.inject(UploadService).uploadAsJob).toHaveBeenCalledWith({
       file,
-      method: 'pool.dataset.encryption_summary',
-      params: ['pool_name_1', { datasets: undefined, force: false, key_file: true }],
+      method: 'zfs.resource.encryption.unlock_summary',
+      params: [{ path: 'pool_name_1', force: false, key_file: true }],
     });
   });
 
@@ -115,13 +115,13 @@ describe('DatasetUnlockComponent', () => {
     await unlockButton.click();
 
     expect(spectator.inject(ApiService).job).toHaveBeenCalledWith(
-      'pool.dataset.encryption_summary',
+      'zfs.resource.encryption.unlock_summary',
       [
-        'pool_name_1',
         {
-          datasets: [
-            { key: '0123456789012345678901234567890123456789012345678901234567890123', name: 'pool_name_1' },
-            { name: 'pool_name_2', passphrase: '12345678' },
+          path: 'pool_name_1',
+          keys: [
+            { key: '0123456789012345678901234567890123456789012345678901234567890123', path: 'pool_name_1' },
+            { path: 'pool_name_2', passphrase: '12345678' },
           ],
           force: true,
           key_file: false,

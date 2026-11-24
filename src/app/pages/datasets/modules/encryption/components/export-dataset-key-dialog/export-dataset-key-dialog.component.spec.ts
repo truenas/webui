@@ -19,7 +19,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
     component: ExportDatasetKeyDialog,
     providers: [
       mockApi([
-        mockJob('pool.dataset.export_key', { state: JobState.Success, result: '12345678' }),
+        mockJob('zfs.resource.encryption.export_key', { state: JobState.Success, result: '12345678' }),
       ]),
       mockProvider(DownloadService, {
         coreDownload: jest.fn(() => of(undefined)),
@@ -43,7 +43,7 @@ describe('ExportDatasetKeyDialogComponent', () => {
   });
 
   it('loads and shows dataset encryption key', () => {
-    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('pool.dataset.export_key', ['pool/my-dataset']);
+    expect(spectator.inject(ApiService).job).toHaveBeenCalledWith('zfs.resource.encryption.export_key', [{ path: 'pool/my-dataset' }]);
     const key = spectator.query('.key');
     expect(key).toHaveText('12345678');
   });
@@ -53,9 +53,9 @@ describe('ExportDatasetKeyDialogComponent', () => {
     await downloadButton.click();
 
     expect(spectator.inject(DownloadService).coreDownload).toHaveBeenCalledWith({
-      arguments: ['pool/my-dataset', true],
+      arguments: [{ path: 'pool/my-dataset', download: true }],
       fileName: 'dataset_my-dataset_key.json',
-      method: 'pool.dataset.export_key',
+      method: 'zfs.resource.encryption.export_key',
       mimeType: 'application/json',
     });
   });

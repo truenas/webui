@@ -13,7 +13,7 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { Role } from 'app/enums/role.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
-import { Dataset, toDataset } from 'app/interfaces/dataset.interface';
+import { Dataset } from 'app/interfaces/dataset.interface';
 import { toDiskDetails } from 'app/interfaces/disk.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
@@ -24,6 +24,7 @@ import { IxFormComponent, SubmitResult } from 'app/modules/forms/ix-forms/compon
 import { optionTestIdByLabel } from 'app/modules/forms/ix-forms/constants/tn-select-option-test-id.constant';
 import { LoaderService } from 'app/modules/loader/loader.service';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { LockedSedDisksComponent } from './locked-sed-disks/locked-sed-disks.component';
 import { UnlockSedDisksComponent } from './unlock-sed-disks/unlock-sed-disks.component';
@@ -59,6 +60,7 @@ enum ImportStep {
 export class ImportPoolComponent extends IxFormHostForm implements OnInit {
   private fb = inject(FormBuilder);
   private api = inject(ApiService);
+  private datasetApi = inject(DatasetApiService);
   private errorHandler = inject(ErrorHandlerService);
   private dialogService = inject(DialogService);
   private translate = inject(TranslateService);
@@ -202,9 +204,8 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
     if (!selectedPool) {
       return of([[], false]);
     }
-    return this.api.query('pool.dataset.query', [['name', '=', selectedPool.name]])
+    return this.datasetApi.loadDatasets([selectedPool.name])
       .pipe(
-        map((datasets) => datasets.map(toDataset)),
         this.loader.withLoader(),
         switchMap((poolDatasets): Observable<[Dataset[], boolean]> => {
           if (poolDatasets[0].locked && poolDatasets[0].encryption_root === poolDatasets[0].id) {

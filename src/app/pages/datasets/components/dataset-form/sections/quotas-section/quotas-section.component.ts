@@ -43,15 +43,15 @@ export class QuotasSectionComponent implements OnInit {
 
   readonly form = this.formBuilder.nonNullable.group({
     refquota: [null as number | null, this.quotaValidator],
-    refquota_warning: [warning, [Validators.min(0), Validators.max(100)]],
+    refquota_warning: [warning, [Validators.required, Validators.min(0), Validators.max(100)]],
     refquota_warning_inherit: [true],
-    refquota_critical: [critical, [Validators.min(0), Validators.max(100)]],
+    refquota_critical: [critical, [Validators.required, Validators.min(0), Validators.max(100)]],
     refquota_critical_inherit: [true],
     refreservation: [null as number | null],
     quota: [null as number | null, this.quotaValidator],
-    quota_warning: [warning, [Validators.min(0), Validators.max(100)]],
+    quota_warning: [warning, [Validators.required, Validators.min(0), Validators.max(100)]],
     quota_warning_inherit: [true],
-    quota_critical: [critical, [Validators.min(0), Validators.max(100)]],
+    quota_critical: [critical, [Validators.required, Validators.min(0), Validators.max(100)]],
     quota_critical_inherit: [true],
     reservation: [null as number | null],
   });

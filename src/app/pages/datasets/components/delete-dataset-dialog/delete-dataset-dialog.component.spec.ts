@@ -5,18 +5,13 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnCheckboxHarness, TnInputHarness } from '@truenas/ui-components';
-import { of, throwError } from 'rxjs';
-import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
-import { JsonRpcError } from 'app/interfaces/api-message.interface';
 import { DatasetAttachment } from 'app/interfaces/pool-attachment.interface';
 import { Process } from 'app/interfaces/process.interface';
 import { VolumesListDataset } from 'app/interfaces/volumes-list-pool.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
-import { ApiCallError } from 'app/services/errors/error.classes';
 import { DeleteDatasetDialog } from './delete-dataset-dialog.component';
 
 describe('DeleteDatasetDialogComponent', () => {
@@ -39,8 +34,8 @@ describe('DeleteDatasetDialogComponent', () => {
       },
       mockProvider(DialogRef),
       mockApi([
-        mockCall('pool.dataset.delete', null),
-        mockCall('pool.dataset.attachments', [
+        mockCall('zfs.resource.destroy', null),
+        mockCall('zfs.resource.attachments', [
           {
             type: 'SMB Share',
             attachments: ['root'],
@@ -52,16 +47,13 @@ describe('DeleteDatasetDialogComponent', () => {
             ],
           },
         ] as DatasetAttachment[]),
-        mockCall('pool.dataset.processes', [
+        mockCall('zfs.resource.processes', [
           { name: 'zsh' } as Process,
           { name: 'ganesha.nfsd' },
           { pid: '1234', cmdline: 'rm -rf /' },
           { cmdline: 'nano' },
-        ] as CallResponse<WebUiApiDirectory, 'pool.dataset.processes'>),
+        ] as CallResponse<WebUiApiDirectory, 'zfs.resource.processes'>),
       ]),
-      mockProvider(DialogService, {
-        confirm: jest.fn(() => of(true)),
-      }),
     ],
   });
 
@@ -85,7 +77,7 @@ describe('DeleteDatasetDialogComponent', () => {
   }
 
   it('loads and shows services that use dataset', () => {
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.attachments', ['lab1']);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.attachments', ['lab1']);
 
     const attachmentsSection = spectator.query('.attachments');
     expect(attachmentsSection).toHaveText(
@@ -113,7 +105,7 @@ describe('DeleteDatasetDialogComponent', () => {
   });
 
   it('loads and shows known processes that use dataset', () => {
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.processes', ['lab1']);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.processes', ['lab1']);
 
     const processesSection = spectator.query('.known-processes');
     expect(processesSection).toHaveText('These running processes are using Lab 1:');
@@ -137,23 +129,7 @@ describe('DeleteDatasetDialogComponent', () => {
   it('deletes dataset and closes modal when deletion is confirmed', async () => {
     await confirmAndDelete();
 
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true }]);
-  });
-
-  it('asks to force delete a dataset if it cannot be deleted because device is busy', async () => {
-    const websocketMock = spectator.inject(MockApiService);
-    jest.spyOn(websocketMock, 'call').mockImplementationOnce(() => throwError(() => new ApiCallError({
-      data: {
-        reason: 'Device busy',
-      },
-    } as JsonRpcError)));
-
-    await confirmAndDelete();
-
-    expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
-      title: 'Device Busy',
-    }));
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.delete', ['lab1', { recursive: true, force: true }]);
+    expect(api.call).toHaveBeenCalledWith('zfs.resource.destroy', [{ path: 'lab1', recursive: true }]);
   });
 
   it('does not delete the dataset when the form is submitted natively while invalid', () => {
@@ -161,6 +137,6 @@ describe('DeleteDatasetDialogComponent', () => {
     // browser submit on Enter. The handler must re-check validity.
     spectator.query('form')!.dispatchEvent(new Event('submit'));
 
-    expect(api.call).not.toHaveBeenCalledWith('pool.dataset.delete', expect.anything());
+    expect(api.call).not.toHaveBeenCalledWith('zfs.resource.destroy', expect.anything());
   });
 });

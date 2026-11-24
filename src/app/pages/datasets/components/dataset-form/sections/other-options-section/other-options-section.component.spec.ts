@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateService } from '@ngx-translate/core';
-import { CallResponse } from '@truenas/api-client';
 import { TnFormSectionHarness, TnInputHarness, TnSelectHarness } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { KiB } from 'app/constants/bytes.constant';
@@ -28,7 +27,6 @@ import { Dataset } from 'app/interfaces/dataset.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import {
   OtherOptionsSectionComponent,
 } from 'app/pages/datasets/components/dataset-form/sections/other-options-section/other-options-section.component';
@@ -209,17 +207,17 @@ describe('OtherOptionsSectionComponent', () => {
     ],
     providers: [
       mockApi([
-        mockCall('pool.dataset.checksum_choices', {
-          ON: 'ON',
-          SHA256: 'SHA256',
-        } as CallResponse<WebUiApiDirectory, 'pool.dataset.checksum_choices'>),
-        mockCall('pool.dataset.compression_choices', {
-          LZ4: 'LZ4',
-          LZJB: 'LZJB',
-          OFF: 'OFF',
+        mockCall('zfs.resource.checksum_choices', {
+          on: 'on',
+          sha256: 'sha256',
         }),
-        mockCall('pool.dataset.recordsize_choices', ['1K', '64K']),
-        mockCall('pool.dataset.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
+        mockCall('zfs.resource.compression_choices', {
+          lz4: 'lz4',
+          lzjb: 'lzjb',
+          off: 'off',
+        }),
+        mockCall('zfs.resource.recordsize_choices', ['1K', '64K']),
+        mockCall('zfs.resource.recommended_zvol_blocksize', '256K' as DatasetRecordSize),
       ]),
       mockProvider(SystemGeneralService),
       mockProvider(SharingTierService, {

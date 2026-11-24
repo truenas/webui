@@ -45,8 +45,8 @@ export class ExportDatasetKeyDialog implements OnInit {
 
     this.download.coreDownload({
       fileName,
-      method: 'pool.dataset.export_key',
-      arguments: [this.dataset.id, true],
+      method: 'zfs.resource.encryption.export_key',
+      arguments: [{ path: this.dataset.id, download: true }],
       mimeType: 'application/json',
     })
       .pipe(
@@ -60,7 +60,7 @@ export class ExportDatasetKeyDialog implements OnInit {
   }
 
   private loadKey(): void {
-    this.api.job('pool.dataset.export_key', [this.dataset.id])
+    this.api.job('zfs.resource.encryption.export_key', [{ path: this.dataset.id }])
       .pipe(this.loader.withLoader(), takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (job) => {

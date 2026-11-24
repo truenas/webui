@@ -43,7 +43,6 @@ import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
-import { Choices } from 'app/interfaces/choices.interface';
 import { Dataset, DatasetCreate, DatasetUpdate } from 'app/interfaces/dataset.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -55,6 +54,7 @@ import { DatasetFormService } from 'app/pages/datasets/components/dataset-form/u
 import { getFieldValue } from 'app/pages/datasets/components/dataset-form/utils/zfs-property.utils';
 import { getUserProperty, transformSpecialSmallBlockSizeForPayload } from 'app/pages/datasets/utils/dataset.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+import { toUpperCaseChoices } from 'app/services/dataset/zfs-resource.utils';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { SystemGeneralService } from 'app/services/system-general.service';
 
@@ -156,12 +156,15 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: this.translate.instant('Off'), value: OnOff.Off },
   ]);
 
-  private readonly defaultCompressionOptions$ = this.api.call('pool.dataset.compression_choices').pipe(choicesToOptions());
+  private readonly defaultCompressionOptions$ = this.api.call('zfs.resource.compression_choices').pipe(
+    map(toUpperCaseChoices),
+    choicesToOptions(),
+  );
+
   private readonly defaultAtimeOptions$ = of(mapToOptions(onOffLabels, this.translate));
   private defaultDeduplicationOptions$ = of(mapToOptions(deduplicationSettingLabels, this.translate));
-  private defaultChecksumOptions$ = this.api.call('pool.dataset.checksum_choices').pipe(
-    // Middleware declares a fixed set of keys, which an interface without an index signature cannot be read as.
-    map((choices): Choices => ({ ...choices })),
+  private defaultChecksumOptions$ = this.api.call('zfs.resource.checksum_choices').pipe(
+    map(toUpperCaseChoices),
     choicesToOptions(),
   );
 
@@ -174,7 +177,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     { label: '3', value: 3 },
   ]);
 
-  private defaultRecordSizeOptions$ = this.api.call('pool.dataset.recordsize_choices').pipe(
+  private defaultRecordSizeOptions$ = this.api.call('zfs.resource.recordsize_choices').pipe(
     singleArrayToOptions(),
   );
 
@@ -554,7 +557,7 @@ export class OtherOptionsSectionComponent implements OnInit, OnChanges {
     const root = parent.id.split('/')[0];
     combineLatest([
       this.form.controls.recordsize.valueChanges.pipe(startWith(this.form.controls.recordsize.value)),
-      this.api.call('pool.dataset.recommended_zvol_blocksize', [root]).pipe(
+      this.api.call('zfs.resource.recommended_zvol_blocksize', [root]).pipe(
         map((recommended) => recommended as DatasetRecordSize),
       ),
     ])
