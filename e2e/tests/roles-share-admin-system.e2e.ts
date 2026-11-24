@@ -1,7 +1,7 @@
 /**
  * Story: the sharing administrator starts and stops FTP and edits a dataset, while SSH, dataset Delete, adding a
  * user or snapshot task, and the power menu stay locked. FTP rows need `SHARING_FTP_WRITE` (held), SSH only
- * `SERVICE_WRITE` (not); Delete isn't rendered without `DATASET_DELETE`. The read-only locks checked here show the
+ * `SERVICE_WRITE` (not); Delete is locked without `DATASET_DELETE`. The read-only locks checked here show the
  * account isn't treated as a full admin. Two sign-ins (see `flows/roles.ts`); nothing locked is clicked. FTP is
  * stopped first so the start is the UI's doing, and restored afterwards.
  */
@@ -15,7 +15,7 @@ import { ensureDatasetAbsent, ensureDatasetPresent, findDataset } from '../fixtu
 import { findUser } from '../fixtures/users';
 import { goToDataProtection, goToDatasets, goToServices, goToUsers } from '../flows/navigation';
 import {
-  expectHiddenByRole, expectLockedByRole, expectUnlockedByRole, signInAsRoleAdmin,
+  expectLockedByRole, expectUnlockedByRole, signInAsRoleAdmin,
 } from '../flows/roles';
 import { serviceChangeTimeoutMs, startServiceFromList, stopServiceFromList } from '../flows/services';
 import { openEditDatasetForm, saveDatasetForm } from '../flows/storage';
@@ -144,16 +144,15 @@ test.describe('as a sharing administrator', () => {
 
     await signInAsRoleAdmin(page, account);
 
-    await test.step('the dataset card offers Edit and not Delete, and adding is unlocked', async () => {
+    await test.step('the dataset card offers Edit and locks Delete, and adding is unlocked', async () => {
       await goToDatasets(page);
       const node = page.locator(datasetLocators.treeNode(dataset));
       await expect(node).toBeVisible({ timeout: pageSettleTimeoutMs });
       await node.click();
       await expect(page.locator(datasetDetailsLocators.path)).toHaveText(dataset);
 
-      // Edit and Delete both start hidden until the session's roles are known, so
-      // Delete is checked only once Edit, which this account holds, has rendered.
-      await expectHiddenByRole(page, datasetLocators.editDataset, deleteDatasetDialogLocators.open);
+      await expectUnlockedByRole(page, datasetLocators.editDataset);
+      await expectLockedByRole(page, deleteDatasetDialogLocators.open);
       await expectUnlockedByRole(page, datasetLocators.addDataset);
       await expectUnlockedByRole(page, zvolLocators.add);
     });

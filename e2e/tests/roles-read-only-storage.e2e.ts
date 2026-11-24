@@ -1,8 +1,7 @@
 /**
  * Story: a read-only administrator browses a dataset, its snapshots and the storage dashboard and finds every
- * control locked or absent. Most sit in `*ixRequiresRoles` (disabled inside the role-missing wrapper), but Edit and
- * Delete on Dataset Details aren't rendered without `DATASET_WRITE` / `DATASET_DELETE`. One sign-in, as steps, for
- * the rate limit. Nothing locked is clicked; the dataset, snapshot, hold and last scan are read back as a guard.
+ * control locked: each sits in `*ixRequiresRoles`, disabled inside the role-missing wrapper. One sign-in, as steps,
+ * for the rate limit. Nothing locked is clicked; the dataset, snapshot, hold and last scan are read back as a guard.
  */
 import {
   ensureRoleAdminAbsent, ensureRoleAdminPresent, roleAdmins,
@@ -14,8 +13,9 @@ import {
   ensureDatasetAbsent, ensureDatasetPresent, findDataset, findPoolScan,
 } from '../fixtures/storage';
 import { goToDatasets, goToStorage } from '../flows/navigation';
-import { expectHiddenByRole, expectLockedByRole, signInAsRoleAdmin } from '../flows/roles';
+import { expectLockedByRole, signInAsRoleAdmin } from '../flows/roles';
 import { expandSnapshot, openSnapshotList } from '../flows/snapshots';
+import { datasetCapacityLocators } from '../locators/dataset-capacity';
 import { permissionsLocators } from '../locators/permissions';
 import { snapshotLocators } from '../locators/snapshots';
 import {
@@ -96,12 +96,9 @@ test.describe('as a read-only administrator', () => {
       await expectLockedByRole(page, zvolLocators.add);
       await expectLockedByRole(page, permissionsLocators.card.edit);
       await expectLockedByRole(page, snapshotLocators.card.takeSnapshot);
-
-      // After the locks, which only render once the session's roles are known.
-      // Edit and Delete start hidden until then, so checking them first could
-      // pass on a card that had not yet asked.
-      await expectHiddenByRole(page, datasetDetailsLocators.path, datasetLocators.editDataset);
-      await expectHiddenByRole(page, datasetDetailsLocators.path, deleteDatasetDialogLocators.open);
+      await expectLockedByRole(page, datasetLocators.editDataset);
+      await expectLockedByRole(page, deleteDatasetDialogLocators.open);
+      await expectLockedByRole(page, datasetCapacityLocators.card.edit);
 
       expect(await findDataset(api, dataset)).toBeDefined();
     });
