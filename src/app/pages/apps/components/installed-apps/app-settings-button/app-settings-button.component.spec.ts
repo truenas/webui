@@ -14,6 +14,7 @@ import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { CatalogConfig } from 'app/interfaces/catalog.interface';
 import { DockerConfig } from 'app/interfaces/docker-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormErrorHandlerService } from 'app/modules/forms/ix-forms/services/form-error-handler.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -82,48 +83,72 @@ describe('AppSettingsButtonComponent', () => {
     ],
   });
 
-  beforeEach(() => {
-    spectator = createComponent();
+  function setup(hasDockerWrite: boolean): void {
+    spectator = createComponent({ detectChanges: false });
+    // The role checks subscribe on first render, so the answer is set before it.
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(hasDockerWrite));
+    spectator.detectChanges();
     Object.defineProperty(spectator.component, 'viewContainerRef', {
       value: viewContainerRef,
     });
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
+  }
+
+  describe('with the Docker Write role', () => {
+    beforeEach(() => setup(true));
+
+    it('shows Choose Pool modal once Settings button -> Choose Pool clicked', async () => {
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Choose Pool' });
+
+      expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
+      expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
+    });
+
+    it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Unset Pool' });
+
+      expect(spectator.inject(DialogService).confirm)
+        .toHaveBeenCalledWith(expect.objectContaining({
+          message: 'Confirm to unset pool?',
+        }));
+      expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith(null);
+    });
+
+    it('navigates to Manage Container Images when the menu item is clicked', async () => {
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Manage Container Images' });
+
+      expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'manage-container-images']);
+    });
+
+    it('opens the Settings form in a side panel when the Settings menu item is clicked', async () => {
+      const menu = await openMenu();
+      await menu.clickItem({ label: 'Settings' });
+
+      expect(formPanel.open).toHaveBeenCalledWith(AppsSettingsComponent, {
+        title: 'Settings',
+        testId: 'apps-settings',
+      });
+    });
   });
 
-  it('shows Choose Pool modal once Settings button -> Choose Pool clicked', async () => {
-    const menu = await openMenu();
-    await menu.clickItem({ label: 'Choose Pool' });
+  describe('without the Docker Write role', () => {
+    beforeEach(() => setup(false));
 
-    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
-    expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
-  });
+    it('disables Choose Pool and Unset Pool, and clicking them opens nothing', async () => {
+      const menu = await openMenu();
 
-  it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
-    const menu = await openMenu();
-    await menu.clickItem({ label: 'Unset Pool' });
+      expect(await menu.isItemDisabled({ label: 'Choose Pool' })).toBe(true);
+      expect(await menu.isItemDisabled({ label: 'Unset Pool' })).toBe(true);
 
-    expect(spectator.inject(DialogService).confirm)
-      .toHaveBeenCalledWith(expect.objectContaining({
-        message: 'Confirm to unset pool?',
-      }));
-    expect(spectator.inject(DockerStore).setDockerPool).toHaveBeenCalledWith(null);
-  });
+      await menu.clickItem({ label: 'Choose Pool' });
+      await menu.clickItem({ label: 'Unset Pool' });
 
-  it('navigates to Manage Container Images when the menu item is clicked', async () => {
-    const menu = await openMenu();
-    await menu.clickItem({ label: 'Manage Container Images' });
-
-    expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/apps', 'manage-container-images']);
-  });
-
-  it('opens the Settings form in a side panel when the Settings menu item is clicked', async () => {
-    const menu = await openMenu();
-    await menu.clickItem({ label: 'Settings' });
-
-    expect(formPanel.open).toHaveBeenCalledWith(AppsSettingsComponent, {
-      title: 'Settings',
-      testId: 'apps-settings',
+      expect(spectator.inject(TnDialog).open).not.toHaveBeenCalled();
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     });
   });
 });

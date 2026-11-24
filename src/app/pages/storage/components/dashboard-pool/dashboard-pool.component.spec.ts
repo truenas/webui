@@ -13,6 +13,7 @@ import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { helptextVolumes } from 'app/helptext/storage/volumes/volume-list';
 import { Pool } from 'app/interfaces/pool.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -130,6 +131,22 @@ describe('DashboardPoolComponent', () => {
     expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(AutotrimDialog, {
       data: pool,
     });
+  });
+
+  it('disables the Advanced Actions menu items for a user without the Pool Write role', async () => {
+    spectator = createComponent({ props: { pool }, detectChanges: false });
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(false));
+    spectator.detectChanges();
+    await spectator.fixture.whenStable();
+
+    const menuTrigger = await loader.getHarness(TnIconButtonHarness);
+    await menuTrigger.click();
+
+    const rootLoader = TestbedHarnessEnvironment.documentRootLoader(spectator.fixture);
+    const menu = await rootLoader.getHarness(TnMenuHarness);
+    expect(await menu.isItemDisabled({ label: 'Expand Pool' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Auto TRIM' })).toBe(true);
   });
 
   it('shows an Upgrade button that upgrades pool with confirmation when pool is not upgraded', async () => {

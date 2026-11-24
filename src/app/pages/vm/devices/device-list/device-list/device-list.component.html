@@ -82,8 +82,8 @@
           {{ 'Edit' | translate }}
         </tn-menu-item>
         <tn-menu-item
-          *ixRequiresRoles="requiredRoles"
           [testId]="[device.id, 'delete']"
+          [disabled]="!(requiredRoles | hasRoles | async)"
           (itemClick)="onDelete(device)"
         >
           {{ 'Delete' | translate }}

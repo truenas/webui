@@ -99,11 +99,10 @@
       <tn-menu #footerActionsMenu>
         @for (item of footerMenu.items; track item.testId) {
           <tn-menu-item
-            *ixRequiresRoles="item.requiredRoles ?? []"
             [testId]="item.testId"
             [icon]="item.icon"
             [iconLibrary]="item.iconLibrary"
-            [disabled]="item.disabled?.() ?? false"
+            [disabled]="(item.disabled?.() ?? false) || !(item.requiredRoles | hasRoles | async)"
             (itemClick)="item.onClick()"
           >{{ item.label | translate }}</tn-menu-item>
         }

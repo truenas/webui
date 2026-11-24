@@ -67,6 +67,7 @@ class MenuTestFormComponent extends SidePanelForm {
       {
         label: 'Download Public Key',
         testId: 'download-public-key',
+        requiredRoles: [Role.KeychainCredentialWrite],
         onClick: () => publicKeyClick(),
       },
     ],
@@ -93,10 +94,8 @@ describe('FormSidePanelContainerComponent footer menu', () => {
     return TnMenuTesting.rootLoader(fixture).getHarness(TnMenuHarness);
   };
 
-  beforeEach(() => {
-    privateKeyClick.mockClear();
-    publicKeyClick.mockClear();
-
+  /** The role check subscribes on first render, so `hasRole` answers before the container renders. */
+  const setUp = (hasRequiredRole = true): void => {
     TestBed.configureTestingModule({
       imports: [FormSidePanelContainerComponent, MenuTestFormComponent, TranslateModule.forRoot()],
       providers: [
@@ -109,6 +108,9 @@ describe('FormSidePanelContainerComponent footer menu', () => {
       ],
     });
 
+    const authService = TestBed.inject(AuthService) as unknown as MockAuthService;
+    authService.hasRole.mockReturnValue(of(hasRequiredRole));
+
     fixture = TestBed.createComponent(FormSidePanelContainerComponent);
     fixture.componentRef.setInput('portal', new ComponentPortal(MenuTestFormComponent));
     // A panel without a title has no accessible name, which the library warns about in
@@ -116,9 +118,15 @@ describe('FormSidePanelContainerComponent footer menu', () => {
     fixture.componentRef.setInput('title', 'Footer Menu Form');
     fixture.componentRef.setInput('open', true);
     fixture.detectChanges();
+  };
+
+  beforeEach(() => {
+    privateKeyClick.mockClear();
+    publicKeyClick.mockClear();
   });
 
   it('renders the footer menu trigger with the translated label as its accessible name', async () => {
+    setUp();
     // Confirms the trigger resolves (by its dots-vertical icon) and the label reached the DOM as
     // an accessible name — the icon-button projects `[ariaLabel]` onto its inner <button>.
     await getTrigger();
@@ -129,12 +137,14 @@ describe('FormSidePanelContainerComponent footer menu', () => {
   });
 
   it('lists every footer-menu item once the trigger is opened', async () => {
+    setUp();
     const menu = await openMenu();
 
     expect(await menu.getItemLabels()).toEqual(['Download Private Key', 'Download Public Key']);
   });
 
   it('reflects each item\'s reactive disabled predicate', async () => {
+    setUp();
     const menu = await openMenu();
     expect(await menu.isItemDisabled({ label: 'Download Private Key' })).toBe(true);
     expect(await menu.isItemDisabled({ label: 'Download Public Key' })).toBe(false);
@@ -148,11 +158,23 @@ describe('FormSidePanelContainerComponent footer menu', () => {
   });
 
   it('invokes the item onClick handler when an enabled item is clicked', async () => {
+    setUp();
     const menu = await openMenu();
     await menu.clickItem({ label: 'Download Public Key' });
 
     expect(publicKeyClick).toHaveBeenCalled();
     expect(privateKeyClick).not.toHaveBeenCalled();
+  });
+
+  it('disables an item whose requiredRoles the user lacks, and clicking it does nothing', async () => {
+    setUp(false);
+    const menu = await openMenu();
+
+    expect(await menu.isItemDisabled({ label: 'Download Public Key' })).toBe(true);
+
+    await menu.clickItem({ label: 'Download Public Key' });
+
+    expect(publicKeyClick).not.toHaveBeenCalled();
   });
 });
 

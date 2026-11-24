@@ -1,3 +1,4 @@
+import { AsyncPipe } from '@angular/common';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -9,6 +10,7 @@ import {
   TnButtonComponent, TnIconComponent, TnMenuComponent, TnMenuItemComponent, TnMenuTriggerDirective,
   TnTestIdDirective,
 } from '@truenas/ui-components';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { AppState } from 'app/enums/app-state.enum';
 import { Role } from 'app/enums/role.enum';
@@ -28,6 +30,8 @@ import { App } from 'app/interfaces/app.interface';
     TnIconComponent,
     TranslateModule,
     TnTestIdDirective,
+    HasRolesPipe,
+    AsyncPipe,
   ],
 })
 

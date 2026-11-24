@@ -37,35 +37,33 @@
     }
     <tn-menu #actionsMenu>
       <tn-menu-item
-        *ixRequiresRoles="requiredRoles"
         iconLibrary="mdi"
         [icon]="replaceIcon"
         [testId]="'replace'"
         [label]="'Replace' | translate"
+        [disabled]="!(requiredRoles | hasRoles | async)"
         (itemClick)="replace()"
       ></tn-menu-item>
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isDisk() && oneDisk()) {
-          <tn-menu-item
-            iconLibrary="mdi"
-            [icon]="attachIcon"
-            [testId]="'attach'"
-            [label]="'Attach' | translate"
-            (itemClick)="attach()"
-          ></tn-menu-item>
-        }
-      </ng-container>
-      <ng-container *ixRequiresRoles="requiredRoles">
-        @if (isMirrorMember()) {
-          <tn-menu-item
-            iconLibrary="mdi"
-            [icon]="detachIcon"
-            [testId]="'detach'"
-            [label]="'Detach' | translate"
-            (itemClick)="detach()"
-          ></tn-menu-item>
-        }
-      </ng-container>
+      @if (isDisk() && oneDisk()) {
+        <tn-menu-item
+          iconLibrary="mdi"
+          [icon]="attachIcon"
+          [testId]="'attach'"
+          [label]="'Attach' | translate"
+          [disabled]="!(requiredRoles | hasRoles | async)"
+          (itemClick)="attach()"
+        ></tn-menu-item>
+      }
+      @if (isMirrorMember()) {
+        <tn-menu-item
+          iconLibrary="mdi"
+          [icon]="detachIcon"
+          [testId]="'detach'"
+          [label]="'Detach' | translate"
+          [disabled]="!(requiredRoles | hasRoles | async)"
+          (itemClick)="detach()"
+        ></tn-menu-item>
+      }
     </tn-menu>
   </div>
 </div>

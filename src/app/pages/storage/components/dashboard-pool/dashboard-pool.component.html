@@ -33,21 +33,21 @@
 
         <tn-menu #advancedMenu>
           <tn-menu-item
-            *ixRequiresRoles="requiredRoles"
             icon="trending-up"
             iconLibrary="mdi"
             [testId]="['expand', pool()?.name]"
             [ixUiSearch]="searchableElements.elements.expand"
             [label]="'Expand Pool' | translate"
+            [disabled]="!(requiredRoles | hasRoles | async)"
             (itemClick)="onExpand()"
           ></tn-menu-item>
 
           <tn-menu-item
-            *ixRequiresRoles="requiredRoles"
             icon="content-cut"
             iconLibrary="mdi"
             [testId]="['auto-trim', pool()?.name]"
             [label]="'Auto TRIM' | translate"
+            [disabled]="!(requiredRoles | hasRoles | async)"
             (itemClick)="onEditAutotrim()"
           ></tn-menu-item>
         </tn-menu>

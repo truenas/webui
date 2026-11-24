@@ -1,4 +1,4 @@
-import { TitleCasePipe } from '@angular/common';
+import { AsyncPipe, TitleCasePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, input, output, computed, inject } from '@angular/core';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
@@ -10,7 +10,7 @@ import {
   TnTooltipDirective,
   tnIconMarker, TnTestIdDirective,
 } from '@truenas/ui-components';
-import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { HasRolesPipe } from 'app/directives/requires-roles/has-roles.pipe';
 import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { TopologyItemType } from 'app/enums/v-dev-type.enum';
@@ -33,9 +33,10 @@ import { BootPoolActionEvent, BootPoolActionType } from 'app/pages/system/booten
     TnMenuComponent,
     TnMenuItemComponent,
     TnMenuTriggerDirective,
-    RequiresRolesDirective,
+    HasRolesPipe,
     TranslateModule,
     TitleCasePipe,
+    AsyncPipe,
   ],
 })
 export class BootenvNodeItemComponent {

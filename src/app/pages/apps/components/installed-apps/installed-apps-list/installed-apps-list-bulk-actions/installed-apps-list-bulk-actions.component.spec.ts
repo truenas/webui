@@ -1,10 +1,14 @@
 import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { createComponentFactory, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnMenuHarness, TnMenuTesting } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnMenuHarness, TnMenuTesting, TnMenuTriggerDirective,
+} from '@truenas/ui-components';
+import { of } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { AppState } from 'app/enums/app-state.enum';
 import { App } from 'app/interfaces/app.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { InstalledAppsListBulkActionsComponent } from './installed-apps-list-bulk-actions.component';
 
 describe('InstalledAppsListBulkActionsComponent', () => {
@@ -77,5 +81,23 @@ describe('InstalledAppsListBulkActionsComponent', () => {
     await menu.clickItem({ label: 'Delete All Selected' });
 
     expect(deleteSpy).toHaveBeenCalled();
+  });
+
+  it('disables the menu items for a user without the Apps Write role', async () => {
+    spectator = createComponent({
+      props: { checkedApps: checkedAppsMock },
+      detectChanges: false,
+    });
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(false));
+    spectator.detectChanges();
+
+    // The trigger is role-locked too, so a click cannot open the menu; open it directly.
+    spectator.query(TnMenuTriggerDirective)!.openMenu();
+    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+
+    expect(await menu.isItemDisabled({ label: 'Start All Selected' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Stop All Selected' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Update All Selected' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Delete All Selected' })).toBe(true);
   });
 });

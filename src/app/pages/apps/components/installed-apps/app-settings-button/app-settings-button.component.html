@@ -10,18 +10,18 @@
 
 <tn-menu #menu>
   <tn-menu-item
-    *ixRequiresRoles="updateDockerRoles"
     testId="choose-pool"
     [label]="'Choose Pool' | translate"
     [ixUiSearch]="searchableElements.elements.choosePool"
+    [disabled]="!(updateDockerRoles | hasRoles | async)"
     (itemClick)="onChoosePool()"
   ></tn-menu-item>
 
   @if (dockerStore.selectedPool()) {
     <tn-menu-item
-      *ixRequiresRoles="updateDockerRoles"
       testId="unset-pool"
       [label]="'Unset Pool' | translate"
+      [disabled]="!(updateDockerRoles | hasRoles | async)"
       (itemClick)="onUnsetPool()"
     ></tn-menu-item>
   }

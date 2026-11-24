@@ -18,7 +18,7 @@ interface SidePanelFooterEntry {
   /** Untranslated marker; the container pipes it through `translate`. */
   label: string;
   testId: TnTestIdValue;
-  /** Roles required to show the entry (omit / empty = always shown). */
+  /** Roles required to use the entry; without them it is locked, a menu item disabled (omit / empty = anyone). */
   requiredRoles?: Role[];
   /** Re-evaluated each change detection — read signals inside for reactive disabling. */
   disabled?: () => boolean;

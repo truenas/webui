@@ -15,6 +15,7 @@ import { customAppTrain, customApp } from 'app/constants/catalog.constants';
 import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxCodeEditorComponent } from 'app/modules/forms/controls/ix-code-editor/ix-code-editor.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -67,48 +68,75 @@ describe('CustomAppButtonComponent', () => {
     ],
   });
 
-  beforeEach(async () => {
+  function setup(hasAppsWrite: boolean): void {
     selectedPool.set('selected pool');
-    spectator = createComponent();
+    spectator = createComponent({ detectChanges: false });
+    // The role checks subscribe on first render, so the answer is set before it.
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(hasAppsWrite));
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     formPanel = spectator.inject(FormSidePanelService);
-    button = await loader.getHarness(TnButtonHarness.with({ label: 'Custom App' }));
-  });
+  }
 
-  it('renders Custom App Button', () => {
-    expect(button).toExist();
-  });
-
-  it('navigates to create custom app page', async () => {
-    await button.click();
-
-    const router = spectator.inject(Router);
-    jest.spyOn(router, 'navigate').mockImplementation();
-
-    expect(router.navigate).toHaveBeenCalledWith([
-      '/apps', 'available', customAppTrain, customApp, 'install',
-    ]);
-  });
-
-  it('disables Custom App button if pool is not set', () => {
-    selectedPool.set(null);
-    spectator.detectChanges();
-
-    expect(button.isDisabled()).toBeTruthy();
-  });
-
-  it('opens the Custom App YAML form in a side panel when "Install via YAML" is clicked', async () => {
+  async function openMenu(): Promise<TnMenuHarness> {
     const menuTrigger = await loader.getHarness(TnIconButtonHarness.with({ name: 'dots-vertical' }));
     await menuTrigger.click();
-    const menu = await TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+    return TnMenuTesting.rootLoader(spectator.fixture).getHarness(TnMenuHarness);
+  }
 
-    await menu.clickItem({ label: /Install via YAML$/ });
-    spectator.detectChanges();
+  describe('with the Apps Write role', () => {
+    beforeEach(async () => {
+      setup(true);
+      button = await loader.getHarness(TnButtonHarness.with({ label: 'Custom App' }));
+    });
 
-    expect(formPanel.open).toHaveBeenCalledWith(CustomAppFormComponent, {
-      title: 'Install via YAML',
-      wide: true,
-      testId: 'custom-app',
+    it('renders Custom App Button', () => {
+      expect(button).toExist();
+    });
+
+    it('navigates to create custom app page', async () => {
+      await button.click();
+
+      const router = spectator.inject(Router);
+      jest.spyOn(router, 'navigate').mockImplementation();
+
+      expect(router.navigate).toHaveBeenCalledWith([
+        '/apps', 'available', customAppTrain, customApp, 'install',
+      ]);
+    });
+
+    it('disables Custom App button if pool is not set', () => {
+      selectedPool.set(null);
+      spectator.detectChanges();
+
+      expect(button.isDisabled()).toBeTruthy();
+    });
+
+    it('opens the Custom App YAML form in a side panel when "Install via YAML" is clicked', async () => {
+      const menu = await openMenu();
+
+      await menu.clickItem({ label: /Install via YAML$/ });
+      spectator.detectChanges();
+
+      expect(formPanel.open).toHaveBeenCalledWith(CustomAppFormComponent, {
+        title: 'Install via YAML',
+        wide: true,
+        testId: 'custom-app',
+      });
+    });
+  });
+
+  describe('without the Apps Write role', () => {
+    beforeEach(() => setup(false));
+
+    it('disables "Install via YAML" and clicking it opens nothing', async () => {
+      const menu = await openMenu();
+
+      expect(await menu.isItemDisabled({ label: /Install via YAML$/ })).toBe(true);
+
+      await menu.clickItem({ label: /Install via YAML$/ });
+
+      expect(formPanel.open).not.toHaveBeenCalled();
     });
   });
 });

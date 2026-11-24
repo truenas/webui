@@ -23,11 +23,10 @@
     ></tn-icon-button>
     <tn-menu #customAppMenu>
       <tn-menu-item
-        *ixRequiresRoles="requiredRoles"
         testId="custom-app-yaml"
         [label]="'Install via YAML' | translate"
-        [disabled]="customAppDisabled()"
         [ixUiSearch]="searchableElements.elements.customAppYaml"
+        [disabled]="customAppDisabled() || !(requiredRoles | hasRoles | async)"
         (itemClick)="openCustomAppYamlCreation()"
       ></tn-menu-item>
     </tn-menu>

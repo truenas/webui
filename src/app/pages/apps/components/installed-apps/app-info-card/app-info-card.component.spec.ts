@@ -19,6 +19,7 @@ import { ApiErrorDetails } from 'app/interfaces/api-error.interface';
 import { App } from 'app/interfaces/app.interface';
 import { AppUpgradeSummary } from 'app/interfaces/application.interface';
 import { Job } from 'app/interfaces/job.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
@@ -123,10 +124,14 @@ describe('AppInfoCardComponent', () => {
     ],
   });
 
-  function setupTest(app: App): void {
+  function setupTest(app: App, hasAppsWrite = true): void {
     spectator = createComponent({
       props: { app },
+      detectChanges: false,
     });
+    // The role checks subscribe on first render, so the answer is set before it.
+    jest.spyOn(spectator.inject(AuthService), 'hasRole').mockReturnValue(of(hasAppsWrite));
+    spectator.detectChanges();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
   }
 
@@ -251,6 +256,21 @@ describe('AppInfoCardComponent', () => {
 
     expect(dialog.warn).toHaveBeenCalledWith('Cannot Upgrade App', 'Upgrading to v2 is not supported.');
     expect(spectator.inject(ErrorHandlerService).showErrorModal).not.toHaveBeenCalled();
+  });
+
+  it('disables Update and Convert for a user without the Apps Write role', async () => {
+    setupTest(fakeApp, false);
+
+    const menu = await openMenu();
+
+    expect(await menu.isItemDisabled({ label: 'Update' })).toBe(true);
+    expect(await menu.isItemDisabled({ label: 'Convert to custom app' })).toBe(true);
+
+    await menu.clickItem({ label: 'Update' });
+    await menu.clickItem({ label: 'Convert to custom app' });
+
+    expect(spectator.inject(TnDialog).open).not.toHaveBeenCalled();
+    expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
   });
 
   it('converts app to custom when Convert button is pressed', async () => {
