@@ -5,9 +5,9 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
 import {
-  debounceTime, filter, map, Observable, of, pipe, switchMap, tap,
+  catchError, debounceTime, EMPTY, exhaustMap, filter, interval, map, merge, Observable, of, pipe, switchMap, tap,
 } from 'rxjs';
-import { VDevType } from 'app/enums/v-dev-type.enum';
+import { TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
 import { Disk, toDisk } from 'app/interfaces/disk.interface';
 import { Pool, PoolTopology, toPool } from 'app/interfaces/pool.interface';
@@ -25,6 +25,9 @@ export interface VDevsState {
   diskDictionary: Record<string, Disk>;
   selectedNodeGuid: string | null;
 }
+
+/** How often the page re-reads a pool while it shows a replacement in progress. */
+const replacingPollIntervalMs = 5000;
 
 const initialState: VDevsState = {
   isLoading: false,
@@ -82,9 +85,18 @@ export class VDevsStore {
     return selectedBranch ? (selectedBranch[0] as VDevGroup).guid : null;
   });
 
-  readonly loadNodes = rxMethod<number>(pipe(
-    tap((poolId) => patchState(this.state, { ...initialState, poolId, isLoading: true })),
-    switchMap((poolId) => this.fetchPool(poolId).pipe(
+  /**
+   * Every read of the pool (a full load, a refresh after a change event, or one found by `pollWhileReplacing`)
+   * goes through this one `switchMap`, so a newer read cancels an older one still in flight and an older answer
+   * can never put a stale topology back over a newer one.
+   */
+  private readonly fetch = rxMethod<{ poolId: number; isRefresh: boolean }>(pipe(
+    tap(({ poolId, isRefresh }) => {
+      if (!isRefresh) {
+        patchState(this.state, { ...initialState, poolId, isLoading: true });
+      }
+    }),
+    switchMap(({ poolId }) => this.fetchPool(poolId).pipe(
       tapResponse({
         next: (loaded) => patchState(this.state, { ...loaded, isLoading: false }),
         error: (error: unknown) => {
@@ -95,29 +107,54 @@ export class VDevsStore {
     )),
   ));
 
+  loadNodes(poolId: number): void {
+    this.fetch({ poolId, isRefresh: false });
+  }
+
   /**
    * Refreshes the loaded pool when middleware reports that its devices changed: a disk faulted or dropped off,
    * a resilver finished, a spare took over. The store is shared across the app, so the page subscribes to this
-   * for as long as it is open. Unlike `loadNodes`, it keeps the selection and leaves `isLoading` alone, so the
+   * for as long as it is open. Unlike `loadNodes`, it keeps the selection and doesn't set `isLoading`, so the
    * tree doesn't flash.
    */
-  listenForPoolChanges(): Observable<unknown> {
-    return this.api.subscribe('pool.query').pipe(
+  listenForPoolChanges(): Observable<void> {
+    const changeEvents$ = this.api.subscribe('pool.query').pipe(
       filter((event) => event.msg === 'changed'),
       filter((event) => event.id === this.state.poolId()),
       // A state change and the config sync that follows it arrive together.
       debounceTime(300),
-      filter((event) => {
-        const changedNodes = this.createDataNodes(toPool(event.fields).topology);
-        return getTopologyKey(changedNodes) !== getTopologyKey(this.state.nodes());
+      filter((event) => this.hasTopologyChanged(toPool(event.fields).topology)),
+      map((event) => event.id),
+    );
+
+    return merge(changeEvents$, this.pollWhileReplacing()).pipe(
+      map((poolId) => {
+        this.fetch({ poolId, isRefresh: true });
       }),
-      switchMap((event) => this.fetchPool(event.id).pipe(
-        tapResponse({
-          next: (loaded) => patchState(this.state, loaded),
-          error: (error: unknown) => this.errorHandler.showErrorModal(error),
-        }),
+    );
+  }
+
+  /**
+   * A REPLACING vdev collapses on its own once the resilver ends, but middleware sends no `pool.query` change
+   * event when it does: the Replace job ends as soon as the new disk is attached, and nothing reports the detach
+   * that follows the resilver. So while the page shows a replacement, it reads the pool itself every few seconds,
+   * and reloads it only once the topology has moved on.
+   */
+  private pollWhileReplacing(): Observable<number> {
+    return interval(replacingPollIntervalMs).pipe(
+      map(() => this.state.poolId()),
+      filter((poolId): poolId is number => poolId !== null && hasReplacingVdev(this.state.nodes())),
+      exhaustMap((poolId) => this.api.query('pool.query', [['id', '=', poolId]]).pipe(
+        filter(([pool]) => Boolean(pool) && this.hasTopologyChanged(toPool(pool).topology)),
+        map(() => poolId),
+        // A failed check is retried on the next tick; the page keeps what it shows.
+        catchError(() => EMPTY),
       )),
     );
+  }
+
+  private hasTopologyChanged(topology: PoolTopology | null): boolean {
+    return getTopologyKey(this.createDataNodes(topology)) !== getTopologyKey(this.state.nodes());
   }
 
   reloadList(): void {
@@ -243,4 +280,13 @@ function describeNodes(nodes: VDevNestedDataNode[] = []): unknown[] {
         describeNodes(node.children),
       ];
     });
+}
+
+function hasReplacingVdev(nodes: VDevNestedDataNode[] = []): boolean {
+  return nodes.some((node) => {
+    if (!isVdevGroup(node) && node.type === TopologyItemType.Replacing) {
+      return true;
+    }
+    return hasReplacingVdev(node.children);
+  });
 }
