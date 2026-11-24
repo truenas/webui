@@ -1,3 +1,4 @@
+// Dummy change to exercise the E2E spec picker (PR 15013). Do not merge.
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy, Component, computed, inject, input,
