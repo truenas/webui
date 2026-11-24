@@ -229,6 +229,110 @@ describe('VDevsStore', () => {
       expect(spectator.inject(ApiService).query).toHaveBeenCalledWith('pool.query', [['id', '=', 4]]);
     });
 
+    it('keeps the refreshed devices when a reload started before the change answers after it', () => {
+      const staleReload$ = new Subject<Pool[]>();
+      const refreshAfterChange$ = new Subject<Pool[]>();
+      (spectator.inject(ApiService).query as unknown as jest.Mock)
+        .mockImplementationOnce(() => staleReload$)
+        .mockImplementationOnce(() => refreshAfterChange$);
+
+      spectator.service.reloadList();
+      sendPoolChange(4, faultedPool);
+      refreshAfterChange$.next([faultedPool]);
+      staleReload$.next([pool]);
+
+      expect(spectator.service.isLoading()).toBe(false);
+      expect(spectator.service.nodes()[1].children[0]).toEqual(
+        expect.objectContaining({ guid: 'guid2', status: TopologyItemStatus.Faulted }),
+      );
+    });
+
+    describe('while a replacement is in progress', () => {
+      const disk = (guid: string): VDevItem => ({ guid, type: TopologyItemType.Disk, children: [] }) as VDevItem;
+      const mirrorWith = (...children: VDevItem[]): Pool => ({
+        ...pool,
+        topology: {
+          ...pool.topology,
+          data: [{ guid: 'mirror', type: TopologyItemType.Mirror, children } as VDevItem],
+        },
+      } as Pool);
+      const replacingPool = mirrorWith(disk('vdc'), {
+        guid: 'replacing', type: TopologyItemType.Replacing, children: [disk('vdb'), disk('vdd')],
+      } as VDevItem);
+      const replacedPool = mirrorWith(disk('vdc'), disk('vdd'));
+      let poolOnAppliance: Pool;
+
+      function queriedMethods(): string[] {
+        return (spectator.inject(ApiService).query as unknown as jest.Mock).mock.calls.map(([method]) => method);
+      }
+
+      beforeEach(() => {
+        poolOnAppliance = replacingPool;
+        (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementation((method: string) => {
+          return method === 'pool.query' ? of([poolOnAppliance]) : of([{ devname: 'sdr' }] as Disk[]);
+        });
+        sendPoolChange(4, replacingPool);
+        jest.clearAllMocks();
+      });
+
+      it('reloads the pool once the replacement is gone, even without a change event', () => {
+        poolOnAppliance = replacedPool;
+
+        jest.advanceTimersByTime(5000);
+
+        expect(queriedMethods()).toEqual(['pool.query', 'disk.query']);
+        expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
+      });
+
+      it('lets a reload slower than the check interval finish instead of restarting it', () => {
+        const disks$ = new Subject<Disk[]>();
+        (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementation((method: string) => {
+          return method === 'pool.query' ? of([poolOnAppliance]) : disks$;
+        });
+        poolOnAppliance = replacedPool;
+
+        jest.advanceTimersByTime(20000);
+        disks$.next([{ devname: 'sdr' }] as Disk[]);
+
+        expect(queriedMethods()).toEqual(['pool.query', 'disk.query']);
+        expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
+      });
+
+      it('drops a check that answers after a newer reload, instead of putting the replacement back', () => {
+        const checkAnswer$ = new Subject<Pool[]>();
+        (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementationOnce(() => checkAnswer$);
+        poolOnAppliance = replacedPool;
+
+        jest.advanceTimersByTime(5000);
+        spectator.service.reloadList();
+        checkAnswer$.next([replacingPool]);
+
+        expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
+      });
+
+      it('only checks, without reloading, while the pool still shows the replacement', () => {
+        jest.advanceTimersByTime(10000);
+
+        expect(queriedMethods()).toEqual(['pool.query', 'pool.query']);
+      });
+
+      it('stops checking once the replacement is gone', () => {
+        poolOnAppliance = replacedPool;
+        jest.advanceTimersByTime(5000);
+        jest.clearAllMocks();
+
+        jest.advanceTimersByTime(15000);
+
+        expect(queriedMethods()).toEqual([]);
+      });
+    });
+
+    it('does not check the pool on its own when no replacement is in progress', () => {
+      jest.advanceTimersByTime(15000);
+
+      expect(spectator.inject(ApiService).query).not.toHaveBeenCalled();
+    });
+
     it('ignores a removed pool', () => {
       poolEvents$.next({ msg: 'removed', id: 4 });
       jest.advanceTimersByTime(300);
