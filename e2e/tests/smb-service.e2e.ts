@@ -11,6 +11,7 @@ import {
 } from '../fixtures/smb';
 import { datasetMountPath, ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { goToDatasets, goToShares } from '../flows/navigation';
+import { confirmServiceStop } from '../flows/services';
 import {
   choosePurpose, formSettleTimeoutMs, openAddShareForm, toggleShareEnabled,
 } from '../flows/smb';
@@ -112,7 +113,9 @@ test('the switch on the card stops the service and starts it again', async ({ pa
   await expect(page.locator(smbLocators.card.serviceStatus))
     .toHaveText('Running', { timeout: formSettleTimeoutMs });
 
+  // Stopping asks first, as it does from System > Services; starting does not.
   await page.locator(smbLocators.card.serviceToggle).click();
+  await confirmServiceStop(page);
 
   await expect
     .poll(async () => (await queryService(api, smbServiceName))?.state, { timeout: 90_000 })

@@ -12,7 +12,7 @@ import {
 } from '../fixtures/s3';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';
-import { createS3Bucket, setS3ManagedRootDatasetFromCard, toggleS3ServiceFromCard } from '../flows/s3';
+import { createS3Bucket, setS3ManagedRootDatasetFromCard, stopS3ServiceFromCard } from '../flows/s3';
 import type { E2eApiClient } from '../support/api/client';
 import { leavingTestData, runCleanupSteps } from '../support/cleanup';
 import { expect, test } from '../support/fixtures';
@@ -97,9 +97,9 @@ test('an admin adds a bucket to a running service and stops it from the card', a
   });
 
   await test.step('stop the service with the card header switch', async () => {
-    await toggleS3ServiceFromCard(page);
+    await stopS3ServiceFromCard(page);
 
-    // Polled: the switch fires a job and the card re-reads the state after it.
+    // Polled: confirming the stop fires a job and the card re-reads the state after it.
     await expect.poll(async () => {
       try {
         return (await queryS3Service(api))?.state;

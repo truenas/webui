@@ -3,6 +3,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToS3AccessKeys, goToShares } from './navigation';
+import { confirmServiceStop } from './services';
 import { confirmDestructiveAction, selectOption } from './storage';
 import { confirmDialogLocators } from '../locators/dialogs';
 import { permissionsLocators } from '../locators/permissions';
@@ -754,13 +755,13 @@ export async function setS3ManagedRootDatasetFromCard(page: Page, serviceId: num
 }
 
 /**
- * Flips the S3 service's on/off switch in the dashboard card's header.
+ * Stops the running S3 service with the switch in the dashboard card's header, confirming the dialog it raises.
  *
- * The switch calls `service.control` straight away and reports through a
- * snackbar; whether the service actually changed state is a question for the
- * API, which the test asks.
+ * The confirmation calls `service.control` and reports through a snackbar; whether the service actually changed
+ * state is a question for the API, which the test asks.
  */
-export async function toggleS3ServiceFromCard(page: Page): Promise<void> {
+export async function stopS3ServiceFromCard(page: Page): Promise<void> {
   await goToShares(page);
   await page.locator(s3ServiceLocators.cardServiceToggle).click();
+  await confirmServiceStop(page);
 }
