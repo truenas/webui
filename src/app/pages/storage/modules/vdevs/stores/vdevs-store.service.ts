@@ -5,7 +5,8 @@ import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { TranslateService } from '@ngx-translate/core';
 import { keyBy } from 'lodash-es';
 import {
-  catchError, debounceTime, EMPTY, exhaustMap, filter, interval, map, merge, Observable, of, pipe, switchMap, tap,
+  catchError, debounceTime, EMPTY, exhaustMap, filter, finalize, interval, map, merge, Observable, of, pipe,
+  switchMap, tap,
 } from 'rxjs';
 import { TopologyItemType, VDevType } from 'app/enums/v-dev-type.enum';
 import { VDevNestedDataNode, isVdevGroup, VDevGroup } from 'app/interfaces/device-nested-data-node.interface';
@@ -29,6 +30,12 @@ export interface VDevsState {
 /** How often the page re-reads a pool while it shows a replacement in progress. */
 const replacingPollIntervalMs = 5000;
 
+/** A pool to read; `pool` is set when the caller already holds its fresh `pool.query` answer. */
+interface PoolRead {
+  poolId: number;
+  pool?: Pool;
+}
+
 const initialState: VDevsState = {
   isLoading: false,
   poolId: null,
@@ -48,6 +55,9 @@ export class VDevsStore {
   private errorHandler = inject(ErrorHandlerService);
 
   private readonly state = signalState(initialState);
+
+  /** A read started by `fetch` has not answered yet. */
+  private isFetching = false;
 
   readonly isLoading = this.state.isLoading;
   readonly poolName = this.state.poolName;
@@ -90,21 +100,28 @@ export class VDevsStore {
    * goes through this one `switchMap`, so a newer read cancels an older one still in flight and an older answer
    * can never put a stale topology back over a newer one.
    */
-  private readonly fetch = rxMethod<{ poolId: number; isRefresh: boolean }>(pipe(
+  private readonly fetch = rxMethod<PoolRead & { isRefresh: boolean }>(pipe(
     tap(({ poolId, isRefresh }) => {
       if (!isRefresh) {
         patchState(this.state, { ...initialState, poolId, isLoading: true });
       }
     }),
-    switchMap(({ poolId }) => this.fetchPool(poolId).pipe(
-      tapResponse({
-        next: (loaded) => patchState(this.state, { ...loaded, isLoading: false }),
-        error: (error: unknown) => {
-          patchState(this.state, { isLoading: false });
-          this.errorHandler.showErrorModal(error);
-        },
-      }),
-    )),
+    switchMap(({ poolId, pool }) => {
+      // `switchMap` finalizes the read it cancels before it starts this one, so the flag stays set.
+      this.isFetching = true;
+      return this.fetchPool(poolId, pool).pipe(
+        tapResponse({
+          next: (loaded) => patchState(this.state, { ...loaded, isLoading: false }),
+          error: (error: unknown) => {
+            patchState(this.state, { isLoading: false });
+            this.errorHandler.showErrorModal(error);
+          },
+        }),
+        finalize(() => {
+          this.isFetching = false;
+        }),
+      );
+    }),
   ));
 
   loadNodes(poolId: number): void {
@@ -124,12 +141,12 @@ export class VDevsStore {
       // A state change and the config sync that follows it arrive together.
       debounceTime(300),
       filter((event) => this.hasTopologyChanged(toPool(event.fields).topology)),
-      map((event) => event.id),
+      map((event): PoolRead => ({ poolId: event.id })),
     );
 
     return merge(changeEvents$, this.pollWhileReplacing()).pipe(
-      map((poolId) => {
-        this.fetch({ poolId, isRefresh: true });
+      map((read) => {
+        this.fetch({ ...read, isRefresh: true });
       }),
     );
   }
@@ -138,15 +155,18 @@ export class VDevsStore {
    * A REPLACING vdev collapses on its own once the resilver ends, but middleware sends no `pool.query` change
    * event when it does: the Replace job ends as soon as the new disk is attached, and nothing reports the detach
    * that follows the resilver. So while the page shows a replacement, it reads the pool itself every few seconds,
-   * and reloads it only once the topology has moved on.
+   * and reloads it only once the topology has moved on. Ticks are skipped while a read is in flight: the tree
+   * shows the replacement until that read lands, so a tick then would start another reload and cancel it.
    */
-  private pollWhileReplacing(): Observable<number> {
+  private pollWhileReplacing(): Observable<PoolRead> {
     return interval(replacingPollIntervalMs).pipe(
+      filter(() => !this.isFetching),
       map(() => this.state.poolId()),
       filter((poolId): poolId is number => poolId !== null && hasReplacingVdev(this.state.nodes())),
       exhaustMap((poolId) => this.api.query('pool.query', [['id', '=', poolId]]).pipe(
-        filter(([pool]) => Boolean(pool) && this.hasTopologyChanged(toPool(pool).topology)),
-        map(() => poolId),
+        map(([pool]) => (pool ? toPool(pool) : undefined)),
+        filter((pool): pool is Pool => Boolean(pool) && this.hasTopologyChanged(pool.topology)),
+        map((pool): PoolRead => ({ poolId, pool })),
         // A failed check is retried on the next tick; the page keeps what it shows.
         catchError(() => EMPTY),
       )),
@@ -168,9 +188,11 @@ export class VDevsStore {
     patchState(this.state, { selectedNodeGuid });
   }
 
-  private fetchPool(poolId: number): Observable<Partial<VDevsState>> {
-    return this.api.query('pool.query', [['id', '=', poolId]]).pipe(
-      map((pools) => pools.map(toPool)),
+  private fetchPool(poolId: number, knownPool?: Pool): Observable<Partial<VDevsState>> {
+    const pools$ = knownPool
+      ? of([knownPool])
+      : this.api.query('pool.query', [['id', '=', poolId]]).pipe(map((pools) => pools.map(toPool)));
+    return pools$.pipe(
       switchMap(([pool]) => {
         if (!pool) {
           return of({});

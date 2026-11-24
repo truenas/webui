@@ -280,7 +280,21 @@ describe('VDevsStore', () => {
 
         jest.advanceTimersByTime(5000);
 
-        expect(queriedMethods()).toEqual(['pool.query', 'pool.query', 'disk.query']);
+        expect(queriedMethods()).toEqual(['pool.query', 'disk.query']);
+        expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
+      });
+
+      it('lets a reload slower than the check interval finish instead of restarting it', () => {
+        const disks$ = new Subject<Disk[]>();
+        (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementation((method: string) => {
+          return method === 'pool.query' ? of([poolOnAppliance]) : disks$;
+        });
+        poolOnAppliance = replacedPool;
+
+        jest.advanceTimersByTime(20000);
+        disks$.next([{ devname: 'sdr' }] as Disk[]);
+
+        expect(queriedMethods()).toEqual(['pool.query', 'disk.query']);
         expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
       });
 
