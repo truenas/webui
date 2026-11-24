@@ -298,6 +298,18 @@ describe('VDevsStore', () => {
         expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
       });
 
+      it('drops a check that answers after a newer reload, instead of putting the replacement back', () => {
+        const checkAnswer$ = new Subject<Pool[]>();
+        (spectator.inject(ApiService).query as unknown as jest.Mock).mockImplementationOnce(() => checkAnswer$);
+        poolOnAppliance = replacedPool;
+
+        jest.advanceTimersByTime(5000);
+        spectator.service.reloadList();
+        checkAnswer$.next([replacingPool]);
+
+        expect(spectator.service.nodes()[0].children[0].children).toEqual([disk('vdc'), disk('vdd')]);
+      });
+
       it('only checks, without reloading, while the pool still shows the replacement', () => {
         jest.advanceTimersByTime(10000);
 

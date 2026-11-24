@@ -59,6 +59,9 @@ export class VDevsStore {
   /** A read started by `fetch` has not answered yet. */
   private isFetching = false;
 
+  /** Counts the reads `fetch` has started, so a replacement check can tell that a newer read began after it. */
+  private readCount = 0;
+
   readonly isLoading = this.state.isLoading;
   readonly poolName = this.state.poolName;
   readonly pool = this.state.pool;
@@ -109,6 +112,7 @@ export class VDevsStore {
     switchMap(({ poolId, pool }) => {
       // `switchMap` finalizes the read it cancels before it starts this one, so the flag stays set.
       this.isFetching = true;
+      this.readCount++;
       return this.fetchPool(poolId, pool).pipe(
         tapResponse({
           next: (loaded) => patchState(this.state, { ...loaded, isLoading: false }),
@@ -163,13 +167,18 @@ export class VDevsStore {
       filter(() => !this.isFetching),
       map(() => this.state.poolId()),
       filter((poolId): poolId is number => poolId !== null && hasReplacingVdev(this.state.nodes())),
-      exhaustMap((poolId) => this.api.query('pool.query', [['id', '=', poolId]]).pipe(
-        map(([pool]) => (pool ? toPool(pool) : undefined)),
-        filter((pool): pool is Pool => Boolean(pool) && this.hasTopologyChanged(pool.topology)),
-        map((pool): PoolRead => ({ poolId, pool })),
-        // A failed check is retried on the next tick; the page keeps what it shows.
-        catchError(() => EMPTY),
-      )),
+      exhaustMap((poolId) => {
+        const readCountAtCheck = this.readCount;
+        return this.api.query('pool.query', [['id', '=', poolId]]).pipe(
+          // A read that started while the check was out is newer; the check's answer would undo it.
+          filter(() => this.readCount === readCountAtCheck),
+          map(([pool]) => (pool ? toPool(pool) : undefined)),
+          filter((pool): pool is Pool => Boolean(pool) && this.hasTopologyChanged(pool.topology)),
+          map((pool): PoolRead => ({ poolId, pool })),
+          // A failed check is retried on the next tick; the page keeps what it shows.
+          catchError(() => EMPTY),
+        );
+      }),
     );
   }
 
