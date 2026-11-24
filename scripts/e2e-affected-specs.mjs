@@ -57,36 +57,39 @@ function listSources(dir) {
   });
 }
 
+const staticImport = /(?:^|[;\s])(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\s+from\s+)?['"]([^'"]+)['"]/g;
+const lazyImport = /\bimport\(\s*['"]([^'"]+)['"]\s*\)/g;
+
+// The source files `source` imports through `statement`, resolved to paths.
+function importsOf(source, statement, known) {
+  return [...readFileSync(source, 'utf8').matchAll(statement)].flatMap(([, specifier]) => {
+    let base;
+    if (specifier.startsWith('app/')) {
+      base = `src/${specifier}`;
+    } else if (specifier.startsWith('.')) {
+      base = normalize(join(dirname(source), specifier));
+    } else {
+      return [];
+    }
+    const target = [`${base}.ts`, `${base}/index.ts`, base].find((candidate) => known.has(candidate));
+    return target ? [target] : [];
+  });
+}
+
 // Maps each source file to the files that import or re-export it. Only static
 // imports: a lazy `import()` is how routes load a page, and that adds nothing
 // a route file would (see dependents()).
-function buildImporters() {
-  const sources = listSources('src/app');
+function buildImporters(sources) {
   const known = new Set(sources);
-  const statement = /(?:^|[;\s])(?:import|export)\s+(?:type\s+)?(?:[^'";]*?\s+from\s+)?['"]([^'"]+)['"]/g;
   const importers = new Map();
-
   for (const source of sources) {
-    for (const [, specifier] of readFileSync(source, 'utf8').matchAll(statement)) {
-      let base;
-      if (specifier.startsWith('app/')) {
-        base = `src/${specifier}`;
-      } else if (specifier.startsWith('.')) {
-        base = normalize(join(dirname(source), specifier));
-      } else {
-        continue;
-      }
-      const target = [`${base}.ts`, `${base}/index.ts`, base].find((candidate) => known.has(candidate));
-      if (!target) {
-        continue;
-      }
+    for (const target of importsOf(source, staticImport, known)) {
       if (!importers.has(target)) {
         importers.set(target, new Set());
       }
       importers.get(target).add(source);
     }
   }
-
   return importers;
 }
 
@@ -107,7 +110,9 @@ function dependents(path, importers) {
   return seen;
 }
 
-function pick(changed, map, specs, importers) {
+function pick(changed, map, specs, sources) {
+  const known = new Set(sources);
+  const importers = buildImporters(sources);
   const areas = Object.keys(map.areas).sort((a, b) => b.length - a.length);
   const areaOf = (path) => areas.find((prefix) => path.startsWith(prefix));
   const patterns = new Set(map.always);
@@ -136,6 +141,16 @@ function pick(changed, map, specs, importers) {
       }
       map.areas[area].forEach((pattern) => patterns.add(pattern));
     }
+
+    // A changed route file can break every page it mounts, and it mounts
+    // components from other areas too (credentials.routes.ts mounts directory
+    // services). Mounted files outside every area are guards and the like,
+    // which a change to the route file itself does not change.
+    if (path.endsWith('.routes.ts') && known.has(path)) {
+      for (const mounted of [...importsOf(path, staticImport, known), ...importsOf(path, lazyImport, known)]) {
+        map.areas[areaOf(mounted)]?.forEach((pattern) => patterns.add(pattern));
+      }
+    }
   }
 
   const picked = new Set();
@@ -153,4 +168,4 @@ function pick(changed, map, specs, importers) {
 
 const changed = readFileSync(0, 'utf8').split('\n').map((line) => line.trim()).filter(Boolean);
 const map = JSON.parse(readFileSync('e2e/affected-specs.json', 'utf8'));
-console.log(JSON.stringify(pick(changed, map, listSpecs(testsDir), buildImporters())));
+console.log(JSON.stringify(pick(changed, map, listSpecs(testsDir), listSources('src/app'))));
