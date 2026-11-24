@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { CallResponse } from '@truenas/api-client';
 import {
   catchError, forkJoin, map, Observable, of, switchMap,
 } from 'rxjs';
@@ -6,8 +7,10 @@ import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { extractApiErrorDetails } from 'app/helpers/api.helper';
 import { DatasetQuota, SetDatasetQuota } from 'app/interfaces/dataset-quota.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
+import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 
 type UserspaceType = 'user' | 'group';
+type UserspaceRow = CallResponse<WebUiApiDirectory, 'zfs.resource.userspace.list'>[number];
 
 /**
  * User and group quotas through `zfs.resource.userspace`, in the shape the quota pages are written against
@@ -19,32 +22,63 @@ export class DatasetQuotaService {
   private api = inject(ApiService);
 
   /**
-   * Every user or group quota row on `path`, usage-only rows included. A row whose account no longer exists has a
-   * `null` name, which the quota list offers to remove.
+   * The user or group quotas on `path`. A row whose account no longer exists has a `null` name, which the quota list
+   * offers to remove.
+   *
+   * Every row needs a name lookup, one call per account, so usage-only rows (an owner of files with no limit set,
+   * possibly thousands of them) are left out unless `includeUsageOnly` asks for them.
    */
-  getQuotas(path: string, quotaType: DatasetQuotaType.User | DatasetQuotaType.Group): Observable<DatasetQuota[]> {
+  getQuotas(
+    path: string,
+    quotaType: DatasetQuotaType.User | DatasetQuotaType.Group,
+    { includeUsageOnly = false }: { includeUsageOnly?: boolean } = {},
+  ): Observable<DatasetQuota[]> {
+    return this.listRows(path, quotaType).pipe(
+      map((rows) => (includeUsageOnly ? rows : rows.filter(hasLimit))),
+      switchMap((rows) => this.withNames(rows, quotaType)),
+    );
+  }
+
+  /** The quota of one user or group on `path`, or none. Only that account is looked up. */
+  getQuota(
+    path: string,
+    quotaType: DatasetQuotaType.User | DatasetQuotaType.Group,
+    xid: number,
+  ): Observable<DatasetQuota[]> {
+    return this.listRows(path, quotaType).pipe(
+      map((rows) => rows.filter((row) => row.xid === xid)),
+      switchMap((rows) => this.withNames(rows, quotaType)),
+    );
+  }
+
+  /** How many users or groups have a quota on `path`. Needs no name lookups. */
+  countQuotas(path: string, quotaType: DatasetQuotaType.User | DatasetQuotaType.Group): Observable<number> {
+    return this.listRows(path, quotaType).pipe(map((rows) => rows.filter(hasLimit).length));
+  }
+
+  private listRows(path: string, quotaType: DatasetQuotaType): Observable<UserspaceRow[]> {
+    return this.api.call('zfs.resource.userspace.list', [{ paths: [path], types: [toUserspaceType(quotaType)] }]);
+  }
+
+  private withNames(rows: UserspaceRow[], quotaType: DatasetQuotaType): Observable<DatasetQuota[]> {
+    const xids = [...new Set(rows.map((row) => row.xid))];
+    if (!xids.length) {
+      return of([]);
+    }
     const type = toUserspaceType(quotaType);
-    return this.api.call('zfs.resource.userspace.list', [{ paths: [path], types: [type] }]).pipe(
-      switchMap((rows) => {
-        const xids = [...new Set(rows.map((row) => row.xid))];
-        if (!xids.length) {
-          return of([]);
-        }
-        return forkJoin(xids.map((xid) => this.getName(type, xid))).pipe(
-          map((names) => {
-            const namesById = new Map(xids.map((xid, i) => [xid, names[i]]));
-            return rows.map((row): DatasetQuota => ({
-              id: row.xid,
-              name: namesById.get(row.xid) ?? null,
-              quota_type: quotaType,
-              quota: row.quota,
-              used_bytes: row.used,
-              used_percent: row.quota ? row.used / row.quota * 100 : 0,
-              obj_quota: row.objquota,
-              obj_used: row.objused,
-            }));
-          }),
-        );
+    return forkJoin(xids.map((xid) => this.getName(type, xid))).pipe(
+      map((names) => {
+        const namesById = new Map(xids.map((xid, i) => [xid, names[i]]));
+        return rows.map((row): DatasetQuota => ({
+          id: row.xid,
+          name: namesById.get(row.xid) ?? null,
+          quota_type: quotaType,
+          quota: row.quota,
+          used_bytes: row.used,
+          used_percent: row.quota ? row.used / row.quota * 100 : 0,
+          obj_quota: row.objquota,
+          obj_used: row.objused,
+        }));
       }),
     );
   }
@@ -97,6 +131,11 @@ export class DatasetQuotaService {
       ? this.api.call('user.get_user_obj', [{ username: idOrName }]).pipe(map((user) => user.pw_uid))
       : this.api.call('group.get_group_obj', [{ groupname: idOrName }]).pipe(map((group) => group.gr_gid));
   }
+}
+
+/** A row with a data or object limit, as opposed to one that only reports usage. */
+function hasLimit(row: UserspaceRow): boolean {
+  return row.quota > 0 || row.objquota > 0;
 }
 
 function toUserspaceType(quotaType: DatasetQuotaType): UserspaceType {

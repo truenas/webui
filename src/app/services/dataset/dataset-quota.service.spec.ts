@@ -47,11 +47,12 @@ describe('DatasetQuotaService', () => {
   });
 
   describe('getQuotas', () => {
-    it('reads userspace rows and looks up their names', async () => {
+    it('reads the rows that have a limit and looks up only their names', async () => {
       const quotas = await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.User));
 
       expect(api.call).toHaveBeenCalledWith('zfs.resource.userspace.list', [{ paths: ['dozer/data'], types: ['user'] }]);
       expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1000 }]);
+      expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1001 }]);
       expect(quotas).toEqual([
         {
           id: 1000,
@@ -63,6 +64,17 @@ describe('DatasetQuotaService', () => {
           obj_quota: 10,
           obj_used: 3,
         },
+      ]);
+    });
+
+    it('includes usage-only rows, with their names, when asked to', async () => {
+      const quotas = await firstValueFrom(
+        spectator.service.getQuotas('dozer/data', DatasetQuotaType.User, { includeUsageOnly: true }),
+      );
+
+      expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1001 }]);
+      expect(quotas).toEqual([
+        expect.objectContaining({ id: 1000, name: 'user1000' }),
         {
           id: 1001,
           name: 'user1001',
@@ -90,7 +102,7 @@ describe('DatasetQuotaService', () => {
 
       const quotas = await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.User));
 
-      expect(quotas.map((quota) => quota.name)).toEqual([null, null]);
+      expect(quotas.map((quota) => quota.name)).toEqual([null]);
     });
 
     it('shows the id when the name cannot be looked up for another reason', async () => {
@@ -101,13 +113,30 @@ describe('DatasetQuotaService', () => {
 
       const quotas = await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.User));
 
-      expect(quotas.map((quota) => quota.name)).toEqual(['1000', '1001']);
+      expect(quotas.map((quota) => quota.name)).toEqual(['1000']);
     });
 
     it('returns nothing without asking for names when there are no rows', async () => {
       spectator.inject(MockApiService).mockCall('zfs.resource.userspace.list', []);
 
       expect(await firstValueFrom(spectator.service.getQuotas('dozer/data', DatasetQuotaType.User))).toEqual([]);
+      expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', expect.anything());
+    });
+  });
+
+  describe('getQuota', () => {
+    it('reads one account\'s quota and looks up only that account', async () => {
+      const quotas = await firstValueFrom(spectator.service.getQuota('dozer/data', DatasetQuotaType.User, 1001));
+
+      expect(quotas).toEqual([expect.objectContaining({ id: 1001, name: 'user1001', obj_used: 1 })]);
+      expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1001 }]);
+      expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1000 }]);
+    });
+  });
+
+  describe('countQuotas', () => {
+    it('counts the accounts with a limit without looking up any names', async () => {
+      expect(await firstValueFrom(spectator.service.countQuotas('dozer/data', DatasetQuotaType.User))).toBe(1);
       expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', expect.anything());
     });
   });

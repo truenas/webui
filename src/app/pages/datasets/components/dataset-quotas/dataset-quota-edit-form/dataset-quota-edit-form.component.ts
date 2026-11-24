@@ -11,7 +11,7 @@ import {
   EMPTY, Observable, of, switchMap,
 } from 'rxjs';
 import {
-  catchError, filter, map, tap,
+  catchError, filter, tap,
 } from 'rxjs/operators';
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
@@ -139,8 +139,7 @@ export class DatasetQuotaEditFormComponent extends IxFormHostForm implements OnI
   }
 
   private getQuota(id: number): Observable<DatasetQuota[]> {
-    return this.quotaService.getQuotas(this.datasetId(), this.quotaType())
-      .pipe(map((quotas) => quotas.filter((quota) => quota.id === id)));
+    return this.quotaService.getQuota(this.datasetId(), this.quotaType(), id);
   }
 
   protected handleSubmit = (_: FormSubmitEvent): SubmitResult => {

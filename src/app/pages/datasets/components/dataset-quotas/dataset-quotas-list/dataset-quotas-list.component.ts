@@ -24,7 +24,6 @@ import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-r
 import { DatasetQuotaType } from 'app/enums/dataset.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { Role } from 'app/enums/role.enum';
-import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helptextQuotas } from 'app/helptext/storage/volumes/datasets/dataset-quotas';
 import {
   DatasetQuota, SetDatasetQuota,
@@ -206,15 +205,11 @@ export class DatasetQuotasListComponent implements OnInit {
 
   private getQuotas(): void {
     this.isLoading = true;
-    this.quotaService.getQuotas(this.datasetId, this.quotaType)
+    this.quotaService.getQuotas(this.datasetId, this.quotaType, { includeUsageOnly: this.showAllQuotas })
       .pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
         next: (quotas: DatasetQuota[]) => {
           this.isLoading = false;
-          this.quotas = quotas.filter(isQuotaSet);
-
-          if (this.showAllQuotas) {
-            this.quotas = quotas;
-          }
+          this.quotas = quotas;
 
           this.onListFiltered(this.searchQuery());
           // Assigned whatever its length, so a removal that leaves none takes the button away.

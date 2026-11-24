@@ -3,7 +3,9 @@ import { provideMockActions } from '@ngrx/effects/testing';
 import { Action } from '@ngrx/store';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { CallResponse } from '@truenas/api-client';
-import { firstValueFrom, ReplaySubject, Subscription } from 'rxjs';
+import {
+  firstValueFrom, ReplaySubject, Subject, Subscription,
+} from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -18,7 +20,9 @@ import {
   snapshotsLoaded,
   snapshotsRefreshed,
 } from 'app/pages/datasets/modules/snapshots/store/snapshot.actions';
-import { SnapshotEffects, snapshotRefreshIntervalMs } from 'app/pages/datasets/modules/snapshots/store/snapshot.effects';
+import {
+  SnapshotEffects, snapshotRefreshIntervalMs, snapshotRefreshWithPropertiesIntervalMs,
+} from 'app/pages/datasets/modules/snapshots/store/snapshot.effects';
 import { snapshotsInitialState } from 'app/pages/datasets/modules/snapshots/store/snapshot.reducer';
 import { AppState } from 'app/store';
 import { snapshotExtraColumnsToggled } from 'app/store/preferences/preferences.actions';
@@ -90,6 +94,21 @@ describe('SnapshotEffects', () => {
       expect(dispatchedAction).toEqual(snapshotsLoaded({ snapshots: expectedSnapshots }));
       expect(api.call).toHaveBeenCalledWith('zfs.resource.snapshot.list', [{ recursive: true, properties: null }]);
       expect(api.call).toHaveBeenCalledTimes(1);
+    });
+
+    it('drops a load that answers after the page was left', () => {
+      const answer$ = new Subject<SnapshotRows>();
+      jest.spyOn(api, 'call').mockReturnValueOnce(answer$ as never);
+      const dispatched: Action[] = [];
+      const subscription = spectator.service.loadSnapshots$.subscribe((action) => dispatched.push(action));
+
+      actions$.next(snapshotPageEntered());
+      actions$.next(snapshotPageLeft());
+      answer$.next(wireSnapshots);
+
+      // No `snapshotsLoaded`, so neither the re-read nor the event subscription starts for a closed page.
+      expect(dispatched).toEqual([]);
+      subscription.unsubscribe();
     });
 
     it('should not make duplicate API calls when preferences change', async () => {
@@ -199,6 +218,39 @@ describe('SnapshotEffects', () => {
       await jest.advanceTimersByTimeAsync(snapshotRefreshIntervalMs * 2);
 
       expect(api.call).toHaveBeenCalledTimes(1);
+      subscription.unsubscribe();
+    });
+
+    it('skips the re-read while the tab is hidden', async () => {
+      const hidden = jest.spyOn(document, 'hidden', 'get').mockReturnValue(true);
+      actions$.next(snapshotsLoaded({ snapshots: [] }));
+      const subscription = spectator.service.refreshSnapshots$.subscribe();
+
+      await jest.advanceTimersByTimeAsync(snapshotRefreshIntervalMs * 2);
+      expect(api.call).not.toHaveBeenCalled();
+
+      hidden.mockReturnValue(false);
+      await jest.advanceTimersByTimeAsync(snapshotRefreshIntervalMs);
+      expect(api.call).toHaveBeenCalledTimes(1);
+
+      hidden.mockRestore();
+      subscription.unsubscribe();
+    });
+
+    it('re-reads less often when the extra columns are on', async () => {
+      store$.overrideSelector(selectPreferences, { showSnapshotExtraColumns: true } as Preferences);
+      store$.refreshState();
+      actions$.next(snapshotsLoaded({ snapshots: [] }));
+      const subscription = spectator.service.refreshSnapshots$.subscribe();
+
+      await jest.advanceTimersByTimeAsync(snapshotRefreshIntervalMs);
+      expect(api.call).not.toHaveBeenCalled();
+
+      await jest.advanceTimersByTimeAsync(snapshotRefreshWithPropertiesIntervalMs - snapshotRefreshIntervalMs);
+      expect(api.call).toHaveBeenCalledWith('zfs.resource.snapshot.list', [{
+        recursive: true,
+        properties: ['creation', 'used', 'referenced'],
+      }]);
       subscription.unsubscribe();
     });
   });

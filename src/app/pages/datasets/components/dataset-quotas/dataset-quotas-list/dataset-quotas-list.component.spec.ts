@@ -2,7 +2,9 @@ import { HarnessLoader } from '@angular/cdk/testing';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { ActivatedRoute } from '@angular/router';
 import { createComponentFactory, mockProvider, Spectator } from '@ngneat/spectator/jest';
-import { TnButtonHarness, TnIconButtonHarness, TnTableHarness } from '@truenas/ui-components';
+import {
+  TnButtonHarness, TnIconButtonHarness, TnSlideToggleHarness, TnTableHarness,
+} from '@truenas/ui-components';
 import { MockComponent } from 'ng-mocks';
 import { of, pipe } from 'rxjs';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -103,7 +105,7 @@ describe('DatasetQuotasListComponent', () => {
   });
 
   it('should show table rows', async () => {
-    expect(quotaService.getQuotas).toHaveBeenCalledWith('Test', DatasetQuotaType.User);
+    expect(quotaService.getQuotas).toHaveBeenCalledWith('Test', DatasetQuotaType.User, { includeUsageOnly: false });
 
     expect(await table.getHeaderTexts()).toEqual(
       ['Name', 'ID', 'Data Quota', 'DQ Used', 'DQ % Used', 'Object Quota', 'OQ Used', 'OQ % Used', ''],
@@ -115,6 +117,13 @@ describe('DatasetQuotasListComponent', () => {
     expect(await table.getRowTexts(1)).toEqual(
       ['bin', '2', '500 KiB', '—', '0%', '—', '33', '—', ''],
     );
+  });
+
+  it('asks for usage-only rows too once Show All is on', async () => {
+    const showAll = await loader.getHarness(TnSlideToggleHarness);
+    await showAll.check();
+
+    expect(quotaService.getQuotas).toHaveBeenLastCalledWith('Test', DatasetQuotaType.User, { includeUsageOnly: true });
   });
 
   it('tags each row by user, not by the quota values that editing it changes', () => {

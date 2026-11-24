@@ -12,7 +12,6 @@ import { DatasetTier } from 'app/enums/dataset-tier.enum';
 import { DatasetType, DatasetQuotaType } from 'app/enums/dataset.enum';
 import { Role } from 'app/enums/role.enum';
 import { listZpools } from 'app/helpers/list-zpools.helper';
-import { isQuotaSet } from 'app/helpers/storage.helper';
 import { helptextDatasetForm } from 'app/helptext/storage/volumes/datasets/dataset-form';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { IxSimpleChanges } from 'app/interfaces/simple-changes.interface';
@@ -171,14 +170,14 @@ export class DatasetCapacityManagementCardComponent implements OnChanges, OnInit
         this.cdr.markForCheck();
       }),
       switchMap(() => forkJoin([
-        this.quotaService.getQuotas(this.dataset().id, DatasetQuotaType.User),
-        this.quotaService.getQuotas(this.dataset().id, DatasetQuotaType.Group),
+        this.quotaService.countQuotas(this.dataset().id, DatasetQuotaType.User),
+        this.quotaService.countQuotas(this.dataset().id, DatasetQuotaType.Group),
       ])),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
       next: ([userQuotas, groupQuotas]) => {
-        this.userQuotas = userQuotas.filter(isQuotaSet).length;
-        this.groupQuotas = groupQuotas.filter(isQuotaSet).length;
+        this.userQuotas = userQuotas;
+        this.groupQuotas = groupQuotas;
         this.isLoadingQuotas = false;
         this.cdr.markForCheck();
       },

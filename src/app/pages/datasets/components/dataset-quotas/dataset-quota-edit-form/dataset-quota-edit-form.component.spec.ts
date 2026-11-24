@@ -66,6 +66,9 @@ describe('DatasetQuotaEditFormComponent', () => {
         'zfs.resource.userspace.list',
         [{ paths: ['Test'], types: ['user'] }],
       );
+      // Only the edited account is looked up, not uid 2.
+      expect(api.call).toHaveBeenCalledWith('user.get_user_obj', [{ uid: 1 }]);
+      expect(api.call).not.toHaveBeenCalledWith('user.get_user_obj', [{ uid: 2 }]);
 
       expect(await (await getTnInput('name')).getValue()).toBe('daemon');
       expect(await (await getTnInput('data_quota')).getValue()).toBe('500 KiB');

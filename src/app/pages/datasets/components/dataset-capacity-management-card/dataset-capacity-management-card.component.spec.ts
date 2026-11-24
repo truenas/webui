@@ -18,6 +18,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { SlideInResult } from 'app/modules/slide-ins/slide-in-result';
+import { ApiService } from 'app/modules/websocket/api.service';
 import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { DatasetCapacityManagementCardComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-management-card.component';
 import { DatasetCapacitySettingsComponent } from 'app/pages/datasets/components/dataset-capacity-management-card/dataset-capacity-settings/dataset-capacity-settings.component';
@@ -89,8 +90,6 @@ describe('DatasetCapacityManagementCardComponent', () => {
           { xid: 1002, quota: 200, used: 0 },
           { xid: 1003, quota: 0, used: 100 },
         ] as CallResponse<WebUiApiDirectory, 'zfs.resource.userspace.list'>),
-        mockCall('user.get_user_obj', { pw_name: 'user' } as CallResponse<WebUiApiDirectory, 'user.get_user_obj'>),
-        mockCall('group.get_group_obj', { gr_name: 'group' } as CallResponse<WebUiApiDirectory, 'group.get_group_obj'>),
       ]),
       mockProvider(DialogService),
       mockProvider(DatasetTreeStore, {
@@ -167,6 +166,9 @@ describe('DatasetCapacityManagementCardComponent', () => {
       expect(items[0].querySelector('.value')).toHaveText('Quotas set for 2 users');
       expect(items[1].querySelector('.label')).toHaveText('Group Quotas:');
       expect(items[1].querySelector('.value')).toHaveText('Quotas set for 2 groups');
+      // The card only counts, so it looks up no names.
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('user.get_user_obj', expect.anything());
+      expect(spectator.inject(ApiService).call).not.toHaveBeenCalledWith('group.get_group_obj', expect.anything());
     });
   });
 
