@@ -76,14 +76,19 @@ function importsOf(source, statement, known) {
   });
 }
 
-// Maps each source file to the files that import or re-export it. Only static
-// imports: a lazy `import()` is how routes load a page, and that adds nothing
-// a route file would (see dependents()).
+// Maps each source file to the files that import or re-export it, lazily or
+// not (user-directory.service.ts lazy-loads the user form for every user
+// picker). A route file's lazy `import()` only loads a page, and that adds
+// nothing a route file would (see dependents()).
 function buildImporters(sources) {
   const known = new Set(sources);
   const importers = new Map();
   for (const source of sources) {
-    for (const target of importsOf(source, staticImport, known)) {
+    const targets = importsOf(source, staticImport, known);
+    if (!source.endsWith('.routes.ts')) {
+      targets.push(...importsOf(source, lazyImport, known));
+    }
+    for (const target of targets) {
       if (!importers.has(target)) {
         importers.set(target, new Set());
       }
