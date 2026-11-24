@@ -119,23 +119,27 @@ jobs:
       shards: ${{ steps.shards.outputs.shards }}
       total: ${{ steps.shards.outputs.total }}
       specs: ${{ steps.affected.outputs.specs }}
+      count: ${{ steps.affected.outputs.count }}
     steps:
       # The jobs' `concurrency` asks the superseded run to cancel, but a shard on
       # a self-hosted runner can sit on that request for many minutes, still
       # holding its runner and appliance. Force-cancelling it frees the pool
-      # for this run. Same PR branch, and only older runs (lower ids): an older
-      # run whose plan starts late must not cancel a newer one.
+      # for this run. Same PR, and only older runs (lower ids): an older run
+      # whose plan starts late must not cancel a newer one. The PR number, not
+      # just the branch: one branch with PRs into two bases starts two runs per
+      # push, and neither supersedes the other.
       - name: Force-cancel the run this push superseded
         if: github.event_name == 'pull_request'
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           BRANCH: ${{ github.head_ref }}
+          PR: ${{ github.event.pull_request.number }}
         run: |
           set -euo pipefail
           for status in in_progress queued; do
             gh api "repos/$GITHUB_REPOSITORY/actions/workflows/e2e.yml/runs?event=pull_request&status=$status&branch=$BRANCH" \
-              --jq ".workflow_runs[] | select(.id < $GITHUB_RUN_ID) | .id"
+              --jq ".workflow_runs[] | select(.id < $GITHUB_RUN_ID and any(.pull_requests[]; .number == $PR)) | .id"
           done | sort -u | while read -r id; do
             echo "Force-cancelling run $id"
             gh api -X POST "repos/$GITHUB_REPOSITORY/actions/runs/$id/force-cancel" > /dev/null || true
@@ -151,6 +155,8 @@ jobs:
       #
       # The PR files API stops at 3000 files, even paginated. Past that the
       # list is partial, and a partial list could narrow a run it should widen.
+      # A failure to list the files, or of the picker, also runs everything
+      # rather than failing `plan`, which would skip every shard.
       - id: affected
         if: github.event_name == 'pull_request'
         env:
@@ -164,8 +170,14 @@ jobs:
               | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
           fi
-          result="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename' \
-            | node scripts/e2e-affected-specs.mjs)"
+          if ! files="$(gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/files" --jq '.[].filename')"; then
+            echo "Whole suite: couldn't list the PR's files" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! result="$(node scripts/e2e-affected-specs.mjs <<< "$files")"; then
+            echo "Whole suite: the spec picker failed" | tee -a "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
           if [ "$(jq -r .full <<< "$result")" = true ]; then
             echo "Whole suite: $(jq -r .reason <<< "$result")" | tee -a "$GITHUB_STEP_SUMMARY"
             exit 0
@@ -539,6 +551,8 @@ jobs:
         continue-on-error: true
         env:
           SHARDS: ${{ needs.plan.outputs.total }}
+          # Set only when the run was narrowed to the specs a PR can reach.
+          NARROWED: ${{ needs.plan.outputs.count }}
         run: |
           set -euo pipefail
           shards="$RUNNER_TEMP/shards"
@@ -558,6 +572,10 @@ jobs:
           report="$RUNNER_TEMP/e2e-coverage.md"
           yarn e2e:coverage "$results" --out "$report"
           {
+            if [ -n "$NARROWED" ]; then
+              echo "> This run was narrowed to $NARROWED specs, so this is not comparable with a whole-suite run."
+              echo
+            fi
             if [ "$uploaded" -lt "$SHARDS" ]; then
               echo "> Only $uploaded of $SHARDS shards uploaded coverage, so this counts only the tests they ran."
               echo
@@ -586,6 +604,8 @@ jobs:
         continue-on-error: true
         env:
           SHARDS: ${{ needs.plan.outputs.total }}
+          # Set only when the run was narrowed to the specs a PR can reach.
+          NARROWED: ${{ needs.plan.outputs.count }}
         run: |
           set -euo pipefail
           results="$RUNNER_TEMP/e2e-timings"
@@ -606,6 +626,10 @@ jobs:
           report="$results/report.md"
           yarn e2e:timings "$results" --out "$report" > /dev/null
           {
+            if [ -n "$NARROWED" ]; then
+              echo "> This run was narrowed to $NARROWED specs, so this is not comparable with a whole-suite run."
+              echo
+            fi
             if [ "$uploaded" -lt "$SHARDS" ]; then
               echo "> Only $uploaded of $SHARDS shards uploaded timings, so this covers only the tests they ran."
               echo
