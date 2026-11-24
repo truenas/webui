@@ -1,17 +1,8 @@
 /**
- * Stories: the links on a user's Access card, under Credentials > Users — adding
- * an API key for a user who has none, viewing the keys of one who has, and
- * downloading a user's SSH public key.
- *
- * Each link is offered only in some states, so each test sets the state up over
- * the API and checks the link against it: "Add API Key" for a user with no key,
- * "View API Keys" once they hold one, "Download Public Key" only while they have
- * an `sshpubkey`. Locking and the one-time password are in
- * `unauthenticated/user-sign-in-controls.e2e.ts`, because their claims are about
- * signing in afterwards.
- *
- * Both accounts are administrators because the card offers "Add API Key" only to
- * a user holding a role, and the API key form lists no one else.
+ * Stories: the links on a user's Access card: Add API Key for a user with none, View API Keys for one with a key,
+ * and Download Public Key only while they have an `sshpubkey`; each test sets that state up over the API. Locking
+ * and one-time passwords are in `unauthenticated/user-sign-in-controls.e2e.ts`. Both accounts are administrators
+ * because Add API Key is offered only to a role-holding user, and the API key form lists no one else.
  */
 import { readFile } from 'node:fs/promises';
 import { ensureApiKeyAbsent, ensureApiKeyPresent, findApiKey } from '../fixtures/api-keys';

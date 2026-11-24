@@ -1,24 +1,9 @@
 /**
- * Stories: an admin changes the timezone, the language and the date format, and
- * each one sticks.
- *
- * The three are not saved in the same place. The timezone is the appliance's, set
- * from the Localization card on System > General Settings and stored in
- * `system.general`. The language and the date format are the signed-in account's,
- * set from the Localization section of the Preferences form and stored in its
- * `preferences` attribute. The card used to hold all three. Each test asserts
- * twice: once on the screen, and once through the API that stores it.
- *
- * ## Setup and teardown
- *
- * The timezone is one config record, so there is nothing to delete. Each test
- * starts from a timezone it writes, and teardown writes back the one the
- * appliance held before the first test, as `replication-settings.e2e.ts` does.
- *
- * The preferences are a blob on the account the whole suite signs in as, so these
- * tests use the baseline and teardown from `preferences.e2e.ts`. That baseline
- * includes English and the default date format, so a run that died with the app
- * in German does not start the next one there.
+ * Stories: an admin changes the timezone, language and date format, and each sticks; each is checked on screen and
+ * through the API that stores it. The timezone is in `system.general` (Localization card on System > General
+ * Settings); teardown restores it as `replication-settings.e2e.ts` does. Language and date format are the account's
+ * `preferences` (Preferences form), using the baseline and teardown from `preferences.e2e.ts`, which includes
+ * English, so a run that died in German does not start the next one there.
  */
 import { findRunningBootEnvironment } from '../fixtures/boot-environments';
 import { readTimezone, readTimezoneLabel, setTimezone } from '../fixtures/localization';

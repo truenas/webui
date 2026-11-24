@@ -1,17 +1,8 @@
 /**
- * Stories: an admin stages a bridge and a link aggregation from the Interfaces
- * card's Add form, deletes a staged VLAN from the card, and opens the NIC's own
- * edit form without saving it.
- *
- * Nothing here commits. Test Changes and Save Changes are never pressed and
- * `interface.commit` is never called: the CI appliance has one NIC, the one the
- * suite talks to, and applying anything to it can cut the run off. Committing is
- * #14537's, on an appliance with a spare NIC. Every test ends by checking that
- * the NIC still holds the addresses it started with.
- *
- * Bridge members and LAGG ports are what the appliance offers, read from
- * `interface.bridge_members_choices` and `interface.lag_ports_choices` rather
- * than written down, since both depend on how the NIC was set up.
+ * Stories: an admin stages a bridge and a LAGG from the Interfaces card's Add form, deletes a staged VLAN, and opens
+ * the NIC's edit form without saving. Nothing commits: CI's only NIC is the one the suite talks to (committing is
+ * #14537's, with a spare NIC), and every test ends by checking the NIC kept its addresses. Bridge members and LAGG
+ * ports come from `interface.bridge_members_choices` and `interface.lag_ports_choices`, as they depend on the NIC.
  */
 import { entitlementFeature, isNotDenied } from '../fixtures/entitlements';
 import {

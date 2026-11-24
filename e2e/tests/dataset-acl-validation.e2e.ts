@@ -1,19 +1,9 @@
 /**
- * Stories: the two ways the ACL editor stops or questions a save.
- *
- * An entry for a user with no user picked is invalid, and Save stays disabled
- * until it is removed, through the alert marker its row shows.
- *
- * The editor always asks middleware to validate the effective ACL, and
- * `filesystem.setacl` then fails when an ALLOW entry's user or group cannot
- * traverse a directory above the path. The editor answers that failure with a
- * "Traverse Access Warning": Cancel saves nothing, Save Anyway saves again
- * without the validation (`handleSaveError` in `dataset-acl-editor.store.ts`).
- * Here the directory above is mode 700 and owned by root, so nobody else can
- * traverse it; that includes the SMB preset's own builtin groups as well as the
- * user the test adds.
- *
- * Every result is read back through `filesystem.getacl`.
+ * Stories: the two ways the ACL editor stops or questions a save. A user entry with no user keeps Save disabled
+ * until it is removed via its row's alert marker. And `filesystem.setacl` fails when an ALLOW entry cannot traverse
+ * a directory above the path, which the editor answers with a "Traverse Access Warning" (`handleSaveError` in
+ * `dataset-acl-editor.store.ts`): Cancel saves nothing, Save Anyway saves without validation. The directory above
+ * is mode 700 owned by root. Results are read through `filesystem.getacl`.
  */
 import {
   findUserAclEntries, nfs4Entries, readAcl, setOwnership,

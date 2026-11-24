@@ -1,15 +1,8 @@
 /**
- * Stories: an admin with no Storj account finds TrueCloud Backup on Data
- * Protection, opens its full list from the card, and starts adding a task — and
- * the form will not take one with its required fields left empty.
- *
- * Nothing here saves a task. `cloud_backup.create` initializes a restic
- * repository on Storj before it stores anything (see `fixtures/cloud-backup.ts`),
- * so a task needs a real account and a bucket, and neither the card's rows nor a
- * task's details page can be reached without one. What is left is what an
- * appliance with no task shows, which is also every appliance this suite boots.
- *
- * Read-only against the appliance, so there is nothing to tear down.
+ * Stories: an admin with no Storj account finds TrueCloud Backup on Data Protection, opens its full list, and
+ * starts adding a task, which the form refuses with required fields empty. Nothing saves a task:
+ * `cloud_backup.create` initializes a restic repository on Storj first (see `fixtures/cloud-backup.ts`), so it
+ * needs a real account. Read-only, so there is nothing to tear down.
  */
 import { countCloudBackupTasks } from '../fixtures/cloud-backup';
 import { leaveFieldEmpty, openCloudBackupForm, openCloudBackupList } from '../flows/cloud-backup';

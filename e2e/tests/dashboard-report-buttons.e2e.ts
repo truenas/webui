@@ -1,23 +1,10 @@
 /**
- * Story: an admin presses the chart button on a Dashboard card and lands on the Reporting tab for
- * that card: CPU Overview, Memory, Storage, Interface and System Information.
- *
- * Two of these cards are not usable on the default layout. CPU Overview is not in it, and the
- * Interface card renders its header, and so its button, only at full size. So each test writes a
- * layout holding all five, one full-size group each, over the API, because adding cards through
- * the Card Editor is a journey of its own and not this file's. `afterEach` writes back the layout the account had, as
- * `fixtures/dashboard.ts` describes, and each test reloads after opening the Dashboard so the app
- * reads the layout it wrote.
- *
- * Each landing is checked by something only that tab draws. Report titles are read from
- * `reporting.netdata_graphs` rather than written here, because they are middleware's and every id on
- * a report is keyed by one. The Disk tab draws its reports only once devices are picked, so its
- * check is the Devices picker, which no other tab renders. Whether the charts hold data is
- * `tests/reporting.e2e.ts`'s question, not this file's.
- *
- * Only the Storage card's test needs a pool, and it asks for the `pool` fixture so the card has a
- * tile to wait for before the click. The other cards show nothing from storage, and the Disk tab's
- * Devices picker lists disks, which are there with or without a pool.
+ * Story: an admin presses a Dashboard card's chart button (CPU Overview, Memory, Storage, Interface, System
+ * Information) and lands on that card's Reporting tab. CPU Overview is not in the default layout and Interface
+ * shows its button only at full size, so each test writes a layout with all five full-size and reloads;
+ * `afterEach` restores the account's (see `fixtures/dashboard.ts`). Report titles come from
+ * `reporting.netdata_graphs`, since report ids are keyed by them; the Disk tab is checked by its Devices picker.
+ * Only the Storage test uses the `pool` fixture, so its card has a tile to wait for.
  */
 import type { Page } from '@playwright/test';
 import {

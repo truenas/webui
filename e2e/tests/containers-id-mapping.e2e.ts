@@ -1,17 +1,9 @@
 /**
- * Stories: an admin maps host users and groups into containers from the
- * Containers page's Map User/Group IDs dialog — a user to the same UID, a group
- * to a GID of its own — clears one, and is refused an account that does not
- * exist.
- *
- * Each is asserted on the account's row in the dialog and through `user.query`
- * or `group.query`. Every assertion is scoped to an account this spec made:
- * what else the dialog lists depends on the appliance, so the table is never
- * counted or expected to be empty.
- *
- * Middleware refuses a mapping on a builtin account or on one in a group that
- * holds roles, so the accounts here are plain ones with neither. No container,
- * image or pool is needed: the dialog reads and writes users and groups only.
+ * Stories: in the Containers page's Map User/Group IDs dialog an admin maps a user to the same UID and a group to
+ * its own GID, clears one, and is refused a nonexistent account; each is checked on the row and through
+ * `user.query` or `group.query`. Assertions are scoped to accounts this spec made, since the rest of the list
+ * depends on the appliance. Middleware refuses builtin accounts and ones in role-holding groups, so these are plain.
+ * No container, image or pool is needed.
  */
 import {
   ensureGroupAbsent, ensureGroupPresent, findGroup, setGroupIdmap,

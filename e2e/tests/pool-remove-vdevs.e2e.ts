@@ -1,24 +1,8 @@
 /**
- * Stories: on a pool's VDEVs page, an admin removes the pool's cache, log and
- * spare disks, and removes one of two mirrored data vdevs.
- *
- * Each removal is asserted on the page, by its node and its group leaving the
- * tree, and through `pool.query`, which holds the pool's topology.
- *
- * The UI also reports a removal in the snackbar "Device removed". It is not
- * asserted: the snackbar renders no `data-test`, and a text match is not a
- * selector this suite uses. The tree is reloaded in the same callback that raises
- * it, so the node going says the same thing.
- *
- * ## Why this spec builds its own pool
- *
- * Both tests change a pool's topology, so neither may use the worker-scoped
- * `pool` fixture other specs share. The pool is built in each test, in the shape
- * that test needs, and destroyed before and after each one: it holds five disks or
- * four, and `fresh-install` needs nine alike.
- *
- * Not covered: a pool with a top-level RAIDZ, where Remove is not offered on a
- * data vdev, and special and dedup vdevs.
+ * Stories: on a pool's VDEVs page, an admin removes the cache, log and spare disks, and one of two mirrored data
+ * vdevs; each removal is checked in the tree and in `pool.query`. The "Device removed" snackbar has no `data-test`
+ * and isn't asserted; the tree reloads in the same callback. Each test builds its own pool and destroys it before
+ * and after: it holds four or five disks, and `fresh-install` needs nine alike.
  */
 import { readPoolTopology } from '../fixtures/pool';
 import { ensureDevicePoolPresent, readPoolStatus } from '../fixtures/pool-devices';

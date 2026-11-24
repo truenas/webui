@@ -1,17 +1,9 @@
 /**
- * A pool for journeys that merely need one, over the API.
+ * A pool for journeys that merely need one, plus pool topology readback, over the API.
  *
- * Buckets, datasets and shares all live under a pool, but most journeys are not
- * about the pool — building one through the wizard is `fresh-install`'s story.
- * This provides one the cheap way: an existing pool when the appliance has one
- * (a developer's box), a one-disk pool built from an unused disk when it does
- * not (the CI appliance), and the export of the latter at the end.
- *
- * Exposed to specs as the worker-scoped `pool` fixture in `support/fixtures.ts`,
- * so a worker builds it once however many specs ask.
- *
- * Also reads a pool's topology back, for the specs that build or change pools of
- * their own.
+ * Uses an existing pool when there is one (a developer's box), else builds a one-disk pool from an unused disk
+ * (CI) and exports it at the end; building through the wizard is `fresh-install`'s story. Exposed as the
+ * worker-scoped `pool` fixture in `support/fixtures.ts`, so a worker builds it once.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import { ensurePoolAbsent, findPool, getSelectableDisks } from './storage';
@@ -96,20 +88,12 @@ export async function findOnlinePool(client: E2eApiClient): Promise<string | und
 }
 
 /**
- * A pool for datasets to live under, by name.
+ * A pool for datasets to live under, by name: an existing one if any (exporting a developer's pool is not a
+ * precondition), else `e2e_shared_tank` built from one unused disk.
  *
- * Prefers one that already exists: a developer's appliance has pools and often
- * no spare disk, and exporting somebody's pool is not a precondition. Only on
- * an appliance with none — the CI case — does this build `e2e_shared_tank`
- * from one unused disk.
- *
- * `onBuild` fires *before* `pool.create` is started, not after it is confirmed.
- * The caller uses it to record that this run is responsible for the pool, and
- * it has to be told before the job because the job can land and still throw
- * here — a timeout, a socket dropped while middleware restarts, a run
- * interrupted between the two. A pool recorded only on confirmation would be
- * skipped by teardown in exactly those cases, and a leaked pool holds its disks
- * and starves every later run.
+ * `onBuild` fires *before* `pool.create` starts, so the caller records ownership before the job: the job can
+ * land and still throw here (timeout, socket dropped while middleware restarts, interrupted run), and a pool
+ * teardown skipped would hold its disks and starve every later run.
  */
 async function providePool(client: E2eApiClient, onBuild: () => void): Promise<string> {
   const existing = await findOnlinePool(client);
@@ -128,16 +112,11 @@ async function providePool(client: E2eApiClient, onBuild: () => void): Promise<s
 }
 
 /**
- * Builds a one-disk striped pool by name.
+ * Builds a one-disk striped pool by name, the one place topology, timeout and disk choice are decided.
  *
- * The shared fixture above and any spec that needs a pool of its own both end
- * up here, so the topology, the timeout and the choice of disk are decided in
- * one place. Striped and single-disk on purpose: nothing stored in a pool the
- * suite built matters, and a wider one would claim disks `fresh-install` needs.
- *
- * `whatItCosts` completes the sentence "Pool X was not created, …" for the job
- * failure, and names the same consequence when there is no disk to build from —
- * the two failures are the same problem for the caller.
+ * Striped and single-disk on purpose: its contents don't matter, and a wider pool would claim disks
+ * `fresh-install` needs. `whatItCosts` completes "Pool X was not created, …" for both a job failure and
+ * having no disk to build from.
  */
 async function buildStripePool(
   client: E2eApiClient,
@@ -168,17 +147,11 @@ async function buildStripePool(
 }
 
 /**
- * Builds a pool of the spec's own, if it is not already there.
+ * Builds a pool of the spec's own, if absent, for journeys whose subject is *destroying* a pool.
  *
- * For journeys whose subject is *destroying* a pool. They must not use the
- * worker-scoped `pool` fixture: that pool is shared with every other spec in
- * the worker, so a test that exports it — or fails partway through trying —
- * takes the rest of the run with it. A pool of one's own keeps the blast radius
- * to the spec that asked for it.
- *
- * The caller owns the removal, and it has to be unconditional. `findOnlinePool`
- * prefers any pool over the suite's own, so a pool left behind here would be
- * handed to a later spec as *its* pool and then exported underneath it.
+ * Those must not use the worker-scoped `pool`, shared by every spec in the worker: exporting it, or failing
+ * partway, takes the rest of the run down. The caller's removal must be unconditional: `findOnlinePool`
+ * prefers any pool over the suite's, so a leftover would be handed to a later spec and exported under it.
  */
 export async function ensurePoolPresent(client: E2eApiClient, name: string): Promise<void> {
   // By name, not `findOnlinePool` — that answers "which pool should a spec
@@ -194,13 +167,9 @@ export async function ensurePoolPresent(client: E2eApiClient, name: string): Pro
 /**
  * Whether a pool is the suite's to export: the fixed name is reserved for it.
  *
- * By name rather than by memory of having built it, so a pool left behind by
- * an interrupted run — created, never exported — is reclaimed the next time
- * the suite uses it, instead of being adopted as somebody else's and leaked for
- * good. (`findOnlinePool` prefers any other pool, so that is the next run on an
- * appliance where it is the only one — the CI case, which is also the only
- * case that builds it.) Every other pool is left alone, however the suite came
- * to use it.
+ * By name rather than memory of building it, so a pool an interrupted run left behind is reclaimed next time
+ * instead of adopted and leaked (on CI it is the only pool, so the next run uses it). Every other pool is left
+ * alone, however the suite came to use it.
  */
 function isSuiteOwnedPool(name: string): boolean {
   return name === suiteOwnedPoolName;

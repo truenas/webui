@@ -1,21 +1,9 @@
 /**
- * Story: an admin on the Dashboard finds the TrueNAS Help card's links pointing where they should,
- * copies the version from System Information, and opens the Update page from its update button.
- *
- * The Help links lead off the appliance, so each one's `href` and `target` are asserted and none is
- * followed. Following one would test the site at the other end, not the UI.
- *
- * Each test writes a layout of System Information and TrueNAS Help and `afterEach` writes back the
- * admin's own, as `dashboard-widgets.e2e.ts` does and for the same reason: `tests/dashboard.e2e.ts`
- * runs on whatever layout it finds. See `fixtures/dashboard.ts`. The layout holds one System
- * Information card and no other copy button, so the version's copy button is the only one on the
- * page. Nothing is created on the appliance.
- *
- * The update check's own answer is not asserted: whether an update is offered depends on the update
- * server, not on the UI.
- *
- * Does not need a pool, so it does not ask for the `pool` fixture: neither card shows storage, and
- * the Update page's Install button renders whether or not the appliance has a pool.
+ * Story: on the Dashboard an admin finds the TrueNAS Help links pointing where they should, copies the version from
+ * System Information, and opens the Update page from its update button. Help links leave the appliance, so only
+ * their `href` and `target` are asserted. Each test writes a layout of those two cards and `afterEach` restores the
+ * admin's own (see `fixtures/dashboard.ts`), so the version's copy button is the only one on the page. Whether an
+ * update is offered depends on the update server and is not asserted. No pool: neither card shows storage.
  */
 import { captureDashState, restoreDashState, writeDashState } from '../fixtures/dashboard';
 import type { CapturedDashState, DashboardGroup } from '../fixtures/dashboard';

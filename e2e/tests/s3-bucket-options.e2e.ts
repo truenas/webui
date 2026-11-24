@@ -1,16 +1,9 @@
 /**
- * Stories: the bucket options behind Advanced Options.
+ * Stories: behind Advanced Options, an administrator switches a bucket to Multiprotocol, turns versioning on with
+ * snapshot versions, a listing cap and an opaque ETag, and forces a versioned bucket back off; all from API buckets.
  *
- * An administrator switches a bucket to the Multiprotocol permissions model,
- * and separately turns versioning on with snapshot versions, a listing cap
- * and an opaque ETag, and on a bucket already versioned forces it back off.
- * All three start from a bucket the API created.
- *
- * What only an appliance can answer: that choosing Multiprotocol folds the
- * ownership to Object Writer on screen *and* in what middleware stores, and
- * that the versioning options the form sends are the ones that come back.
- * The unit spec mocks the fold; middleware performs it too, and the two have
- * to agree.
+ * Choosing Multiprotocol folds ownership to Object Writer on screen *and* in middleware's stored record; the unit
+ * spec mocks the fold, so the two have to agree. The versioning options sent must be the ones that come back.
  */
 import { entitlementFeature, isEntitled } from '../fixtures/entitlements';
 import {

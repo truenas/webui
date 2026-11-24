@@ -1,13 +1,9 @@
 /**
- * Selecting and opening datasets in the Datasets tree.
- *
- * A click on a row that is not selected selects it and opens nothing. A click on the row that is
- * already selected opens or closes it instead. Selecting a dataset opens its ancestors, so its own
- * row is in view, and entering the page with nothing selected opens the first pool.
- *
- * So a bare click is right only for a row known not to be selected. These helpers are for a row
- * that may be: the page selects the first pool as it loads, and a flow that clicked that pool to
- * select it would close it.
+ * Selecting and opening datasets in the Datasets tree. A click on an unselected row selects it and opens
+ * nothing; a click on the selected row opens or closes it. Selecting a dataset opens its ancestors, and
+ * entering with nothing selected opens the first pool. So a bare click is right only for a row known not to
+ * be selected; these helpers are for one that may be (the page selects the first pool as it loads, and a
+ * flow clicking that pool to select it would close it).
  */
 import { expect, type Page } from '@playwright/test';
 import { datasetDetailsLocators, datasetLocators } from '../locators/storage';

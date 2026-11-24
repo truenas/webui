@@ -1,14 +1,8 @@
 /**
- * Stories: an admin opens the SNMP form from its row on System > Services,
- * saves the general settings and the SNMP v3 credentials, and the form will
- * not take a v3 password shorter than eight characters.
- *
- * The page has no readout of a service's settings, so each save is asserted
- * through `snmp.config` alone, as the whole record less its two secrets, so a
- * save that changed a field it was not asked to touch fails too.
- *
- * SNMP goes back to stopped, and its settings to the baseline, before and after
- * every test. See `fixtures/service-config.ts`.
+ * Stories: an admin saves the SNMP general settings and v3 credentials from System > Services, and the form refuses
+ * a v3 password under eight characters. Each save is checked against the whole `snmp.config` record less its two
+ * secrets, so a stray field change fails too. SNMP goes back to stopped and the baseline before and after every
+ * test; see `fixtures/service-config.ts`.
  */
 import {
   readSnmpSettings, setSnmpSettings, snmpBaseline, type SnmpReadback,

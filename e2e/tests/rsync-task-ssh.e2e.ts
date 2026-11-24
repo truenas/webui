@@ -1,21 +1,9 @@
 /**
- * Stories: an admin saves a rsync task in SSH mode from the card on Data
- * Protection, the task keeps its connection settings when it is edited, and a
- * task in the Pull direction copies files from the remote path into the local
- * dataset.
- *
- * The "remote" is the appliance itself, through an SSH connection to
- * `127.0.0.1` made with `fixtures/ssh-connections.ts` under this spec's own
- * name — see `rsync-task-run.e2e.ts`, which pushes the same way. Middleware runs
- * rsync over `ssh` exactly as it would to another host.
- *
- * Every save in SSH mode is checked by middleware before it is stored: Validate
- * Remote Path is ticked by default, so the form's save signs in over the
- * connection and lists the remote path. Each remote path here is a dataset that
- * exists, so that check has something to find.
- *
- * Module mode, Push and the transfer options are `rsync-tasks.e2e.ts`; running a
- * push is `rsync-task-run.e2e.ts`.
+ * Stories: an admin saves a rsync task in SSH mode, it keeps its connection settings when edited, and a Pull task
+ * copies files from the remote path into the local dataset. The "remote" is the appliance itself over an SSH
+ * connection to `127.0.0.1` (`fixtures/ssh-connections.ts`). Validate Remote Path is ticked by default, so each save
+ * signs in and lists the remote path; every remote path here is an existing dataset so that check has something to
+ * find.
  */
 import { findFileNames, writeFileOnAppliance } from '../fixtures/cloud-sync';
 import {

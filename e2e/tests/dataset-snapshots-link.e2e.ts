@@ -1,16 +1,9 @@
 /**
- * Stories: an admin on a dataset opens its snapshots from the dataset's Data
- * Protection card, by "View Snapshots", and sees that dataset's snapshots and its
- * children's, and nobody else's.
- *
- * The link goes to `/datasets/snapshots/<dataset>`, the snapshot list scoped to
- * that dataset: a chip in the page header names it, "Include child datasets"
- * starts on, and the search box starts empty. Removing the chip lists every
- * snapshot again.
- *
- * `…_a` and `…_ab` are siblings whose names share a prefix, which a substring
- * match on the dataset cannot tell apart. The list once fell back to one when
- * the dataset had no snapshots of its own, which the second test covers.
+ * Stories: from a dataset's Data Protection card, "View Snapshots" opens the snapshot list scoped to that
+ * dataset (a header chip; "Include child datasets" on; removing the chip lists every snapshot), showing its
+ * snapshots and its children's, and nobody else's. `…_a` and `…_ab` are siblings sharing a prefix, which a
+ * substring match cannot tell apart. The list once fell back to one when the dataset had no snapshots of its
+ * own, which the second test covers.
  */
 import { ensureSnapshotPresent } from '../fixtures/snapshots';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';

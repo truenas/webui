@@ -1,22 +1,9 @@
 /**
- * Stories: an admin opens the full Replication Tasks list from its card on Data
- * Protection, searches it down to the task they want, and runs, edits, switches
- * off and on, and deletes a task from its row. The appliance holds what they did.
- *
- * The card's own journeys are `replication-tasks.e2e.ts`. The list is a
- * different page, with its own search, its own Enabled switch, and its actions
- * in a detail panel that opens when the row is clicked rather than in a kebab
- * menu. Its ids are its own too (see `replicationTaskLocators.list`), so nothing
- * the card spec passes says anything about it.
- *
- * Every action acts beside a second task that must come through untouched. The
- * panel's actions are keyed by the task's id, so an action belongs to whichever
- * row was opened, and a row-targeting bug would act on the wrong task without
- * failing anything else.
- *
- * Every task is local, between two datasets on this appliance, made fresh for
- * each test. No target is made: replication creates its own, so a target that
- * exists afterwards is evidence of a run.
+ * Stories: from the full Replication Tasks list, an admin searches, runs, edits, toggles and deletes a task. The
+ * list has its own search, Enabled switch, detail-panel actions and ids (`replicationTaskLocators.list`), so the
+ * card spec says nothing about it. Every action runs beside a second task that must come through untouched, to
+ * catch row-targeting bugs. Tasks are local and fresh per test; no target is made, so one existing afterwards is
+ * evidence of a run.
  */
 import {
   createSnapshot,

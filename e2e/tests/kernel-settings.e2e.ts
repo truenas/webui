@@ -1,14 +1,7 @@
 /**
- * Story: an admin turns the debug kernel on from the Kernel card on
- * System > Advanced Settings, and then off again, and the appliance keeps each.
- *
- * Each save is asserted twice, as `console-settings.e2e.ts` does: the card's
- * readout says the screen believed it, `system.advanced.config` says the
- * appliance did it. Whether the debug kernel boots needs a reboot and is out of
- * scope; the stored setting is the claim.
- *
- * The setting is one field of one config record, so there is nothing to delete.
- * The value the appliance held is read once and written back.
+ * Story: an admin turns the debug kernel on and off from the Kernel card on System > Advanced Settings, checked on
+ * the card and through `system.advanced.config`. Booting it needs a reboot and is out of scope; the stored setting
+ * is the claim. The original value is read once and written back.
  */
 import { readDebugKernel, setDebugKernel } from '../fixtures/kernel';
 import { openKernelForm, saveKernelForm } from '../flows/kernel';

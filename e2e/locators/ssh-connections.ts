@@ -1,13 +1,7 @@
 /**
- * The SSH Connections card on Credentials > Backup Credentials, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `ssh-con-<name>`, a plain concatenation with no pre-normalizing, so the row,
- * its Name cell and its actions all go through the library's normalizer — the
- * same shape as `locators/ssh-keypairs.ts`.
- *
- * A `tn-select` option is `option-<base>-<label>`, keyed by the text on screen
- * (see `locators/s3.ts`), so the option locators below take the label.
+ * The SSH Connections card on Credentials > Backup Credentials, and its form. Row ids come from `uniqueRowTag`,
+ * `ssh-con-<name>`, with no pre-normalizing, so everything goes through the library normalizer (as in
+ * `locators/ssh-keypairs.ts`). Select options are keyed by on-screen label (see `locators/s3.ts`).
  */
 import { kebabTestSegment } from './test-id';
 

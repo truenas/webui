@@ -1,14 +1,7 @@
 /**
- * Stories: the full Cron Jobs list, reached from the title of the card on
- * System > Advanced Settings.
- *
- * The list is a different page from the card: its own search, a row tag built
- * from the command and the description, and Edit in a detail row rather than a
- * kebab menu, with no first-time warning in front of the form. The card's specs
- * say nothing about any of it.
- *
- * The search filters the Users column alone, so the target runs as a user of
- * its own and the bystander as root, and the query is that user's name.
+ * Stories: the full Cron Jobs list, reached from the card title on System > Advanced Settings. It has its own
+ * search, row tag and detail-row Edit with no first-time warning, so the card's specs say nothing about it.
+ * The search filters the Users column alone, so the target runs as its own user and the bystander as root.
  */
 import { ensureCronjobAbsent, ensureCronjobPresent, findCronjob, type CronSchedule } from '../fixtures/cron';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';

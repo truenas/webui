@@ -1,15 +1,9 @@
 /**
- * Stories: editing a user under Credentials > Users — changing profile and
- * access fields, moving the home directory, and the edit form's refusals.
- *
- * The form drops every home key from `user.update` when the home was left alone,
- * because middleware acts on each one it is given: a different `home` relocates
- * the account and copies the old directory over, and a `home_mode` re-applies
- * permissions. The payload itself is not observable here, so the first test reads
- * the evidence instead — no warning raised, and the home's path and seeded mode
- * unchanged afterwards.
- *
- * Lock and Unlock are covered by `unauthenticated/user-sign-in-controls.e2e.ts`.
+ * Stories: editing a user's profile and access fields, moving the home directory, and the edit form's refusals. The
+ * form drops every home key from `user.update` when the home is untouched, since a new `home` relocates and copies
+ * the directory and `home_mode` re-applies permissions. The payload isn't observable, so the first test checks that
+ * no warning is raised and the home's path and seeded mode are unchanged. Lock and Unlock are
+ * `unauthenticated/user-sign-in-controls.e2e.ts`.
  */
 import { ensureGroupAbsent, ensureGroupPresent, findGroup } from '../fixtures/groups';
 import { readOwnership, setOwnership } from '../fixtures/permissions';

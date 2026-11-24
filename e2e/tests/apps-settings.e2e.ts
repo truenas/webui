@@ -1,42 +1,10 @@
 /**
- * Stories: an admin edits Docker's address pools, adds a registry mirror and turns off image update
- * checks from Apps > Configuration > Settings, and middleware refuses the two settings it cannot
- * use: a base network smaller than its subnet size, and a plain-HTTP mirror not marked insecure.
- * In the same panel an admin adds a train to the preferred trains and removes it again, the form
- * refuses a save with no train, and an Enterprise-entitled appliance refuses a list without
- * `enterprise`.
- *
- * The form saves through `catalog.update` and the `docker.update` job together, and the panel
- * closes only once both succeed. Every save is checked through `docker.config` and
- * `catalog.config` afterwards.
- *
- * ## Why only with no Apps pool
- *
- * With no pool, `docker.update` only writes the datastore. With one, every change to the pools or
- * mirrors stops Docker, restarts it and redeploys the apps, which is slow and not this form's
- * concern. Apps on a pool is somebody's, and taking it off would stop their apps, so the spec skips
- * there instead. On the CI appliance Apps has no pool.
- *
- * ## Why the preferred trains need a sync
- *
- * The form offers what `catalog.trains` returns, and middleware answers that from the cache a
- * catalog sync fills, never from the catalog itself, and with no Apps pool nothing ensures a sync
- * has run. So the preferred-trains tests sync once first when `test` is not offered. With no pool a
- * sync clones into a temporary directory rather than onto a pool, and it needs outbound access to
- * github.com.
- *
- * ## Where the refusals show
- *
- * The Docker ones are reported in the error dialog, not under a field. The pool's is filed under
- * `docker_update.address_pools.<i>.base`, and the form's error handler cannot resolve a path through
- * a form array, so it falls back to the dialog. The mirror's comes from the `DockerUpdate` model's
- * own validator, which names no field. The missing `enterprise` train is filed under
- * `catalog_update.preferred_trains`, which is a control the form has, so it shows under the field.
- *
- * Not covered: whether Discover lists the newly preferred train, which would need a reload or a
- * sync after the save, since Discover loads the catalog into its store once; the NVIDIA checkbox,
- * hidden with no GPU; and a pool that overlaps the appliance's own network, which depends on the
- * CI NIC's address. The "Settings saved" snackbar renders no `data-test`.
+ * Stories: in Apps > Configuration > Settings an admin edits address pools, adds a registry mirror, turns off
+ * update checks, and adds and removes a preferred train; middleware refuses a base network smaller than its subnet,
+ * a plain-HTTP mirror not marked insecure, no train, and (Enterprise) a list without `enterprise`. Saves are
+ * checked through `docker.config` and `catalog.config`. Skips when Apps has a pool: each change would restart
+ * Docker and redeploy someone's apps. `catalog.trains` reads a sync's cache, so train tests sync first (needs
+ * github.com). Docker refusals show in the error dialog, since the error handler can't resolve form-array paths.
  */
 import {
   defaultDockerSettings,

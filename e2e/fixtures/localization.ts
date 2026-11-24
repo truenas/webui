@@ -1,14 +1,9 @@
 /**
  * Localization settings: preconditions, cleanup and readback, over the API.
  *
- * The appliance's timezone is one field of `system.general`, a single config
- * record, so — as in `fixtures/replication.ts` — there is nothing to create or
- * delete. Each test writes the timezone it starts from, and the spec writes back
- * the one the appliance held before its first test.
- *
- * Language and date format are not here. They are the signed-in account's own
- * preferences rather than the appliance's, and `fixtures/preferences.ts` owns
- * those.
+ * The timezone is one field of the `system.general` config record: each test writes its starting timezone, and
+ * the spec restores the one held before its first test. Language and date format are the account's own
+ * preferences, owned by `fixtures/preferences.ts`.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

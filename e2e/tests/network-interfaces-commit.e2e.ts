@@ -1,26 +1,10 @@
 /**
- * Stories: an admin builds a VLAN, a bridge and a failover LAGG on a spare NIC,
- * applies each one with Test Changes and keeps it with Save Changes, and then
- * deletes a VLAN the same way.
- *
- * Commit and check-in are the safety net that rolls a bad network change back
- * by itself, and a regression there is how an admin locks themselves out.
- * `network-interfaces-staging.e2e.ts` stages and reverts; this file is the one
- * that applies.
- *
- * **It needs a spare NIC**, named by its MAC in `TN_SPARE_NICS`, and skips
- * without one. A commit re-applies every interface, and anything built on the
- * NIC the suite talks to could take its address away. The spare has no address,
- * no DHCP and no peer, and everything here is built on it. Every address is in
- * TEST-NET-1, so nothing can route anywhere real.
- *
- * Before anything commits, the management NIC is saved to the database as DHCP,
- * as it already runs: once the table holds any row, middleware unconfigures
- * every NIC without one. See `pinManagementInterface`. That row is removed
- * again at the end.
- *
- * Serial: commit and check-in are global, and every test reuses the same spare
- * NIC.
+ * Stories: an admin builds a VLAN, bridge and failover LAGG on a spare NIC, applies each with Test Changes and keeps
+ * it with Save Changes, then deletes a VLAN the same way; commit and check-in are what roll back a lockout. Needs a
+ * spare NIC (MAC in `TN_SPARE_NICS`) and skips without one: a commit re-applies every interface, so everything is
+ * built on the spare, in TEST-NET-1. The management NIC is first saved as DHCP (`pinManagementInterface`), since
+ * once the table has any row middleware unconfigures NICs without one; it is removed at the end. Serial: commit and
+ * check-in are global and every test reuses the spare.
  */
 import {
   commitInterfaceChanges, ensureNoPendingInterfaceChanges, ensureNothingOnSpareInterface, findInterface,

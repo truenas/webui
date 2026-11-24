@@ -1,16 +1,9 @@
 /**
  * Static route preconditions, cleanup and readback, over the API.
  *
- * A route has no name, and middleware does not hold destinations unique: a form
- * saved twice by a retried test leaves two routes to the same network. So these
- * helpers key on the destination, and removal takes every match.
- *
- * Every destination is a /26 of 198.51.100.0/24 and every gateway is in
- * 192.0.2.0/24. RFC 5737 reserves both for documentation, so nothing the suite
- * or the appliance talks to lives behind either, and a route to one cannot take
- * a real path away. Saving or deleting a route restarts the routing service,
- * which re-applies every route middleware holds; the appliance's default route
- * is not one of them and is left alone.
+ * Destinations are not unique and a retried save leaves duplicates, so helpers key on the destination and removal
+ * takes every match. Destinations are /26s of 198.51.100.0/24 and gateways in 192.0.2.0/24 (RFC 5737), so no
+ * real path is taken away. Saves restart routing, re-applying middleware's routes; the default route isn't one.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

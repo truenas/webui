@@ -1,12 +1,8 @@
 /**
- * Stories: the NFS share form's advanced Access section — who a client's
- * requests are mapped to, and which security flavours the export accepts.
- *
- * None of it is on the card, so every save is asserted through
- * `sharing.nfs.query`. Maproot and mapall get a test each because middleware
- * refuses a share that sets both users. Security exists only while the NFS
- * service offers NFSv4, so the protocols are part of each test's precondition,
- * and teardown writes back whatever the service offered before this file ran.
+ * Stories: the NFS share form's advanced Access section: client request mapping and accepted security flavours.
+ * None is on the card, so saves are checked through `sharing.nfs.query`. Maproot and mapall get a test each, as
+ * middleware refuses both users together. Security needs NFSv4 offered, so protocols are part of each precondition
+ * and teardown restores what the service offered before the file ran.
  */
 import {
   ensureNfsServiceStopped, ensureNfsShareAbsent, findNfsShare, nfsServiceName, readNfsProtocols, setNfsProtocols,

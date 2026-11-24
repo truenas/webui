@@ -1,18 +1,8 @@
 /**
- * Stories: an admin adds, edits and deletes an NTP server from the NTP Servers
- * card on System > Advanced Settings, and the appliance holds what they did.
- *
- * Each save is asserted twice, the way the other Advanced Settings specs do it:
- * the card's row says the screen believed it, `system.ntpserver.query` says the
- * appliance did it — and carries IBurst, which the test leaves alone.
- *
- * Edit and delete each run beside a second server that must come through
- * untouched: the row's actions sit in a kebab menu, so an action belongs to
- * whichever row's menu was opened, and a row-targeting bug changes the wrong
- * server without failing anything else.
- *
- * Every address is unreachable on purpose, so every save goes through Force —
- * see `fixtures/ntp-servers.ts`.
+ * Stories: an admin adds, edits and deletes an NTP server from its card on System > Advanced Settings; each save is
+ * checked on the row and through `system.ntpserver.query`. Edit and delete run beside a bystander that must come
+ * through untouched, so a row-targeting bug fails. Every address is deliberately unreachable, so every save goes
+ * through Force (see `fixtures/ntp-servers.ts`).
  */
 import { ensureNtpServerAbsent, ensureNtpServerPresent, findNtpServer } from '../fixtures/ntp-servers';
 import {

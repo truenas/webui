@@ -1,26 +1,9 @@
 /**
- * Stories: an admin adds an SSH connection from the SSH Connections card on
- * Credentials > Backup Credentials, both Manual and Semi-automatic, edits one,
- * and deletes one with and without its keypair — and the appliance holds what
- * they did.
- *
- * Every connection points back at the appliance itself, `127.0.0.1`, so no
- * second system is needed: Discover Remote Host Key scans the appliance's own
- * SSH, and Semi-automatic signs in to its own middleware with the suite's admin
- * credentials. Each is asserted on the card and through
- * `keychaincredential.query`, which holds the host, key and keypair the card
- * does not show.
- *
- * Semi-automatic changes the appliance beyond the connection: middleware
- * enables and starts SSH and appends the new public key to root's `sshpubkey`.
- * So the file reads root's keys and the SSH service before anything runs and
- * writes both back. SSH has to be running for the host key scan, and is
- * stopped again only if this file found it stopped.
- *
- * Edit and delete each act on a connection made over the API with
- * `fixtures/ssh-connections.ts`. Edit runs beside a second connection that must
- * come through untouched, since a row-targeting bug edits the wrong one without
- * failing anything else.
+ * Stories: an admin adds Manual and Semi-automatic SSH connections, edits one, and deletes one with and without its
+ * keypair. Connections point at `127.0.0.1`, so Discover scans the appliance's own SSH and Semi-automatic signs in
+ * to its own middleware; `keychaincredential.query` holds what the card doesn't show. Semi-automatic enables and
+ * starts SSH and appends to root's `sshpubkey`, so the file snapshots both first and writes them back (SSH is
+ * stopped only if it was found stopped). Edit runs beside a second connection that must stay untouched.
  */
 import { readRootAuthorizedKeys, setRootAuthorizedKeys } from '../fixtures/loopback-ssh';
 import { readSshSettings } from '../fixtures/service-config';

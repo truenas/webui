@@ -1,12 +1,7 @@
 /**
- * The Jobs page at `/jobs` (`jobs-list.component.html`), reached from the jobs
- * panel's "View All Jobs".
- *
- * It lists every job in the app's job store, which is every job on the
- * appliance, so everything here is keyed by middleware's job id. The row tag is
- * `job-<id>`, the same tag the jobs panel gives its rows, so `row(id)` would
- * also match a row in the panel. The two are never on screen together: the
- * panel closes as the page opens.
+ * The Jobs page at `/jobs` (`jobs-list.component.html`), reached from the panel's "View All Jobs". It lists every
+ * job on the appliance, keyed by middleware's job id. Its row tag `job-<id>` matches the jobs panel's too, but the
+ * panel closes as the page opens, so they're never on screen together.
  */
 export const jobsPageLocators = {
   /** The state filter, a `tn-button-toggle` each. `aria-pressed` says which one is on. */

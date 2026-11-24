@@ -1,22 +1,8 @@
 /**
- * Story: on a pool's VDEVs page, an admin replaces one disk of a mirror with an
- * unused disk, from Replace on the disk's Disk Info card.
- *
- * The change is asserted on the page and through `pool.query`, which holds the
- * mirror's disks and their ZFS status. The page is left open through the resilver,
- * which ZFS finishes after the dialog has closed, so the page has to follow it on
- * its own: the old disk leaves the tree and the new one, in its place, is selected.
- *
- * ## Why this spec builds its own pool
- *
- * Replacing a disk changes the pool's topology, so it may not use the
- * worker-scoped `pool` fixture other specs share. The pool is a two-disk mirror,
- * as in `pool-devices.e2e.ts`, built before the test and destroyed before and
- * after it, unconditionally: it holds two disks, the replacement takes a third,
- * and `fresh-install` needs nine alike.
- *
- * Not covered: Force, for a replacement that carries data or another pool's
- * labels, and replacing a disk in a RAIDZ vdev, which is the same dialog.
+ * Story: on a pool's VDEVs page, an admin replaces one disk of a mirror with an unused disk from the Disk Info
+ * card; checked on the page and in `pool.query`. The page stays open through the resilver and must follow it: the
+ * old disk leaves the tree and the new one is selected. Replacing changes topology, so the spec builds its own
+ * two-disk mirror and destroys it before and after, unconditionally: `fresh-install` needs nine disks alike.
  */
 import {
   ensureMirrorPoolPresent, pickReplacementDisk, readMirror, readPoolStatus,

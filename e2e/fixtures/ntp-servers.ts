@@ -1,20 +1,10 @@
 /**
  * NTP server preconditions, cleanup and readback, over the API.
  *
- * A server has no name, and middleware does not hold addresses unique: a form
- * saved twice by a retried test leaves two servers with the same address. So
- * these helpers key on the address, and removal takes every match.
- *
- * Every address here is in 192.0.2.0/24, which RFC 5737 reserves for
- * documentation, so no appliance can reach a server on it. That is deliberate:
- * middleware queries a new or edited server before saving it and refuses one
- * that does not answer unless `force` is set, and whether a CI appliance can
- * reach any real NTP server is not something the suite should depend on. With
- * an unreachable address, `force` is what every save turns on, every time.
- *
- * Creating or deleting a server rewrites the time daemon's configuration and
- * restarts it. Nothing in a test run depends on the clock moving, and the
- * appliance's own servers are left alone.
+ * Addresses are not unique and a retried save leaves duplicates, so helpers key on the address and removal
+ * takes every match. Addresses are in RFC 5737's 192.0.2.0/24, so unreachable: middleware refuses an
+ * unanswering server unless `force` is set, so every save sets it, and the suite never depends on reaching
+ * real NTP. Changes restart the time daemon; nothing depends on the clock, and existing servers are untouched.
  */
 import type { CallResponse } from '@truenas/api-client';
 import { firstValueFrom, timeout } from 'rxjs';

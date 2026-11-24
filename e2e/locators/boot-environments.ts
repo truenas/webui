@@ -1,19 +1,9 @@
 /**
- * The Boot Environments list on System > Boot, its header, its clone form, its
- * delete dialog and its Stats/Settings dialog, and the Boot Pool Status page it
- * links to with that page's Attach dialog.
- *
- * Every id on a row is built from the list's own `uniqueRowTag`, `bootenv-<name>`,
- * a plain template literal with no pre-normalizing — so the row, its cells and its
- * actions all go through the library's normalizer, the same as `locators/tunable.ts`.
- * A boot environment's name is its id, and nothing on this page renames one.
- *
- * The list asks for `mode="inline"`, so a row's actions are buttons on the row
- * rather than a kebab menu: the row tag, the icon with its library, then `row-action`.
- * Keep and Unkeep are two actions, one hidden at a time — Keep is `bookmark-outline`.
- *
- * The clone form is built by `ix-form-renderer` from `bootenv.form-config.ts`, so
- * every field's id is its control name — see `locators/groups.ts`.
+ * The Boot Environments list on System > Boot with its header, clone form, delete and Stats/Settings dialogs,
+ * plus the Boot Pool Status page and its Attach dialog. Row ids come from `uniqueRowTag`, `bootenv-<name>`, with
+ * no pre-normalizing, so everything goes through the library normalizer. `mode="inline"` makes actions row
+ * buttons: row tag, icon with its library, then `row-action`; Keep (`bookmark-outline`) and Unkeep alternate.
+ * The clone form is `ix-form-renderer` from `bootenv.form-config.ts`, so ids are control names.
  */
 import { kebabTestSegment } from './test-id';
 

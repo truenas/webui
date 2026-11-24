@@ -1,15 +1,8 @@
 /**
- * Stories: an admin edits a group from its row on Credentials > Groups — renaming
- * it, changing what it may run with sudo and whether it is an SMB group, moving
- * privileges onto and off it — and the form's refusals in edit mode.
- *
- * Each save is asserted through `group.query`, and the privilege moves through
- * `privilege.query` as well: privileges are not part of `group.update` at all.
- * The form sends one `privilege.update` per privilege it touched, so the group's
- * side of the relationship is only ever written by those.
- *
- * Members and Delete are covered by `groups-members.e2e.ts` and
- * `groups-deletion.e2e.ts`; the add direction of the form by `groups-form.e2e.ts`.
+ * Stories: an admin edits a group from its row on Credentials > Groups (rename, sudo commands, SMB group, moving
+ * privileges on and off) and meets the form's edit-mode refusals. Saves are checked through `group.query`, and
+ * privilege moves also through `privilege.query`: the form sends one `privilege.update` per privilege touched,
+ * never via `group.update`. Members, Delete and add are `groups-members`, `groups-deletion` and `groups-form`.
  */
 import {
   ensureGroupAbsent, ensureGroupPresent, findGroup, type GroupRecord, type GroupSeedOptions,

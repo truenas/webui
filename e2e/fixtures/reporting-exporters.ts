@@ -1,13 +1,8 @@
 /**
- * Reporting exporters, over the API: `reporting.exporters.query` to find one, `create` to seed one
- * and `delete` to remove it.
+ * Reporting exporters over the API: `reporting.exporters.query` to find, `create` to seed, `delete` to remove.
  *
- * Every exporter the suite makes is a Graphite one pointed at `127.0.0.1`, where nothing listens, so
- * nothing leaves the appliance. Middleware stores the exporter and regenerates netdata's config
- * without contacting the destination, so an exporter can be saved whether or not anything answers.
- *
- * Deleting the exporters is the whole restoration: netdata goes back to having none, and nothing
- * else global changes.
+ * Every exporter is Graphite at `127.0.0.1`, where nothing listens; middleware saves it and regenerates
+ * netdata's config without contacting the destination. Deleting the exporters is the whole restoration.
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

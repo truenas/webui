@@ -1,25 +1,9 @@
 /**
- * Story: an admin imports a pool that was exported, from the storage dashboard.
- *
- * The pool is built and exported over the API without `destroy`, so its labels
- * stay on its disk and `pool.import_find` offers it. The import itself is the
- * UI's: the dashboard's Import Pool button, the pool picked by name from the
- * panel's select, and Import.
- *
- * Each claim is settled through the API as well as on screen. `pool.query` has
- * to list the pool `ONLINE`, and `disk.details` must no longer report its disk as
- * carrying an exported pool. A card on the dashboard is the UI's half.
- *
- * ## Why this spec builds its own pool
- *
- * Exporting the worker-scoped `pool` fixture would pull it from under every
- * other spec in the worker. `e2e_import_tank` is this spec's own, and a disk
- * left carrying it exported is one the pool wizard will not offer
- * (`getSelectableDisks`), so it is removed before and after each test whatever
- * state it was left in: destroyed if imported, its disk wiped if not.
- *
- * Not covered: locked SED disks before the search, and a pool with an encrypted
- * root, which the panel offers to unlock after the import.
+ * Story: an admin imports an exported pool from the storage dashboard's Import Pool panel.
+ * The pool is exported over the API without `destroy`, so `pool.import_find` offers it. Afterwards `pool.query`
+ * must list it `ONLINE` and `disk.details` must no longer report its disk as carrying an exported pool.
+ * `e2e_import_tank` is this spec's own; a disk left carrying it exported is one the wizard won't offer
+ * (`getSelectableDisks`), so it's removed before and after each test: destroyed if imported, its disk wiped if not.
  */
 import { ensureDiskWithExportedPool, ensureExportedPoolGone, findDisksCarryingExportedPool } from '../fixtures/disks';
 import { findPool } from '../fixtures/storage';

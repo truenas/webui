@@ -1,21 +1,9 @@
 /**
- * Stories: an admin changes an alert class's level, and its frequency, from the
- * Category card on System > Alert Settings, and the appliance keeps what they saved.
- *
- * Each save is asserted twice: `alertclasses.config` says the appliance did it,
- * and the card, opened afresh from the sidebar, says the screen shows what is
- * stored rather than what was last clicked.
- *
- * The card sends every override it holds on each save, and middleware replaces
- * the whole set with what it receives. So each test runs beside a second class
- * in the same category, carrying an override of its own, which must come
- * through the save untouched — a card that sent only the row that changed would
- * wipe it and still show the change.
- *
- * The classes are middleware's, picked when the file starts: see
- * `fixtures/alert-classes.ts`. The settings are one config record, so there is
- * nothing to delete afterwards. Teardown writes back every override the
- * appliance held before the first test.
+ * Stories: an admin changes an alert class's level and frequency from the Category card on System > Alert
+ * Settings. Each save is checked through `alertclasses.config` and on the card reopened from the sidebar.
+ * The card sends every override and middleware replaces the whole set, so each test runs beside a second class
+ * with its own override that must survive. Classes are picked at file start (`fixtures/alert-classes.ts`);
+ * teardown writes back every override the appliance held before the first test.
  */
 import {
   type AlertClassOverrides, type AlertClassPick, pickAlertClasses, readAlertClassOverride,

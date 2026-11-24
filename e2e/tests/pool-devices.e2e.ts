@@ -1,23 +1,9 @@
 /**
- * Stories: on a pool's VDEVs page, an admin takes a disk offline and brings it
- * back, and adds a spare to the pool.
- *
- * Each change is asserted on the page and through `pool.query`, which holds each
- * disk's ZFS status and the pool's spares.
- *
- * ## Why this spec builds its own pool
- *
- * Both tests change a pool's topology, so neither may use the worker-scoped
- * `pool` fixture other specs share. The pool here is a two-disk mirror, because
- * taking a disk offline needs a vdev that survives losing it: on a one-disk stripe
- * ZFS refuses. It is destroyed and built again before each test, so a spare or an
- * offline disk an interrupted run left behind is never what a test starts from,
- * and destroyed after each one: it holds two disks, three with its spare, and
- * `fresh-install` needs nine alike.
- *
- * Replace is `pool-replace-disk.e2e.ts`, and Extend and Detach are
- * `pool-extend-detach.e2e.ts`. Not covered: Remove, and the other kinds of vdev
- * the wizard adds (log, cache, special, dedup, more data).
+ * Stories: on a pool's VDEVs page an admin takes a disk offline and back, and adds a spare; each checked on the
+ * page and through `pool.query`. Topology changes rule out the shared `pool` fixture, so the spec builds a two-disk
+ * mirror (ZFS will not offline a stripe's only disk), rebuilt before each test so leftover spares or offline disks
+ * never carry over, and destroyed after, since `fresh-install` needs nine alike. Replace is
+ * `pool-replace-disk.e2e.ts`; Extend and Detach are `pool-extend-detach.e2e.ts`.
  */
 import { ensureMirrorPoolPresent, listSpares, readMirror, readPoolStatus } from '../fixtures/pool-devices';
 import { ensurePoolAbsent, getSelectableDisks } from '../fixtures/storage';

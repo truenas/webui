@@ -1,20 +1,8 @@
 /**
- * Stories: an admin changes the console settings from the Console card on
- * System > Advanced Settings, and the appliance keeps what they saved.
- *
- * Each save is asserted twice, the way the other Advanced Settings specs do it:
- * the card's readouts say the screen believed it, `system.advanced.config` says
- * the appliance did it.
- *
- * One test starts from the defaults, turns the serial console on at a new speed,
- * hides the text console behind a password and changes the banner. The other
- * starts from all of that and undoes it, emptying the banner, which the card
- * shows as `–`. Between them, both boxes are ticked and unticked.
- *
- * The serial port is not changed: see `fixtures/console.ts`.
- *
- * The settings are one config record, so there is nothing to delete afterwards.
- * Teardown writes middleware's defaults back.
+ * Stories: an admin changes the console settings from the Console card on System > Advanced Settings, checked on
+ * the card's readouts and through `system.advanced.config`. One test turns on the serial console at a new speed,
+ * password-protects the text console and changes the banner; the other undoes it all (empty banner shows `–`).
+ * The serial port is not changed: see `fixtures/console.ts`. Teardown writes middleware's defaults back.
  */
 import {
   consoleBaseline, readConsoleSettings, setConsoleSettings, type ConsoleSettings,

@@ -1,16 +1,8 @@
 /**
- * The Init/Shutdown Scripts card on System > Advanced Settings, and its form.
- *
- * Every id on a row is built from the card's own `uniqueRowTag`,
- * `card-init-shutdown-<command>-<when>`, written as a plain template literal
- * with no pre-normalizing — so the row, its cells and its action menu all go
- * through the library's normalizer, and {@link kebabTestSegment} is the one to
- * use throughout. The tag carries the command, so **editing the command or the
- * When renames every id on the row**; a spec that edits either looks the row
- * up again under the new values.
- *
- * The form is a hand-written template whose controls fall back to their
- * `formControlName`, so the field ids read like the API's own keys.
+ * The Init/Shutdown Scripts card on System > Advanced Settings, and its form. Row ids come from `uniqueRowTag`,
+ * `card-init-shutdown-<command>-<when>`, with no pre-normalizing, so use {@link kebabTestSegment}. Editing the
+ * command or When renames every id on the row; look it up again under the new values. Form controls fall back
+ * to their `formControlName`, so ids read like the API's keys.
  */
 import { kebabTestSegment } from './test-id';
 

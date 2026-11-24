@@ -1,19 +1,9 @@
 /**
- * Stories: an admin sets up outgoing mail from the Email card on System > General
- * Settings, and the appliance keeps what they saved.
- *
- * Each save is asserted twice: the card's From readout says the screen believed
- * it, and `mail.config` says the appliance did it.
- *
- * One test fills in every SMTP field, starting from the defaults, and turns SMTP
- * authentication on. The other starts with authentication on and turns it off
- * again while moving to another server. Between them, every SMTP control in the
- * form is changed. The OAuth send methods are not covered: they need a real
- * Google or Microsoft login.
- *
- * The settings are one config record, so there is nothing to delete afterwards.
- * Teardown writes middleware's defaults back, with a placeholder sender because
- * `mail.update` refuses an empty one. See `fixtures/email.ts`.
+ * Stories: an admin sets up outgoing mail from the Email card on System > General Settings, checked on the card's
+ * From readout and through `mail.config`. One test fills every SMTP field from defaults with authentication on; the
+ * other turns it off while moving server. OAuth methods need a real Google or Microsoft login and are not covered.
+ * Teardown writes middleware's defaults back, with a placeholder sender since `mail.update` refuses an empty one
+ * (see `fixtures/email.ts`).
  */
 import { mailBaseline, readMailSettings, resetMailSettings, setAuthenticatedMail } from '../fixtures/email';
 import { chooseMailSecurity, openEmailForm, saveEmailForm } from '../flows/email';

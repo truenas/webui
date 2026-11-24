@@ -1,25 +1,9 @@
 /**
- * Story: an admin opens an installed app's container logs from its Workloads card and watches them
- * follow, limits them with Tail Lines, and opens the container's shell and runs a command in it. A
- * read-only administrator finds that shell locked.
- *
- * The app is a custom one with a single BusyBox service that prints three numbered lines and then a
- * tick every two seconds, so the logs page has known lines to show and a new one to follow. BusyBox
- * has no bash, and middleware's app shell falls back to `sh` when bash is absent.
- *
- * ## Setup
- *
- * Apps run on `e2e_apps`, the pool the apps specs share through the `appsPool` fixture, built once
- * per worker. The app is seeded once for the file: starting it takes minutes, and no test changes
- * it. Reading logs and running `echo` leave it as it was. Teardown deletes the app and the image
- * after the last test.
- *
- * Nothing is read back over the API afterwards: no test here changes anything on the appliance. The
- * container's id comes from `app.query`, and it is what the pages' URLs and readouts are checked
- * against.
- *
- * Not covered: Volume Mounts, the logs page's Auto Scroll and font size, the terminal's font size and
- * its reconnect after a dropped socket, and catalog apps, whose card is the same.
+ * Story: an admin follows an installed app's container logs from its Workloads card, limits them with Tail Lines,
+ * and runs a command in the container's shell; a read-only administrator finds the shell locked. The app is a
+ * BusyBox service printing three numbered lines then a tick every two seconds; BusyBox has no bash, so the app
+ * shell falls back to `sh`. It is seeded once for the file on the shared `e2e_apps` pool (starting takes minutes)
+ * and deleted with its image after the last test. Nothing is changed, so nothing is read back over the API.
  */
 import type { Page } from '@playwright/test';
 import {

@@ -1,25 +1,9 @@
 /**
- * Stories: an admin starts a stopped container, stops a running one and restarts
- * a running one from the buttons in its row on the Containers page, and the
- * appliance holds what they did.
- *
- * Each container is seeded stopped over the API from the first Debian image the
- * registry lists, as `containers.e2e.ts` does, and started over the API where the
- * story needs it running. Every state is read back from `container.query`. A
- * restart ends where it began, so it is told from a no-op by the container's
- * `pid`, which a new init process changes.
- *
- * ## Setup and teardown
- *
- * As `containers.e2e.ts`: each test starts with the worker's `pool` as the
- * preferred pool and no container named `e2e-ct-power`. Teardown deletes the
- * container, with `force`, which takes one a failed test left running, then writes
- * back the containers settings the appliance held before the first test. Once the
- * file is done it removes `<pool>/.truenas_containers` before the worker exports
- * the pool.
- *
- * Not covered: the list's bulk Start and Stop, the graceful-only stop method, and
- * the console. The shell is `containers-shell.e2e.ts`.
+ * Stories: an admin starts, stops and restarts a container from its row on the Containers page, each read back
+ * from `container.query`. A restart ends where it began, so it is told from a no-op by the changed `pid`.
+ * Setup is as `containers.e2e.ts`; teardown deletes `e2e-ct-power` with `force`, which takes one a failed test
+ * left running, restores the containers settings, and after the file removes `<pool>/.truenas_containers`.
+ * The shell is `containers-shell.e2e.ts`.
  */
 import {
   type ContainerSettings, containersDataset, containerSettingsBaseline, ensureContainerAbsent,

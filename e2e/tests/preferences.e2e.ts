@@ -1,29 +1,10 @@
 /**
- * Story: a preference is a promise that something will still be true later.
- *
- * That is the whole of what these screens claim, and it is the one claim no
- * layer below this can check. A unit test can prove the reducer produced a new
- * object and the effect called `auth.set_attribute`; only a real browser against
- * a real appliance can say the value came back.
- *
- * So every test here asserts twice, and the pair is the point: the screen
- * re-rendering says the app believed the change, `auth.me` says the appliance
- * stored it. A preference that only ever reached the store would satisfy the
- * first and fail the second, which is exactly the bug worth catching.
- *
- * ## Why the setup and teardown are unusual
- *
- * Preferences hang off the account the whole suite signs in as, so a test that
- * leaves one behind changes what every later test sees — a date format changes
- * the text in every date cell, a language translates the app. There is nothing
- * to delete, so `beforeEach` writes a known baseline and `afterEach` writes the
- * same one back.
- *
- * Written rather than observed, which matters more here than it first looks: a
- * test that read its starting theme off the appliance would be asserting a
- * precondition instead of establishing one, and a run interrupted between a
- * change and its restore would leave the next run measuring from somewhere
- * nobody chose. See `fixtures/preferences.ts`.
+ * Story: a preference is a promise that something will still be true later. Every test asserts twice: the
+ * screen re-rendering says the app believed the change, `auth.me` says the appliance stored it, and a
+ * preference that only reached the store fails the second. Preferences belong to the suite's account, so a
+ * leftover changes every later test: `beforeEach` writes a known baseline and `afterEach` writes it back, written
+ * rather than observed so an interrupted run can't leave the next measuring from somewhere nobody chose.
+ * See `fixtures/preferences.ts`.
  */
 import { ensureGroupAbsent, ensureGroupPresent } from '../fixtures/groups';
 import {
@@ -60,15 +41,9 @@ const testTheme = { label: 'Paper', value: 'paper' };
 const builtinGroup = 'wheel';
 
 /**
- * A non-builtin group, created solely so the list has something to render.
- *
- * Without it the "built-ins are hidden" assertion is unfalsifiable: `goToGroups`
- * resolves on the route activating, the rows arrive over the socket a beat
- * later, and `toBeHidden` is satisfied by an empty table. A regression that
- * stopped filtering built-ins entirely would still pass. Waiting for *this* row
- * first is what proves the list had loaded when `wheel` was found absent — and
- * it has to be a row the test made, because with built-ins hidden a stock
- * appliance's list can legitimately be empty.
+ * A non-builtin group, so the list has a row to wait for. Without it "built-ins are hidden" is unfalsifiable:
+ * rows arrive after the route activates and `toBeHidden` passes on an empty table. It must be a row the test
+ * made, since with built-ins hidden a stock appliance's list can legitimately be empty.
  */
 const anchorGroup = 'e2e_prefs_anchor';
 
@@ -99,14 +74,10 @@ test('a theme change outlives the page that made it', async ({ page, api }) => {
   // wait on, so this polls rather than reads once.
   await expect.poll(() => readPreference(api, 'userTheme')).toBe(testTheme.value);
 
-  // The app is rebuilt and comes back on the same theme. Worth stating what this
-  // does *not* prove: the theme is cached in the browser too — webui under
-  // `theme` in both `localStorage` and `sessionStorage`, the library under
-  // `tn-theme` — and a reload keeps all three, so this would still pass for a
-  // change that never reached the appliance. The line above is what covers that,
-  // and `unauthenticated/preferences-session.e2e.ts` is what proves a new
-  // browser gets it from the account. Clearing the caches here instead would
-  // take the session token with them.
+  // The app is rebuilt and comes back on the same theme. This alone doesn't prove persistence: webui caches the
+  // theme under `theme` in `localStorage` and `sessionStorage`, the library under `tn-theme`, and a reload keeps
+  // all three. The `auth.me` check above covers that, and `unauthenticated/preferences-session.e2e.ts` proves a
+  // new browser gets it from the account. Clearing the caches here would also take the session token.
   await page.reload();
   await expectTheme(page, testTheme.value);
 });

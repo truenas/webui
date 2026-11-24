@@ -1,14 +1,9 @@
 /**
- * Stories: the access key options beyond a plain, non-expiring key.
+ * Stories: an administrator mints a key that may manage buckets for an allowed account, is refused it for an
+ * account that isn't, and mints a key with an expiry date; each through the UI, since the options are the form's.
  *
- * An administrator mints a key that may manage buckets for an account that is
- * allowed to; is refused the same for an account that is not; and mints a key
- * with an expiry date. Each creates its key through the UI, since the options
- * are the form's, and `s3.e2e.ts` already covers the plain case.
- *
- * What only an appliance can answer: that the role check behind Manage
- * Buckets is real and lands in the form, and that a typed date arrives at
- * middleware as the day that was typed.
+ * Only an appliance can show that the role check behind Manage Buckets is real and lands in the form, and that a
+ * typed date arrives at middleware as the day that was typed.
  */
 import { ensureS3AccessKeysAbsent, findS3AccessKeys } from '../fixtures/s3';
 import { ensureUserAbsent, ensureUserPresent } from '../fixtures/users';

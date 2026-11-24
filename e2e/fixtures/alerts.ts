@@ -15,14 +15,11 @@ import { readTimeoutMs } from '../support/timeouts';
 export type AlertRecord = CallResponse<E2eApiDirectory, 'alert.list'>[number];
 
 /**
- * How many networks an NFS share may list before saving it raises
- * `NFSNetworkListExcessive`: middleware's `NFS_NETWORKS_WARNING_THRESHOLD`.
+ * How many networks an NFS share may list before saving raises `NFSNetworkListExcessive`
+ * (middleware's `NFS_NETWORKS_WARNING_THRESHOLD`).
  *
- * That class is the one to dismiss and reopen. It is a one-shot alert that
- * middleware deletes automatically, so `alert.dismiss` marks it dismissed and
- * `alert.restore` brings it back. A one-shot class that is *not* deleted
- * automatically, such as `RsyncFailed`, is removed outright by `alert.dismiss`
- * and there is nothing left to reopen.
+ * That class is the one to dismiss and reopen: it is one-shot and auto-deleted, so `alert.restore` can bring it
+ * back. A one-shot class not auto-deleted, such as `RsyncFailed`, is removed outright by `alert.dismiss`.
  */
 export const nfsNetworkListAlertThreshold = 100;
 

@@ -1,31 +1,10 @@
 /**
- * Story: an admin signs the Apps service in to a Docker registry, renames the sign-in and deletes
- * it, and the form refuses a URI that is not a URL.
- *
- * Each action is the UI's: Apps > Configuration > Sign-in to a Docker registry, Add Registry and
- * its side panel, and the row's Edit and Delete. Each is checked on screen and through
- * `app.registry.query`. The registry a test does not add is seeded with `app.registry.create`.
- *
- * ## The registry
- *
- * Middleware stores a registry only once the Docker daemon has logged in to it, and the suite holds
- * no registry credentials. So the first three tests sign in to a public registry whose `/v2/` asks
- * for none, with made-up credentials. Which registry that is is found in `beforeAll`, by trying
- * each of `registryCandidates` over the API. If none is accepted, those three tests fail with what
- * middleware answered for each; the URI test does not depend on it.
- *
- * `app.registry.query` masks `username` and `password`, so neither can be read back. The Username
- * column shows the mask, and the tests do not assert it.
- *
- * ## Setup
- *
- * The menu item is disabled until Apps has a pool, so Apps runs on `e2e_apps`, the pool the apps
- * specs share through the `appsPool` fixture, built once per worker: moving Apps onto a pool takes
- * minutes, and no test here changes it. Every registry name the spec uses is deleted before and
- * after each test.
- *
- * Not covered: signing in to Docker Hub, the Docker Hub rate-limit dialog, pulling with registry
- * credentials, and the list's search, sorting and column picker.
+ * Story: an admin signs Apps in to a Docker registry, renames and deletes the sign-in, and is refused a non-URL
+ * URI; each is checked on screen and through `app.registry.query`. Middleware stores a registry only after the
+ * daemon logs in, and the suite has no credentials, so `beforeAll` finds one of `registryCandidates` that accepts
+ * made-up ones; if none does, the first three tests fail with each answer. `username` and `password` come back
+ * masked and are not asserted. The menu item needs an Apps pool, so the shared `e2e_apps` pool is used; every
+ * registry name used is deleted before and after each test.
  */
 import {
   ensureRegistryAbsent,

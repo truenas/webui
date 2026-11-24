@@ -1,13 +1,8 @@
 /**
- * Story: a preference belongs to the account, not to the browser that set it.
- *
- * The other preference tests live in `tests/preferences.e2e.ts` and reload the
- * page. This one is here, without the token bypass, because reloading is not the
- * claim the feature makes — signing in tomorrow is, and only a real sign-out and
- * sign-in crosses that boundary (R4.2).
- *
- * One test, deliberately. Every submitted form spends from the unauthenticated
- * rate limit (20 per method per IP per 60s), and this one spends two.
+ * Story: a preference belongs to the account, not to the browser that set it. It runs without the token bypass,
+ * unlike `tests/preferences.e2e.ts`, because the claim is signing in tomorrow, and only a real sign-out and sign-in
+ * crosses that boundary (R4.2). One test, deliberately: each submitted form spends from the unauthenticated rate
+ * limit (20 per method per IP per 60s), and this one spends two.
  */
 import {
   establishPreferenceBaseline, readPreference, restorePreferences,
@@ -54,20 +49,11 @@ test('a preference set in one session is there in the next', async ({ page, api,
 
   await signOut(page);
 
-  // The theme is cached in the browser as well as stored on the account —
-  // `TnThemeService` reads `localStorage` at startup and applies the class
-  // before anything has asked the appliance, and webui keeps its own copy in
-  // `sessionStorage` (`theme.service.ts`). Left in place, a second sign-in here
-  // would come up in Paper whether or not the appliance had kept a thing, and
-  // this test would prove nothing.
-  //
-  // Both, not just the one that happens to be load-bearing today: which of the
-  // two wins is a detail of startup ordering, and a test whose meaning depends
-  // on that ordering is a test that goes quietly vacuous when it changes.
-  //
-  // Bare globals rather than `window.*`: this callback is serialized and runs in
-  // the page, where the lint rule's advice (inject Angular's WINDOW) has nothing
-  // to refer to.
+  // The theme is cached in the browser too: `TnThemeService` applies it from `localStorage` at startup, and webui
+  // keeps a copy in `sessionStorage` (`theme.service.ts`). Left in place, a second sign-in would come up in Paper
+  // whether or not the appliance kept it. Both are cleared because which wins depends on startup ordering, and a
+  // test relying on that goes quietly vacuous when it changes. Bare globals, not `window.*`: this callback is
+  // serialized into the page, where the lint rule's advice (inject Angular's WINDOW) has nothing to refer to.
   await page.evaluate(() => {
     localStorage.clear();
     sessionStorage.clear();

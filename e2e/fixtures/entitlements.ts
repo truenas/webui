@@ -1,14 +1,10 @@
 /**
  * What this appliance is licensed to offer, over the API.
  *
- * The UI greys out a feature the entitlement engine denies and tags it Premium, so a journey
- * that drives one of those controls cannot run here — the control is inert by design, and the
- * click times out rather than failing on anything the journey is about.
- *
- * This is how such a journey asks first. It is not a CI workaround: a community appliance is
- * denied `S3_AUDIT` and `S3_VERSIONING` whatever middleware it runs (`Vector(ce=0, hw=0, …)` in
- * `middlewared/utils/entitlements/matrix.py` grants them only in the key-bearing columns), so
- * these journeys are unrunnable there for the same reason they are unrunnable on the lab box.
+ * The UI greys out and tags Premium a feature the entitlement engine denies, so a journey driving it would just
+ * time out; this is how such a journey asks first. Not a CI workaround: community appliances are denied
+ * `S3_AUDIT` and `S3_VERSIONING` on any middleware (`middlewared/utils/entitlements/matrix.py` grants them only
+ * in key-bearing columns).
  */
 import { firstValueFrom, timeout } from 'rxjs';
 import type { E2eApiClient } from '../support/api/client';

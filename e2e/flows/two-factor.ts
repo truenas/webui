@@ -39,16 +39,10 @@ export async function openGlobalTwoFactorForm(page: Page, expectedState: 'Enable
 /**
  * Turns global two-factor on from its card on System > Advanced Settings.
  *
- * The panel closing is the app's signal that the save landed. On success the
- * app also takes the admin to `/two-factor-auth`,
- * and this waits until that page has rendered: the route signed out from is the
- * one the next sign-in returns to, and {@link setUpTwoFactorOnPage} depends on it.
- * Signing out while that navigation is still in flight would leave the previous
- * route recorded instead.
- *
- * `toleranceWindow` is the form's Window: how many 30-second steps either side
- * of now a code is still accepted for, by the setup page and the sign-in page
- * alike.
+ * On success the panel closes and the app goes to `/two-factor-auth`; this waits for that page, because the
+ * route signed out from is where the next sign-in returns, and {@link setUpTwoFactorOnPage} depends on it.
+ * `toleranceWindow` is the form's Window: how many 30-second steps either side of now a code is accepted,
+ * by the setup and sign-in pages alike.
  */
 export async function enableGlobalTwoFactor(page: Page, toleranceWindow: number): Promise<void> {
   const { globalForm } = twoFactorLocators;
@@ -123,17 +117,11 @@ export async function startWithGlobalTwoFactorOn(
 }
 
 /**
- * Sets two-factor up on the `/two-factor-auth` page, and returns the secret.
+ * Sets two-factor up on the `/two-factor-auth` page as a person does, and returns the secret.
  *
- * The way a person does it: generate a secret, read it off the screen, type in
- * the code an authenticator app shows for it. The app checks that code itself
- * and offers Unset only once it matches, so Unset appearing is the app saying
- * the secret on screen is the one the account now holds.
- *
- * Expects the page to be on screen already. The sign-in returns to the route the
- * last session signed out from (`redirectUrl`), which {@link enableGlobalTwoFactor}
- * leaves here. On this route the admin layout's guard shows the page and does not
- * raise its full-screen setup dialog, so nothing here covers that dialog.
+ * The app offers Unset only once the typed code matches, so Unset appearing confirms the secret on screen is
+ * the account's. Expects the page already on screen: sign-in returns to the route {@link enableGlobalTwoFactor}
+ * left. On this route the layout's guard does not raise its full-screen setup dialog, so that is not covered.
  */
 export async function setUpTwoFactorOnPage(page: Page): Promise<string> {
   const { setup } = twoFactorLocators;

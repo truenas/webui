@@ -1,16 +1,8 @@
 /**
- * Story: an admin opens a running VM's serial console from its row on the Virtual Machines page,
- * and it connects.
- *
- * The VM has no devices and no operating system, as in `virtual-machines-power.e2e.ts`, so once
- * started it sits at its firmware. What firmware prints on the serial line, if anything, is not the
- * same every run, so the claim stops at the console connecting: the shared terminal renders its
- * font-size buttons only once its websocket is attached.
- *
- * Nothing is typed into the console, so the guest is left exactly as it booted.
- *
- * Not covered: typing into the guest, reconnecting, and the font size, which `system-shell.e2e.ts`
- * covers for the same terminal.
+ * Story: an admin opens a running VM's serial console from its row and it connects. The VM sits at firmware (as in
+ * `virtual-machines-power.e2e.ts`), whose serial output varies per run, so the claim stops at connecting: the
+ * terminal renders its font-size buttons only once its websocket is attached. Nothing is typed, so the guest is
+ * left as it booted.
  */
 import {
   ensureVmAbsent, ensureVmPresent, findVm, requireVirtualization, startVm,

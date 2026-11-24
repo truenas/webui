@@ -1,21 +1,9 @@
 /**
- * Stories: an admin reads another user's two-factor state on that user's Access
- * card on Credentials > Users, and clears it for a user who has it.
- *
- * The recovery path for a user who has lost their authenticator, and the one
- * two-factor journey the suite's own admin performs. `unauthenticated/two-factor.e2e.ts`
- * ends by clearing a secret too, but with global two-factor off, where the card
- * shows no two-factor line at all. These run with it on, which is when the card
- * says whether the user has it.
- *
- * Each claim is asserted twice: the card says the screen believed it,
- * `user.query` says the appliance holds it.
- *
- * Global two-factor is turned on over the API after the token sign-in and the
- * setup dialog it raises is skipped, as `two-factor-global.e2e.ts` does, so the
- * suite's admin is never given a secret. It is turned off before each test and
- * after it, unconditionally and deliberately not skipped under
- * `TN_KEEP_TEST_DATA`: left on, every later spec would open behind that dialog.
+ * Stories: an admin reads another user's two-factor state on their Access card and clears it, the recovery path for
+ * a lost authenticator. These run with global two-factor on, the only time the card shows it; each claim is checked
+ * on the card and in `user.query`. Global two-factor is enabled over the API after the token sign-in and its setup
+ * dialog skipped, as in `two-factor-global.e2e.ts`, so the suite's admin never gets a secret. It's turned off before
+ * and after each test, unconditionally and not skipped under `TN_KEEP_TEST_DATA`, or every later spec opens behind it.
  */
 import {
   armTwoFactorSecret, disableGlobalTwoFactor, readGlobalTwoFactor, type GlobalTwoFactorConfig,

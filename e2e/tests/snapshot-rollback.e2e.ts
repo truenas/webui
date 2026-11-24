@@ -1,15 +1,9 @@
 /**
- * Stories: rolling a dataset back to a snapshot, and the check that stops one.
- *
- * A rollback is about a dataset's *contents*, so each test changes them after
- * the snapshot — a directory made over the API — and asks afterwards whether it
- * is still there. Nothing else can say a rollback happened: properties and
- * child datasets survive one.
- *
- * It also destroys what came after. The dialog opens on its strictest setting,
- * which refuses to roll back past a newer snapshot, and offers "No Safety
- * Check" for an admin who means it; the last two tests are that pair, since a
- * refusal that never lets go is as wrong as one that never holds.
+ * Stories: rolling a dataset back to a snapshot, and the check that stops one. Only *contents* show a rollback
+ * happened (properties and children survive one), so each test makes a directory over the API after the snapshot
+ * and checks for it afterwards. The dialog's strictest setting refuses to roll back past a newer snapshot and
+ * offers "No Safety Check"; the last two tests are that pair, since a refusal that never lets go is as wrong as
+ * one that never holds.
  */
 import {
   directoryExists, ensureDirectoryPresent, ensureSnapshotPresent, ensureSnapshotsAbsent, findSnapshot,

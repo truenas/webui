@@ -1,27 +1,9 @@
 /**
- * Stories: an admin opens the full Periodic Snapshot Tasks list from its card on
- * Data Protection, searches it down to the task they want, and edits and
- * deletes a task from its row. The appliance holds what they did.
- *
- * The card's own journeys are `periodic-snapshot-tasks.e2e.ts`. The list is a
- * different page, with its own search, and its actions in a detail panel that
- * opens when the row is clicked rather than in a kebab menu. Its ids are its own
- * too (see `snapshotTaskLocators.list`), so nothing the card spec passes says
- * anything about it.
- *
- * Every action acts beside a second task that must come through untouched. The
- * panel's actions are keyed by the task's dataset and naming schema, so an
- * action belongs to whichever row was opened, and a row-targeting bug would act
- * on the wrong task without failing anything else.
- *
- * The list offers no Run, because a periodic snapshot task runs only on its
- * schedule, and has no Enabled switch: Enabled is a Yes/No cell. Switching a
- * task off from the list goes through the edit form's checkbox, so the edit
- * test does it. The edit leaves the naming schema alone, because the list names
- * a row by it.
- *
- * Every task is scheduled monthly on a dataset of its own, made fresh for each
- * test, so none takes a snapshot while the spec runs.
+ * Stories: from the full Periodic Snapshot Tasks list, an admin searches, edits and deletes a task. The list has
+ * its own search, detail-panel actions and ids (`snapshotTaskLocators.list`), so the card spec says nothing about
+ * it. Each action runs beside a second task that must stay untouched, to catch row-targeting bugs. There's no Run
+ * or Enabled switch, so the edit test switches a task off in the form, and leaves the naming schema alone because
+ * the list names a row by it. Tasks are monthly on fresh datasets of their own, so none fires during the spec.
  */
 import {
   ensureSnapshotTaskPresent,

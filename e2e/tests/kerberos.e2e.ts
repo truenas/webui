@@ -1,19 +1,8 @@
 /**
- * Stories: an admin opens Advanced Settings on Credentials > Directory Services,
- * past its warning, and adds, edits and deletes a Kerberos realm and adds, edits
- * and deletes a keytab — and the appliance holds what they did.
- *
- * Joining AD, LDAP or IPA needs a directory server the CI appliance does not
- * have; these two cards do not, which is why they are what is covered. The
- * AD-only Sync button is left alone: it renders only while AD is joined.
- *
- * Each save is asserted twice: the card's row says the screen believed it,
- * `kerberos.*.query` says the appliance did it. Edit and delete each run beside
- * a second realm that must come through untouched, since an action belongs to
- * whichever row's button was pressed and a row-targeting bug changes the wrong
- * realm without failing anything else.
- *
- * Every realm and host is under `.test` — see `fixtures/kerberos.ts`.
+ * Stories: past the Advanced Settings warning on Credentials > Directory Services, an admin adds, edits and deletes
+ * a Kerberos realm and a keytab; these cards need no directory server, unlike joins. Saves are checked on the row
+ * and through `kerberos.*.query`; edit and delete run beside a bystander realm that must come through untouched.
+ * The AD-only Sync button is not covered. Hosts are under `.test` (see `fixtures/kerberos.ts`).
  */
 import {
   buildKeytab,

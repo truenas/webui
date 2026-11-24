@@ -1,10 +1,8 @@
 /**
- * Stories: what a share needs from the SMB service, and the switches on the card.
- *
- * Apple SMB2/3 extensions are always on in the service now, so a Time Machine
- * share no longer has to stop and ask for them. This spec starts the service,
- * which is global state, and stops it again whatever the test did. The "Restart SMB Service" prompt is
- * deliberately not covered — see the known gaps in `docs/status.md`.
+ * Stories: what a share needs from the SMB service, and the switches on the card. Apple SMB2/3 extensions are
+ * always on now, so a Time Machine share no longer asks for them. The spec starts the service, which is global
+ * state, and stops it whatever the test did. The "Restart SMB Service" prompt is deliberately not covered; see the
+ * known gaps in `docs/status.md`.
  */
 import { ensureServiceRunning, queryService } from '../fixtures/services';
 import {

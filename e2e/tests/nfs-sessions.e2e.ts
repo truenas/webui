@@ -1,18 +1,8 @@
 /**
- * Stories: the NFS Sessions page, opened from "NFS Sessions" on the NFS list.
- *
- * The page lists the clients the running server has, one version at a time,
- * behind an NFS 3 / NFS 4 switch. Nothing in this suite can mount a share, so
- * what is checked is the page with no client: each version shows its own empty
- * state, the switch moves between them, and Refresh asks again and is answered.
- *
- * Refresh is checked on the call it sends, not only on the page it leaves. With
- * no client the answer never changes, so a Refresh that did nothing would leave
- * the same empty state behind; the page's own websocket is the only place the
- * difference shows. Hence `recordApiCalls`.
- *
- * The service runs for these tests, because the page asks the running server,
- * and it is stopped again in teardown.
+ * Stories: the NFS Sessions page, opened from the NFS list. No test can mount a share, so with no client each
+ * version (NFS 3 / NFS 4 switch) shows its empty state and Refresh is answered. Refresh is checked on the call it
+ * sends (`recordApiCalls`), since a no-op would leave the same empty state. The page asks the running server, so the
+ * service runs for these tests and is stopped in teardown.
  */
 import { ensureNfsServiceRunning, ensureNfsServiceStopped } from '../fixtures/nfs';
 import { openNfsListPage, openNfsSessionsPage } from '../flows/nfs';

@@ -1,16 +1,7 @@
 /**
- * Stories: an admin generates an SSH keypair and deletes one, from the SSH
- * Keypairs card on Credentials > Backup Credentials, and the appliance holds
- * what they did.
- *
- * Each is asserted twice, the way the other card specs do it: the card's row
- * says the screen believed it, `keychaincredential.query` says the appliance did
- * it — and carries what the card does not show at all, the keys themselves.
- *
- * The delete runs beside a second keypair that must come through untouched: the
- * row's actions sit in a kebab menu, so an action belongs to whichever row's
- * menu was opened, and a row-targeting bug deletes the wrong keypair without
- * failing anything else.
+ * Stories: an admin generates and deletes an SSH keypair from the SSH Keypairs card. Each is checked on the row and
+ * in `keychaincredential.query`, which also carries the keys. The delete runs beside a second keypair that must
+ * stay untouched, so a row-targeting bug in the kebab menu fails the test.
  */
 import {
   countSshKeypairs, ensureSshKeypairAbsent, ensureSshKeypairPresent, findSshKeypair, keypairKeys,

@@ -14,13 +14,9 @@ import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
 /**
  * A group as middleware reports it, with its two identity fields narrowed.
  *
- * The generated `group.query` result declares every field optional, `id` and
- * `gid` included — so a record read straight back out of it cannot be handed to
- * `group.delete`, which wants a number. The same narrowing `UserRecord` does in
- * `fixtures/users.ts`, and for the same reason: a row that came back from a
- * query has both, and re-declaring the rest here would restate the API from
- * memory. Everything the specs assert on — `users`, `roles`, `sudo_commands` —
- * stays exactly as the package describes it.
+ * The generated `group.query` result makes `id` and `gid` optional, so a queried record can't be passed to
+ * `group.delete`, which wants a number. Same narrowing as `UserRecord` in `fixtures/users.ts`; everything the
+ * specs assert on stays as the package describes it.
  */
 type GroupEntry = Extract<CallResponse<E2eApiDirectory, 'group.query'>, unknown[]>[number];
 
@@ -49,17 +45,11 @@ export interface GroupSeedOptions {
 }
 
 /**
- * Creates a local group if absent.
+ * Creates a local group if absent, with no members and no privileges.
  *
- * No members and no privileges — which is not incidental. The list disables
- * Delete for a group holding either (`isDeleteDisabled` in
- * `group-details-row.component.ts`, which also covers non-local groups; sudo
- * commands are not part of it), so a group made here is one a deletion test can
- * actually drive through the UI. See {@link setGroupMembers} for the other
- * side of that.
- *
- * An existing group is left as it is, options and all, so callers clean up
- * first — as every spec using this does.
+ * Deliberately: the list disables Delete for a group holding either (`isDeleteDisabled` in
+ * `group-details-row.component.ts`), so a group made here is one a deletion test can drive; see
+ * {@link setGroupMembers}. An existing group is left as it is, so callers clean up first.
  */
 export async function ensureGroupPresent(
   client: E2eApiClient,
@@ -96,12 +86,8 @@ export async function ensureGroupAbsent(client: E2eApiClient, name: string): Pro
 /**
  * Sets a group's membership outright, as a precondition.
  *
- * `group.users` holds auxiliary members, not only the accounts whose *primary*
- * group this is — confirmed against a v27 appliance by adding a user with the
- * group as a secondary and reading the field back. That matters because the
- * list disables Delete whenever `users` is non-empty, so a group seeded here is
- * one the UI will not let go of until its members are taken off again.
- *
+ * `group.users` holds auxiliary members too (confirmed on v27), and the list disables Delete whenever it is
+ * non-empty, so a group seeded here can't be deleted in the UI until its members are removed.
  * @throws if the group does not exist, rather than silently setting nothing.
  */
 export async function setGroupMembers(

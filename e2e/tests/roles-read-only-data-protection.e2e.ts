@@ -1,23 +1,9 @@
 /**
- * Story: a read-only administrator sees a task on each of the Periodic Snapshot,
- * Replication, Rsync and Cloud Sync cards on Data Protection, and finds every
- * control that would change or run one locked: Add, the row's Enabled switch,
- * and Run, Dry Run, Restore and Delete in the row menu. On the snapshot card,
- * Edit opens its form and Save there is locked. Nothing is changed afterwards
- * and no task has run.
- *
- * One test with a step per card, so the account signs in once: every sign-in
- * spends from the unauthenticated rate limit (see `flows/roles.ts`).
- *
- * Every gated action is a `tn-menu-item` in the row's kebab menu, which the
- * role-missing wrapper never reaches, so `disabled` is all there is to check for
- * those. Edit carries no role on any card. The snapshot form is made dirty and
- * valid before Save is checked, so that Save can only be held down by the role.
- *
- * Every task is seeded over the API and none of them runs on its own: snapshot,
- * rsync and cloud sync tasks are scheduled monthly, and the replication task
- * only runs when asked. So a run found afterwards could only have been started
- * from the page.
+ * Story: a read-only administrator sees a task on each Data Protection card and finds every control that would
+ * change or run one locked. One test, one sign-in (see `flows/roles.ts`). Row-menu items never get the role-missing
+ * wrapper, so `disabled` is the check there; the snapshot form is made dirty and valid so only the role can hold
+ * Save down. Seeded tasks never run on their own (monthly schedules, manual replication), so any run found
+ * afterwards was started from the page.
  */
 import type { Page } from '@playwright/test';
 import {
