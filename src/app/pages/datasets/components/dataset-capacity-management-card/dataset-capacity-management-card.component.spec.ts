@@ -14,6 +14,7 @@ import { DatasetType } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FileSizePipe } from 'app/modules/pipes/file-size/file-size.pipe';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -236,6 +237,35 @@ describe('DatasetCapacityManagementCardComponent', () => {
         wide: true,
         inputs: { datasetToEdit: datasetFilesystem },
       });
+  });
+
+  describe('as a read-only admin', () => {
+    const createReadOnlyComponent = createComponentFactory({
+      component: DatasetCapacityManagementCardComponent,
+      imports: [FileSizePipe],
+      componentProviders: [MockModule(NgxSkeletonLoaderModule)],
+      declarations: [MockComponents(SpaceManagementChartComponent)],
+      providers: [
+        mockAuth(),
+        mockProvider(AuthService, { hasRole: jest.fn(() => of(false)) }),
+        mockApi([mockCall('zfs.resource.userspace.list', [])]),
+        mockProvider(DatasetTreeStore, { selectedBranch: signal([]) }),
+        mockProvider(FormSidePanelService),
+        mockProvider(SharingTierService, {
+          getTierConfig: () => of({ enabled: false }),
+          tierEnabled: () => false,
+        }),
+      ],
+    });
+
+    it('shows Edit locked by role', async () => {
+      spectator = createReadOnlyComponent({ props: { dataset: datasetFilesystem } });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+      expect(await editButton.isDisabled()).toBe(true);
+      expect(spectator.query('ix-missing-access-wrapper')).toExist();
+    });
   });
 
   describe('tiering', () => {

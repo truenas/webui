@@ -7,6 +7,7 @@ import {
   TnTestIdDirective, type TnCardAction, type TnMenuItem,
 } from '@truenas/ui-components';
 import { filter } from 'rxjs/operators';
+import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { DatasetType, DatasetCaseSensitivity } from 'app/enums/dataset.enum';
 import { OnOff } from 'app/enums/on-off.enum';
 import { Role } from 'app/enums/role.enum';
@@ -47,6 +48,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     CopyButtonComponent,
     TooltipComponent,
     TierStatusComponent,
+    RequiresRolesDirective,
   ],
 })
 export class DatasetDetailsCardComponent {
@@ -69,7 +71,6 @@ export class DatasetDetailsCardComponent {
   readonly DatasetCaseSensitivity = DatasetCaseSensitivity;
 
   private hasDatasetWrite = toSignal(this.authService.hasRole(Role.DatasetWrite), { initialValue: false });
-  private hasDatasetDelete = toSignal(this.authService.hasRole(Role.DatasetDelete), { initialValue: false });
 
   protected readonly datasetCompression = computed(() => {
     const compressRatioValue = this.dataset().compressratio?.value;
@@ -97,10 +98,8 @@ export class DatasetDetailsCardComponent {
 
   protected readonly canBePromoted = computed(() => Boolean(this.dataset().origin?.parsed));
 
-  protected readonly editAction = computed<TnCardAction | undefined>(() => {
-    if (!this.hasDatasetWrite()) {
-      return undefined;
-    }
+  // Edit and Delete are gated by `*ixRequiresRoles` in the template, so a user without the role sees them locked.
+  protected readonly editAction = computed<TnCardAction>(() => {
     return this.isFilesystem()
       ? { label: this.translate.instant('Edit'), testId: 'edit-dataset', handler: () => this.editDataset() }
       : { label: this.translate.instant('Edit Zvol'), testId: 'edit-zvol', handler: () => this.editZvol() };
@@ -120,20 +119,22 @@ export class DatasetDetailsCardComponent {
   });
 
   protected readonly deleteAction = computed<TnCardAction | undefined>(() => {
-    if (this.dataset().id === this.dataset().pool || !this.hasDatasetDelete()) {
+    if (this.dataset().id === this.dataset().pool) {
       return undefined;
     }
     return { label: this.translate.instant('Delete'), testId: 'delete-dataset', handler: () => this.deleteDataset() };
   });
 
+  // A menu item cannot sit in the role-missing wrapper, so without the role Promote is shown disabled.
   protected readonly actionsMenu = computed<TnMenuItem[] | undefined>(() => {
-    if (this.dataset().id === this.dataset().pool || !this.canBePromoted() || !this.hasDatasetWrite()) {
+    if (this.dataset().id === this.dataset().pool || !this.canBePromoted()) {
       return undefined;
     }
     return [{
       id: 'promote',
       label: this.translate.instant('Promote'),
       testId: 'promote-dataset',
+      disabled: !this.hasDatasetWrite(),
       action: () => this.promoteDataset(),
     }];
   });

@@ -10,8 +10,8 @@ import type { QuotaKind } from '../fixtures/quotas';
 export const datasetCapacityLocators = {
   card: {
     /**
-     * The card's Edit, `testId: 'edit-quotas'` on its secondary action. Not offered on a zvol or
-     * without `DATASET_WRITE`.
+     * The card's Edit, `testId="edit-quotas"` in its footer actions. Not offered on a zvol, and
+     * locked without `DATASET_WRITE`.
      */
     edit: '[data-test="button-edit-quotas"]',
     /**

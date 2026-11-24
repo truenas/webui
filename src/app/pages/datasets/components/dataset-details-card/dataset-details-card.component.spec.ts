@@ -15,6 +15,7 @@ import { OnOff } from 'app/enums/on-off.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ZfsProperty } from 'app/interfaces/zfs-property.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { CopyButtonComponent } from 'app/modules/buttons/copy-button/copy-button.component';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
@@ -269,6 +270,35 @@ describe('DatasetDetailsCardComponent', () => {
           inputs: { params: { isNew: false, parentOrZvolId: 'pool/child' } },
         },
       );
+    });
+  });
+
+  describe('as a read-only admin', () => {
+    beforeEach(() => {
+      spectator = createComponent({
+        props: {
+          dataset: {
+            ...dataset,
+            origin: { parsed: 'pool/origin' },
+          } as DatasetDetails,
+        },
+        providers: [mockProvider(AuthService, { hasRole: jest.fn(() => of(false)) })],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    });
+
+    it('shows Edit and Delete locked by role', async () => {
+      const editButton = await loader.getHarness(TnButtonHarness.with({ label: 'Edit' }));
+      const deleteButton = await loader.getHarness(TnButtonHarness.with({ label: 'Delete' }));
+
+      expect(await editButton.isDisabled()).toBe(true);
+      expect(await deleteButton.isDisabled()).toBe(true);
+      expect(spectator.queryAll('ix-missing-access-wrapper')).toHaveLength(2);
+    });
+
+    it('shows Promote disabled', async () => {
+      const menu = await openCardMenu();
+      expect(await menu.isItemDisabled({ label: 'Promote' })).toBe(true);
     });
   });
 
