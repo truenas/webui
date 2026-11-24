@@ -12,7 +12,9 @@ import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent, TnTooltipDirective } from '@truenas/ui-components';
-import { combineLatest, of } from 'rxjs';
+import {
+  combineLatest, forkJoin, Observable, of,
+} from 'rxjs';
 import {
   filter, map, switchMap, tap,
 } from 'rxjs/operators';
@@ -175,6 +177,7 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       : of(null);
 
     sedPasswordUpdate$.pipe(
+      switchMap(() => this.applySedDiskPasswords()),
       switchMap(() => {
         return this.dialogService.jobDialog(
           this.api.job('pool.create', [payload]),
@@ -262,6 +265,25 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * The pool job sets each uninitialized SED disk up with the disk's stored password, or the global one
+   * when none is stored, so the per-disk choices from the Review step are stored on the disks first.
+   */
+  private applySedDiskPasswords(): Observable<unknown> {
+    if (this.state.encryptionType !== EncryptionType.Sed) {
+      return of(null);
+    }
+
+    const { changes } = this.state.sedDiskPasswords;
+    if (!changes.length) {
+      return of(null);
+    }
+
+    return forkJoin(changes.map((change) => {
+      return this.api.call('disk.update', [change.identifier, { passwd: change.password }]);
+    }));
+  }
+
   private prepareCreatePayload(): CreatePool {
     const payload: CreatePool = {
       name: this.state.name,
@@ -289,12 +311,12 @@ export class PoolManagerWizardComponent implements OnInit, OnDestroy {
       allow_duplicate_serials: this.state.diskSettings.allowNonUniqueSerialDisks,
     };
 
-    this.dialogService.jobDialog(
-      this.api.job('pool.update', [this.existingPool.id, payload]),
-      { title: this.translate.instant('Update Pool') },
-    )
-      .afterClosed()
+    this.applySedDiskPasswords()
       .pipe(
+        switchMap(() => this.dialogService.jobDialog(
+          this.api.job('pool.update', [this.existingPool.id, payload]),
+          { title: this.translate.instant('Update Pool') },
+        ).afterClosed()),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       )

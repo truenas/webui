@@ -11,6 +11,7 @@ import { BehaviorSubject, Subject, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { mockCall, mockJob, mockApi } from 'app/core/testing/utils/mock-api.utils';
 import { CreateVdevLayout, VDevType } from 'app/enums/v-dev-type.enum';
+import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FakeProgressBarComponent } from 'app/modules/loader/components/fake-progress-bar/fake-progress-bar.component';
@@ -67,6 +68,7 @@ describe('PoolManagerWizardComponent', () => {
   const state = {
     name: 'pewl',
     encryptionType: EncryptionType.None,
+    sedDiskPasswords: { changes: [], isValid: true },
     diskSettings: {
       allowNonUniqueSerialDisks: true,
     },
@@ -95,6 +97,7 @@ describe('PoolManagerWizardComponent', () => {
   } as PoolManagerState;
   const state$ = new BehaviorSubject(state);
   const createdPool = {} as Pool;
+  const existingPool$ = new BehaviorSubject<Pool | null>(null);
 
   const createComponent = createComponentFactory({
     component: PoolManagerWizardComponent,
@@ -123,7 +126,9 @@ describe('PoolManagerWizardComponent', () => {
       }),
       mockApi([
         mockCall('pool.query', []),
+        mockCall('disk.update', {} as Disk),
         mockJob('pool.create', fakeSuccessfulJob(createdPool)),
+        mockJob('pool.update', fakeSuccessfulJob(createdPool)),
       ]),
       mockProvider(ActivatedRoute, {
         params: of({}),
@@ -149,7 +154,7 @@ describe('PoolManagerWizardComponent', () => {
         ],
       }),
       mockProvider(AddVdevsStore, {
-        pool$: of(null),
+        pool$: existingPool$.asObservable(),
         isLoading$: of(false),
       }),
       mockProvider(Router),
@@ -162,6 +167,8 @@ describe('PoolManagerWizardComponent', () => {
   });
 
   beforeEach(async () => {
+    state$.next(state);
+    existingPool$.next(null);
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     wizard = await loader.getHarness(MatStepperHarness);
@@ -278,6 +285,69 @@ describe('PoolManagerWizardComponent', () => {
           encryption_options: { generate_key: true },
         }),
       ]);
+    });
+
+    it('stores the per-disk SED password choices on the disks before creating an SED pool', async () => {
+      state$.next({
+        ...state,
+        encryptionType: EncryptionType.Sed,
+        sedDiskPasswords: {
+          changes: [
+            { identifier: '{serial}A', name: 'ada1', password: 'own-password' },
+            { identifier: '{serial}B', name: 'ada2', password: '' },
+          ],
+          isValid: true,
+        },
+      });
+
+      await wizard.selectStep({ label: 'Review' });
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      const api = spectator.inject(ApiService, true);
+      expect(api.call).toHaveBeenCalledWith('disk.update', ['{serial}A', { passwd: 'own-password' }]);
+      expect(api.call).toHaveBeenCalledWith('disk.update', ['{serial}B', { passwd: '' }]);
+      expect(api.job).toHaveBeenCalledWith('pool.create', [expect.objectContaining({ all_sed: true })]);
+
+      const lastUpdateOrder = Math.max(...jest.mocked(api.call).mock.invocationCallOrder);
+      expect(jest.mocked(api.job).mock.invocationCallOrder[0]).toBeGreaterThan(lastUpdateOrder);
+    });
+
+    it('does not touch disk passwords when the pool does not use SED', async () => {
+      state$.next({
+        ...state,
+        sedDiskPasswords: {
+          changes: [{ identifier: '{serial}A', name: 'ada1', password: 'own-password' }],
+          isValid: true,
+        },
+      });
+
+      await wizard.selectStep({ label: 'Review' });
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      expect(spectator.inject(ApiService, true).call).not.toHaveBeenCalledWith('disk.update', expect.anything());
+    });
+  });
+
+  describe('updating an existing pool', () => {
+    it('stores the per-disk SED password choices on the disks before updating an SED pool', async () => {
+      existingPool$.next({ id: 4 } as Pool);
+      state$.next({
+        ...state,
+        encryptionType: EncryptionType.Sed,
+        sedDiskPasswords: {
+          changes: [{ identifier: '{serial}A', name: 'ada1', password: 'own-password' }],
+          isValid: true,
+        },
+      });
+
+      await wizard.selectStep({ label: 'Review' });
+      spectator.query(ReviewWizardStepComponent)!.createPool.emit();
+
+      const api = spectator.inject(ApiService, true);
+      expect(api.call).toHaveBeenCalledWith('disk.update', ['{serial}A', { passwd: 'own-password' }]);
+      expect(api.job).toHaveBeenCalledWith('pool.update', [4, expect.anything()]);
+      expect(jest.mocked(api.job).mock.invocationCallOrder[0])
+        .toBeGreaterThan(jest.mocked(api.call).mock.invocationCallOrder[0]);
     });
   });
 });

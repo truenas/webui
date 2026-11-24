@@ -7,7 +7,7 @@ import { MatButton } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatStepperPrevious, MatStepperNext } from '@angular/material/stepper';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
-import { filter } from 'rxjs';
+import { combineLatest, filter } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { Role } from 'app/enums/role.enum';
 import { VDevType, vdevTypeLabels } from 'app/enums/v-dev-type.enum';
@@ -20,6 +20,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import {
   InspectVdevsDialog,
 } from 'app/pages/storage/modules/pool-manager/components/inspect-vdevs-dialog/inspect-vdevs-dialog.component';
+import {
+  SedDiskPasswordsComponent,
+} from 'app/pages/storage/modules/pool-manager/components/pool-manager-wizard/steps/9-review-wizard-step/sed-disk-passwords/sed-disk-passwords.component';
 import { EncryptionType } from 'app/pages/storage/modules/pool-manager/enums/encryption-type.enum';
 import { PoolCreationSeverity } from 'app/pages/storage/modules/pool-manager/enums/pool-creation-severity';
 import { PoolCreationError } from 'app/pages/storage/modules/pool-manager/interfaces/pool-creation-error';
@@ -48,6 +51,7 @@ import {
     AsyncPipe,
     TopologyCategoryDescriptionPipe,
     FormActionsComponent,
+    SedDiskPasswordsComponent,
   ],
 })
 export class ReviewWizardStepComponent implements OnInit {
@@ -108,9 +112,14 @@ export class ReviewWizardStepComponent implements OnInit {
       this.cdr.markForCheck();
     });
 
-    this.poolManagerValidation.getPoolCreationErrors().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((errors) => {
+    combineLatest([
+      this.poolManagerValidation.getPoolCreationErrors(),
+      this.store.sedDiskPasswords$,
+    ]).pipe(takeUntilDestroyed(this.destroyRef)).subscribe(([errors, sedDiskPasswords]) => {
       this.poolCreationErrors = errors;
-      this.isCreateDisabled = !!errors.filter((error) => error.severity === PoolCreationSeverity.Error).length;
+      this.isCreateDisabled = errors.some((error) => error.severity === PoolCreationSeverity.Error)
+        || !sedDiskPasswords.isValid;
+      this.cdr.markForCheck();
     });
   }
 
