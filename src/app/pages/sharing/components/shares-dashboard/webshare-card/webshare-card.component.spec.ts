@@ -53,16 +53,17 @@ describe('WebShareCardComponent', () => {
     open: jest.fn(),
   } as unknown as Window;
 
+  // Out of name order, so the card's default sort is what puts `documents` first.
   const mockWebShares: WebShare[] = [
-    {
-      id: 1,
-      name: 'documents',
-      path: '/mnt/tank/documents',
-    },
     {
       id: 2,
       name: 'media',
       path: '/mnt/tank/media',
+    },
+    {
+      id: 1,
+      name: 'documents',
+      path: '/mnt/tank/documents',
     },
   ];
 
@@ -149,6 +150,14 @@ describe('WebShareCardComponent', () => {
     const rows = await table.getAllRowTexts();
     expect(rows[0]).toContain('documents');
     expect(rows[0]).toContain('/mnt/tank/documents');
+  });
+
+  it('sorts rows by name by default and shows it in the header', async () => {
+    const table = await loader.getHarness(TnTableHarness);
+
+    expect(await table.getCellText(0, 'name')).toBe('documents');
+    expect(await table.getCellText(1, 'name')).toBe('media');
+    expect(await table.getSortDirection('name')).toBe('ascending');
   });
 
   it('shows Open WebShare button when service is running', async () => {

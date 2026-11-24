@@ -1,6 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef,
+  ChangeDetectionStrategy, Component, computed, inject, OnInit, DestroyRef, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
@@ -174,6 +174,10 @@ export class WebShareCardComponent implements OnInit {
 
   protected readonly displayedColumns = ['name', 'path', 'actions'];
 
+  private readonly defaultSort: TnSortEvent = { column: 'name', direction: 'asc' };
+  protected readonly sortColumn = signal(this.defaultSort.column);
+  protected readonly sortDirection = signal(this.defaultSort.direction);
+
   protected readonly trackByWebShareId = (_index: number, row: WebShareTableRow): number => row.id;
 
   private readonly rowTags = rowTagPair<WebShareTableRow>((row) => `card-webshare-${row.name}`);
@@ -197,6 +201,7 @@ export class WebShareCardComponent implements OnInit {
     );
 
     this.dataProvider = new AsyncDataProvider<WebShareTableRow>(webshares$);
+    this.dataProvider.setSorting(mapTnSortToTableSort(this.defaultSort, this.displayedColumns), true);
     this.dataProvider.load();
 
     // Trigger hostname lookup to enable WebShare opening when not on truenas.direct domain
