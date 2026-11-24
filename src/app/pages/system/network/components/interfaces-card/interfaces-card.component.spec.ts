@@ -140,7 +140,7 @@ describe('InterfacesCardComponent', () => {
     await menu.clickItem({ text: 'Edit' });
 
     expect(spectator.inject(SlideIn).open).toHaveBeenCalledWith(InterfaceFormComponent, {
-      data: { interface: interfaces[0] },
+      data: { interface: interfaces[0], interfaces },
     });
     expect(spectator.component.interfacesUpdated.emit).toHaveBeenCalled();
     expect(spectator.inject(InterfacesStore).loadInterfaces).toHaveBeenCalledTimes(2);

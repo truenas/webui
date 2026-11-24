@@ -224,6 +224,7 @@ export class InterfacesCardComponent implements OnInit {
     this.slideIn.open(InterfaceFormComponent, {
       data: {
         interface: row,
+        interfaces: this.interfaces,
       },
     }).pipe(
       filter((response) => !!response.response),

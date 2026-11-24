@@ -491,6 +491,114 @@ describe('InterfaceFormComponent', () => {
     });
   });
 
+  describe('bridge loop warning', () => {
+    const physicalNics = ['enp0s3', 'enp0s4'].map((name) => ({
+      ...existingInterface,
+      id: name,
+      name,
+      type: NetworkInterfaceType.Physical,
+    } as NetworkInterface));
+    const vlanNic = {
+      ...existingInterface, id: 'vlan1', name: 'vlan1', type: NetworkInterfaceType.Vlan,
+    } as NetworkInterface;
+
+    const bridgeLoopConfirmation = expect.objectContaining({
+      title: 'Possible network loop',
+      buttonText: 'Continue',
+      cancelText: 'Back to editing',
+      hideCheckbox: true,
+    });
+
+    async function setUp(data: { interfaces: NetworkInterface[]; interface?: NetworkInterface }): Promise<void> {
+      spectator = createComponent({
+        providers: [
+          mockProvider(SlideInRef, { ...slideInRef, close: jest.fn(), getData: () => data }),
+        ],
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      form = await loader.getHarness(IxFormHarness);
+      api = spectator.inject(ApiService);
+    }
+
+    async function save(): Promise<void> {
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      await saveButton.click();
+    }
+
+    const existingBridge = (...bridgeMembers: string[]): NetworkInterface => ({
+      ...existingInterface,
+      id: 'br7',
+      name: 'br7',
+      type: NetworkInterfaceType.Bridge,
+      bridge_members: bridgeMembers,
+    } as NetworkInterface);
+
+    it('asks before creating a bridge with two physical members and saves on Continue', async () => {
+      await setUp({ interfaces: physicalNics });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
+
+      await form.fillForm({ Type: 'Bridge' });
+      await form.fillForm({ Name: 'br0', 'Bridge Members': ['enp0s3', 'enp0s4'] });
+      await save();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(bridgeLoopConfirmation);
+      expect(api.call).toHaveBeenCalledWith('interface.create', [
+        expect.objectContaining({ bridge_members: ['enp0s3', 'enp0s4'] }),
+      ]);
+      expect(spectator.inject(SlideInRef).close).toHaveBeenCalled();
+    });
+
+    it('keeps the form open without saving on Back to editing', async () => {
+      await setUp({ interfaces: physicalNics });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(false));
+
+      await form.fillForm({ Type: 'Bridge' });
+      await form.fillForm({ Name: 'br0', 'Bridge Members': ['enp0s3', 'enp0s4'] });
+      await save();
+
+      expect(api.call).not.toHaveBeenCalledWith('interface.create', expect.anything());
+      expect(spectator.inject(SlideInRef).close).not.toHaveBeenCalled();
+      expect((await form.getValues())['Bridge Members']).toEqual(['enp0s3', 'enp0s4']);
+      const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+      expect(await saveButton.isDisabled()).toBe(false);
+    });
+
+    it('does not ask when only one bridge member is physical', async () => {
+      await setUp({ interfaces: [physicalNics[0], { ...vlanNic, name: 'enp0s4' } as NetworkInterface] });
+
+      await form.fillForm({ Type: 'Bridge' });
+      await form.fillForm({ Name: 'br0', 'Bridge Members': ['enp0s3', 'enp0s4'] });
+      await save();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(api.call).toHaveBeenCalledWith('interface.create', expect.anything());
+    });
+
+    it('does not ask on an edit that leaves the physical members unchanged', async () => {
+      await setUp({ interfaces: physicalNics, interface: existingBridge('enp0s4', 'enp0s3') });
+
+      await form.fillForm({ Description: 'Updated' });
+      await save();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(api.call).toHaveBeenCalledWith('interface.update', ['br7', expect.anything()]);
+    });
+
+    it('asks when an edit adds a second physical member', async () => {
+      await setUp({ interfaces: physicalNics, interface: existingBridge('enp0s3') });
+      jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
+
+      await form.fillForm({ 'Bridge Members': ['enp0s3', 'enp0s4'] });
+      await save();
+
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(bridgeLoopConfirmation);
+      expect(api.call).toHaveBeenCalledWith('interface.update', [
+        'br7',
+        expect.objectContaining({ bridge_members: ['enp0s3', 'enp0s4'] }),
+      ]);
+    });
+  });
+
   describe('edit link aggregation', () => {
     beforeEach(async () => {
       spectator = createComponent({
