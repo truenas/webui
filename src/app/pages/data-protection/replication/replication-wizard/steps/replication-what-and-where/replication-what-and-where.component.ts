@@ -252,13 +252,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.form.controls.schema_or_regex.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.form.controls.schema_or_regex.enabled) {
-        if (value === SnapshotNamingOption.NameRegex) {
-          this.form.controls.name_regex.enable();
-          this.form.controls.naming_schema.disable();
-        } else {
-          this.form.controls.name_regex.disable();
-          this.form.controls.naming_schema.enable();
-        }
+        this.enableSelectedNamingField(value);
       }
       this.checkCustomVisible();
     });
@@ -704,9 +698,12 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   private setSchemaOrRegexForRemoteSource(): void {
     this.form.controls.schema_or_regex.enable();
+    this.enableSelectedNamingField(this.form.controls.schema_or_regex.value);
+  }
 
-    // Only the field matching the selected radio is enabled, or the hidden one stays required and blocks Next.
-    if (this.form.controls.schema_or_regex.value === SnapshotNamingOption.NameRegex) {
+  // Only the field matching the selected radio is enabled, or the hidden one stays required and blocks Next.
+  private enableSelectedNamingField(option: SnapshotNamingOption): void {
+    if (option === SnapshotNamingOption.NameRegex) {
       this.form.controls.name_regex.enable();
       this.form.controls.naming_schema.disable();
     } else {
