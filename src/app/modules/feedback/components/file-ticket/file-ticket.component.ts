@@ -67,7 +67,7 @@ export class FileTicketComponent {
   });
 
   protected OauthButtonType = OauthButtonType;
-  protected readonly oauthUrl = 'https://support-proxy.ixsystems.com/oauth/initiate?origin=';
+  protected readonly oauthUrl = 'https://support-proxy.truenas.com/oauth/initiate?origin=';
   protected readonly messagePlaceholder = helptext.bug.message.label;
   protected readonly acceptedFiles = ticketAcceptedFiles;
 
