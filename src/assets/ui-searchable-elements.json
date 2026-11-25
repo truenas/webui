@@ -1849,9 +1849,7 @@
       "Download Config",
       "Backup Config"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
@@ -1877,9 +1875,7 @@
       "Upload Config",
       "Restore Config"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
@@ -1906,9 +1902,7 @@
       "Restore Config Defaults",
       "Restore Default Configuration"
     ],
-    "requiredRoles": [
-      "FULL_ADMIN"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/system",
@@ -2859,9 +2853,7 @@
       "Expand"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "POOL_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [],
     "anchorRouterLink": [
       "/storage"
@@ -6106,9 +6098,7 @@
       "User ID Mapping",
       "Group ID Mapping"
     ],
-    "requiredRoles": [
-      "CONTAINER_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [
       "VMS"
     ],
@@ -6191,9 +6181,7 @@
       "Choose Pool"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "DOCKER_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [
       "APPS"
     ],
@@ -6300,9 +6288,7 @@
       "Custom App via YAML"
     ],
     "synonyms": [],
-    "requiredRoles": [
-      "APPS_WRITE"
-    ],
+    "requiredRoles": [],
     "visibleTokens": [
       "APPS"
     ],

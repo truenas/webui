@@ -1,8 +1,8 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, throwError } from 'rxjs';
+import { EMPTY, Observable, of, throwError } from 'rxjs';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
-import { mockApi, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import { mockApi, mockJob, settleApi } from 'app/core/testing/utils/mock-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
@@ -171,7 +171,7 @@ describe('AppsStore', () => {
       ],
     });
 
-    beforeEach(() => {
+    beforeEach(async () => {
       emptySpectator = createEmptyService();
       appsServiceMock = emptySpectator.inject(ApplicationsService);
 
@@ -188,6 +188,7 @@ describe('AppsStore', () => {
       jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(emptyMockDialogRef);
 
       emptySpectator.service.initialize();
+      await settleApi();
     });
 
     it('shows job dialog with descriptive message during sync', () => {
@@ -205,7 +206,7 @@ describe('AppsStore', () => {
       expect(emptySpectator.inject(ApiService).job).toHaveBeenCalledWith('catalog.sync');
     });
 
-    it('reloads catalog data after sync completes', () => {
+    it('reloads catalog data after sync completes', async () => {
       // Clear previous mock calls from initialization
       jest.clearAllMocks();
 
@@ -221,6 +222,7 @@ describe('AppsStore', () => {
 
       // Trigger a fresh initialization
       emptySpectator.service.initialize();
+      await settleApi();
 
       // Verify data loading methods are called exactly twice: initial load + reload after sync
       expect(appsServiceMock.getAvailableApps).toHaveBeenCalledTimes(2);
@@ -249,13 +251,8 @@ describe('AppsStore', () => {
     });
 
     it('handles sync job failure gracefully', async () => {
-      const errorMockDialogRef = {
-        afterClosed: jest.fn(() => throwError(() => new Error('Sync failed'))),
-        getDestroyRef: jest.fn(),
-      } as unknown as JobProgressDialogRef<unknown>;
-
-      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(errorMockDialogRef);
       jest.clearAllMocks();
+      jest.spyOn(emptySpectator.inject(ApiService), 'job').mockReturnValue(throwError(() => new Error('Sync failed')));
 
       emptySpectator.service.initialize();
 
@@ -270,6 +267,32 @@ describe('AppsStore', () => {
       );
 
       // Verify loading state is set to false
+      expect(emptySpectator.service.isLoading()).toBe(false);
+    });
+
+    it('loads the catalog once the sync finishes when its dialog was minimized', async () => {
+      // A minimized dialog is destroyed before the job settles, so `afterClosed()` completes without a value.
+      const minimizedDialogRef = {
+        afterClosed: jest.fn(() => EMPTY),
+        getDestroyRef: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(minimizedDialogRef);
+      jest.clearAllMocks();
+      jest.spyOn(appsServiceMock, 'getAvailableApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(of(availableApps) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getLatestApps').mockReturnValue(of([]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories')
+        .mockReturnValueOnce(of([]) as Observable<string[]>)
+        .mockReturnValueOnce(of(['storage', 'media']) as Observable<string[]>);
+
+      emptySpectator.service.initialize();
+      expect(emptySpectator.service.isLoading()).toBe(true);
+
+      await settleApi();
+
+      expect(appsServiceMock.getAvailableApps).toHaveBeenCalledTimes(2);
+      expect(emptySpectator.service.availableApps()).toEqual(availableApps);
       expect(emptySpectator.service.isLoading()).toBe(false);
     });
 
