@@ -42,7 +42,7 @@ describe('AppSettingsButtonComponent', () => {
         setDockerPool: jest.fn(() => of({})),
       }),
       mockProvider(AppsStore, {
-        loadCatalog: jest.fn(() => of({})),
+        initialize: jest.fn(),
       }),
     ],
   });
@@ -61,7 +61,7 @@ describe('AppSettingsButtonComponent', () => {
     await menu.clickItem({ text: 'Choose Pool' });
 
     expect(spectator.inject(MatDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
-    expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
+    expect(spectator.inject(AppsStore).initialize).toHaveBeenCalled();
   });
 
   it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
