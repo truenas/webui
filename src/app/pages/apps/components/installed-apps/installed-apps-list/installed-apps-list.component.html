@@ -50,7 +50,7 @@
     (rowClick)="viewDetails($event)"
     (selectionChange)="onSelectionChange($event)"
   >
-    <ng-container [tnColumnDef]="sortableField.Application" [sortable]="true" [width]="'18%'">
+    <ng-container [tnColumnDef]="sortableField.Application" [sortable]="true" [width]="columnWidths()[sortableField.Application]">
       <ng-template tnHeaderCellDef>{{ 'Application' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <div class="name-cell">
@@ -71,7 +71,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="sortableField.State" [sortable]="true" [width]="'13%'">
+    <ng-container [tnColumnDef]="sortableField.State" [sortable]="true" [width]="columnWidths()[sortableField.State]">
       <ng-template tnHeaderCellDef>{{ 'Status' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <ix-app-state-cell
@@ -84,7 +84,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'cpu'" [width]="'6%'">
+    <ng-container [tnColumnDef]="'cpu'" [width]="columnWidths().cpu">
       <ng-template tnHeaderCellDef>{{ 'CPU' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let cpuStats = getAppStats(row.name);
@@ -100,7 +100,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'ram'" [width]="'12%'">
+    <ng-container [tnColumnDef]="'ram'" [width]="columnWidths().ram">
       <ng-template tnHeaderCellDef>{{ 'RAM' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let ramStats = getAppStats(row.name);
@@ -119,7 +119,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'io'" [width]="'12%'">
+    <ng-container [tnColumnDef]="'io'" [width]="columnWidths().io">
       <ng-template tnHeaderCellDef>{{ 'Block I/O' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let ioStats = getAppStats(row.name);
@@ -141,7 +141,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'network'" [width]="'15%'">
+    <ng-container [tnColumnDef]="'network'" [width]="columnWidths().network">
       <ng-template tnHeaderCellDef>{{ 'Network' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         @let networkStats = getAppStats(row.name);
@@ -163,7 +163,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="sortableField.Updates" [sortable]="hasUpdates" [width]="'15%'">
+    <ng-container [tnColumnDef]="sortableField.Updates" [sortable]="hasUpdates" [width]="columnWidths()[sortableField.Updates]">
       <ng-template tnHeaderCellDef>
         <span class="updates-header">
           {{ 'Updates' | translate }}
@@ -188,7 +188,7 @@
       </ng-template>
     </ng-container>
 
-    <ng-container [tnColumnDef]="'controls'" [width]="'10%'">
+    <ng-container [tnColumnDef]="'controls'" [width]="columnWidths().controls">
       <ng-template tnHeaderCellDef>{{ 'Controls' | translate }}</ng-template>
       <ng-template let-row tnCellDef>
         <div class="controls-cell">

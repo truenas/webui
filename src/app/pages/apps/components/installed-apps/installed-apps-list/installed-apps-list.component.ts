@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect,
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, DestroyRef, effect, ElementRef,
   inject, input, OnInit, output, signal, untracked, viewChild,
 } from '@angular/core';
 import { toSignal, takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -70,6 +70,47 @@ enum SortableField {
   State = 'state',
   Updates = 'updates',
 }
+
+type AppsTableColumn = SortableField | 'cpu' | 'ram' | 'io' | 'network' | 'controls';
+
+interface ColumnSize {
+  share: number;
+  maxWidth?: number;
+}
+
+/**
+ * How the table's width is split. `share` is a column's slice of the row, which is all a column
+ * gets on a narrow table. `maxWidth` is the most content width a value column ever needs (its
+ * widest value, such as a "- 1023.99 MiB" Block I/O half or "Revision available"), so on a wide
+ * table it stops there and the Application column takes everything that is left. With shares
+ * alone the stats grew into empty space while long app names stayed squeezed onto two lines.
+ */
+const columnSizes: Record<AppsTableColumn, ColumnSize> = {
+  [SortableField.Application]: { share: 18 },
+  [SortableField.State]: { share: 13, maxWidth: 100 },
+  cpu: { share: 6, maxWidth: 42 },
+  ram: { share: 12, maxWidth: 86 },
+  io: { share: 12, maxWidth: 94 },
+  network: { share: 15, maxWidth: 94 },
+  [SortableField.Updates]: { share: 15, maxWidth: 130 },
+  controls: { share: 10, maxWidth: 70 },
+};
+
+const columnSizeEntries = Object.entries(columnSizes) as [AppsTableColumn, ColumnSize][];
+const totalColumnShare = columnSizeEntries.reduce((sum, [, { share }]) => sum + share, 0);
+
+function mapColumns<T>(fn: (size: ColumnSize, column: AppsTableColumn) => T): Record<AppsTableColumn, T> {
+  return Object.fromEntries(
+    columnSizeEntries.map(([column, size]) => [column, fn(size, column)]),
+  ) as Record<AppsTableColumn, T>;
+}
+
+/**
+ * Set in installed-apps-list.component.scss: the checkbox column's width, and the horizontal
+ * padding every other cell adds on top of the content width given to it.
+ */
+const selectColumnWidth = 38;
+const cellPadding = 10;
 
 function doSortCompare(a: number | string, b: number | string, isAsc: boolean): number {
   return (a < b ? -1 : 1) * (isAsc ? 1 : -1);
@@ -163,6 +204,32 @@ export class InstalledAppsListComponent implements OnInit {
   readonly sortingInfo = this.installedAppsStore.sortingInfo;
 
   protected readonly table = viewChild(TnTableComponent);
+  private readonly tableElement = viewChild(TnTableComponent, { read: ElementRef });
+  private readonly tableWidth = signal(0);
+
+  /**
+   * Column widths for the current table width (see `columnSizes`). Percentages until the table
+   * has been measured, and in the mobile layout, where the table is wider than its container
+   * (`tableMinColumnWidth`) and scrolls instead.
+   */
+  protected readonly columnWidths = computed((): Record<AppsTableColumn, string> => {
+    const tableWidth = this.tableWidth();
+    if (!tableWidth || this.isMobileView()) {
+      return mapColumns(({ share }) => `${share}%`);
+    }
+
+    // Content widths: every cell adds `cellPadding` on top of the width it is given.
+    const available = tableWidth - selectColumnWidth;
+    const widths = mapColumns(({ share, maxWidth }) => {
+      const shareWidth = Math.floor(available * share / totalColumnShare) - cellPadding;
+      return maxWidth === undefined ? 0 : Math.min(maxWidth, shareWidth);
+    });
+    // Application gets the exact remainder. Left without a width, Chrome spreads the slack over
+    // every column instead of handing it all to the one with no width.
+    const cellsWidth = Object.values(widths).reduce((sum, width) => sum + width + cellPadding, 0);
+    widths[SortableField.Application] = available - cellsWidth;
+    return mapColumns((_, column) => `${widths[column]}px`);
+  });
 
   readonly sortableField = SortableField;
   protected readonly requiredRoles = [Role.AppsWrite];
@@ -236,6 +303,17 @@ export class InstalledAppsListComponent implements OnInit {
       const isDockerStarted = this.dockerStore.isDockerStarted();
       const apps = this.installedAppsStore.installedApps();
       untracked(() => this.onInstalledAppsChanged(pool, isDockerStarted, apps));
+    });
+
+    // The table is only rendered while there are apps to list, so watch whichever one is there.
+    effect((onCleanup) => {
+      const element = this.tableElement()?.nativeElement as HTMLElement | undefined;
+      if (!element) {
+        return;
+      }
+      const observer = new ResizeObserver(([entry]) => this.tableWidth.set(entry.contentRect.width));
+      observer.observe(element);
+      onCleanup(() => observer.disconnect());
     });
   }
 
