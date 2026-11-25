@@ -165,6 +165,16 @@ describe('DatasetAclEditorStore', () => {
       expect(store.acesWithError()).toEqual([1]);
     });
 
+    it('removeAce selects the new last entry when the selected last entry is removed', () => {
+      store.addAce();
+      store.addAce();
+
+      store.removeAce(2);
+
+      expect(aces()).toHaveLength(2);
+      expect(store.selectedAceIndex()).toBe(1);
+    });
+
     it('updateSelectedAceValidation adds and clears an error for the selected entry', () => {
       store.updateSelectedAceValidation(false);
       expect(store.acesWithError()).toEqual([0]);
