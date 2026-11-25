@@ -266,6 +266,27 @@ test('an admin turns on FTP TLS with the appliance certificate', async ({ page, 
   expect(await readFtpCertificateId(api)).toBe(certificate?.id);
 });
 
+test('the FTP form will not save TLS without a certificate', async ({ page, api }) => {
+  const form = servicesLocators.ftpForm;
+
+  await openServiceForm(page, 'ftp', form.port, String(ftpBaseline.port));
+  await showAdvancedSettings(page, form.tls);
+
+  // Unticking TLS clears the certificate, so ticking it again leaves Certificate empty. Middleware
+  // refuses TLS with no certificate, so Save stays blocked until one is picked.
+  await page.locator(form.tls).click();
+  await expect(page.locator(form.certificate)).toBeVisible();
+  await page.locator(form.tls).click();
+  await expect(page.locator(form.certificate)).toBeHidden();
+  await page.locator(form.tls).click();
+  await expect(page.locator(form.certificate)).toBeVisible();
+  await expect(page.locator(servicesLocators.save)).toBeDisabled();
+
+  await selectOption(page, form.certificate, form.certificateOption('truenas_default'));
+  await expect(page.locator(servicesLocators.save)).toBeEnabled();
+  expect(await readFtpAdvancedSettings(api)).toEqual(ftpAdvancedBaseline);
+});
+
 test('the FTP form refuses a maximum passive port below the minimum', async ({ page, api }) => {
   const form = servicesLocators.ftpForm;
 
