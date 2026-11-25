@@ -129,11 +129,8 @@ export async function fillRemoteReplication(
 
 /**
  * Starts What and Where for a pull from another system over SSH connection `connection`. Leaves the source
- * explorer empty for the caller, and the target locked to this system.
- *
- * A remote source shows both Naming Schema (filled with the default) and a required, empty regular expression
- * field, so Next stays disabled. Moving the radio to regex and back clears it, as an admin would, since each
- * move turns the other field off. The task then pulls by the default naming schema.
+ * explorer empty for the caller, and the target locked to this system. The task pulls by the default naming
+ * schema, which a remote source starts with selected and the regular expression field hidden.
  */
 export async function chooseRemoteReplicationSource(page: Page, connection: string): Promise<void> {
   const { wizard } = replicationTaskLocators;
@@ -141,8 +138,6 @@ export async function chooseRemoteReplicationSource(page: Page, connection: stri
   await selectOption(page, wizard.sourceFrom, wizard.sourceFromDifferentSystem);
   await selectOption(page, wizard.sshConnection, wizard.sshConnectionOption(connection));
 
-  await page.locator(wizard.schemaOrRegex('Snapshot Name Regular Expression')).click();
-  await page.locator(wizard.schemaOrRegex('Naming Schema')).click();
   await expect(page.locator(wizard.schemaOrRegex('Naming Schema'))).toBeChecked();
   await expect(page.locator(wizard.nameRegex)).toBeHidden();
 }
