@@ -1,20 +1,22 @@
-<div class="cards">
-  @if (noPoolsDisks.length) {
-    <ix-unused-disk-card
-      class="unused-resources"
-      testId="unassigned-disks"
-      [title]="'Unassigned Disks' | translate"
-      [disks]="noPoolsDisks"
-      (addToStorage)="addNoPoolDisksToStorage()"
-    ></ix-unused-disk-card>
-  }
-  @if (exportedPoolsDisks.length) {
-    <ix-unused-disk-card
-      class="unused-resources"
-      testId="exported-pool-disks"
-      [title]="'Disks with exported pools' | translate"
-      [disks]="exportedPoolsDisks"
-      (addToStorage)="addExportedPoolDisksToStorage()"
-    ></ix-unused-disk-card>
-  }
-</div>
+@if (noPoolsDisks.length || exportedPoolsDisks.length) {
+  <div class="cards">
+    @if (noPoolsDisks.length) {
+      <ix-unused-disk-card
+        class="unused-resources"
+        testId="unassigned-disks"
+        [title]="'Unassigned Disks' | translate"
+        [disks]="noPoolsDisks"
+        (addToStorage)="addNoPoolDisksToStorage()"
+      ></ix-unused-disk-card>
+    }
+    @if (exportedPoolsDisks.length) {
+      <ix-unused-disk-card
+        class="unused-resources"
+        testId="exported-pool-disks"
+        [title]="'Disks with exported pools' | translate"
+        [disks]="exportedPoolsDisks"
+        (addToStorage)="addExportedPoolDisksToStorage()"
+      ></ix-unused-disk-card>
+    }
+  </div>
+}
