@@ -155,12 +155,18 @@ export class ServiceFtpComponent extends IxFormHostForm<boolean, FtpFormValue> i
   }
 
   ngOnInit(): void {
-    this.loadConfig();
+    // Middleware refuses TLS without a certificate, so block Save here instead of sending it.
     this.form.controls.tls.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((tlsEnabled) => {
-      if (!tlsEnabled) {
-        this.form.controls.ssltls_certificate.patchValue(null);
+      const certificate = this.form.controls.ssltls_certificate;
+      if (tlsEnabled) {
+        certificate.addValidators(Validators.required);
+      } else {
+        certificate.removeValidators(Validators.required);
+        certificate.setValue(null, { emitEvent: false });
       }
+      certificate.updateValueAndValidity();
     });
+    this.loadConfig();
   }
 
   protected handleSubmit = ({ allValues }: FormSubmitEvent<FtpFormValue>): SubmitResult => {

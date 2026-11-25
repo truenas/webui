@@ -230,6 +230,29 @@ describe('ServiceFtpComponent', () => {
     }]);
   });
 
+  it('blocks Save while TLS is on without a certificate, and sends TLS on once one is picked', async () => {
+    toggleAdvancedOptions();
+
+    await (await getCheckbox('tls')).uncheck();
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    await (await getCheckbox('tls')).check();
+    expect(await (await getSelect('ssltls_certificate')).getDisplayText()).toBe('Select an option');
+    expect(spectator.component.canSubmit()).toBe(false);
+
+    await (await getSelect('ssltls_certificate')).selectOption('Secure certificate');
+    expect(spectator.component.canSubmit()).toBe(true);
+
+    spectator.component.submit();
+    await spectator.fixture.whenStable();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
+      ...existingFtpConfig,
+      tls: true,
+      ssltls_certificate: 1,
+    }]);
+  });
+
   it('does not show TLS fields when TLS is off', async () => {
     toggleAdvancedOptions();
 
