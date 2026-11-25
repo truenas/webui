@@ -11,6 +11,7 @@ import {
   TnTestIdDirective, TnFilePickerComponent,
 } from '@truenas/ui-components';
 import { format } from 'date-fns';
+import { omit } from 'lodash-es';
 import {
   debounceTime, map, merge, Observable, of, startWith, switchMap,
 } from 'rxjs';
@@ -457,10 +458,11 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
       payload.name_regex = value.name_regex;
     } else {
-      payload.naming_schema = value.naming_schema ? value.naming_schema?.split(' ') : [this.defaultNamingSchema];
+      payload.naming_schema = [value.naming_schema || this.defaultNamingSchema];
     }
 
     if (payload.datasets.length > 0 && (payload.naming_schema || payload.name_regex)) {
+      this.clearSnapshotCountError();
       this.authService.hasRole([
         Role.ReplicationTaskWrite,
         Role.ReplicationTaskWritePull,
@@ -499,6 +501,16 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
       this.snapshotsText = '';
       this.cdr.markForCheck();
     }
+  }
+
+  // A failed count pins its error on source_datasets; drop only that entry so the control's own validators stand.
+  private clearSnapshotCountError(): void {
+    const control = this.form.controls.source_datasets;
+    if (!control.hasError(ixManualValidateErrorKey)) {
+      return;
+    }
+    const otherErrors = omit(control.errors, ixManualValidateErrorKey);
+    control.setErrors(Object.keys(otherErrors).length ? otherErrors : null);
   }
 
   private checkCustomVisible(): void {

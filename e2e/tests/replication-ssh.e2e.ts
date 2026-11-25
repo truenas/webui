@@ -1,12 +1,14 @@
 /**
  * Stories: an admin creates a push replication task over SSH through the wizard and the target receives the
- * source's snapshots; and creates a pull task by browsing the remote's datasets (saved on a schedule, never run).
+ * source's snapshots; and creates a pull task by browsing the remote's datasets (saved on a schedule, never run),
+ * and another whose naming schema has a space in it.
  * The "remote" is the appliance itself via `127.0.0.1` (see `fixtures/ssh-connections.ts`); middleware still sends
  * the stream through `ssh`. Results come from `replication.query`, `core.get_jobs` and `pool.snapshot.query`.
  * Sources are fresh per test; no target is made, so a target existing afterwards is evidence of a run.
  */
 import {
   countReplicationTasks,
+  createSnapshot,
   ensureReplicationTaskAbsent,
   findReplicationRunJobIds,
   findReplicationRuns,
@@ -25,6 +27,7 @@ import { openExplorer, openExplorerDirectory, pickExplorerEntry } from '../flows
 import {
   chooseRemoteReplicationSource,
   fillRemoteReplication,
+  fillRemoteReplicationSource,
   finishReplicationWhatAndWhere,
   openReplicationWizard,
   replicationTaskCardPageSize,
@@ -189,5 +192,33 @@ test('an admin picks a pull task\'s source by browsing the remote system\'s data
     target_dataset: target,
     naming_schema: [replicationNamingSchema],
     auto: true,
+  });
+});
+
+test('a pull task\'s naming schema with a space is counted and saved as one schema', async ({ page, api, pool }) => {
+  const source = `${pool}/${sourceLeaf}`;
+  const target = `${pool}/${targetLeaf}`;
+  const spacedSchema = 'e2e media-%Y-%m-%d_%H-%M';
+  const { wizard } = replicationTaskLocators;
+  // The one snapshot the schema matches, so a count of it is 1 and nothing else.
+  await createSnapshot(api, source, 'e2e media-2026-01-01_00-00');
+
+  await openReplicationWizard(page);
+  await chooseRemoteReplicationSource(page, connectionName);
+  await page.locator(wizard.namingSchema).fill(spacedSchema);
+  await fillRemoteReplicationSource(page, source);
+
+  // A total only shows when middleware took the schema whole; split at the space, the count is refused.
+  await expect(page.locator(wizard.snapshotsFound)).toContainText('1 snapshots found.');
+
+  await finishReplicationWhatAndWhere(page, { target, name: pulledName });
+  await saveReplicationOnSchedule(page);
+
+  expect(await findReplicationTasks(api, pulledName)).toHaveLength(1);
+  expect(await findReplicationTask(api, pulledName)).toMatchObject({
+    direction: 'PULL',
+    source_datasets: [source],
+    target_dataset: target,
+    naming_schema: [spacedSchema],
   });
 });

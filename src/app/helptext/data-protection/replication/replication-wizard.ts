@@ -92,9 +92,8 @@ export const helptextReplicationWizard = {
  replicated. Enter the name and\
  <a href="https://man7.org/linux/man-pages/man3/strftime.3.html" target="_blank">strftime(3)</a>\
  <i>&percnt;Y</i>, <i>&percnt;m</i>, <i>&percnt;d</i>, <i>&percnt;H</i>, and <i>&percnt;M</i> strings that\
- match the snapshots to include in the replication. Separate entries by\
- pressing <code>Enter</code>. The number of snapshots matching the\
- patterns is shown.'),
+ match the snapshots to include in the replication. The number of\
+ snapshots matching the pattern is shown.'),
   nameRegexTooltip: T('Using this option will replicate all snapshots\
  whose names match the specified regular expression. The\
  performance on systems with a large number of snapshots\

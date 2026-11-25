@@ -13,6 +13,7 @@ import {
   TnFilePickerHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockQuery, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DatasetSource } from 'app/enums/dataset.enum';
@@ -26,6 +27,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import {
   SshCredentialsSelectComponent,
 } from 'app/modules/forms/custom-selects/ssh-credentials-select/ssh-credentials-select.component';
+import { ixManualValidateErrorKey } from 'app/modules/forms/ix-forms/manual-validate-error.constants';
 import { LocaleService } from 'app/modules/language/locale.service';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
 import { WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
@@ -316,6 +318,52 @@ describe('ReplicationWhatAndWhereComponent', () => {
       expect(spectator.component.form.controls.schema_or_regex.disabled).toBe(true);
       expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
       expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
+    });
+  });
+
+  describe('counting snapshots by naming schema', () => {
+    const spacedSchema = 'media weekly-%Y-%m-%d_%H-%M';
+
+    beforeEach(async () => {
+      await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
+      await (await getExplorer('source_datasets')).setValue(['pool1', 'pool2']);
+      // The harnesses wait on timers of their own, so fake time also runs with the clock.
+      jest.useFakeTimers({ advanceTimers: true });
+    });
+
+    afterEach(() => {
+      jest.useRealTimers();
+    });
+
+    const enterNamingSchema = async (schema: string): Promise<void> => {
+      await (await getInput('naming_schema')).setValue(schema);
+      await jest.advanceTimersByTimeAsync(300);
+      await spectator.fixture.whenStable();
+    };
+
+    it('counts a naming schema with a space as one schema', async () => {
+      const api = spectator.inject(MockApiService);
+      api.call.mockClear();
+
+      await enterNamingSchema(spacedSchema);
+
+      expect(api.call).toHaveBeenCalledWith('replication.count_eligible_manual_snapshots', [
+        expect.objectContaining({ naming_schema: [spacedSchema] }),
+      ]);
+    });
+
+    it('clears the error of a failed count once a later count runs', async () => {
+      const api = spectator.inject(MockApiService);
+      const sourceDatasets = spectator.component.form.controls.source_datasets;
+
+      api.mockCallError('replication.count_eligible_manual_snapshots', { reason: 'Invalid naming schema' });
+      await enterNamingSchema('media');
+      expect(sourceDatasets.hasError(ixManualValidateErrorKey)).toBe(true);
+
+      api.mockCall('replication.count_eligible_manual_snapshots', { total: 1, eligible: 1 });
+      await enterNamingSchema(spacedSchema);
+      expect(sourceDatasets.errors).toBeNull();
     });
   });
 });

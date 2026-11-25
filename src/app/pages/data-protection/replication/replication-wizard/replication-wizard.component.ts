@@ -250,7 +250,7 @@ export class ReplicationWizardComponent {
     if (value.schema_or_regex === SnapshotNamingOption.NameRegex) {
       payload.name_regex = value.name_regex;
     } else {
-      payload.naming_schema = (value.naming_schema || this.defaultNamingSchema).split(' ');
+      payload.naming_schema = [value.naming_schema || this.defaultNamingSchema];
     }
 
     if (payload.datasets.length > 0) {
