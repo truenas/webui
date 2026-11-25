@@ -45,7 +45,12 @@
 
 ix-app-row,
 .app-header-row {
-  grid-template-columns: 5% minmax(18%, auto) 10.5% 4% 7% 10.5% 11% 13% 10%;
+  // Each stats column keeps its share of the row until it reaches the width its widest value needs
+  // (for example "- 1023.99 MiB" in Block I/O or "Revision available" in Updates), and Application
+  // takes the space left over, so long app names stop wrapping next to empty stats columns.
+  grid-template-columns:
+    5% minmax(18%, auto) min(10.5%, 100px) min(4%, 42px) min(7%, 86px)
+    min(10.5%, 94px) min(11%, 94px) min(13%, 130px) min(10%, 70px);
 
   @media (max-width: $breakpoint-tablet) {
     grid-template-columns: 45px auto 0 0 0 0 0 0;
