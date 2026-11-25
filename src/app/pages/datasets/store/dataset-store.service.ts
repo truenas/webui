@@ -4,9 +4,10 @@ import { patchState, signalState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
-import { DatasetDetails, toDatasetDetails } from 'app/interfaces/dataset.interface';
+import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
+import { toDatasetDetails } from 'app/services/dataset/webui-dataset-details.utils';
 
 export interface DatasetTreeState {
   isLoading: boolean;
@@ -51,7 +52,7 @@ export class DatasetTreeStore {
   /**
    * details for the currently selected dataset in the menu.
    * will be `null` if nothing is currently selected *or* if the store is
-   * awaiting `pool.dataset.details` to finish with updated information.
+   * awaiting `webui.dataset.details` to finish with updated information.
    */
   readonly selectedDataset = computed<DatasetDetails | null>(() => {
     const selectedBranch = this.selectedBranch();
@@ -72,7 +73,7 @@ export class DatasetTreeStore {
     return selectedBranch[selectedBranch.length - 2] ?? null;
   });
 
-  /** Whether a `pool.dataset.details` call is in flight. */
+  /** Whether a `webui.dataset.details` call is in flight. */
   private isFetching = false;
   /** Whether a refresh arrived during that call and still has to run once it answers. */
   private isRefreshQueued = false;
@@ -96,10 +97,10 @@ export class DatasetTreeStore {
     switchMap(({ silent }) => {
       // A refresh queued behind the fetch this one replaces stays queued. A load does
       // not stand in for it: what the refresh was asked to pick up may not be in
-      // `pool.dataset.details` yet when the load is answered.
+      // `webui.dataset.details` yet when the load is answered.
       this.isFetching = true;
 
-      return this.api.call('pool.dataset.details').pipe(
+      return this.api.call('webui.dataset.details').pipe(
         map(toDatasetDetails),
         tapResponse({
           next: (datasets) => {
@@ -126,7 +127,7 @@ export class DatasetTreeStore {
   ));
 
   /**
-   * Loads the datasets, entering the loading state while `pool.dataset.details` runs.
+   * Loads the datasets, entering the loading state while `webui.dataset.details` runs.
    * For loads the user asked for, where the page should show that it is fetching.
    * Cancels whatever fetch is in flight, so the latest load always wins.
    */
@@ -137,7 +138,7 @@ export class DatasetTreeStore {
   /**
    * Refetches without entering the loading state, so the tree and details stay mounted, for refreshes
    * the user didn't ask for. It never cancels a fetch in flight: it runs once after it, however many
-   * arrived, so a burst can't keep restarting `pool.dataset.details` or discard a load the user awaits.
+   * arrived, so a burst can't keep restarting `webui.dataset.details` or discard a load the user awaits.
    * An unanswered fetch leaves refreshes queued until the next `loadDatasets`.
    */
   refreshDatasets(): void {

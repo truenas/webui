@@ -1,38 +1,44 @@
 <tn-card class="card" [title]="'Data Protection' | translate">
-  <div class="details-item">
-    <div class="label">{{ 'Snapshots' | translate }}:</div>
-    <div class="total-snapshots value" tnTestIdType="text" [tnTestId]="'data-protection-snapshots'">{{ dataset().snapshot_count }}</div>
-    <a
-      class="action"
-      tnTestIdType="link" [tnTestId]="'manage-snapshots'"
-      [routerLink]="['/datasets/snapshots', dataset().id]"
-      [ixUiSearch]="searchableElements.elements.manageSnapshots"
-    >
-      {{ 'View Snapshots' | translate }}
-    </a>
-  </div>
-  <div class="details-item">
-    <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
-    <div class="snapshot-tasks value" tnTestIdType="text" [tnTestId]="'data-protection-snapshot-tasks'">{{ dataset().snapshot_tasks_count }}</div>
-    <a
-      class="action"
-      tnTestIdType="link" [tnTestId]="'manage-snapshot-tasks'"
-      [routerLink]="['/data-protection/snapshot', dataset().id]"
-      [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
-    >
-      {{ 'View Snapshot Tasks' | translate }}
-    </a>
-  </div>
-  <div class="details-item">
-    <div class="label backup-tasks" tnTestIdType="text" [tnTestId]="'data-protection-backup-tasks'">{{ backupTasksLabel() }}</div>
-    <a
-      class="action"
-      tnTestIdType="link" [tnTestId]="'manage-backups'"
-      [routerLink]="['/data-protection']"
-    >
-      {{ 'Go to Backups' | translate }}
-    </a>
-  </div>
+  @if (hasSnapshotCount()) {
+    <div class="details-item">
+      <div class="label">{{ 'Snapshots' | translate }}:</div>
+      <div class="total-snapshots value" tnTestIdType="text" [tnTestId]="'data-protection-snapshots'">{{ dataset().snapshot_count }}</div>
+      <a
+        class="action"
+        tnTestIdType="link" [tnTestId]="'manage-snapshots'"
+        [routerLink]="['/datasets/snapshots', dataset().id]"
+        [ixUiSearch]="searchableElements.elements.manageSnapshots"
+      >
+        {{ 'View Snapshots' | translate }}
+      </a>
+    </div>
+  }
+  @if (hasSnapshotTasksCount()) {
+    <div class="details-item">
+      <div class="label">{{ 'Snapshot Tasks' | translate }}:</div>
+      <div class="snapshot-tasks value" tnTestIdType="text" [tnTestId]="'data-protection-snapshot-tasks'">{{ dataset().snapshot_tasks_count }}</div>
+      <a
+        class="action"
+        tnTestIdType="link" [tnTestId]="'manage-snapshot-tasks'"
+        [routerLink]="['/data-protection/snapshot', dataset().id]"
+        [ixUiSearch]="searchableElements.elements.manageSnapshotTasks"
+      >
+        {{ 'View Snapshot Tasks' | translate }}
+      </a>
+    </div>
+  }
+  @if (backupTasksLabel()) {
+    <div class="details-item">
+      <div class="label backup-tasks" tnTestIdType="text" [tnTestId]="'data-protection-backup-tasks'">{{ backupTasksLabel() }}</div>
+      <a
+        class="action"
+        tnTestIdType="link" [tnTestId]="'manage-backups'"
+        [routerLink]="['/data-protection']"
+      >
+        {{ 'Go to Backups' | translate }}
+      </a>
+    </div>
+  }
 
   <ng-template tnCardFooterActions>
     <tn-button

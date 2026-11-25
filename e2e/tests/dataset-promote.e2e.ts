@@ -21,7 +21,7 @@ const snapshotName = 'base';
 
 const promoteMethod = 'zfs.resource.promote';
 /** What the Datasets page reloads its tree and the selected dataset's card from. */
-const detailsMethod = 'pool.dataset.details';
+const detailsMethod = 'webui.dataset.details';
 
 test.use({ recordApiCalls: true });
 

@@ -177,7 +177,20 @@ export class UsageCardComponent {
     return this.formatShareNames([...directShareNames, ...uniqueInheritedNames]);
   });
 
+  /**
+   * "Not Shared" is only claimed when every consumer list it checks is known: one the user may not see is `null`,
+   * and the dataset could be in use there.
+   */
   readonly canCreateShare = computed(() => {
+    const dataset = this.dataset();
+    const consumerLists = [
+      dataset.apps, dataset.vms, dataset.containers,
+      dataset.smb_shares, dataset.nfs_shares, dataset.iscsi_shares, dataset.webshare_shares,
+    ];
+    if (consumerLists.some((list) => list === null)) {
+      return false;
+    }
+
     return !this.hasChildrenWithShares()
       && !this.isSystemDataset()
       && !this.isApplications()
@@ -189,6 +202,28 @@ export class UsageCardComponent {
       && !this.dataset().iscsi_shares?.length
       && !this.dataset().webshare_shares?.length
       && !this.hasInheritedWebShares();
+  });
+
+  /**
+   * Whether any row below renders. Without one (every consumer list the user may see is empty, and one they may not
+   * see keeps "Not Shared" from showing) the card is left out rather than shown empty.
+   */
+  readonly hasAnyRow = computed(() => {
+    const dataset = this.dataset();
+    return Boolean(
+      dataset.apps?.length
+      || this.isApplications()
+      || this.isSystemDataset()
+      || this.hasChildrenWithShares()
+      || dataset.vms?.length
+      || dataset.containers?.length
+      || dataset.smb_shares?.length
+      || dataset.nfs_shares?.length
+      || dataset.iscsi_shares?.length
+      || this.hasDirectWebShares()
+      || this.hasInheritedWebShares()
+      || this.canCreateShare(),
+    );
   });
 
   readonly hasTruenasConnect = toSignal(
