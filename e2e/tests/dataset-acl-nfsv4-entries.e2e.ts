@@ -240,3 +240,28 @@ test('removing the builtin_users entry leaves every other entry in order', async
   expect(after.some(isBuiltinUsers)).toBe(false);
   expect(after.map(identityOf)).toEqual(before.filter((_, position) => position !== index).map(identityOf));
 });
+
+// NAS-145412: removing the last row used to leave the entry form blank, because the click on its remove
+// control also selected the row it had just removed.
+test('removing the last entry keeps an entry selected in the form', async ({ page, api, pool }) => {
+  const dataset = `${pool}/${leaf}`;
+  const aclEditor = permissionsLocators.aclEditor;
+
+  // owner@, group@, builtin_users, builtin_administrators: the form is seen staying on owner@, then moving to group@.
+  expect((await entriesOf(api, datasetMountPath(dataset))).map((entry) => entry.tag))
+    .toEqual(['owner@', 'group@', 'GROUP', 'GROUP']);
+
+  await openAclEditor(page, dataset);
+  await expect(page.locator(aclEditor.tag)).toContainText('owner@');
+
+  // The last row while owner@ is selected: the selection stays on owner@.
+  await removeAce(page, 3);
+  await expect(page.locator(aclEditor.ace(3))).toHaveCount(0);
+  await expect(page.locator(aclEditor.tag)).toContainText('owner@');
+
+  // The last row while it is the one selected: the selection moves to the row before it.
+  await selectAce(page, 2, 'Group');
+  await removeAce(page, 2);
+  await expect(page.locator(aclEditor.ace(2))).toHaveCount(0);
+  await expect(page.locator(aclEditor.tag)).toContainText('group@');
+});

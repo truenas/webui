@@ -28,7 +28,7 @@
             tnTestIdType="button"
             [tnTooltip]="'Ace has errors.' | translate"
             [tnTestId]="['remove-ace-error', i]"
-            (click)="onRemoveAcePressed(i)"
+            (click)="$event.stopPropagation(); onRemoveAcePressed(i)"
           >
             <tn-icon name="alert" library="mdi"></tn-icon>
           </span>
@@ -39,7 +39,7 @@
             tnTestIdType="button"
             [attr.title]="'Close' | translate"
             [tnTestId]="['remove-ace', i]"
-            (click)="onRemoveAcePressed(i)"
+            (click)="$event.stopPropagation(); onRemoveAcePressed(i)"
           >
             <tn-icon name="close-circle" library="mdi"></tn-icon>
           </span>

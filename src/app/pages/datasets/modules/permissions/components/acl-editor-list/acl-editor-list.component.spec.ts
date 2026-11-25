@@ -158,12 +158,26 @@ describe('AclEditorListComponent', () => {
     expect(spectator.inject(DatasetAclEditorStore).removeAce).toHaveBeenCalledWith(1);
   });
 
+  it('does not select the removed row, so the last entry can be removed without blanking the editor', () => {
+    jest.useFakeTimers();
+    setup(nfsAcl([nfsAce(NfsAclTag.Owner), nfsAce(NfsAclTag.Everyone)]), { selectedAceIndex: 1 });
+    const store = spectator.inject(DatasetAclEditorStore);
+
+    spectator.click(spectator.queryAll('.remove')[1]);
+    jest.runAllTimers();
+
+    expect(store.removeAce).toHaveBeenCalledWith(1);
+    expect(store.selectAce).not.toHaveBeenCalled();
+    jest.useRealTimers();
+  });
+
   it('removes an entry with errors when its warning icon is clicked', () => {
     setup(nfsAcl([nfsAce(NfsAclTag.Owner)]), { acesWithError: [0] });
 
     spectator.click('.warning');
 
     expect(spectator.inject(DatasetAclEditorStore).removeAce).toHaveBeenCalledWith(0);
+    expect(spectator.inject(DatasetAclEditorStore).selectAce).not.toHaveBeenCalled();
   });
 
   it('selects an entry when it is clicked', () => {
