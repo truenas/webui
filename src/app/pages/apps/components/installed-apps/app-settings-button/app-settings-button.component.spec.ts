@@ -72,6 +72,7 @@ describe('AppSettingsButtonComponent', () => {
       }),
       mockProvider(AppsStore, {
         loadCatalog: jest.fn(() => of({})),
+        initialize: jest.fn(),
       }),
       mockProvider(FormSidePanelService, {
         open: jest.fn(() => SlideInResult.cancel()),
@@ -103,7 +104,7 @@ describe('AppSettingsButtonComponent', () => {
       await menu.clickItem({ label: 'Choose Pool' });
 
       expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(SelectPoolDialog, { viewContainerRef });
-      expect(spectator.inject(AppsStore).loadCatalog).toHaveBeenCalled();
+      expect(spectator.inject(AppsStore).initialize).toHaveBeenCalled();
     });
 
     it('shows Unset Pool modal once Settings button -> Unset Pool clicked', async () => {
