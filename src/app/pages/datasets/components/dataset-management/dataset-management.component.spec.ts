@@ -7,7 +7,8 @@ import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/sp
 import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
-import { of, Subject } from 'rxjs';
+import { NEVER, of, Subject } from 'rxjs';
+import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
@@ -24,6 +25,7 @@ import { DatasetsManagementComponent } from 'app/pages/datasets/components/datas
 import { DatasetNodeComponent } from 'app/pages/datasets/components/dataset-node/dataset-node.component';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
 import { mockSharingTierService } from 'app/pages/sharing/components/testing/mock-sharing-tier.utils';
+import { WebUiDatasetDetailsEntry } from 'app/services/dataset/webui-dataset-details.utils';
 import { ApiCallError } from 'app/services/errors/error.classes';
 
 describe('DatasetsManagementComponent', () => {
@@ -145,6 +147,23 @@ describe('DatasetsManagementComponent', () => {
     tierJobUpdates$.next({ tier_job_id: 'pool/dataset@1' } as ZfsTierRewriteJobEntry);
 
     expect(store.refreshDatasets).toHaveBeenCalledTimes(1);
+  });
+
+  it('refreshes the datasets in the background once a burst of dataset changes settles', async () => {
+    jest.useFakeTimers();
+    const store = spectator.inject(DatasetTreeStore);
+    const api = spectator.inject(MockApiService);
+    spectator.detectChanges();
+    await jest.advanceTimersByTimeAsync(0);
+
+    api.emitEvent('zfs.resource.list', { msg: 'removed', collection: 'zfs.resource.list', id: 'pool/old' });
+    api.emitEvent('zfs.resource.list', { msg: 'removed', collection: 'zfs.resource.list', id: 'pool/older' });
+    await jest.advanceTimersByTimeAsync(999);
+    expect(store.refreshDatasets).not.toHaveBeenCalled();
+
+    await jest.advanceTimersByTimeAsync(1);
+    expect(store.refreshDatasets).toHaveBeenCalledTimes(1);
+    jest.useRealTimers();
   });
 
   it('filters the tree while no dataset is selected', async () => {
@@ -286,11 +305,16 @@ describe('DatasetsManagementComponent', () => {
 // With the real store: the reload a create starts unmounts the details panel, which a mocked store never does.
 describe('DatasetsManagementComponent opening a dataset just created', () => {
   let spectator: SpectatorRouting<DatasetsManagementComponent>;
-  /** One subject per `pool.dataset.details` call, answered by the test. */
-  let answers: Subject<DatasetDetails[]>[];
+  /** One subject per `webui.dataset.details` call, answered by the test. */
+  let answers: Subject<WebUiDatasetDetailsEntry[]>[];
 
-  const pool = { id: 'pool', name: 'pool', children: [] as DatasetDetails[] } as DatasetDetails;
-  const created = { id: 'pool/new', name: 'pool/new', children: [] as DatasetDetails[] } as DatasetDetails;
+  function row(name: string): WebUiDatasetDetailsEntry {
+    return {
+      id: name, name, properties: {}, user_properties: {}, consumers: {}, tasks: {},
+    } as WebUiDatasetDetailsEntry;
+  }
+  const pool = row('pool');
+  const created = row('pool/new');
 
   const createComponent = createRoutingFactory({
     component: DatasetsManagementComponent,
@@ -314,20 +338,21 @@ describe('DatasetsManagementComponent opening a dataset just created', () => {
       mockAuth(),
       mockProvider(ApiService, {
         call: jest.fn((method: string) => {
-          if (method !== 'pool.dataset.details') {
+          if (method !== 'webui.dataset.details') {
             return of({ pool: 'pool' });
           }
-          const answer$ = new Subject<DatasetDetails[]>();
+          const answer$ = new Subject<WebUiDatasetDetailsEntry[]>();
           answers.push(answer$);
           return answer$;
         }),
+        subscribe: jest.fn(() => NEVER),
       }),
       mockSharingTierService({ jobUpdates$: new Subject<ZfsTierRewriteJobEntry>() }),
     ],
   });
 
-  /** Answers the latest `pool.dataset.details` call. */
-  async function respond(datasets: DatasetDetails[]): Promise<void> {
+  /** Answers the latest `webui.dataset.details` call. */
+  async function respond(datasets: WebUiDatasetDetailsEntry[]): Promise<void> {
     const answer$ = answers[answers.length - 1];
     answer$.next(datasets);
     answer$.complete();
@@ -349,7 +374,7 @@ describe('DatasetsManagementComponent opening a dataset just created', () => {
     await spectator.fixture.whenStable();
     expect(router.navigate).not.toHaveBeenCalledWith(['/datasets', 'pool/new']);
 
-    await respond([{ ...pool, children: [created] }]);
+    await respond([pool, created]);
 
     expect(router.navigate).toHaveBeenCalledWith(['/datasets', 'pool/new']);
     expect(store.pendingSelectionId()).toBeNull();

@@ -1,4 +1,4 @@
-import { CallParams, CallResponse } from '@truenas/api-client';
+import { CallParams } from '@truenas/api-client';
 import { AclMode } from 'app/enums/acl-type.enum';
 import {
   DatasetAclType,
@@ -186,22 +186,26 @@ export interface DatasetDetails {
   refquota: ZfsProperty<string, number>;
   refreservation: ZfsProperty<string, number>;
   reservation: ZfsProperty<string, number>;
-  snapshot_count?: number;
-  replication_tasks_count?: number;
-  snapshot_tasks_count?: number;
-  cloudsync_tasks_count?: number;
-  rsync_tasks_count?: number;
-  smb_shares?: NamedDatasetShareSummary[];
-  nfs_shares?: DatasetShareSummary[];
-  iscsi_shares?: (DatasetShareSummary & { type: IscsiExtentType })[];
-  nvmet_shares?: DatasetShareSummary[];
-  vms?: { name: string; path: string }[];
-  apps?: { name: string; path: string }[];
-  containers?: { name: string; path: string }[];
-  webshare_shares?: NamedDatasetShareSummary[];
+  /*
+   * Counts and consumer lists are `null` when the user may not see them (each needs the role of the method it is
+   * read from, e.g. `snapshot_count` needs SNAPSHOT_READ). Hide those rather than showing them as empty.
+   */
+  snapshot_count?: number | null;
+  replication_tasks_count?: number | null;
+  snapshot_tasks_count?: number | null;
+  cloudsync_tasks_count?: number | null;
+  rsync_tasks_count?: number | null;
+  smb_shares?: NamedDatasetShareSummary[] | null;
+  nfs_shares?: DatasetShareSummary[] | null;
+  iscsi_shares?: (DatasetShareSummary & { type: IscsiExtentType })[] | null;
+  nvmet_shares?: DatasetShareSummary[] | null;
+  vms?: { name: string; path: string }[] | null;
+  apps?: { name: string; path: string }[] | null;
+  containers?: { name: string; path: string }[] | null;
+  webshare_shares?: NamedDatasetShareSummary[] | null;
   children?: DatasetDetails[];
   volsize?: ZfsProperty<string, number>; // Present for type === DatasetType.Volume
-  thick_provisioned?: boolean; // Present for type === DatasetType.Volume
+  thick_provisioned?: boolean | null; // `null` for filesystems
   atime: ZfsProperty<OnOff, boolean>;
   casesensitivity: ZfsProperty<DatasetCaseSensitivity, string>;
   origin: ZfsProperty<string>;
@@ -230,14 +234,6 @@ export type SwatchColors = Partial<Record<DiskSpaceKey, { backgroundColor: strin
  */
 export function toDataset(dataset: WebUiQueryEntity<'pool.dataset.query'>): Dataset {
   return dataset as unknown as Dataset;
-}
-
-/**
- * Reads `pool.dataset.details` into `DatasetDetails`. Middleware declares the response as a list of loose
- * records, so there is nothing in the generated type to check this against.
- */
-export function toDatasetDetails(details: CallResponse<WebUiApiDirectory, 'pool.dataset.details'>): DatasetDetails[] {
-  return details as unknown as DatasetDetails[];
 }
 
 /** What `pool.dataset.create` takes, as middleware declares it. */

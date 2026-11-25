@@ -34,7 +34,7 @@ export const datasetProperties = [
 ];
 
 /** Native names the storage pages know by their `pool.dataset` names. */
-const renamedProperties: Record<string, string> = {
+export const renamedProperties: Record<string, string> = {
   dedup: 'deduplication',
   encryption: 'encryption_algorithm',
   keyformat: 'key_format',

@@ -20,7 +20,7 @@ import {
   TnTreeFlatDataSource, TnTreeFlattener, type TnTreeExpansion, createFlatTreeControl,
 } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
-import { filter, map } from 'rxjs/operators';
+import { debounceTime, filter, map } from 'rxjs/operators';
 import { datasetEmptyConfig, noSearchResultsConfig } from 'app/constants/empty-configs';
 import { ContentVirtualScrollableDirective } from 'app/directives/content-virtual-scrollable/content-virtual-scrollable.directive';
 import { DetailsHeightDirective } from 'app/directives/details-height/details-height.directive';
@@ -44,6 +44,9 @@ import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service
 import { datasetNameSortComparer } from 'app/pages/datasets/utils/dataset.utils';
 import { getTreeBranchToNode } from 'app/pages/datasets/utils/get-tree-branch-to-node.utils';
 import { SharingTierService } from 'app/pages/sharing/components/sharing-tier.service';
+
+/** How long `zfs.resource.list` events must be quiet before the tree is refreshed. */
+const datasetChangeDebounceMs = 1000;
 
 @Component({
   selector: 'ix-dataset-management',
@@ -237,6 +240,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(() => this.cdr.markForCheck());
     this.listenForTierJobs();
+    this.listenForDatasetChanges();
   }
 
   ngAfterViewInit(): void {
@@ -256,7 +260,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   /**
    * Refreshes the tree when a tier rewrite job appears, changes status or ends, since the details card's
-   * own reload can beat the job into `pool.dataset.details`. `refreshDatasets`, because a load would
+   * own reload can beat the job into `webui.dataset.details`. `refreshDatasets`, because a load would
    * unmount the details panel. The topic only carries these transitions; progress is on the per-job
    * topic this page doesn't follow, so a running migration can't cause a refresh loop.
    */
@@ -265,6 +269,17 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
       destroyRef: this.destroyRef,
       reload: () => this.datasetStore.refreshDatasets(),
     });
+  }
+
+  /**
+   * Keeps the tree current when datasets change outside this page (another tab, a user, a task): `zfs.resource.list`
+   * reports every create, rename, property change and delete. Shares, tasks and snapshots send nothing there, so the
+   * page's own actions still reload after them. A burst (a recursive change, a replication) settles into one refresh.
+   */
+  private listenForDatasetChanges(): void {
+    this.api.subscribe('zfs.resource.list')
+      .pipe(debounceTime(datasetChangeDebounceMs), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.datasetStore.refreshDatasets());
   }
 
   private listenForLoading(): void {

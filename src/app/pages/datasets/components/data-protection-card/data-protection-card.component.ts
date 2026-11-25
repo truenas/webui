@@ -13,6 +13,10 @@ import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form
 import { dataProtectionCardElements } from 'app/pages/datasets/components/data-protection-card/data-protection-card.elements';
 import { SnapshotAddFormComponent } from 'app/pages/datasets/modules/snapshots/snapshot-add-form/snapshot-add-form.component';
 
+function isKnownCount(count: number | null | undefined): boolean {
+  return count !== null && count !== undefined;
+}
+
 @Component({
   selector: 'ix-data-protection-card',
   templateUrl: './data-protection-card.component.html',
@@ -38,10 +42,18 @@ export class DataProtectionCardComponent {
   protected readonly requiredRoles = [Role.SnapshotWrite];
   protected readonly searchableElements = dataProtectionCardElements;
 
-  protected readonly backupTasksLabel = computed<string>(() => {
-    const replicationCount = this.dataset()?.replication_tasks_count || 0;
-    const cloudSyncCount = this.dataset()?.cloudsync_tasks_count || 0;
-    const rsyncCount = this.dataset()?.rsync_tasks_count || 0;
+  /** A count is `null` when the user may not see it, and its row is left out. */
+  protected readonly hasSnapshotCount = computed(() => isKnownCount(this.dataset().snapshot_count));
+  protected readonly hasSnapshotTasksCount = computed(() => isKnownCount(this.dataset().snapshot_tasks_count));
+
+  /**
+   * The replication, cloud sync and rsync counts, or `null` to hide the row: when the user may see none of them,
+   * or when the ones they may see are all zero, since "No Backup Tasks" would not be known to be true.
+   */
+  protected readonly backupTasksLabel = computed<string | null>(() => {
+    const dataset = this.dataset();
+    const counts = [dataset.replication_tasks_count, dataset.cloudsync_tasks_count, dataset.rsync_tasks_count];
+    const [replicationCount, cloudSyncCount, rsyncCount] = counts.map((count) => count || 0);
 
     const parts: string[] = [];
 
@@ -61,11 +73,11 @@ export class DataProtectionCardComponent {
       );
     }
 
-    if (parts.length === 0) {
-      return this.translate.instant('No Backup Tasks');
+    if (parts.length) {
+      return parts.join(', ');
     }
 
-    return parts.join(', ');
+    return counts.some((count) => count === null) ? null : this.translate.instant('No Backup Tasks');
   });
 
   addSnapshot(): void {

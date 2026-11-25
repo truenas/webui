@@ -4,6 +4,12 @@ import { NEVER, of, Subject, throwError } from 'rxjs';
 import { DatasetDetails } from 'app/interfaces/dataset.interface';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DatasetTreeStore } from 'app/pages/datasets/store/dataset-store.service';
+import { toDatasetDetails } from 'app/services/dataset/webui-dataset-details.utils';
+
+// The ordering of fetches is under test here; reading the rows has its own spec.
+jest.mock('app/services/dataset/webui-dataset-details.utils', () => ({
+  toDatasetDetails: jest.fn((rows: unknown) => rows),
+}));
 
 describe('DatasetTreeStore', () => {
   let spectator: SpectatorService<DatasetTreeStore>;
@@ -27,7 +33,7 @@ describe('DatasetTreeStore', () => {
     providers: [mockProvider(ApiService)],
   });
 
-  /** Each call to `pool.dataset.details` gets the next subject, answered by the test. */
+  /** Each call to `webui.dataset.details` gets the next subject, answered by the test. */
   function mockAnswers(count: number): Subject<DatasetDetails[]>[] {
     const answers = Array.from({ length: count }, () => new Subject<DatasetDetails[]>());
     const mock = jest.spyOn(api, 'call');
@@ -50,12 +56,13 @@ describe('DatasetTreeStore', () => {
 
     spectator.service.loadDatasets();
 
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.details');
+    expect(api.call).toHaveBeenCalledWith('webui.dataset.details');
     expect(spectator.service.isLoading()).toBe(true);
     expect(spectator.service.datasets()).toEqual([]);
 
     respond(load$, datasets);
 
+    expect(jest.mocked(toDatasetDetails).mock.calls[0][0]).toBe(datasets);
     expect(spectator.service.isLoading()).toBe(false);
     expect(spectator.service.error()).toBeNull();
     expect(spectator.service.datasets()).toEqual(datasets);
@@ -77,7 +84,7 @@ describe('DatasetTreeStore', () => {
 
       spectator.service.refreshDatasets();
 
-      expect(api.call).toHaveBeenCalledWith('pool.dataset.details');
+      expect(api.call).toHaveBeenCalledWith('webui.dataset.details');
       expect(spectator.service.isLoading()).toBe(false);
 
       respond(refresh$, datasets);
@@ -217,7 +224,7 @@ describe('DatasetTreeStore', () => {
 
     spectator.service.datasetUpdated();
 
-    expect(api.call).toHaveBeenCalledWith('pool.dataset.details');
+    expect(api.call).toHaveBeenCalledWith('webui.dataset.details');
     expect(spectator.service.datasets()).toEqual(datasets);
   });
 

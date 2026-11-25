@@ -43,7 +43,7 @@ export const snapshotLocators = {
     takeSnapshot: '[data-test="button-create-snapshot"]',
     /** "View Snapshots" — the list, scoped to this dataset. See {@link datasetScopeLocators}. */
     viewSnapshots: '[data-test="link-manage-snapshots"]',
-    /** The Snapshot Tasks count, `snapshot_tasks_count` from `pool.dataset.details`. */
+    /** The Snapshot Tasks count, `tasks.snapshot` from `webui.dataset.details`. */
     snapshotTasks: '[data-test="text-data-protection-snapshot-tasks"]',
     /**
      * "View Snapshot Tasks" — the full Periodic Snapshot Tasks list, scoped to

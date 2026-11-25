@@ -475,5 +475,40 @@ describe('UsageCardComponent', () => {
 
       expect(spectator.component.canCreateShare()).toBe(true);
     });
+
+    it('returns false when the user may not see one of the consumer lists', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        name: 'pool/eligible-dataset',
+        smb_shares: null,
+        nfs_shares: [],
+        iscsi_shares: [],
+        webshare_shares: [],
+        apps: [],
+        vms: [],
+        containers: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.component.canCreateShare()).toBe(false);
+      expect(spectator.query('.details-item .label')).not.toHaveText('Not Shared');
+    });
+
+    it('leaves the card out when it has no row to show', () => {
+      spectator.setInput('dataset', {
+        ...datasetDummy,
+        name: 'pool/hidden-consumers',
+        smb_shares: null,
+        nfs_shares: null,
+        iscsi_shares: null,
+        webshare_shares: [],
+        apps: [],
+        vms: [],
+        containers: [],
+      });
+      spectator.setInput('hasChildrenWithShares', false);
+
+      expect(spectator.query('tn-card')).not.toExist();
+    });
   });
 });
