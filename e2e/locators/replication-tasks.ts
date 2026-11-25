@@ -180,6 +180,10 @@ export const replicationTaskLocators = {
      * Regular Expression`. Naming Schema is picked when it appears.
      */
     schemaOrRegex: schemaOrRegexRadio,
+    /** One naming schema, spaces and all; shown while Naming Schema is picked. */
+    namingSchema: '[data-test="input-naming-schema"]',
+    /** `{count} snapshots found.`, once a count of the source's snapshots succeeds. */
+    snapshotsFound: '[data-test="text-snapshots"]',
     /**
      * The regular expression. Required whenever it is shown, which a source on a
      * different system leaves it until the radio is moved — see

@@ -21,6 +21,7 @@ import { LifetimeUnit } from 'app/enums/lifetime-unit.enum';
 import { ReadOnlyMode } from 'app/enums/readonly-mode.enum';
 import { RetentionPolicy } from 'app/enums/retention-policy.enum';
 import { TransportMode } from 'app/enums/transport-mode.enum';
+import { KeychainCredential } from 'app/interfaces/keychain-credential.interface';
 import { PeriodicSnapshotTask } from 'app/interfaces/periodic-snapshot-task.interface';
 import { ReplicationTask } from 'app/interfaces/replication-task.interface';
 import { LocaleService } from 'app/modules/language/locale.service';
@@ -79,7 +80,9 @@ describe('ReplicationWizardComponent', () => {
     providers: [
       mockAuth(),
       mockApi([
-        mockQuery('keychaincredential.query', []),
+        mockQuery('keychaincredential.query', [
+          { id: 7, name: 'root-ssh-connection', attributes: { username: 'root' } },
+        ] as KeychainCredential[]),
         mockQuery('replication.query', []),
         mockCall('replication.count_eligible_manual_snapshots', { total: 0, eligible: 0 }),
         mockCall('replication.target_unmatched_snapshots', {}),
@@ -252,5 +255,30 @@ describe('ReplicationWizardComponent', () => {
         dom: '*', dow: '*', hour: '0', minute: '0', month: '*',
       },
     }]);
+  });
+
+  it('sends a naming schema with a space unsplit when a pull task is submitted', async () => {
+    const spacedSchema = 'media weekly-%Y-%m-%d_%H-%M';
+    await selectTnOption('source_datasets_from', 'On a Different System');
+    await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('root-ssh-connection');
+    // A remote source starts with the regex field enabled as well; moving the radio away and back turns it off.
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Snapshot Name Regular Expression' }))).check();
+    await (await loader.getHarness(TnRadioHarness.with({ label: 'Naming Schema' }))).check();
+    await setTnInput('naming_schema', spacedSchema);
+    await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="source_datasets"]' }))).setValue(['remote/source']);
+    await (await loader.getHarness(TnFilePickerHarness.with({ selector: '[formControlName="target_dataset"]' }))).setValue('pool3/');
+
+    await goToNextStep();
+
+    const api = spectator.inject(ApiService);
+    jest.mocked(api.call).mockClear();
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Save' }))).click();
+
+    expect(api.call).toHaveBeenCalledWith('replication.count_eligible_manual_snapshots', [
+      expect.objectContaining({ naming_schema: [spacedSchema] }),
+    ]);
+    expect(api.call).toHaveBeenCalledWith('replication.create', [
+      expect.objectContaining({ direction: Direction.Pull, naming_schema: [spacedSchema] }),
+    ]);
   });
 });

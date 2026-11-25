@@ -96,6 +96,11 @@ export async function finishReplicationWhatAndWhere(
   await expect(page.locator(wizard.runOnce)).toBeVisible();
 }
 
+/** Types a pull's source, as a dataset name on the remote system, after {@link chooseRemoteReplicationSource}. */
+export async function fillRemoteReplicationSource(page: Page, source: string): Promise<void> {
+  await fillExplorer(page, replicationTaskLocators.wizard.sourceDatasets, source);
+}
+
 /** Fills What and Where for a replication from one dataset on this appliance to another. */
 export async function fillLocalReplication(
   page: Page,
