@@ -328,17 +328,15 @@ describe('ReplicationWhatAndWhereComponent', () => {
       await (await getSelect('source_datasets_from')).selectOption('On a Different System');
       await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
       await (await getExplorer('source_datasets')).setValue(['pool1', 'pool2']);
-      // The harnesses wait on timers of their own, so fake time also runs with the clock.
-      jest.useFakeTimers({ advanceTimers: true });
     });
 
-    afterEach(() => {
-      jest.useRealTimers();
-    });
-
+    // The setup above has already started the 300 ms count debounce on real timers, so fake timers
+    // installed now would race it. A longer real wait lets every pending debounce fire first.
     const enterNamingSchema = async (schema: string): Promise<void> => {
       await (await getInput('naming_schema')).setValue(schema);
-      await jest.advanceTimersByTimeAsync(300);
+      await new Promise((resolve) => {
+        setTimeout(resolve, 400);
+      });
       await spectator.fixture.whenStable();
     };
 
