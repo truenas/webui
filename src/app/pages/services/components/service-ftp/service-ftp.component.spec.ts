@@ -200,6 +200,28 @@ describe('ServiceFtpComponent', () => {
     }]);
   });
 
+  it('blocks Save while TLS is on without a certificate, and sends TLS on once one is picked', async () => {
+    const advancedOptionsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
+    await advancedOptionsButton.click();
+
+    await form.fillForm({ 'Enable TLS': false });
+    await form.fillForm({ 'Enable TLS': true });
+
+    const saveButton = await loader.getHarness(MatButtonHarness.with({ text: 'Save' }));
+    expect(await saveButton.isDisabled()).toBe(true);
+
+    await form.fillForm({ Certificate: 'Secure certificate' });
+    expect(await saveButton.isDisabled()).toBe(false);
+
+    await saveButton.click();
+
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('ftp.update', [{
+      ...existingFtpConfig,
+      tls: true,
+      ssltls_certificate: 1,
+    }]);
+  });
+
   it('does not show TLS fields when TLS is off', async () => {
     const advancedOptionsButton = await loader.getHarness(MatButtonHarness.with({ text: 'Advanced Options' }));
     await advancedOptionsButton.click();
