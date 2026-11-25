@@ -71,7 +71,8 @@ export class AppSettingsButtonComponent {
       .open(SelectPoolDialog, { viewContainerRef: this.viewContainerRef })
       .closed
       .pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef))
-      .subscribe(() => this.appsStore.loadCatalog());
+      // The catalog lives on the apps pool, so a new pool means a new catalog.
+      .subscribe(() => this.appsStore.initialize());
   }
 
   onUnsetPool(): void {
