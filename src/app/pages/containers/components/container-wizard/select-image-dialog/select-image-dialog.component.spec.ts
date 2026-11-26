@@ -8,6 +8,7 @@ import {
   mockProvider,
   Spectator,
 } from '@ngneat/spectator/jest';
+import { TnIconHarness } from '@truenas/ui-components';
 import {
   mockCall,
   mockApi,
@@ -135,6 +136,14 @@ describe('SelectImageDialogComponent', () => {
         instance_types: [ContainerType.Container],
         secureboot: null,
       });
+    });
+
+    it('shows an × close button with an accessible name', async () => {
+      const closeButton = await loader.getHarness(
+        MatButtonHarness.with({ selector: '[aria-label="Close Container Form"]' }),
+      );
+
+      expect(await closeButton.getHarnessOrNull(TnIconHarness.with({ name: 'close' }))).not.toBeNull();
     });
 
     it('closes the dialog when X icon is pressed', () => {
