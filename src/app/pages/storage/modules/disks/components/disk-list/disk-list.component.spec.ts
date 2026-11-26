@@ -14,6 +14,7 @@ import {
   BehaviorSubject, NEVER, of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
+import { MockAuthService } from 'app/core/testing/classes/mock-auth.service';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import {
   mockApi, mockCall, mockJob, mockQuery,
@@ -23,6 +24,7 @@ import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
+import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
@@ -983,6 +985,23 @@ describe('DiskListComponent - unlocking the disks of a pool that did not import'
         message: 'The SED disks of pool sedpool are unlocked. Import the pool now to bring it back online?',
       }));
       expect(api.job).toHaveBeenCalledWith('pool.reimport', [7]);
+    });
+  });
+
+  describe('for a user who can unlock disks but not write to pools', () => {
+    const createComponent = createFactory(['sdc'], [offlinePool]);
+
+    it('does not offer an import that pool.reimport would refuse', async () => {
+      spectator = createComponent();
+      // The mock grants every role by default; this user has disk write only.
+      spectator.inject(MockAuthService).hasRole.mockImplementation(
+        (roles: Role[]) => of(roles.every((role) => role === Role.DiskWrite)),
+      );
+
+      await unlockFirstDisk();
+
+      expect(spectator.inject(ApiService).query).not.toHaveBeenCalledWith('pool.query', expect.anything());
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
     });
   });
 

@@ -36,6 +36,7 @@ import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import {
   Disk, DetailsDisk, toDisk, toDiskDetails,
 } from 'app/interfaces/disk.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
@@ -152,6 +153,7 @@ export class DiskListComponent {
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
   private dialogService = inject(DialogService);
+  private authService = inject(AuthService);
   private snackbar = inject(SnackbarService);
   private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
@@ -538,9 +540,13 @@ export class DiskListComponent {
    * pool can be imported — but nothing on this page shows that pool, so ask here rather than leave
    * the user to find Import Again on the Storage Dashboard. Disks of a pool that is not configured
    * also report an `exported_zpool`; `pool.query` only knows configured ones, so those get no prompt.
+   * Unlocking needs only `DISK_WRITE`, but `pool.reimport` needs `POOL_WRITE`: without it, no prompt.
    */
   private offerReimport(poolName: string): void {
-    this.api.query('pool.query', [['name', '=', poolName], ['status', '=', PoolStatus.Offline]]).pipe(
+    this.authService.hasRole([Role.PoolWrite]).pipe(
+      take(1),
+      filter(Boolean),
+      switchMap(() => this.api.query('pool.query', [['name', '=', poolName], ['status', '=', PoolStatus.Offline]])),
       switchMap(([pool]) => {
         if (!pool) {
           return EMPTY;
