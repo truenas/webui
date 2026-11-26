@@ -61,11 +61,11 @@
       </div>
     </div>
 
-    @if (isSedLocked()) {
-      <ix-sed-locked-warning
+    @if (isOffline()) {
+      <ix-offline-pool-warning
         [pool]="pool()"
         (importSuccess)="onImportSuccess()"
-      ></ix-sed-locked-warning>
+      ></ix-offline-pool-warning>
     }
 
     <div class="cards">

@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import { TnIconComponent } from '@truenas/ui-components';
 import {
-  catchError, defer, filter, forkJoin, map, Observable, of, Subject, switchMap, take,
+  catchError, defer, EMPTY, filter, forkJoin, map, Observable, of, Subject, switchMap, take,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
 import { UiSearchDirective } from 'app/directives/ui-search.directive';
@@ -17,11 +17,14 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { Disk, DetailsDisk } from 'app/interfaces/disk.interface';
 import { EmptyConfig } from 'app/interfaces/empty-config.interface';
+import { AuthService } from 'app/modules/auth/auth.service';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { AsyncDataProvider } from 'app/modules/ix-table/classes/async-data-provider/async-data-provider';
@@ -40,6 +43,7 @@ import { createTable } from 'app/modules/ix-table/utils';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { SlideIn } from 'app/modules/slide-ins/slide-in';
 import { SlideInResponse } from 'app/modules/slide-ins/slide-in.interface';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
@@ -53,6 +57,7 @@ import { sedStatusColumn } from 'app/pages/storage/modules/disks/components/disk
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { EntitlementsService } from 'app/services/entitlements.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 // TODO: Exclude AnythingUi when NAS-127632 is done
 interface DiskUi extends Disk {
@@ -90,6 +95,10 @@ export class DiskListComponent implements OnInit {
   private matDialog = inject(MatDialog);
   private translate = inject(TranslateService);
   private slideIn = inject(SlideIn);
+  private dialogService = inject(DialogService);
+  private authService = inject(AuthService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
   private cdr = inject(ChangeDetectorRef);
   private entitlements = inject(EntitlementsService);
@@ -335,7 +344,7 @@ export class DiskListComponent implements OnInit {
   }
 
   protected wipe(disk: Disk): void {
-    const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
+    const exportedPool = this.exportedPoolOf(disk);
     const dialog = this.matDialog.open(DiskWipeDialog, {
       data: {
         diskName: disk.name,
@@ -351,7 +360,17 @@ export class DiskListComponent implements OnInit {
     this.matDialog.open(UnlockSedDialog, {
       data: { diskName: disk.name },
     }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      // Read before reloading: the rows still hold which of the pool's other disks are locked.
+      const poolName = this.exportedPoolOf(disk);
+      const poolStillLocked = Boolean(poolName) && this.disks.some((other) => {
+        return other.name !== disk.name && this.isSedLocked(other) && this.exportedPoolOf(other) === poolName;
+      });
+
       this.dataProvider.load();
+
+      if (poolName && !poolStillLocked) {
+        this.offerReimport(poolName);
+      }
     });
   }
 
@@ -366,6 +385,50 @@ export class DiskListComponent implements OnInit {
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.dataProvider.load());
+  }
+
+  /**
+   * After the last locked disk of a configured pool that failed to import at boot is unlocked, the
+   * pool can be imported — but nothing on this page shows that pool, so ask here rather than leave
+   * the user to find Import Again on the Storage Dashboard. Disks of a pool that is not configured
+   * also report an `exported_zpool`; `pool.query` only knows configured ones, so those get no prompt.
+   * Unlocking needs only `DISK_WRITE`, but `pool.reimport` needs `POOL_WRITE`: without it, no prompt.
+   */
+  private offerReimport(poolName: string): void {
+    this.authService.hasRole([Role.PoolWrite]).pipe(
+      take(1),
+      filter(Boolean),
+      switchMap(() => this.api.call('pool.query', [[['name', '=', poolName], ['status', '=', PoolStatus.Offline]]])),
+      switchMap(([pool]) => {
+        if (!pool) {
+          return EMPTY;
+        }
+        return this.dialogService.confirm({
+          title: this.translate.instant('Import Pool'),
+          message: this.translate.instant(
+            'The SED disks of pool {pool} are unlocked. Import the pool now to bring it back online?',
+            { pool: poolName },
+          ),
+          buttonText: this.translate.instant('Import'),
+          hideCheckbox: true,
+        }).pipe(
+          filter(Boolean),
+          switchMap(() => this.dialogService.jobDialog(
+            this.api.job('pool.reimport', [pool.id]),
+            { title: this.translate.instant('Importing Pool') },
+          ).afterClosed()),
+        );
+      }),
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Pool imported successfully.'));
+      this.dataProvider.load();
+    });
+  }
+
+  private exportedPoolOf(disk: Disk): string | undefined {
+    return this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
   }
 
   protected resetSed(disk: Disk): void {
