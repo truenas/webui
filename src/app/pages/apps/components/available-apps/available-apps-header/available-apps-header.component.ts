@@ -19,12 +19,10 @@ import { Role } from 'app/enums/role.enum';
 import { helptextApps } from 'app/helptext/apps/apps';
 import { AppsFiltersSort } from 'app/interfaces/apps-filters-values.interface';
 import { Option } from 'app/interfaces/option.interface';
-import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ChipsProvider } from 'app/modules/forms/ix-forms/components/ix-chips/chips-provider';
 import { IxChipsComponent } from 'app/modules/forms/ix-forms/components/ix-chips/ix-chips.component';
 import { IxInputComponent } from 'app/modules/forms/ix-forms/components/ix-input/ix-input.component';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { ApiService } from 'app/modules/websocket/api.service';
 import { FilterSelectListComponent } from 'app/pages/apps/components/filter-select-list/filter-select-list.component';
 import { AppsFilterStore } from 'app/pages/apps/store/apps-filter-store.service';
 import { AppsStore } from 'app/pages/apps/store/apps-store.service';
@@ -54,10 +52,8 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 })
 export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   private fb = inject(FormBuilder);
-  private api = inject(ApiService);
   private translate = inject(TranslateService);
   private cdr = inject(ChangeDetectorRef);
-  private dialogService = inject(DialogService);
   protected applicationsStore = inject(AppsStore);
   protected appsFilterStore = inject(AppsFilterStore);
   protected installedAppsStore = inject(InstalledAppsStore);
@@ -142,14 +138,7 @@ export class AvailableAppsHeaderComponent implements OnInit, AfterViewInit {
   }
 
   refreshCatalog(): void {
-    this.dialogService.jobDialog(
-      this.api.job('catalog.sync'),
-      {
-        title: this.translate.instant(helptextApps.refreshing),
-        canMinimize: true,
-      },
-    )
-      .afterClosed()
+    this.applicationsStore.syncCatalog({ title: this.translate.instant(helptextApps.refreshing) })
       .pipe(
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),

@@ -1,10 +1,12 @@
 import { SpectatorService, createServiceFactory, mockProvider } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, firstValueFrom, filter, throwError } from 'rxjs';
+import {
+  EMPTY, Observable, of, firstValueFrom, filter, throwError,
+} from 'rxjs';
 import { TestScheduler } from 'rxjs/testing';
 import { JobProgressDialogRef } from 'app/classes/job-progress-dialog-ref.class';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
 import { getTestScheduler } from 'app/core/testing/utils/get-test-scheduler.utils';
-import { mockJob } from 'app/core/testing/utils/mock-api.utils';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { ApiEvent } from 'app/interfaces/api-message.interface';
 import { App } from 'app/interfaces/app.interface';
@@ -71,7 +73,7 @@ describe('AppsStore', () => {
         showErrorModal: jest.fn(),
       }),
       mockProvider(ApiService, {
-        job: jest.fn(() => mockJob('catalog.sync')),
+        job: jest.fn(() => of(fakeSuccessfulJob())),
       }),
       mockProvider(TranslateService, {
         instant: jest.fn((key: string) => key),
@@ -171,7 +173,7 @@ describe('AppsStore', () => {
           showErrorModal: jest.fn(),
         }),
         mockProvider(ApiService, {
-          job: jest.fn(() => mockJob('catalog.sync')),
+          job: jest.fn(() => of(fakeSuccessfulJob())),
         }),
         mockProvider(TranslateService, {
           instant: jest.fn((key: string) => key),
@@ -270,13 +272,8 @@ describe('AppsStore', () => {
     });
 
     it('handles sync job failure gracefully', async () => {
-      const errorMockDialogRef = {
-        afterClosed: jest.fn(() => throwError(() => new Error('Sync failed'))),
-        getDestroyRef: jest.fn(),
-      } as unknown as JobProgressDialogRef<unknown>;
-
-      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(errorMockDialogRef);
       jest.clearAllMocks();
+      jest.spyOn(emptySpectator.inject(ApiService), 'job').mockReturnValueOnce(throwError(() => new Error('Sync failed')));
 
       emptySpectator.service.initialize();
 
@@ -297,6 +294,29 @@ describe('AppsStore', () => {
         ),
       );
       expect(isLoading).toBe(false);
+    });
+
+    it('loads the catalog once the sync finishes when its dialog was minimized', async () => {
+      // A minimized dialog is destroyed before the job settles, so `afterClosed()` completes without a value.
+      const minimizedDialogRef = {
+        afterClosed: jest.fn(() => EMPTY),
+        getDestroyRef: jest.fn(),
+      } as unknown as JobProgressDialogRef<unknown>;
+      jest.spyOn(emptySpectator.inject(DialogService), 'jobDialog').mockReturnValue(minimizedDialogRef);
+      jest.clearAllMocks();
+      jest.spyOn(appsServiceMock, 'getAvailableApps')
+        .mockReturnValueOnce(of([]) as Observable<AvailableApp[]>)
+        .mockReturnValueOnce(of(availableApps) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getLatestApps').mockReturnValue(of([]) as Observable<AvailableApp[]>);
+      jest.spyOn(appsServiceMock, 'getAllAppsCategories')
+        .mockReturnValueOnce(of([]) as Observable<string[]>)
+        .mockReturnValueOnce(of(['storage', 'media']) as Observable<string[]>);
+
+      emptySpectator.service.initialize();
+
+      expect(appsServiceMock.getAvailableApps).toHaveBeenCalledTimes(2);
+      expect(await firstValueFrom(emptySpectator.service.availableApps$)).toEqual(availableApps);
+      expect(await firstValueFrom(emptySpectator.service.isLoading$)).toBe(false);
     });
 
     it('handles individual service failures during reload after sync', async () => {

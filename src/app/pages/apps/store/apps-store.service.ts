@@ -3,11 +3,13 @@ import { ComponentStore } from '@ngrx/component-store';
 import { TranslateService } from '@ngx-translate/core';
 import {
   EMPTY,
-  Observable, catchError, combineLatest, of, switchMap, tap,
+  Observable, catchError, combineLatest, last, of, shareReplay, switchMap, tap,
 } from 'rxjs';
 import { AppExtraCategory } from 'app/enums/app-extra-category.enum';
 import { AvailableApp } from 'app/interfaces/available-app.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
+import { TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { ApplicationsService } from 'app/pages/apps/services/applications.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
@@ -128,24 +130,11 @@ export class AppsStore extends ComponentStore<AppsState> {
     // Set flag in state to prevent concurrent sync operations and turn on loading indicator
     this.patchState({ isSyncingCatalog: true, isLoading: true });
 
-    return this.dialogService.jobDialog(
-      this.api.job('catalog.sync'),
-      {
-        title: this.translate.instant('Syncing Catalog'),
-        description: this.translate.instant('The catalog is being synced for the first time. This may take a few minutes.'),
-        canMinimize: true,
-      },
-    ).afterClosed().pipe(
-      switchMap((job) => {
-        // If job completed successfully, reload catalog data
-        if (job) {
-          return this.reloadCatalogAfterSync();
-        }
-        // When dialog is minimized, afterClosed() returns undefined.
-        // The sync job continues running in background, but we skip the reload here.
-        // The catalog will remain empty until user manually refreshes or restarts the app.
-        return of(null);
-      }),
+    return this.syncCatalog({
+      title: this.translate.instant('Syncing Catalog'),
+      description: this.translate.instant('The catalog is being synced for the first time. This may take a few minutes.'),
+    }).pipe(
+      switchMap(() => this.reloadCatalogAfterSync()),
       tap(() => {
         // Always clear loading and sync flags after everything completes
         this.setLoadingState(false);
@@ -153,6 +142,20 @@ export class AppsStore extends ComponentStore<AppsState> {
       }),
       catchError(() => this.handleSyncError()),
     );
+  }
+
+  /**
+   * Runs `catalog.sync` in a job dialog the user can minimize, and emits once the job has finished.
+   *
+   * It waits for the job, not for the dialog: `afterClosed()` only emits when the job settles while the
+   * dialog is open, and completes without emitting once a minimized dialog is destroyed. Waiting on it
+   * left a minimized sync with nothing to reload the catalog when it finished. The job is shared, so the
+   * dialog and this wait observe the same run.
+   */
+  syncCatalog({ title, description }: { title: TranslatedString; description?: TranslatedString }): Observable<Job> {
+    const job$ = this.api.job('catalog.sync').pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    this.dialogService.jobDialog(job$, { title, description, canMinimize: true });
+    return job$.pipe(last());
   }
 
   /**
