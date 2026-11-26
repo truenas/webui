@@ -1,0 +1,79 @@
+<h1 mat-dialog-title>{{ 'Unlock SEDs' | translate }}</h1>
+
+<div mat-dialog-content class="content">
+  <p class="intro">{{ 'Successfully unlocking a disk will automatically update the database.' | translate }}</p>
+
+  <form class="ix-form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <ix-input
+      formControlName="password"
+      type="password"
+      [label]="'Password' | translate"
+      [hint]="'Used for every disk below that has no password of its own. Leave empty to use each disk\'s saved password or the global SED password.' | translate"
+    ></ix-input>
+
+    <div class="disks" role="list" formGroupName="passwords" [attr.aria-label]="'Locked SED disks' | translate">
+      @for (disk of lockedDisks; track disk.name) {
+        @let result = resultFor(disk.name);
+        <div class="disk" role="listitem" [attr.aria-label]="disk.name" [class.unlocked]="result?.unlocked">
+          <div class="disk-info">
+            <span class="disk-name" [ixTest]="['disk-name', disk.name]">{{ disk.name }}</span>
+            <span class="disk-meta" [ixTest]="['disk-model', disk.name]">{{ disk.model }} ({{ disk.serial }})</span>
+          </div>
+
+          @if (result?.unlocked) {
+            <div class="status status-unlocked" [ixTest]="['disk-status', disk.name]">
+              <tn-icon name="check-circle" library="mdi"></tn-icon>
+              <span>{{ 'Unlocked' | translate }}</span>
+            </div>
+          } @else {
+            <ix-input
+              type="password"
+              [formControlName]="disk.name"
+              [label]="'Password for {disk} (optional)' | translate: { disk: disk.name }"
+              [placeholder]="'Use the password above' | translate"
+            ></ix-input>
+
+            @if (result?.error) {
+              <div class="status status-failed" role="alert" [ixTest]="['disk-status', disk.name]">
+                <tn-icon name="alert-circle" library="mdi"></tn-icon>
+                <span>{{ result?.error }}</span>
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+
+    @if (skippedDisks.length) {
+      <div class="skipped">
+        <h3 class="section-title">{{ 'Skipped' | translate }}</h3>
+        <p class="section-hint">{{ 'These selected disks are not locked SEDs and will not be changed.' | translate }}</p>
+        <ul>
+          @for (disk of skippedDisks; track disk.name) {
+            <li>
+              <span [ixTest]="['skipped-disk', disk.name]"><strong>{{ disk.name }}</strong> – {{ disk.reason | translate }}</span>
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </form>
+</div>
+
+<ix-form-actions mat-dialog-actions>
+  <button mat-button type="button" ixTest="cancel" (click)="close()">
+    {{ (unlockedCount() ? 'Close' : 'Cancel') | translate }}
+  </button>
+
+  <button
+    *ixRequiresRoles="[Role.DiskWrite]"
+    mat-button
+    type="button"
+    color="primary"
+    ixTest="unlock"
+    [disabled]="isUnlocking()"
+    (click)="onSubmit()"
+  >
+    {{ (hasFailures() ? 'Retry' : 'Unlock') | translate }}
+  </button>
+</ix-form-actions>
