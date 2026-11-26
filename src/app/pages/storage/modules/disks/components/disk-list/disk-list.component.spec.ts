@@ -38,6 +38,9 @@ import {
   DiskBulkEditComponent,
 } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import {
+  BulkUnlockSedDialog,
+} from 'app/pages/storage/modules/disks/components/disk-list/bulk-unlock-sed-dialog/bulk-unlock-sed-dialog.component';
 import { DiskListComponent } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.component';
 import {
   ResetSedDialog,
@@ -441,6 +444,37 @@ describe('DiskListComponent', () => {
         },
       },
     );
+  });
+
+  it('offers a bulk SED unlock only while the selection holds a locked SED', async () => {
+    await table.toggleRowSelection(0);
+    await table.toggleRowSelection(1);
+
+    expect(await loader.getHarnessOrNull(TnButtonHarness.with({ label: /^Unlock SED/ }))).toBeNull();
+
+    await table.toggleRowSelection(2);
+
+    expect(await loader.getHarness(TnButtonHarness.with({ label: 'Unlock SED' }))).toBeTruthy();
+  });
+
+  it('opens the bulk unlock dialog with the whole selection and reloads once it closes with unlocked disks', async () => {
+    await table.toggleRowSelection(1);
+    await table.toggleRowSelection(2);
+    jest.spyOn(spectator.inject(ApiService), 'call').mockClear();
+
+    const unlockButton = await loader.getHarness(TnButtonHarness.with({ label: 'Unlock SED' }));
+    await unlockButton.click();
+
+    expect(spectator.inject(TnDialog).open).toHaveBeenCalledWith(BulkUnlockSedDialog, {
+      data: {
+        disks: [
+          expect.objectContaining({ name: 'sdb' }),
+          expect.objectContaining({ name: 'sdc', sed_status: SedStatus.Locked }),
+        ],
+      },
+      disableClose: true,
+    });
+    expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.details');
   });
 
   it('shows unlock SED dialog when Unlock button is pressed for locked SED disk', async () => {
