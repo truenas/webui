@@ -23,6 +23,15 @@ export class UserAccessCellComponent {
    */
   readonly uniqueRowTag = input.required<string>();
 
+  /**
+   * Only local accounts are shown as locked: directory services do not report lock state, so the
+   * flag on their users is synthesized and could be misleading.
+   */
+  protected readonly isLocked = computed(() => {
+    const user = this.user();
+    return user.local && user.locked;
+  });
+
   protected readonly roles = computed<string>(() => {
     return formatRoleNames(this.user().roles, (key) => this.translate.instant(key));
   });
