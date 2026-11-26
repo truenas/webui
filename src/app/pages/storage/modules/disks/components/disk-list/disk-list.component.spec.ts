@@ -14,13 +14,19 @@ import {
   BehaviorSubject, NEVER, of, Subject, throwError,
 } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
-import { mockApi, mockCall, mockQuery } from 'app/core/testing/utils/mock-api.utils';
+import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
+import {
+  mockApi, mockCall, mockJob, mockQuery,
+} from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { mockEntitlements } from 'app/core/testing/utils/mock-entitlements.utils';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { JobState } from 'app/enums/job-state.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { Disk, DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { Preferences } from 'app/interfaces/preferences.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { BasicSearchHarness } from 'app/modules/forms/search-input/components/basic-search/basic-search.harness';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
@@ -894,5 +900,114 @@ describe('DiskListComponent when the SED entitlement resolves late', () => {
     expect(spectator.query(TableColumnPickerComponent)).not.toBeNull();
     const picker = await loader.getHarness(TnSelectHarness);
     expect(await picker.getOptions()).toContain('Self-Encrypting Drive (SED)');
+  });
+});
+
+describe('DiskListComponent - unlocking the disks of a pool that did not import', () => {
+  let spectator: Spectator<DiskListComponent>;
+  let loader: HarnessLoader;
+
+  // Disks of a configured pool that failed to import at boot have no `pool`; `disk.details` reports
+  // the pool they belong to as `exported_zpool`.
+  const lockedDisk = (name: string): DetailsDisk => ({
+    name, devname: name, exported_zpool: 'sedpool', sed_status: SedStatus.Locked,
+  } as DetailsDisk);
+
+  const listedDisk = (name: string): Disk => ({
+    identifier: name, name, devname: name, serial: name, size: 5368709120, pool: null, sed: true,
+  } as Disk);
+
+  const offlinePool = { id: 7, name: 'sedpool', status: PoolStatus.Offline } as WebUiQueryEntity<'pool.query'>;
+
+  // The list loads as the component is built, so each scenario needs its own disks up front.
+  function createFactory(
+    diskNames: string[],
+    configuredPools: WebUiQueryEntity<'pool.query'>[],
+  ): () => Spectator<DiskListComponent> {
+    return createComponentFactory({
+      component: DiskListComponent,
+      imports: [
+        MockComponent(PageHeaderComponent),
+        BasicSearchComponent,
+        TableColumnPickerComponent,
+        TableDetailsRowComponent,
+      ],
+      providers: [
+        mockAuth(),
+        mockProvider(ActivatedRoute, {
+          snapshot: { queryParamMap: convertToParamMap({}) },
+          queryParamMap: of(convertToParamMap({})),
+        }),
+        mockProvider(Location),
+        mockProvider(FormSidePanelService),
+        mockProvider(TnDialog, {
+          open: jest.fn(() => ({ closed: of(true), close: jest.fn() }) as unknown as DialogRef),
+        }),
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(true)),
+          jobDialog: jest.fn(() => ({ afterClosed: () => of(fakeSuccessfulJob(true)) })),
+        }),
+        mockEntitlements(),
+        provideMockStore({
+          selectors: [{ selector: selectPreferences, value: {} }],
+        }),
+        mockApi([
+          mockQuery('disk.query', diskNames.map(listedDisk) as unknown as WebUiQueryEntity<'disk.query'>[]),
+          mockCall('disk.details', { unused: [], used: diskNames.map(lockedDisk) }),
+          mockQuery('pool.query', configuredPools),
+          mockJob('pool.reimport', { state: JobState.Success, result: true }),
+        ]),
+      ],
+    });
+  }
+
+  async function unlockFirstDisk(): Promise<void> {
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    const table = await loader.getHarness(TnTableHarness);
+    await table.toggleRowExpansion(0);
+    await (await loader.getHarness(TnButtonHarness.with({ label: 'Unlock' }))).click();
+  }
+
+  describe('when the last locked disk of a configured pool is unlocked', () => {
+    const createComponent = createFactory(['sdc'], [offlinePool]);
+
+    it('offers to import the pool and imports it with pool.reimport', async () => {
+      spectator = createComponent();
+
+      await unlockFirstDisk();
+
+      const api = spectator.inject(ApiService);
+      expect(api.query).toHaveBeenCalledWith('pool.query', [['name', '=', 'sedpool'], ['status', '=', PoolStatus.Offline]]);
+      expect(spectator.inject(DialogService).confirm).toHaveBeenCalledWith(expect.objectContaining({
+        title: 'Import Pool',
+        message: 'The SED disks of pool sedpool are unlocked. Import the pool now to bring it back online?',
+      }));
+      expect(api.job).toHaveBeenCalledWith('pool.reimport', [7]);
+    });
+  });
+
+  describe('while another disk of the pool is still locked', () => {
+    const createComponent = createFactory(['sdc', 'sdd'], [offlinePool]);
+
+    it('does not offer the import', async () => {
+      spectator = createComponent();
+
+      await unlockFirstDisk();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+      expect(spectator.inject(ApiService).job).not.toHaveBeenCalledWith('pool.reimport', expect.anything());
+    });
+  });
+
+  describe('when the disks belong to a pool that is not configured on the system', () => {
+    const createComponent = createFactory(['sdc'], []);
+
+    it('does not offer the import', async () => {
+      spectator = createComponent();
+
+      await unlockFirstDisk();
+
+      expect(spectator.inject(DialogService).confirm).not.toHaveBeenCalled();
+    });
   });
 });

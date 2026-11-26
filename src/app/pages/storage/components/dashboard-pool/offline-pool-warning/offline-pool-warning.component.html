@@ -1,0 +1,35 @@
+<div class="offline-pool-warning" role="alert">
+  <div class="warning-content">
+    <div class="warning-header">
+      <tn-icon name="alert-circle" library="mdi"></tn-icon>
+      <span class="warning-title">
+        @if (isSedLocked()) {
+          {{ 'Pool Failed to Import - SED Disks Locked' | translate }}
+        } @else {
+          {{ 'Pool Failed to Import' | translate }}
+        }
+      </span>
+    </div>
+    <p class="warning-message">
+      @if (isSedLocked()) {
+        {{ 'This pool uses Self-Encrypting Drives (SED) that are currently locked. The pool cannot be imported until the drives are unlocked with the correct password.' | translate }}
+      } @else {
+        {{ 'This pool is configured on the system but is not imported. If its disks were locked, missing or unavailable when the system started, resolve that and import the pool again.' | translate }}
+      }
+    </p>
+  </div>
+  <div class="warning-actions">
+    <tn-button
+      [testId]="['view-disks', pool().name]"
+      [label]="'View Disks' | translate"
+      (onClick)="onViewDisks()"
+    ></tn-button>
+    <tn-button
+      *ixRequiresRoles="requiredRoles"
+      color="primary"
+      [testId]="['import-again', pool().name]"
+      [label]="'Import Again' | translate"
+      (onClick)="onImportAgain()"
+    ></tn-button>
+  </div>
+</div>

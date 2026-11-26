@@ -23,11 +23,11 @@ import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
 import {
+  OfflinePoolWarningComponent,
+} from 'app/pages/storage/components/dashboard-pool/offline-pool-warning/offline-pool-warning.component';
+import {
   PoolUsageCardComponent,
 } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
-import {
-  SedLockedWarningComponent,
-} from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import {
   AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
@@ -54,7 +54,7 @@ describe('DashboardPoolComponent', () => {
       MockComponent(PoolUsageCardComponent),
       MockComponent(DiskHealthCardComponent),
       MockComponent(VDevsCardComponent),
-      MockComponent(SedLockedWarningComponent),
+      MockComponent(OfflinePoolWarningComponent),
     ],
     providers: [
       mockProvider(TnDialog, {
@@ -177,12 +177,12 @@ describe('DashboardPoolComponent', () => {
     expect(card.poolState).toBe(pool);
   });
 
-  it('does not show SED locked warning for online pool', () => {
-    const warning = spectator.query(SedLockedWarningComponent);
+  it('does not show the offline pool warning for online pool', () => {
+    const warning = spectator.query(OfflinePoolWarningComponent);
     expect(warning).toBeFalsy();
   });
 
-  it('shows SED locked warning when pool is offline with SED locked disks', () => {
+  it('shows the offline pool warning when pool is offline with SED locked disks', () => {
     spectator.setInput('pool', {
       ...pool,
       status: PoolStatus.Offline,
@@ -191,11 +191,23 @@ describe('DashboardPoolComponent', () => {
     });
     spectator.detectChanges();
 
-    const warning = spectator.query(SedLockedWarningComponent);
+    const warning = spectator.query(OfflinePoolWarningComponent);
     expect(warning).toBeTruthy();
   });
 
-  it('reloads dashboard when import success is triggered from SED warning', () => {
+  it('shows the offline pool warning once the SED disks are unlocked and middleware drops the status code', () => {
+    spectator.setInput('pool', {
+      ...pool,
+      status: PoolStatus.Offline,
+      all_sed: true,
+      status_code: null,
+    });
+    spectator.detectChanges();
+
+    expect(spectator.query(OfflinePoolWarningComponent)).toBeTruthy();
+  });
+
+  it('reloads dashboard when import success is triggered from the offline pool warning', () => {
     spectator.setInput('pool', {
       ...pool,
       status: PoolStatus.Offline,
@@ -204,7 +216,7 @@ describe('DashboardPoolComponent', () => {
     });
     spectator.detectChanges();
 
-    const warning = spectator.query(SedLockedWarningComponent);
+    const warning = spectator.query(OfflinePoolWarningComponent);
     warning.importSuccess.emit();
 
     expect(spectator.inject(PoolsDashboardStore).loadDashboard).toHaveBeenCalled();

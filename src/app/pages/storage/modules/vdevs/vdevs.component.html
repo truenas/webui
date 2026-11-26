@@ -11,11 +11,11 @@
   }
 </ix-page-header>
 
-@if (sedLockedPool(); as lockedPool) {
-  <ix-sed-locked-warning
-    [pool]="lockedPool"
+@if (offlinePool(); as offline) {
+  <ix-offline-pool-warning
+    [pool]="offline"
     (importSuccess)="vDevsStore.reloadList()"
-  ></ix-sed-locked-warning>
+  ></ix-offline-pool-warning>
 }
 
 @if (pool) {

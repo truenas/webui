@@ -20,7 +20,7 @@ import {
   TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
-  defer, filter, forkJoin, map, Observable, of, Subject,
+  defer, EMPTY, filter, forkJoin, map, Observable, of, Subject,
 } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
@@ -29,16 +29,19 @@ import { DiskPowerLevel } from 'app/enums/disk-power-level.enum';
 import { DiskStandby } from 'app/enums/disk-standby.enum';
 import { EmptyType } from 'app/enums/empty-type.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { SedStatus } from 'app/enums/sed-status.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import {
   Disk, DetailsDisk, toDisk, toDiskDetails,
 } from 'app/interfaces/disk.interface';
+import { DialogService } from 'app/modules/dialog/dialog.service';
 import { EmptyService } from 'app/modules/empty/empty.service';
 import { BasicSearchComponent } from 'app/modules/forms/search-input/components/basic-search/basic-search.component';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { FormSidePanelService } from 'app/modules/slide-ins/form-side-panel/form-side-panel.service';
+import { SnackbarService } from 'app/modules/snackbar/services/snackbar.service';
 import { normalizeTestIdString } from 'app/modules/test-id/normalize-test-id.utils';
 import { AsyncDataProvider } from 'app/modules/tn-table/classes/async-data-provider/async-data-provider';
 import { column } from 'app/modules/tn-table/column-configs';
@@ -58,6 +61,7 @@ import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk
 import { DiskWipeDialog } from 'app/pages/storage/modules/disks/components/disk-wipe-dialog/disk-wipe-dialog.component';
 import { sedStatusLabel } from 'app/pages/storage/modules/disks/utils/sed-status-label.utils';
 import { EntitlementsService } from 'app/services/entitlements.service';
+import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 
 /**
  * A disk row with every display-only value resolved once, when the rows are built, so
@@ -147,6 +151,9 @@ export class DiskListComponent {
   private tnDialog = inject(TnDialog);
   private translate = inject(TranslateService);
   private formPanel = inject(FormSidePanelService);
+  private dialogService = inject(DialogService);
+  private snackbar = inject(SnackbarService);
+  private errorHandler = inject(ErrorHandlerService);
   protected emptyService = inject(EmptyService);
   private route = inject(ActivatedRoute);
   private location = inject(Location);
@@ -496,7 +503,7 @@ export class DiskListComponent {
   }
 
   protected wipe(disk: Disk): void {
-    const exportedPool = this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
+    const exportedPool = this.exportedPoolOf(disk);
     const dialog = this.tnDialog.open(DiskWipeDialog, {
       data: {
         diskName: disk.name,
@@ -512,8 +519,58 @@ export class DiskListComponent {
     this.tnDialog.open(UnlockSedDialog, {
       data: { diskName: disk.name },
     }).closed.pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      // Read before reloading: the rows still hold which of the pool's other disks are locked.
+      const poolName = this.exportedPoolOf(disk);
+      const poolStillLocked = Boolean(poolName) && this.disks.some((other) => {
+        return other.name !== disk.name && this.isSedLocked(other) && this.exportedPoolOf(other) === poolName;
+      });
+
+      this.reload();
+
+      if (poolName && !poolStillLocked) {
+        this.offerReimport(poolName);
+      }
+    });
+  }
+
+  /**
+   * After the last locked disk of a configured pool that failed to import at boot is unlocked, the
+   * pool can be imported — but nothing on this page shows that pool, so ask here rather than leave
+   * the user to find Import Again on the Storage Dashboard. Disks of a pool that is not configured
+   * also report an `exported_zpool`; `pool.query` only knows configured ones, so those get no prompt.
+   */
+  private offerReimport(poolName: string): void {
+    this.api.query('pool.query', [['name', '=', poolName], ['status', '=', PoolStatus.Offline]]).pipe(
+      switchMap(([pool]) => {
+        if (!pool) {
+          return EMPTY;
+        }
+        return this.dialogService.confirm({
+          title: this.translate.instant('Import Pool'),
+          message: this.translate.instant(
+            'The SED disks of pool {pool} are unlocked. Import the pool now to bring it back online?',
+            { pool: poolName },
+          ),
+          buttonText: this.translate.instant('Import'),
+          hideCheckbox: true,
+        }).pipe(
+          filter(Boolean),
+          switchMap(() => this.dialogService.jobDialog(
+            this.api.job('pool.reimport', [pool.id]),
+            { title: this.translate.instant('Importing Pool') },
+          ).afterClosed()),
+        );
+      }),
+      this.errorHandler.withErrorHandler(),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.snackbar.success(this.translate.instant('Pool imported successfully.'));
       this.reload();
     });
+  }
+
+  private exportedPoolOf(disk: Disk): string | undefined {
+    return this.unusedDisks.find((dev) => dev.devname === disk.devname)?.exported_zpool;
   }
 
   protected resetSed(disk: Disk): void {
