@@ -44,6 +44,9 @@ import { TestDirective } from 'app/modules/test-id/test.directive';
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import {
+  BulkUnlockSedDialog, BulkUnlockSedDialogData,
+} from 'app/pages/storage/modules/disks/components/disk-list/bulk-unlock-sed-dialog/bulk-unlock-sed-dialog.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
 import { sedStatusColumn } from 'app/pages/storage/modules/disks/components/disk-list/sed-status-cell/sed-status-cell.component';
@@ -207,6 +210,11 @@ export class DiskListComponent implements OnInit {
     return this.disks.filter((disk) => disk.selected);
   }
 
+  /** Locked SEDs in the selection; the batch bar offers a bulk unlock while there are any. */
+  get selectedLockedSedCount(): number {
+    return this.selectedDisks.filter((disk) => this.isSedLocked(disk)).length;
+  }
+
   private disks: DiskUi[] = [];
   private unusedDisks: DetailsDisk[] = [];
 
@@ -345,6 +353,19 @@ export class DiskListComponent implements OnInit {
     }).afterClosed().pipe(filter(Boolean), takeUntilDestroyed(this.destroyRef)).subscribe(() => {
       this.dataProvider.load();
     });
+  }
+
+  /**
+   * Every selected disk goes to the dialog, which lists the ones that aren't locked SEDs as skipped.
+   * `disableClose`: Escape or a backdrop click would close with `undefined` — mid-job, or after a
+   * partial unlock — and skip the reload; the dialog's own Cancel/Close reports what changed.
+   */
+  protected unlockSelected(disks: DiskUi[]): void {
+    const data: BulkUnlockSedDialogData = { disks: this.prepareDisks(disks) };
+    this.matDialog.open(BulkUnlockSedDialog, { data, disableClose: true }).afterClosed().pipe(
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.dataProvider.load());
   }
 
   protected resetSed(disk: Disk): void {

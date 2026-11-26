@@ -34,6 +34,24 @@
           }
         </span>
       </button>
+
+      @if (selectedLockedSedCount) {
+        <button
+          *ixRequiresRoles="requiredRoles"
+          mat-button
+          ixTest="unlock-selected"
+          (click)="unlockSelected(selectedDisks)"
+        >
+          <tn-icon name="lock-open-variant" library="mdi"></tn-icon>
+          <span>
+            @if (selectedLockedSedCount === 1) {
+              {{ 'Unlock SED' | translate }}
+            } @else {
+              {{ 'Unlock SEDs' | translate }}
+            }
+          </span>
+        </button>
+      }
     </div>
   </div>
 }
