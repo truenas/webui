@@ -1,0 +1,85 @@
+<tn-dialog-shell testId="bulk-unlock-sed" [title]="'Unlock SEDs' | translate">
+<div class="content">
+  <p class="intro">{{ 'Successfully unlocking a disk will automatically update the database.' | translate }}</p>
+
+  <form class="ix-form-container" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <tn-form-field
+      [label]="'Password' | translate"
+      [hint]="'Used for every disk below that has no password of its own. Leave empty to use each disk\'s saved password or the global SED password.' | translate"
+    >
+      <tn-input
+        testId="password"
+        formControlName="password"
+        [inputType]="InputType.Password"
+      ></tn-input>
+    </tn-form-field>
+
+    <div class="disks" role="list" formGroupName="passwords" [attr.aria-label]="'Locked SED disks' | translate">
+      @for (disk of lockedDisks; track disk.name) {
+        @let result = resultFor(disk.name);
+        <div class="disk" role="listitem" [attr.aria-label]="disk.name" [class.unlocked]="result?.unlocked">
+          <div class="disk-info">
+            <strong tnTestIdType="text" [tnTestId]="['disk-name', disk.name]">{{ disk.name }}</strong>
+            <span class="disk-meta" tnTestIdType="text" [tnTestId]="['disk-model', disk.name]">{{ disk.model }} ({{ disk.serial }})</span>
+          </div>
+
+          @if (result?.unlocked) {
+            <div class="status status-unlocked" tnTestIdType="text" [tnTestId]="['disk-status', disk.name]">
+              <tn-icon name="check-circle" library="mdi"></tn-icon>
+              <span>{{ 'Unlocked' | translate }}</span>
+            </div>
+          } @else {
+            <tn-form-field [label]="'Password for {disk} (optional)' | translate: { disk: disk.name }">
+              <tn-input
+                [testId]="['password', disk.name]"
+                [formControlName]="disk.name"
+                [inputType]="InputType.Password"
+                [placeholder]="'Use the password above' | translate"
+              ></tn-input>
+            </tn-form-field>
+
+            @if (result?.error) {
+              <div class="status status-failed" role="alert" tnTestIdType="text" [tnTestId]="['disk-status', disk.name]">
+                <tn-icon name="alert-circle" library="mdi"></tn-icon>
+                <span>{{ result?.error }}</span>
+              </div>
+            }
+          }
+        </div>
+      }
+    </div>
+
+    @if (skippedDisks.length) {
+      <div class="skipped">
+        <h3 class="section-title">{{ 'Skipped' | translate }}</h3>
+        <p class="section-hint">{{ 'These selected disks are not locked SEDs and will not be changed.' | translate }}</p>
+        <ul>
+          @for (disk of skippedDisks; track disk.name) {
+            <li tnTestIdType="text" [tnTestId]="['skipped-disk', disk.name]">
+              <strong>{{ disk.name }}</strong> – {{ disk.reason | translate }}
+            </li>
+          }
+        </ul>
+      </div>
+    }
+  </form>
+</div>
+
+<ix-form-actions tnDialogAction>
+  <tn-button
+    variant="outline"
+    testId="cancel"
+    [label]="(unlockedCount() ? 'Close' : 'Cancel') | translate"
+    (onClick)="close()"
+  ></tn-button>
+
+  <tn-button
+    *ixRequiresRoles="[Role.DiskWrite]"
+    color="primary"
+    testId="unlock"
+    [label]="(hasFailures() ? 'Retry' : 'Unlock') | translate"
+    [disabled]="isUnlocking()"
+    (onClick)="onSubmit()"
+  ></tn-button>
+</ix-form-actions>
+</tn-dialog-shell>
