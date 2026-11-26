@@ -16,8 +16,8 @@ import { MasterDetailViewComponent } from 'app/modules/master-detail-view/master
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
 import { CastPipe } from 'app/modules/pipes/cast/cast.pipe';
 import { TestDirective } from 'app/modules/test-id/test.directive';
-import { isSedLockedPool } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/is-sed-locked-pool.utils';
-import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
+import { OfflinePoolWarningComponent } from 'app/pages/storage/components/dashboard-pool/offline-pool-warning/offline-pool-warning.component';
+import { isOfflinePool } from 'app/pages/storage/components/dashboard-pool/offline-pool-warning/offline-pool.utils';
 import { DiskDetailsPanelComponent } from 'app/pages/storage/modules/vdevs/components/disk-details-panel/disk-details-panel.component';
 import { TopologyItemIconComponent } from 'app/pages/storage/modules/vdevs/components/topology-item-icon/topology-item-icon.component';
 import { VDevsListComponent } from 'app/pages/storage/modules/vdevs/components/vdevs-list/vdevs-list.component';
@@ -43,7 +43,7 @@ const raidzItems = [TopologyItemType.Raidz, TopologyItemType.Raidz1, TopologyIte
     MasterDetailViewComponent,
     AsyncPipe,
     TopologyItemIconComponent,
-    SedLockedWarningComponent,
+    OfflinePoolWarningComponent,
   ],
 })
 export class VDevsComponent implements OnInit, AfterViewInit {
@@ -58,9 +58,9 @@ export class VDevsComponent implements OnInit, AfterViewInit {
   protected isPoolUnavailable = toSignal(this.vDevsStore.isPoolUnavailable$, { initialValue: false });
   private pool = toSignal(this.vDevsStore.pool$, { initialValue: null });
 
-  protected readonly sedLockedPool = computed(() => {
+  protected readonly offlinePool = computed(() => {
     const pool = this.pool();
-    return isSedLockedPool(pool) ? pool : null;
+    return isOfflinePool(pool) ? pool : null;
   });
 
   protected readonly requiredRoles = [Role.PoolWrite];

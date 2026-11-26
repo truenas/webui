@@ -6,13 +6,15 @@ import { MatCard, MatCardContent } from '@angular/material/card';
 import { Router } from '@angular/router';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
-  Observable, forkJoin, last, map, of, switchMap,
+  Observable, catchError, forkJoin, last, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -72,7 +74,14 @@ export class ImportPoolComponent implements OnInit {
   protected lockedSedDisks = signal<LockedSedDisk[]>([]);
   protected globalSedPassword = signal('');
 
+  /**
+   * Every pool in the select. `id` is set for a pool that is already configured on the system but
+   * offline — typically one whose SED disks were locked at boot and have since been unlocked.
+   * `pool.import_find` leaves those out because they are in the database, and `pool.import_pool`
+   * would add a second entry for them, so they are imported with `pool.reimport` instead.
+   */
   importablePools: {
+    id?: number;
     name: string;
     guid: string;
   }[] = [];
@@ -131,22 +140,26 @@ export class ImportPoolComponent implements OnInit {
   private loadImportablePools(): void {
     this.isLoading.set(true);
 
-    this.api.job('pool.import_find').pipe(
-      observeJob(),
-      last(),
+    forkJoin([
+      this.api.job('pool.import_find').pipe(observeJob(), last()),
+      this.loadOfflinePools(),
+    ]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (importablePoolFindJob) => {
+      next: ([importablePoolFindJob, offlinePools]) => {
         this.isLoading.set(false);
 
         const result: PoolFindResult[] = importablePoolFindJob.result || [];
-        this.importablePools = result.map((pool) => ({
-          name: pool.name,
-          guid: pool.guid,
-        }));
+        this.importablePools = [
+          ...result.map((pool) => ({ name: pool.name, guid: pool.guid })),
+          ...offlinePools,
+        ];
 
-        const opts = result.map((pool) => ({
-          label: `${pool.name} | ${pool.guid}`,
+        const offlineSuffix = this.translate.instant('Offline, configured on this system');
+        const opts = this.importablePools.map((pool) => ({
+          label: pool.id === undefined
+            ? `${pool.name} | ${pool.guid}`
+            : `${pool.name} | ${pool.guid} (${offlineSuffix})`,
           value: pool.guid,
         } as Option));
         this.pool.options = of(opts);
@@ -158,6 +171,20 @@ export class ImportPoolComponent implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  /**
+   * Configured pools that ZFS has not imported. Supplementary: if the query fails, the wizard still
+   * lists the pools `pool.import_find` found.
+   */
+  private loadOfflinePools(): Observable<{ id: number; name: string; guid: string }[]> {
+    return this.api.call('pool.query', [[['status', '=', PoolStatus.Offline]]]).pipe(
+      map((pools) => pools.map((pool) => ({ id: pool.id, name: pool.name, guid: pool.guid }))),
+      catchError((error: unknown) => {
+        console.error(error);
+        return of([]);
+      }),
+    );
   }
 
   protected onLockedSedSkip(): void {
@@ -178,7 +205,7 @@ export class ImportPoolComponent implements OnInit {
 
   protected onSubmit(): void {
     this.dialogService.jobDialog(
-      this.api.job('pool.import_pool', [{ guid: this.formGroup.getRawValue().guid }]),
+      this.importJob(),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
@@ -199,6 +226,14 @@ export class ImportPoolComponent implements OnInit {
           this.isLoading.set(false);
         },
       });
+  }
+
+  private importJob(): Observable<Job> {
+    const { guid } = this.formGroup.getRawValue();
+    const offlinePoolId = this.importablePools.find((pool) => pool.guid === guid)?.id;
+    return offlinePoolId === undefined
+      ? this.api.job('pool.import_pool', [{ guid }])
+      : this.api.job('pool.reimport', [offlinePoolId]);
   }
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {

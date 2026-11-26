@@ -12,7 +12,7 @@ import { Disk } from 'app/interfaces/disk.interface';
 import { Pool } from 'app/interfaces/pool.interface';
 import { VDevItem } from 'app/interfaces/storage.interface';
 import { PageHeaderComponent } from 'app/modules/page-header/page-title-header/page-header.component';
-import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
+import { OfflinePoolWarningComponent } from 'app/pages/storage/components/dashboard-pool/offline-pool-warning/offline-pool-warning.component';
 import { HardwareDiskEncryptionComponent } from 'app/pages/storage/modules/vdevs/components/hardware-disk-encryption/hardware-disk-encryption.component';
 import { VDevsStore } from 'app/pages/storage/modules/vdevs/stores/vdevs-store.service';
 import { VDevsComponent } from 'app/pages/storage/modules/vdevs/vdevs.component';
@@ -194,7 +194,7 @@ describe('VDevsComponent', () => {
     declarations: [
       MockComponent(PageHeaderComponent),
       MockComponent(HardwareDiskEncryptionComponent),
-      MockComponent(SedLockedWarningComponent),
+      MockComponent(OfflinePoolWarningComponent),
     ],
     providers: [
       mockAuth(),
@@ -268,25 +268,39 @@ describe('VDevsComponent', () => {
       expect(spectator.query('[ixTest="add-vdev"]')).not.toExist();
     });
 
-    it('shows the locked SED warning when the pool failed to import because its SED disks are locked', () => {
+    it('shows the offline pool warning when the pool failed to import because its SED disks are locked', () => {
       loadOfflinePool({ all_sed: true, status_code: 'LOCKED_SED_DISKS' });
 
       // A mocked component exposes its signal inputs as plain values.
-      expect(spectator.query(SedLockedWarningComponent)!.pool as unknown).toEqual(pool$.value);
+      expect(spectator.query(OfflinePoolWarningComponent)!.pool as unknown).toEqual(pool$.value);
     });
 
     it('reloads the pool once the warning reports that it was imported again', () => {
       loadOfflinePool({ all_sed: true, status_code: 'LOCKED_SED_DISKS' });
 
-      spectator.query(SedLockedWarningComponent)!.importSuccess.emit();
+      spectator.query(OfflinePoolWarningComponent)!.importSuccess.emit();
 
       expect(spectator.inject(VDevsStore).reloadList).toHaveBeenCalled();
     });
 
-    it('does not show the locked SED warning for a pool that is offline for another reason', () => {
+    it('shows the warning for a pool that is offline for another reason, so it can be imported again', () => {
       loadOfflinePool({ all_sed: false });
 
-      expect(spectator.query(SedLockedWarningComponent)).toBeNull();
+      expect(spectator.query(OfflinePoolWarningComponent)!.pool as unknown).toEqual(pool$.value);
+    });
+
+    it('shows the warning once the SED disks are unlocked and middleware drops the status code', () => {
+      loadOfflinePool({ all_sed: true, status_code: null });
+
+      expect(spectator.query(OfflinePoolWarningComponent)!.pool as unknown).toEqual(pool$.value);
+    });
+
+    it('does not show the warning for an imported pool', () => {
+      pool$.next({ id: 2, name: 'test', status: PoolStatus.Online } as Pool);
+      isPoolUnavailable$.next(false);
+      spectator.detectChanges();
+
+      expect(spectator.query(OfflinePoolWarningComponent)).toBeNull();
     });
   });
 });

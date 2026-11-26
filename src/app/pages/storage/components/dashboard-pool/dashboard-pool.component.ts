@@ -40,9 +40,9 @@ import { VDevsCardComponent } from 'app/pages/storage/components/dashboard-pool/
 import { PoolsDashboardStore } from 'app/pages/storage/stores/pools-dashboard-store.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { DiskHealthCardComponent } from './disk-health-card/disk-health-card.component';
+import { OfflinePoolWarningComponent } from './offline-pool-warning/offline-pool-warning.component';
+import { isOfflinePool } from './offline-pool-warning/offline-pool.utils';
 import { PoolUsageCardComponent } from './pool-usage-card/pool-usage-card.component';
-import { isSedLockedPool } from './sed-locked-warning/is-sed-locked-pool.utils';
-import { SedLockedWarningComponent } from './sed-locked-warning/sed-locked-warning.component';
 import { StorageHealthCardComponent } from './storage-health-card/storage-health-card.component';
 
 @Component({
@@ -69,7 +69,7 @@ import { StorageHealthCardComponent } from './storage-health-card/storage-health
     MatCard,
     MatCardContent,
     TranslateModule,
-    SedLockedWarningComponent,
+    OfflinePoolWarningComponent,
   ],
 })
 export class DashboardPoolComponent implements OnChanges {
@@ -96,7 +96,7 @@ export class DashboardPoolComponent implements OnChanges {
     return this.pool().status === PoolStatus.Online;
   });
 
-  protected isSedLocked = computed(() => isSedLockedPool(this.pool()));
+  protected isOffline = computed(() => isOfflinePool(this.pool()));
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isLoading || !this.isLoading()) {

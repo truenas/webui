@@ -13,6 +13,7 @@ import { SedStatus } from 'app/enums/sed-status.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { DetailsDisk, DiskDetailsResponse } from 'app/interfaces/disk.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
+import { Pool } from 'app/interfaces/pool.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { IxSelectHarness } from 'app/modules/forms/ix-forms/components/ix-select/ix-select.harness';
 import { IxFormHarness } from 'app/modules/forms/ix-forms/testing/ix-form.harness';
@@ -78,6 +79,7 @@ describe('ImportPoolComponent', () => {
       mockApi([
         mockJob('pool.import_pool', fakeSuccessfulJob()),
         mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
+        mockCall('pool.query', []),
         mockCall('disk.details', mockDiskDetailsNoLocked),
         mockCall('system.advanced.sed_global_password', 'existingpassword'),
         mockCall('pool.dataset.query', [{
@@ -148,6 +150,84 @@ describe('ImportPoolComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', '/mnt/pewl', 'unlock']);
   });
 
+  describe('with a configured pool that did not import', () => {
+    // `pool.import_find` leaves out pools that are in the database, such as one whose SED disks were
+    // locked at boot, so the wizard adds them from `pool.query` and imports them with `pool.reimport`.
+    const offlinePool = {
+      id: 7, name: 'sedpool', guid: 'sed_guid', status: PoolStatus.Offline,
+    } as Pool;
+
+    const createComponentWithOfflinePool = createComponentFactory({
+      component: ImportPoolComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        mockApi([
+          mockJob('pool.import_pool', fakeSuccessfulJob()),
+          mockJob('pool.import_find', fakeSuccessfulJob([mockPools[0]])),
+          mockJob('pool.reimport', fakeSuccessfulJob(true)),
+          mockCall('pool.query', [offlinePool]),
+          mockCall('disk.details', mockDiskDetailsNoLocked),
+          mockCall('system.advanced.sed_global_password', ''),
+          mockCall('pool.dataset.query', [{ id: 'sedpool', locked: false } as Dataset]),
+        ]),
+        mockProvider(SlideInRef, slideInRef),
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(true)),
+          jobDialog: jest.fn((job$) => ({
+            afterClosed: () => job$,
+          })),
+        }),
+        mockAuth(),
+        mockProvider(Router),
+      ],
+    });
+
+    let offlineSpectator: Spectator<ImportPoolComponent>;
+    let offlineLoader: HarnessLoader;
+
+    beforeEach(() => {
+      offlineSpectator = createComponentWithOfflinePool();
+      offlineLoader = TestbedHarnessEnvironment.loader(offlineSpectator.fixture);
+    });
+
+    async function selectPool(label: string): Promise<void> {
+      const form = await offlineLoader.getHarness(IxFormHarness);
+      await form.fillForm({ Pool: label });
+    }
+
+    it('lists the offline configured pool after the pools that can be imported', async () => {
+      const form = await offlineLoader.getHarness(IxFormHarness);
+      const controls = await form.getControlHarnessesDict();
+
+      expect(offlineSpectator.inject(ApiService).call)
+        .toHaveBeenCalledWith('pool.query', [[['status', '=', PoolStatus.Offline]]]);
+      expect(await (controls['Pool'] as IxSelectHarness).getOptionLabels()).toEqual([
+        'pool_name_1 | pool_guid_1',
+        'sedpool | sed_guid (Offline, configured on this system)',
+      ]);
+    });
+
+    it('imports the offline configured pool with pool.reimport', async () => {
+      await selectPool('sedpool | sed_guid (Offline, configured on this system)');
+
+      const importButton = await offlineLoader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+      await importButton.click();
+
+      const offlineApi = offlineSpectator.inject(ApiService);
+      expect(offlineApi.job).toHaveBeenCalledWith('pool.reimport', [7]);
+      expect(offlineApi.job).not.toHaveBeenCalledWith('pool.import_pool', expect.anything());
+    });
+
+    it('still imports a newly found pool with pool.import_pool', async () => {
+      await selectPool('pool_name_1 | pool_guid_1');
+
+      const importButton = await offlineLoader.getHarness(MatButtonHarness.with({ text: 'Import' }));
+      await importButton.click();
+
+      expect(offlineSpectator.inject(ApiService).job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+    });
+  });
+
   describe('with locked SED disks', () => {
     const createComponentWithLockedDisks = createComponentFactory({
       component: ImportPoolComponent,
@@ -156,6 +236,7 @@ describe('ImportPoolComponent', () => {
         mockApi([
           mockJob('pool.import_pool', fakeSuccessfulJob()),
           mockJob('pool.import_find', fakeSuccessfulJob(mockPools)),
+          mockCall('pool.query', []),
           mockCall('disk.details', mockDiskDetailsWithLocked),
           mockCall('system.advanced.sed_global_password', 'existingpassword'),
           mockCall('disk.unlock_sed'),
