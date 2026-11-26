@@ -41,6 +41,16 @@ export const usersLocators = {
   row: (username: string): string => `[data-test="row-user-${legacyKebabTestSegment(username)}"]`,
 
   /**
+   * The lock icon in a row's Access cell, rendered only while a local user is locked.
+   *
+   * `[tnTestId]="[uniqueRowTag(), 'locked']"`: the row tag is lodash-kebabed like
+   * {@link row}'s, so this takes the legacy normalizer too, without the `row-` prefix.
+   */
+  lockedIndicator: (username: string): string => (
+    `[data-test="icon-user-${legacyKebabTestSegment(username)}-locked"]`
+  ),
+
+  /**
    * Delete, in the details pane for the selected user.
    *
    * `<tn-button [testId]="['delete', user().username]">`, so this one goes

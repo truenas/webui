@@ -3,7 +3,7 @@
  * signs the user in exactly once. Unauthenticated because the claim is signing in afterwards (R4.2); every sign-in
  * spends from the rate limit, so each story is one test. A throwaway administrator is used, since a stuck lock on the
  * suite's admin would break every later sign-in, and a one-time password needs a role-holding user. `locked` is
- * read back from `user.query` after each toggle.
+ * read back from `user.query` after each toggle, and the users table's lock icon is checked to follow it.
  */
 import { ensureSignInAdministratorPresent, ensureUserAbsent, findUser } from '../../fixtures/users';
 import {
@@ -11,6 +11,7 @@ import {
   wrongCredentialsMessage,
 } from '../../flows/auth';
 import { generateOneTimePassword, lockUser, openUserDetails, unlockUser } from '../../flows/users';
+import { usersLocators } from '../../locators/users';
 import { leavingTestData } from '../../support/cleanup';
 import { expect, test } from '../../support/fixtures';
 
@@ -52,9 +53,11 @@ test('a locked user is refused at sign-in, and unlocking lets them back in', asy
   await test.step('an admin locks the user from the Access card', async () => {
     await signIn(page, config.username, config.password);
     await openUserDetails(page, lockTarget.username);
+    await expect(page.locator(usersLocators.lockedIndicator(lockTarget.username))).toBeHidden();
     await lockUser(page, lockTarget.username);
 
     expect((await findUser(api, lockTarget.username))?.locked).toBe(true);
+    await expect(page.locator(usersLocators.lockedIndicator(lockTarget.username))).toBeVisible();
     await signOut(page);
   });
 
@@ -66,9 +69,11 @@ test('a locked user is refused at sign-in, and unlocking lets them back in', asy
   await test.step('an admin unlocks the user', async () => {
     await signIn(page, config.username, config.password);
     await openUserDetails(page, lockTarget.username);
+    await expect(page.locator(usersLocators.lockedIndicator(lockTarget.username))).toBeVisible();
     await unlockUser(page, lockTarget.username);
 
     expect((await findUser(api, lockTarget.username))?.locked).toBe(false);
+    await expect(page.locator(usersLocators.lockedIndicator(lockTarget.username))).toBeHidden();
     await signOut(page);
   });
 

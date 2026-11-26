@@ -55,6 +55,26 @@ describe('UserAccessCellComponent', () => {
     expect(await loader.getHarness(TnIconHarness.with({ name: 'power-plug' }))).toBeTruthy();
   });
 
+  it('shows a lock icon when a local user is locked', async () => {
+    setupTest({ ...mockUser, local: true, locked: true });
+
+    const lockIcon = await loader.getHarness(TnIconHarness.with({ name: 'lock' }));
+    expect(await lockIcon.getLibrary()).toBe('mdi');
+    expect(spectator.query('tn-icon')).toHaveAttribute('data-test', 'icon-user-john-doe-locked');
+  });
+
+  it('does not show a lock icon when the user is not locked', async () => {
+    setupTest({ ...mockUser, local: true, locked: false });
+
+    expect(await loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }))).toBeNull();
+  });
+
+  it('does not show a lock icon for directory service users, whose lock state is not reported', async () => {
+    setupTest({ ...mockUser, local: false, locked: true });
+
+    expect(await loader.getHarnessOrNull(TnIconHarness.with({ name: 'lock' }))).toBeNull();
+  });
+
   it('tags every access indicator with the row it belongs to', () => {
     setupTest({
       ...mockUser,
