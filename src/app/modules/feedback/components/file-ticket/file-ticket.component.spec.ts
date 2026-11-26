@@ -89,7 +89,7 @@ describe('FileTicketComponent', () => {
   it('renders login to Jira button', () => {
     expect(loginToJiraButton).toBeTruthy();
     expect(loginToJiraButton.oauthType).toBe(OauthButtonType.Jira);
-    expect(loginToJiraButton.oauthUrl).toBe('https://support-proxy.ixsystems.com/oauth/initiate?origin=');
+    expect(loginToJiraButton.oauthUrl).toBe('https://support-proxy.truenas.com/oauth/initiate?origin=');
   });
 
   it('renders similar issues and passes in title as it is entered', async () => {
