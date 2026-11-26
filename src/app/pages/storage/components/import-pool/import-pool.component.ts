@@ -7,14 +7,16 @@ import {
   TnButtonComponent, TnFormFieldComponent, TnFormSectionComponent, TnSelectComponent, TnSpinnerComponent,
 } from '@truenas/ui-components';
 import {
-  Observable, forkJoin, last, map, of, switchMap,
+  Observable, catchError, forkJoin, last, map, of, switchMap,
 } from 'rxjs';
 import { RequiresRolesDirective } from 'app/directives/requires-roles/requires-roles.directive';
+import { PoolStatus } from 'app/enums/pool-status.enum';
 import { Role } from 'app/enums/role.enum';
 import { observeJob } from 'app/helpers/operators/observe-job.operator';
 import { helptextImport } from 'app/helptext/storage/volumes/volume-import-wizard';
 import { Dataset } from 'app/interfaces/dataset.interface';
 import { toDiskDetails } from 'app/interfaces/disk.interface';
+import { Job } from 'app/interfaces/job.interface';
 import { Option } from 'app/interfaces/option.interface';
 import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -76,9 +78,16 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
   protected lockedSedDisks = signal<LockedSedDisk[]>([]);
   protected globalSedPassword = signal('');
 
+  /**
+   * Every pool in the select. `id` is set for a pool that is already configured on the system but
+   * offline — typically one whose SED disks were locked at boot and have since been unlocked.
+   * `pool.import_find` leaves those out because they are in the database, and `pool.import_pool`
+   * would add a second entry for them, so they are imported with `pool.reimport` instead.
+   */
   private importablePools: {
     name: string;
     guid: string;
+    id?: number;
   }[] = [];
 
   protected readonly form = this.fb.nonNullable.group({
@@ -143,20 +152,24 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
     // Show the spinner step while the find job runs, instead of leaving the SED step on screen.
     this.currentStep.set(ImportStep.Loading);
 
-    this.api.job('pool.import_find').pipe(
-      observeJob(),
-      last(),
+    forkJoin([
+      this.api.job('pool.import_find').pipe(observeJob(), last()),
+      this.loadOfflinePools(),
+    ]).pipe(
       takeUntilDestroyed(this.destroyRef),
     ).subscribe({
-      next: (importablePoolFindJob) => {
+      next: ([importablePoolFindJob, offlinePools]) => {
         const result: PoolFindResult[] = importablePoolFindJob.result || [];
-        this.importablePools = result.map((pool) => ({
-          name: pool.name,
-          guid: pool.guid,
-        }));
+        this.importablePools = [
+          ...result.map((pool) => ({ name: pool.name, guid: pool.guid })),
+          ...offlinePools,
+        ];
 
-        this.poolOptions.set(result.map((pool) => ({
-          label: `${pool.name} | ${pool.guid}`,
+        const offlineSuffix = this.translate.instant('Offline, configured on this system');
+        this.poolOptions.set(this.importablePools.map((pool) => ({
+          label: pool.id === undefined
+            ? `${pool.name} | ${pool.guid}`
+            : `${pool.name} | ${pool.guid} (${offlineSuffix})`,
           value: pool.guid,
         } as Option)));
 
@@ -166,6 +179,20 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
         this.errorHandler.showErrorModal(error);
       },
     });
+  }
+
+  /**
+   * Configured pools that ZFS has not imported. Supplementary: if the query fails, the wizard still
+   * lists the pools `pool.import_find` found.
+   */
+  private loadOfflinePools(): Observable<{ id: number; name: string; guid: string }[]> {
+    return this.api.query('pool.query', [['status', '=', PoolStatus.Offline]]).pipe(
+      map((pools) => pools.map((pool) => ({ id: pool.id, name: pool.name, guid: pool.guid }))),
+      catchError((error: unknown) => {
+        console.error(error);
+        return of([]);
+      }),
+    );
   }
 
   protected onLockedSedSkip(): void {
@@ -186,7 +213,7 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
 
   protected handleSubmit = (): SubmitResult<boolean, [Dataset[], boolean]> => ({
     request$: this.dialogService.jobDialog(
-      this.api.job('pool.import_pool', [{ guid: this.form.getRawValue().guid }]),
+      this.importJob(),
       { title: this.translate.instant('Importing Pool') },
     )
       .afterClosed()
@@ -198,6 +225,14 @@ export class ImportPoolComponent extends IxFormHostForm implements OnInit {
       }
     },
   });
+
+  private importJob(): Observable<Job> {
+    const { guid } = this.form.getRawValue();
+    const offlinePoolId = this.importablePools.find((pool) => pool.guid === guid)?.id;
+    return offlinePoolId === undefined
+      ? this.api.job('pool.import_pool', [{ guid }])
+      : this.api.job('pool.reimport', [offlinePoolId]);
+  }
 
   private checkIfUnlockNeeded(): Observable<[Dataset[], boolean]> {
     const selectedPool = this.importablePools.find((pool) => pool.guid === this.form.value.guid);

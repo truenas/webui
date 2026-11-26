@@ -7,7 +7,9 @@ import { CallResponse } from '@truenas/api-client';
 import { TnButtonHarness, TnSelectHarness } from '@truenas/ui-components';
 import { NEVER, of } from 'rxjs';
 import { fakeSuccessfulJob } from 'app/core/testing/utils/fake-job.utils';
-import { mockApi, mockCall, mockJob } from 'app/core/testing/utils/mock-api.utils';
+import {
+  mockApi, mockCall, mockJob, mockQuery,
+} from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
 import { JobState } from 'app/enums/job-state.enum';
 import { PoolStatus } from 'app/enums/pool-status.enum';
@@ -17,7 +19,7 @@ import { PoolFindResult } from 'app/interfaces/pool-import.interface';
 import { DialogService } from 'app/modules/dialog/dialog.service';
 import { ixFormTestingProviders } from 'app/modules/forms/ix-forms/testing/ix-form-testing.helpers';
 import { ApiService } from 'app/modules/websocket/api.service';
-import { WebUiApiDirectory } from 'app/modules/websocket/typed-api/typed-api-client.token';
+import { WebUiApiDirectory, WebUiQueryEntity } from 'app/modules/websocket/typed-api/typed-api-client.token';
 import { ZfsResourceEntry } from 'app/services/dataset/zfs-resource.utils';
 import { ImportPoolComponent } from './import-pool.component';
 
@@ -76,6 +78,7 @@ describe('ImportPoolComponent', () => {
       mockApi([
         mockJob('pool.import_pool', { state: JobState.Success }),
         mockJob('pool.import_find', { state: JobState.Success, result: mockPools }),
+        mockQuery('pool.query', []),
         mockCall('disk.details', mockDiskDetailsNoLocked as unknown as DiskDetailsCallResponse),
         mockCall('system.advanced.sed_global_password', 'existingpassword'),
         mockCall('zfs.resource.list', [{
@@ -152,6 +155,79 @@ describe('ImportPoolComponent', () => {
     expect(spectator.inject(Router).navigate).toHaveBeenCalledWith(['/datasets', 'pewl', 'unlock']);
   });
 
+  describe('with a configured pool that did not import', () => {
+    // `pool.import_find` leaves out pools that are in the database, such as one whose SED disks were
+    // locked at boot, so the wizard adds them from `pool.query` and imports them with `pool.reimport`.
+    const offlinePool = {
+      id: 7, name: 'sedpool', guid: 'sed_guid', status: PoolStatus.Offline,
+    } as WebUiQueryEntity<'pool.query'>;
+
+    const createComponentWithOfflinePool = createComponentFactory({
+      component: ImportPoolComponent,
+      imports: [ReactiveFormsModule],
+      providers: [
+        ...ixFormTestingProviders(),
+        mockApi([
+          mockJob('pool.import_find', { state: JobState.Success, result: [mockPools[0]] }),
+          mockJob('pool.reimport', { state: JobState.Success, result: true }),
+          mockQuery('pool.query', [offlinePool]),
+          mockCall('disk.details', mockDiskDetailsNoLocked as unknown as DiskDetailsCallResponse),
+          mockCall('system.advanced.sed_global_password', ''),
+          mockCall('zfs.resource.list', [{ name: 'sedpool', pool: 'sedpool', type: 'FILESYSTEM' }] as ZfsResourceEntry[]),
+        ]),
+        mockProvider(DialogService, {
+          confirm: jest.fn(() => of(true)),
+          jobDialog: jest.fn((job$) => ({
+            afterClosed: () => job$,
+          })),
+        }),
+        mockAuth(),
+        mockProvider(Router),
+      ],
+    });
+
+    let offlineSpectator: Spectator<ImportPoolComponent>;
+    let offlineLoader: HarnessLoader;
+
+    beforeEach(() => {
+      offlineSpectator = createComponentWithOfflinePool();
+      offlineLoader = TestbedHarnessEnvironment.loader(offlineSpectator.fixture);
+    });
+
+    function getOfflinePoolSelect(): Promise<TnSelectHarness> {
+      return offlineLoader.getHarness(TnSelectHarness.with({ selector: '[formControlName="guid"]' }));
+    }
+
+    it('lists the offline configured pool after the pools that can be imported', async () => {
+      expect(offlineSpectator.inject(ApiService).query)
+        .toHaveBeenCalledWith('pool.query', [['status', '=', PoolStatus.Offline]]);
+      expect(await (await getOfflinePoolSelect()).getOptions()).toEqual([
+        'pool_name_1 | pool_guid_1',
+        'sedpool | sed_guid (Offline, configured on this system)',
+      ]);
+    });
+
+    it('imports the offline configured pool with pool.reimport', async () => {
+      await (await getOfflinePoolSelect()).selectOption('sedpool | sed_guid (Offline, configured on this system)');
+
+      const importButton = await offlineLoader.getHarness(TnButtonHarness.with({ label: 'Import' }));
+      await importButton.click();
+
+      const offlineApi = offlineSpectator.inject(ApiService);
+      expect(offlineApi.job).toHaveBeenCalledWith('pool.reimport', [7]);
+      expect(offlineApi.job).not.toHaveBeenCalledWith('pool.import_pool', expect.anything());
+    });
+
+    it('still imports a newly found pool with pool.import_pool', async () => {
+      await (await getOfflinePoolSelect()).selectOption('pool_name_1 | pool_guid_1');
+
+      const importButton = await offlineLoader.getHarness(TnButtonHarness.with({ label: 'Import' }));
+      await importButton.click();
+
+      expect(offlineSpectator.inject(ApiService).job).toHaveBeenCalledWith('pool.import_pool', [{ guid: 'pool_guid_1' }]);
+    });
+  });
+
   describe('while the initial lookup is in flight', () => {
     const createLoadingComponent = createComponentFactory({
       component: ImportPoolComponent,
@@ -192,6 +268,7 @@ describe('ImportPoolComponent', () => {
         mockApi([
           mockJob('pool.import_pool', { state: JobState.Success }),
           mockJob('pool.import_find', { state: JobState.Success, result: mockPools }),
+          mockQuery('pool.query', []),
           mockCall('disk.details', mockDiskDetailsWithLocked as unknown as DiskDetailsCallResponse),
           mockCall('system.advanced.sed_global_password', 'existingpassword'),
           mockCall('disk.unlock_sed', null),

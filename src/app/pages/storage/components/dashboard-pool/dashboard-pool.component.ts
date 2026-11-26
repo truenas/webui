@@ -39,9 +39,9 @@ import { DiskHealthCardComponent } from 'app/pages/storage/components/dashboard-
 import {
   ExportDisconnectModalComponent,
 } from 'app/pages/storage/components/dashboard-pool/export-disconnect-modal/export-disconnect-modal.component';
+import { OfflinePoolWarningComponent } from 'app/pages/storage/components/dashboard-pool/offline-pool-warning/offline-pool-warning.component';
+import { isOfflinePool } from 'app/pages/storage/components/dashboard-pool/offline-pool-warning/offline-pool.utils';
 import { PoolUsageCardComponent } from 'app/pages/storage/components/dashboard-pool/pool-usage-card/pool-usage-card.component';
-import { isSedLockedPool } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/is-sed-locked-pool.utils';
-import { SedLockedWarningComponent } from 'app/pages/storage/components/dashboard-pool/sed-locked-warning/sed-locked-warning.component';
 import {
   AutotrimDialog,
 } from 'app/pages/storage/components/dashboard-pool/storage-health-card/autotrim-dialog/autotrim-dialog.component';
@@ -71,7 +71,7 @@ import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
     NgxSkeletonLoaderModule,
     TnCardComponent,
     TranslateModule,
-    SedLockedWarningComponent,
+    OfflinePoolWarningComponent,
     HasRolesPipe,
     AsyncPipe,
   ],
@@ -100,7 +100,7 @@ export class DashboardPoolComponent implements OnChanges {
     return this.pool().status === PoolStatus.Online;
   });
 
-  protected isSedLocked = computed(() => isSedLockedPool(this.pool()));
+  protected isOffline = computed(() => isOfflinePool(this.pool()));
 
   ngOnChanges(changes: IxSimpleChanges<this>): void {
     if (changes.isLoading || !this.isLoading()) {

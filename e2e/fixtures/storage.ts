@@ -7,7 +7,7 @@
  * prevent, and storage is where it actually bites.
  */
 import type { CallResponse, QueryEntity } from '@truenas/api-client';
-import { firstValueFrom, timeout } from 'rxjs';
+import { firstValueFrom, type Observable, timeout } from 'rxjs';
 import type { E2eApiClient, E2eApiDirectory } from '../support/api/client';
 import { runJob } from '../support/jobs';
 import { readTimeoutMs, slowCallTimeoutMs } from '../support/timeouts';
@@ -178,6 +178,20 @@ export async function findPool(client: E2eApiClient, name: string): Promise<Name
   );
 
   return pool;
+}
+
+/**
+ * Leaves `name` configured on the system but not imported, as a pool whose SED disks were locked at boot is.
+ *
+ * `zfs.pool.export` exports the pool at the ZFS level only, so its database row stays and `pool.query` reports
+ * it OFFLINE — what the Storage Dashboard's Import Again and the Import Pool panel offer `pool.reimport` for.
+ * The method is private: the `api` fixture opts its connection in to those (see `enablePrivateMethods`). This is
+ * setup, not the action under test, and the only way to reach the state without locking real SED disks.
+ */
+export async function takePoolOffline(client: E2eApiClient, name: string): Promise<void> {
+  type UntypedCall = (method: string, params: unknown[]) => Observable<unknown>;
+  const call = client.api.call.bind(client.api) as unknown as UntypedCall;
+  await firstValueFrom(call('zfs.pool.export', [name]).pipe(timeout(slowCallTimeoutMs)));
 }
 
 /**

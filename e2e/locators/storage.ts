@@ -476,6 +476,15 @@ export const poolCardLocators = {
 } as const;
 
 /**
+ * The banner a pool's card (and its VDEVs page) shows while the pool is configured but not imported.
+ * Keyed by pool name, since every offline pool on the dashboard shows one.
+ */
+export const offlinePoolLocators = {
+  /** `[testId]="['import-again', pool().name]"` on a tn-button. Runs `pool.reimport`. */
+  importAgain: (pool: string) => `[data-test="button-import-again-${kebabTestSegment(pool)}"]`,
+} as const;
+
+/**
  * Scrubbing, on the Storage Health card inside a pool's card.
  *
  * Every id carries the pool's name, because the dashboard shows one such card

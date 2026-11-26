@@ -12,7 +12,7 @@ import type { E2eApiClient } from './client';
 
 const callTimeoutMs = 15_000;
 
-/** `api.call` without the typed directory, for the one private method the suite calls. */
+/** `api.call` without the typed directory, for a private method (`fixtures/storage.ts` has the other one). */
 type UntypedCall = (method: string, params?: unknown[]) => Observable<unknown>;
 
 /** Clients that have already reported a failed clear, so a run says it once per worker. */
