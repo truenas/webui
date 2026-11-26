@@ -132,6 +132,11 @@ describe('BulkUnlockSedDialog', () => {
     expect(spectator.inject(DialogRef).close).toHaveBeenCalledWith(true);
   });
 
+  it('offers no header close, so every way out reports whether to reload', async () => {
+    const dialog = await loader.getHarness(TnDialogHarness);
+    await expect(dialog.close()).rejects.toThrow();
+  });
+
   it('closes reporting whether any disk was unlocked, so the list knows to reload', async () => {
     await clickButton('Cancel');
     expect(spectator.inject(DialogRef).close).toHaveBeenLastCalledWith(false);

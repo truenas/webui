@@ -524,10 +524,14 @@ export class DiskListComponent {
     });
   }
 
-  /** Every selected disk goes to the dialog, which lists the ones that aren't locked SEDs as skipped. */
+  /**
+   * Every selected disk goes to the dialog, which lists the ones that aren't locked SEDs as skipped.
+   * `disableClose`: Escape or a backdrop click would close with `undefined` — mid-job, or after a
+   * partial unlock — and skip the reload; the dialog's own Cancel/Close reports what changed.
+   */
   protected unlockSelected(rows: DiskRow[]): void {
     const data: BulkUnlockSedDialogData = { disks: rows.map((row) => rowToDisk(row)) };
-    this.tnDialog.open(BulkUnlockSedDialog, { data }).closed.pipe(
+    this.tnDialog.open(BulkUnlockSedDialog, { data, disableClose: true }).closed.pipe(
       filter(Boolean),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(() => this.reload());

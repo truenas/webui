@@ -472,6 +472,7 @@ describe('DiskListComponent', () => {
           expect.objectContaining({ name: 'sdc', sed_status: SedStatus.Locked }),
         ],
       },
+      disableClose: true,
     });
     expect(spectator.inject(ApiService).call).toHaveBeenCalledWith('disk.details');
   });

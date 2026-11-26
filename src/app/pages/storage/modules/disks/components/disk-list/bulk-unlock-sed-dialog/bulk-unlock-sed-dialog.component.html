@@ -1,4 +1,5 @@
-<tn-dialog-shell testId="bulk-unlock-sed" [title]="'Unlock SEDs' | translate">
+<!-- No header close: it would close with `undefined`, so the list could miss a reload. -->
+<tn-dialog-shell testId="bulk-unlock-sed" [title]="'Unlock SEDs' | translate" [showCloseButton]="false">
 <div class="content">
   <p class="intro">{{ 'Successfully unlocking a disk will automatically update the database.' | translate }}</p>
 
