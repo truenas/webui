@@ -24,7 +24,7 @@
           <span
             class="warning"
             [matTooltip]="'Ace has errors.' | translate"
-            (click)="onRemoveAcePressed(i)"
+            (click)="$event.stopPropagation(); onRemoveAcePressed(i)"
           >
             <tn-icon name="alert" library="mdi"></tn-icon>
           </span>
@@ -33,7 +33,7 @@
           <span
             class="remove"
             [attr.title]="'Close' | translate"
-            (click)="onRemoveAcePressed(i)"
+            (click)="$event.stopPropagation(); onRemoveAcePressed(i)"
           >
             <tn-icon name="close-circle" library="mdi"></tn-icon>
           </span>

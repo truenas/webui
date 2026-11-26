@@ -79,6 +79,22 @@ describe('DatasetAclEditorStore', () => {
     api = spectator.inject(ApiService);
   });
 
+  describe('removeAce', () => {
+    it('selects the new last entry when the selected last entry is removed', () => {
+      const ace = mockAcl.acl[0];
+      store.patchState({
+        acl: { ...mockAcl, acl: [ace, { ...ace }, { ...ace }] } as NfsAcl,
+        selectedAceIndex: 2,
+      });
+
+      store.removeAce(2);
+
+      const state = store.state();
+      expect(state.acl.acl).toHaveLength(2);
+      expect(state.selectedAceIndex).toBe(1);
+    });
+  });
+
   describe('prepareSetAcl', () => {
     beforeEach(async () => {
       // Load ACL first to set up the store state
