@@ -53,6 +53,16 @@
         [label]="(selectedDisks().length === 1 ? 'Edit Disk' : 'Edit Disks') | translate"
         (onClick)="edit(selectedDisks())"
       ></tn-button>
+
+      @if (selectedLockedSedCount()) {
+        <tn-button
+          *ixRequiresRoles="requiredRoles"
+          icon="mdi-lock-open-variant"
+          [testId]="'unlock-selected'"
+          [label]="(selectedLockedSedCount() === 1 ? 'Unlock SED' : 'Unlock SEDs') | translate"
+          (onClick)="unlockSelected(selectedDisks())"
+        ></tn-button>
+      }
     </div>
   </div>
 }

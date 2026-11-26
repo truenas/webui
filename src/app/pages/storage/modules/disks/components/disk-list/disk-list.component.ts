@@ -56,6 +56,9 @@ import { TableTextCellComponent } from 'app/modules/tn-table-cells/text-cell/tab
 import { ApiService } from 'app/modules/websocket/api.service';
 import { DiskBulkEditComponent } from 'app/pages/storage/modules/disks/components/disk-bulk-edit/disk-bulk-edit.component';
 import { DiskFormComponent, DiskFormResponse } from 'app/pages/storage/modules/disks/components/disk-form/disk-form.component';
+import {
+  BulkUnlockSedDialog, BulkUnlockSedDialogData,
+} from 'app/pages/storage/modules/disks/components/disk-list/bulk-unlock-sed-dialog/bulk-unlock-sed-dialog.component';
 import { diskListElements } from 'app/pages/storage/modules/disks/components/disk-list/disk-list.elements';
 import { ResetSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/reset-sed-dialog/reset-sed-dialog.component';
 import { UnlockSedDialog } from 'app/pages/storage/modules/disks/components/disk-list/unlock-sed-dialog/unlock-sed-dialog.component';
@@ -246,6 +249,11 @@ export class DiskListComponent {
 
   protected readonly selectedDisks = computed(
     () => this.rows().filter((disk) => this.selectedIdentifiers().has(disk.identifier)),
+  );
+
+  /** Locked SEDs in the selection; the batch bar offers a bulk unlock while there are any. */
+  protected readonly selectedLockedSedCount = computed(
+    () => this.selectedDisks().filter((disk) => this.isSedLocked(disk)).length,
   );
 
   // Rendered twice — visibly in the batch bar and, for screen readers, in the live region that
@@ -533,6 +541,19 @@ export class DiskListComponent {
         this.offerReimport(poolName);
       }
     });
+  }
+
+  /**
+   * Every selected disk goes to the dialog, which lists the ones that aren't locked SEDs as skipped.
+   * `disableClose`: Escape or a backdrop click would close with `undefined` — mid-job, or after a
+   * partial unlock — and skip the reload; the dialog's own Cancel/Close reports what changed.
+   */
+  protected unlockSelected(rows: DiskRow[]): void {
+    const data: BulkUnlockSedDialogData = { disks: rows.map((row) => rowToDisk(row)) };
+    this.tnDialog.open(BulkUnlockSedDialog, { data, disableClose: true }).closed.pipe(
+      filter(Boolean),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => this.reload());
   }
 
   /**
