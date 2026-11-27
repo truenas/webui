@@ -513,11 +513,11 @@ export class InterfaceFormComponent extends IxFormHostForm<boolean, InterfaceFor
     } as NetworkInterfaceCreate | NetworkInterfaceUpdate;
 
     // Always sent, so rows removed before switching to DHCP are removed on the server too. Under DHCP the rows are
-    // hidden and skip validation, so only those with a valid address are kept: an empty or half-typed row the user
-    // can no longer see is dropped instead of reaching the API.
+    // hidden and skip validation, so only complete, valid rows are kept: an empty or half-typed row the user can no
+    // longer see is dropped instead of reaching the API.
     const rows = this.canHaveStaticIpAddresses()
       ? values.aliases
-      : values.aliases.filter((alias) => isIpAddress(alias.address, { cidr: true }));
+      : values.aliases.filter((alias) => this.isCompleteAlias(alias));
     const aliases = formAliasesToInterfaceAliases(rows);
     params.aliases = aliases.aliases;
 
@@ -563,6 +563,15 @@ export class InterfaceFormComponent extends IxFormHostForm<boolean, InterfaceFor
     }
 
     return params;
+  }
+
+  /** A row that would pass its own validation: a CIDR address, plus both failover addresses on HA. */
+  private isCompleteAlias(alias: NetworkInterfaceFormAlias): boolean {
+    if (!isIpAddress(alias.address, { cidr: true })) {
+      return false;
+    }
+    return !this.isHaLicensed()
+      || (isIpAddress(alias.failover_address ?? '') && isIpAddress(alias.failover_virtual_address ?? ''));
   }
 
   protected withSuffix(label: string, suffix: string): TranslatedString {

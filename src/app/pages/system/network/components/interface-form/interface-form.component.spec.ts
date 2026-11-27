@@ -815,6 +815,24 @@ describe('InterfaceFormComponent', () => {
         },
       );
     });
+
+    it('drops a row with an incomplete failover address once DHCP is selected', async () => {
+      await setSelectValue('Type', 'Bridge');
+      await aliasesList!.add();
+      const ipAddress = await loader.getHarness(
+        TnFormControlHarness.with({ label: 'IP Address (This Controller)' }),
+      );
+      await ipAddress.setValue('10.2.3.4/24');
+      await setInputValue('IP Address (TrueNAS Controller 2)', '10.2.3');
+      await setRadioValue('Get IP Address Automatically from DHCP');
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('interface.create', [
+        expect.objectContaining({ aliases: [], failover_aliases: [], failover_virtual_aliases: [] }),
+      ]);
+    });
   });
 
   describe('fec mode when entitled to NETWORK_FEC', () => {
