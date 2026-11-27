@@ -71,4 +71,25 @@ describe('UnusedResourcesComponent', () => {
 
     expect(spectator.queryAll('ix-unused-disk-card')).toHaveLength(1);
   });
+
+  it('does not render the cards wrapper when there are no unused disks', async () => {
+    spectator.inject(MockApiService).mockCall('disk.details', { used: [], unused: [] });
+    spectator.setInput('pools', []);
+    await settle();
+
+    expect(spectator.query('.cards')).not.toExist();
+  });
+
+  it('renders the cards wrapper when there is an unused disk', async () => {
+    spectator.inject(MockApiService).mockCall('disk.details', {
+      used: [],
+      unused: [
+        { devname: 'sdc', identifier: '{uuid}7ad07324-f0e9-49a4-a7a4-92edd82a4929' },
+      ] as DetailsDisk[],
+    });
+    spectator.setInput('pools', []);
+    await settle();
+
+    expect(spectator.query('.cards')).toExist();
+  });
 });
