@@ -236,7 +236,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
     this.form.controls.custom_snapshots.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.form.controls.custom_snapshots.enabled) {
         if (value) {
-          // Only enable schema_or_regex & naming_schema & name_regex for remote sources
+          // Only remote sources offer the choice between naming_schema and name_regex
           if (this.isRemoteSource) {
             this.setSchemaOrRegexForRemoteSource();
           } else {
@@ -253,13 +253,7 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
     this.form.controls.schema_or_regex.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value) => {
       if (this.form.controls.schema_or_regex.enabled) {
-        if (value === SnapshotNamingOption.NameRegex) {
-          this.form.controls.name_regex.enable();
-          this.form.controls.naming_schema.disable();
-        } else {
-          this.form.controls.name_regex.disable();
-          this.form.controls.naming_schema.enable();
-        }
+        this.enableSelectedNamingField(value);
       }
       this.checkCustomVisible();
     });
@@ -716,7 +710,17 @@ export class ReplicationWhatAndWhereComponent implements OnInit, SummaryProvider
 
   private setSchemaOrRegexForRemoteSource(): void {
     this.form.controls.schema_or_regex.enable();
-    this.form.controls.naming_schema.enable();
-    this.form.controls.name_regex.enable();
+    this.enableSelectedNamingField(this.form.controls.schema_or_regex.value);
+  }
+
+  // Only the field matching the selected radio is enabled, or the hidden one stays required and blocks Next.
+  private enableSelectedNamingField(option: SnapshotNamingOption): void {
+    if (option === SnapshotNamingOption.NameRegex) {
+      this.form.controls.name_regex.enable();
+      this.form.controls.naming_schema.disable();
+    } else {
+      this.form.controls.name_regex.disable();
+      this.form.controls.naming_schema.enable();
+    }
   }
 }

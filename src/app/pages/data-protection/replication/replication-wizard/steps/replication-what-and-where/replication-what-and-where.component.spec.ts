@@ -280,6 +280,36 @@ describe('ReplicationWhatAndWhereComponent', () => {
       expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
     });
 
+    it('for Remote system: name_regex is disabled and hidden while Naming Schema is selected', async () => {
+      await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+
+      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+      expect(await loader.getAllHarnesses(
+        TnInputHarness.with({ selector: '[formControlName="name_regex"]' }),
+      )).toHaveLength(0);
+
+      await setRadio('Snapshot Name Regular Expression');
+      expect(spectator.component.form.controls.name_regex.enabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.disabled).toBe(true);
+
+      await setRadio('Naming Schema');
+      expect(spectator.component.form.controls.name_regex.disabled).toBe(true);
+      expect(spectator.component.form.controls.naming_schema.enabled).toBe(true);
+    });
+
+    it('for Remote system: Next is enabled once source, target and name are filled', async () => {
+      await (await getSelect('source_datasets_from')).selectOption('On a Different System');
+      await (await loader.getHarness(TnSelectHarness.with({ ancestor: '[formControlName="ssh_credentials_source"]' }))).selectOption('non-root-ssh-connection');
+      await (await getExplorer('source_datasets')).setValue(['pool1']);
+      await (await getExplorer('target_dataset')).setValue('pool3/');
+      await (await getInput('name')).setValue('task3');
+      spectator.fixture.detectChanges();
+      await spectator.fixture.whenStable();
+
+      const nextButton = await loader.getHarness(TnButtonHarness.with({ label: 'Next' }));
+      expect(await nextButton.isDisabled()).toBe(false);
+    });
+
     it('switching from Local to Remote enables schema_or_regex and naming_schema', async () => {
       // Start with Local system
       await (await getSelect('source_datasets_from')).selectOption('On this System');
