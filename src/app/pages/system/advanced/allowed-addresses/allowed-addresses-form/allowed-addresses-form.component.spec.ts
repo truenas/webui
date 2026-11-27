@@ -65,6 +65,17 @@ describe('AllowedAddressesComponent', () => {
     expect(await (await getAddressInput()).getValue()).toBe('1.1.1.1/32');
   });
 
+  it('renders the loaded addresses without a forced component refresh', async () => {
+    // `MockApiService` answers on a microtask, so the config lands after the first render, as on an
+    // appliance. The harness refreshes only the fixture, and an OnPush view under it only when
+    // marked; unlike `beforeEach`, no `detectComponentChanges()` forces it, so the form must mark it.
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+
+    expect(await loader.getAllHarnesses(TnInputHarness)).toHaveLength(1);
+  });
+
   it('sends an update payload with specific IP address', async () => {
     await (await getAddressInput()).setValue('2.2.2.2');
 
