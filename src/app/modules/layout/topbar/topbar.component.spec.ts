@@ -6,7 +6,7 @@ import {
 } from '@ngneat/spectator/jest';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import {
-  TnDialog, TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
+  TnDialog, TnIconButtonComponent, TnIconButtonHarness, TnIconComponent, TnIconHarness, TnSpriteLoaderService,
 } from '@truenas/ui-components';
 import { MockComponents } from 'ng-mocks';
 import { of } from 'rxjs';
@@ -284,6 +284,11 @@ describe('TopbarComponent', () => {
   });
 
   describe('sidenav toggle', () => {
+    it('shows the shortcut in the menu button tooltip', () => {
+      const toggle = spectator.query('#sidenavToggle', { read: TnIconButtonComponent })!;
+      expect(toggle.tooltip()).toBe('Toggle Collapse (Ctrl + B)');
+    });
+
     it('toggles the side menu when Ctrl + B is pressed', () => {
       const store$ = spectator.inject(MockStore);
       jest.spyOn(store$, 'dispatch');

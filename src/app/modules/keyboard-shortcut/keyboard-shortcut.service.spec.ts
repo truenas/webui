@@ -8,6 +8,7 @@ describe('KeyboardShortcutService', () => {
   let isMacOs = false;
   let handler: jest.Mock;
   let unregisters: (() => void)[] = [];
+  let unregisterSidenav: () => void;
 
   const createService = createServiceFactory({
     service: KeyboardShortcutService,
@@ -28,7 +29,7 @@ describe('KeyboardShortcutService', () => {
     isMacOs = false;
     handler = jest.fn();
     spectator = createService();
-    register('toggleSidenav', handler);
+    unregisterSidenav = register('toggleSidenav', handler);
   });
 
   // Root services are not destroyed between tests, so the previous test's service still listens
@@ -67,9 +68,32 @@ describe('KeyboardShortcutService', () => {
     expect(handler).toHaveBeenCalledTimes(1);
   });
 
+  it('fires with Caps Lock on, when the letter arrives upper-cased', () => {
+    press({ key: 'B', code: 'KeyB', ctrlKey: true });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('falls back to the physical key on a non-Latin layout', () => {
+    press({ key: 'и', code: 'KeyB', ctrlKey: true });
+
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it('follows the typed letter, not the physical key, on a Latin layout such as Dvorak', () => {
+    press({ key: 'x', code: 'KeyB', ctrlKey: true });
+    expect(handler).not.toHaveBeenCalled();
+
+    press({ key: 'b', code: 'KeyN', ctrlKey: true });
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
   it('ignores the key without the modifier or with extra modifiers', () => {
     const plain = press({ key: 'b' });
     press({ key: 'B', ctrlKey: true, shiftKey: true });
+    press({
+      key: 'И', code: 'KeyB', ctrlKey: true, shiftKey: true,
+    });
     press({ key: 'b', ctrlKey: true, altKey: true });
     press({ key: 'b', ctrlKey: true, metaKey: true });
 
@@ -123,12 +147,25 @@ describe('KeyboardShortcutService', () => {
   });
 
   it('stops running the handler once unregistered', () => {
-    const unregister = register('toggleSidenav', handler);
-    unregister();
+    unregisterSidenav();
 
     press({ key: 'b', ctrlKey: true });
 
     expect(handler).not.toHaveBeenCalled();
+  });
+
+  it('runs only the newest handler for a shortcut, and the earlier one again once it unregisters', () => {
+    const newerHandler = jest.fn();
+    const unregisterNewer = register('toggleSidenav', newerHandler);
+
+    press({ key: 'b', ctrlKey: true });
+    expect(newerHandler).toHaveBeenCalledTimes(1);
+    expect(handler).not.toHaveBeenCalled();
+
+    unregisterNewer();
+    press({ key: 'b', ctrlKey: true });
+    expect(newerHandler).toHaveBeenCalledTimes(1);
+    expect(handler).toHaveBeenCalledTimes(1);
   });
 
   it('builds a platform-specific hint', () => {

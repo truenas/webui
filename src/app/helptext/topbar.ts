@@ -4,7 +4,7 @@ import { tnIconMarker } from '@truenas/ui-components';
 export const helptextTopbar = {
   haStatus: T('HA Status'),
   tooltips: {
-    toggleCollapse: T('Toggle Collapse'),
+    toggleCollapse: T('Toggle Collapse ({shortcut})'),
     connectingToTruecommand: T('Connecting to TrueCommand'),
     truecommandStatus: T('Status of TrueCommand'),
     tncStatus: T('Status of TrueNAS Connect'),

@@ -25,7 +25,11 @@ export class KeyboardShortcutService {
   private document = inject(DOCUMENT);
   private destroyRef = inject(DestroyRef);
 
-  private handlers = new Map<KeyboardShortcutId, () => void>();
+  /**
+   * Handlers per shortcut, newest last. Only the newest runs, so a later registration takes over
+   * and hands back to the earlier one when it unregisters.
+   */
+  private handlers = new Map<KeyboardShortcutId, (() => void)[]>();
 
   constructor() {
     fromEvent<KeyboardEvent>(this.document, 'keydown')
@@ -41,11 +45,10 @@ export class KeyboardShortcutService {
    * `handler` must set signals or call `markForCheck()` for the change to render.
    */
   register(id: KeyboardShortcutId, handler: () => void, destroyRef?: DestroyRef): () => void {
-    this.handlers.set(id, handler);
+    const entry = (): void => handler();
+    this.handlers.set(id, [...(this.handlers.get(id) ?? []), entry]);
     const unregister = (): void => {
-      if (this.handlers.get(id) === handler) {
-        this.handlers.delete(id);
-      }
+      this.handlers.set(id, (this.handlers.get(id) ?? []).filter((registered) => registered !== entry));
     };
     destroyRef?.onDestroy(unregister);
     return unregister;
@@ -65,13 +68,13 @@ export class KeyboardShortcutService {
     }
 
     const match = (Object.entries(keyboardShortcuts) as [KeyboardShortcutId, KeyboardShortcutDefinition][])
-      .find(([, shortcut]) => shortcut.key === event.key);
+      .find(([, shortcut]) => this.matchesKey(event, shortcut.key));
     if (!match) {
       return;
     }
 
     const [id, shortcut] = match;
-    const handler = this.handlers.get(id);
+    const handler = this.handlers.get(id)?.at(-1);
     if (!handler) {
       return;
     }
@@ -92,8 +95,21 @@ export class KeyboardShortcutService {
     const commandPressed = isMacOs ? event.metaKey : event.ctrlKey;
     const otherPressed = isMacOs ? event.ctrlKey : event.metaKey;
     // Shift is not rejected outright: on many layouts it is needed to type keys like "/".
-    const shiftedLetter = event.shiftKey && /^[a-z]$/i.test(event.key);
+    const shiftedLetter = event.shiftKey && (/^[a-z]$/i.test(event.key) || event.code?.startsWith('Key'));
     return commandPressed && !otherPressed && !event.altKey && !shiftedLetter;
+  }
+
+  private matchesKey(event: KeyboardEvent, key: string): boolean {
+    // Lower-cased, so the shortcut still works with Caps Lock on (Shift is rejected earlier).
+    const pressed = event.key.toLowerCase();
+    if (pressed === key) {
+      return true;
+    }
+    // On a non-Latin layout (e.g. Ctrl+B gives "и" on Russian) fall back to the physical key.
+    // Only then: on Latin layouts such as Dvorak the letter moves, and `event.key` is what the user meant.
+    const isLatinLetter = /^[a-z]$/.test(key);
+    const pressedNonLatin = pressed.length === 1 && !/^[\x20-\x7e]$/.test(pressed);
+    return isLatinLetter && pressedNonLatin && event.code === `Key${key.toUpperCase()}`;
   }
 
   private isTextField(target: EventTarget | null): boolean {
