@@ -1,22 +1,20 @@
 import { AsyncPipe } from '@angular/common';
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, Injector, OnInit, signal, inject, input,
+  ChangeDetectionStrategy, Component, DestroyRef, OnInit, computed, inject, input, signal,
 } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import {
-  AbstractControl, Validators, ReactiveFormsModule, FormBuilder, FormControl, FormGroup,
-} from '@angular/forms';
+  applyEach, disabled, form, hidden, readonly, required, validate,
+} from '@angular/forms/signals';
 import { Store } from '@ngrx/store';
 import { TranslateService, TranslateModule } from '@ngx-translate/core';
 import {
   InputType, TnCheckboxComponent, TnDialog, TnFormErrorsComponent, TnFormFieldComponent, TnFormListComponent,
   TnFormListItemComponent, TnFormSectionComponent, TnInputComponent, TnRadioComponent, TnRadioGroupComponent,
-  TnSelectComponent,
+  TnSelectComponent, TnSelectOption,
 } from '@truenas/ui-components';
 import { isEqual, range } from 'lodash-es';
-import {
-  BehaviorSubject, Observable, of,
-} from 'rxjs';
+import { Observable, of } from 'rxjs';
 import {
   filter, map, switchMap, take,
 } from 'rxjs/operators';
@@ -30,10 +28,8 @@ import {
 } from 'app/enums/network-interface.enum';
 import { Role } from 'app/enums/role.enum';
 import { choicesToOptions, singleArrayToOptions } from 'app/helpers/operators/options.operators';
-import { revalidateAfterRender } from 'app/helpers/revalidate-after-render.helper';
 import { helptextInterfacesForm } from 'app/helptext/network/interfaces/interfaces-form';
 import { Choices } from 'app/interfaces/choices.interface';
-import { ControlsOf } from 'app/interfaces/controls-of.interface';
 import {
   NetworkConfigToBeRemoved,
   NetworkInterface,
@@ -48,11 +44,14 @@ import { IxFormHostForm } from 'app/modules/forms/ix-forms/components/ix-form/ix
 import {
   FormSubmitEvent, IxFormComponent, SubmitResult,
 } from 'app/modules/forms/ix-forms/components/ix-form/ix-form.component';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
-import { ipv4or6cidrValidator, ipv4or6Validator } from 'app/modules/forms/ix-forms/validators/ip-validation';
-import { rangeValidator } from 'app/modules/forms/ix-forms/validators/range-validation/range-validation';
+import { signalFormImports } from 'app/modules/forms/signal-forms/ix-signal-error-dismiss.directive';
+import { SignalFormErrors } from 'app/modules/forms/signal-forms/signal-form-errors.service';
+import { patchModelValue, toFormModel } from 'app/modules/forms/signal-forms/signal-forms.utils';
+import {
+  isIpAddress, requiredList, validateIpAddress, validateRange,
+} from 'app/modules/forms/signal-forms/signal-validators';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
-import { TranslatedString } from 'app/modules/translate/translate.helper';
+import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
 import {
   DefaultGatewayDialog,
@@ -72,14 +71,62 @@ import { AppState } from 'app/store';
 import { selectHaInfoState } from 'app/store/ha-info/ha-info.selectors';
 import { networkInterfacesChanged } from 'app/store/network-interfaces/network-interfaces.actions';
 
+interface InterfaceFormModel {
+  type: NetworkInterfaceType | null;
+  name: string;
+  description: string;
+  ipv4_dhcp: boolean;
+  ipv6_auto: boolean;
+  bridge_members: string[];
+  enable_learning: boolean;
+  lag_protocol: LinkAggregationProtocol | null;
+  xmit_hash_policy: XmitHashPolicy;
+  lacpdu_rate: LacpduRate;
+  lag_ports: string[];
+  vlan_parent_interface: string;
+  vlan_tag: number | null;
+  vlan_pcp: number | null;
+  failover_critical: boolean;
+  failover_group: number | null;
+  mtu: number | null;
+  fec_mode: string | null;
+  aliases: NetworkInterfaceFormAlias[];
+}
+
+const defaultMtu = 1500;
+
+const defaultModel: InterfaceFormModel = {
+  type: null,
+  name: '',
+  description: '',
+  ipv4_dhcp: false,
+  ipv6_auto: false,
+  bridge_members: [],
+  enable_learning: true,
+  // The backend's `lag_supported_protocols` never returns NONE, so start unselected (placeholder)
+  // and force an explicit choice rather than showing a phantom NONE that isn't in the options.
+  lag_protocol: null,
+  xmit_hash_policy: XmitHashPolicy.Layer2Plus3,
+  lacpdu_rate: LacpduRate.Slow,
+  lag_ports: [],
+  vlan_parent_interface: '',
+  vlan_tag: null,
+  vlan_pcp: null,
+  failover_critical: false,
+  failover_group: null,
+  mtu: defaultMtu,
+  fec_mode: null,
+  aliases: [],
+};
+
 @Component({
   selector: 'ix-interface-form',
   templateUrl: './interface-form.component.html',
   styleUrls: ['./interface-form.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [InterfaceNameValidatorService],
+  providers: [InterfaceNameValidatorService, SignalFormErrors],
   imports: [
-    ReactiveFormsModule,
+    signalFormImports,
     IxFormComponent,
     TnFormSectionComponent,
     TnFormFieldComponent,
@@ -97,20 +144,17 @@ import { networkInterfacesChanged } from 'app/store/network-interfaces/network-i
     AsyncPipe,
   ],
 })
-export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
-  private formBuilder = inject(FormBuilder);
-  private cdr = inject(ChangeDetectorRef);
+export class InterfaceFormComponent extends IxFormHostForm<boolean, InterfaceFormModel> implements OnInit {
   private api = inject(ApiService);
   private entitlements = inject(EntitlementsService);
   private translate = inject(TranslateService);
   private networkService = inject(NetworkService);
   private errorHandler = inject(ErrorHandlerService);
-  private validatorsService = inject(IxValidatorsService);
-  private interfaceFormValidator = inject(InterfaceNameValidatorService);
+  private interfaceNameValidator = inject(InterfaceNameValidatorService);
+  private serverErrors = inject(SignalFormErrors);
   private tnDialog = inject(TnDialog);
   private dialog = inject(DialogService);
   private destroyRef = inject(DestroyRef);
-  private injector = inject(Injector);
   private store$ = inject<Store<AppState>>(Store);
 
   /** Interface to edit, supplied by the `<tn-side-panel>` host (`FormSidePanelService.open`). */
@@ -120,90 +164,106 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
 
   readonly requiredRoles = [Role.NetworkInterfaceWrite];
   protected readonly InputType = InputType;
-  protected existingInterface: NetworkInterface | undefined;
-  private interfaceList: NetworkInterface[] = [];
+  readonly helptext = helptextInterfacesForm;
+
   /** Physical bridge members as loaded for edit, so Save only warns when that set actually changes. */
   private initialPhysicalBridgeMembers: string[] = [];
 
-  readonly defaultMtu = 1500;
-  protected readonly isHaEnabled$ = new BehaviorSubject(false);
+  private readonly model = signal<InterfaceFormModel>({ ...defaultModel });
 
-  protected fecModeOptions$: Observable<{ label: string; value: string }[]> = of([]);
-  protected showFecMode = signal(false);
-  isHaLicensed = false;
-  ipLabelSuffix: TranslatedString = '';
-  failoverLabelSuffix: TranslatedString = '';
-
-  form = this.formBuilder.group({
-    type: new FormControl(null as NetworkInterfaceType | null, Validators.required),
-    name: ['', [
-      Validators.required,
-      this.interfaceFormValidator.validate,
-    ]],
-    description: [''],
-    ipv4_dhcp: [false],
-    ipv6_auto: [false],
-
-    // Bridge fields
-    bridge_members: [[] as string[]],
-    enable_learning: [true],
-
-    // Lag fields
-    // The backend's `lag_supported_protocols` never returns NONE, so start unselected (placeholder)
-    // and force an explicit choice rather than showing a phantom NONE that isn't in the options.
-    lag_protocol: new FormControl(null as LinkAggregationProtocol | null),
-    xmit_hash_policy: [XmitHashPolicy.Layer2Plus3],
-    lacpdu_rate: [LacpduRate.Slow],
-    lag_ports: [[] as string[]],
-
-    // Vlan fields
-    vlan_parent_interface: [''],
-    vlan_tag: new FormControl(null as number | null, rangeValidator(1, 4094)),
-    vlan_pcp: new FormControl(null as number | null),
-
-    // Failover
-    failover_critical: [false],
-    failover_group: new FormControl(null as number | null),
-
-    mtu: [this.defaultMtu, rangeValidator(68, 9216)],
-    fec_mode: new FormControl(null as string | null),
-
-    // Aliases
-    aliases: this.formBuilder.array<FormGroup<ControlsOf<NetworkInterfaceFormAlias>>>([]),
+  protected readonly isNew = computed(() => !this.editInterface());
+  protected readonly isBridge = computed(() => this.model().type === NetworkInterfaceType.Bridge);
+  protected readonly isLag = computed(() => this.model().type === NetworkInterfaceType.LinkAggregation);
+  protected readonly isVlan = computed(() => this.model().type === NetworkInterfaceType.Vlan);
+  protected readonly isLacpLag = computed(() => this.model().lag_protocol === LinkAggregationProtocol.Lacp);
+  protected readonly isFailoverLag = computed(() => this.model().lag_protocol === LinkAggregationProtocol.Failover);
+  protected readonly hasXmitHashPolicy = computed(() => {
+    return this.isLacpLag() || this.model().lag_protocol === LinkAggregationProtocol.LoadBalance;
   });
+
+  protected readonly canHaveStaticIpAddresses = computed(() => !this.model().ipv4_dhcp);
+
+  protected readonly isHaLicensed = signal(false);
+  protected readonly ipLabelSuffix = signal('');
+  protected readonly failoverLabelSuffix = signal('');
+
+  protected readonly fecModeOptions = signal<TnSelectOption<string>[]>([]);
+  protected readonly showFecMode = computed(() => this.fecModeOptions().length > 0);
 
   // Editing interfaces is disallowed while HA is enabled, so the host's Save must be gated on it
   // too — bound as the `<ix-form>`'s `extraDisabled`.
-  protected readonly isHaEnabled = toSignal(this.isHaEnabled$, { initialValue: false });
+  protected readonly isHaEnabled = signal(false);
 
-  interfaceTypes$ = of([
+  /**
+   * Each type's fields are hidden for the other types rather than removed, so their `required` stops counting
+   * the moment the type changes: nothing the user cannot see can block Save.
+   */
+  protected readonly form = form(this.model, (path) => {
+    hidden(path.type, { when: () => !this.isNew() });
+    required(path.type);
+
+    required(path.name);
+    readonly(path.name, { when: () => !this.isNew() });
+    validate(path.name, ({ value, valueOf }) => this.interfaceNameValidator.validate(valueOf(path.type), value()));
+
+    disabled(path.ipv6_auto, { when: () => this.isHaLicensed() });
+
+    hidden(path.aliases, { when: () => !this.canHaveStaticIpAddresses() });
+    applyEach(path.aliases, (alias) => {
+      required(alias.address);
+      validateIpAddress(alias.address, { cidr: true });
+
+      hidden(alias.failover_address, { when: () => !this.isHaLicensed() });
+      required(alias.failover_address);
+      validateIpAddress(alias.failover_address);
+
+      hidden(alias.failover_virtual_address, { when: () => !this.isHaLicensed() });
+      required(alias.failover_virtual_address);
+      validateIpAddress(alias.failover_virtual_address);
+    });
+
+    hidden(path.bridge_members, { when: () => !this.isBridge() });
+    hidden(path.enable_learning, { when: () => !this.isBridge() });
+
+    hidden(path.lag_protocol, { when: () => !this.isLag() });
+    required(path.lag_protocol);
+    hidden(path.xmit_hash_policy, { when: () => !this.isLag() || !this.hasXmitHashPolicy() });
+    required(path.xmit_hash_policy);
+    hidden(path.lacpdu_rate, { when: () => !this.isLag() || !this.isLacpLag() });
+    required(path.lacpdu_rate);
+    hidden(path.lag_ports, { when: () => !this.isLag() });
+    requiredList(path.lag_ports);
+
+    hidden(path.vlan_parent_interface, { when: () => !this.isVlan() });
+    required(path.vlan_parent_interface);
+    // The parent of an existing VLAN cannot change.
+    disabled(path.vlan_parent_interface, { when: () => !this.isNew() });
+    hidden(path.vlan_tag, { when: () => !this.isVlan() });
+    required(path.vlan_tag);
+    validateRange(path.vlan_tag, 1, 4094);
+    hidden(path.vlan_pcp, { when: () => !this.isVlan() });
+
+    hidden(path.failover_critical, { when: () => !this.isHaLicensed() });
+    hidden(path.failover_group, { when: () => !this.isHaLicensed() });
+
+    validateRange(path.mtu, 68, 9216);
+    hidden(path.fec_mode, { when: () => !this.showFecMode() });
+
+    this.serverErrors.apply(path);
+  });
+
+  protected readonly interfaceTypes: TnSelectOption<NetworkInterfaceType>[] = [
     { label: this.translate.instant('Bridge'), value: NetworkInterfaceType.Bridge },
     { label: this.translate.instant('Link Aggregation'), value: NetworkInterfaceType.LinkAggregation },
     { label: 'VLAN', value: NetworkInterfaceType.Vlan },
-  ]);
+  ];
 
-  dhcpOptions$ = of([
+  protected readonly dhcpOptions = [
     { label: this.translate.instant('Get IP Address Automatically from DHCP'), value: true },
     { label: this.translate.instant('Define Static IP Addresses'), value: false },
-  ]);
+  ];
 
-  bridgeMembers$ = this.networkService.getBridgeMembersChoices().pipe(choicesToOptions());
-
-  lagProtocols$ = this.networkService.getLaggProtocolChoices().pipe(singleArrayToOptions());
-  lagPorts$ = this.networkService.getLaggPortsChoices().pipe(choicesToOptions());
-  // Middleware declares both choices as a fixed set of keys, which an interface without an index signature
-  // cannot be read as.
-  xmitHashPolicies$ = this.api.call('interface.xmit_hash_policy_choices').pipe(
-    map((choices): Choices => ({ ...choices })),
-    choicesToOptions(),
-  );
-
-  lacpduRates$ = this.api.call('interface.lacpdu_rate_choices').pipe(
-    map((choices): Choices => ({ ...choices })),
-    choicesToOptions(),
-  );
-
-  vlanPcpOptions$ = of([
+  protected readonly vlanPcpOptions: TnSelectOption<number>[] = [
     { value: 0, label: this.translate.instant('Best effort (default)') },
     { value: 1, label: this.translate.instant('Background (lowest)') },
     { value: 2, label: this.translate.instant('Excellent effort') },
@@ -212,114 +272,99 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     { value: 5, label: this.translate.instant('Video, < 10ms latency') },
     { value: 6, label: this.translate.instant('Internetwork control') },
     { value: 7, label: this.translate.instant('Network control (highest)') },
-  ]);
+  ];
 
-  vlanParentInterfaces$ = this.networkService.getVlanParentInterfaceChoices().pipe(choicesToOptions());
+  protected readonly failoverGroups = range(1, 32).map((group) => ({
+    label: ignoreTranslation(String(group)),
+    value: group,
+  }));
 
-  failoverGroups$ = of(range(1, 32)).pipe(singleArrayToOptions());
+  // An edited bridge or LAG also offers its own current members, so its choices are fetched again on edit.
+  protected bridgeMembers$ = this.networkService.getBridgeMembersChoices().pipe(choicesToOptions());
 
-  readonly helptext = helptextInterfacesForm;
+  protected readonly lagProtocols = toSignal(
+    this.networkService.getLaggProtocolChoices().pipe(singleArrayToOptions()),
+    { initialValue: [] },
+  );
 
-  get isNew(): boolean {
-    return !this.existingInterface;
-  }
+  protected lagPorts$ = this.networkService.getLaggPortsChoices().pipe(choicesToOptions());
 
-  get isVlan(): boolean {
-    return this.form.controls.type.value === NetworkInterfaceType.Vlan;
-  }
+  // Middleware declares both choices as a fixed set of keys, which an interface without an index signature
+  // cannot be read as.
+  protected readonly xmitHashPolicies = toSignal(
+    this.api.call('interface.xmit_hash_policy_choices').pipe(
+      map((choices): Choices => ({ ...choices })),
+      choicesToOptions(),
+    ),
+    { initialValue: [] },
+  );
 
-  get isBridge(): boolean {
-    return this.form.controls.type.value === NetworkInterfaceType.Bridge;
-  }
+  protected readonly lacpduRates = toSignal(
+    this.api.call('interface.lacpdu_rate_choices').pipe(
+      map((choices): Choices => ({ ...choices })),
+      choicesToOptions(),
+    ),
+    { initialValue: [] },
+  );
 
-  get isLag(): boolean {
-    return this.form.controls.type.value === NetworkInterfaceType.LinkAggregation;
-  }
-
-  get isLacpLag(): boolean {
-    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.Lacp;
-  }
-
-  get isFailover(): boolean {
-    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.Failover;
-  }
-
-  get isLoadBalanceLag(): boolean {
-    return this.form.controls.lag_protocol.value === LinkAggregationProtocol.LoadBalance;
-  }
-
-  get canHaveStaticIpAddresses(): boolean {
-    return !this.form.value.ipv4_dhcp;
-  }
+  protected readonly vlanParentInterfaces = toSignal(
+    this.networkService.getVlanParentInterfaceChoices().pipe(choicesToOptions()),
+    { initialValue: [] },
+  );
 
   ngOnInit(): void {
-    // Edit record and the existing-interfaces list arrive via the `editInterface` / `interfacesList`
-    // inputs from the `<tn-side-panel>` host (`FormSidePanelService.open`).
-    this.existingInterface = this.editInterface();
-    this.interfaceList = this.interfacesList();
-
     this.loadFailoverStatus();
     this.loadFecModes();
-    this.validateNameOnTypeChange();
-    this.updateRequiredValidatorsOnTypeChange();
-    this.checkFailoverDisabled();
+    this.networkService.getIsHaEnabled().pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaEnabled) => {
+      this.isHaEnabled.set(isHaEnabled);
+    });
 
-    if (this.existingInterface) {
-      this.setInterfaceForEdit(this.existingInterface);
+    const nic = this.editInterface();
+    if (nic) {
+      this.setInterfaceForEdit(nic);
     }
   }
 
-  private checkFailoverDisabled(): void {
-    this.networkService.getIsHaEnabled().pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((isHaEnabled) => {
-      this.isHaEnabled$.next(isHaEnabled);
-    });
-  }
-
   private setInterfaceForEdit(nic: NetworkInterface): void {
-    nic.aliases.forEach(() => this.addStaticIpAddress());
-    this.form.patchValue({
+    this.model.set(patchModelValue({ ...defaultModel }, toFormModel({
       ...nic,
-      mtu: nic.mtu || this.defaultMtu,
+      mtu: nic.mtu || defaultMtu,
       fec_mode: nic.fec_mode ?? null,
       aliases: interfaceAliasesToFormAliases(nic),
-    });
+    })));
 
-    this.setOptionsForEdit(nic);
-    this.disableVlanParentInterface();
-    this.initialPhysicalBridgeMembers = this.getPhysicalBridgeMembers(this.form.controls.bridge_members.value);
+    if (nic.type === NetworkInterfaceType.Bridge) {
+      this.bridgeMembers$ = this.networkService.getBridgeMembersChoices(nic.id).pipe(choicesToOptions());
+    } else if (nic.type === NetworkInterfaceType.LinkAggregation) {
+      this.lagPorts$ = this.networkService.getLaggPortsChoices(nic.id).pipe(choicesToOptions());
+    }
+    this.initialPhysicalBridgeMembers = this.getPhysicalBridgeMembers(this.model().bridge_members);
+  }
+
+  /** A new interface is named after its type (`br1`, `bond2`, ...) with the first number not in use. */
+  protected onTypeSelected(type: NetworkInterfaceType): void {
+    const name = this.isNew() ? this.generateNextAvailableNameByType(type) : null;
+    if (name) {
+      this.form.name().value.set(name);
+    }
   }
 
   protected addStaticIpAddress(): void {
-    this.form.controls.aliases.push(this.formBuilder.group({
-      address: ['', [Validators.required, ipv4or6cidrValidator()]],
-      failover_address: ['', [
-        this.validatorsService.validateOnCondition(
-          () => this.isHaLicensed,
-          Validators.required,
-        ),
-        ipv4or6Validator(),
-      ]],
-      failover_virtual_address: ['', [
-        this.validatorsService.validateOnCondition(
-          () => this.isHaLicensed,
-          Validators.required,
-        ),
-        ipv4or6Validator(),
-      ]],
+    this.model.update((model) => ({
+      ...model,
+      aliases: [...model.aliases, { address: '', failover_address: '', failover_virtual_address: '' }],
     }));
   }
 
   protected removeStaticIpAddress(index: number): void {
-    this.form.controls.aliases.removeAt(index);
+    this.model.update((model) => ({ ...model, aliases: model.aliases.filter((_, i) => i !== index) }));
   }
 
   protected handleSubmit = (
-    event: FormSubmitEvent,
+    event: FormSubmitEvent<InterfaceFormModel>,
   ): SubmitResult<boolean, NetworkConfigToBeRemoved> => {
     const params = this.prepareSubmitParams();
-    const existingInterface = this.existingInterface;
+    const existingInterface = this.editInterface();
 
     // "Back to editing" completes the chain without emitting, so the form stays open with its values.
     const request$ = this.confirmBridgeLoopRiskIfNeeded().pipe(
@@ -355,12 +400,12 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
    * Edits that leave that set alone don't ask again.
    */
   private confirmBridgeLoopRiskIfNeeded(): Observable<boolean> {
-    if (!this.isBridge) {
+    if (!this.isBridge()) {
       return of(true);
     }
 
-    const physicalMembers = this.getPhysicalBridgeMembers(this.form.controls.bridge_members.value);
-    const hasPhysicalMembersChanged = this.isNew || !isEqual(physicalMembers, this.initialPhysicalBridgeMembers);
+    const physicalMembers = this.getPhysicalBridgeMembers(this.model().bridge_members);
+    const hasPhysicalMembersChanged = this.isNew() || !isEqual(physicalMembers, this.initialPhysicalBridgeMembers);
     if (physicalMembers.length < 2 || !hasPhysicalMembersChanged) {
       return of(true);
     }
@@ -377,7 +422,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   /** Sorted, so a reordered selection compares equal to the one it started as. */
   private getPhysicalBridgeMembers(members: string[]): string[] {
     const physicalNames = new Set(
-      this.interfaceList
+      this.interfacesList()
         .filter((nic) => nic.type === NetworkInterfaceType.Physical)
         .map((nic) => nic.name),
     );
@@ -385,107 +430,20 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
   }
 
   private generateNextAvailableNameByType(type: NetworkInterfaceType): string | null {
-    const interfaces = this.interfaceList;
-    const prefix = this.getPrefixByType(type);
+    const prefix = this.interfaceNameValidator.getNamePrefix(type);
     if (!prefix) return null;
 
-    const usedNumbers = this.getUsedNumbersForPrefix(interfaces, prefix);
-    const nextAvailableNumber = this.findNextAvailableNumber(usedNumbers);
-
-    return `${prefix}${nextAvailableNumber}`;
-  }
-
-  private getPrefixByType(type: NetworkInterfaceType): string | null {
-    switch (type) {
-      case NetworkInterfaceType.LinkAggregation:
-        return 'bond';
-      case NetworkInterfaceType.Bridge:
-        return 'br';
-      case NetworkInterfaceType.Vlan:
-        return 'vlan';
-      default:
-        return null;
-    }
-  }
-
-  private getUsedNumbersForPrefix(interfaces: NetworkInterface[], prefix: string): Set<number> {
-    return new Set(
-      interfaces
+    const usedNumbers = new Set(
+      this.interfacesList()
         .map((item) => new RegExp(`^${prefix}(\\d+)$`).exec(item.name))
         .filter(Boolean)
         .map((match) => Number(match[1])),
     );
-  }
-
-  private findNextAvailableNumber(usedNumbers: Set<number>): number {
-    const sorted = Array.from(usedNumbers).sort((a, b) => a - b);
-    for (let i = 1; i <= sorted.length + 1; i++) {
-      if (!usedNumbers.has(i)) {
-        return i;
-      }
+    let next = 1;
+    while (usedNumbers.has(next)) {
+      next++;
     }
-    return sorted.length + 1;
-  }
-
-  private validateNameOnTypeChange(): void {
-    this.form.controls.type.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((type: NetworkInterfaceType) => {
-        if (!this.existingInterface) {
-          const name = this.generateNextAvailableNameByType(type);
-          if (name) {
-            this.form.controls.name.patchValue(name, { emitEvent: false });
-          }
-        }
-
-        setTimeout(() => {
-          this.form.controls.name.updateValueAndValidity();
-        });
-      });
-  }
-
-  /**
-   * The type-specific selects are marked required in the template, but that only draws the asterisk —
-   * it attaches no validator, so `form.invalid` (and thus the Save button) ignored them. Attach
-   * `Validators.required` to the active type's fields and clear it from the others on every change.
-   */
-  private updateRequiredValidatorsOnTypeChange(): void {
-    this.form.controls.type.valueChanges
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((type) => this.applyTypeRequiredValidators(type));
-  }
-
-  private applyTypeRequiredValidators(type: NetworkInterfaceType | null): void {
-    const controls = this.form.controls;
-    const requiredControlsByType = new Map<NetworkInterfaceType, AbstractControl[]>([
-      [NetworkInterfaceType.LinkAggregation, [controls.lag_protocol, controls.lag_ports]],
-      [NetworkInterfaceType.Vlan, [controls.vlan_parent_interface, controls.vlan_tag]],
-    ]);
-
-    const activeControls = (type && requiredControlsByType.get(type)) || [];
-    const typeControls = [...requiredControlsByType.values()].flat();
-    typeControls.forEach((control) => {
-      if (activeControls.includes(control)) {
-        control.addValidators(Validators.required);
-      } else {
-        control.removeValidators(Validators.required);
-      }
-      control.updateValueAndValidity({ emitEvent: false });
-    });
-    // The other types' fields are hidden by `@if`, and their template `[required]` outlives the above.
-    revalidateAfterRender(this.injector, typeControls);
-  }
-
-  private setOptionsForEdit(nic: NetworkInterface): void {
-    if (this.isBridge) {
-      this.bridgeMembers$ = this.networkService
-        .getBridgeMembersChoices(nic.id)
-        .pipe(choicesToOptions());
-    } else if (this.isLag) {
-      this.lagPorts$ = this.networkService
-        .getLaggPortsChoices(nic.id)
-        .pipe(choicesToOptions());
-    }
+    return `${prefix}${next}`;
   }
 
   /**
@@ -493,7 +451,7 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
    * check with the failover lookup below, which gated two unrelated things at once.
    */
   private loadFecModes(): void {
-    const existingInterface = this.existingInterface;
+    const existingInterface = this.editInterface();
     if (!existingInterface) {
       return;
     }
@@ -501,8 +459,11 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
     this.entitlements.entitled$(EntitlementFeature.NetworkFec).pipe(
       filter(Boolean),
       take(1),
+      switchMap(() => this.api.call('interface.available_fec_modes', [existingInterface.id])),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(() => this.loadAvailableFecModes(existingInterface.id));
+    ).subscribe((modes) => {
+      this.fecModeOptions.set(modes.map((mode) => ({ label: mode, value: mode })));
+    });
   }
 
   /** The `HA` entitlement alone decides HA here; product type must not pre-gate it. */
@@ -518,102 +479,102 @@ export class InterfaceFormComponent extends IxFormHostForm implements OnInit {
       this.errorHandler.withErrorHandler(),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(([isHaLicensed, failoverNode]) => {
-      this.isHaLicensed = isHaLicensed;
-      if (isHaLicensed) {
-        this.form.controls.ipv6_auto.setValue(false);
-        this.form.controls.ipv6_auto.disable();
-
-        if (failoverNode === 'A') {
-          this.ipLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-          this.failoverLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 2)') as TranslatedString;
-        } else if (failoverNode === 'B') {
-          this.ipLabelSuffix = ' ' + this.translate.instant('(TrueNAS Controller 1)') as TranslatedString;
-          this.failoverLabelSuffix = ' ' + this.translate.instant('(This Controller)') as TranslatedString;
-        }
+      if (!isHaLicensed) {
+        return;
       }
-      this.cdr.markForCheck();
-    });
-  }
+      // Autoconfigure IPv6 is not supported on HA, so it is switched off and locked.
+      this.form.ipv6_auto().value.set(false);
+      this.isHaLicensed.set(true);
 
-  private loadAvailableFecModes(interfaceId: string): void {
-    this.api.call('interface.available_fec_modes', [interfaceId]).pipe(
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe((modes) => {
-      if (modes.length > 0) {
-        this.fecModeOptions$ = of(modes.map((mode) => ({ label: mode, value: mode })));
-        this.showFecMode.set(true);
-        this.cdr.markForCheck();
+      if (failoverNode === 'A') {
+        this.ipLabelSuffix.set(' ' + this.translate.instant('(This Controller)'));
+        this.failoverLabelSuffix.set(' ' + this.translate.instant('(TrueNAS Controller 2)'));
+      } else if (failoverNode === 'B') {
+        this.ipLabelSuffix.set(' ' + this.translate.instant('(TrueNAS Controller 1)'));
+        this.failoverLabelSuffix.set(' ' + this.translate.instant('(This Controller)'));
       }
     });
   }
 
-  private disableVlanParentInterface(): void {
-    if (!this.isVlan) {
-      return;
-    }
-
-    this.form.controls.vlan_parent_interface.disable();
-  }
-
+  /**
+   * Built field by field rather than from `activeValue()`: an existing VLAN's parent is disabled but must still
+   * be sent, LAG sends its hash policy and LACPDU rate whatever the protocol (the API ignores them where they do
+   * not apply), and `ipv6_auto` is sent even while HA locks it.
+   */
   private prepareSubmitParams(): NetworkInterfaceCreate | NetworkInterfaceUpdate {
-    const formValues = this.form.getRawValue();
+    const values = this.model();
 
     let params = {
-      name: formValues.name,
-      description: formValues.description,
-      ipv4_dhcp: formValues.ipv4_dhcp,
-      ipv6_auto: formValues.ipv6_auto,
-      mtu: formValues.mtu,
+      name: values.name,
+      description: values.description,
+      ipv4_dhcp: values.ipv4_dhcp,
+      ipv6_auto: values.ipv6_auto,
+      mtu: values.mtu,
     } as NetworkInterfaceCreate | NetworkInterfaceUpdate;
 
-    const aliases = formAliasesToInterfaceAliases(formValues.aliases);
+    // Always sent, so rows removed before switching to DHCP are removed on the server too. Under DHCP the rows are
+    // hidden and skip validation, so only complete, valid rows are kept: an empty or half-typed row the user can no
+    // longer see is dropped instead of reaching the API.
+    const rows = this.canHaveStaticIpAddresses()
+      ? values.aliases
+      : values.aliases.filter((alias) => this.isCompleteAlias(alias));
+    const aliases = formAliasesToInterfaceAliases(rows);
     params.aliases = aliases.aliases;
 
-    if (this.isHaLicensed) {
+    if (this.isHaLicensed()) {
       params.failover_aliases = aliases.failover_aliases;
       params.failover_virtual_aliases = aliases.failover_virtual_aliases;
     }
 
-    if (this.isNew) {
-      (params as NetworkInterfaceCreate).type = formValues.type as unknown as CreateNetworkInterfaceType;
+    if (this.isNew()) {
+      (params as NetworkInterfaceCreate).type = values.type as unknown as CreateNetworkInterfaceType;
     }
 
-    if (this.isBridge) {
-      params.bridge_members = formValues.bridge_members;
-      params.enable_learning = formValues.enable_learning;
-    } else if (this.isLag) {
+    if (this.isBridge()) {
+      params.bridge_members = values.bridge_members;
+      params.enable_learning = values.enable_learning;
+    } else if (this.isLag()) {
       params = {
         ...params,
-        lag_protocol: formValues.lag_protocol as LinkAggregationProtocol,
-        xmit_hash_policy: formValues.xmit_hash_policy,
-        lacpdu_rate: formValues.lacpdu_rate,
-        lag_ports: formValues.lag_ports,
+        lag_protocol: values.lag_protocol as LinkAggregationProtocol,
+        xmit_hash_policy: values.xmit_hash_policy,
+        lacpdu_rate: values.lacpdu_rate,
+        lag_ports: values.lag_ports,
       };
-    } else if (this.isVlan) {
+    } else if (this.isVlan()) {
       params = {
         ...params,
-        vlan_parent_interface: formValues.vlan_parent_interface,
-        vlan_tag: formValues.vlan_tag,
-        vlan_pcp: formValues.vlan_pcp,
-      };
-    }
-
-    if (this.isHaLicensed) {
-      params = {
-        ...params,
-        failover_critical: formValues.failover_critical,
-        failover_group: formValues.failover_group,
+        vlan_parent_interface: values.vlan_parent_interface,
+        vlan_tag: values.vlan_tag,
+        vlan_pcp: values.vlan_pcp,
       };
     }
 
-    if (this.showFecMode() && formValues.fec_mode) {
-      params.fec_mode = formValues.fec_mode;
+    if (this.isHaLicensed()) {
+      params = {
+        ...params,
+        failover_critical: values.failover_critical,
+        failover_group: values.failover_group,
+      };
+    }
+
+    if (this.showFecMode() && values.fec_mode) {
+      params.fec_mode = values.fec_mode;
     }
 
     return params;
   }
 
-  protected asTranslatedString(string: string): TranslatedString {
-    return string as TranslatedString;
+  /** A row that would pass its own validation: a CIDR address, plus both failover addresses on HA. */
+  private isCompleteAlias(alias: NetworkInterfaceFormAlias): boolean {
+    if (!isIpAddress(alias.address, { cidr: true })) {
+      return false;
+    }
+    return !this.isHaLicensed()
+      || (isIpAddress(alias.failover_address ?? '') && isIpAddress(alias.failover_virtual_address ?? ''));
+  }
+
+  protected withSuffix(label: string, suffix: string): TranslatedString {
+    return (label + suffix) as TranslatedString;
   }
 }

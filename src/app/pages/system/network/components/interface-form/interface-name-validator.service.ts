@@ -1,41 +1,21 @@
 import { Injectable, inject } from '@angular/core';
-import {
-  AbstractControl, ValidationErrors, ValidatorFn, Validators,
-} from '@angular/forms';
+import { ValidationError } from '@angular/forms/signals';
 import { TranslateService } from '@ngx-translate/core';
 import { NetworkInterfaceType } from 'app/enums/network-interface.enum';
-import { IxValidatorsService } from 'app/modules/forms/ix-forms/services/ix-validators.service';
 
 @Injectable()
 export class InterfaceNameValidatorService {
   private translate = inject(TranslateService);
-  private validatorsService = inject(IxValidatorsService);
 
-
-  validate: ValidatorFn = (control: AbstractControl<string>): ValidationErrors | null => {
-    if (!control.parent) {
-      return null;
-    }
-
-    const type = (control.parent.value as { type: NetworkInterfaceType }).type;
-    const isPrefixRequired = [
-      NetworkInterfaceType.Bridge,
-      NetworkInterfaceType.LinkAggregation,
-      NetworkInterfaceType.Vlan,
-    ].includes(type);
-
-    if (control.value === '' || control.value === undefined || !isPrefixRequired) {
-      return null;
-    }
-
+  /** A bridge, LAG or VLAN name must be its type's prefix followed by a number (`br0`, `bond1`, `vlan10`). */
+  validate(type: NetworkInterfaceType | null, name: string): ValidationError | null {
     const prefix = this.getNamePrefix(type);
-    const validator = this.validatorsService.withMessage(
-      Validators.pattern(`^${prefix}\\d+$`),
-      this.getNameFormatMessage(type),
-    );
+    if (!name || !prefix || new RegExp(`^${prefix}\\d+$`).test(name)) {
+      return null;
+    }
 
-    return validator(control);
-  };
+    return { kind: 'pattern', message: this.getNameFormatMessage(type) };
+  }
 
   getNameFormatMessage(type: NetworkInterfaceType): string {
     const prefix = this.getNamePrefix(type);
@@ -60,7 +40,7 @@ export class InterfaceNameValidatorService {
     );
   }
 
-  getNamePrefix(type: NetworkInterfaceType): string {
+  getNamePrefix(type: NetworkInterfaceType | null): string {
     switch (type) {
       case NetworkInterfaceType.Bridge:
         return 'br';

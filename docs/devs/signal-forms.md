@@ -4,7 +4,7 @@ Angular's signal forms (`form()` from `@angular/forms/signals`) can be used for 
 Forms. This page is the pattern. The background, the measurements and the decision to adopt them in stages are in
 [signal-forms-spike.md](signal-forms-spike.md) (NAS-145110, epic NAS-145108).
 
-> **Pilot only, for now.** Until the pilot (NAS-145171) ends in a decision to continue, write new forms and change
+> **Pilot only, for now.** Until the pilot (NAS-145171, extended by NAS-145401) ends in a decision to continue, write new forms and change
 > existing ones with Reactive Forms as before. Use this page for the pilot forms.
 
 ## A side-panel form
@@ -72,6 +72,7 @@ What each piece does:
 | `toFormModel()` | same | An unfrozen copy, for store or API data going into a model. |
 | `errorTarget()` | same | The cast a field-targeted error needs under `strict: false`. |
 | `validatePrincipalExists()` | `signal-forms/validate-principal-exists.ts` | The existence check a user or group picker runs on its own under `formControlName`. Under `[formField]` the picker has no control to attach it to, so the schema calls this. |
+| `validateRange()`, `validateIpAddress()`, `requiredList()` | `signal-forms/signal-validators.ts` | `rangeValidator`, `ipv4or6Validator` / `ipv4or6cidrValidator` with the same messages, and `required()` for a list field (below). |
 
 ## Rules
 
@@ -102,6 +103,9 @@ field drops them all, and dismissing one drops that one. A path the form does no
 
 **Cross-field rules need a cast.** Under the repo's `strict: false`, `fieldTree: fieldTree.other` does not compile.
 Wrap it: `{ kind: 'mismatch', message, fieldTree: errorTarget(fieldTree.other) }`.
+
+**A required list needs `requiredList()`.** Angular's `required()` treats `''`, `false` and `null` as empty but
+not `[]`, so on a multi-select or listbox it draws the asterisk and never fails. `requiredList(path)` adds the check.
 
 **Rows are tracked by object.** Keep rows as objects. With a `string[]` model, per-row state (touched, errors) is
 tracked by index and stays behind when a row above is removed.
