@@ -66,8 +66,9 @@ describe('AllowedAddressesComponent', () => {
   });
 
   it('renders the loaded addresses without a forced component refresh', async () => {
-    // The config answers after the first render, and the app re-renders an OnPush view only when
-    // something marks it, so this checks the form does that itself.
+    // `MockApiService` answers on a microtask, so the config lands after the first render, as on an
+    // appliance. The harness refreshes only the fixture, and an OnPush view under it only when
+    // marked; unlike `beforeEach`, no `detectComponentChanges()` forces it, so the form must mark it.
     spectator = createComponent();
     loader = TestbedHarnessEnvironment.loader(spectator.fixture);
     await spectator.fixture.whenStable();
