@@ -1,34 +1,31 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, inject } from '@angular/core';
-import { DetectBrowserService } from 'app/services/detect-browser.service';
+import {
+  ChangeDetectionStrategy, Component, computed, effect, inject, input, output,
+} from '@angular/core';
+import { KeyboardShortcutService } from 'app/modules/keyboard-shortcut/keyboard-shortcut.service';
+import { KeyboardShortcutId } from 'app/modules/keyboard-shortcut/keyboard-shortcuts.const';
 
 /**
- * Renders a hint for keyboard shortcut
+ * Renders a hint for a keyboard shortcut from `keyboardShortcuts`
  * and emits an event when Command/Ctrl+Key is pressed.
  */
 @Component({
   selector: 'ix-keyboard-shortcut',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./keyboard-shortcut.component.scss'],
-  template: '{{ shortcutString() }}',
-  host: {
-    '(window:keydown)': 'globalShortcut($event)',
-  },
+  template: '{{ hint() }}',
 })
 export class KeyboardShortcutComponent {
-  private detectBrowser = inject(DetectBrowserService);
+  private shortcuts = inject(KeyboardShortcutService);
 
-  readonly key = input.required<string>();
+  readonly shortcut = input.required<KeyboardShortcutId>();
   readonly keyPress = output();
 
-  readonly shortcutString = computed(() => {
-    const commandKey = this.detectBrowser.isMacOs() ? '⌘' : 'Ctrl';
-    return `${commandKey} + ${this.key().toLocaleUpperCase()}`;
-  });
+  protected readonly hint = computed(() => this.shortcuts.getHint(this.shortcut()));
 
-  globalShortcut(event: KeyboardEvent): void {
-    const wasCommandKeyPressed = this.detectBrowser.isMacOs() ? event.metaKey : event.ctrlKey;
-    if (event.key === this.key() && wasCommandKeyPressed) {
-      this.keyPress.emit();
-    }
+  constructor() {
+    effect((onCleanup) => {
+      const unregister = this.shortcuts.register(this.shortcut(), () => this.keyPress.emit());
+      onCleanup(unregister);
+    });
   }
 }

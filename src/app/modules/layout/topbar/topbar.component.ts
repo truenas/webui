@@ -26,6 +26,7 @@ import { DialogService } from 'app/modules/dialog/dialog.service';
 import { FeedbackDialog } from 'app/modules/feedback/components/feedback-dialog/feedback-dialog.component';
 import { GlobalSearchTriggerComponent } from 'app/modules/global-search/components/global-search-trigger/global-search-trigger.component';
 import { selectUpdateJobs } from 'app/modules/jobs/store/job.selectors';
+import { KeyboardShortcutService } from 'app/modules/keyboard-shortcut/keyboard-shortcut.service';
 import { CheckinIndicatorComponent } from 'app/modules/layout/topbar/checkin-indicator/checkin-indicator.component';
 import { HaStatusIconComponent } from 'app/modules/layout/topbar/ha-status-icon/ha-status-icon.component';
 import { JobsIndicatorComponent } from 'app/modules/layout/topbar/jobs-indicator/jobs-indicator.component';
@@ -84,6 +85,7 @@ export class TopbarComponent implements OnInit {
   private tnc = inject(TruenasConnectService);
   private rebootInfoSuppression = inject(RebootInfoDialogSuppressionService);
   private destroyRef = inject(DestroyRef);
+  private keyboardShortcuts = inject(KeyboardShortcutService);
 
   private alertIndicator = viewChild<TnIconButtonComponent>('alertIndicator');
 
@@ -96,6 +98,7 @@ export class TopbarComponent implements OnInit {
   updateNotificationSent = false;
   tooltips = helptextTopbar.tooltips;
   protected searchableElements = toolBarElements;
+  protected readonly sidenavShortcutHint = this.keyboardShortcuts.getHint('toggleSidenav');
 
   readonly hasRebootRequiredReasons = signal(false);
   readonly shownDialog = signal(false);
@@ -168,6 +171,13 @@ export class TopbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.keyboardShortcuts.register('toggleSidenav', () => {
+      this.onSidenavIndicatorPressed();
+      // Unlike a click on the toggle, a document keydown marks no view, and the layout reads the
+      // sidenav state from plain fields.
+      this.cdr.markForCheck();
+    }, this.destroyRef);
+
     // The `HA` entitlement alone decides HA; product type must not pre-gate it.
     this.store$.select(selectIsHaLicensed).pipe(takeUntilDestroyed(this.destroyRef)).subscribe((isHaLicensed) => {
       this.isHaLicensed = isHaLicensed;

@@ -37,6 +37,7 @@ import { RebootInfoState } from 'app/store/reboot-info/reboot-info.reducer';
 import { selectRebootInfo } from 'app/store/reboot-info/reboot-info.selectors';
 import { selectGeneralConfig } from 'app/store/system-config/system-config.selectors';
 import { selectSystemInfo } from 'app/store/system-info/system-info.selectors';
+import { sidenavIndicatorPressed } from 'app/store/topbar/topbar.actions';
 
 const fakeRebootInfo: RebootInfoState = {
   thisNodeRebootInfo: {
@@ -279,6 +280,27 @@ describe('TopbarComponent', () => {
         interfaces_ips: [],
       } as TruenasConnectConfig);
       expect(spectator.component.hasTncConfig()).toBeFalsy();
+    });
+  });
+
+  describe('sidenav toggle', () => {
+    it('toggles the side menu when Ctrl + B is pressed', () => {
+      const store$ = spectator.inject(MockStore);
+      jest.spyOn(store$, 'dispatch');
+
+      spectator.dispatchKeyboardEvent(document, 'keydown', 'ctrl.b');
+
+      expect(store$.dispatch).toHaveBeenCalledWith(sidenavIndicatorPressed());
+    });
+
+    it('toggles the side menu when the menu button is clicked', async () => {
+      const store$ = spectator.inject(MockStore);
+      jest.spyOn(store$, 'dispatch');
+
+      const toggle = await loader.getHarness(TnIconButtonHarness.with({ name: 'menu' }));
+      await toggle.click();
+
+      expect(store$.dispatch).toHaveBeenCalledWith(sidenavIndicatorPressed());
     });
   });
 
