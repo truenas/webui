@@ -7,7 +7,7 @@ import { createRoutingFactory, SpectatorRouting, mockProvider } from '@ngneat/sp
 import { CallResponse } from '@truenas/api-client';
 import { TnEmptyComponent, TnEmptyHarness, TnTreeVirtualScrollViewComponent } from '@truenas/ui-components';
 import { MockComponent, MockComponents, MockDirective } from 'ng-mocks';
-import { NEVER, of, Subject } from 'rxjs';
+import { firstValueFrom, NEVER, of, Subject } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
 import { mockApi, mockCall } from 'app/core/testing/utils/mock-api.utils';
 import { mockAuth } from 'app/core/testing/utils/mock-auth.utils';
@@ -267,6 +267,60 @@ describe('DatasetsManagementComponent', () => {
       spectator.detectChanges();
 
       expect(isExpanded('pool')).toBe(false);
+    });
+
+    describe('searching', () => {
+      /** Ids of the rows the tree renders: collapsed subtrees are left out. */
+      async function visibleRows(): Promise<string[]> {
+        const rows = await firstValueFrom(spectator.component.dataSource.connect());
+        return rows.map((dataset) => dataset.id);
+      }
+
+      async function search(query: string): Promise<void> {
+        const searchInput = await loader.getHarness(BasicSearchHarness);
+        if (query) {
+          await searchInput.setValue(query);
+        } else {
+          await searchInput.clearInput();
+        }
+        // The data source debounces the filter.
+        await jest.advanceTimersByTimeAsync(200);
+        spectator.detectChanges();
+      }
+
+      beforeEach(() => {
+        jest.useFakeTimers();
+      });
+
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      it('opens the ancestors of a match under a collapsed parent', async () => {
+        expect(isExpanded('pool')).toBe(false);
+
+        await search('a/b/c');
+
+        expect(await visibleRows()).toEqual(['pool', 'pool/a', 'pool/a/b', 'pool/a/b/c']);
+      });
+
+      it('restores what was open before the search once it is cleared', async () => {
+        await search('a/b/c');
+        await search('');
+
+        expect(isExpanded('pool')).toBe(false);
+        expect(await visibleRows()).toEqual(['pool']);
+      });
+
+      it('keeps a dataset selected during the search in view once it is cleared', async () => {
+        await search('a/b/c');
+        selectedBranch.set(branchTo('pool/a/b/c'));
+        spectator.detectChanges();
+
+        await search('');
+
+        expect(await visibleRows()).toEqual(['pool', 'pool/a', 'pool/a/b', 'pool/a/b/c']);
+      });
     });
   });
 
