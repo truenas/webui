@@ -110,6 +110,45 @@ export async function findSnapshotRetention(
   };
 }
 
+/** What the list's extra columns show, as middleware reports it: sizes in bytes, `creation` in unix seconds. */
+export interface SnapshotColumnValues {
+  used: number;
+  referenced: number;
+  creation: number;
+}
+
+/**
+ * The extra columns' values for a snapshot, read the way the list reads them (`zfs.resource.snapshot.list`).
+ *
+ * Throws for a snapshot the appliance does not have, or a property it did not report, so that neither can be
+ * compared against a cell as a missing value.
+ */
+export async function readSnapshotColumnValues(
+  client: E2eApiClient,
+  dataset: string,
+  name: string,
+): Promise<SnapshotColumnValues> {
+  const id = snapshotId(dataset, name);
+  const [snapshot] = await firstValueFrom(
+    client.api
+      .call('zfs.resource.snapshot.list', [{ paths: [id], properties: ['creation', 'used', 'referenced'] }])
+      .pipe(timeout(readTimeoutMs)),
+  );
+  if (!snapshot) {
+    throw new Error(`the appliance has no snapshot ${id}`);
+  }
+
+  const read = (property: keyof SnapshotColumnValues): number => {
+    const value: unknown = snapshot.properties?.[property]?.value;
+    if (typeof value !== 'number') {
+      throw new Error(`snapshot ${id} reported no numeric ${property}: ${JSON.stringify(value)}`);
+    }
+    return value;
+  };
+
+  return { used: read('used'), referenced: read('referenced'), creation: read('creation') };
+}
+
 /** Whether a snapshot the appliance has is held. False for one it does not have. */
 export async function isSnapshotHeld(client: E2eApiClient, dataset: string, name: string): Promise<boolean> {
   const snapshot = await findSnapshot(client, dataset, name);

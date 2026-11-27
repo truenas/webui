@@ -16,7 +16,8 @@ import {
 } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
-  TnIconComponent, TnTreeVirtualScrollViewComponent, TnTreeNodeComponent, TnEmptyComponent, type IconLibraryType,
+  TnIconComponent, TnTreeVirtualScrollViewComponent, TnTreeNodeComponent, TnEmptyComponent, TnTestIdDirective,
+  type IconLibraryType,
   TnTreeFlatDataSource, TnTreeFlattener, type TnTreeExpansion, createFlatTreeControl,
 } from '@truenas/ui-components';
 import { uniqBy } from 'lodash-es';
@@ -56,6 +57,7 @@ const datasetChangeDebounceMs = 1000;
   host: { '[class.details-overlay]': 'showMobileDetails' },
   imports: [
     TnEmptyComponent,
+    TnTestIdDirective,
     FakeProgressBarComponent,
     ContentVirtualScrollableDirective,
     BasicSearchComponent,

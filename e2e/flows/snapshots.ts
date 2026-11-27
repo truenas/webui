@@ -6,6 +6,7 @@
  */
 import { expect, type Page } from '@playwright/test';
 import { goToDatasets } from './navigation';
+import { selectOption } from './storage';
 import { selectRow } from './table';
 import { datasetScopeLocators, snapshotLocators, snapshotRowTag } from '../locators/snapshots';
 import { datasetLocators } from '../locators/storage';
@@ -53,6 +54,21 @@ export async function openSnapshotList(page: Page, dataset: string): Promise<voi
 
   await page.locator(snapshotLocators.card.viewSnapshots).click();
   await expect(page.locator(snapshotLocators.list.add)).toBeVisible({ timeout: pageSettleTimeoutMs });
+}
+
+/**
+ * Opens the take-snapshot form by Add on the snapshot list already open, and
+ * picks the dataset in it: unlike the card's, this one chooses none itself.
+ */
+export async function openAddSnapshotForm(page: Page, dataset: string): Promise<void> {
+  const { form } = snapshotLocators;
+
+  await page.locator(snapshotLocators.list.add).click();
+  await expect(page.locator(form.name)).toHaveValue(/^manual-/, { timeout: pageSettleTimeoutMs });
+  await expect(page.locator(form.dataset)).not.toContainText(dataset);
+
+  await selectOption(page, form.dataset, form.datasetOption(dataset));
+  await expect(page.locator(form.dataset)).toContainText(dataset);
 }
 
 /**
