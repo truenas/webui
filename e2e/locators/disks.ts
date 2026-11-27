@@ -15,7 +15,8 @@ export type DiskColumn
     | 'Pool'
     | 'Description'
     | 'HDD Standby'
-    | 'Adv. Power Management';
+    | 'Adv. Power Management'
+    | 'Self-Encrypting Drive (SED)';
 
 /**
  * `disk-<name>`, as `toUniqueRowTag` writes it. Exported for the controls
@@ -59,6 +60,10 @@ export const diskListLocators = {
   edit: (disk: string): string => `[data-test="button-${legacyKebabTestSegment(disk)}-edit"]`,
   /** In the expanded row, and only for a disk in no imported pool. */
   wipe: (disk: string): string => `[data-test="button-${legacyKebabTestSegment(disk)}-wipe"]`,
+  /** In the expanded row, and only for a locked SED. */
+  unlock: (disk: string): string => `[data-test="button-${legacyKebabTestSegment(disk)}-unlock"]`,
+  /** In the expanded row, for a SED in any state. */
+  resetSed: (disk: string): string => `[data-test="button-${legacyKebabTestSegment(disk)}-reset-sed"]`,
 
   /**
    * The batch bar, rendered above the table only while a row is ticked. Its count
