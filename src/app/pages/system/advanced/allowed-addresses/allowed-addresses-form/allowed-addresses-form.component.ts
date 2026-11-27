@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, OnInit, inject, signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
@@ -44,6 +46,7 @@ export class AllowedAddressesFormComponent extends IxFormHostForm implements OnI
   private translate = inject(TranslateService);
   private systemGeneralService = inject(SystemGeneralService);
   private destroyRef = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
 
   protected readonly requiredRoles = [Role.SystemGeneralWrite];
   protected readonly helptext = helptextSystemAdvanced;
@@ -72,6 +75,9 @@ export class AllowedAddressesFormComponent extends IxFormHostForm implements OnI
       this.form.controls.addresses.clear();
       config.ui_allowlist.forEach(() => this.addAddress());
       this.form.controls.addresses.patchValue(config.ui_allowlist);
+      // The rows are a plain array the template loops over, and the config answers after the first
+      // render, so nothing else tells this OnPush view to draw them.
+      this.cdr.markForCheck();
     });
   }
 

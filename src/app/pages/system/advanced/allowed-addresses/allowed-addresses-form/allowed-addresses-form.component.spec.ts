@@ -65,6 +65,16 @@ describe('AllowedAddressesComponent', () => {
     expect(await (await getAddressInput()).getValue()).toBe('1.1.1.1/32');
   });
 
+  it('renders the loaded addresses without a forced component refresh', async () => {
+    // The config answers after the first render, and the app re-renders an OnPush view only when
+    // something marks it, so this checks the form does that itself.
+    spectator = createComponent();
+    loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+    await spectator.fixture.whenStable();
+
+    expect(await loader.getAllHarnesses(TnInputHarness)).toHaveLength(1);
+  });
+
   it('sends an update payload with specific IP address', async () => {
     await (await getAddressInput()).setValue('2.2.2.2');
 
