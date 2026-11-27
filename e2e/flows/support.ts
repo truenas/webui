@@ -10,7 +10,8 @@ import { generalSettingsLocators } from '../locators/general-settings';
 /**
  * A `system.debug` job started through `core.download`, then the fetch of the archive it wrote.
  * The job gathers logs and command output from every subsystem and runs for a minute or more, so
- * this is a ceiling well above that rather than an expected duration.
+ * this is a ceiling well above that rather than an expected duration. It sits inside the suite's
+ * 20-minute per-test ceiling in `playwright.config.ts`, which leaves no need for a test-level one.
  */
 const debugDownloadTimeoutMs = 10 * 60_000;
 
