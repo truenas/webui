@@ -47,7 +47,9 @@ import {
 import { signalFormImports } from 'app/modules/forms/signal-forms/ix-signal-error-dismiss.directive';
 import { SignalFormErrors } from 'app/modules/forms/signal-forms/signal-form-errors.service';
 import { patchModelValue, toFormModel } from 'app/modules/forms/signal-forms/signal-forms.utils';
-import { requiredList, validateIpAddress, validateRange } from 'app/modules/forms/signal-forms/signal-validators';
+import {
+  isIpAddress, requiredList, validateIpAddress, validateRange,
+} from 'app/modules/forms/signal-forms/signal-validators';
 import { OrderedListboxComponent } from 'app/modules/lists/ordered-list/ordered-list.component';
 import { ignoreTranslation, TranslatedString } from 'app/modules/translate/translate.helper';
 import { ApiService } from 'app/modules/websocket/api.service';
@@ -510,16 +512,18 @@ export class InterfaceFormComponent extends IxFormHostForm<boolean, InterfaceFor
       mtu: values.mtu,
     } as NetworkInterfaceCreate | NetworkInterfaceUpdate;
 
-    // Under DHCP the static addresses are hidden and left out: a new interface gets none, an edited one keeps
-    // what it has.
-    if (this.canHaveStaticIpAddresses()) {
-      const aliases = formAliasesToInterfaceAliases(values.aliases);
-      params.aliases = aliases.aliases;
+    // Always sent, so rows removed before switching to DHCP are removed on the server too. Under DHCP the rows are
+    // hidden and skip validation, so only those with a valid address are kept: an empty or half-typed row the user
+    // can no longer see is dropped instead of reaching the API.
+    const rows = this.canHaveStaticIpAddresses()
+      ? values.aliases
+      : values.aliases.filter((alias) => isIpAddress(alias.address, { cidr: true }));
+    const aliases = formAliasesToInterfaceAliases(rows);
+    params.aliases = aliases.aliases;
 
-      if (this.isHaLicensed()) {
-        params.failover_aliases = aliases.failover_aliases;
-        params.failover_virtual_aliases = aliases.failover_virtual_aliases;
-      }
+    if (this.isHaLicensed()) {
+      params.failover_aliases = aliases.failover_aliases;
+      params.failover_virtual_aliases = aliases.failover_virtual_aliases;
     }
 
     if (this.isNew()) {

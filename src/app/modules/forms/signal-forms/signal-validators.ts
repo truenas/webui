@@ -34,11 +34,15 @@ export function validateIpAddress(path: SchemaPath<string>, options: { cidr?: bo
     if (!address) {
       return null;
     }
-    const isValid = options.cidr
-      ? isCidr.v4(address) || isCidr.v6(address)
-      : ipRegex({ exact: true, includeBoundaries: true }).test(address);
-    return isValid ? null : { kind: 'ip2', message: translate.instant('Invalid IP address') };
+    return isIpAddress(address, options) ? null : { kind: 'ip2', message: translate.instant('Invalid IP address') };
   });
+}
+
+/** The check behind {@link validateIpAddress}, for code that needs it outside a schema. */
+export function isIpAddress(value: string, options: { cidr?: boolean } = {}): boolean {
+  return options.cidr
+    ? isCidr.v4(value) || isCidr.v6(value)
+    : ipRegex({ exact: true, includeBoundaries: true }).test(value);
 }
 
 /**

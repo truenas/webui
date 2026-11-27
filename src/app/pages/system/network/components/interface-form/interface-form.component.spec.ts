@@ -296,6 +296,7 @@ describe('InterfaceFormComponent', () => {
         type: NetworkInterfaceType.LinkAggregation,
         name: 'bond0',
         description: 'LAG',
+        aliases: [],
         ipv4_dhcp: true,
         ipv6_auto: false,
         lacpdu_rate: LacpduRate.Slow,
@@ -364,7 +365,7 @@ describe('InterfaceFormComponent', () => {
         .toBe('The value is out of range. Enter a value between 1 and 4094.');
     });
 
-    it('does not let an empty static IP row block Save once DHCP is selected, and leaves it out', async () => {
+    it('does not let an empty static IP row block Save once DHCP is selected, and drops it', async () => {
       await setSelectValue('Type', 'Bridge');
       await aliasesList!.add();
       await spectator.fixture.whenStable();
@@ -378,7 +379,7 @@ describe('InterfaceFormComponent', () => {
       await spectator.fixture.whenStable();
 
       expect(api.call).toHaveBeenCalledWith('interface.create', [
-        expect.not.objectContaining({ aliases: expect.anything() }),
+        expect.objectContaining({ aliases: [], ipv4_dhcp: true }),
       ]);
     });
 
@@ -493,6 +494,48 @@ describe('InterfaceFormComponent', () => {
 
       const ipAddress = await loader.getHarness(TnFormControlHarness.with({ label: 'IP Address' }));
       expect(await ipAddress.getValue()).toBe('10.2.3.4/24');
+    });
+  });
+
+  describe('edit with a static IP', () => {
+    beforeEach(async () => {
+      spectator = createComponent({
+        props: {
+          editInterface: existingInterface,
+        },
+      });
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      aliasesList = await loader.getHarness(TnFormListHarness.with({ label: 'Static IP Addresses' }));
+      api = spectator.inject(ApiService);
+    });
+
+    it('clears the static IPs when a row is removed and DHCP is selected', async () => {
+      const [row] = await aliasesList!.getItems();
+      await row.remove();
+      await setRadioValue('Get IP Address Automatically from DHCP');
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('interface.update', [
+        'enp0s6',
+        expect.objectContaining({ aliases: [], ipv4_dhcp: true }),
+      ]);
+    });
+
+    it('keeps the static IPs when only DHCP is selected', async () => {
+      await setRadioValue('Get IP Address Automatically from DHCP');
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('interface.update', [
+        'enp0s6',
+        expect.objectContaining({
+          aliases: [{ address: '10.2.3.4', netmask: 24, type: NetworkInterfaceAliasType.Inet }],
+          ipv4_dhcp: true,
+        }),
+      ]);
     });
   });
 
