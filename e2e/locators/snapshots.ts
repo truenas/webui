@@ -58,8 +58,17 @@ export const snapshotLocators = {
      * sees that the card handed its own dataset over.
      */
     dataset: '[data-test="select-dataset"]',
+    /** A dataset in the picker, labelled with its full name. */
+    datasetOption: (dataset: string): string => `[data-test="option-dataset-${kebabTestSegment(dataset)}"]`,
     /** Opens holding a generated `manual-<date>_<time>` name. */
     name: '[data-test="input-name"]',
+    /**
+     * "Naming Schema", offering every periodic snapshot task's schema
+     * (`replication.list_naming_schemas`). Exclusive with Name: the form
+     * refuses both at once, so Name is emptied before a schema is picked.
+     */
+    namingSchema: '[data-test="select-naming-schema"]',
+    namingSchemaOption: (schema: string): string => `[data-test="option-naming-schema-${kebabTestSegment(schema)}"]`,
     recursive: '[data-test="checkbox-recursive"]',
     save: '[data-test="button-save"]',
   },
@@ -69,6 +78,24 @@ export const snapshotLocators = {
     add: '[data-test="button-add-snapshot"]',
     /** `ix-basic-search` in the page header. Filters on the snapshot's full name. */
     search: '[data-test="input-search"]',
+
+    /**
+     * "Show extra columns", a `tn-slide-toggle` in the page header. Either way
+     * it asks first, in the shared confirm dialog, and the answer is stored in
+     * the account's `showSnapshotExtraColumns` preference. Replaced by a
+     * spinner while the list re-reads with or without the extra properties.
+     */
+    showExtraColumns: '[data-test="toggle-show-extra-columns"]',
+
+    /** The extra columns' cells, drawn only while they are shown. Sizes read as the file-size pipe renders them. */
+    used: (dataset: string, name: string): string => `[data-test="text-used-${snapshotRowTag(dataset, name)}-row-size"]`,
+    /** "Date created", an `ix-date`: the account's date and time format, in the appliance's timezone. */
+    created: (dataset: string, name: string): string => (
+      `[data-test="date-created-${snapshotRowTag(dataset, name)}-row-date"]`
+    ),
+    referenced: (dataset: string, name: string): string => (
+      `[data-test="text-referenced-${snapshotRowTag(dataset, name)}-row-size"]`
+    ),
 
     /** A snapshot's row. */
     row: (dataset: string, name: string): string => `[data-test="row-${snapshotRowTag(dataset, name)}"]`,
