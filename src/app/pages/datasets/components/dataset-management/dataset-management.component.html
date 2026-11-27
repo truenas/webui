@@ -143,6 +143,8 @@
 <ng-template #empty>
   <tn-empty
     iconSize="56px"
+    tnTestIdType="text"
+    [tnTestId]="['datasets', emptyConfig().type]"
     [title]="emptyConfig().title || ''"
     [description]="emptyConfig().message"
     [icon]="emptyIcon().name"

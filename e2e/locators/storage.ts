@@ -260,6 +260,20 @@ export const datasetLocators = {
    */
   treeNode: (name: string) => `[data-test="dataset-${kebabTestSegment(name)}"]`,
 
+  /**
+   * The search above the tree, `ix-basic-search`: a `tn-input` with `[testId]="'search'"`. It keeps the
+   * datasets whose full name contains the text, and their ancestors, but leaves each row open or closed as
+   * it was, so a match under a closed parent stays out of view.
+   */
+  search: '[data-test="input-search"]',
+  /** The search box's ✕, `[suffixActionTestId]="'clear-search'"`. Rendered only while the box holds text. */
+  clearSearch: '[data-test="button-clear-search"]',
+  /**
+   * The page's `tn-empty` for a search that matches nothing, `[tnTestId]="['datasets', emptyConfig().type]"`,
+   * so `no_search_results` here. It replaces the rows, and the details card goes with them.
+   */
+  noSearchResults: '[data-test="text-datasets-no-search-results"]',
+
   addDataset: '[data-test="button-add-dataset"]',
   /**
    * "Edit" on the dataset details card — `testId: 'edit-dataset'` in
