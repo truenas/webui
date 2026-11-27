@@ -9,7 +9,7 @@
       testId="toggle-sidenav"
       tooltipPosition="right"
       [dense]="true"
-      [tooltip]="tooltips.toggleCollapse | translate"
+      [tooltip]="tooltips.toggleCollapse | translate: { shortcut: sidenavShortcutHint }"
       [ariaLabel]="'Toggle Sidenav' | translate"
       (onClick)="onSidenavIndicatorPressed()"
     ></tn-icon-button>

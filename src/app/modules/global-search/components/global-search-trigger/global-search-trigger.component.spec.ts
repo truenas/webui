@@ -55,7 +55,7 @@ describe('GlobalSearchTriggerComponent', () => {
 
   it('renders keyboard shortcut', () => {
     const shortcut = spectator.query(KeyboardShortcutComponent)!;
-    expect(shortcut.key).toBe('/');
+    expect(shortcut.shortcut).toBe('globalSearch');
   });
 
   it('shows search overlay on focus', () => {

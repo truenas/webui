@@ -6,17 +6,12 @@ describe('KeyboardShortcutComponent', () => {
   let spectator: Spectator<KeyboardShortcutComponent>;
   const createComponent = createComponentFactory({
     component: KeyboardShortcutComponent,
-    providers: [
-      mockProvider(DetectBrowserService, {
-        isMacOs: jest.fn(() => false),
-      }),
-    ],
   });
 
-  function setupTest(isMacOs = false): void {
+  function setupTest(isMacOs: boolean): void {
     spectator = createComponent({
       props: {
-        key: 'f',
+        shortcut: 'globalSearch',
       },
       providers: [
         mockProvider(DetectBrowserService, {
@@ -32,12 +27,12 @@ describe('KeyboardShortcutComponent', () => {
       setupTest(true);
     });
 
-    it('renders Command + key as shortcut hint on macOS systems', () => {
-      expect(spectator.element).toHaveExactText('⌘ + F');
+    it('renders Command + key as shortcut hint', () => {
+      expect(spectator.element).toHaveExactText('⌘ + /');
     });
 
     it('emits (keyPress) when Command + key is pressed', () => {
-      spectator.dispatchKeyboardEvent(spectator.element, 'keydown', 'meta.f');
+      spectator.dispatchKeyboardEvent(document, 'keydown', 'meta./');
 
       expect(spectator.component.keyPress.emit).toHaveBeenCalled();
     });
@@ -48,14 +43,21 @@ describe('KeyboardShortcutComponent', () => {
       setupTest(false);
     });
 
-    it('renders Ctrl + key as shortcut hint on macOS systems', () => {
-      expect(spectator.element).toHaveExactText('Ctrl + F');
+    it('renders Ctrl + key as shortcut hint', () => {
+      expect(spectator.element).toHaveExactText('Ctrl + /');
     });
 
     it('emits (keyPress) when Ctrl + key is pressed', () => {
-      spectator.dispatchKeyboardEvent(spectator.element, 'keydown', 'ctrl.f');
+      spectator.dispatchKeyboardEvent(document, 'keydown', 'ctrl./');
 
       expect(spectator.component.keyPress.emit).toHaveBeenCalled();
+    });
+
+    it('stops emitting once destroyed', () => {
+      spectator.fixture.destroy();
+      spectator.dispatchKeyboardEvent(document, 'keydown', 'ctrl./');
+
+      expect(spectator.component.keyPress.emit).not.toHaveBeenCalled();
     });
   });
 });
