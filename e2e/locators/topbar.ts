@@ -5,6 +5,13 @@
  */
 export const topbarLocators = {
   /**
+   * `<tn-icon-button testId="toggle-sidenav">`, the menu button that collapses the side menu to its icons and
+   * expands it again, as Cmd/Ctrl+B does. Its tooltip names the shortcut.
+   */
+  toggleSidenav: '[data-test="button-toggle-sidenav"]',
+  /** `<tn-icon-button testId="leave-feedback">`, which raises the Send Feedback dialog. */
+  leaveFeedback: '[data-test="button-leave-feedback"]',
+  /**
    * `<tn-icon-button testId="user-menu">` — the single trigger that projects the
    * username beside its icon, so it is both the menu trigger and where the
    * signed-in user's name is rendered.

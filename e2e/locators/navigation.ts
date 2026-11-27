@@ -19,6 +19,11 @@ export const globalSearchLocators = {
 
 export const navLocators = {
   dashboard: '[data-test="link-dashboard-menu"]',
+  /**
+   * The entry's label, `[tnTestId]="[getItemName(item), 'label']"`. Hidden while the menu is collapsed to its
+   * icons, when the entry itself stays visible.
+   */
+  dashboardLabel: '[data-test="text-dashboard-menu-label"]',
   storage: '[data-test="link-storage-menu"]',
   datasets: '[data-test="link-datasets-menu"]',
   shares: '[data-test="link-shares-menu"]',
