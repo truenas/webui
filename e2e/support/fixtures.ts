@@ -18,6 +18,7 @@ import {
 import { CoverageRecorder } from './coverage';
 import { type SharedAppsPool, sharedAppsPool } from '../fixtures/apps';
 import { type EntitlementDecisions, readEntitlements } from '../fixtures/entitlements';
+import { fakeMiddleware, type MiddlewareOverrides } from '../fixtures/fake-middleware';
 import { poolLifecycle } from '../fixtures/pool';
 
 /**
@@ -157,6 +158,11 @@ export interface E2eTestOptions {
    * `test.use`. See `support/api-calls.ts`.
    */
   recordApiCalls: boolean;
+  /**
+   * Middleware answers `page` receives rewritten, by method. None by default; a spec that needs
+   * state the appliance lacks sets them with `test.use`. See `fixtures/fake-middleware.ts`.
+   */
+  middlewareOverrides: MiddlewareOverrides | undefined;
 }
 
 export interface E2eWorkerFixtures {
@@ -215,6 +221,7 @@ export interface E2eWorkerFixtures {
 export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
   authenticate: [true, { option: true }],
   recordApiCalls: [false, { option: true }],
+  middlewareOverrides: [undefined, { option: true }],
 
   haThroughVip: [false, { option: true, scope: 'worker' }],
 
@@ -283,7 +290,7 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
    * from the test's first navigation or input (`support/coverage.ts`).
    */
   page: async ({
-    page, authenticate, recordApiCalls: recording, api, config,
+    page, authenticate, recordApiCalls: recording, middlewareOverrides, api, config,
   }, use, testInfo) => {
     // First, so this test's sign-in and any reloads it makes start from an empty
     // rate-limit budget, whatever the tests before it spent. For the
@@ -299,6 +306,9 @@ export const test = base.extend<E2eTestOptions, E2eWorkerFixtures>({
     // Before the sign-in too: that is where the socket opens.
     if (recording) {
       recordApiCalls(page);
+    }
+    if (middlewareOverrides) {
+      await fakeMiddleware(page, middlewareOverrides);
     }
 
     if (authenticate) {

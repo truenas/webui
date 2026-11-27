@@ -447,3 +447,51 @@ Do not infer a job's success from its side effects. Two revisions of this
 fixture did, and both could report a clean teardown for a failed export: the
 pool row disappears when the export completes, while the `destroy: true` disk
 wipe that `requireUnusedDisks` depends on continues afterwards.
+
+## Faking middleware
+
+Some screens only appear on hardware or a licence CI does not have: SED disks,
+an enclosure, an entitlement, a TrueNAS Connect subscription.
+`fixtures/fake-middleware.ts` gets a test onto them by rewriting chosen answers
+on the page's own socket. Every call still goes to the appliance; an override
+receives what the appliance answered, and the call's params, and returns what
+the page sees instead. `tests/disks-fake-sed.e2e.ts` is the worked example.
+
+```ts
+test.use({
+  middlewareOverrides: {
+    'disk.query': (answer) => …,
+  },
+});
+```
+
+The overrides are typed per method from the client's directory, and the `page`
+fixture installs them **before** it signs in, since the app opens the socket
+there and loads some of what is worth faking (`truenas.entitlements.info`)
+straight away. A value an override needs from the appliance, such as which disk
+to fake, is read in `beforeEach`: hooks run before the test's own fixtures, so
+before `page`, as long as the hook does not ask for `page` itself.
+
+**A faked test can claim only what the UI shows and sends**, never what the
+appliance ends up with. The appliance still has no SED, so pressing Unlock on a
+faked one sends `disk.unlock` for a disk middleware will refuse. Assert the
+screen, and assert that the request went out (`recordApiCalls`, below "Waiting"),
+then stop; reading the result back over the API asks a question the fake has no
+answer to. This is the one place "Verifying through the API afterwards" does
+not apply.
+
+**Each test opens a fresh page.** The overrides belong to the page the fixture
+built for that test, which is what keeps them from leaking into the next one.
+So never share a page between tests (a `beforeAll` page, serial mode reusing
+one), and never open a page of your own with `browser.newPage()` in a faked
+test: it is neither faked nor signed in.
+
+What it does not do:
+
+- **Only answers to calls.** Events, `collection_update` and job progress
+  included, reach the page as middleware sent them.
+- **A refused call stays refused.** An override sees only a successful answer.
+- **`apiCallsTo` reports the real answer**, because the recording reads the
+  socket between the page's fake and the appliance. Whether a call was sent is
+  still right.
+- **Only `/api/current`.** The shell's socket and any other is left alone.

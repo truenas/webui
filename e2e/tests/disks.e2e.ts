@@ -3,7 +3,8 @@
  * disk, and wipes one in no pool, each checked on the page and through `disk.query` or `disk.details`. A blank disk
  * shows no result after a wipe, so the wiped disk carries a pool exported without `destroy`; a real wipe leaves
  * `disk.details` reporting no pool. Only Quick is used. Ticking and expanding a row prove `tn-table`'s control ids
- * (`locators/table.ts`). Bulk edit is `disks-bulk-edit.e2e.ts`; SED actions need a self-encrypting drive.
+ * (`locators/table.ts`). Bulk edit is `disks-bulk-edit.e2e.ts`; SED actions need a self-encrypting drive, which
+ * `disks-fake-sed.e2e.ts` fakes.
  */
 import {
   diskBaseline,
