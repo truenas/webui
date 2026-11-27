@@ -68,6 +68,8 @@ export const generalSettingsLocators = {
   support: {
     /** `<tn-button [testId]="'file-ticket'">` in the card footer. Labelled "File Ticket" or "Send Feedback". */
     fileTicket: '[data-test="button-file-ticket"]',
+    /** `<tn-button [testId]="'save-debug'">` in the card footer. Asks for confirmation before it starts anything. */
+    saveDebug: '[data-test="button-save-debug"]',
 
     /*
      * The licensed readouts, from `sys-info.component.html`. Each is rendered only on a licensed
