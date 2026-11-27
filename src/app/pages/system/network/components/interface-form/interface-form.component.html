@@ -1,6 +1,6 @@
 <ix-form
-  [formGroup]="form"
-  [isEditMode]="!isNew"
+  [fieldTree]="form"
+  [isEditMode]="!isNew()"
   [addTitle]="'Add Interface' | translate"
   [editTitle]="'Edit Interface' | translate"
   [requiredRoles]="requiredRoles"
@@ -9,15 +9,16 @@
   (closed)="closed.emit($event)"
 >
   <tn-form-section [heading]="'Interface Settings' | translate">
-    @if (isNew) {
+    @if (isNew()) {
       <tn-form-field
         [label]="'Type' | translate"
         [tooltip]="helptext.typeTooltip | translate"
-        [required]="true"
       >
         <tn-select
-          formControlName="type"
-          [options]="(interfaceTypes$ | async) ?? []"
+          testId="type"
+          [formField]="form.type"
+          [options]="interfaceTypes"
+          (selectionChange)="onTypeSelected($event)"
         ></tn-select>
       </tn-form-field>
     }
@@ -26,24 +27,19 @@
       [label]="'Name' | translate"
       [tooltip]="helptext.nameTooltip | translate"
     >
-      <tn-input
-        name="name"
-        formControlName="name"
-        [required]="true"
-        [readonly]="!isNew"
-      ></tn-input>
+      <tn-input testId="name" [formField]="form.name"></tn-input>
     </tn-form-field>
 
     <tn-form-field [label]="'Description' | translate">
-      <tn-input name="description" formControlName="description"></tn-input>
+      <tn-input testId="description" [formField]="form.description"></tn-input>
     </tn-form-field>
 
     <tn-form-field
       [label]="'DHCP' | translate"
       [tooltip]="helptext.dhcpTooltip | translate"
     >
-      <tn-radio-group formControlName="ipv4_dhcp">
-        @for (option of (dhcpOptions$ | async) ?? []; track option.value) {
+      <tn-radio-group testId="ipv4-dhcp" [formField]="form.ipv4_dhcp">
+        @for (option of dhcpOptions; track option.value) {
           <!-- `radio-button` in the base is absorbed by composeTestId's idempotent guard, keeping the
                legacy `radio-button-*` option ids that the legacy radio group produced. The base is
                spelled pre-kebabed as `ipv-4-dhcp` (not the raw `ipv4_dhcp` control name) because the
@@ -58,57 +54,49 @@
       </tn-radio-group>
     </tn-form-field>
 
-    @if (canHaveStaticIpAddresses) {
+    @if (canHaveStaticIpAddresses()) {
       <tn-form-list
-        formArrayName="aliases"
-        [control]="form.controls.aliases"
-        [empty]="form.controls.aliases.controls.length === 0"
+        [control]="form.aliases"
+        [empty]="form.aliases().value().length === 0"
         [label]="'Static IP Addresses' | translate"
         [addLabel]="'Add' | translate"
         [emptyMessage]="'No items have been added yet.' | translate"
         (add)="addStaticIpAddress()"
       >
-        @for (network of form.controls.aliases.controls; track network; let i = $index) {
+        @for (alias of form.aliases; track alias; let i = $index) {
           <tn-form-list-item
             testId="remove-from-list"
-            [formGroupName]="i"
             [label]="'Static IP Addresses' | translate"
             [removeAriaLabel]="'Remove {label} item' | translate: { label: 'Static IP Addresses' | translate }"
             (delete)="removeStaticIpAddress(i)"
           >
             <div class="alias">
               <tn-form-field
-                [label]="asTranslatedString(('IP Address' | translate) + ipLabelSuffix)"
-                [required]="true"
+                [label]="withSuffix('IP Address' | translate, ipLabelSuffix())"
                 [tooltip]="helptext.aliasAddressTooltip | translate"
               >
                 <ix-ip-input-with-netmask
                   class="alias-ip"
-                  formControlName="address"
-                  [required]="true"
+                  [formField]="alias.address"
                 ></ix-ip-input-with-netmask>
               </tn-form-field>
 
-              @if (isHaLicensed) {
+              @if (isHaLicensed()) {
                 <tn-form-field
-                  [label]="asTranslatedString(('IP Address' | translate) + failoverLabelSuffix)"
+                  [label]="withSuffix('IP Address' | translate, failoverLabelSuffix())"
                   [tooltip]="helptext.failover.aliasAddressTooltip | translate"
                 >
-                  <tn-input name="failover_address" formControlName="failover_address" [required]="true"></tn-input>
+                  <tn-input testId="failover-address" [formField]="alias.failover_address"></tn-input>
                 </tn-form-field>
                 <tn-form-field
                   [label]="'Virtual IP Address (Failover Address)' | translate"
                   [tooltip]="helptext.failover.virtualAliasAddressTooltip | translate"
                 >
-                  <tn-input
-                    name="failover_virtual_address"
-                    formControlName="failover_virtual_address"
-                    [required]="true"
-                  ></tn-input>
+                  <tn-input testId="failover-virtual-address" [formField]="alias.failover_virtual_address"></tn-input>
                 </tn-form-field>
               }
 
-              <tn-form-errors [control]="network"></tn-form-errors>
+              <tn-form-errors [control]="alias"></tn-form-errors>
             </div>
           </tn-form-list-item>
         }
@@ -116,23 +104,25 @@
     }
 
     <tn-form-field
-      [tooltip]="isHaLicensed ? ('Autoconfigure IPv6 is not supported for HA systems.' | translate) : (helptext.ipv6autoTooltip | translate)"
+      [tooltip]="isHaLicensed() ? ('Autoconfigure IPv6 is not supported for HA systems.' | translate) : (helptext.ipv6autoTooltip | translate)"
     >
       <tn-checkbox
-        formControlName="ipv6_auto"
+        testId="ipv6-auto"
+        [formField]="form.ipv6_auto"
         [label]="'Autoconfigure IPv6' | translate"
       ></tn-checkbox>
     </tn-form-field>
   </tn-form-section>
 
-  @if (isBridge) {
+  @if (isBridge()) {
     <tn-form-section [heading]="'Bridge Settings' | translate">
       <tn-form-field
         [label]="'Bridge Members' | translate"
         [tooltip]="helptext.bridgeMembersTooltip | translate"
       >
         <tn-select
-          formControlName="bridge_members"
+          testId="bridge-members"
+          [formField]="form.bridge_members"
           [multiple]="true"
           [options]="(bridgeMembers$ | async) ?? []"
         ></tn-select>
@@ -140,48 +130,51 @@
 
       <tn-form-field [tooltip]="helptext.enableLearningTooltip | translate">
         <tn-checkbox
-          formControlName="enable_learning"
+          testId="enable-learning"
+          [formField]="form.enable_learning"
           [label]="'Enable Learning' | translate"
         ></tn-checkbox>
       </tn-form-field>
     </tn-form-section>
   }
 
-  @if (isLag) {
+  @if (isLag()) {
     <tn-form-section [heading]="'Link Aggregation' | translate">
-      <tn-form-field [label]="'Link Aggregation Protocol' | translate" [required]="true">
+      <tn-form-field [label]="'Link Aggregation Protocol' | translate">
         <tn-select
-          formControlName="lag_protocol"
-          [options]="(lagProtocols$ | async) ?? []"
+          testId="lag-protocol"
+          [formField]="form.lag_protocol"
+          [options]="lagProtocols()"
         ></tn-select>
       </tn-form-field>
 
-      @if (isLacpLag || isLoadBalanceLag) {
-        <tn-form-field [label]="'Transmit Hash Policy' | translate" [required]="true">
+      @if (hasXmitHashPolicy()) {
+        <tn-form-field [label]="'Transmit Hash Policy' | translate">
           <tn-select
-            formControlName="xmit_hash_policy"
-            [options]="(xmitHashPolicies$ | async) ?? []"
+            testId="xmit-hash-policy"
+            [formField]="form.xmit_hash_policy"
+            [options]="xmitHashPolicies()"
           ></tn-select>
         </tn-form-field>
       }
 
-      @if (isLacpLag) {
-        <tn-form-field [label]="'LACPDU Rate' | translate" [required]="true">
+      @if (isLacpLag()) {
+        <tn-form-field [label]="'LACPDU Rate' | translate">
           <tn-select
-            formControlName="lacpdu_rate"
-            [options]="(lacpduRates$ | async) ?? []"
+            testId="lacpdu-rate"
+            [formField]="form.lacpdu_rate"
+            [options]="lacpduRates()"
           ></tn-select>
         </tn-form-field>
       }
 
-      @if (isFailover) {
+      @if (isFailoverLag()) {
         <tn-form-field
           [label]="'Link Aggregation Interfaces' | translate"
           [tooltip]="helptext.lagg.interfacesFailoverTooltip | translate"
-          [required]="true"
         >
           <ix-ordered-listbox
-            formControlName="lag_ports"
+            [formField]="form.lag_ports"
             [options]="lagPorts$"
           ></ix-ordered-listbox>
         </tn-form-field>
@@ -189,10 +182,10 @@
         <tn-form-field
           [label]="'Link Aggregation Interfaces' | translate"
           [tooltip]="helptext.lagg.interfacesTooltip | translate"
-          [required]="true"
         >
           <tn-select
-            formControlName="lag_ports"
+            testId="lag-ports"
+            [formField]="form.lag_ports"
             [multiple]="true"
             [options]="(lagPorts$ | async) ?? []"
           ></tn-select>
@@ -201,30 +194,28 @@
     </tn-form-section>
   }
 
-  @if (isVlan) {
+  @if (isVlan()) {
     <tn-form-section [heading]="'VLAN Settings' | translate">
       <tn-form-field
         [label]="'Parent Interface' | translate"
         [tooltip]="helptext.vlan.parentInterfaceTooltip | translate"
-        [required]="true"
       >
         <tn-select
-          formControlName="vlan_parent_interface"
-          [options]="(vlanParentInterfaces$ | async) ?? []"
+          testId="vlan-parent-interface"
+          [formField]="form.vlan_parent_interface"
+          [options]="vlanParentInterfaces()"
         ></tn-select>
       </tn-form-field>
 
       <tn-form-field
         [label]="'VLAN Tag' | translate"
         [tooltip]="helptext.vlan.tagTooltip | translate"
-        [required]="true"
       >
         <tn-input
-          name="vlan_tag"
-          formControlName="vlan_tag"
+          testId="vlan-tag"
+          [formField]="form.vlan_tag"
           [inputType]="InputType.Number"
           [allowDecimals]="false"
-          [required]="true"
         ></tn-input>
       </tn-form-field>
 
@@ -233,18 +224,20 @@
         [tooltip]="helptext.vlan.priorityCodePointTooltip | translate"
       >
         <tn-select
-          formControlName="vlan_pcp"
-          [options]="(vlanPcpOptions$ | async) ?? []"
+          testId="vlan-pcp"
+          [formField]="form.vlan_pcp"
+          [options]="vlanPcpOptions"
         ></tn-select>
       </tn-form-field>
     </tn-form-section>
   }
 
-  @if (isHaLicensed) {
+  @if (isHaLicensed()) {
     <tn-form-section [heading]="'Failover' | translate">
       <tn-form-field [tooltip]="helptext.failover.criticalTooltip | translate">
         <tn-checkbox
-          formControlName="failover_critical"
+          testId="failover-critical"
+          [formField]="form.failover_critical"
           [label]="'Critical' | translate"
         ></tn-checkbox>
       </tn-form-field>
@@ -254,8 +247,9 @@
         [tooltip]="helptext.failover.groupTooltip | translate"
       >
         <tn-select
-          formControlName="failover_group"
-          [options]="(failoverGroups$ | async) ?? []"
+          testId="failover-group"
+          [formField]="form.failover_group"
+          [options]="failoverGroups"
         ></tn-select>
       </tn-form-field>
     </tn-form-section>
@@ -267,8 +261,8 @@
       [tooltip]="helptext.mtuTooltip | translate"
     >
       <tn-input
-        name="mtu"
-        formControlName="mtu"
+        testId="mtu"
+        [formField]="form.mtu"
         [inputType]="InputType.Number"
         [allowDecimals]="false"
       ></tn-input>
@@ -280,8 +274,9 @@
         [tooltip]="helptext.fecModeTooltip | translate"
       >
         <tn-select
-          formControlName="fec_mode"
-          [options]="(fecModeOptions$ | async) ?? []"
+          testId="fec-mode"
+          [formField]="form.fec_mode"
+          [options]="fecModeOptions()"
         ></tn-select>
       </tn-form-field>
     }

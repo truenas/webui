@@ -5,7 +5,7 @@ import { createComponentFactory, Spectator, mockProvider } from '@ngneat/spectat
 import { Store, StoreModule } from '@ngrx/store';
 import { CallResponse } from '@truenas/api-client';
 import {
-  TnCheckboxHarness, TnDialog, TnFormListHarness, TnInputHarness, TnRadioHarness, TnSelectHarness,
+  TnCheckboxHarness, TnDialog, TnFormListHarness, TnRadioHarness,
 } from '@truenas/ui-components';
 import { of } from 'rxjs';
 import { MockApiService } from 'app/core/testing/classes/mock-api.service';
@@ -55,21 +55,24 @@ describe('InterfaceFormComponent', () => {
   let api: ApiService;
   let aliasesList: TnFormListHarness | null;
 
-  async function setSelectValue(fcName: string, ...labels: string[]): Promise<void> {
-    const select = await loader.getHarness(TnSelectHarness.with({ selector: `[formControlName="${fcName}"]` }));
-    for (const label of labels) {
-      await select.selectOption(label);
+  function getField(label: string): Promise<TnFormControlHarness> {
+    return loader.getHarness(TnFormControlHarness.with({ label }));
+  }
+
+  /** Picks each option in turn, so a multi-select ends up with all of them. */
+  async function setSelectValue(label: string, ...options: string[]): Promise<void> {
+    const field = await getField(label);
+    for (const option of options) {
+      await field.setValue(option);
     }
   }
 
-  async function setInputValue(name: string, value: string | number): Promise<void> {
-    const input = await loader.getHarness(TnInputHarness.with({ name }));
-    await input.setValue(String(value));
+  async function setInputValue(label: string, value: string | number): Promise<void> {
+    await (await getField(label)).setValue(value);
   }
 
-  async function getInputValue(name: string): Promise<string> {
-    const input = await loader.getHarness(TnInputHarness.with({ name }));
-    return input.getValue();
+  async function getInputValue(label: string): Promise<unknown> {
+    return (await getField(label)).getValue();
   }
 
   async function setCheckbox(label: string, value: boolean): Promise<void> {
@@ -212,14 +215,14 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('auto-generates name when type is changed', async () => {
-      await setSelectValue('type', 'Bridge');
-      expect(await getInputValue('name')).toMatch('br1');
+      await setSelectValue('Type', 'Bridge');
+      expect(await getInputValue('Name')).toMatch('br1');
 
-      await setSelectValue('type', 'Link Aggregation');
-      expect(await getInputValue('name')).toMatch('bond1');
+      await setSelectValue('Type', 'Link Aggregation');
+      expect(await getInputValue('Name')).toMatch('bond1');
 
-      await setSelectValue('type', 'VLAN');
-      expect(await getInputValue('name')).toMatch('vlan2');
+      await setSelectValue('Type', 'VLAN');
+      expect(await getInputValue('Name')).toMatch('vlan2');
     });
 
     it('saves a new bridge interface when form is submitted for bridge interface', async () => {
@@ -228,12 +231,12 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
-      await setSelectValue('type', 'Bridge');
+      await setSelectValue('Type', 'Bridge');
       await aliasesList!.add();
 
-      await setInputValue('name', 'br0');
-      await setInputValue('description', 'Bridge interface');
-      await setSelectValue('bridge_members', 'enp0s3', 'enp0s4');
+      await setInputValue('Name', 'br0');
+      await setInputValue('Description', 'Bridge interface');
+      await setSelectValue('Bridge Members', 'enp0s3', 'enp0s4');
       const ipAddress = await loader.getHarness(TnFormControlHarness.with({ label: 'IP Address' }));
       await ipAddress.setValue('10.0.1.2/24');
       await setCheckbox('Enable Learning', true);
@@ -276,15 +279,15 @@ describe('InterfaceFormComponent', () => {
       const store$ = spectator.inject(Store);
       const dispatchSpy = jest.spyOn(store$, 'dispatch');
 
-      await setSelectValue('type', 'Link Aggregation');
-      await setInputValue('name', 'bond0');
-      await setInputValue('description', 'LAG');
+      await setSelectValue('Type', 'Link Aggregation');
+      await setInputValue('Name', 'bond0');
+      await setInputValue('Description', 'LAG');
       await setRadioValue('Get IP Address Automatically from DHCP');
-      await setSelectValue('lag_protocol', 'LACP');
-      await setInputValue('mtu', 1024);
-      await setSelectValue('xmit_hash_policy', 'LAYER2+3');
-      await setSelectValue('lacpdu_rate', 'SLOW');
-      await setSelectValue('lag_ports', 'enp0s3');
+      await setSelectValue('Link Aggregation Protocol', 'LACP');
+      await setInputValue('MTU', 1024);
+      await setSelectValue('Transmit Hash Policy', 'LAYER2+3');
+      await setSelectValue('LACPDU Rate', 'SLOW');
+      await setSelectValue('Link Aggregation Interfaces', 'enp0s3');
 
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -293,7 +296,6 @@ describe('InterfaceFormComponent', () => {
         type: NetworkInterfaceType.LinkAggregation,
         name: 'bond0',
         description: 'LAG',
-        aliases: [],
         ipv4_dhcp: true,
         ipv6_auto: false,
         lacpdu_rate: LacpduRate.Slow,
@@ -318,38 +320,86 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('keeps the Save button disabled for a LAG until the required Interfaces field is filled', async () => {
-      await setSelectValue('type', 'Link Aggregation');
-      await setInputValue('name', 'bond0');
-      await setSelectValue('lag_protocol', 'LACP');
-      await setSelectValue('xmit_hash_policy', 'LAYER2+3');
-      await setSelectValue('lacpdu_rate', 'SLOW');
+      await setSelectValue('Type', 'Link Aggregation');
+      await setInputValue('Name', 'bond0');
+      await setSelectValue('Link Aggregation Protocol', 'LACP');
+      await setSelectValue('Transmit Hash Policy', 'LAYER2+3');
+      await setSelectValue('LACPDU Rate', 'SLOW');
 
       await spectator.fixture.whenStable();
       expect(spectator.component.canSubmit()).toBe(false);
 
-      await setSelectValue('lag_ports', 'enp0s3');
+      await setSelectValue('Link Aggregation Interfaces', 'enp0s3');
       await spectator.fixture.whenStable();
       expect(spectator.component.canSubmit()).toBe(true);
     });
 
-    it('does not leave the hidden VLAN Tag invalid when the type is changed away from VLAN', async () => {
-      await setSelectValue('type', 'VLAN');
-      expect(spectator.component.form.controls.vlan_tag.hasError('required')).toBe(true);
+    it('does not let the hidden VLAN fields block Save when the type is changed away from VLAN', async () => {
+      await setSelectValue('Type', 'VLAN');
+      await spectator.fixture.whenStable();
+      expect(spectator.component.canSubmit()).toBe(false);
 
-      await setSelectValue('type', 'Bridge');
-      expect(spectator.component.form.controls.vlan_tag.valid).toBe(true);
+      await setSelectValue('Type', 'Bridge');
+      await spectator.fixture.whenStable();
+      expect(spectator.component.canSubmit()).toBe(true);
+    });
+
+    it('checks the name against the prefix of the selected type', async () => {
+      await setSelectValue('Type', 'Bridge');
+      await setInputValue('Name', 'bond1');
+
+      const name = await getField('Name');
+      expect(await name.getErrorMessage()).toBe('Bridge interface must start with "br" followed by a unique number');
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await setSelectValue('Type', 'Link Aggregation');
+      expect(await name.getErrorMessage()).toBeNull();
+    });
+
+    it('checks the VLAN Tag range', async () => {
+      await setSelectValue('Type', 'VLAN');
+      await setInputValue('VLAN Tag', 5000);
+
+      expect(await (await getField('VLAN Tag')).getErrorMessage())
+        .toBe('The value is out of range. Enter a value between 1 and 4094.');
+    });
+
+    it('does not let an empty static IP row block Save once DHCP is selected, and leaves it out', async () => {
+      await setSelectValue('Type', 'Bridge');
+      await aliasesList!.add();
+      await spectator.fixture.whenStable();
+      expect(spectator.component.canSubmit()).toBe(false);
+
+      await setRadioValue('Get IP Address Automatically from DHCP');
+      await spectator.fixture.whenStable();
+      expect(spectator.component.canSubmit()).toBe(true);
+
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(api.call).toHaveBeenCalledWith('interface.create', [
+        expect.not.objectContaining({ aliases: expect.anything() }),
+      ]);
+    });
+
+    it('rejects a static IP address without a netmask', async () => {
+      await aliasesList!.add();
+      const ipAddress = await getField('IP Address');
+      await ipAddress.setValue('10.0.1.2');
+
+      expect(await ipAddress.getErrorMessage()).toBe('Invalid IP address');
     });
 
     it('saves a new VLAN interface when form is submitted for a VLAN', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
-      await setSelectValue('type', 'VLAN');
-      await setInputValue('name', 'vlan1');
-      await setInputValue('description', 'New VLAN');
+      await setSelectValue('Type', 'VLAN');
+      await setInputValue('Name', 'vlan1');
+      await setInputValue('Description', 'New VLAN');
       await setCheckbox('Autoconfigure IPv6', true);
-      await setSelectValue('vlan_parent_interface', 'enp0s3');
-      await setInputValue('vlan_tag', 2);
-      await setSelectValue('vlan_pcp', 'Excellent effort');
+      await setSelectValue('Parent Interface', 'enp0s3');
+      await setInputValue('VLAN Tag', 2);
+      await setSelectValue('Priority Code Point', 'Excellent effort');
 
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -395,9 +445,9 @@ describe('InterfaceFormComponent', () => {
 
     it('disables save button when HA is enabled', async () => {
       // Fill form with valid data first
-      await setSelectValue('type', 'Bridge');
-      await setInputValue('name', 'br0');
-      await setInputValue('description', 'Test Bridge');
+      await setSelectValue('Type', 'Bridge');
+      await setInputValue('Name', 'br0');
+      await setInputValue('Description', 'Test Bridge');
 
       const networkService = spectator.inject(NetworkService);
       jest.spyOn(networkService, 'getIsHaEnabled').mockReturnValue(of(true));
@@ -431,9 +481,9 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('shows values for a network interface when it is opened for edit', async () => {
-      expect(await getInputValue('name')).toBe('enp0s6');
-      expect(await getInputValue('description')).toBe('Main NIC');
-      expect(await getInputValue('mtu')).toBe('1500');
+      expect(await getInputValue('Name')).toBe('enp0s6');
+      expect(await getInputValue('Description')).toBe('Main NIC');
+      expect(await getInputValue('MTU')).toBe('1500');
 
       const dhcpRadio = await loader.getHarness(TnRadioHarness.with({ label: 'Define Static IP Addresses' }));
       expect(await dhcpRadio.isChecked()).toBe(true);
@@ -463,10 +513,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('disables parent interface fields when VLAN is opened for edit', async () => {
-      const parentInterfaceField = await loader.getHarness(
-        TnSelectHarness.with({ selector: '[formControlName="vlan_parent_interface"]' }),
-      );
-      expect(await parentInterfaceField.isDisabled()).toBe(true);
+      expect(await (await getField('Parent Interface')).isDisabled()).toBe(true);
     });
   });
 
@@ -522,8 +569,8 @@ describe('InterfaceFormComponent', () => {
     }
 
     async function createBridge(...members: string[]): Promise<void> {
-      await setSelectValue('type', 'Bridge');
-      await setSelectValue('bridge_members', ...members);
+      await setSelectValue('Type', 'Bridge');
+      await setSelectValue('Bridge Members', ...members);
       spectator.component.submit();
       await spectator.fixture.whenStable();
     }
@@ -550,8 +597,7 @@ describe('InterfaceFormComponent', () => {
 
       expect(api.call).not.toHaveBeenCalledWith('interface.create', expect.anything());
       expect(closedSpy).not.toHaveBeenCalled();
-      const members = await loader.getHarness(TnSelectHarness.with({ selector: '[formControlName="bridge_members"]' }));
-      expect(await members.getDisplayText()).toContain('enp0s4');
+      expect(await getInputValue('Bridge Members')).toContain('enp0s4');
     });
 
     it('does not ask when only one bridge member is physical', async () => {
@@ -575,7 +621,7 @@ describe('InterfaceFormComponent', () => {
         } as NetworkInterface,
       });
 
-      await setInputValue('description', 'Updated');
+      await setInputValue('Description', 'Updated');
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
@@ -596,7 +642,7 @@ describe('InterfaceFormComponent', () => {
       });
       jest.spyOn(spectator.inject(DialogService), 'confirm').mockReturnValue(of(true));
 
-      await setSelectValue('bridge_members', 'enp0s4');
+      await setSelectValue('Bridge Members', 'enp0s4');
       spectator.component.submit();
       await spectator.fixture.whenStable();
 
@@ -661,10 +707,10 @@ describe('InterfaceFormComponent', () => {
     it('shows and saves additional fields in Aliases when failover is licensed', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
-      await setSelectValue('type', 'Bridge');
-      await setInputValue('name', 'br0');
+      await setSelectValue('Type', 'Bridge');
+      await setInputValue('Name', 'br0');
       await setCheckbox('Critical', true);
-      await setSelectValue('failover_group', '1');
+      await setSelectValue('Failover Group', '1');
 
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -692,15 +738,15 @@ describe('InterfaceFormComponent', () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
       await aliasesList!.add();
-      await setSelectValue('type', 'Bridge');
-      await setInputValue('name', 'br0');
+      await setSelectValue('Type', 'Bridge');
+      await setInputValue('Name', 'br0');
 
       const ipAddress = await loader.getHarness(
         TnFormControlHarness.with({ label: 'IP Address (This Controller)' }),
       );
       await ipAddress.setValue('10.2.3.4/24');
-      await setInputValue('failover_address', '192.168.1.2');
-      await setInputValue('failover_virtual_address', '192.168.1.3');
+      await setInputValue('IP Address (TrueNAS Controller 2)', '192.168.1.2');
+      await setInputValue('Virtual IP Address (Failover Address)', '192.168.1.3');
 
       spectator.component.submit();
       await spectator.fixture.whenStable();
@@ -758,16 +804,14 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('shows the FEC Mode dropdown when the interface supports FEC', async () => {
-      const fecModeSelect = await loader.getHarnessOrNull(
-        TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
-      );
+      const fecModeSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'FEC Mode' }));
       expect(fecModeSelect).toBeTruthy();
     });
 
     it('sends fec_mode when saving with FEC support', async () => {
       jest.spyOn(spectator.inject(TnDialog), 'open');
 
-      await setSelectValue('fec_mode', 'rs');
+      await setSelectValue('FEC Mode', 'rs');
 
       spectator.detectChanges();
       await spectator.fixture.whenStable();
@@ -809,9 +853,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('does not show the FEC Mode dropdown', async () => {
-      const fecModeSelect = await loader.getHarnessOrNull(
-        TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
-      );
+      const fecModeSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'FEC Mode' }));
       expect(fecModeSelect).toBeNull();
     });
   });
@@ -838,9 +880,7 @@ describe('InterfaceFormComponent', () => {
     });
 
     it('does not show FEC Mode when available_fec_modes returns empty array', async () => {
-      const fecModeSelect = await loader.getHarnessOrNull(
-        TnSelectHarness.with({ selector: '[formControlName="fec_mode"]' }),
-      );
+      const fecModeSelect = await loader.getHarnessOrNull(TnFormControlHarness.with({ label: 'FEC Mode' }));
       expect(fecModeSelect).toBeNull();
     });
   });
