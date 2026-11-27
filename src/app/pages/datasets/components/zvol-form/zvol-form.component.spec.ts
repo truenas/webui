@@ -20,9 +20,11 @@ import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { EntitlementReason } from 'app/enums/entitlement-reason.enum';
 import { OnOff } from 'app/enums/on-off.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { inherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { Dataset } from 'app/interfaces/dataset.interface';
+import { EntitlementFacts } from 'app/interfaces/entitlement.interface';
 import { SystemInfo } from 'app/interfaces/system-info.interface';
 import { DetailsTableHarness } from 'app/modules/details-table/details-table.harness';
 import { DialogService } from 'app/modules/dialog/dialog.service';
@@ -33,6 +35,7 @@ import { ZvolFormComponent } from 'app/pages/datasets/components/zvol-form/zvol-
 import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
 import { selectEntitlements } from 'app/store/entitlements/entitlements.selectors';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 async function setTnInput(loader: HarnessLoader, controlName: string, value: string): Promise<void> {
   const input = await loader.getHarness(TnInputHarness.with({ selector: `[formControlName="${controlName}"]` }));
@@ -196,7 +199,7 @@ describe('ZvolFormComponent', () => {
         initialState: {
           entitlements: { entitlements: {} },
           systemInfo: {
-            entitlementFacts: null,
+            entitlementFacts: { license_type: null } as EntitlementFacts,
             systemInfo: {
               license: { features: [] },
             } as SystemInfo,
@@ -364,6 +367,51 @@ describe('ZvolFormComponent', () => {
       expect(spectator.inject(DatasetApiService).createDataset).toHaveBeenLastCalledWith(
         expect.not.objectContaining({ deduplication: expect.anything() }),
       );
+    });
+  });
+
+  describe('default sync on Enterprise', () => {
+    afterEach(() => {
+      spectator.inject(MockStore).resetSelectors();
+    });
+
+    async function setupSyncTest(isNew: boolean, isEnterprise: boolean): Promise<void> {
+      spectator = createComponent({
+        detectChanges: false,
+        props: { params: { isNew, parentOrZvolId: isNew ? 'parentId' : 'zvolId' } },
+      });
+      spectator.inject(MockStore).overrideSelector(
+        selectProductType,
+        isEnterprise ? ProductType.Enterprise : ProductType.CommunityEdition,
+      );
+      spectator.detectChanges();
+      loader = TestbedHarnessEnvironment.loader(spectator.fixture);
+      await spectator.fixture.whenStable();
+      mainDetails = await loader.getHarness(DetailsTableHarness);
+    }
+
+    it('pre-fills Always for a new zvol and sends it', async () => {
+      await setupSyncTest(true, true);
+      expect((await mainDetails.getValues())['Sync']).toBe('Always');
+
+      await setTnInput(loader, 'name', 'new zvol');
+      await setTnInput(loader, 'volsize', '1 GiB');
+      spectator.component.submit();
+      await spectator.fixture.whenStable();
+
+      expect(spectator.inject(DatasetApiService).createDataset).toHaveBeenLastCalledWith(
+        expect.objectContaining({ sync: DatasetSync.Always }),
+      );
+    });
+
+    it('keeps Inherit for a new zvol outside Enterprise', async () => {
+      await setupSyncTest(true, false);
+      expect((await mainDetails.getValues())['Sync']).toBe('Inherit (standard)');
+    });
+
+    it('leaves the sync of an existing zvol alone', async () => {
+      await setupSyncTest(false, true);
+      expect((await mainDetails.getValues())['Sync']).toBe('Inherit (standard)');
     });
   });
 

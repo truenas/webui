@@ -4,13 +4,14 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import {
   InputType, TnButtonToggleComponent, TnButtonToggleGroupComponent, TnCheckboxComponent, TnFormFieldComponent,
   TnFormSectionComponent, TnInputComponent, TnSelectComponent, TnTestIdDirective,
 } from '@truenas/ui-components';
 import {
-  finalize, forkJoin, map, Observable, switchMap, tap, throwError,
+  finalize, forkJoin, map, Observable, switchMap, take, tap, throwError,
 } from 'rxjs';
 import {
   minimumPbkdf2Iterations,
@@ -22,6 +23,7 @@ import {
   DatasetCaseSensitivity,
   DatasetRecordSize,
   DatasetSnapdev, datasetSnapdevLabels,
+  DatasetSync,
   datasetSyncLabels,
   DatasetType,
 } from 'app/enums/dataset.enum';
@@ -29,11 +31,13 @@ import { deduplicationSettingLabels } from 'app/enums/deduplication-setting.enum
 import { EncryptionKeyFormat } from 'app/enums/encryption-key-format.enum';
 import { EntitlementFeature } from 'app/enums/entitlement-feature.enum';
 import { OnOff, onOffLabels } from 'app/enums/on-off.enum';
+import { ProductType } from 'app/enums/product-type.enum';
 import { Role } from 'app/enums/role.enum';
 import { inherit, WithInherit } from 'app/enums/with-inherit.enum';
 import { ZfsPropertySource } from 'app/enums/zfs-property-source.enum';
 import { buildNormalizedFileSize } from 'app/helpers/file-size.utils';
 import { choicesToOptions } from 'app/helpers/operators/options.operators';
+import { selectNotNull } from 'app/helpers/operators/select-not-null.helper';
 import { mapToOptions } from 'app/helpers/options.helper';
 import { helptextZvol } from 'app/helptext/storage/volumes/zvol-form';
 import {
@@ -66,6 +70,8 @@ import { DatasetApiService } from 'app/services/dataset/dataset-api.service';
 import { toUpperCaseChoices } from 'app/services/dataset/zfs-resource.utils';
 import { EntitlementsService } from 'app/services/entitlements.service';
 import { ErrorHandlerService } from 'app/services/errors/error-handler.service';
+import { AppState } from 'app/store';
+import { selectProductType } from 'app/store/system-info/system-info.selectors';
 
 // volsize values round-trip through the file-size formatter, so a re-saved
 // edit can drift by a few bytes. Treat anything within 0.1% of the original
@@ -105,6 +111,7 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
   private cdr = inject(ChangeDetectorRef);
   private errorHandler = inject(ErrorHandlerService);
   private entitlements = inject(EntitlementsService);
+  private store$ = inject<Store<AppState>>(Store);
 
   private destroyRef = inject(DestroyRef);
 
@@ -477,13 +484,19 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
       this.datasetApi.loadDatasets([this.parentOrZvolId()], { withChildren: this.isNew() }),
       this.loadRecommendedBlocksize(),
       this.api.call('zfs.resource.compression_choices').pipe(map(toUpperCaseChoices), choicesToOptions()),
+      // Wait for the edition rather than read `false` while `truenas.entitlements.facts` is in flight.
+      this.store$.pipe(
+        selectNotNull(selectProductType),
+        take(1),
+        map((productType) => productType === ProductType.Enterprise),
+      ),
     ])
       .pipe(
         finalize(() => this.setupLoading.set(false)),
         this.errorHandler.withErrorHandler(),
         takeUntilDestroyed(this.destroyRef),
       ).subscribe({
-        next: ([parents, , compressionOptions]) => {
+        next: ([parents, , compressionOptions, isEnterprise]) => {
           this.compressionOptions = compressionOptions;
           const parentOrZvol = parents[0];
           if (parentOrZvol.encrypted) {
@@ -500,6 +513,11 @@ export class ZvolFormComponent extends IxFormHostForm<Dataset> implements OnInit
           if (parentOrZvol?.type === DatasetType.Filesystem) {
             this.setReadonlyField(parentOrZvol, parentOrZvol);
             this.inheritFileSystemProperties(parentOrZvol);
+            if (this.isNew() && isEnterprise) {
+              // Enterprise systems mostly back VMs and iSCSI with zvols, where an acknowledged write
+              // lost to a power or network event costs more than the write speed `always` gives up.
+              this.form.controls.sync.setValue(DatasetSync.Always);
+            }
             if (!this.isNew()) {
               this.formSnapshot.set(this.form.getRawValue());
             }
