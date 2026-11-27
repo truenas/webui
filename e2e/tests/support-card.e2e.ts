@@ -3,7 +3,12 @@
  * global search. All read-only: each readout is checked against `system.info` and `truenas.license.info`, and the
  * production toggle, File Ticket and license upload are never touched. The Expiration Date uses the account's date
  * format, so the card test writes the `preferences.e2e.ts` baseline first and restores it afterwards.
+ *
+ * Save Debug is the one action taken: confirmed, it runs `system.debug` and the browser receives the archive;
+ * cancelled, it starts nothing. The archive stays in Playwright's output, and the job leaves nothing to undo.
  */
+import { readFile } from 'node:fs/promises';
+import { findJobStateAfter, findLatestJobId } from '../fixtures/jobs';
 import { establishPreferenceBaseline, restorePreferences } from '../fixtures/preferences';
 import type { PreferencesBlob } from '../fixtures/preferences';
 import {
@@ -20,12 +25,21 @@ import {
   readSupportSystemInfo,
   supportExpiryDate,
 } from '../fixtures/support';
+import { readSystemIdentity } from '../fixtures/system-info';
 import { goToGeneralSettings, goToViaGlobalSearch } from '../flows/navigation';
+import { confirmSaveDebug, openSaveDebugConfirmation } from '../flows/support';
+import { confirmDialogLocators } from '../locators/dialogs';
 import { generalSettingsLocators } from '../locators/general-settings';
 import { globalSearchLocators } from '../locators/navigation';
 import { expect, test } from '../support/fixtures';
 
 const { support, fingerprintDialog, eula } = generalSettingsLocators;
+
+/** The UI waits for the job before it fetches the file, so the job is normally done already. */
+const debugJobReadTimeoutMs = 30_000;
+
+/** The first two bytes of every gzip stream. */
+const gzipMagic = Buffer.from([0x1f, 0x8b]);
 
 test.describe('the Support card', () => {
   /** What `beforeEach` wrote, and therefore exactly what `afterEach` must undo to. */
@@ -161,4 +175,45 @@ test('an admin opens the EULA from global search and reads it', async ({ page, a
 
   await page.locator(eula.backToSupport).click();
   await expect(page).toHaveURL(/\/system\/general\/?$/);
+});
+
+test.describe('Save Debug', () => {
+  // A retry would only run `system.debug` for another minute or more to learn the same thing.
+  test.describe.configure({ retries: 0 });
+
+  test('an admin saves a debug, and the browser receives a gzipped archive named for the host', async ({ page, api }) => {
+    const { hostname } = await readSystemIdentity(api);
+    const shortHostname = hostname.split('.')[0];
+    const since = await findLatestJobId(api, 'system.debug');
+
+    await openSaveDebugConfirmation(page);
+    const download = await confirmSaveDebug(page);
+
+    // Then `<yyyyMMddHHmmss>`, the browser's time when the job started.
+    const fileName = download.suggestedFilename();
+    const prefix = `debug-${shortHostname}-`;
+    expect(fileName.startsWith(prefix), `"${fileName}" should start with "${prefix}"`).toBe(true);
+    expect(fileName.slice(prefix.length)).toMatch(/^\d{14}\.tgz$/);
+    const archive = await readFile(await download.path());
+    expect(archive.length).toBeGreaterThan(gzipMagic.length);
+    expect(archive.subarray(0, gzipMagic.length).equals(gzipMagic)).toBe(true);
+
+    await expect
+      .poll(() => findJobStateAfter(api, 'system.debug', since), {
+        message: 'The system.debug job the button started should have succeeded.',
+        timeout: debugJobReadTimeoutMs,
+      })
+      .toBe('SUCCESS');
+  });
+
+  test('cancelling the confirmation starts no debug', async ({ page, api }) => {
+    const since = await findLatestJobId(api, 'system.debug');
+
+    await openSaveDebugConfirmation(page);
+    await page.locator(confirmDialogLocators.cancel).click();
+    await expect(page.locator(confirmDialogLocators.title)).toBeHidden();
+
+    // `core.download` is only called once the dialog answers yes, so a closed dialog is the whole wait.
+    expect(await findJobStateAfter(api, 'system.debug', since)).toBeUndefined();
+  });
 });
