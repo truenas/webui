@@ -131,6 +131,10 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
 
   /** The selection whose ancestors were last expanded; see {@link revealSelectedDataset}. */
   private revealedDatasetId: string | null = null;
+  /** The search query whose matches were last revealed; see {@link revealSearchMatches}. */
+  private revealedQuery = '';
+  /** Ids of the datasets that were expanded when the current search began; null while no search runs. */
+  private expandedBeforeSearch: string[] | null = null;
   showMobileDetails = false;
   isMobileView = false;
   systemDataset = toSignal(this.api.call('systemdataset.config').pipe(map((config) => config.pool)));
@@ -445,6 +449,7 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
     if (!this.dataSource.filterPredicate) {
       this.dataSource.filterPredicate = (datasetsToFilter, query = '') => {
         const result: DatasetDetails[] = [];
+        const ancestorIds = new Set<string>();
 
         const datasetsMatched = datasetsToFilter
           .filter((dataset) => dataset.name.toLowerCase().includes(query.toLowerCase()));
@@ -456,15 +461,43 @@ export class DatasetsManagementComponent implements OnInit, AfterViewInit {
             const matched = datasetsToFilter.find((parent) => parent.id === paths.slice(0, i).join('/'));
             if (matched) {
               result.push(matched);
+              if (i < paths.length) {
+                ancestorIds.add(matched.id);
+              }
             }
           }
         });
 
+        this.revealSearchMatches(query, [...ancestorIds]);
         return uniqBy(result, 'id');
       };
       this.dataSource.sortComparer = datasetNameSortComparer;
     }
     this.dataSource.data = datasets;
+  }
+
+  /**
+   * Opens the ancestors of every match when the search query changes, and puts back what was open before
+   * the search once it is cleared, keeping the selected dataset in view. Called from the filter predicate:
+   * the data source offers no hook after it filters, and a reload during a search runs the predicate
+   * again with the same query, which must not reopen what the user collapsed since.
+   */
+  private revealSearchMatches(query: string, ancestorIds: string[]): void {
+    if (query === this.revealedQuery) {
+      return;
+    }
+    this.revealedQuery = query;
+
+    const { expansionModel } = this.treeControl;
+    if (query) {
+      this.expandedBeforeSearch ??= [...expansionModel.selected];
+      expansionModel.select(...ancestorIds);
+      return;
+    }
+
+    const selectedAncestorIds = (this.datasetStore.selectedBranch() ?? []).slice(0, -1).map((dataset) => dataset.id);
+    expansionModel.setSelection(...(this.expandedBeforeSearch ?? []), ...selectedAncestorIds);
+    this.expandedBeforeSearch = null;
   }
 
   private expandDatasetBranch(): void {

@@ -3,8 +3,7 @@
  * their parents, and choosing a match opens its details; a term that matches nothing shows the empty
  * state; and clearing the search brings the whole tree back.
  *
- * The search leaves each row open or closed as it was, so a match under a closed parent is kept but not
- * in view. Each story opens the branch down to the match before it searches.
+ * The search opens the parents of every match, and clearing it puts back the rows that were open before.
  */
 import type { Locator, Page } from '@playwright/test';
 import { ensureDatasetAbsent, ensureDatasetPresent } from '../fixtures/storage';
@@ -79,9 +78,9 @@ test('searching narrows the tree to the match and its parents, and choosing it o
   const branch = branchIn(pool);
   const node = (name: string): Locator => treeNode(page, name);
 
-  await openBranch(page, pool, branch);
-  await expect(node(branch.sibling)).toBeVisible();
-  await expect(node(branch.match)).toBeVisible();
+  // Nothing is opened first: the search opens the match's parents itself.
+  await goToDatasets(page);
+  await expect(node(branch.match)).toBeHidden();
 
   await page.locator(datasetLocators.search).fill(term);
 
@@ -90,7 +89,7 @@ test('searching narrows the tree to the match and its parents, and choosing it o
   await expect(node(branch.middle)).toBeVisible();
   await expect(node(branch.root)).toBeVisible();
   await expect(node(pool)).toBeVisible();
-  // The selected parent is not a match, so its details are not shown while the search holds.
+  // The pool the page selected on entry is not a match, so its details are not shown while the search holds.
   await expect(page.locator(datasetDetailsLocators.path)).toBeHidden();
 
   await node(branch.match).click();
